@@ -5,8 +5,11 @@
 <div id="contents">
     <div class="container-fluid">
         <div class="row">
-            <div th:insert="fragments/sidebar :: sidebar()" class="col-sm-auto bg-light sticky-top"></div>
-            <div th:insert="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <div th:insert="fragments/sidebar :: sidebar()"></div>
+            <div class="container">
+                <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+                <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
+            </div>
         </div>
     </div>
 </div>
