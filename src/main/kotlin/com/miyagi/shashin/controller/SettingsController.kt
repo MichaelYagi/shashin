@@ -14,6 +14,7 @@ class SettingsController {
         val module = "settings"
         model["data"] = "This is the settings page"
         model["activePage"] = module
+        model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
     }
@@ -23,6 +24,7 @@ class SettingsController {
         val module = "scan"
         model["data"] = "This is scan setting"
         model["activePage"] = module
+        model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
     }

@@ -13,6 +13,7 @@ class TimelineController {
         val module = "timeline"
         model["data"] = "This is some timeline data"
         model["activePage"] = module
+        model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
     }

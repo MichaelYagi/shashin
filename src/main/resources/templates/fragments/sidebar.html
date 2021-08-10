@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="sidebar()">
+<body th:fragment="sidebar(activeSidebar)">
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link active" href="/settings">
+                <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' ? ' active' : ''}" href="/settings">
                     <span class="bi-wrench"></span>
-                    Settings <span class="sr-only">(current)</span>
+                    Settings
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="/timeline">
+                <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline">
                     <span class="bi-calendar4"></span>
                     Timeline
                 </a>
