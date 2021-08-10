@@ -2,15 +2,19 @@
 <html lang="en">
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
-<div id="contents">
-    <div class="container-fluid">
-        <div class="row">
-            <div th:insert="fragments/sidebar :: sidebar()"></div>
-            <div class="container">
-                <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
-                <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
-            </div>
-        </div>
+
+<div th:replace="fragments/topnav :: topnav()"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar()"></div>
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+            <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <form action="/settings/scan" method="post" id="scanPhotos">
+                <input class="btn btn-primary" name="submit" type="submit" value="Scan">
+            </form>
+            <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
+        </main>
     </div>
 </div>
 
