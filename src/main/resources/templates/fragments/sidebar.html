@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<div th:fragment="sidebar()">
-    <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top">
+    <div class="d-flex flex-sm-column flex-row flex-nowrap bg-light align-items-center sticky-top" th:fragment="sidebar()">
         <a href="/" class="d-block p-3 link-dark text-decoration-none" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
             <i class="bi-bootstrap fs-1"></i>
         </a>
@@ -13,8 +12,8 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
-                    <i class="bi-speedometer2 fs-1"></i>
+                <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Products">
+                    <i class="bi-heart fs-1"></i>
                 </a>
             </li>
             <li>
@@ -23,8 +22,8 @@
                 </a>
             </li>
             <li>
-                <a href="#" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Products">
-                    <i class="bi-heart fs-1"></i>
+                <a href="/settings" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Dashboard">
+                    <i class="bi-wrench fs-1"></i>
                 </a>
             </li>
             <li>
@@ -44,6 +43,5 @@
             </ul>
         </div>
     </div>
-</div>
 </body>
 </html>

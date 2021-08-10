@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body>
-<div th:fragment="content(data)">
+<body th:fragment="content(data,activePage)">
     <!-- content -->
-    <div class="lead">
-        <span th:text="${data}"></span>
-    </div>
-</div>
+    <span th:if="${activePage == 'settings' or activePage == 'scan'}">
+        <div th:replace="fragments/settings :: settings(${activePage})"></div>
+    </span>
+    <p th:text="${data}"></p>
+    <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
 </body>
 </html>

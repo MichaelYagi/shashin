@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<ul class="nav nav-tabs" th:fragment="settings(activePage)">
+  <li class="nav-item">
+    <a th:attr="class='nav-link' + ${activePage=='settings' ? ' active' : ''}" href="/settings">General</a>
+  </li>
+  <li class="nav-item">
+    <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan">Scan</a>
+  </li>
+</ul>
+</body>
+</html>
