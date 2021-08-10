@@ -8,6 +8,9 @@
             <div th:insert="fragments/sidebar :: sidebar()"></div>
             <div class="container">
                 <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+                <form action="/settings/scan" method="post" id="scanPhotos">
+                    <input class="btn btn-primary" name="submit" type="submit" value="Scan">
+                </form>
                 <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
             </div>
         </div>
@@ -15,8 +18,19 @@
 </div>
 
 <script type="text/babel">
-    var app = new Vue({
-        el: '#contents'
+    $("#scanPhotos").submit(function (e) {
+        e.preventDefault();
+
+        var posting = $.post(
+            "/settings/scan",
+            { "submit": "Scan" }
+        );
+
+        posting.done(function( data ) {
+            console.log(JSON.stringify(data));
+        });
+        `12`
+        return false;
     });
 </script>
 </body>
