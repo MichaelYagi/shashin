@@ -5,15 +5,16 @@ import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
-import java.net.URI
-import java.nio.file.Path
-import java.nio.file.Paths
+import java.util.logging.Level
+import java.util.logging.Logger
 import javax.imageio.ImageIO
 
-
 class ImageProcessingUtils {
+
     companion object {
-        fun createSidecarData(file: File, sidecarDir: String) {
+        private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
+
+        fun createSidecarData(file: File, sidecarDir: String, rootDir: String) {
             val metadata = ImageMetadataReader.readMetadata(file)
             for (directory in metadata.directories) {
                 for (tag in directory.tags) {
@@ -24,17 +25,16 @@ class ImageProcessingUtils {
             // TODO: Save data to yaml/exif/sidecar files in configured directory
         }
 
-        fun createThumbnails(file: File, sidecarDir: String) {
+        fun createThumbnails(file: File, sidecarDir: String, rootDir: String) {
             // Scale to different sizes and save
             val img: BufferedImage = ImageIO.read(file)
             val scaled: BufferedImage = scaleImageByHeight(img, 224)
 
             // Map path to sidecar file
-            val path: Path = Paths.get(file.canonicalPath)
-            val directory: String = path.parent.toString()
-            val strPath = directory.replace('\\', '/')
-            val uri = URI(strPath)
-            val tnDir = sidecarDir.dropLast(1) + uri.path
+            val tempFile = File(rootDir)
+            var fileRootDir: String = (file.parent).lowercase().replace((tempFile.canonicalPath).lowercase(), "")
+            fileRootDir = fileRootDir.replace('\\', '/')
+            val tnDir = sidecarDir.dropLast(1) + "/thumbnails" + fileRootDir
             val tnFileStr = tnDir + "/" + file.name + ".jpg"
 
             try {
@@ -46,14 +46,13 @@ class ImageProcessingUtils {
                 // Create file
                 val thumbnailFile = File(tnFileStr)
                 if (thumbnailFile.createNewFile()) {
-                    println("Thumbnail created: " + thumbnailFile.name)
+                    logger.log(Level.INFO, "Thumbnail created: " + thumbnailFile.name)
                 } else {
-                    println("File already exists.")
+                    logger.log(Level.INFO, "Thumbnail already exists: " + thumbnailFile.name)
                 }
                 ImageIO.write(scaled, "jpg", thumbnailFile)
             } catch (e: IOException) {
-                println("An error occurred.")
-                e.printStackTrace()
+                logger.log(Level.SEVERE, "Thumbnail creation error: " + e.message)
             }
         }
 

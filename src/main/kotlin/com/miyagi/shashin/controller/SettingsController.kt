@@ -10,13 +10,15 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.io.File
 import java.io.IOException
-
-
-
+import java.util.logging.Level
+import java.util.logging.Logger
 
 
 @Controller
 class SettingsController {
+
+    var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
+
     @GetMapping("/settings")
     fun getIndex(model: Model): String {
         val module = "settings"
@@ -44,6 +46,7 @@ class SettingsController {
 
             // TODO: Make these configurable
             val dir = "c:/Users/micha/Downloads/testData/"
+            val rootDir = "c:/Users/micha/Downloads/testData/"
             val sidecarDir = "c:/Users/micha/Downloads/testData/sidecar/"
 
             if (!checkThreadFileAlive(dir)) {
@@ -56,21 +59,20 @@ class SettingsController {
                     try {
                         val threadFile = File(dir + "/" + Thread.currentThread().name + ".shashinscan")
                         if (threadFile.createNewFile()) {
-                            println("File created: " + threadFile.name)
+                            logger.log(Level.FINE, "Thread file created: " + threadFile.name)
                         } else {
-                            println("File already exists.")
+                            logger.log(Level.FINE, "Thread file already exists: " + threadFile.name)
                         }
-                        getFile(dir, threadFile, sidecarDir)
+                        getFile(dir, threadFile, sidecarDir, rootDir)
 
                         // Delete thread file
                         if (threadFile.delete()) {
-                            println("Deleted the file: " + threadFile.name);
+                            logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
                         } else {
-                            println("Failed to delete the file.");
+                            logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
                         }
                     } catch (e: IOException) {
-                        println("An error occurred.")
-                        e.printStackTrace()
+                        logger.log(Level.SEVERE, "Thread file error: " + e.message)
                     }
                 }.start()
                 return "{\"msg\":\"Scan start\"}"
@@ -124,7 +126,7 @@ class SettingsController {
         }
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String) {
         val f = File(dirPath)
         val files = f.listFiles()
         if (files != null) {
@@ -142,24 +144,19 @@ class SettingsController {
                         if (FileUtils.isRaw(file.extension.lowercase())) {
 
                         } else {
-                            // TODO: Log and display in web app
-                            println(file.name)
-
                             // TODO: Check if mapped sidecar file exists, if it does, skip creating them
                             if (false) {
 
                             } else {
-                                ImageProcessingUtils.createSidecarData(file, sidecarDir)
-                                ImageProcessingUtils.createThumbnails(file, sidecarDir)
+                                ImageProcessingUtils.createSidecarData(file, sidecarDir, rootDir)
+                                ImageProcessingUtils.createThumbnails(file, sidecarDir, rootDir)
                             }
                         }
-                        // TODO: Remove output
-                        println("---------------------")
                     }
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir)
                 }
             }
         }
