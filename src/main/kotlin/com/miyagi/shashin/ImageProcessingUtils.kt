@@ -28,18 +28,22 @@ class ImageProcessingUtils {
             // Scale to different sizes and save
             val img: BufferedImage = ImageIO.read(file)
             val scaled: BufferedImage = scaleImageByHeight(img, 224)
+
+            // Map path to sidecar file
             val path: Path = Paths.get(file.canonicalPath)
             val directory: String = path.parent.toString()
             val strPath = directory.replace('\\', '/')
             val uri = URI(strPath)
             val tnDir = sidecarDir.dropLast(1) + uri.path
-            val tnFileStr = tnDir + "/" + file.name
+            val tnFileStr = tnDir + "/" + file.name + ".jpg"
 
             try {
+                // Create directory if dne
                 val thumbnailFileDir = File(tnDir)
                 if (!thumbnailFileDir.exists()) {
                     thumbnailFileDir.mkdirs()
                 }
+                // Create file
                 val thumbnailFile = File(tnFileStr)
                 if (thumbnailFile.createNewFile()) {
                     println("Thumbnail created: " + thumbnailFile.name)
