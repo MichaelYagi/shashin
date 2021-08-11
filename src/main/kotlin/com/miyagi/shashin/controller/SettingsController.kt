@@ -1,6 +1,5 @@
 package com.miyagi.shashin.controller
 
-import com.drew.imaging.ImageMetadataReader
 import com.miyagi.shashin.FileUtils
 import com.miyagi.shashin.ImageProcessingUtils
 import com.miyagi.shashin.TextUtils
@@ -18,6 +17,11 @@ import java.util.logging.Logger
 class SettingsController {
 
     var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
+
+    // TODO: Make these configurable
+    val photoDir = "c:/Users/micha/Downloads/testData/"
+    val rootPhotoDir = "c:/Users/micha/Downloads/testData/"
+    val sidecarDir = "c:/Users/micha/Downloads/testData/sidecar/"
 
     @GetMapping("/settings")
     fun getIndex(model: Model): String {
@@ -44,26 +48,21 @@ class SettingsController {
     fun postScan(@RequestParam submit: String): String {
         if (submit == "Scan") {
 
-            // TODO: Make these configurable
-            val dir = "c:/Users/micha/Downloads/testData/"
-            val rootDir = "c:/Users/micha/Downloads/testData/"
-            val sidecarDir = "c:/Users/micha/Downloads/testData/sidecar/"
-
-            if (!checkThreadFileAlive(dir)) {
+            if (!checkThreadFileAlive(photoDir)) {
                 // Clean up any existing thread files
-                deleteThreadFiles(dir)
+                deleteThreadFiles(photoDir)
 
                 // Iterate through directory in another thread
                 Thread {
                     //Create file with thread name and write file name iterated
                     try {
-                        val threadFile = File(dir + "/" + Thread.currentThread().name + ".shashinscan")
+                        val threadFile = File(photoDir + "/" + Thread.currentThread().name + ".shashinscan")
                         if (threadFile.createNewFile()) {
                             logger.log(Level.FINE, "Thread file created: " + threadFile.name)
                         } else {
                             logger.log(Level.FINE, "Thread file already exists: " + threadFile.name)
                         }
-                        getFile(dir, threadFile, sidecarDir, rootDir)
+                        getFile(photoDir, threadFile, sidecarDir, rootPhotoDir)
 
                         // Delete thread file
                         if (threadFile.delete()) {
