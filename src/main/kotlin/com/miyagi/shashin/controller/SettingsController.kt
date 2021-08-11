@@ -2,6 +2,7 @@ package com.miyagi.shashin.controller
 
 import com.drew.imaging.ImageMetadataReader
 import com.miyagi.shashin.FileUtils
+import com.miyagi.shashin.ImageProcessingUtils
 import com.miyagi.shashin.TextUtils
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -41,7 +42,9 @@ class SettingsController {
     fun postScan(@RequestParam submit: String): String {
         if (submit == "Scan") {
 
+            // TODO: Make these configurable
             val dir = "c:/Users/micha/Downloads/testData/"
+            val sidecarDir = "c:/Users/micha/Downloads/testData/sidecar/"
 
             if (!checkThreadFileAlive(dir)) {
                 // Clean up any existing thread files
@@ -57,7 +60,7 @@ class SettingsController {
                         } else {
                             println("File already exists.")
                         }
-                        getFile(dir, threadFile)
+                        getFile(dir, threadFile, sidecarDir)
 
                         // Delete thread file
                         if (threadFile.delete()) {
@@ -121,14 +124,14 @@ class SettingsController {
         }
     }
 
-    private fun getFile(dirPath: String, threadFile: File) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String) {
         val f = File(dirPath)
         val files = f.listFiles()
         if (files != null) {
             for (i in files.indices) {
 
                 // TODO: Remove this test
-                Thread.sleep(4000);
+                //Thread.sleep(4000);
 
                 val file: File = files[i]
 
@@ -139,21 +142,24 @@ class SettingsController {
                         if (FileUtils.isRaw(file.extension.lowercase())) {
 
                         } else {
+                            // TODO: Log and display in web app
                             println(file.name)
-                            // TODO: Check if sidecar file exists, if it does, skip creating them
-                            val metadata = ImageMetadataReader.readMetadata(file)
-                            for (directory in metadata.directories) {
-                                for (tag in directory.tags) {
-                                    //println(tag)
-                                }
+
+                            // TODO: Check if mapped sidecar file exists, if it does, skip creating them
+                            if (false) {
+
+                            } else {
+                                ImageProcessingUtils.createSidecarData(file, sidecarDir)
+                                ImageProcessingUtils.createThumbnails(file, sidecarDir)
                             }
                         }
+                        // TODO: Remove output
                         println("---------------------")
                     }
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile)
+                    getFile(file.absolutePath, threadFile, sidecarDir)
                 }
             }
         }
