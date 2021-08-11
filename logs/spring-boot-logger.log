@@ -380,3 +380,203 @@
 2021-08-11 09:11:47,158 INFO com.miyagi.shashin.ImageProcessingUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG.jpg
 2021-08-11 09:11:47,522 INFO com.miyagi.shashin.ImageProcessingUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG.jpg
 2021-08-11 09:11:47,863 INFO com.miyagi.shashin.ImageProcessingUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG.jpg
+2021-08-11 12:09:20,903 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 15948 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-11 12:09:20,908 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-11 12:09:20,998 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-11 12:09:20,999 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-11 12:09:22,517 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-11 12:09:22,532 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-11 12:09:22,533 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-11 12:09:22,534 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-11 12:09:22,628 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-11 12:09:22,629 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 1629 ms
+2021-08-11 12:09:22,958 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-11 12:09:23,166 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-11 12:09:23,189 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-11 12:09:23,236 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-11 12:09:23,252 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 3.065 seconds (JVM running for 4.188)
+2021-08-11 12:09:27,662 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-11 12:09:27,663 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-11 12:09:27,664 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-11 12:09:27,779 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thread already exists: testData
+2021-08-11 12:09:27,844 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1061.JPG.yaml
+2021-08-11 12:09:28,380 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG.jpg
+2021-08-11 12:09:28,380 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG.jpg
+2021-08-11 12:09:28,409 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1062.JPG.yaml
+2021-08-11 12:09:28,988 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG.jpg
+2021-08-11 12:09:28,990 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG.jpg
+2021-08-11 12:09:29,005 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1063.JPG.yaml
+2021-08-11 12:09:29,380 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG.jpg
+2021-08-11 12:09:29,381 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG.jpg
+2021-08-11 12:09:29,393 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1080.JPG.yaml
+2021-08-11 12:09:29,754 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG.jpg
+2021-08-11 12:09:29,755 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG.jpg
+2021-08-11 12:09:29,764 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1074.JPG.yaml
+2021-08-11 12:09:30,168 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG.jpg
+2021-08-11 12:09:30,169 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG.jpg
+2021-08-11 12:09:30,181 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1075.JPG.yaml
+2021-08-11 12:09:30,545 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG.jpg
+2021-08-11 12:09:30,546 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG.jpg
+2021-08-11 12:09:30,556 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1076.JPG.yaml
+2021-08-11 12:09:31,001 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG.jpg
+2021-08-11 12:09:31,003 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG.jpg
+2021-08-11 12:09:31,017 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1077.JPG.yaml
+2021-08-11 12:09:31,707 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG.jpg
+2021-08-11 12:09:31,708 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG.jpg
+2021-08-11 12:09:31,720 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1078.JPG.yaml
+2021-08-11 12:09:32,044 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG.jpg
+2021-08-11 12:09:32,044 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG.jpg
+2021-08-11 12:09:32,052 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1079.JPG.yaml
+2021-08-11 12:09:32,405 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG.jpg
+2021-08-11 12:09:32,405 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG.jpg
+2021-08-11 12:09:32,413 ERROR com.miyagi.shashin.controller.SettingsController [Thread-7] Could not delete thread file: testData
+2021-08-11 12:10:58,265 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 16620 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-11 12:10:58,269 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-11 12:10:58,338 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-11 12:10:58,339 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-11 12:10:59,765 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-11 12:10:59,777 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-11 12:10:59,778 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-11 12:10:59,778 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-11 12:10:59,865 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-11 12:10:59,865 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 1524 ms
+2021-08-11 12:11:00,135 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-11 12:11:00,277 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-11 12:11:00,295 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-11 12:11:00,338 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-11 12:11:00,353 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 2.692 seconds (JVM running for 3.607)
+2021-08-11 12:11:03,011 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-11 12:11:03,012 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-11 12:11:03,013 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-11 12:11:05,253 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thread created: Thread-7.shashinscan
+2021-08-11 12:11:05,305 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1061.JPG.yaml
+2021-08-11 12:11:05,828 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG.jpg
+2021-08-11 12:11:05,829 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG.jpg
+2021-08-11 12:11:05,855 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1062.JPG.yaml
+2021-08-11 12:11:06,320 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG.jpg
+2021-08-11 12:11:06,321 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG.jpg
+2021-08-11 12:11:06,335 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1063.JPG.yaml
+2021-08-11 12:11:06,689 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG.jpg
+2021-08-11 12:11:06,690 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG.jpg
+2021-08-11 12:11:06,703 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1080.JPG.yaml
+2021-08-11 12:11:07,075 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG.jpg
+2021-08-11 12:11:07,076 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG.jpg
+2021-08-11 12:11:07,089 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1074.JPG.yaml
+2021-08-11 12:11:07,476 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG.jpg
+2021-08-11 12:11:07,477 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG.jpg
+2021-08-11 12:11:07,489 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1075.JPG.yaml
+2021-08-11 12:11:07,863 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG.jpg
+2021-08-11 12:11:07,864 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG.jpg
+2021-08-11 12:11:07,878 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1076.JPG.yaml
+2021-08-11 12:11:08,256 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG.jpg
+2021-08-11 12:11:08,257 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG.jpg
+2021-08-11 12:11:08,275 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1077.JPG.yaml
+2021-08-11 12:11:08,649 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG.jpg
+2021-08-11 12:11:08,650 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG.jpg
+2021-08-11 12:11:08,661 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1078.JPG.yaml
+2021-08-11 12:11:09,050 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG.jpg
+2021-08-11 12:11:09,051 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG.jpg
+2021-08-11 12:11:09,065 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1079.JPG.yaml
+2021-08-11 12:11:09,644 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG.jpg
+2021-08-11 12:11:09,645 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG.jpg
+2021-08-11 12:11:39,565 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thread created: Thread-8.shashinscan
+2021-08-11 12:11:39,571 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1061.JPG.yaml
+2021-08-11 12:11:39,936 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1061.JPG.jpg
+2021-08-11 12:11:39,936 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG.jpg
+2021-08-11 12:11:39,944 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1062.JPG.yaml
+2021-08-11 12:11:40,329 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1062.JPG.jpg
+2021-08-11 12:11:40,330 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG.jpg
+2021-08-11 12:11:40,342 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1063.JPG.yaml
+2021-08-11 12:11:40,713 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1063.JPG.jpg
+2021-08-11 12:11:40,714 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG.jpg
+2021-08-11 12:11:40,726 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1080.JPG.yaml
+2021-08-11 12:11:41,074 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1080.JPG.jpg
+2021-08-11 12:11:41,075 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG.jpg
+2021-08-11 12:11:41,089 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1074.JPG.yaml
+2021-08-11 12:11:41,459 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1074.JPG.jpg
+2021-08-11 12:11:41,460 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1074.JPG.jpg
+2021-08-11 12:11:41,470 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1075.JPG.yaml
+2021-08-11 12:11:41,816 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1075.JPG.jpg
+2021-08-11 12:11:41,817 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1075.JPG.jpg
+2021-08-11 12:11:41,829 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1076.JPG.yaml
+2021-08-11 12:11:42,168 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1076.JPG.jpg
+2021-08-11 12:11:42,169 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1076.JPG.jpg
+2021-08-11 12:11:42,178 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1077.JPG.yaml
+2021-08-11 12:11:42,501 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1077.JPG.jpg
+2021-08-11 12:11:42,502 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1077.JPG.jpg
+2021-08-11 12:11:42,512 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1078.JPG.yaml
+2021-08-11 12:11:42,839 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1078.JPG.jpg
+2021-08-11 12:11:42,841 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1078.JPG.jpg
+2021-08-11 12:11:42,851 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1079.JPG.yaml
+2021-08-11 12:11:43,171 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1079.JPG.jpg
+2021-08-11 12:11:43,172 INFO com.miyagi.shashin.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1079.JPG.jpg
+2021-08-11 12:17:21,505 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thread created: Thread-9.shashinscan
+2021-08-11 12:17:21,512 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1061.JPG.yaml
+2021-08-11 12:17:21,893 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1061.JPG.jpg
+2021-08-11 12:17:21,894 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1061.JPG.jpg
+2021-08-11 12:17:21,905 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1062.JPG.yaml
+2021-08-11 12:17:22,319 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1062.JPG.jpg
+2021-08-11 12:17:22,321 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1062.JPG.jpg
+2021-08-11 12:17:22,333 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1063.JPG.yaml
+2021-08-11 12:17:22,671 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1063.JPG.jpg
+2021-08-11 12:17:22,671 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1063.JPG.jpg
+2021-08-11 12:17:22,682 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1080.JPG.yaml
+2021-08-11 12:17:23,055 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1080.JPG.jpg
+2021-08-11 12:17:23,056 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1080.JPG.jpg
+2021-08-11 12:17:23,065 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1074.JPG.yaml
+2021-08-11 12:17:23,442 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1074.JPG.jpg
+2021-08-11 12:17:23,443 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1074.JPG.jpg
+2021-08-11 12:17:23,452 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1075.JPG.yaml
+2021-08-11 12:17:23,840 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1075.JPG.jpg
+2021-08-11 12:17:23,841 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1075.JPG.jpg
+2021-08-11 12:17:23,850 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1076.JPG.yaml
+2021-08-11 12:17:24,226 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1076.JPG.jpg
+2021-08-11 12:17:24,227 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1076.JPG.jpg
+2021-08-11 12:17:24,237 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1077.JPG.yaml
+2021-08-11 12:17:24,933 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1077.JPG.jpg
+2021-08-11 12:17:24,934 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1077.JPG.jpg
+2021-08-11 12:17:24,949 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1078.JPG.yaml
+2021-08-11 12:17:25,530 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1078.JPG.jpg
+2021-08-11 12:17:25,531 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1078.JPG.jpg
+2021-08-11 12:17:25,541 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] YAML metadata created: DSCF1079.JPG.yaml
+2021-08-11 12:17:25,953 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail created: DSCF1079.JPG.jpg
+2021-08-11 12:17:25,954 INFO com.miyagi.shashin.FileUtils$Companion [Thread-9] Thumbnail already exists: DSCF1079.JPG.jpg
+2021-08-11 12:18:13,094 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 12932 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-11 12:18:13,101 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-11 12:18:13,212 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-11 12:18:13,213 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-11 12:18:14,751 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-11 12:18:14,770 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-11 12:18:14,771 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-11 12:18:14,771 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-11 12:18:14,854 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-11 12:18:14,854 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 1639 ms
+2021-08-11 12:18:15,143 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-11 12:18:15,302 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-11 12:18:15,322 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-11 12:18:15,365 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-11 12:18:15,379 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 2.999 seconds (JVM running for 4.041)
+2021-08-11 12:18:15,445 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-11 12:18:15,446 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-11 12:18:15,449 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 2 ms
+2021-08-11 12:18:15,584 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thread created: Thread-7.shashinscan
+2021-08-11 12:18:15,641 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1061.JPG.yaml
+2021-08-11 12:18:16,290 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG.jpg
+2021-08-11 12:18:16,320 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1062.JPG.yaml
+2021-08-11 12:18:16,901 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG.jpg
+2021-08-11 12:18:16,926 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1063.JPG.yaml
+2021-08-11 12:18:17,337 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG.jpg
+2021-08-11 12:18:17,350 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1080.JPG.yaml
+2021-08-11 12:18:17,710 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG.jpg
+2021-08-11 12:18:17,722 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1074.JPG.yaml
+2021-08-11 12:18:18,383 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG.jpg
+2021-08-11 12:18:18,396 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1075.JPG.yaml
+2021-08-11 12:18:18,858 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG.jpg
+2021-08-11 12:18:18,871 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1076.JPG.yaml
+2021-08-11 12:18:19,221 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG.jpg
+2021-08-11 12:18:19,232 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1077.JPG.yaml
+2021-08-11 12:18:19,589 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG.jpg
+2021-08-11 12:18:19,598 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1078.JPG.yaml
+2021-08-11 12:18:19,920 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG.jpg
+2021-08-11 12:18:19,928 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1079.JPG.yaml
+2021-08-11 12:18:20,257 INFO com.miyagi.shashin.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG.jpg

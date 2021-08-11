@@ -15,6 +15,15 @@ class ImageProcessingUtils {
         private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
         fun createSidecarData(file: File, sidecarDir: String, rootDir: String) {
+            val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
+            val exifDirectory = sidecarDir.dropLast(1) + "/exif"
+
+            val rootDirFile = File(rootDir)
+            var fileRootDir: String = (file.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
+            fileRootDir = fileRootDir.replace('\\', '/')
+
+            val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
+
             val metadata = ImageMetadataReader.readMetadata(file)
             for (directory in metadata.directories) {
                 for (tag in directory.tags) {
@@ -22,37 +31,29 @@ class ImageProcessingUtils {
                     //println(tag)
                 }
             }
-            // TODO: Save data to yaml/exif/sidecar files in configured directory
+
+            val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
+            if (mdFile != null) {
+                // TODO: Create YAML metadata
+            }
         }
 
         fun createThumbnails(file: File, sidecarDir: String, rootDir: String) {
+            val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
+
             // Scale to different sizes and save
             val img: BufferedImage = ImageIO.read(file)
             val scaled: BufferedImage = scaleImageByHeight(img, 224)
 
             // Map path to sidecar file
-            val tempFile = File(rootDir)
-            var fileRootDir: String = (file.parent).lowercase().replace((tempFile.canonicalPath).lowercase(), "")
+            val rootDirFile = File(rootDir)
+            var fileRootDir: String = (file.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
             fileRootDir = fileRootDir.replace('\\', '/')
-            val tnDir = sidecarDir.dropLast(1) + "/thumbnails" + fileRootDir
-            val tnFileStr = tnDir + "/" + file.name + ".jpg"
+            val thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + ".jpg"
 
-            try {
-                // Create directory if dne
-                val thumbnailFileDir = File(tnDir)
-                if (!thumbnailFileDir.exists()) {
-                    thumbnailFileDir.mkdirs()
-                }
-                // Create file
-                val thumbnailFile = File(tnFileStr)
-                if (thumbnailFile.createNewFile()) {
-                    logger.log(Level.INFO, "Thumbnail created: " + thumbnailFile.name)
-                } else {
-                    logger.log(Level.INFO, "Thumbnail already exists: " + thumbnailFile.name)
-                }
-                ImageIO.write(scaled, "jpg", thumbnailFile)
-            } catch (e: IOException) {
-                logger.log(Level.SEVERE, "Thumbnail creation error: " + e.message)
+            val tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            if (tnFile != null) {
+                ImageIO.write(scaled, "jpg", tnFile)
             }
         }
 

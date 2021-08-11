@@ -55,23 +55,15 @@ class SettingsController {
                 // Iterate through directory in another thread
                 Thread {
                     //Create file with thread name and write file name iterated
-                    try {
-                        val threadFile = File(photoDir + "/" + Thread.currentThread().name + ".shashinscan")
-                        if (threadFile.createNewFile()) {
-                            logger.log(Level.FINE, "Thread file created: " + threadFile.name)
-                        } else {
-                            logger.log(Level.FINE, "Thread file already exists: " + threadFile.name)
-                        }
+                    val threadFile = FileUtils.createFile(photoDir, photoDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
+                    if (threadFile != null) {
                         getFile(photoDir, threadFile, sidecarDir, rootPhotoDir)
-
                         // Delete thread file
                         if (threadFile.delete()) {
                             logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
                         } else {
                             logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
                         }
-                    } catch (e: IOException) {
-                        logger.log(Level.SEVERE, "Thread file error: " + e.message)
                     }
                 }.start()
                 return "{\"msg\":\"Scan start\"}"
