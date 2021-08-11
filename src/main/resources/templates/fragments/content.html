@@ -5,6 +5,6 @@
 <span th:if="${activePage == 'settings' or activePage == 'scan'}">
     <div th:replace="fragments/settings :: settings(${activePage})"></div>
 </span>
-<p th:text="${data}"></p>
+<p id="msg" th:text="${data}"></p>
 </body>
 </html>
