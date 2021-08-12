@@ -1,14 +1,15 @@
 package com.miyagi.shashin.controller
 
-import com.miyagi.shashin.FileUtils
-import com.miyagi.shashin.ImageProcessingUtils
-import com.miyagi.shashin.TextUtils
+import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.ImageProcessingUtils
+import com.miyagi.shashin.util.TextUtils
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.io.File
-import java.io.IOException
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -16,7 +17,9 @@ import java.util.logging.Logger
 @Controller
 class SettingsController {
 
-    var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
+    @Autowired
+    private val metadataRepository: MetadataRepository? = null
+    private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
     // TODO: Make these configurable
     val photoDir = "c:/Users/micha/Downloads/testData/"
@@ -140,7 +143,8 @@ class SettingsController {
 
                             } else {
                                 val thumbnailFile = ImageProcessingUtils.createThumbnails(file, sidecarDir, rootDir)
-                                ImageProcessingUtils.createSidecarData(file, sidecarDir, rootDir, thumbnailFile)
+                                val metadataObj = ImageProcessingUtils.createMetadata(file, sidecarDir, rootDir, thumbnailFile)
+                                metadataRepository?.save(metadataObj)
                             }
                         }
                     }

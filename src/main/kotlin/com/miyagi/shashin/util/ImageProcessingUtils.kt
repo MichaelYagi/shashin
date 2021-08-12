@@ -1,4 +1,4 @@
-package com.miyagi.shashin
+package com.miyagi.shashin.util
 
 import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -19,9 +20,8 @@ class ImageProcessingUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
-        fun createSidecarData(file: File, sidecarDir: String, rootDir: String, thumbnailFile: File?): Metadata {
+        fun createMetadata(file: File, sidecarDir: String, rootDir: String, thumbnailFile: File?): Metadata {
             val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
-            val exifDirectory = sidecarDir.dropLast(1) + "/exif"
 
             val rootDirFile = File(rootDir)
             var fileRootDir: String = (file.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
@@ -52,16 +52,40 @@ class ImageProcessingUtils {
                 file.toPath(),
                 BasicFileAttributes::class.java
             )
-            metadataObj.setCreatedAt(attr.creationTime().toString())
-            metadataObj.setModifiedAt(attr.lastModifiedTime().toString())
-            metadataObj.setLastAccessedAt(attr.lastAccessTime().toString())
+
+            val datePattern = "yyyy-MM-dd HH:mm:ss"
+            val sourceFormatMS = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+            val destFormat = SimpleDateFormat(datePattern)
+            var date: Date? = null
+
+            val creationTime = attr.creationTime().toString()
+            date = if (creationTime.contains(".")) {
+                sourceFormatMS.parse(creationTime)
+            } else {
+                sourceFormat.parse(creationTime)
+            }
+            metadataObj.setCreatedAt(destFormat.format(date))
+
+            val modifiedTime = attr.lastModifiedTime().toString()
+            date = if (modifiedTime.contains(".")) {
+                sourceFormatMS.parse(modifiedTime)
+            } else {
+                sourceFormat.parse(modifiedTime)
+            }
+            metadataObj.setModifiedAt(destFormat.format(date))
+
+            val accessTime = attr.lastAccessTime().toString()
+            date = if (accessTime.contains(".")) {
+                sourceFormatMS.parse(accessTime)
+            } else {
+                sourceFormat.parse(accessTime)
+            }
+            metadataObj.setLastAccessedAt(destFormat.format(date))
 
             // Get image data
             val metadata = ImageMetadataReader.readMetadata(file)
             for (directory in metadata.directories) {
-                var year: String? = null
-                var month: String? = null
-                var day: String? = null
                 var cameraMake: String? = null
                 var cameraModel: String? = null
                 var lensMake: String? = null
@@ -70,12 +94,15 @@ class ImageProcessingUtils {
                     // TODO: Get this info into exif file
                     when (tag.tagName) {
                         "Date/Time" -> {
+                            val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
+                            date = takenFormat.parse(tag.description)
+                            metadataObj.setTakenAt(destFormat.format(date))
+
                             val dateArray = tag.description.split(" ")
                             val takenDateArray = dateArray[0].split(":")
-                            metadataObj.setTakenAt(tag.description)
-                            metadataObj.setYear(takenDateArray[0])
-                            metadataObj.setMonth(takenDateArray[1])
-                            metadataObj.setDay(takenDateArray[2])
+                            metadataObj.setYear(takenDateArray[0].toInt())
+                            metadataObj.setMonth(takenDateArray[1].toInt())
+                            metadataObj.setDay(takenDateArray[2].toInt())
                         }
                         "File Modified Date" -> {
                             val dateArray = (tag.description).split(" ")
@@ -153,7 +180,14 @@ class ImageProcessingUtils {
                 }
             }
 
-            metadataObj.setUID(TextUtils.generateUUID(metadataObj.getPath(),metadataObj.getTakenAt(),metadataObj.getLat(),metadataObj.getLng()))
+            metadataObj.setId(
+                TextUtils.generateUUID(
+                    metadataObj.getPath(),
+                    metadataObj.getTakenAt(),
+                    metadataObj.getLat(),
+                    metadataObj.getLng()
+                ).toString()
+            )
 
             return metadataObj
         }

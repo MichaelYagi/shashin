@@ -1,4 +1,4 @@
-package com.miyagi.shashin
+package com.miyagi.shashin.util
 
 import java.io.File
 import java.io.IOException

@@ -1,4 +1,4 @@
-package com.miyagi.shashin
+package com.miyagi.shashin.util
 
 import java.util.*
 
@@ -35,9 +35,9 @@ class TextUtils {
             return "${h1.toInt()}/${k1.toInt()}"
         }
 
-        fun generateUUID(path:String?,takenAt:String?,lat:String?,lng:String?): String {
+        fun generateUUID(path:String?,takenAt:String?,lat:String?,lng:String?): UUID {
             val uuidInput = path+takenAt+lat+lng
-            return UUID.nameUUIDFromBytes(uuidInput.toByteArray()).toString()
+            return UUID.nameUUIDFromBytes(uuidInput.toByteArray())
         }
     }
 }

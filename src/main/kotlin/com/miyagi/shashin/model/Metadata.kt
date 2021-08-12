@@ -1,19 +1,48 @@
 package com.miyagi.shashin.model
 
+import javax.persistence.*
+
+@Entity
+@Table(name = "metadata")
 class Metadata {
+    @Id
+    private lateinit var id: String
+    private var path: String? = null
+    private var thumbnailPath: String? = null
+    private var takenAt: String? = null
+    private var type: String? = null
+    private var fileName: String? = null
+    private var timeZone: String? = null
+    private var lat: String? = null
+    private var lng: String? = null
+    private var year: Int? = null
+    private var month: Int? = null
+    private var day: Int? = null
+    private var iso: Int? = null
+    private var exposure: String? = null
+    private var fNumber: Double? = null
+    private var focalLength: Int? = null
+    private var camera: String? = null
+    private var lens: String? = null
+    private var quality: String? = null
+    private var keywords: String? = null
+    private var createdAt: String? = null
+    private var modifiedAt: String? = null
+    private var lastAccessedAt: String? = null
+
     fun Metadata(
         path: String?,
         thumbnailPath: String?,
         takenAt: String?,
-        uid: String?,
+        id: String,
         type: String?,
         fileName: String?,
         timeZone: String?,
         lat: String?,
         lng: String?,
-        year: String?,
-        month: String?,
-        day: String?,
+        year: Int?,
+        month: Int?,
+        day: Int?,
         iso: Int?,
         exposure: String?,
         fNumber: Double?,
@@ -26,195 +55,171 @@ class Metadata {
         modifiedAt: String?,
         lastAccessedAt: String?
     ) {
-        this.Path = path
-        this.ThumbnailPath = thumbnailPath
-        this.TakenAt = takenAt
-        this.UID = uid
-        this.Type = type
-        this.FileName = fileName
-        this.TimeZone = timeZone
-        this.Lat = lat
-        this.Lng = lng
-        this.Year = year
-        this.Month = month
-        this.Day = day
-        this.ISO = iso
-        this.Exposure = exposure
-        this.FNumber = fNumber
-        this.FocalLength = focalLength
-        this.Camera = camera
-        this.Lens = lens
-        this.Quality = quality
-        this.Keywords = keywords
-        this.CreatedAt = createdAt
-        this.ModifiedAt = modifiedAt
-        this.LastAccessedAt = lastAccessedAt
+        this.path = path
+        this.thumbnailPath = thumbnailPath
+        this.takenAt = takenAt
+        this.id = id
+        this.type = type
+        this.fileName = fileName
+        this.timeZone = timeZone
+        this.lat = lat
+        this.lng = lng
+        this.year = year
+        this.month = month
+        this.day = day
+        this.iso = iso
+        this.exposure = exposure
+        this.fNumber = fNumber
+        this.focalLength = focalLength
+        this.camera = camera
+        this.lens = lens
+        this.quality = quality
+        this.keywords = keywords
+        this.createdAt = createdAt
+        this.modifiedAt = modifiedAt
+        this.lastAccessedAt = lastAccessedAt
     }
 
     // Without a default constructor, Jackson will throw an exception
     fun Metadata() {}
 
-    private var Path: String? = null
-    private var ThumbnailPath: String? = null
-    private var TakenAt: String? = null
-    private var UID: String? = null
-    private var Type: String? = null
-    private var FileName: String? = null
-    private var TimeZone: String? = null
-    private var Lat: String? = null
-    private var Lng: String? = null
-    private var Year: String? = null
-    private var Month: String? = null
-    private var Day: String? = null
-    private var ISO: Int? = 0
-    private var Exposure: String? = null
-    private var FNumber: Double? = 0.0
-    private var FocalLength: Int? = 0
-    private var Camera: String? = null
-    private var Lens: String? = null
-    private var Quality: String? = null
-    private var Keywords: String? = null
-    private var CreatedAt: String? = null
-    private var ModifiedAt: String? = null
-    private var LastAccessedAt: String? = null
-
     fun setPath(path: String?) {
-        this.Path = path
+        this.path = path
     }
     fun setThumbnailPath(thumbnailPath: String?) {
-        this.ThumbnailPath = thumbnailPath
+        this.thumbnailPath = thumbnailPath
     }
     fun setTakenAt(takenAt: String?) {
-        this.TakenAt = takenAt
+        this.takenAt = takenAt
     }
-    fun setUID(uid: String?) {
-        this.UID = uid
+    fun setId(id: String) {
+        this.id = id
     }
     fun setType(type: String?) {
-        this.Type = type
+        this.type = type
     }
     fun setFileName(fileName: String?) {
-        this.FileName = fileName
+        this.fileName = fileName
     }
     fun setTimeZone(timeZone: String?) {
-        this.TimeZone = timeZone
+        this.timeZone = timeZone
     }
     fun setLat(lat: String?) {
-        this.Lat = lat
+        this.lat = lat
     }
     fun setLng(lng: String?) {
-        this.Lng = lng
+        this.lng = lng
     }
-    fun setYear(year: String?) {
-        this.Year = year
+    fun setYear(year: Int?) {
+        this.year = year
     }
-    fun setMonth(month: String?) {
-        this.Month = month
+    fun setMonth(month: Int?) {
+        this.month = month
     }
-    fun setDay(day: String?) {
-        this.Day = day
+    fun setDay(day: Int?) {
+        this.day = day
     }
     fun setISO(iso: Int?) {
-        this.ISO = iso
+        this.iso = iso
     }
     fun setExposure(exposure: String?) {
-        this.Exposure = exposure
+        this.exposure = exposure
     }
     fun setFNumber(fNumber: Double?) {
-        this.FNumber = fNumber
+        this.fNumber = fNumber
     }
     fun setFocalLength(focalLength: Int?) {
-        this.FocalLength = focalLength
+        this.focalLength = focalLength
     }
     fun setCamera(camera: String?) {
-        this.Camera = camera
+        this.camera = camera
     }
     fun setLens(lens: String?) {
-        this.Lens = lens
+        this.lens = lens
     }
     fun setQuality(quality: String?) {
-        this.Quality = quality
+        this.quality = quality
     }
     fun setKeywords(keywords: String?) {
-        this.Keywords = keywords
+        this.keywords = keywords
     }
     fun setCreatedAt(createdAt: String?) {
-        this.CreatedAt = createdAt
+        this.createdAt = createdAt
     }
     fun setModifiedAt(modifiedAt: String?) {
-        this.ModifiedAt = modifiedAt
+        this.modifiedAt = modifiedAt
     }
     fun setLastAccessedAt(lastAccessedAt: String?) {
-        this.LastAccessedAt = lastAccessedAt
+        this.lastAccessedAt = lastAccessedAt
     }
 
     fun getPath(): String? {
-        return this.Path
+        return this.path
     }
     fun getThumbnailPath(): String? {
-        return this.ThumbnailPath
+        return this.thumbnailPath
     }
     fun getTakenAt(): String? {
-        return this.TakenAt
+        return this.takenAt
     }
-    fun getUID(): String? {
-        return this.UID
+    fun getId(): String {
+        return this.id
     }
     fun getType(): String? {
-        return this.Type
+        return this.type
     }
     fun getFileName(): String? {
-        return this.FileName
+        return this.fileName
     }
     fun getTimeZone(): String? {
-        return this.TimeZone
+        return this.timeZone
     }
     fun getLat(): String? {
-        return this.Lat
+        return this.lat
     }
     fun getLng(): String? {
-        return this.Lng
+        return this.lng
     }
-    fun getYear(): String? {
-        return this.Year
+    fun getYear(): Int? {
+        return this.year
     }
-    fun getMonth(): String? {
-        return this.Month
+    fun getMonth(): Int? {
+        return this.month
     }
-    fun getDay(): String? {
-        return this.Day
+    fun getDay(): Int? {
+        return this.day
     }
     fun getISO(): Int? {
-        return this.ISO
+        return this.iso
     }
     fun getExposure(): String? {
-        return this.Exposure
+        return this.exposure
     }
     fun getFNumber(): Double? {
-        return this.FNumber
+        return this.fNumber
     }
     fun getFocalLength(): Int? {
-        return this.FocalLength
+        return this.focalLength
     }
     fun getCamera(): String? {
-        return this.Camera
+        return this.camera
     }
     fun getLens(): String? {
-        return this.Lens
+        return this.lens
     }
     fun getQuality(): String? {
-        return this.Quality
+        return this.quality
     }
     fun getKeywords(): String? {
-        return this.Keywords
+        return this.keywords
     }
     fun getCreatedAt(): String? {
-        return this.CreatedAt
+        return this.createdAt
     }
     fun getModifiedAt(): String? {
-        return this.ModifiedAt
+        return this.modifiedAt
     }
     fun getLastAccessedAt(): String? {
-        return return this.LastAccessedAt
+        return this.lastAccessedAt
     }
 }
