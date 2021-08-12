@@ -28,8 +28,6 @@
         );
 
         posting.done(function( data ) {
-            console.log(JSON.stringify(data));
-            console.log(data["msg"])
             $("#msg").text(data.hasOwnProperty("msg") ? data["msg"] : "");
         });
 
