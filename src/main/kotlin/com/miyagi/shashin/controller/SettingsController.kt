@@ -144,7 +144,9 @@ class SettingsController {
                             } else {
                                 val thumbnailFile = ImageProcessingUtils.createThumbnails(file, sidecarDir, rootDir)
                                 val metadataObj = ImageProcessingUtils.createMetadata(file, sidecarDir, rootDir, thumbnailFile)
-                                metadataRepository?.save(metadataObj)
+                                if (metadataObj != null) {
+                                    metadataRepository?.save(metadataObj)
+                                }
                             }
                         }
                     }

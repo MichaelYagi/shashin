@@ -20,7 +20,7 @@ class ImageProcessingUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
-        fun createMetadata(file: File, sidecarDir: String, rootDir: String, thumbnailFile: File?): Metadata {
+        fun createMetadata(file: File, sidecarDir: String, rootDir: String, thumbnailFile: File?): Metadata? {
             val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
 
             val rootDirFile = File(rootDir)
@@ -39,9 +39,10 @@ class ImageProcessingUtils {
             if (mdFile != null) {
                 val om = ObjectMapper(YAMLFactory())
                 om.writeValue(mdFile, metadataObj);
+                return metadataObj
             }
 
-            return metadataObj
+            return null
         }
 
         private fun populateMetadataObject(file: File, metadataObj: Metadata): Metadata {
