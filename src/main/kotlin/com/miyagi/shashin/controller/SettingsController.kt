@@ -139,8 +139,8 @@ class SettingsController {
                             if (false) {
 
                             } else {
-                                ImageProcessingUtils.createSidecarData(file, sidecarDir, rootDir)
-                                ImageProcessingUtils.createThumbnails(file, sidecarDir, rootDir)
+                                val thumbnailFile = ImageProcessingUtils.createThumbnails(file, sidecarDir, rootDir)
+                                ImageProcessingUtils.createSidecarData(file, sidecarDir, rootDir, thumbnailFile)
                             }
                         }
                     }

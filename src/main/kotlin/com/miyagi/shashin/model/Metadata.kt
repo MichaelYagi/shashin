@@ -3,6 +3,7 @@ package com.miyagi.shashin.model
 class Metadata {
     fun Metadata(
         path: String?,
+        thumbnailPath: String?,
         takenAt: String?,
         uid: String?,
         type: String?,
@@ -26,6 +27,7 @@ class Metadata {
         lastAccessedAt: String?
     ) {
         this.Path = path
+        this.ThumbnailPath = thumbnailPath
         this.TakenAt = takenAt
         this.UID = uid
         this.Type = type
@@ -53,6 +55,7 @@ class Metadata {
     fun Metadata() {}
 
     private var Path: String? = null
+    private var ThumbnailPath: String? = null
     private var TakenAt: String? = null
     private var UID: String? = null
     private var Type: String? = null
@@ -77,6 +80,9 @@ class Metadata {
 
     fun setPath(path: String?) {
         this.Path = path
+    }
+    fun setThumbnailPath(thumbnailPath: String?) {
+        this.ThumbnailPath = thumbnailPath
     }
     fun setTakenAt(takenAt: String?) {
         this.TakenAt = takenAt
@@ -144,6 +150,9 @@ class Metadata {
 
     fun getPath(): String? {
         return this.Path
+    }
+    fun getThumbnailPath(): String? {
+        return this.ThumbnailPath
     }
     fun getTakenAt(): String? {
         return this.TakenAt

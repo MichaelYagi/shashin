@@ -19,7 +19,7 @@ class ImageProcessingUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
-        fun createSidecarData(file: File, sidecarDir: String, rootDir: String) {
+        fun createSidecarData(file: File, sidecarDir: String, rootDir: String, thumbnailFile: File?): Metadata {
             val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
             val exifDirectory = sidecarDir.dropLast(1) + "/exif"
 
@@ -31,12 +31,17 @@ class ImageProcessingUtils {
 
             var metadataObj = Metadata()
             metadataObj = populateMetadataObject(file, metadataObj)
+            if (thumbnailFile != null) {
+                metadataObj.setThumbnailPath(thumbnailFile.path)
+            }
 
             val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
             if (mdFile != null) {
                 val om = ObjectMapper(YAMLFactory())
                 om.writeValue(mdFile, metadataObj);
             }
+
+            return metadataObj
         }
 
         private fun populateMetadataObject(file: File, metadataObj: Metadata): Metadata {
@@ -153,7 +158,7 @@ class ImageProcessingUtils {
             return metadataObj
         }
 
-        fun createThumbnails(file: File, sidecarDir: String, rootDir: String) {
+        fun createThumbnails(file: File, sidecarDir: String, rootDir: String): File? {
             val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
 
             // Scale to different sizes and save
@@ -170,6 +175,8 @@ class ImageProcessingUtils {
             if (tnFile != null) {
                 ImageIO.write(scaled, "jpg", tnFile)
             }
+
+            return tnFile
         }
 
         private fun scaleImageByRatio(source: BufferedImage, ratio: Double): BufferedImage {
