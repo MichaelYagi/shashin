@@ -34,5 +34,10 @@ class TextUtils {
             } while (Math.abs(x - h1 / k1) > x * tolerance)
             return "${h1.toInt()}/${k1.toInt()}"
         }
+
+        fun generateUUID(path:String?,takenAt:String?,lat:String?,lng:String?): String {
+            val uuidInput = path+takenAt+lat+lng
+            return UUID.nameUUIDFromBytes(uuidInput.toByteArray()).toString()
+        }
     }
 }

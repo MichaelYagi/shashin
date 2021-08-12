@@ -2,6 +2,7 @@ package com.miyagi.shashin.model
 
 class Metadata {
     fun Metadata(
+        path: String?,
         takenAt: String?,
         uid: String?,
         type: String?,
@@ -24,6 +25,7 @@ class Metadata {
         modifiedAt: String?,
         lastAccessedAt: String?
     ) {
+        this.Path = path
         this.TakenAt = takenAt
         this.UID = uid
         this.Type = type
@@ -50,6 +52,7 @@ class Metadata {
     // Without a default constructor, Jackson will throw an exception
     fun Metadata() {}
 
+    private var Path: String? = null
     private var TakenAt: String? = null
     private var UID: String? = null
     private var Type: String? = null
@@ -72,6 +75,9 @@ class Metadata {
     private var ModifiedAt: String? = null
     private var LastAccessedAt: String? = null
 
+    fun setPath(path: String?) {
+        this.Path = path
+    }
     fun setTakenAt(takenAt: String?) {
         this.TakenAt = takenAt
     }
@@ -136,6 +142,9 @@ class Metadata {
         this.LastAccessedAt = lastAccessedAt
     }
 
+    fun getPath(): String? {
+        return this.Path
+    }
     fun getTakenAt(): String? {
         return this.TakenAt
     }

@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
+import java.util.*
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 
@@ -39,6 +40,8 @@ class ImageProcessingUtils {
         }
 
         private fun populateMetadataObject(file: File, metadataObj: Metadata): Metadata {
+            metadataObj.setPath(file.path)
+
             // Get file data
             val attr: BasicFileAttributes = Files.readAttributes(
                 file.toPath(),
@@ -144,6 +147,8 @@ class ImageProcessingUtils {
                     }
                 }
             }
+
+            metadataObj.setUID(TextUtils.generateUUID(metadataObj.getPath(),metadataObj.getTakenAt(),metadataObj.getLat(),metadataObj.getLng()))
 
             return metadataObj
         }
