@@ -150,7 +150,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                     }
                     "Focal Length" -> {
                         val flArray = tag.description.split(" ")
-                        metadataObj.setFocalLength(flArray[0].toInt())
+                        metadataObj.setFocalLength(flArray[0].toDouble())
                     }
                     "Make" -> {
                         cameraMake = tag.description

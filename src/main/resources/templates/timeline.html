@@ -10,11 +10,18 @@
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar})"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
-            <span th:if="${metadataList != ''}">
-                <span th:each="metadata: ${metadataList}">
+            <th:block th:if="${metadataList != ''}">
+                <th:block th:each="metadata, iterStat: ${metadataList}">
+                    <th:block th:unless="${!iterStat.first and {metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}}">
+                        <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-MM-dd HH:mm:ss')}">
+                            <br><br><p><strong th:text="${#dates.format(sdf.parse(metadata.takenAt), 'EEE, MMM dd, yyyy')}"></strong></p>
+                        </th:block>
+                    </th:block>
+
                     <img th:src="${metadata.thumbnailUrlSmall}" class="photo" />
-                </span>
-            </span>
+
+                </th:block>
+            </th:block>
             <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>
     </div>
