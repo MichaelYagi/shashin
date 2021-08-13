@@ -25,7 +25,7 @@ CREATE TABLE `metadata` (
     `iso` int(10) DEFAULT NULL,
     `exposure` varchar(20) DEFAULT NULL,
     `fNumber` real(10) DEFAULT NULL,
-    `focalLength` int(10) DEFAULT NULL,
+    `focalLength` real(10) DEFAULT NULL,
     `keywords` varchar(500) DEFAULT NULL,
     `createdAt` datetime DEFAULT NULL,
     `modifiedAt` datetime DEFAULT NULL,
