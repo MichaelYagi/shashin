@@ -18,7 +18,13 @@
                         </th:block>
                     </th:block>
 
-                    <img th:src="${metadata.thumbnailUrlSmall}" class="photo" />
+                    <a th:href="'#' + ${metadata.id}">
+                        <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail"/>
+                    </a>
+
+                    <a href="#" class="lightbox" th:id="${metadata.id}">
+                        <span th:style="'background-image: url(\''+${metadata.thumbnailUrlOriginal}+'\')'"></span>
+                    </a>
 
                 </th:block>
             </th:block>
