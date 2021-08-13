@@ -10,6 +10,11 @@
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar})"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <span th:if="${metadataList != ''}">
+                <span th:each="metadata: ${metadataList}">
+                    <img th:src="${metadata.thumbnailUrl}"/>
+                </span>
+            </span>
             <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>
     </div>

@@ -1,0 +1,25 @@
+---
+id: "c96ff8f2-957e-37c4-b3ec-839e2664f3e8"
+path: "c:\\Users\\micha\\Downloads\\testData\\DSCF1075.JPG"
+thumbnailPath: "C:\\Users\\micha\\IdeaProjects\\shashin\\sidecar\\thumbnails\\DSCF1075.JPG.jpg"
+thumbnailUrl: "/api/v1/thumbnails/DSCF1075.JPG.jpg"
+takenAt: "2021-07-31 20:56:22"
+type: "image/jpeg"
+fileName: "DSCF1075.JPG"
+timeZone: "-07:00"
+lat: "49.18639444444444445"
+lng: "-122.7935111111111111"
+year: 2021
+month: 7
+day: 31
+iso: 4000
+exposure: "1/2"
+focalLength: 50
+camera: "FUJIFILM X-T200"
+lens: null
+quality: "FINE"
+keywords: null
+createdAt: "2021-08-10 23:06:59"
+modifiedAt: "2021-08-10 21:48:36"
+lastAccessedAt: "2021-08-13 03:29:37"
+fnumber: 0.0

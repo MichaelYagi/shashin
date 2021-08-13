@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="content(data,activePage)">
-<!-- shared content -->
 <span th:if="${activePage == 'settings' or activePage == 'scan'}">
     <div th:replace="fragments/settings :: settings(${activePage})"></div>
 </span>
-<p id="msg" th:text="${data}"></p>
+<span th:if="${data != ''}">
+    <p id="msg" th:text="${data}"></p>
+</span>
 </body>
 </html>

@@ -9,6 +9,7 @@ class Metadata {
     private lateinit var id: String
     private var path: String? = null
     private var thumbnailPath: String? = null
+    private var thumbnailUrl: String? = null
     private var takenAt: String? = null
     private var type: String? = null
     private var fileName: String? = null
@@ -33,6 +34,7 @@ class Metadata {
     fun Metadata(
         path: String?,
         thumbnailPath: String?,
+        thumbnailUrl: String?,
         takenAt: String?,
         id: String,
         type: String?,
@@ -57,6 +59,7 @@ class Metadata {
     ) {
         this.path = path
         this.thumbnailPath = thumbnailPath
+        this.thumbnailUrl = thumbnailUrl
         this.takenAt = takenAt
         this.id = id
         this.type = type
@@ -88,6 +91,9 @@ class Metadata {
     }
     fun setThumbnailPath(thumbnailPath: String?) {
         this.thumbnailPath = thumbnailPath
+    }
+    fun setThumbnailUrl(thumbnailUrl: String?) {
+        this.thumbnailUrl = thumbnailUrl
     }
     fun setTakenAt(takenAt: String?) {
         this.takenAt = takenAt
@@ -158,6 +164,9 @@ class Metadata {
     }
     fun getThumbnailPath(): String? {
         return this.thumbnailPath
+    }
+    fun getThumbnailUrl(): String? {
+        return this.thumbnailUrl
     }
     fun getTakenAt(): String? {
         return this.takenAt

@@ -1,11 +1,13 @@
 package com.miyagi.shashin.util
 
+import org.springframework.stereotype.Component
 import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
+@Component
 class FileUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)

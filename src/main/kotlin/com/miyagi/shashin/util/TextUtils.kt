@@ -1,7 +1,9 @@
 package com.miyagi.shashin.util
 
+import org.springframework.stereotype.Component
 import java.util.*
 
+@Component
 class TextUtils {
     companion object {
         fun capitalized(str: String): String {

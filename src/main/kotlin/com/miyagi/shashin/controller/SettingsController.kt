@@ -5,6 +5,8 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -17,6 +19,10 @@ import java.util.logging.Logger
 @Controller
 class SettingsController {
 
+    @Value("\${app.sidecar.path}")
+    private var relativeSidecarDir: String? = null
+    @Value("\${app.api.version}")
+    private var apiVersion: String? = null
     @Autowired
     private val metadataRepository: MetadataRepository? = null
     private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
@@ -24,7 +30,7 @@ class SettingsController {
     // TODO: Make these configurable
     val photoDir = "c:/Users/micha/Downloads/testData/"
     val rootPhotoDir = "c:/Users/micha/Downloads/testData/"
-    val sidecarDir = "c:/Users/micha/Downloads/testData/sidecar/"
+
 
     @GetMapping("/settings")
     fun getIndex(model: Model): String {
@@ -50,15 +56,18 @@ class SettingsController {
     @ResponseBody
     fun postScan(@RequestParam submit: String): String {
         if (submit == "Scan") {
-
-            if (!checkThreadFileAlive(photoDir)) {
+            if (!checkThreadFileAlive()) {
                 // Clean up any existing thread files
-                deleteThreadFiles(photoDir)
+                deleteThreadFiles()
+
+                val rootPath = FileSystemResource("").file.absolutePath
+                val sidecarDir = rootPath + relativeSidecarDir
 
                 // Iterate through directory in another thread
                 Thread {
                     //Create file with thread name and write file name iterated
-                    val threadFile = FileUtils.createFile(photoDir, photoDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
+                    val tempDir = System.getProperty("java.io.tmpdir")
+                    val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
                     if (threadFile != null) {
                         getFile(photoDir, threadFile, sidecarDir, rootPhotoDir)
                         // Delete thread file
@@ -85,8 +94,9 @@ class SettingsController {
         return false
     }
 
-    private fun checkThreadFileAlive(dirPath: String): Boolean {
-        val f = File(dirPath)
+    private fun checkThreadFileAlive(): Boolean {
+        val tempDir = System.getProperty("java.io.tmpdir")
+        val f = File(tempDir)
         val files = f.listFiles()
         if (files != null) {
             for (i in files.indices) {
@@ -104,8 +114,9 @@ class SettingsController {
         return false
     }
 
-    private fun deleteThreadFiles(dirPath: String) {
-        val f = File(dirPath)
+    private fun deleteThreadFiles() {
+        val tempDir = System.getProperty("java.io.tmpdir")
+        val f = File(tempDir)
         val files = f.listFiles()
         if (files != null) {
             for (i in files.indices) {
@@ -142,8 +153,9 @@ class SettingsController {
                             if (false) {
 
                             } else {
-                                val thumbnailFile = ImageProcessingUtils.createThumbnails(file, sidecarDir, rootDir)
-                                val metadataObj = ImageProcessingUtils.createMetadata(file, sidecarDir, rootDir, thumbnailFile)
+                                val imageProcessingUtils = ImageProcessingUtils(apiVersion)
+                                val thumbnailFile = imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir)
+                                val metadataObj = imageProcessingUtils.createMetadata(file, sidecarDir, rootDir, thumbnailFile)
                                 if (metadataObj != null) {
                                     metadataRepository?.save(metadataObj)
                                 }

@@ -13,6 +13,7 @@ CREATE TABLE `metadata` (
     `path` varchar(255) DEFAULT NULL,
     `fileName` varchar(255) DEFAULT NULL,
     `thumbnailPath` varchar(255) DEFAULT NULL,
+    `thumbnailUrl` varchar (255) DEFAULT NULL,
     `type` varchar(20) DEFAULT NULL,
     `lat` varchar(20) DEFAULT NULL,
     `lng` varchar(20) DEFAULT NULL,
