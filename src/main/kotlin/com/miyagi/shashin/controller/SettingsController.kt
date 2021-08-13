@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessingUtils
@@ -154,8 +155,9 @@ class SettingsController {
 
                             } else {
                                 val imageProcessingUtils = ImageProcessingUtils(apiVersion)
-                                val thumbnailFile = imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir)
-                                val metadataObj = imageProcessingUtils.createMetadata(file, sidecarDir, rootDir, thumbnailFile)
+                                var metadataObj: Metadata? = Metadata()
+                                metadataObj = imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
+                                metadataObj = imageProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
                                 if (metadataObj != null) {
                                     metadataRepository?.save(metadataObj)
                                 }

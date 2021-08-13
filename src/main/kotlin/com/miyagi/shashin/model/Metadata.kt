@@ -8,8 +8,10 @@ class Metadata {
     @Id
     private lateinit var id: String
     private var path: String? = null
-    private var thumbnailPath: String? = null
-    private var thumbnailUrl: String? = null
+    private var thumbnailPathSmall: String? = null
+    private var thumbnailUrlSmall: String? = null
+    private var thumbnailPathOriginal: String? = null
+    private var thumbnailUrlOriginal: String? = null
     private var takenAt: String? = null
     private var type: String? = null
     private var fileName: String? = null
@@ -33,8 +35,10 @@ class Metadata {
 
     fun Metadata(
         path: String?,
-        thumbnailPath: String?,
-        thumbnailUrl: String?,
+        thumbnailPathSmall: String?,
+        thumbnailUrlSmall: String?,
+        thumbnailPathOriginal: String?,
+        thumbnailUrlOriginal: String?,
         takenAt: String?,
         id: String,
         type: String?,
@@ -58,8 +62,10 @@ class Metadata {
         lastAccessedAt: String?
     ) {
         this.path = path
-        this.thumbnailPath = thumbnailPath
-        this.thumbnailUrl = thumbnailUrl
+        this.thumbnailPathSmall = thumbnailPathSmall
+        this.thumbnailUrlSmall = thumbnailUrlSmall
+        this.thumbnailPathOriginal = thumbnailPathOriginal
+        this.thumbnailUrlOriginal = thumbnailUrlOriginal
         this.takenAt = takenAt
         this.id = id
         this.type = type
@@ -89,11 +95,17 @@ class Metadata {
     fun setPath(path: String?) {
         this.path = path
     }
-    fun setThumbnailPath(thumbnailPath: String?) {
-        this.thumbnailPath = thumbnailPath
+    fun setThumbnailPathSmall(thumbnailPathSmall: String?) {
+        this.thumbnailPathSmall = thumbnailPathSmall
     }
-    fun setThumbnailUrl(thumbnailUrl: String?) {
-        this.thumbnailUrl = thumbnailUrl
+    fun setThumbnailUrlSmall(thumbnailUrlSmall: String?) {
+        this.thumbnailUrlSmall = thumbnailUrlSmall
+    }
+    fun setThumbnailPathOriginal(thumbnailPathOriginal: String?) {
+        this.thumbnailPathOriginal = thumbnailPathOriginal
+    }
+    fun setThumbnailUrlOriginal(thumbnailUrlOriginal: String?) {
+        this.thumbnailUrlOriginal = thumbnailUrlOriginal
     }
     fun setTakenAt(takenAt: String?) {
         this.takenAt = takenAt
@@ -162,11 +174,17 @@ class Metadata {
     fun getPath(): String? {
         return this.path
     }
-    fun getThumbnailPath(): String? {
-        return this.thumbnailPath
+    fun getThumbnailPathSmall(): String? {
+        return this.thumbnailPathSmall
     }
-    fun getThumbnailUrl(): String? {
-        return this.thumbnailUrl
+    fun getThumbnailUrlSmall(): String? {
+        return this.thumbnailUrlSmall
+    }
+    fun getThumbnailPathOriginal(): String? {
+        return this.thumbnailPathOriginal
+    }
+    fun getThumbnailUrlOriginal(): String? {
+        return this.thumbnailUrlOriginal
     }
     fun getTakenAt(): String? {
         return this.takenAt

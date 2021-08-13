@@ -23,7 +23,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
 
     private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
-    fun createMetadata(file: File, sidecarDir: String, rootDir: String, thumbnailFile: File?): Metadata? {
+    fun populateMetadata(file: File, sidecarDir: String, rootDir: String, _metadataObj: Metadata?): Metadata? {
         val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
 
         val rootDirFile = File(rootDir)
@@ -32,12 +32,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
 
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
 
-        var metadataObj = Metadata()
-        metadataObj = populateMetadataObject(file, metadataObj)
-        if (thumbnailFile != null) {
-            metadataObj.setThumbnailPath(thumbnailFile.path)
-            metadataObj.setThumbnailUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + ".jpg")
-        }
+        val metadataObj = _metadataObj?.let { populateMetadataObject(file, it) }
 
         val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
         if (mdFile != null) {
@@ -197,25 +192,36 @@ class ImageProcessingUtils(private var apiVersion: String?) {
         return metadataObj
     }
 
-    fun createThumbnails(file: File, sidecarDir: String, rootDir: String): File? {
+    fun createThumbnails(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata?): Metadata? {
         val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
-
-        // Scale to different sizes and save
-        val img: BufferedImage = ImageIO.read(file)
-        val scaled: BufferedImage = scaleImageByHeight(img, 224)
 
         // Map path to sidecar file
         val rootDirFile = File(rootDir)
         var fileRootDir: String = (file.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
         fileRootDir = fileRootDir.replace('\\', '/')
-        val thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + ".jpg"
 
-        val tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+        // Scale to different sizes and save
+        val img: BufferedImage = ImageIO.read(file)
+
+        var thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
+        var tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
         if (tnFile != null) {
-            ImageIO.write(scaled, "jpg", tnFile)
+            val scaled209: BufferedImage = scaleImageByHeight(img, 209)
+            ImageIO.write(scaled209, "jpg", tnFile)
+            metadataObj?.setThumbnailPathSmall(tnFile.path)
+            metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
         }
 
-        return tnFile
+        thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original.jpg"
+        tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+        if (tnFile != null) {
+            val scaled: BufferedImage = scaleImageByRatio(img, 1.0)
+            ImageIO.write(scaled, "jpg", tnFile)
+            metadataObj?.setThumbnailPathOriginal(tnFile.path)
+            metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+        }
+
+        return metadataObj
     }
 
     private fun scaleImageByRatio(source: BufferedImage, ratio: Double): BufferedImage {

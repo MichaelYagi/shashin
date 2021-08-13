@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -19,7 +20,7 @@ class TimelineController {
         val module = "timeline"
 
         model["metadataList"] = ""
-        val metadataList = metadataRepository?.findAll()
+        val metadataList = metadataRepository?.findAll(Sort.by(Sort.Direction.DESC, "takenAt"))
         if (metadataList != null) {
             model["metadataList"] = metadataList
         }

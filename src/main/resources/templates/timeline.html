@@ -12,7 +12,7 @@
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
             <span th:if="${metadataList != ''}">
                 <span th:each="metadata: ${metadataList}">
-                    <img th:src="${metadata.thumbnailUrl}"/>
+                    <img th:src="${metadata.thumbnailUrlSmall}" class="photo" />
                 </span>
             </span>
             <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
