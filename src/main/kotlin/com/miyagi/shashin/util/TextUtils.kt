@@ -37,8 +37,16 @@ class TextUtils {
             return "${h1.toInt()}/${k1.toInt()}"
         }
 
-        fun generateUUID(path:String?,takenAt:String?,lat:String?,lng:String?): UUID {
-            val uuidInput = path+takenAt+lat+lng
+        fun generateUUID(
+            takenAt:String?,
+            createdAt:String?,
+            type: String?,
+            fNumber: Double?,
+            iso: Int?,
+            exposure: String?,
+            lat:String?,
+            lng:String?): UUID {
+            val uuidInput = takenAt+createdAt+type+fNumber+iso+exposure+lat+lng
             return UUID.nameUUIDFromBytes(uuidInput.toByteArray())
         }
     }

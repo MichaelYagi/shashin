@@ -10176,3 +10176,262 @@ org.springframework.expression.spel.SpelParseException: EL1041E: After parsing a
 2021-08-12 21:49:57,602 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
 2021-08-12 21:49:57,603 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
 2021-08-12 21:49:57,863 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [http-nio-8080-exec-1] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-12 22:22:14,710 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:22:14,772 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-12 22:22:14,795 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-12 22:22:30,641 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 5844 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-12 22:22:30,647 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-12 22:22:30,751 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-12 22:22:30,752 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-12 22:22:32,304 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-12 22:22:32,426 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 96 ms. Found 1 JPA repository interfaces.
+2021-08-12 22:22:33,249 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-12 22:22:33,261 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:22:33,262 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-12 22:22:33,262 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-12 22:22:33,383 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-12 22:22:33,383 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 2629 ms
+2021-08-12 22:22:33,649 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-12 22:22:33,788 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-12 22:22:33,790 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-12 22:22:33,856 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-12 22:22:33,878 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-12 22:22:34,056 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-12 22:22:34,630 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-12 22:22:34,650 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-12 22:22:34,686 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-12 22:22:35,368 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:22:36,212 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-12 22:22:36,485 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-12 22:22:36,511 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:22:36,566 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-12 22:22:36,580 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 6.894 seconds (JVM running for 8.282)
+2021-08-12 22:22:40,105 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-12 22:22:40,106 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-12 22:22:40,109 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 2 ms
+2021-08-12 22:22:43,654 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thread created: Thread-7.shashinscan
+2021-08-12 22:22:44,220 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG_209.jpg
+2021-08-12 22:22:44,336 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG_original.jpg
+2021-08-12 22:22:45,877 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [http-nio-8080-exec-7] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-12 22:22:46,394 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1061.JPG.yaml
+2021-08-12 22:22:47,272 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG_209.jpg
+2021-08-12 22:22:47,284 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG_original.jpg
+2021-08-12 22:22:51,643 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1062.JPG.yaml
+2021-08-12 22:22:52,447 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG_209.jpg
+2021-08-12 22:22:52,465 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG_original.jpg
+2021-08-12 22:22:54,511 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1063.JPG.yaml
+2021-08-12 22:22:55,493 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG_209.jpg
+2021-08-12 22:22:55,506 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG_original.jpg
+2021-08-12 22:22:56,987 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1080.JPG.yaml
+2021-08-12 22:22:57,607 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG_209.jpg
+2021-08-12 22:22:57,618 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG_original.jpg
+2021-08-12 22:22:59,168 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1074.JPG.yaml
+2021-08-12 22:22:59,802 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG_209.jpg
+2021-08-12 22:22:59,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG_original.jpg
+2021-08-12 22:23:00,827 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1075.JPG.yaml
+2021-08-12 22:23:01,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG_209.jpg
+2021-08-12 22:23:01,217 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG_original.jpg
+2021-08-12 22:23:02,033 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1076.JPG.yaml
+2021-08-12 22:23:02,421 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG_209.jpg
+2021-08-12 22:23:02,428 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG_original.jpg
+2021-08-12 22:23:03,218 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1077.JPG.yaml
+2021-08-12 22:23:03,617 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG_209.jpg
+2021-08-12 22:23:03,626 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG_original.jpg
+2021-08-12 22:23:04,424 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1078.JPG.yaml
+2021-08-12 22:23:04,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG_209.jpg
+2021-08-12 22:23:04,821 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG_original.jpg
+2021-08-12 22:23:05,604 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1079.JPG.yaml
+2021-08-12 22:23:05,821 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200905_100554.jpg_209.jpg
+2021-08-12 22:23:05,830 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200905_100554.jpg_original.jpg
+2021-08-12 22:23:06,518 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: IMG_20200905_100554.jpg.yaml
+2021-08-12 22:23:06,670 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200911_142553.jpg_209.jpg
+2021-08-12 22:23:06,678 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200911_142553.jpg_original.jpg
+2021-08-12 22:23:07,138 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: IMG_20200911_142553.jpg.yaml
+2021-08-12 22:23:07,340 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20201211_131005.jpg_209.jpg
+2021-08-12 22:23:07,348 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20201211_131005.jpg_original.jpg
+2021-08-12 22:23:07,937 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: IMG_20201211_131005.jpg.yaml
+2021-08-12 22:23:08,143 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20201223_094103.jpg_209.jpg
+2021-08-12 22:23:08,154 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20201223_094103.jpg_original.jpg
+2021-08-12 22:23:08,687 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: IMG_20201223_094103.jpg.yaml
+2021-08-12 22:27:08,091 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:27:08,130 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-12 22:27:08,156 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-12 22:27:16,800 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 19712 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-12 22:27:16,805 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-12 22:27:16,899 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-12 22:27:16,899 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-12 22:27:18,045 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-12 22:27:18,114 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 58 ms. Found 1 JPA repository interfaces.
+2021-08-12 22:27:18,798 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-12 22:27:18,810 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:27:18,811 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-12 22:27:18,811 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-12 22:27:18,935 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-12 22:27:18,935 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 2034 ms
+2021-08-12 22:27:19,176 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-12 22:27:19,270 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-12 22:27:19,273 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-12 22:27:19,318 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-12 22:27:19,332 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-12 22:27:19,522 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-12 22:27:20,030 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-12 22:27:20,043 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-12 22:27:20,076 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-12 22:27:20,437 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:27:21,109 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-12 22:27:21,302 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-12 22:27:21,324 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:27:21,377 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-12 22:27:21,391 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 5.392 seconds (JVM running for 7.178)
+2021-08-12 22:27:36,932 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-12 22:27:36,933 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-12 22:27:36,934 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-12 22:27:37,210 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [http-nio-8080-exec-1] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-12 22:39:51,427 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:39:51,488 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-12 22:39:51,506 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-12 22:39:59,793 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 2552 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-12 22:39:59,798 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-12 22:40:00,039 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-12 22:40:00,040 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-12 22:40:01,673 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-12 22:40:01,769 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 81 ms. Found 1 JPA repository interfaces.
+2021-08-12 22:40:02,728 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-12 22:40:02,743 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:40:02,745 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-12 22:40:02,746 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-12 22:40:02,897 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-12 22:40:02,897 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 2823 ms
+2021-08-12 22:40:03,186 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-12 22:40:03,305 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-12 22:40:03,308 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-12 22:40:03,357 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-12 22:40:03,372 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-12 22:40:03,552 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-12 22:40:04,042 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-12 22:40:04,053 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-12 22:40:04,092 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-12 22:40:04,504 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:40:05,168 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-12 22:40:05,378 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-12 22:40:05,407 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:40:05,471 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-12 22:40:05,486 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 7.251 seconds (JVM running for 9.911)
+2021-08-12 22:40:13,631 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-12 22:40:13,632 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-12 22:40:13,633 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-12 22:40:13,894 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [http-nio-8080-exec-1] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-12 22:41:41,774 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:41:41,779 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-12 22:41:41,785 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-12 22:41:46,495 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 7460 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-12 22:41:46,500 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-12 22:41:46,594 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-12 22:41:46,595 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-12 22:41:47,789 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-12 22:41:47,864 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 60 ms. Found 1 JPA repository interfaces.
+2021-08-12 22:41:48,472 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-12 22:41:48,483 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:41:48,485 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-12 22:41:48,485 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-12 22:41:48,592 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-12 22:41:48,593 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 1997 ms
+2021-08-12 22:41:48,794 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-12 22:41:48,908 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-12 22:41:48,911 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-12 22:41:48,957 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-12 22:41:48,970 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-12 22:41:49,084 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-12 22:41:49,548 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-12 22:41:49,560 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-12 22:41:49,591 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-12 22:41:50,015 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:41:50,620 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-12 22:41:50,833 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-12 22:41:50,859 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:41:50,901 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-12 22:41:50,914 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 5.114 seconds (JVM running for 6.459)
+2021-08-12 22:42:00,875 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-12 22:42:00,876 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-12 22:42:00,877 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-12 22:42:01,167 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [http-nio-8080-exec-1] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-12 22:43:45,086 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:43:45,089 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-12 22:43:45,092 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-12 22:43:48,853 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 1824 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-12 22:43:48,857 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-12 22:43:48,941 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-12 22:43:48,942 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-12 22:43:50,085 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-12 22:43:50,158 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 56 ms. Found 1 JPA repository interfaces.
+2021-08-12 22:43:50,811 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-12 22:43:50,824 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:43:50,826 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-12 22:43:50,826 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-12 22:43:50,981 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-12 22:43:50,982 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 2039 ms
+2021-08-12 22:43:51,175 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-12 22:43:51,272 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-12 22:43:51,274 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-12 22:43:51,328 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-12 22:43:51,350 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-12 22:43:51,502 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-12 22:43:51,650 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-12 22:43:51,665 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-12 22:43:51,694 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-12 22:43:52,143 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:43:52,819 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-12 22:43:53,021 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-12 22:43:53,047 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:43:53,105 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-12 22:43:53,123 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 4.903 seconds (JVM running for 5.947)
+2021-08-12 22:44:03,771 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-12 22:44:03,772 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-12 22:44:03,777 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 5 ms
+2021-08-12 22:44:04,302 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [http-nio-8080-exec-1] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-12 22:45:40,450 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:45:40,454 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-12 22:45:40,458 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-12 22:45:44,602 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 2032 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-12 22:45:44,607 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-12 22:45:44,707 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-12 22:45:44,707 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-12 22:45:46,024 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-12 22:45:46,103 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 67 ms. Found 1 JPA repository interfaces.
+2021-08-12 22:45:46,793 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-12 22:45:46,804 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:45:46,806 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-12 22:45:46,806 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-12 22:45:46,951 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-12 22:45:46,952 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 2244 ms
+2021-08-12 22:45:47,168 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-12 22:45:47,278 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-12 22:45:47,280 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-12 22:45:47,332 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-12 22:45:47,348 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-12 22:45:47,486 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-12 22:45:47,802 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-12 22:45:47,819 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-12 22:45:47,849 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-12 22:45:48,333 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-12 22:45:48,999 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-12 22:45:49,226 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-12 22:45:49,248 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-12 22:45:49,301 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-12 22:45:49,317 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 5.511 seconds (JVM running for 6.661)
+2021-08-12 22:45:52,096 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-12 22:45:52,097 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-12 22:45:52,098 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-12 22:45:52,349 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [http-nio-8080-exec-1] HHH000397: Using ASTQueryTranslatorFactory

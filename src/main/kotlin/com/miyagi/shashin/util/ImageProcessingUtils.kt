@@ -182,8 +182,12 @@ class ImageProcessingUtils(private var apiVersion: String?) {
 
         metadataObj.setId(
             TextUtils.generateUUID(
-                metadataObj.getPath(),
                 metadataObj.getTakenAt(),
+                metadataObj.getCreatedAt(),
+                metadataObj.getType(),
+                metadataObj.getFNumber(),
+                metadataObj.getISO(),
+                metadataObj.getExposure(),
                 metadataObj.getLat(),
                 metadataObj.getLng()
             ).toString()
