@@ -10,7 +10,7 @@
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar})"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
-            <form action="/settings/scan" method="post" id="scanPhotos">
+            <form id="scanPhotos">
                 <input class="btn btn-primary" name="submit" type="submit" value="Scan">
             </form>
             <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>

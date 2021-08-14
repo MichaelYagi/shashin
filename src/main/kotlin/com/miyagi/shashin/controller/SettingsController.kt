@@ -28,10 +28,11 @@ class SettingsController {
     private val metadataRepository: MetadataRepository? = null
     private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
-    // TODO: Make these configurable
-    val photoDir = "c:/Users/micha/Downloads/testData/"
-    val rootPhotoDir = "c:/Users/micha/Downloads/testData/"
-
+    // TODO: Stored in application.properties for now but make these user configurable
+    @Value("\${app.photoDir}")
+    lateinit var photoDir: String
+    @Value("\${app.photoDir}")
+    lateinit var rootPhotoDir: String
 
     @GetMapping("/settings")
     fun getIndex(model: Model): String {
