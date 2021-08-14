@@ -6,7 +6,7 @@
 <div th:replace="fragments/topnav :: topnav()"></div>
 
 <div class="container-fluid">
-    <div class="row">
+    <th:block class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar})"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
@@ -14,24 +14,93 @@
                 <th:block th:each="metadata, iterStat: ${metadataList}">
                     <th:block th:unless="${!iterStat.first and {metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}}">
                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-MM-dd HH:mm:ss')}">
-                            <br><br><p><strong th:text="${#dates.format(sdf.parse(metadata.takenAt), 'EEE, MMM dd, yyyy')}"></strong></p>
+                            <th:block th:unless="${iterStat.first}">
+                                <br><br>
+                            </th:block>
+                            <p><strong th:text="${#dates.format(sdf.parse(metadata.takenAt), 'EEE, MMM dd, yyyy')}"></strong></p>
                         </th:block>
+                        <div class="row">
                     </th:block>
 
-                    <a th:href="'#' + ${metadata.id}">
-                        <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail"/>
-                    </a>
+                    <div class="photo-thumbnail-container photo-thumbnail">
+                        <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image">
+                        <div class="thumbnail-tl">
+                            <a href="#">
+                                <span class="bi-circle" style="font-size: 1rem;top:4px;left:4px;color: steelblue;"></span>
+                            </a>
+                        </div>
+                        <div class="thumbnail-bl">
+                            <a href="#">
+                                <span class="bi-pencil" style="font-size: 1rem;bottom:4px;left:4px;color: steelblue;"></span>
+                            </a>
+                        </div>
+                        <div class="thumbnail-centered">
+                            <a href="#">
+                                <span class="bi-play-circle" style="font-size: 2rem;color: steelblue;"></span>
+                            </a>
+                        </div>
+                    </div>
 
-                    <a href="#" class="lightbox" th:id="${metadata.id}">
-                        <span th:style="'background-image: url(\''+${metadata.thumbnailUrlOriginal}+'\')'"></span>
-                    </a>
+                    <th:block th:if="${iterStat.last} or ${!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}">
+                        <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
+                    </th:block>
 
                 </th:block>
             </th:block>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+
+        $(".photo-thumbnail-image").hover(function() {
+            $(this).css("opacity", 0.3);
+            $(this).siblings().css("display", "block");
+        }, function() {
+            $(this).css("opacity", 1.0);
+            $(this).siblings().css("display", "none");
+        });
+        $(".thumbnail-centered").hover(function() {
+            $(this).css("display", "block");
+            $(this).siblings(".thumbnail-tl").css("display", "block");
+            $(this).siblings(".thumbnail-bl").css("display", "block");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+        }, function() {
+            $(this).css("display", "none");
+            $(this).siblings(".thumbnail-tl").css("display", "none");
+            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+        });
+        $(".thumbnail-tl").hover(function() {
+            $(this).css("display", "block");
+            $(this).siblings(".thumbnail-centered").css("display", "block");
+            $(this).siblings(".thumbnail-bl").css("display", "block");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+        }, function() {
+            $(this).css("display", "none");
+            $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+        });
+        $(".thumbnail-bl").hover(function() {
+            $(this).css("display", "block");
+            $(this).siblings(".thumbnail-tl").css("display", "block");
+            $(this).siblings(".thumbnail-centered").css("display", "block");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+        }, function() {
+            $(this).css("display", "none");
+            $(this).siblings(".thumbnail-tl").css("display", "none");
+            $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+        });
+    });
+</script>
 
 </body>
 </html>
