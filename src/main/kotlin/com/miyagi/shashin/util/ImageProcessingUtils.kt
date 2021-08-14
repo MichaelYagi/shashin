@@ -99,18 +99,64 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             var lensMake: String? = null
             var lensModel: String? = null
             for (tag in directory.tags) {
+//                println(tag.tagName)
+//                println(tag.description)
+//                println()
                 // TODO: Get this info into exif file
                 when (tag.tagName) {
-                    "Date/Time" -> {
+                    "Date/Time", "Creation Time" -> {
                         val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
-                        date = takenFormat.parse(tag.description)
-                        metadataObj.setTakenAt(destFormat.format(date))
+                        date = null
 
-                        val dateArray = tag.description.split(" ")
-                        val takenDateArray = dateArray[0].split(":")
+                        try {
+                            date = takenFormat.parse(tag.description)
+                        } catch(e: Exception) {
+                            try {
+                                // Sun Jul 25 14:34:09 PDT 2021
+                                val sourceFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+                                date = sourceFormat.parse(tag.description)
+                            } catch(e: Exception) {
+                                try {
+                                    // Sun Jul 25 14:34:09 -07:00 2021
+                                    val sourceFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy")
+                                    date = sourceFormat.parse(tag.description)
+                                } catch(e: Exception) {
+                                    // Do nothing
+                                }
+                            }
+                        }
+
+                        metadataObj.setTakenAt(destFormat.format(date))
+                        metadataObj.setCreatedAt(destFormat.format(date))
+
+                        val dateArray = destFormat.format(date).toString().split(" ")
+                        val takenDateArray = dateArray[0].split("-")
                         metadataObj.setYear(takenDateArray[0].toInt())
                         metadataObj.setMonth(takenDateArray[1].toInt())
                         metadataObj.setDay(takenDateArray[2].toInt())
+                    }
+                    "Modification Time" -> {
+                        val modificationFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
+                        date = null
+
+                        try {
+                            date = modificationFormat.parse(tag.description)
+                        } catch(e: Exception) {
+                            try {
+                                // Sun Jul 25 14:34:09 PDT 2021
+                                val sourceFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+                                date = sourceFormat.parse(tag.description)
+                            } catch(e: Exception) {
+                                try {
+                                    // Sun Jul 25 14:34:09 -07:00 2021
+                                    val sourceFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy")
+                                    date = sourceFormat.parse(tag.description)
+                                } catch(e: Exception) {
+                                    // Do nothing
+                                }
+                            }
+                        }
+                        metadataObj.setModifiedAt(destFormat.format(date))
                     }
                     "File Modified Date" -> {
                         val dateArray = (tag.description).split(" ")
@@ -123,22 +169,35 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                     "File Name" -> {
                         metadataObj.setFileName(tag.description)
                     }
-                    "GPS Latitude" -> {
-                        val latArray = tag.description.split(" ")
-                        val latDegree = latArray[0].dropLast(1).toDouble()
-                        val latMinute = latArray[1].dropLast(1).toDouble()
-                        val latSeconds = latArray[2].dropLast(1).toDouble()
-                        val latTotalSeconds = (((latMinute*60) + latSeconds)/3600)
-                        val latDecimal = latDegree.toString().dropLast(1) + latTotalSeconds.toString().drop(2)
+                    "GPS Latitude", "Latitude" -> {
+                        val latitudeValue = tag.description
+                        var latDecimal = latitudeValue
+
+                        val numeric = latitudeValue.matches("-?\\d+(\\.\\d+)?".toRegex())
+                        if (!numeric) {
+                            val latArray = tag.description.split(" ")
+                            val latDegree = latArray[0].dropLast(1).toDouble()
+                            val latMinute = latArray[1].dropLast(1).toDouble()
+                            val latSeconds = latArray[2].dropLast(1).toDouble()
+                            val latTotalSeconds = (((latMinute * 60) + latSeconds) / 3600)
+                            latDecimal = latDegree.toString().dropLast(1) + latTotalSeconds.toString().drop(2)
+                        }
                         metadataObj.setLat(latDecimal)
                     }
-                    "GPS Longitude" -> {
-                        val lngArray = tag.description.split(" ")
-                        val lngDegree = lngArray[0].dropLast(1).toDouble()
-                        val lngMinute = lngArray[1].dropLast(1).toDouble()
-                        val lngSeconds = lngArray[2].dropLast(1).toDouble()
-                        val lngTotalSeconds = (((lngMinute*60) + lngSeconds)/3600)
-                        val lngDecimal = lngDegree.toString().dropLast(1) + lngTotalSeconds.toString().drop(2)
+                    "GPS Longitude", "Longitude" -> {
+                        val longitudeValue = tag.description
+                        var lngDecimal = longitudeValue
+
+                        // Check if decimal
+                        val numeric = longitudeValue.matches("-?\\d+(\\.\\d+)?".toRegex())
+                        if (!numeric) {
+                            val lngArray = tag.description.split(" ")
+                            val lngDegree = lngArray[0].dropLast(1).toDouble()
+                            val lngMinute = lngArray[1].dropLast(1).toDouble()
+                            val lngSeconds = lngArray[2].dropLast(1).toDouble()
+                            val lngTotalSeconds = (((lngMinute * 60) + lngSeconds) / 3600)
+                            lngDecimal = lngDegree.toString().dropLast(1) + lngTotalSeconds.toString().drop(2)
+                        }
                         metadataObj.setLng(lngDecimal)
                     }
                     "ISO Speed Ratings" -> {
