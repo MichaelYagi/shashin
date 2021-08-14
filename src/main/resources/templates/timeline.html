@@ -12,18 +12,26 @@
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
             <th:block th:if="${metadataList != ''}">
                 <th:block th:each="metadata, iterStat: ${metadataList}">
+
                     <th:block th:unless="${!iterStat.first and {metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}}">
-                        <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                            <th:block th:unless="${iterStat.first}">
-                                <br><br>
-                            </th:block>
-                            <p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p>
+
+                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                            <p><strong>Undated</strong></p>
+                            <div class="row">
                         </th:block>
-                        <div class="row">
+
+                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                <p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p>
+                            </th:block>
+                            <div class="row">
+                        </th:block>
+
                     </th:block>
 
                     <div class="photo-thumbnail-container photo-thumbnail">
                         <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image">
+
                         <div class="thumbnail-tl">
                             <a href="#">
                                 <span class="bi-circle" style="font-size: 1rem;top:4px;left:4px;color: steelblue;"></span>
@@ -37,9 +45,16 @@
                         </div>
 
                         <div class="thumbnail-centered">
-                            <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
-                                <span class="bi-play-circle" style="font-size: 2rem;color: steelblue;"></span>
-                            </a>
+                            <th:block th:unless="${metadata.type.contains('video')}">
+                                <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
+                                    <span class="bi-play-circle" style="font-size: 2rem;color: steelblue;"></span>
+                                </a>
+                            </th:block>
+                            <th:block th:if="${metadata.type.contains('video')}">
+                                <a href="#" th:data-featherlight="'<video controls><source src=\''+${metadata.videoUrl}+'\'>Your browser does not support this video.</video>'"
+                                    <span class="bi-camera-video" style="font-size: 2rem;color: steelblue;"></span>
+                                </a>
+                            </th:block>
                         </div>
                     </div>
 

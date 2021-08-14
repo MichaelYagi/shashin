@@ -16,6 +16,7 @@ CREATE TABLE `metadata` (
     `thumbnailUrlSmall` varchar (255) DEFAULT NULL,
     `thumbnailPathOriginal` varchar(255) DEFAULT NULL,
     `thumbnailUrlOriginal` varchar (255) DEFAULT NULL,
+    `videoUrl` varchar (255) DEFAULT NULL,
     `type` varchar(20) DEFAULT NULL,
     `lat` varchar(20) DEFAULT NULL,
     `lng` varchar(20) DEFAULT NULL,

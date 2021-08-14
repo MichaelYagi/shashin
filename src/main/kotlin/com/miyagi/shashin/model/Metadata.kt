@@ -12,6 +12,7 @@ class Metadata {
     private var thumbnailUrlSmall: String? = null
     private var thumbnailPathOriginal: String? = null
     private var thumbnailUrlOriginal: String? = null
+    private var videoUrl: String? = null
     private var takenAt: String? = null
     private var type: String? = null
     private var fileName: String? = null
@@ -39,6 +40,7 @@ class Metadata {
         thumbnailUrlSmall: String?,
         thumbnailPathOriginal: String?,
         thumbnailUrlOriginal: String?,
+        videoUrl: String?,
         takenAt: String?,
         id: String,
         type: String?,
@@ -66,6 +68,7 @@ class Metadata {
         this.thumbnailUrlSmall = thumbnailUrlSmall
         this.thumbnailPathOriginal = thumbnailPathOriginal
         this.thumbnailUrlOriginal = thumbnailUrlOriginal
+        this.videoUrl = videoUrl
         this.takenAt = takenAt
         this.id = id
         this.type = type
@@ -106,6 +109,9 @@ class Metadata {
     }
     fun setThumbnailUrlOriginal(thumbnailUrlOriginal: String?) {
         this.thumbnailUrlOriginal = thumbnailUrlOriginal
+    }
+    fun setVideoUrl(videoUrl: String?) {
+        this.videoUrl = videoUrl
     }
     fun setTakenAt(takenAt: String?) {
         this.takenAt = takenAt
@@ -185,6 +191,9 @@ class Metadata {
     }
     fun getThumbnailUrlOriginal(): String? {
         return this.thumbnailUrlOriginal
+    }
+    fun getVideoUrl(): String? {
+        return this.videoUrl
     }
     fun getTakenAt(): String? {
         return this.takenAt
