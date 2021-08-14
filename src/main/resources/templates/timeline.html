@@ -15,6 +15,8 @@
 
                     <th:block th:unless="${!iterStat.first and {metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}}">
 
+                        <br>
+
                         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                             <p><strong>Undated</strong></p>
                             <div class="row">
@@ -51,7 +53,11 @@
                                 </a>
                             </th:block>
                             <th:block th:if="${metadata.type.contains('video')}">
-                                <a href="#" th:data-featherlight="'<video controls><source src=\''+${metadata.videoUrl}+'\'>Your browser does not support this video.</video>'"
+                                <a th:href="${metadata.videoUrl}"
+                                   data-featherlight="iframe"
+                                   data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
+                                   data-featherlight-iframe-frameborder="0"
+                                   data-featherlight-iframe-allowfullscreen="true">
                                     <span class="bi-camera-video" style="font-size: 2rem;color: steelblue;"></span>
                                 </a>
                             </th:block>
