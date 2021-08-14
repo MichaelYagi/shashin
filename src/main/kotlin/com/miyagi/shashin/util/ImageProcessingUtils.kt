@@ -3,11 +3,9 @@ package com.miyagi.shashin.util
 import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.ComponentScan
-import org.springframework.stereotype.Component
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
@@ -36,7 +34,11 @@ class ImageProcessingUtils(private var apiVersion: String?) {
 
         val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
         if (mdFile != null) {
-            val om = ObjectMapper(YAMLFactory())
+            val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                .build()
+            val om = ObjectMapper(yamlFactory)
             om.writeValue(mdFile, metadataObj);
             return metadataObj
         }
