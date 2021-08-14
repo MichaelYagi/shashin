@@ -92,45 +92,35 @@ body {
 .border-top { border-top: 1px solid #e5e5e5; }
 .border-bottom { border-bottom: 1px solid #e5e5e5; }
 
-img {
-  max-height: 50vh;
+.photo-thumbnail-container {
+  position: relative;
+}
+
+.thumbnail-bl {
+  display: none;
+  background-color: transparent;
+  bottom:4px;
+  left:4px;
+  position: absolute;
+}
+
+.thumbnail-tl {
+  display: none;
+  background-color: transparent;
+  top:0px;
+  left:4px;
+  position: absolute;
+}
+
+.thumbnail-centered {
+  display: none;
+  background-color: transparent;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .photo-thumbnail {
-  padding: 0px 0px 3px 0px;
-}
-
-.lightbox {
-  /* Default to hidden */
-  display: none;
-
-  /* Overlay entire screen */
-  position: fixed;
-  z-index: 999;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  /* A bit of padding around image */
-  padding: 1em;
-
-  background: rgba(0, 0, 0, 1);
-}
-
-/* Unhide the lightbox when it's the target */
-.lightbox:target {
-  display: block;
-}
-
-.lightbox span {
-  /* Full width and height */
-  display: block;
-  width: 100%;
-  height: 100%;
-
-  /* Size and position background image */
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: contain;
+  padding: 0px 4px 4px 0px;
 }
