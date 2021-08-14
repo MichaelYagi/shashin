@@ -12,8 +12,16 @@ class FileUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
-        fun allowableImageFiles(): Array<String> {
+        fun allowableMediaFiles(): Array<String> {
             return arrayOf("jpeg","jpg","tiff","png","bmp","gif","webm","ico","nef","cr2","orf","arw","rw2","rwl","srw","mp4","wav","avi")
+        }
+
+        fun allowableImageFiles(): Array<String> {
+            return arrayOf("jpeg","jpg","tiff","png","bmp","gif","webm","ico")
+        }
+
+        fun allowableVideoFiles(): Array<String> {
+            return arrayOf("mp4","wav","avi")
         }
 
         fun isRaw(extension: String): Boolean {

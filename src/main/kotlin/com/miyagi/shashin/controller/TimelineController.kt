@@ -25,8 +25,8 @@ class TimelineController {
     private val metadataRepository: MetadataRepository? = null
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
-    @Value("\${app.photoDir}")
-    lateinit var rootPhotoDir: String
+    @Value("\${app.mediaDir}")
+    lateinit var rootMediaDir: String
 
     @GetMapping("/timeline")
     fun getTimeline(model: Model): String {
@@ -65,7 +65,7 @@ class TimelineController {
             val rootPath = FileSystemResource("").file.absolutePath
             val sidecarDir = rootPath + relativeSidecarDir
             val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
-            val rootDirFile = File(rootPhotoDir)
+            val rootDirFile = File(rootMediaDir)
             val photoFile = File(metadataObj.get().getPath())
             var fileRootDir: String = (photoFile.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
             fileRootDir = fileRootDir.replace('\\', '/')

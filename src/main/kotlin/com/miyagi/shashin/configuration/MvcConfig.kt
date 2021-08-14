@@ -15,14 +15,16 @@ class MvcConfig : WebMvcConfigurer {
     private val relativeSidecarDir: String? = null
     @Value("\${app.api.version}")
     private val apiVersion: String? = null
+    @Value("\${app.mediaDir}")
+    private val mediaDir: String? = null
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         val rootPath = FileSystemResource("").file.absolutePath
         val thumbnailDir = "file:///$rootPath$relativeSidecarDir/thumbnails/"
 
         registry
-            .addResourceHandler("/api/$apiVersion/thumbnails/**")
-            .addResourceLocations(thumbnailDir)
+            .addResourceHandler("/api/$apiVersion/thumbnails/**","/api/$apiVersion/original/video/**")
+            .addResourceLocations(thumbnailDir, "file:///$mediaDir")
             .setCachePeriod(3600)
             .resourceChain(true)
             .addResolver(PathResourceResolver())

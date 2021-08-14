@@ -5,14 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
+import org.bytedeco.javacv.FFmpegFrameGrabber
+import org.bytedeco.javacv.Java2DFrameConverter
 import org.springframework.context.annotation.ComponentScan
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 
@@ -206,28 +210,69 @@ class ImageProcessingUtils(private var apiVersion: String?) {
         var fileRootDir: String = (file.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
         fileRootDir = fileRootDir.replace('\\', '/')
 
-        // Scale to different sizes and save
-        val img: BufferedImage = ImageIO.read(file)
+        val supportedImageFormats = FileUtils.allowableImageFiles()
+        val supportedVideoFormats = FileUtils.allowableVideoFiles()
 
-        var thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
-        var tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-        if (tnFile != null) {
-            val scaled209: BufferedImage = scaleImageByHeight(img, 209)
-            ImageIO.write(scaled209, "jpg", tnFile)
-            metadataObj?.setThumbnailPathSmall(tnFile.path)
-            metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+        var img: BufferedImage? = null
+        if (supportedImageFormats.contains(file.extension.lowercase())) {
+            img = ImageIO.read(file)
+        } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
+            // Grab screen shot
+            img = grabScreenshot(file)
+            metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
         }
 
-        thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original.jpg"
-        tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-        if (tnFile != null) {
-            val scaled: BufferedImage = scaleImageByRatio(img, 1.0)
-            ImageIO.write(scaled, "jpg", tnFile)
-            metadataObj?.setThumbnailPathOriginal(tnFile.path)
-            metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+        if (img != null) {
+            // Scale to different sizes and save
+            var thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
+            var tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            if (tnFile != null) {
+                val scaled209: BufferedImage = scaleImageByHeight(img, 209)
+                ImageIO.write(scaled209, "jpg", tnFile)
+                metadataObj?.setThumbnailPathSmall(tnFile.path)
+                metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+            }
+
+            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original.jpg"
+            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            if (tnFile != null) {
+                val scaled: BufferedImage = scaleImageByRatio(img, 1.0)
+                ImageIO.write(scaled, "jpg", tnFile)
+                metadataObj?.setThumbnailPathOriginal(tnFile.path)
+                metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+            }
+        } else {
+            logger.log(Level.WARNING, "File not supported: " + file.name)
         }
 
         return metadataObj
+    }
+
+    private fun grabScreenshot(file: File): BufferedImage? {
+        val frameGrabber = FFmpegFrameGrabber(file.path);
+        frameGrabber.start();
+        val aa = Java2DFrameConverter()
+
+        try {
+            var f = frameGrabber.grabKeyFrame() ;
+            var bi = aa.convert(f)
+
+            val limit = 1000
+            var count = 0
+            while (bi != null) {
+                if (limit > count) {
+                    break
+                }
+                f = frameGrabber.grabKeyFrame() ;
+                bi = aa.convert(f)
+                count++
+            }
+            frameGrabber.stop();
+            return bi
+        } catch (e: IOException) {
+            logger.log(Level.WARNING, "Could not convert video " + file.name + ": " + e.message)
+            return null
+        }
     }
 
     private fun scaleImageByRatio(source: BufferedImage, ratio: Double): BufferedImage {
