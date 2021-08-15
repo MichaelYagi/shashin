@@ -90,24 +90,33 @@
                 $("#saveMetadata[[${metadata.id}]]").click(function (e) {
                     e.preventDefault();
 
-                    const posting = $.post({
-                        url: "/timeline/update/[[${metadata.id}]]",
-                        data: JSON.stringify($('#saveData[[${metadata.id}]]').serializeObject()),
-                        contentType: 'application/json; charset=utf-8'
-                    });
+                    if (validateInputs(
+                        $("#dayTaken[[${metadata.id}]]").val(),
+                        $("#monthTaken[[${metadata.id}]]").val(),
+                        $("#yearTaken[[${metadata.id}]]").val(),
+                        $("#lat[[${metadata.id}]]").val(),
+                        $("#lng[[${metadata.id}]]").val(),
+                        "msg[[${metadata.id}]]"
+                    ) === true) {
+                        const posting = $.post({
+                            url: "/timeline/update/[[${metadata.id}]]",
+                            data: JSON.stringify($('#saveData[[${metadata.id}]]').serializeObject()),
+                            contentType: 'application/json; charset=utf-8'
+                        });
 
-                    posting.done(function( data ) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"]==="success") {
-                                message = '<div class="alert alert-success" role="alert">'+data["msg"]+'</div>';
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">'+data["msg"]+'</div>';
+                        posting.done(function (data) {
+                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                                let message = "Error";
+                                if (data["status"] === "success") {
+                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                } else {
+                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                }
+                                $("#msg[[${metadata.id}]]").html(message);
+                                window.top.location = window.top.location
                             }
-                            $("#msg[[${metadata.id}]]").html(message);
-                            window.top.location = window.top.location
-                        }
-                    });
+                        });
+                    }
 
                     return false;
                 });

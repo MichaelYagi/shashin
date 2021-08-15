@@ -2,44 +2,39 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="timelinejs(metadata)">
 <script type="text/javascript">
-    $.fn.serializeObject = function() {
-        var o = {};
-        var a = this.serializeArray();
-        $.each(a, function() {
-            if (o[this.name]) {
-                if (!o[this.name].push) {
-                    o[this.name] = [o[this.name]];
-                }
-                o[this.name].push(this.value || '');
-            } else {
-                o[this.name] = this.value || '';
-            }
-        });
-        return o;
-    };
+    function validateInputs(day, month, year, lat, lng, msgId) {
+        var dayValidate = "([1-9]|[12]\d|3[01])";
+        var monthValidate = "^(0?[1-9]|1[012])$";
 
-    /*<![CDATA[*/
-    $("#saveMetadata[[${metadata.id}]]").click(function (e) {
-        const posting = $.post({
-            url: "/timeline/update/[[${metadata.id}]]",
-            data: JSON.stringify($('#saveData[[${metadata.id}]]').serializeObject()),
-            contentType: 'application/json; charset=utf-8'
-        });
+        var msg = "";
+        if (day !== "" && !day.match(dayValidate)) {
+            msg = "Enter Valid Day";
+        }
 
-        posting.done(function( data ) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"]==="success") {
-                    message = '<div class="alert alert-success" role="alert">'+data["msg"]+'</div>';
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">'+data["msg"]+'</div>';
-                }
-                $("#msg[[${metadata.id}]]").html(message);
-            }
-        });
+        if (month !== "" && !month.match(monthValidate)) {
+            msg = "Enter Valid Month";
+        }
 
-        return false;
-    });
+        if (year !== "" && !(+year >= 1888 && +year <= new Date().getFullYear())) {
+            msg = "Enter Valid Year";
+        }
+
+        if (lat !== "" && lat % 1 === 0) {
+            msg = "Enter Valid Latitude";
+        }
+
+        if (lng !== "" && lng % 1 === 0) {
+            msg = "Enter Valid Longitude";
+        }
+
+        if (msg !== "") {
+            $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 
     $("#appToolsBatchEdit").click(function(e) {
         e.preventDefault();
@@ -134,6 +129,7 @@
         $(this).siblings(".thumbnail-bl").css("display", "none");
         $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
     });
+
     $("#tnbl[[${metadata.id}]]").hover(function() {
         $(this).css("display", "block");
         $(this).siblings(".thumbnail-tl").css("display", "block");
@@ -144,6 +140,19 @@
         $(this).siblings(".thumbnail-tl").css("display", "none");
         $(this).siblings(".thumbnail-centered").css("display", "none");
         $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+    });
+
+    $("#tntr[[${metadata.id}]]").hover(function() {
+        $("#image[[${metadata.id}]]").css("opacity", 0.3);
+        if ($("#tlicon[[${metadata.id}]]").attr("class") === "bi-circle-fill") {
+            $("#tntl[[${metadata.id}]]").css("display", "block");
+            $("#tnbl[[${metadata.id}]]").css("display", "none");
+            $("#tncentered[[${metadata.id}]]").css("display", "none");
+        } else {
+            $("#tncentered[[${metadata.id}]]").css("display", "block");
+            $("#tntl[[${metadata.id}]]").css("display", "block");
+            $("#tnbl[[${metadata.id}]]").css("display", "block");
+        }
     });
     /*]]>*/
 </script>
