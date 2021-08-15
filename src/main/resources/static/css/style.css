@@ -104,6 +104,13 @@ body {
   position: absolute;
 }
 
+.thumbnail-tr {
+  background-color: transparent;
+  top:0px;
+  right:10px;
+  position: absolute;
+}
+
 .thumbnail-tl {
   display: none;
   background-color: transparent;
@@ -125,27 +132,10 @@ body {
   padding: 0px 4px 4px 0px;
 }
 
-#footer {
-  top: 10px;
+footer {
+  padding-top: 15px;
 }
 
-/** SHASHIN LIGHTBOX MARKUP **/
-
-.shashinlightbox {
-  /* Default to hidden */
+#appTools {
   display: none;
-
-  /* Overlay entire screen */
-  position: fixed;
-  z-index: 999;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  /* A bit of padding around image */
-  padding: 1em;
-
-  /* Translucent background */
-  background: rgba(0, 0, 0, 0.8);
 }

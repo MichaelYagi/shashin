@@ -58,6 +58,8 @@ class TimelineController {
             metadataObj.get().setYear(metadataFormUpdateData.getYear())
             metadataObj.get().setMonth(metadataFormUpdateData.getMonth())
             metadataObj.get().setDay(metadataFormUpdateData.getDay())
+            metadataObj.get().setLat(metadataFormUpdateData.getLat())
+            metadataObj.get().setLng(metadataFormUpdateData.getLng())
 
             // Update DB
             metadataRepository?.save(metadataObj.get())
