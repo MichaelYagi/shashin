@@ -37,7 +37,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
 
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
 
-        val metadataObj = _metadataObj?.let { populateMetadataObject(file, it) }
+        val metadataObj = _metadataObj?.let { extractExifData(file, sidecarDir, rootDir, it) }
 
         val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
         if (mdFile != null) {
@@ -53,7 +53,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
         return null
     }
 
-    private fun populateMetadataObject(file: File, metadataObj: Metadata): Metadata {
+    private fun extractExifData(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata): Metadata {
         metadataObj.setPath(file.path)
 
         // Get file data
@@ -91,6 +91,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             sourceFormat.parse(accessTime)
         }
         metadataObj.setLastAccessedAt(destFormat.format(date))
+        val exifMap = hashMapOf<String,String>()
 
         // Get image data
         val metadata = ImageMetadataReader.readMetadata(file)
@@ -99,11 +100,19 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             var cameraModel: String? = null
             var lensMake: String? = null
             var lensModel: String? = null
+
             for (tag in directory.tags) {
+                val tagName = tag.tagName.replace(" ", "").replace("/", "")
+                if ("unknowntag" !in tagName.lowercase()) {
+                    exifMap[tagName] = tag.description
+                }
 //                println(tag.tagName)
 //                println(tag.description)
 //                println()
+
                 // TODO: Get this info into exif file
+
+
                 when (tag.tagName) {
                     "Date/Time", "Creation Time" -> {
                         val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
@@ -247,6 +256,8 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                 }
             }
         }
+
+        saveExifdata(exifMap, sidecarDir, rootDir, file.path)
 
         metadataObj.setId(
             TextUtils.generateUUID(
@@ -406,6 +417,27 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             w, h,
             BufferedImage.TYPE_INT_RGB
         )
+    }
+
+   private fun saveExifdata(exifMap: HashMap<String, String>, _sidecarDir: String, rootDir: String, path: String) {
+        if (exifMap.isNotEmpty()) {
+            // Update Exif file
+            val metadataDirectory = _sidecarDir.dropLast(1) + "/metadata"
+            val photoFile = File(path)
+            val photoFileParent = photoFile.parent.replace('\\', '/')
+            var fileRootDir: String =
+                photoFileParent.lowercase().replace(rootDir.lowercase(), "")
+            fileRootDir = fileRootDir.replace('\\', '/')
+            val exifFile = FileUtils.createFile("$metadataDirectory/$fileRootDir", "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml", "Exif")
+            if (exifFile != null) {
+                val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                    .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                    .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                    .build()
+                val om = ObjectMapper(yamlFactory)
+                om.writeValue(exifFile, exifMap)
+            }
+        }
     }
 
     fun saveMetadata(metadataObj: Metadata?, _sidecarDir: String, rootDir: String) {
