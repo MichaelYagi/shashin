@@ -32,11 +32,10 @@ class ImageProcessingUtils(private var apiVersion: String?) {
         val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
 
         val rootDirFile = File(rootDir)
-        var fileRootDir: String = (file.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
+        var fileRootDir: String = file.parent.replace('\\', '/').lowercase().replace(rootDirFile.parent.replace('\\', '/').lowercase(), "")
         fileRootDir = fileRootDir.replace('\\', '/')
 
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
-
         val metadataObj = _metadataObj?.let { extractExifData(file, sidecarDir, rootDir, it) }
 
         val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
@@ -280,7 +279,8 @@ class ImageProcessingUtils(private var apiVersion: String?) {
 
         // Map path to sidecar file
         val rootDirFile = File(rootDir)
-        var fileRootDir: String = (file.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
+
+        var fileRootDir: String = file.parent.replace('\\', '/').lowercase().replace(rootDirFile.parent.replace('\\', '/').lowercase(), "")
         fileRootDir = fileRootDir.replace('\\', '/')
 
         val supportedImageFormats = FileUtils.allowableImageFiles()
@@ -425,8 +425,9 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             val metadataDirectory = _sidecarDir.dropLast(1) + "/metadata"
             val photoFile = File(path)
             val photoFileParent = photoFile.parent.replace('\\', '/')
+            val rootDirFile = File(rootDir)
             var fileRootDir: String =
-                photoFileParent.lowercase().replace(rootDir.lowercase(), "")
+                photoFileParent.replace('\\', '/').lowercase().replace(rootDirFile.parent.replace('\\', '/').lowercase(), "")
             fileRootDir = fileRootDir.replace('\\', '/')
             val exifFile = FileUtils.createFile("$metadataDirectory/$fileRootDir", "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml", "Exif")
             if (exifFile != null) {
@@ -449,7 +450,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             val rootDirFile = File(rootDir)
             val photoFile = File(metadataObj.getPath())
             var fileRootDir: String =
-                (photoFile.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
+                photoFile.parent.replace('\\', '/').lowercase().replace(rootDirFile.parent.replace('\\', '/').lowercase(), "")
             fileRootDir = fileRootDir.replace('\\', '/')
             val metadataFileStr = metadataDirectory + fileRootDir + "/" + photoFile.name + ".yaml"
             val mdFile = File(metadataFileStr)

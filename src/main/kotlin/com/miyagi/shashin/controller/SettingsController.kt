@@ -29,10 +29,8 @@ class SettingsController {
     private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
     // TODO: Stored in application.properties for now but make these user configurable
-    @Value("\${app.mediaDir}")
-    lateinit var mediaDir: String
-    @Value("\${app.mediaDir}")
-    lateinit var rootMediaDir: String
+    @Value("\${app.mediaDirs}")
+    lateinit var mediaDirs: Array<String>
 
     @GetMapping("/settings")
     fun getIndex(model: Model): String {
@@ -71,7 +69,11 @@ class SettingsController {
                     val tempDir = System.getProperty("java.io.tmpdir")
                     val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
                     if (threadFile != null) {
-                        getFile(mediaDir, threadFile, sidecarDir, rootMediaDir)
+
+                        for (mediaDir in mediaDirs) {
+                            getFile(mediaDir, threadFile, sidecarDir, mediaDir)
+                        }
+
                         // Delete thread file
                         if (threadFile.delete()) {
                             logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)

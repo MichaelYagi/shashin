@@ -30,14 +30,16 @@ class TimelineController {
     private lateinit var relativeSidecarDir: String
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
-    @Value("\${app.mediaDir}")
-    lateinit var rootMediaDir: String
+    @Value("\${app.mediaDirs}")
+    lateinit var rootMediaDirs: Array<String>
 
     @GetMapping("/timeline")
     fun getTimeline(model: Model): String {
         val module = "timeline"
 
         model["metadataList"] = ""
+        model["data"] = "There are no photos!"
+
         val sort = Sort.by(
             Sort.Order.desc("year"),
             Sort.Order.desc("month"),
@@ -46,9 +48,9 @@ class TimelineController {
         val metadataList = metadataRepository?.findAll(sort)
         if (metadataList != null) {
             model["metadataList"] = metadataList
+            model["data"] = ""
         }
 
-        model["data"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -70,7 +72,20 @@ class TimelineController {
             metadataRepository?.save(metadataObj.get())
             // Update MD file
             val imageProcessingUtils = ImageProcessingUtils(apiVersion)
-            imageProcessingUtils.saveMetadata(metadataObj.get(), relativeSidecarDir, rootMediaDir)
+            val originalImagePath = metadataObj.get().getPath()
+            var rootDir: String? = null
+            for (rootmediaDir in rootMediaDirs) {
+                if (originalImagePath != null) {
+                    if (originalImagePath.replace('\\', '/').contains(rootmediaDir)) {
+                        rootDir = rootmediaDir
+                        break
+                    }
+                }
+            }
+
+            if (rootDir != null) {
+                imageProcessingUtils.saveMetadata(metadataObj.get(), relativeSidecarDir, rootDir)
+            }
             return "{\"status\":\"success\",\"msg\":\"Saved\"}"
         }
         return "{\"status\":\"fail\",\"msg\":\"Not Saved\"}"
@@ -151,7 +166,19 @@ class TimelineController {
                 // Update MD file
                 val imageProcessingUtils = ImageProcessingUtils(apiVersion)
                 for (metadata in metadataList) {
-                    imageProcessingUtils.saveMetadata(metadata, relativeSidecarDir, rootMediaDir)
+                    val originalImagePath = metadata.getPath()
+                    var rootDir: String? = null
+                    for (rootmediaDir in rootMediaDirs) {
+                        if (originalImagePath != null) {
+                            if (originalImagePath.replace('\\', '/').contains(rootmediaDir)) {
+                                rootDir = rootmediaDir
+                                break
+                            }
+                        }
+                    }
+                    if (rootDir != null) {
+                        imageProcessingUtils.saveMetadata(metadata, relativeSidecarDir, rootDir)
+                    }
                 }
                 return "{\"status\":\"success\",\"msg\":\"Saved\"}"
             }
