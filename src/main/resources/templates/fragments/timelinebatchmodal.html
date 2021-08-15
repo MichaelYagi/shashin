@@ -89,24 +89,34 @@
                 $("#saveBatchMetadata").click(function (e) {
                     e.preventDefault();
 
-                    const posting = $.post({
-                        url: "/timeline/update/batch",
-                        data: JSON.stringify($('#saveBatchData').serializeObject()),
-                        contentType: 'application/json; charset=utf-8'
-                    });
+                    if (validateInputs(
+                        $("#dayTakenBatchData").val(),
+                        $("#monthTakenBatchData").val(),
+                        $("#yearTakenBatchData").val(),
+                        $("#latBatchData").val(),
+                        $("#lngBatchData").val(),
+                        "msgBatchMetadata"
+                    ) === true) {
 
-                    posting.done(function( data ) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"]==="success") {
-                                message = '<div class="alert alert-success" role="alert">'+data["msg"]+'</div>';
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">'+data["msg"]+'</div>';
+                        const posting = $.post({
+                            url: "/timeline/update/batch",
+                            data: JSON.stringify($('#saveBatchData').serializeObject()),
+                            contentType: 'application/json; charset=utf-8'
+                        });
+
+                        posting.done(function (data) {
+                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                                let message = "Error";
+                                if (data["status"] === "success") {
+                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                } else {
+                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                }
+                                $("#msgBatchMetadata").html(message);
+                                window.top.location = window.top.location
                             }
-                            $("#msgBatchMetadata").html(message);
-                            window.top.location = window.top.location
-                        }
-                    });
+                        });
+                    }
 
                     return false;
                 });

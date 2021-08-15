@@ -99,23 +99,23 @@ body {
 .thumbnail-bl {
   display: none;
   background-color: transparent;
-  bottom:4px;
-  left:4px;
+  bottom:11px;
+  left:11px;
   position: absolute;
 }
 
 .thumbnail-tr {
   background-color: transparent;
-  top:0px;
-  right:10px;
+  top:5px;
+  right:16px;
   position: absolute;
 }
 
 .thumbnail-tl {
   display: none;
   background-color: transparent;
-  top:0px;
-  left:4px;
+  top:7px;
+  left:11px;
   position: absolute;
 }
 
