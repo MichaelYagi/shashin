@@ -12,9 +12,13 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
+import java.nio.file.Files
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.stream.Collectors
 
 
 @Controller
@@ -54,8 +58,18 @@ class SettingsController {
 
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun postScan(@RequestParam submit: String): String {
-        if (submit == "Scan") {
+    fun postScan(@RequestParam submit: String, @RequestParam isCheckOnly: Boolean): String {
+        if (isCheckOnly) {
+            if (!checkThreadFileAlive()) {
+                return "{\"msg\":\"Scan Complete\"}"
+            }
+
+            val threadFileContent = readThreadFile()
+            if (threadFileContent != null) {
+                return "{\"msg\":\"Scanning ${threadFileContent.replace("\\","\\\\")}\"}"
+            }
+            return "{\"msg\":\"Start Scanning\"}"
+        } else if (submit == "Scan") {
             if (!checkThreadFileAlive()) {
                 // Clean up any existing thread files
                 deleteThreadFiles()
@@ -82,11 +96,24 @@ class SettingsController {
                         }
                     }
                 }.start()
-                return "{\"msg\":\"Scan start\"}"
+
+                return "{\"msg\":\"Scan started\"}"
             }
-            return "{\"msg\":\"Scan in progress\"}"
+
+            val threadFileContent = readThreadFile()
+            if (threadFileContent != null) {
+                return "{\"msg\":\"Scanning ${threadFileContent.replace("\\","\\\\")}\"}"
+            } else {
+                return "{\"msg\":\"Scan in progress\"}"
+            }
         }
         return "{\"msg\":\"Error\"}"
+    }
+
+    private fun escapeHTML(str: String): String? {
+        return str.chars().mapToObj { c: Int ->
+            if (c > 127 || "\"'<>&".indexOf(c.toChar()) != -1) "&#$c;" else c.toChar().toString()
+        }.collect(Collectors.joining())
     }
 
     private fun threadIsAlive(threadName: String): Boolean {
@@ -96,6 +123,26 @@ class SettingsController {
             }
         }
         return false
+    }
+
+    private fun readThreadFile(): String? {
+        val tempDir = System.getProperty("java.io.tmpdir")
+        val f = File(tempDir)
+        val files = f.listFiles()
+        if (files != null) {
+            for (i in files.indices) {
+                val file: File = files[i]
+
+                if (file.isFile &&
+                    file.extension.lowercase() == "shashinscan" &&
+                    threadIsAlive(file.nameWithoutExtension)
+                ) {
+                    return Files.readString(file.toPath())
+                }
+            }
+        }
+
+        return null
     }
 
     private fun checkThreadFileAlive(): Boolean {
@@ -149,6 +196,16 @@ class SettingsController {
                 if (file.isFile) {
                     val supportedFormats = FileUtils.allowableMediaFiles()
                     if (supportedFormats.contains(file.extension.lowercase())) {
+
+                        try {
+                            val writer = BufferedWriter(FileWriter(threadFile))
+                            writer.write(file.path)
+                            writer.close()
+                        } catch(e: Exception) {
+                            logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
+
+                        }
+
                         // TODO: If RAW then convert to jpeg
                         if (FileUtils.isRaw(file.extension.lowercase())) {
 
