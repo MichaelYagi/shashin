@@ -10,6 +10,7 @@
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar})"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+
             <th:block th:if="${metadataList != ''}">
                 <th:block th:each="metadata, iterStat: ${metadataList}">
 
@@ -32,21 +33,29 @@
                     </th:block>
 
                     <div class="photo-thumbnail-container photo-thumbnail">
-                        <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image">
+                        <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
 
-                        <div class="thumbnail-tl">
-                            <a href="#">
-                                <span class="bi-circle" style="font-size: 1rem;top:4px;left:4px;color: steelblue;"></span>
+                        <th:block th:if="${metadata.type.contains('video')}">
+                            <div class="thumbnail-tr">
+                                <a href="#">
+                                    <span class="bi-camera-video" style="font-size: 1rem;top:4px;left:4px;color: lightsalmon;"></span>
+                                </a>
+                            </div>
+                        </th:block>
+
+                        <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                            <a href="#" th:id="'select'+${metadata.id}">
+                                <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;top:4px;left:4px;color: steelblue;"></span>
                             </a>
                         </div>
 
-                        <div class="thumbnail-bl">
+                        <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
                             <a href="#" data-toggle="modal" th:data-target="'#prop'+${metadata.id}">
                                 <span class="bi-pencil" style="font-size: 1rem;bottom:4px;left:4px;color: steelblue;"></span>
                             </a>
                         </div>
 
-                        <div class="thumbnail-centered">
+                        <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                             <th:block th:unless="${metadata.type.contains('video')}">
                                 <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
                                     <span class="bi-play-circle" style="font-size: 2rem;color: steelblue;"></span>
@@ -58,120 +67,14 @@
                                    data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
                                    data-featherlight-iframe-frameborder="0"
                                    data-featherlight-iframe-allowfullscreen="true">
-                                    <span class="bi-camera-video" style="font-size: 2rem;color: steelblue;"></span>
+                                    <span class="bi-play-circle" style="font-size: 2rem;color: steelblue;"></span>
                                 </a>
                             </th:block>
                         </div>
                     </div>
 
-                    <div class="modal fade" th:id="'prop'+${metadata.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${metadata.id}" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="exampleModalLabel">Edit <th:block th:text="${metadata.fileName}"></th:block></h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <ul class="nav nav-tabs">
-                                        <li class="nav-item">
-                                            <a class="nav-link show active" data-toggle="tab" href="#home">General</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#menu1">Labels</a>
-                                        </li>
-                                        <li class="nav-item">
-                                            <a class="nav-link" data-toggle="tab" href="#menu2">Details</a>
-                                        </li>
-                                    </ul>
-
-                                    <div class="tab-content">
-                                        <div class="tab-pane container show active" id="home">
-                                            <form th:id="'saveData'+${metadata.id}">
-                                                <input type="hidden" name="id" th:value="${metadata.id}">
-
-                                                <div class="form-group row">
-                                                    <div class="col-sm">
-                                                        <label th:for="'dayTaken'+${metadata.id}" class="col-form-label">Day</label>
-                                                        <input type="text" class="form-control" th:id="'dayTaken'+${metadata.id}" name="day" th:value="${metadata.day}">
-                                                    </div>
-                                                    <div class="col-sm">
-                                                        <label th:for="'monthTaken'+${metadata.id}" class="col-form-label">Month</label>
-                                                        <input type="text" class="form-control" th:id="'monthTaken'+${metadata.id}" name="month" th:value="${metadata.month}">
-                                                    </div>
-                                                    <div class="col-sm">
-                                                        <label th:for="'yearTaken'+${metadata.id}" class="col-form-label">Year</label>
-                                                        <input type="text" class="form-control" th:id="'yearTaken'+${metadata.id}" name="year" th:value="${metadata.year}">
-                                                    </div>
-                                                </div>
-                                                <div class="form-group row">
-                                                    <div class="col-sm">
-                                                        <label class="col-form-label">Message:</label>
-                                                        <textarea class="form-control"></textarea>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                        <div class="tab-pane container fade" id="menu1">
-                                            Labels Form
-                                        </div>
-                                        <div class="tab-pane container fade" id="menu2">
-                                            Details of the photo/video
-                                        </div>
-                                        <div class="col-sm">
-                                            <span th:id="'msg'+${metadata.id}"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-primary" th:id="'saveMetadata'+${metadata.id}">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                                </div>
-                                <script type="text/javascript">
-                                    $.fn.serializeObject = function() {
-                                        var o = {};
-                                        var a = this.serializeArray();
-                                        $.each(a, function() {
-                                            if (o[this.name]) {
-                                                if (!o[this.name].push) {
-                                                    o[this.name] = [o[this.name]];
-                                                }
-                                                o[this.name].push(this.value || '');
-                                            } else {
-                                                o[this.name] = this.value || '';
-                                            }
-                                        });
-                                        return o;
-                                    };
-
-                                    /*<![CDATA[*/
-                                    $("#saveMetadata[[${metadata.id}]]").click(function (e) {
-                                        const posting = $.post({
-                                            url: "/timeline/update/[[${metadata.id}]]",
-                                            data: JSON.stringify($('#saveData[[${metadata.id}]]').serializeObject()),
-                                            contentType: 'application/json; charset=utf-8'
-                                        });
-
-                                        posting.done(function( data ) {
-                                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                                let message = "Error";
-                                                if (data["status"]==="success") {
-                                                    message = '<div class="alert alert-success" role="alert">'+data["msg"]+'</div>';
-                                                } else {
-                                                    message = '<div class="alert alert-danger" role="alert">'+data["msg"]+'</div>';
-                                                }
-                                                $("#msg[[${metadata.id}]]").html(message);
-                                            }
-                                        });
-
-                                        return false;
-                                    });
-                                    /*]]>*/
-                                </script>
-                            </div>
-                        </div>
-                    </div>
+                    <div th:replace="fragments/timelinemodal :: timelinemodal(${metadata})"></div>
+                    <div th:replace="fragments/timelinejs :: timelinejs(${metadata})"></div>
 
                     <th:block th:if="${iterStat.last} or ${!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}">
                         <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
@@ -179,6 +82,8 @@
 
                 </th:block>
             </th:block>
+
+            <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal()"></div>
 
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>
@@ -190,47 +95,6 @@
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
-
-        $(".photo-thumbnail-image").hover(function() {
-            $(this).css("opacity", 0.3);
-            $(this).siblings().css("display", "block");
-        }, function() {
-            $(this).css("opacity", 1.0);
-            $(this).siblings().css("display", "none");
-        });
-        $(".thumbnail-centered").hover(function() {
-            $(this).css("display", "block");
-            $(this).siblings(".thumbnail-tl").css("display", "block");
-            $(this).siblings(".thumbnail-bl").css("display", "block");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-        }, function() {
-            $(this).css("display", "none");
-            $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-bl").css("display", "none");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
-        });
-        $(".thumbnail-tl").hover(function() {
-            $(this).css("display", "block");
-            $(this).siblings(".thumbnail-centered").css("display", "block");
-            $(this).siblings(".thumbnail-bl").css("display", "block");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-        }, function() {
-            $(this).css("display", "none");
-            $(this).siblings(".thumbnail-centered").css("display", "none");
-            $(this).siblings(".thumbnail-bl").css("display", "none");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
-        });
-        $(".thumbnail-bl").hover(function() {
-            $(this).css("display", "block");
-            $(this).siblings(".thumbnail-tl").css("display", "block");
-            $(this).siblings(".thumbnail-centered").css("display", "block");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-        }, function() {
-            $(this).css("display", "none");
-            $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-centered").css("display", "none");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
-        });
     });
 </script>
 
