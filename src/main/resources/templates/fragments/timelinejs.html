@@ -79,18 +79,39 @@
         if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
             $("#appSearch").css("display", "none");
             $("#appTools").css("display", "block");
+
+            // Hide all center and bottom left icons
+            $('.thumbnail-bl').hide();
+            $('.thumbnail-centered').hide();
         } else {
             $("#appSearch").css("display", "block");
             $("#appTools").css("display", "none");
         }
     });
 
-    $("#image[[${metadata.id}]]").hover(function() {
+    $("#image[[${metadata.id}]]").click(function(e) {
+        e.preventDefault();
+
+        // Fill top left icon when clicking anywhere on thumbnail
+        if ($('.bi-circle-fill')[0]) {
+            if ($("#tlicon[[${metadata.id}]]").attr("class") === "bi-circle-fill") {
+                $("#tlicon[[${metadata.id}]]").addClass('bi-circle').removeClass('bi-circle-fill');
+            } else {
+                $("#tlicon[[${metadata.id}]]").addClass('bi-circle-fill').removeClass('bi-circle');
+            }
+        }
+    });
+
+        $("#image[[${metadata.id}]]").hover(function() {
         $(this).css("opacity", 0.3);
         $(this).siblings().css("display", "block");
         if ($("#tlicon[[${metadata.id}]]").attr("class") === "bi-circle-fill") {
             $("#tncentered[[${metadata.id}]]").css("display", "none");
             $("#tnbl[[${metadata.id}]]").css("display", "none");
+        }
+        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            $('.thumbnail-bl').hide();
+            $('.thumbnail-centered').hide();
         }
     }, function() {
         if ($("#tlicon[[${metadata.id}]]").attr("class") !== "bi-circle-fill") {
@@ -99,6 +120,10 @@
             $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
         } else {
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                $('.thumbnail-bl').hide();
+                $('.thumbnail-centered').hide();
+            }
             $("#tncentered[[${metadata.id}]]").css("display", "none");
             $("#tnbl[[${metadata.id}]]").css("display", "none");
         }
@@ -109,6 +134,10 @@
         $(this).siblings(".thumbnail-tl").css("display", "block");
         $(this).siblings(".thumbnail-bl").css("display", "block");
         $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            $('.thumbnail-bl').hide();
+            $('.thumbnail-centered').hide();
+        }
     }, function() {
         $(this).css("display", "none");
         $(this).siblings(".thumbnail-tl").css("display", "none");
@@ -122,6 +151,10 @@
             $(this).siblings(".thumbnail-centered").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                $('.thumbnail-bl').hide();
+                $('.thumbnail-centered').hide();
+            }
         }
     }, function() {
         $(this).css("display", "none");
@@ -135,6 +168,10 @@
         $(this).siblings(".thumbnail-tl").css("display", "block");
         $(this).siblings(".thumbnail-centered").css("display", "block");
         $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            $('.thumbnail-bl').hide();
+            $('.thumbnail-centered').hide();
+        }
     }, function() {
         $(this).css("display", "none");
         $(this).siblings(".thumbnail-tl").css("display", "none");
@@ -152,6 +189,10 @@
             $("#tncentered[[${metadata.id}]]").css("display", "block");
             $("#tntl[[${metadata.id}]]").css("display", "block");
             $("#tnbl[[${metadata.id}]]").css("display", "block");
+        }
+        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            $('.thumbnail-bl').hide();
+            $('.thumbnail-centered').hide();
         }
     });
     /*]]>*/
