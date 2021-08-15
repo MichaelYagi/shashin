@@ -88,6 +88,8 @@
 
                 /*<![CDATA[*/
                 $("#saveMetadata[[${metadata.id}]]").click(function (e) {
+                    e.preventDefault();
+
                     const posting = $.post({
                         url: "/timeline/update/[[${metadata.id}]]",
                         data: JSON.stringify($('#saveData[[${metadata.id}]]').serializeObject()),
@@ -103,6 +105,7 @@
                                 message = '<div class="alert alert-danger" role="alert">'+data["msg"]+'</div>';
                             }
                             $("#msg[[${metadata.id}]]").html(message);
+                            window.top.location = window.top.location
                         }
                     });
 

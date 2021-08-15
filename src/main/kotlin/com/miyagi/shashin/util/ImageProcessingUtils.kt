@@ -8,6 +8,7 @@ import com.miyagi.shashin.model.Metadata
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
 import org.springframework.context.annotation.ComponentScan
+import org.springframework.core.io.FileSystemResource
 import java.awt.RenderingHints
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
@@ -405,5 +406,27 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             w, h,
             BufferedImage.TYPE_INT_RGB
         )
+    }
+
+    fun saveMetadata(metadataObj: Metadata?, _sidecarDir: String, rootDir: String) {
+        if (metadataObj != null) {
+            // Update MD file
+            val rootPath = FileSystemResource("").file.absolutePath
+            val sidecarDir = rootPath + _sidecarDir
+            val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
+            val rootDirFile = File(rootDir)
+            val photoFile = File(metadataObj.getPath())
+            var fileRootDir: String =
+                (photoFile.parent).lowercase().replace((rootDirFile.canonicalPath).lowercase(), "")
+            fileRootDir = fileRootDir.replace('\\', '/')
+            val metadataFileStr = metadataDirectory + fileRootDir + "/" + photoFile.name + ".yaml"
+            val mdFile = File(metadataFileStr)
+            val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                .build()
+            val om = ObjectMapper(yamlFactory)
+            om.writeValue(mdFile, metadataObj);
+        }
     }
 }

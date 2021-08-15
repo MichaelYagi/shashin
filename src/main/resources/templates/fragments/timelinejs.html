@@ -100,7 +100,9 @@
     }, function() {
         if ($("#tlicon[[${metadata.id}]]").attr("class") !== "bi-circle-fill") {
             $(this).css("opacity", 1.0);
-            $(this).siblings().css("display", "none");
+            $(this).siblings(".thumbnail-tl").css("display", "none");
+            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".thumbnail-centered").css("display", "none");
         } else {
             $("#tncentered[[${metadata.id}]]").css("display", "none");
             $("#tnbl[[${metadata.id}]]").css("display", "none");
