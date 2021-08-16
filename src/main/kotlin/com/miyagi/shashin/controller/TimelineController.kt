@@ -32,6 +32,8 @@ class TimelineController {
     private var apiVersion: String? = null
     @Value("\${app.mediaDirs}")
     lateinit var rootMediaDirs: Array<String>
+    val mapper = ObjectMapper()
+    val resp = mutableMapOf<String, String?>()
 
     @GetMapping("/timeline")
     fun getTimeline(model: Model): String {
@@ -86,9 +88,13 @@ class TimelineController {
             if (rootDir != null) {
                 imageProcessingUtils.saveMetadata(metadataObj.get(), relativeSidecarDir, rootDir)
             }
-            return "{\"status\":\"success\",\"msg\":\"Saved\"}"
+            resp["msg"] = "Saved!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
         }
-        return "{\"status\":\"fail\",\"msg\":\"Not Saved\"}"
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
     }
 
     @RequestMapping(value = ["/timeline/update/batch"], method = [RequestMethod.POST], produces = ["application/json"])
@@ -180,10 +186,13 @@ class TimelineController {
                         imageProcessingUtils.saveMetadata(metadata, relativeSidecarDir, rootDir)
                     }
                 }
-                return "{\"status\":\"success\",\"msg\":\"Saved\"}"
+                resp["msg"] = "Saved!"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
             }
         }
-
-        return "{\"status\":\"fail\",\"msg\":\"Not Saved\"}"
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
     }
 }

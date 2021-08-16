@@ -16,6 +16,9 @@ class User {
     private var password: String? = null
     @NotBlank
     private var loggedIn = false
+    @OneToOne
+    @JoinColumn(name = "authority")
+    private var authority: Authority? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -64,6 +67,14 @@ class User {
 
     fun setModifiedAt(modifiedAt: String?) {
         this.modifiedAt = modifiedAt
+    }
+
+    fun getAuthority(): Authority? {
+        return this.authority
+    }
+
+    fun setAuthority(authority: Authority?) {
+        this.authority = authority
     }
 
     fun isLoggedIn(): Boolean {

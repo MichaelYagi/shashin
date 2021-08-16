@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head></head>
-<body th:fragment="loginregcontent(activePage)">
+<body th:fragment="loginregcontent(activePage, data)">
 <div class="container">
-    <form class="form-signin" method="post" th:action="'users/'+${activePage}">
+    <form class="form-signin" method="post" th:object="${user}" th:action="'/users/'+${activePage}">
+        <th:block th:if="${data != ''}">
+            <div class="alert alert-info" role="alert">
+                <th:block th:text="${data}"></th:block>
+            </div>
+        </th:block>
         <h2 class="form-signin-heading"><th:block th:text="'Please ' + ${#strings.capitalize(activePage)}"></th:block></h2>
         <p>
             <label for="username" class="sr-only">Username</label>
