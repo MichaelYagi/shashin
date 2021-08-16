@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.FileUtils
@@ -36,6 +37,9 @@ class SettingsController {
     @Value("\${app.mediaDirs}")
     lateinit var mediaDirs: Array<String>
 
+    val mapper = ObjectMapper()
+    val resp = mutableMapOf<String, String?>()
+
     @GetMapping("/settings")
     fun getIndex(model: Model): String {
         val module = "settings"
@@ -61,14 +65,17 @@ class SettingsController {
     fun postScan(@RequestParam submit: String, @RequestParam isCheckOnly: Boolean): String {
         if (isCheckOnly) {
             if (!checkThreadFileAlive()) {
-                return "{\"msg\":\"Scan Complete\"}"
+                resp["msg"] = "Scan complete"
+                return mapper.writeValueAsString(resp)
             }
 
             val threadFileContent = readThreadFile()
             if (threadFileContent != null) {
-                return "{\"msg\":\"Scanning ${threadFileContent.replace("\\","\\\\")}\"}"
+                resp["msg"] = "Scanning " + threadFileContent.replace("\\","\\\\")
+                return mapper.writeValueAsString(resp)
             }
-            return "{\"msg\":\"Start Scanning\"}"
+            resp["msg"] = "Start scanning"
+            return mapper.writeValueAsString(resp)
         } else if (submit == "Scan") {
             if (!checkThreadFileAlive()) {
                 // Clean up any existing thread files
@@ -97,17 +104,22 @@ class SettingsController {
                     }
                 }.start()
 
-                return "{\"msg\":\"Scan started\"}"
+                resp["msg"] = "Start started"
+                return mapper.writeValueAsString(resp)
             }
 
             val threadFileContent = readThreadFile()
             if (threadFileContent != null) {
-                return "{\"msg\":\"Scanning ${threadFileContent.replace("\\","\\\\")}\"}"
+                resp["msg"] = "Scanning " + threadFileContent.replace("\\","\\\\")
+                return mapper.writeValueAsString(resp)
             } else {
-                return "{\"msg\":\"Scan in progress\"}"
+                resp["msg"] = "Scan in progress"
+                return mapper.writeValueAsString(resp)
             }
         }
-        return "{\"msg\":\"Error\"}"
+
+        resp["msg"] = "Error"
+        return mapper.writeValueAsString(resp)
     }
 
     private fun escapeHTML(str: String): String? {

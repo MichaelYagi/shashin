@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="content(data,activePage)">
-<span th:if="${activePage == 'settings' or activePage == 'scan'}">
+<th:block th:if="${activePage == 'settings' or activePage == 'scan'}">
     <div th:replace="fragments/settings :: settings(${activePage})"></div>
-</span>
-<span th:if="${data != ''}">
+</th:block>
+<th:block th:if="${data != ''}">
     <p id="msg" th:text="${data}"></p>
-</span>
+</th:block>
 </body>
 </html>
