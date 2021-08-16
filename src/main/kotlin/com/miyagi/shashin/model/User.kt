@@ -9,7 +9,7 @@ import java.util.Objects;
 class User {
     @Id
     @GeneratedValue
-    private var id: Long = 0
+    private var id: Int = 0
     @NotBlank
     private var username: String? = null
     @NotBlank
@@ -30,7 +30,7 @@ class User {
         this.loggedIn = false
     }
 
-    fun getId(): Long {
+    fun getId(): Int {
         return this.id
     }
 

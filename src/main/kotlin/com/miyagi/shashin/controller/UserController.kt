@@ -2,17 +2,18 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
+import org.springframework.ui.set
+import org.springframework.web.bind.annotation.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.validation.Valid
 
 
-@RestController
+@Controller
 class UserController {
 
     enum class Status {
@@ -22,6 +23,17 @@ class UserController {
     private var logger: Logger = Logger.getLogger(UserController::class.simpleName)
     @Autowired
     var userRepository: UserRepository? = null
+
+    @GetMapping("/users/register")
+    fun getRegisterUser(model: Model): String {
+        val module = "register"
+        model["data"] = ""
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
     @PostMapping("/users/register")
     fun registerUser(@RequestBody newUser: @Valid User?): Status {
         val users: List<User?> = userRepository?.findAll() as List<User?>
@@ -37,6 +49,16 @@ class UserController {
         }
         userRepository!!.save(newUser!!)
         return Status.SUCCESS
+    }
+
+    @GetMapping("/users/login")
+    fun getLoginUser(model: Model): String {
+        val module = "login"
+        model["data"] = TextUtils.capitalized(module)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @PostMapping("/users/login")
