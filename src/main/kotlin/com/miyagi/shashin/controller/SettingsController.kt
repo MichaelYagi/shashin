@@ -30,7 +30,7 @@ class SettingsController {
     private var apiVersion: String? = null
     @Autowired
     private val metadataRepository: MetadataRepository? = null
-    private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
+    private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     // TODO: Stored in application.properties for now but make these user configurable
     @Value("\${app.mediaDirs}")

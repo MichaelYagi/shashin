@@ -33,4 +33,14 @@ CREATE TABLE `metadata` (
     `lastAccessedAt` datetime DEFAULT NULL,
     PRIMARY KEY (`id`)
 );
+DROP TABLE IF EXISTS `user`;
+CREATE TABLE `user` (
+    `id` bigint(20) NOT NULL,
+    `username` char(50) NOT NULL,
+    `password` char(50) NOT NULL,
+    `loggedIn` int(1) NOT NULL,
+    `createdAt` datetime DEFAULT NULL,
+    `modifiedAt` datetime DEFAULT NULL,
+    PRIMARY KEY (`id`)
+);
 INSERT INTO `hibernate_sequence` VALUES (362);

@@ -6816,3 +6816,8 @@ java.io.FileNotFoundException: C:\Users\micha\IdeaProjects\shashin\sidecar\metad
 2021-08-15 15:59:42,562 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_original.jpg
 2021-08-15 15:59:42,738 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: reface-2021-05-16-06-12-30.mp4.exif.yaml
 2021-08-15 15:59:42,749 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: reface-2021-05-16-06-12-30.mp4.yaml
+2021-08-15 17:23:52,160 WARN com.zaxxer.hikari.pool.HikariPool$HouseKeeper [HikariPool-1 housekeeper] HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=51m34s241ms254µs500ns).
+2021-08-15 19:15:56,608 WARN com.zaxxer.hikari.pool.HikariPool$HouseKeeper [HikariPool-1 housekeeper] HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h31m34s89ms918µs700ns).
+2021-08-15 19:23:37,178 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-15 19:23:37,303 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-15 19:23:37,413 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
