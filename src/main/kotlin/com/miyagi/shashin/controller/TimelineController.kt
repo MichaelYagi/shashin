@@ -41,7 +41,7 @@ class TimelineController {
         val module = "timeline"
 
         model["metadataList"] = ""
-        model["data"] = "There are no photos!"
+        model["data"] = "There are no photos. Please setup directories in Settings and scan ."
 
         val sort = Sort.by(
             Sort.Order.desc("year"),
@@ -51,7 +51,9 @@ class TimelineController {
         val metadataList = metadataRepository?.findAll(sort)
         if (metadataList != null) {
             model["metadataList"] = metadataList
-            model["data"] = ""
+            if (metadataList.count() > 0) {
+                model["data"] = ""
+            }
         }
 
         model["activePage"] = module

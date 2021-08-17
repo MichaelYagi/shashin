@@ -61,6 +61,18 @@
         $("#appTools").css("display", "none");
     })
 
+    $("#appToolsAddAlbum").click(function(e) {
+        e.preventDefault();
+
+        let metadataIdList = [];
+        $('.bi-circle-fill').each(function(i, obj) {
+            metadataIdList.push(obj.id.substring(6, obj.id.length));
+        });
+
+        $("#albumMetadataIds").val(JSON.stringify(metadataIdList));
+        $("#propAddAlbum").modal('show');
+    });
+
     $("#select[[${metadata.id}]]").click(function(e) {
         e.preventDefault();
 
