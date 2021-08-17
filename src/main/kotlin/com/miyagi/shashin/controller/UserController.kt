@@ -1,38 +1,45 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Authority
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.AuthorityRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.authentication.AnonymousAuthenticationToken
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.support.SessionStatus
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpSession
 import javax.validation.Valid
 
 
 @Controller
 class UserController {
 
-    enum class Status {
-        SUCCESS, USER_ALREADY_EXISTS, FAILURE
-    }
-
     private var logger: Logger = Logger.getLogger(UserController::class.simpleName)
     @Autowired
     var userRepository: UserRepository? = null
-    @Autowired
-    var authorityRepository: AuthorityRepository? = null
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
+    var bcrypt = BCryptPasswordEncoder()
+
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
+    @Value("\${app.role.user}")
+    private var userRole: String? = null
 
     @GetMapping("/users/register")
     fun getRegisterUser(model: Model): String {
@@ -51,116 +58,151 @@ class UserController {
         return module
     }
 
-    @RequestMapping(value = ["/users/register"], method = [RequestMethod.POST], produces = ["application/json"])
-    @ResponseBody
-    fun registerUser(@ModelAttribute newUser: @Valid User?): String? {
+    @RequestMapping(value = ["/users/register"], method = [RequestMethod.POST])
+    fun registerUser(model: Model, @ModelAttribute newUser: @Valid User?): String {
         val userCount = userRepository?.count()
 
         val users: List<User?> = userRepository?.findAll() as List<User?>
 
         logger.log(Level.INFO, "New user: " + newUser.toString())
 
+        model["user"] = User()
+        model["data"] = ""
+
+        val module = "register"
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
         for (user in users) {
-            logger.log(Level.INFO, "Already registered user: " + newUser.toString())
             if (user != null && newUser != null) {
-                if (user.sameAs(newUser)) {
-                    resp["msg"] = "User already exists"
-                    resp["status"] = "fail"
-                    return mapper.writeValueAsString(resp)
+                if (user.getUsername() == newUser.getUsername()) {
+                    logger.log(Level.INFO, "Already registered user: $newUser")
+                    model["data"] = "User already exists"
+                    return module
                 }
             }
         }
 
         if (newUser != null) {
-            val encodedPassword: String = BCryptPasswordEncoder().encode(newUser.getPassword())
+            val encodedPassword: String = bcrypt.encode(newUser.getPassword())
             newUser.setPassword(encodedPassword)
-            val authority = Authority()
             if ((userCount != null) && (userCount.toInt() == 0)) {
-                authority.setAuthority("ADMIN")
+                newUser.setAuthority("ADMIN")
             } else {
-                authority.setAuthority("USER")
+                newUser.setAuthority("USER")
             }
 
-            authority.setUserId(newUser.getId())
-            newUser.setAuthority(authority)
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
             newUser.setCreatedAt(dtf.format(now))
             newUser.setModifiedAt(dtf.format(now))
+            newUser.setLoggedIn(true)
 
-//            authorityRepository?.save(authority)
-//            userRepository?.save(newUser)
+            userRepository?.save(newUser)
 
-            resp["msg"] = "Registered!"
-            resp["status"] = "success"
-            return mapper.writeValueAsString(resp)
+            return "redirect:/users/login?msg=regsuccess"
         }
 
-        resp["msg"] = "Something went wrong"
-        resp["status"] = "fail"
-        return mapper.writeValueAsString(resp)
-
-    }
-
-    @GetMapping("/users/login")
-    fun getLoginUser(model: Model): String {
-        val module = "login"
-        model["user"] = User()
-        model["data"] = ""
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["data"] = "Something went wrong"
         return module
     }
 
-    @PostMapping("/users/login")
-    fun loginUser(@ModelAttribute user: @Valid User?): Status {
+    @GetMapping("/users/login")
+    fun getLoginUser(model: Model, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
+        val module = "login"
+
+        if (model.getAttribute("authority").toString() == adminRole) {
+            return "redirect:/timeline"
+        } else if (model.getAttribute("authority").toString() == userRole) {
+            return "redirect:/albums"
+        } else {
+            model["user"] = User()
+            model["data"] = ""
+            if (error == "401") {
+                model["data"] = "Login failed"
+            } else if (message == "regsuccess") {
+                model["data"] = "Registration succeful. Please login."
+            }
+            model["activePage"] = module
+            model["activeSidebar"] = module
+            model["titleDescriptor"] = TextUtils.capitalized(module)
+            return module
+        }
+
+        return module
+    }
+
+    @RequestMapping(value = ["/users/login"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun loginUser(@ModelAttribute user: @Valid User?, @RequestParam(name="msg",required=false) message: String?): String? {
         val users: List<User?> = userRepository?.findAll() as List<User?>
         for (other in users) {
             if (other != null && user != null) {
-                if (other.sameAs(user)) {
+                if (other.equals(user) && bcrypt.matches(user.getPassword(), other.getPassword())) {
                     user.setLoggedIn(true)
-                    userRepository!!.save(user!!)
-                    return Status.SUCCESS
+                    userRepository?.save(user)
+
+                    resp["msg"] = "Logged in!"
+                    resp["status"] = "success"
+                    return mapper.writeValueAsString(resp)
                 }
             }
         }
-        return Status.FAILURE
+
+        resp["msg"] = "Could not login"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
     }
 
-    @PostMapping("/users/logout")
-    fun logUserOut(@RequestBody user: @Valid User?): Status {
+    @GetMapping("/users/logout")
+    fun logUserOut(httpsession: HttpSession, status: SessionStatus): String {
+        val authentication = SecurityContextHolder.getContext().authentication
+
+        if (!authentication.name.isNullOrBlank()) {
+            val user = userRepository?.findByUsername(authentication.name)
+
+            if (user != null) {
+                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val now = LocalDateTime.now()
+                user.setLoggedIn(false)
+                user.setModifiedAt(dtf.format(now))
+                userRepository?.save(user)
+            }
+
+            status.setComplete();
+            httpsession.invalidate();
+            SecurityContextHolder.clearContext();
+            return "redirect:/users/login"
+        }
+        status.setComplete();
+        httpsession.invalidate();
+        SecurityContextHolder.clearContext();
+        return "redirect:/users/login"
+    }
+
+    @RequestMapping(value = ["/users/delete"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun deleteUser(@ModelAttribute user: @Valid User?): String? {
         val users: List<User?> = userRepository?.findAll() as List<User?>
         for (other in users) {
             if (other != null && user != null) {
-                if (other.sameAs(user)) {
+                if (other.equals(user)) {
                     user.setLoggedIn(false)
-                    userRepository!!.save(user!!)
-                    return Status.SUCCESS
+                    userRepository?.delete(user)
+
+                    resp["msg"] = "Deleted user " + user.getUsername()
+                    resp["status"] = "success"
+                    return mapper.writeValueAsString(resp)
                 }
             }
         }
-        return Status.FAILURE
-    }
 
-    @DeleteMapping("/users/delete")
-    fun deleteUser(@RequestBody user: @Valid User?): Status {
-        val users: List<User?> = userRepository?.findAll() as List<User?>
-        for (other in users) {
-            if (other != null && user != null) {
-                if (other.sameAs(user)) {
-                    user.setLoggedIn(false)
-                    userRepository!!.delete(user)
-                    return Status.SUCCESS
-                }
-            }
+        resp["msg"] = "Could not delete user"
+        if (user != null) {
+            resp["msg"] = "Could not delete user " + user.getUsername()
         }
-        return Status.FAILURE
-    }
-
-    @DeleteMapping("/users/deleteall")
-    fun deleteUsers(): Status {
-        userRepository!!.deleteAll()
-        return Status.SUCCESS
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
     }
 }

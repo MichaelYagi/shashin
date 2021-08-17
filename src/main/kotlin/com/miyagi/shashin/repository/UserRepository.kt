@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface UserRepository : CrudRepository<User?, Int?> {
     fun findAll(sort: Sort?): MutableIterable<User?>?
+    fun findByUsername(username: String?): User?
 }

@@ -8,17 +8,15 @@ import java.util.Objects;
 @Table(name = "user")
 class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private var id: Int = 0
     @NotBlank
     private var username: String? = null
     @NotBlank
     private var password: String? = null
     @NotBlank
-    private var loggedIn = false
-    @OneToOne
-    @JoinColumn(name = "authority")
-    private var authority: Authority? = null
+    private var loggedIn: Boolean? = false
+    private var authority: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -69,43 +67,41 @@ class User {
         this.modifiedAt = modifiedAt
     }
 
-    fun getAuthority(): Authority? {
+    fun getAuthority(): String? {
         return this.authority
     }
 
-    fun setAuthority(authority: Authority?) {
+    fun setAuthority(authority: String?) {
         this.authority = authority
     }
 
-    fun isLoggedIn(): Boolean {
-        return loggedIn
+    fun getLoggedIn(): Boolean? {
+        return this.loggedIn
     }
 
-    fun setLoggedIn(loggedIn: Boolean) {
+    fun setLoggedIn(loggedIn: Boolean?) {
         this.loggedIn = loggedIn
     }
 
-    fun sameAs(o: Any): Boolean {
+    override fun equals(o: Any?): Boolean {
         if (this === o) return true
         if (o !is User) return false
         val user: User = o
-        return Objects.equals(username, user.username) &&
-                Objects.equals(password, user.password)
+        return Objects.equals(username, user.username)
     }
 
     override fun hashCode(): Int {
         return Objects.hash(
-            id, username, password,
-            loggedIn
+            id, username, password, authority, loggedIn
         )
     }
 
     override fun toString(): String {
         return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", loggedIn=" + loggedIn +
+                "id=" + this.id +
+                ", username='" + this.username + '\'' +
+                ", authority='" + this.authority + '\'' +
+                ", loggedIn=" + this.loggedIn +
                 '}'
     }
 }

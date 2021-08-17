@@ -22,6 +22,9 @@
         <th:block th:if="${activePage == 'login'}">
         <a href="/users/register">Register</a>
         </th:block>
+        <th:block th:if="${activePage == 'register'}">
+            <a href="/users/login">Login</a>
+        </th:block>
     </form>
 </div>
 </body>

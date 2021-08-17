@@ -3,11 +3,11 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 
-<div th:replace="fragments/topnav :: topnav()"></div>
+<div th:replace="fragments/topnav :: topnav(${authority})"></div>
 
 <div class="container-fluid">
     <th:block class="row">
-        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar})"></div>
+        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar}, ${authority})"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
 
