@@ -11,25 +11,24 @@
                         Timeline
                     </a>
                 </li>
+            </th:block>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='albums' ? ' active' : ''}" href="/albums">
+                    <span class="bi-images"></span>
+                    Albums
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='comments' ? ' active' : ''}" href="/comments">
+                    <span class="bi-chat-right-text"></span>
+                    Comments
+                </a>
+            </li>
+            <th:block th:if="${authority == 'ADMIN'}">
                 <li class="nav-item">
                     <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' ? ' active' : ''}" href="/settings">
                         <span class="bi-wrench"></span>
                         Settings
-                    </a>
-                </li>
-            </th:block>
-
-            <th:block th:if="${authority == 'USER' or authority == 'ADMIN'}">
-                <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='albums' ? ' active' : ''}" href="/albums">
-                        <span class="bi-images"></span>
-                        Albums
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='comments' ? ' active' : ''}" href="/comments">
-                        <span class="bi-chat-right-text"></span>
-                        Comments
                     </a>
                 </li>
             </th:block>

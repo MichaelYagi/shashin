@@ -54,4 +54,14 @@ CREATE TABLE `mediadir` (
     `modifiedAt` datetime DEFAULT NULL
 );
 
+DROP TABLE IF EXISTS `album`;
+CREATE TABLE `album` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `metadataId` varchar(36) NOT NULL,
+    `createdAt` datetime DEFAULT NULL,
+    `modifiedAt` datetime DEFAULT NULL,
+    FOREIGN KEY (`metadataId`)
+    REFERENCES metadata ('id')
+);
+
 INSERT INTO `hibernate_sequence` VALUES (362);

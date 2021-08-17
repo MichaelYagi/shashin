@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="addalbummodal()">
+<div class="modal fade" id="propAddAlbum" tabindex="-1" role="dialog" aria-labelledby="labelAddAlbum" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos</th:block></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="tab-content">
+                    <form id="saveBatchData">
+                        <input type="hidden" id="albumMetadataIds" name="albumMetadataIds" value="">
+
+                        <div class="form-group row">
+                            <div class="col-sm">
+                                <label for="dayTakenBatchData" class="col-form-label">Day</label>
+                                <input type="text" class="form-control" id="dayTakenBatchData" name="dayTakenBatchData" value="">
+                            </div>
+                            <div class="col-sm">
+                                <label for="monthTakenBatchData" class="col-form-label">Month</label>
+                                <input type="text" class="form-control" id="monthTakenBatchData" name="monthTakenBatchData" value="">
+                            </div>
+                            <div class="col-sm">
+                                <label for="yearTakenBatchData" class="col-form-label">Year</label>
+                                <input type="text" class="form-control" id="yearTakenBatchData" name="yearTakenBatchData" value="">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm">
+                                <label for="latBatchData" class="col-form-label">Latitude</label>
+                                <input type="text" class="form-control" id="latBatchData" name="latBatchData" value="">
+                            </div>
+                            <div class="col-sm">
+                                <label for="lngBatchData" class="col-form-label">Longitude</label>
+                                <input type="text" class="form-control" id="lngBatchData" name="lngBatchData" value="">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveAlbum">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+            <script type="text/javascript">
+                // TODO:Fill drop down of existing albums
+
+                $.fn.serializeObject = function() {
+                    var o = {};
+                    var a = this.serializeArray();
+                    $.each(a, function() {
+                        if (o[this.name]) {
+                            if (!o[this.name].push) {
+                                o[this.name] = [o[this.name]];
+                            }
+                            o[this.name].push(this.value || '');
+                        } else {
+                            o[this.name] = this.value || '';
+                        }
+                    });
+                    return o;
+                };
+
+                $("#saveAlbum").click(function (e) {
+                    e.preventDefault();
+
+                    // if (validateInputs(
+                    //     $("#dayTakenBatchData").val(),
+                    //     $("#monthTakenBatchData").val(),
+                    //     $("#yearTakenBatchData").val(),
+                    //     $("#latBatchData").val(),
+                    //     $("#lngBatchData").val(),
+                    //     "msgBatchMetadata"
+                    // ) === true) {
+                    //
+                    //     const posting = $.post({
+                    //         url: "/timeline/update/batch",
+                    //         data: JSON.stringify($('#saveBatchData').serializeObject()),
+                    //         contentType: 'application/json; charset=utf-8'
+                    //     });
+                    //
+                    //     posting.done(function (data) {
+                    //         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    //             let message = "Error";
+                    //             if (data["status"] === "success") {
+                    //                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                    //             } else {
+                    //                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    //             }
+                    //             $("#msgBatchMetadata").html(message);
+                    //             window.top.location = window.top.location
+                    //         }
+                    //     });
+                    // }
+
+                    return false;
+                });
+            </script>
+        </div>
+    </div>
+</div>
+</body>
+</html>

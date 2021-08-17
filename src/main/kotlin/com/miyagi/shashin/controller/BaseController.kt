@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.util.TextUtils
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
@@ -23,6 +24,10 @@ class BaseController {
             model["authority"] = authority.authority
         }
         model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)
+        model["titleDescriptor"] = ""
+        model["data"] = ""
+        model["activePage"] = ""
+        model["activeSidebar"] = ""
         model["titleDescriptor"] = ""
     }
 }
