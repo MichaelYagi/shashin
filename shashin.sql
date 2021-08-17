@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS `hibernate_sequence`;
 CREATE TABLE `hibernate_sequence` (
     `next_val` bigint(20) DEFAULT NULL
 );
+
 DROP TABLE IF EXISTS `metadata`;
 CREATE TABLE `metadata` (
     `id` varchar(36) NOT NULL DEFAULT '00000000-00000000-00000000-00000000',
@@ -33,6 +34,7 @@ CREATE TABLE `metadata` (
     `lastAccessedAt` datetime DEFAULT NULL,
     PRIMARY KEY (`id`)
 );
+
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -43,4 +45,13 @@ CREATE TABLE `user` (
     `createdAt` datetime DEFAULT NULL,
     `modifiedAt` datetime DEFAULT NULL
 );
+
+DROP TABLE IF EXISTS `mediadir`;
+CREATE TABLE `mediadir` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `directory` char(150) NOT NULL,
+    `createdAt` datetime DEFAULT NULL,
+    `modifiedAt` datetime DEFAULT NULL
+);
+
 INSERT INTO `hibernate_sequence` VALUES (362);

@@ -10,6 +10,18 @@
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar}, ${authority})"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <br>
+            <form id="saveSettingsForm" method="post" action="/settings">
+                <div class="col-12">
+                    <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma seperated)</strong></label>
+                    <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                </div>
+                <br>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
+                </div>
+            </form>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>
     </div>
