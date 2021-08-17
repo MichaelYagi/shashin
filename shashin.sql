@@ -38,15 +38,9 @@ CREATE TABLE `user` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `username` char(50) NOT NULL,
     `password` char(50) NOT NULL,
-    `loggedIn` int(1) NOT NULL,
+    `authority` VARCHAR(50) NOT NULL,
+    `loggedIn` BOOLEAN DEFAULT NULL CHECK (`loggedIn` IN (0, 1)),
     `createdAt` datetime DEFAULT NULL,
     `modifiedAt` datetime DEFAULT NULL
-);
-DROP TABLE IF EXISTS `authorities`;
-CREATE TABLE `authorities` (
-    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `userId` INTEGER NOT NULL,
-    `authority` VARCHAR(50) NOT NULL,
-    FOREIGN KEY (`userId`) REFERENCES `user`(`id`)
 );
 INSERT INTO `hibernate_sequence` VALUES (362);

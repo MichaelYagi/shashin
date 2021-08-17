@@ -1,7 +1,9 @@
 package com.miyagi.shashin.configuration
 
-import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.component.AuthFailureHandler
+import com.miyagi.shashin.component.AuthSuccessHandler
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
@@ -18,10 +20,19 @@ import javax.sql.DataSource
 class WebSecurityConfig: WebSecurityConfigurerAdapter() {
 
     @Autowired
-    var userRepository: UserRepository? = null
+    private val dataSource: DataSource? = null
 
     @Autowired
-    private val dataSource: DataSource? = null
+    private val authFailureHandler: AuthFailureHandler? = null
+
+    @Autowired
+    private val authSuccessHandler: AuthSuccessHandler? = null
+    
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
+    @Value("\${app.role.user}")
+    private var userRole: String? = null
 
     @Bean
     fun passwordEncoder(): PasswordEncoder? {
@@ -35,42 +46,24 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
             .dataSource(dataSource)
             .passwordEncoder(passwordEncoder())
             .usersByUsernameQuery(
-                "SELECT username, password from users where username = ?")
+                "SELECT username, password, TRUE from user where username = ?")
             .authoritiesByUsernameQuery(
-                "SELECT u.username, a.authority " +
-                        "FROM authorities a, users u " +
-                        "WHERE u.username = ? " +
-                        "AND u.id = a.user_id"
-            );
+                "SELECT username, authority from user where username = ?");
     }
 
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
             .authorizeRequests()
-                .antMatchers("/css/**", "/js/**", "/", "/share", "/users/register", "/api/**").permitAll()
-                .antMatchers("/settings/**").hasAnyRole("ADMIN")
-                .antMatchers("/comments/**", "album/**").hasRole("USER")
+                .antMatchers("/css/**", "/js/**", "/api/**", "/share", "/users/register", "/users/login", "/users/logout").permitAll()
+                .antMatchers("settings/**", "timeline/**", "users/delete").hasRole(adminRole)
+                .antMatchers("comments/**", "albums/**").hasAnyRole(userRole, adminRole)
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
                 .loginPage("/users/login")
-                .permitAll()
-                .and()
-            .logout()
-                .invalidateHttpSession(true)
-                .clearAuthentication(true)
-                .logoutSuccessUrl("/users/login?logout")
+                .successHandler(authSuccessHandler)
+                .failureHandler(authFailureHandler)
                 .permitAll()
     }
-//
-//    fun loadUserById(id: Int): UserDetails? {
-//        val user = userRepository?.findById(id)
-//
-//        if (user != null) {
-//            return UserPrincipal(user.get())
-//        }
-//
-//        return null
-//    }
 }

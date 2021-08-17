@@ -1,54 +1,38 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="sidebar(activeSidebar)">
+<body th:fragment="sidebar(activeSidebar, authority)">
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
-            <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' ? ' active' : ''}" href="/settings">
-                    <span class="bi-wrench"></span>
-                    Settings
-                </a>
-            </li>
-            <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline">
-                    <span class="bi-calendar4"></span>
-                    Timeline
-                </a>
-            </li>
-        </ul>
+            <th:block th:if="${authority == 'ADMIN'}">
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline">
+                        <span class="bi-calendar4"></span>
+                        Timeline
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' ? ' active' : ''}" href="/settings">
+                        <span class="bi-wrench"></span>
+                        Settings
+                    </a>
+                </li>
+            </th:block>
 
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-            <span>Saved reports</span>
-            <a class="d-flex align-items-center text-muted" href="#">
-                <span data-feather="plus-circle"></span>
-            </a>
-        </h6>
-        <ul class="nav flex-column mb-2">
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="file-text"></span>
-                    Current month
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="file-text"></span>
-                    Last quarter
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="file-text"></span>
-                    Social engagement
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <span data-feather="file-text"></span>
-                    Year-end sale
-                </a>
-            </li>
+            <th:block th:if="${authority == 'USER' or authority == 'ADMIN'}">
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='albums' ? ' active' : ''}" href="/albums">
+                        <span class="bi-images"></span>
+                        Albums
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='comments' ? ' active' : ''}" href="/comments">
+                        <span class="bi-chat-right-text"></span>
+                        Comments
+                    </a>
+                </li>
+            </th:block>
         </ul>
     </div>
 </nav>
