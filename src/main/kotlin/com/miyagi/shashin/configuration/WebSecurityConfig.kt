@@ -27,7 +27,7 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
 
     @Autowired
     private val authSuccessHandler: AuthSuccessHandler? = null
-    
+
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
@@ -57,7 +57,7 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
             .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/api/**", "/share", "/users/register", "/users/login", "/users/logout").permitAll()
                 .antMatchers("settings/**", "timeline/**", "users/delete").hasRole(adminRole)
-                .antMatchers("comments/**", "albums/**").hasAnyRole(userRole, adminRole)
+                .antMatchers("comments/**", "albums/**", "settings/users/edit").hasAnyRole(userRole, adminRole)
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
@@ -65,5 +65,7 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
                 .successHandler(authSuccessHandler)
                 .failureHandler(authFailureHandler)
                 .permitAll()
+                .and()
+            .csrf().disable()
     }
 }

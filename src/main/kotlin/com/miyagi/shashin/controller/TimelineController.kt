@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.repository.MediaDirectoryRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
@@ -30,8 +31,8 @@ class TimelineController {
     private lateinit var relativeSidecarDir: String
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
-    @Value("\${app.mediaDirs}")
-    lateinit var rootMediaDirs: Array<String>
+    @Autowired
+    private val mediaDirRepository: MediaDirectoryRepository? = null
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -76,11 +77,14 @@ class TimelineController {
             val imageProcessingUtils = ImageProcessingUtils(apiVersion)
             val originalImagePath = metadataObj.get().getPath()
             var rootDir: String? = null
-            for (rootmediaDir in rootMediaDirs) {
-                if (originalImagePath != null) {
-                    if (originalImagePath.replace('\\', '/').contains(rootmediaDir)) {
-                        rootDir = rootmediaDir
-                        break
+            val rootMediaDirs = mediaDirRepository?.findAll()
+            if (rootMediaDirs != null) {
+                for (rootmediaDir in rootMediaDirs) {
+                    if (originalImagePath != null && rootmediaDir != null) {
+                        if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                            rootDir = rootmediaDir.getDirectory()
+                            break
+                        }
                     }
                 }
             }
@@ -174,11 +178,14 @@ class TimelineController {
                 for (metadata in metadataList) {
                     val originalImagePath = metadata.getPath()
                     var rootDir: String? = null
-                    for (rootmediaDir in rootMediaDirs) {
-                        if (originalImagePath != null) {
-                            if (originalImagePath.replace('\\', '/').contains(rootmediaDir)) {
-                                rootDir = rootmediaDir
-                                break
+                    val rootMediaDirs = mediaDirRepository?.findAll()
+                    if (rootMediaDirs != null) {
+                        for (rootmediaDir in rootMediaDirs) {
+                            if (originalImagePath != null && rootmediaDir != null) {
+                                if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                                    rootDir = rootmediaDir.getDirectory()
+                                    break
+                                }
                             }
                         }
                     }

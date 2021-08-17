@@ -1,7 +1,9 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.repository.MediaDirectoryRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessingUtils
@@ -17,6 +19,9 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.ArrayList
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.stream.Collectors
@@ -27,23 +32,64 @@ class SettingsController {
 
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
+
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
+
     @Autowired
     private val metadataRepository: MetadataRepository? = null
-    private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
-    // TODO: Stored in application.properties for now but make these user configurable
-    @Value("\${app.mediaDirs}")
-    lateinit var mediaDirs: Array<String>
+    @Autowired
+    private val mediaDirRepository: MediaDirectoryRepository? = null
+
+    private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
     @GetMapping("/settings")
-    fun getIndex(model: Model): String {
+    fun getSettings(model: Model): String {
+        val mediaDirectories = mediaDirRepository?.findAll()
+
         val module = "settings"
-        model["data"] = "This is the settings page"
+        model["data"] = ""
+        model["mediaDirList"] = ""
+        if (mediaDirectories != null) {
+            model["mediaDirList"] = mediaDirectories.joinToString { it -> "${it?.getDirectory()}" }
+        }
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
+    fun postSettings(model: Model, @RequestParam("mediaDirList") mediaDirList: String): String {
+        if (!mediaDirList.isNullOrBlank()) {
+            val mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
+            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val now = LocalDateTime.now()
+            val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
+
+            if (mediaDirs.isNotEmpty()) {
+                for (mediaDir in mediaDirs) {
+                    var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
+                    if (mediaDirObj == null) {
+                        mediaDirObj = MediaDirectory()
+                        mediaDirObj.setDirectory(mediaDir)
+                    }
+                    mediaDirObj.setCreatedAt(dtf.format(now))
+                    mediaDirObj.setModifiedAt(dtf.format(now))
+                    mediaDirArrayList.add(mediaDirObj)
+                }
+                mediaDirRepository?.saveAll(mediaDirArrayList)
+            }
+        }
+
+        val module = "settings"
+        model["data"] = ""
+        model["mediaDirList"] = ""
+        model["mediaDirList"] = mediaDirList.trim()
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -91,8 +137,13 @@ class SettingsController {
                     val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
                     if (threadFile != null) {
 
-                        for (mediaDir in mediaDirs) {
-                            getFile(mediaDir, threadFile, sidecarDir, mediaDir)
+                        val mediaDirs = mediaDirRepository?.findAll()
+                        if (mediaDirs != null) {
+                            for (mediaDir in mediaDirs) {
+                                if (mediaDir != null) {
+                                    getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
+                                }
+                            }
                         }
 
                         // Delete thread file
@@ -120,12 +171,6 @@ class SettingsController {
 
         resp["msg"] = "Error"
         return mapper.writeValueAsString(resp)
-    }
-
-    private fun escapeHTML(str: String): String? {
-        return str.chars().mapToObj { c: Int ->
-            if (c > 127 || "\"'<>&".indexOf(c.toChar()) != -1) "&#$c;" else c.toChar().toString()
-        }.collect(Collectors.joining())
     }
 
     private fun threadIsAlive(threadName: String): Boolean {

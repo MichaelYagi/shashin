@@ -1,5 +1,7 @@
 package com.miyagi.shashin.configuration
 
+import com.miyagi.shashin.repository.MediaDirectoryRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.FileSystemResource
@@ -17,17 +19,18 @@ class MvcConfig : WebMvcConfigurer {
     private val relativeSidecarDir: String? = null
     @Value("\${app.api.version}")
     private val apiVersion: String? = null
-    @Value("\${app.mediaDirs}")
-    private val mediaDirs: Array<String>? = null
+    @Autowired
+    private val mediaDirRepository: MediaDirectoryRepository? = null
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         val rootPath = FileSystemResource("").file.absolutePath
         var thumbnailDir = "file:///$rootPath$relativeSidecarDir"+"thumbnails/"
         thumbnailDir = thumbnailDir.replace('\\', '/').lowercase()
 
+        val mediaDirs = mediaDirRepository?.findAll()
         if (mediaDirs != null) {
             for (mediaDir in mediaDirs) {
-                val _mediaDir = mediaDir.lowercase()
+                val _mediaDir = mediaDir?.getDirectory().toString().lowercase()
                 val parentDir = Paths.get(_mediaDir)
                 val parentDirString = parentDir.fileName.toString().lowercase()
 
