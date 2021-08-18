@@ -136,7 +136,11 @@ footer {
   padding-top: 15px;
 }
 
-#appTools {
+#timelineAppTools {
+  display: none;
+}
+
+#albumAppTools {
   display: none;
 }
 

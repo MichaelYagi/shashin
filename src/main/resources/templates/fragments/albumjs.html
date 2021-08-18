@@ -1,41 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="timelinejs(metadata)">
+<body th:fragment="albumjs(album, metadata)">
 <script type="text/javascript">
-    function validateInputs(day, month, year, lat, lng, msgId) {
-        var dayValidate = "([1-9]|[12]\d|3[01])";
-        var monthValidate = "^(0?[1-9]|1[012])$";
-
-        var msg = "";
-        if (day !== "" && !day.match(dayValidate)) {
-            msg = "Enter Valid Day";
-        }
-
-        if (month !== "" && !month.match(monthValidate)) {
-            msg = "Enter Valid Month";
-        }
-
-        if (year !== "" && !(+year >= 1888 && +year <= new Date().getFullYear())) {
-            msg = "Enter Valid Year";
-        }
-
-        if (lat !== "" && lat % 1 === 0) {
-            msg = "Enter Valid Latitude";
-        }
-
-        if (lng !== "" && lng % 1 === 0) {
-            msg = "Enter Valid Longitude";
-        }
-
-        if (msg !== "") {
-            $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
-            return false;
-        } else {
-            return true;
-        }
-
-    }
-
     $("#appToolsBatchEdit").click(function(e) {
         e.preventDefault();
 

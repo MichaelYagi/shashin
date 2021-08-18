@@ -16,8 +16,46 @@
                 <div class="row">
                     <th:block th:each="metadata, iterStat: ${albumMetadataList}">
                         <div class="photo-thumbnail-container photo-thumbnail">
-                            <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'albumImage'+${metadata.id}">
+                            <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+
+                            <th:block th:if="${metadata.type.contains('video')}">
+                                <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
+                                </div>
+                            </th:block>
+
+                            <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                                <a href="#" th:id="'select'+${metadata.id}">
+                                    <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: steelblue;"></span>
+                                </a>
+                            </div>
+
+                            <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
+                                <a href="#" data-toggle="modal" th:data-target="'#propalbum'+${metadata.id}">
+                                    <span class="bi-pencil" style="font-size: 1rem;color: steelblue;"></span>
+                                </a>
+                            </div>
+
+                            <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
+                                <th:block th:unless="${metadata.type.contains('video')}">
+                                    <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
+                                        <span class="bi-play-circle" style="font-size: 4rem;color: steelblue;"></span>
+                                    </a>
+                                </th:block>
+                                <th:block th:if="${metadata.type.contains('video')}">
+                                    <a th:href="${metadata.videoUrl}"
+                                       data-featherlight="iframe"
+                                       data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
+                                       data-featherlight-iframe-frameborder="0"
+                                       data-featherlight-iframe-allowfullscreen="true">
+                                        <span class="bi-play-circle" style="font-size: 4rem;color: steelblue;"></span>
+                                    </a>
+                                </th:block>
+                            </div>
                         </div>
+
+                        <div th:replace="fragments/albummodal :: albummodal(${album}, ${metadata})"></div>
+                        <div th:replace="fragments/albumjs :: albumjs(${album}, ${metadata})"></div>
                     </th:block>
                 </div>
             </th:block>
@@ -26,6 +64,13 @@
         </main>
     </div>
 </div>
-</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    });
+</script>
 </body>
 </html>

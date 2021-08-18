@@ -4,10 +4,14 @@
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-2 col-md-1 mr-0" th:href="${authority == 'ADMIN' ? '/timeline' : '/albums'}">Shashin</a>
     <input id="appSearch" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
-    <div id="appTools">
+    <div id="timelineAppTools">
         <a href="#" id="appToolsBatchEdit" data-toggle="tooltip" data-placement="bottom" title="Edit Photos"><span class="bi-pencil" style="font-size: 1.5rem;color: whitesmoke;"></span></a>&nbsp;&nbsp;
         <a href="#" id="appToolsAddAlbum" data-toggle="tooltip" data-placement="bottom" title="Add To Album"><span class="bi-images" style="font-size: 1.5rem;color: whitesmoke;"></span></a>&nbsp;&nbsp;
         <a href="#" id="appToolsDeselectAll" data-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: whitesmoke;"></span></a>
+    </div>
+    <div id="albumAppTools">
+        <a href="#" id="albumAppToolsAddAlbum" data-toggle="tooltip" data-placement="bottom" title="Remove From Album"><span class="bi-bookmark-x" style="font-size: 1.5rem;color: whitesmoke;"></span></a>&nbsp;&nbsp;
+        <a href="#" id="albumAppToolsDeselectAll" data-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: whitesmoke;"></span></a>
     </div>
     <ul class="navbar-nav px-3">
         <li class="nav-item text-nowrap">
