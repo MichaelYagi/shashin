@@ -5,4 +5,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countByMetadataIdAndAlbumId(metdataId: String?, albumId: Int?): Int?
+    fun countByAlbumId(albumId: Int?): Int?
 }

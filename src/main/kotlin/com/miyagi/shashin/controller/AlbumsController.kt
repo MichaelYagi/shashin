@@ -43,20 +43,33 @@ class AlbumsController {
         val module = "albums"
         model["data"] = "There are no albums."
         model["albumsList"] = ""
+        model["albumsCount"] = ""
 
         val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
         if (currentUserObj != null) {
             val userAlbums = userAlbumRepository.findAllByUserId(currentUserObj.getId())
             if (userAlbums != null) {
                 if (userAlbums.count() > 0) {
-                    model["data"] = ""
-                    val albums = HashMap<String, Album>()
+                    val albums = ArrayList<Album>()
+                    val albumCounts = ArrayList<Int>()
+                    var albumCount = 0
                     for (userAlbum in userAlbums) {
                         if (userAlbum?.getAlbumId() != null) {
+                            albumCount = 0
                             val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
+                            val albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum.getAlbumId()!!)
+                            if (albumPhotoCount != null) {
+                                albumCount = albumPhotoCount
+                            }
+                            albumCounts.add(albumCount)
+                            albums.add(albumObj.get())
                         }
                     }
-                    model["albumsList"] = albums
+                    if (albums.count() > 0) {
+                        model["albumsList"] = albums
+                        model["albumsCount"] = albumCounts
+                        model["data"] = ""
+                    }
                 }
             }
         }
