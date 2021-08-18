@@ -60,6 +60,7 @@ DROP TABLE IF EXISTS `album`;
 CREATE TABLE `album` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `name` varchar(100) NOT NULL UNIQUE,
+    `coverUrl` varchar(255) DEFAULT NULL,
     `createdAt` datetime DEFAULT NULL,
     `modifiedAt` datetime DEFAULT NULL
 );
