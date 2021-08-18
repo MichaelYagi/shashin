@@ -16,6 +16,7 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.transaction.Transactional
 
 
 @Controller
@@ -78,6 +79,69 @@ class AlbumsController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @RequestMapping(value = ["/album/update/{metadataId}/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun updateAlbum(@RequestBody requestBody: JsonNode): String? {
+        val albumOptionsMapper = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (albumOptionsMapper.containsKey("removeFromAlbum") &&
+            albumOptionsMapper.containsKey("setCoverAlbum") &&
+            albumOptionsMapper.containsKey("metadataId") &&
+            albumOptionsMapper.containsKey("albumId")
+        ) {
+            val albumId = albumOptionsMapper["albumId"].toString().toInt()
+            val metadataId = albumOptionsMapper["metadataId"].toString()
+            val removeFromAlbum = albumOptionsMapper["removeFromAlbum"].toString().toBoolean()
+            val setCoverAlbum = albumOptionsMapper["setCoverAlbum"].toString().toBoolean()
+
+            if (removeFromAlbum) {
+                albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
+                val count = albumPhotoRepository.countByAlbumId(albumId)
+
+                if (count != null) {
+                    if (count.toInt() > 0) {
+                        var metadataObj = metadataRepository.findById(metadataId)
+                        val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
+                        val album = albumRepository.findById(albumId)
+                        if (album.get().getCoverUrl() == coverAlbumUrl) {
+                            // Use the first photo in album
+                            val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
+                            if (albumPhoto != null) {
+                                metadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
+                                album.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                                albumRepository.save(album.get())
+                            }
+                        }
+
+                    } else {
+                        userAlbumRepository.deleteByAlbumId(albumId)
+                        albumRepository.deleteById(albumId)
+                        resp["msg"] = "/albums"
+                        resp["status"] = "redirect"
+                        return mapper.writeValueAsString(resp)
+                    }
+                }
+            } else if (setCoverAlbum) {
+                val metadataObj = metadataRepository.findById(metadataId)
+                val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
+                val album = albumRepository.findById(albumId)
+                album.get().setCoverUrl(coverAlbumUrl)
+                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val now = LocalDateTime.now()
+                album.get().setModifiedAt(dtf.format(now))
+                albumRepository.save(album.get())
+            }
+
+            resp["msg"] = "Saved!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
     }
 
     @RequestMapping(value = ["/album/{albumId}"], method = [RequestMethod.GET])

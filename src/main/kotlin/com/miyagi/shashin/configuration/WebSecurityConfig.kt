@@ -54,6 +54,8 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
+            .headers().frameOptions().sameOrigin()
+                .and()
             .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/api/**", "/share", "/users/register", "/users/login", "/users/logout").permitAll()
                 .antMatchers("settings/**", "timeline/**", "users/delete", "albums/add").hasRole(adminRole)

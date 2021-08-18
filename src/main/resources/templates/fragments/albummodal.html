@@ -14,31 +14,18 @@
                 <form th:id="'saveData'+${metadata.id}">
                     <input type="hidden" name="id" th:value="${metadata.id}">
 
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <label th:for="'dayTaken'+${metadata.id}" class="col-form-label">Day</label>
-                            <input type="text" class="form-control" th:id="'dayTaken'+${metadata.id}" name="day" th:value="${metadata.day}">
-                        </div>
-                        <div class="col-sm">
-                            <label th:for="'monthTaken'+${metadata.id}" class="col-form-label">Month</label>
-                            <input type="text" class="form-control" th:id="'monthTaken'+${metadata.id}" name="month" th:value="${metadata.month}">
-                        </div>
-                        <div class="col-sm">
-                            <label th:for="'yearTaken'+${metadata.id}" class="col-form-label">Year</label>
-                            <input type="text" class="form-control" th:id="'yearTaken'+${metadata.id}" name="year" th:value="${metadata.year}">
-                        </div>
+                    <div class="col-auto form-check">
+                        <input type="checkbox" class="form-check-input" th:id="'removeFromAlbum'+${metadata.id}" name="removeFromAlbum">
+                        <label class="form-check-label" th:for="'removeFromAlbum'+${metadata.id}">Remove from album</label>
                     </div>
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <label th:for="'lat'+${metadata.id}" class="col-form-label">Latitude</label>
-                            <input type="text" class="form-control" th:id="'lat'+${metadata.id}" name="lat" th:value="${metadata.lat}">
-                        </div>
-                        <div class="col-sm">
-                            <label th:for="'lng'+${metadata.id}" class="col-form-label">Longitude</label>
-                            <input type="text" class="form-control" th:id="'lng'+${metadata.id}" name="lng" th:value="${metadata.lng}">
-                        </div>
+                    <div class="col-auto form-check">
+                        <input type="checkbox" class="form-check-input" th:id="'setCoverAlbum'+${metadata.id}" name="setCoverAlbum">
+                        <label class="form-check-label" th:for="'setCoverAlbum'+${metadata.id}">Set as album cover</label>
                     </div>
                 </form>
+                <div class="col-sm">
+                    <span th:id="'msg'+${metadata.id}"></span>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" th:id="'saveAlbum'+${metadata.id}">Save</button>
@@ -61,26 +48,46 @@
                     return o;
                 };
 
+                $('#removeFromAlbum[[${metadata.id}]]').change(function() {
+                    if (this.checked) {
+                        $('#setCoverAlbum[[${metadata.id}]]').prop("checked", false);
+                        $('#setCoverAlbum[[${metadata.id}]]').attr("disabled", true);
+                    } else {
+                        $('#setCoverAlbum[[${metadata.id}]]').removeAttr("disabled");
+                    }
+                });
+
                 /*<![CDATA[*/
                 $("#saveAlbum[[${metadata.id}]]").click(function (e) {
                     e.preventDefault();
 
+                    let requestJson = {
+                        removeFromAlbum:$("#removeFromAlbum[[${metadata.id}]]").prop("checked"),
+                        setCoverAlbum:$("#setCoverAlbum[[${metadata.id}]]").prop("checked"),
+                        metadataId:"[[${metadata.id}]]",
+                        albumId:[[${album.id}]]
+                    }
+
                     const posting = $.post({
-                        url: "/album/update/[[${metadata.id}]]_[[${album.id}]]",
-                        data: JSON.stringify($('#saveData[[${metadata.id}]]').serializeObject()),
+                        url: "/album/update/[[${metadata.id}]]/[[${album.id}]]",
+                        data: JSON.stringify(requestJson),
                         contentType: 'application/json; charset=utf-8'
                     });
 
                     posting.done(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            if (data["status"] === "redirect") {
+                                window.location.replace(data["msg"]);
                             } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                let message = "Error";
+                                if (data["status"] === "success") {
+                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                } else {
+                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                }
+                                $("#msg[[${metadata.id}]]").html(message);
+                                window.top.location = window.top.location
                             }
-                            $("#msg[[${metadata.id}]]").html(message);
-                            window.top.location = window.top.location
                         }
                     });
 
