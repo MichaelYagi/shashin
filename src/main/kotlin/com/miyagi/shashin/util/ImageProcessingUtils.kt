@@ -299,11 +299,20 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             // Scale to different sizes and save
             var thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
             var tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            val scaled209: BufferedImage = scaleImageByHeight(img, 209)
             if (tnFile != null) {
-                val scaled209: BufferedImage = scaleImageByHeight(img, 209)
                 ImageIO.write(scaled209, "jpg", tnFile)
                 metadataObj?.setThumbnailPathSmall(tnFile.path)
                 metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+            }
+
+            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered.jpg"
+            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            if (tnFile != null) {
+                val square: BufferedImage = getSquareThumbnail(scaled209)
+                ImageIO.write(square, "jpg", tnFile)
+                metadataObj?.setThumbnailPathCentered(tnFile.path)
+                metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
 
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original.jpg"
@@ -410,6 +419,14 @@ class ImageProcessingUtils(private var apiVersion: String?) {
         g2d.drawRenderedImage(source, at)
         g2d.dispose()
         return bi
+    }
+
+    private fun getSquareThumbnail(source: BufferedImage): BufferedImage {
+        // Get a square thumbnail
+        val side = Math.min(source.width, source.height)
+        val x = (source.width - side) / 2
+        val y = (source.height - side) / 2
+        return source.getSubimage(x, y, side, side)
     }
 
     private fun getCompatibleImage(w: Int, h: Int): BufferedImage {
