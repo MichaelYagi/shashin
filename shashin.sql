@@ -57,11 +57,33 @@ CREATE TABLE `mediadir` (
 DROP TABLE IF EXISTS `album`;
 CREATE TABLE `album` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `metadataId` varchar(36) NOT NULL,
+    `name` varchar(100) NOT NULL UNIQUE,
+    `createdAt` datetime DEFAULT NULL,
+    `modifiedAt` datetime DEFAULT NULL
+);
+
+DROP TABLE IF EXISTS `useralbum`;
+CREATE TABLE `useralbum` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `userId` INTEGER,
+    `albumId` INTEGER,
     `createdAt` datetime DEFAULT NULL,
     `modifiedAt` datetime DEFAULT NULL,
-    FOREIGN KEY (`metadataId`)
-    REFERENCES metadata ('id')
+    UNIQUE(`albumId`, `userId`) ON CONFLICT IGNORE,
+    FOREIGN KEY (`albumId`) REFERENCES album(`id`),
+    FOREIGN KEY (`userId`) REFERENCES user(`id`)
+);
+
+DROP TABLE IF EXISTS `albumphoto`;
+CREATE TABLE `albumphoto` (
+     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+     `metadataId` varchar(36),
+     `albumId` INTEGER,
+     `createdAt` datetime DEFAULT NULL,
+     `modifiedAt` datetime DEFAULT NULL,
+     UNIQUE(`albumId`, `metadataId`) ON CONFLICT IGNORE,
+    FOREIGN KEY (`albumId`) REFERENCES album(`id`),
+    FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`)
 );
 
 INSERT INTO `hibernate_sequence` VALUES (362);

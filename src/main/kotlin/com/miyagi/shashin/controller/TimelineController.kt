@@ -3,22 +3,20 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MediaDirectoryRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.AlbumPhotoRepository
+import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.io.FileSystemResource
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.io.File
 import java.util.*
 
 
@@ -27,12 +25,19 @@ class TimelineController {
 
     @Autowired
     private val metadataRepository: MetadataRepository? = null
+
     @Value("\${app.sidecar.path}")
     private lateinit var relativeSidecarDir: String
+
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
+
     @Autowired
     private val mediaDirRepository: MediaDirectoryRepository? = null
+
+    @Autowired
+    private val albumRepository: AlbumRepository? = null
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -40,7 +45,6 @@ class TimelineController {
     fun getTimeline(model: Model): String {
         val module = "timeline"
 
-        model["metadataList"] = ""
         model["data"] = "There are no photos. Please setup directories in Settings and scan ."
 
         val sort = Sort.by(
@@ -48,12 +52,20 @@ class TimelineController {
             Sort.Order.desc("month"),
             Sort.Order.desc("day")
         )
+
+        model["metadataList"] = ""
         val metadataList = metadataRepository?.findAll(sort)
         if (metadataList != null) {
             model["metadataList"] = metadataList
             if (metadataList.count() > 0) {
                 model["data"] = ""
             }
+        }
+
+        model["albumList"] = ""
+        val albumList = albumRepository?.findAll()
+        if (albumList != null && albumList.count() > 0) {
+            model["albumList"] = albumList
         }
 
         model["activePage"] = module
