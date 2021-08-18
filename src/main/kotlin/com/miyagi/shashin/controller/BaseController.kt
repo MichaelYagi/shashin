@@ -37,7 +37,7 @@ class BaseController {
                 model["authority"] = authority.authority
             }
         } catch(e: Exception) {
-            logger.log(Level.SEVERE, "Error getting authority: " + e.message)
+            logger.log(Level.WARNING, "Error getting authority: " + e.message)
         }
         model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)
         model["titleDescriptor"] = ""

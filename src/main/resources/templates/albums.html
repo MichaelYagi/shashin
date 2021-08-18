@@ -6,16 +6,16 @@
 <div th:replace="fragments/topnav :: topnav(${authority})"></div>
 
 <div class="container-fluid">
-    < class="row">
+    <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar}, ${authority})"></div>
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+        <main role="main" class="col-md-10 col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
 
             <th:block th:if="${albumsList != '' and albumsCount != ''}">
                 <div class="card-group">
                     <th:block th:each="album, iterStat: ${albumsList}">
                         <div class="card" style="width: 209px;">
-                            <a href="#" style="text-decoration: none !important;color: black;">
+                            <a th:href="'/album/'+${album.id}"  style="text-decoration: none !important;color: black;" th:id="'album'+${album.id}">
                                 <img class="card-img-top" th:src="${album.coverUrl}" th:alt="${album.name}">
                                 <div class="card-body">
                                     <p class="card-text"><strong th:text="${album.name}"></strong></p>

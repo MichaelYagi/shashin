@@ -1,39 +1,37 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="sidebar(activeSidebar, authority)">
-<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+
+<div class="col-md-1 bg-light" style="width: 4.5rem;">
     <div class="sidebar-sticky">
-        <ul class="nav flex-column">
+        <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
             <th:block th:if="${authority == 'ADMIN'}">
                 <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline">
-                        <span class="bi-calendar4"></span>
-                        Timeline
+                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline" data-toggle="tooltip" data-placement="bottom" title="Timeline">
+                        <span class="bi-calendar4" style="font-size: 2rem;"></span>
                     </a>
                 </li>
             </th:block>
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='albums' ? ' active' : ''}" href="/albums">
-                    <span class="bi-images"></span>
-                    Albums
+                <a th:attr="class='nav-link' + ${activeSidebar=='albums' ? ' active' : ''}" href="/albums" data-toggle="tooltip"  data-placement="bottom" title="Albums">
+                    <span class="bi-images" style="font-size: 2rem;"></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='comments' ? ' active' : ''}" href="/comments">
-                    <span class="bi-chat-right-text"></span>
-                    Comments
+                <a th:attr="class='nav-link' + ${activeSidebar=='comments' ? ' active' : ''}" href="/comments" data-toggle="tooltip"  data-placement="bottom" title="Comments">
+                    <span class="bi-chat-right-text" style="font-size: 2rem;"></span>
                 </a>
             </li>
             <th:block th:if="${authority == 'ADMIN'}">
                 <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' ? ' active' : ''}" href="/settings">
-                        <span class="bi-wrench"></span>
-                        Settings
+                    <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' ? ' active' : ''}" href="/settings" data-toggle="tooltip"  data-placement="bottom" title="Settings">
+                        <span class="bi-wrench" style="font-size: 2rem;"></span>
                     </a>
                 </li>
             </th:block>
         </ul>
     </div>
-</nav>
+</div>
+
 </body>
 </html>

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Album
 import com.miyagi.shashin.model.AlbumPhoto
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.UserAlbum
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
@@ -76,6 +77,45 @@ class AlbumsController {
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/album/{albumId}"], method = [RequestMethod.GET])
+    fun getAlbum(model: Model, @PathVariable albumId: Int): String {
+        val module = "album"
+        model["data"] = "Oops, something went wrong!"
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        model["album"] = ""
+        model["albumMetadataList"] = ""
+
+        val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+        if (currentUserObj != null && albumId > 0) {
+            val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+            if (userAlbums != null) {
+                // Get album photos
+                val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+                val albumMetadataList = ArrayList<Metadata>()
+                if (albumPhotos != null) {
+                    for (albumPhoto in albumPhotos) {
+                        if (albumPhoto != null) {
+                            val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                            albumMetadataList.add(metadata.get())
+                        }
+                    }
+                    if (albumMetadataList.count() > 0) {
+                        val album = albumRepository.findById(albumId)
+                        model["album"] = album.get()
+                        model["albumMetadataList"] = albumMetadataList
+                        model["data"] = ""
+
+                    }
+                }
+            }
+        }
+
         return module
     }
 
