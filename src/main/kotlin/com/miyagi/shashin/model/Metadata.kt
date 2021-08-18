@@ -10,6 +10,8 @@ class Metadata {
     private var path: String? = null
     private var thumbnailPathSmall: String? = null
     private var thumbnailUrlSmall: String? = null
+    private var thumbnailPathCentered: String? = null
+    private var thumbnailUrlCentered: String? = null
     private var thumbnailPathOriginal: String? = null
     private var thumbnailUrlOriginal: String? = null
     private var videoUrl: String? = null
@@ -34,64 +36,6 @@ class Metadata {
     private var modifiedAt: String? = null
     private var lastAccessedAt: String? = null
 
-    fun Metadata(
-        path: String?,
-        thumbnailPathSmall: String?,
-        thumbnailUrlSmall: String?,
-        thumbnailPathOriginal: String?,
-        thumbnailUrlOriginal: String?,
-        videoUrl: String?,
-        takenAt: String?,
-        id: String,
-        type: String?,
-        fileName: String?,
-        timeZone: String?,
-        lat: String?,
-        lng: String?,
-        year: Int?,
-        month: Int?,
-        day: Int?,
-        iso: Int?,
-        exposure: String?,
-        fNumber: Double?,
-        focalLength: Double?,
-        camera: String?,
-        lens: String?,
-        quality: String?,
-        keywords: String?,
-        createdAt: String?,
-        modifiedAt: String?,
-        lastAccessedAt: String?
-    ) {
-        this.path = path
-        this.thumbnailPathSmall = thumbnailPathSmall
-        this.thumbnailUrlSmall = thumbnailUrlSmall
-        this.thumbnailPathOriginal = thumbnailPathOriginal
-        this.thumbnailUrlOriginal = thumbnailUrlOriginal
-        this.videoUrl = videoUrl
-        this.takenAt = takenAt
-        this.id = id
-        this.type = type
-        this.fileName = fileName
-        this.timeZone = timeZone
-        this.lat = lat
-        this.lng = lng
-        this.year = year
-        this.month = month
-        this.day = day
-        this.iso = iso
-        this.exposure = exposure
-        this.fNumber = fNumber
-        this.focalLength = focalLength
-        this.camera = camera
-        this.lens = lens
-        this.quality = quality
-        this.keywords = keywords
-        this.createdAt = createdAt
-        this.modifiedAt = modifiedAt
-        this.lastAccessedAt = lastAccessedAt
-    }
-
     // Without a default constructor, Jackson will throw an exception
     fun Metadata() {}
 
@@ -103,6 +47,12 @@ class Metadata {
     }
     fun setThumbnailUrlSmall(thumbnailUrlSmall: String?) {
         this.thumbnailUrlSmall = thumbnailUrlSmall
+    }
+    fun setThumbnailPathCentered(thumbnailPathCentered: String?) {
+        this.thumbnailPathCentered = thumbnailPathCentered
+    }
+    fun setThumbnailUrlCentered(thumbnailUrlCentered: String?) {
+        this.thumbnailUrlCentered = thumbnailUrlCentered
     }
     fun setThumbnailPathOriginal(thumbnailPathOriginal: String?) {
         this.thumbnailPathOriginal = thumbnailPathOriginal
@@ -185,6 +135,12 @@ class Metadata {
     }
     fun getThumbnailUrlSmall(): String? {
         return this.thumbnailUrlSmall
+    }
+    fun getThumbnailPathCentered(): String? {
+        return this.thumbnailPathCentered
+    }
+    fun getThumbnailUrlCentered(): String? {
+        return this.thumbnailPathCentered
     }
     fun getThumbnailPathOriginal(): String? {
         return this.thumbnailPathOriginal

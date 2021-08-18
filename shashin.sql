@@ -15,6 +15,8 @@ CREATE TABLE `metadata` (
     `fileName` varchar(255) DEFAULT NULL,
     `thumbnailPathSmall` varchar(255) DEFAULT NULL,
     `thumbnailUrlSmall` varchar (255) DEFAULT NULL,
+    `thumbnailPathCentered` varchar(255) DEFAULT NULL,
+    `thumbnailUrlCentered` varchar (255) DEFAULT NULL,
     `thumbnailPathOriginal` varchar(255) DEFAULT NULL,
     `thumbnailUrlOriginal` varchar (255) DEFAULT NULL,
     `videoUrl` varchar (255) DEFAULT NULL,
