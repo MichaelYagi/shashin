@@ -6,10 +6,27 @@
 <div th:replace="fragments/topnav :: topnav(${authority})"></div>
 
 <div class="container-fluid">
-    <div class="row">
+    < class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar}, ${authority})"></div>
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+
+            <th:block th:if="${albumsList != '' and albumsCount != ''}">
+                <div class="card-group">
+                    <th:block th:each="album, iterStat: ${albumsList}">
+                        <div class="card" style="width: 209px;">
+                            <a href="#" style="text-decoration: none !important;color: black;">
+                                <img class="card-img-top" th:src="${album.coverUrl}" th:alt="${album.name}">
+                                <div class="card-body">
+                                    <p class="card-text"><strong th:text="${album.name}"></strong></p>
+                                    <p class="card-text"><small class="text-muted" th:text="${albumsCount[iterStat.index] + ' items'}"></small></p>
+                                </div>
+                            </a>
+                        </div>
+                    </th:block>
+                </div>
+            </th:block>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>
     </div>
