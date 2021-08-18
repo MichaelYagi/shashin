@@ -82,6 +82,7 @@
             </th:block>
 
             <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal()"></div>
+            <div th:replace="fragments/addalbummodal :: addalbummodal(${albumList})"></div>
 
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>

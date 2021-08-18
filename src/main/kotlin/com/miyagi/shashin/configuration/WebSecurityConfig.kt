@@ -56,8 +56,8 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
         http
             .authorizeRequests()
                 .antMatchers("/css/**", "/js/**", "/api/**", "/share", "/users/register", "/users/login", "/users/logout").permitAll()
-                .antMatchers("settings/**", "timeline/**", "users/delete").hasRole(adminRole)
-                .antMatchers("comments/**", "albums/**", "settings/users/edit").hasAnyRole(userRole, adminRole)
+                .antMatchers("settings/**", "timeline/**", "users/delete", "albums/add").hasRole(adminRole)
+                .antMatchers("comments/**", "albums", "settings/users/edit").hasAnyRole(userRole, adminRole)
                 .anyRequest().authenticated()
                 .and()
             .formLogin()
