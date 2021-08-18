@@ -14,7 +14,7 @@
         $("#propBatchMetadata").modal('show');
     });
 
-    $("#appToolsDeselectAll").click(function(e) {
+    $("#albumAppToolsDeselectAll").click(function(e) {
         e.preventDefault();
 
         $(".thumbnail-centered").css("display", "none");
@@ -24,7 +24,7 @@
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
         $("#appSearch").css("display", "block");
-        $("#timelineAppTools").css("display", "none");
+        $("#albumAppTools").css("display", "none");
     })
 
     $("#appToolsAddAlbum").click(function(e) {
@@ -57,7 +57,7 @@
 
         if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
             $("#appSearch").css("display", "none");
-            $("#timelineAppTools").css("display", "block");
+            $("#albumAppTools").css("display", "block");
 
             // Hide all center and bottom left icons
             $('.thumbnail-bl').hide();

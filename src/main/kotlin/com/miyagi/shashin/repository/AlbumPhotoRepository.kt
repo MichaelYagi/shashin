@@ -8,4 +8,6 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countByMetadataIdAndAlbumId(metdataId: String?, albumId: Int?): Int?
     fun countByAlbumId(albumId: Int?): Int?
     fun findAllByAlbumId(albumId: Int?): MutableIterable<AlbumPhoto?>?
+    fun deleteByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Long?
+    fun findFirstByOrderByIdAsc(): AlbumPhoto?
 }
