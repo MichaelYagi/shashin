@@ -13,7 +13,7 @@
                 </li>
             </th:block>
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='albums' ? ' active' : ''}" href="/albums" data-toggle="tooltip"  data-placement="bottom" title="Albums">
+                <a th:attr="class='nav-link' + ${activeSidebar=='albums' or activeSidebar=='album'? ' active' : ''}" href="/albums" data-toggle="tooltip"  data-placement="bottom" title="Albums">
                     <span class="bi-images" style="font-size: 2rem;"></span>
                 </a>
             </li>
