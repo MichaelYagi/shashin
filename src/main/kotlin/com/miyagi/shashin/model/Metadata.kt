@@ -140,7 +140,7 @@ class Metadata {
         return this.thumbnailPathCentered
     }
     fun getThumbnailUrlCentered(): String? {
-        return this.thumbnailPathCentered
+        return this.thumbnailUrlCentered
     }
     fun getThumbnailPathOriginal(): String? {
         return this.thumbnailPathOriginal

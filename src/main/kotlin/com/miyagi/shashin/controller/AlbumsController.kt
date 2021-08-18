@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Album
 import com.miyagi.shashin.model.AlbumPhoto
 import com.miyagi.shashin.model.UserAlbum
-import com.miyagi.shashin.repository.AlbumPhotoRepository
-import com.miyagi.shashin.repository.AlbumRepository
-import com.miyagi.shashin.repository.UserAlbumRepository
-import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -35,6 +32,9 @@ class AlbumsController {
     @Autowired
     private lateinit var userRepository: UserRepository
 
+    @Autowired
+    private lateinit var metadataRepository: MetadataRepository
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -50,11 +50,10 @@ class AlbumsController {
             if (userAlbums != null) {
                 if (userAlbums.count() > 0) {
                     model["data"] = ""
-                    val albums = ArrayList<Album>()
+                    val albums = HashMap<String, Album>()
                     for (userAlbum in userAlbums) {
                         if (userAlbum?.getAlbumId() != null) {
                             val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
-                            albums.add(albumObj.get())
                         }
                     }
                     model["albumsList"] = albums
@@ -84,6 +83,11 @@ class AlbumsController {
         val now = LocalDateTime.now()
 
         if (albumIdString.isNullOrBlank()) {
+            if (albumMetadataIdList.count() > 0) {
+                // Get the first one and set as album cover
+                val metadataObj = metadataRepository.findById(albumMetadataIdList[0])
+                albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+            }
             albumObj.setName(albumName)
             albumObj.setCreatedAt(dtf.format(now))
             albumObj.setModifiedAt(dtf.format(now))

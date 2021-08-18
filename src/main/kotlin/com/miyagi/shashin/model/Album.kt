@@ -11,6 +11,7 @@ class Album {
     private var id: Int = 0
     @NotBlank
     private var name: String? = null
+    private var coverUrl: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -26,6 +27,14 @@ class Album {
 
     fun setName(name: String?) {
         this.name = name
+    }
+
+    fun getCoverUrl(): String? {
+        return this.coverUrl
+    }
+
+    fun setCoverUrl(coverUrl: String?) {
+        this.coverUrl = coverUrl
     }
 
     fun getCreatedAt(): String? {
