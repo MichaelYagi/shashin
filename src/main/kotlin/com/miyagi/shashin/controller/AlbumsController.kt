@@ -249,6 +249,8 @@ class AlbumsController {
             val userMapObj = mapper.readTree(shareAlbum["userShareMap"].toString())
             val userMap = mapper.convertValue(userMapObj, object : TypeReference<Map<String, Boolean>>() {})
             val shareAlbumId = shareAlbum["albumId"].toString().toInt();
+            val userAlbumList = mutableListOf<UserAlbum>()
+
             for ((userId, share) in userMap) {
                 if (share) {
                     val countUserAlbum = userAlbumRepository.countByUserIdAndAlbumId(userId.toInt(), albumId)
@@ -260,11 +262,15 @@ class AlbumsController {
                         val now = LocalDateTime.now()
                         userAlbumObj.setCreatedAt(dtf.format(now))
                         userAlbumObj.setModifiedAt(dtf.format(now))
-                        userAlbumRepository.save(userAlbumObj)
+                        userAlbumList.add(userAlbumObj)
                     }
                 } else {
                     userAlbumRepository.deleteByUserIdAndAlbumId(userId.toInt(),shareAlbumId)
                 }
+            }
+
+            if (userAlbumList.count() > 0) {
+                userAlbumRepository.saveAll(userAlbumList)
             }
 
             resp["msg"] = "Shared!"
