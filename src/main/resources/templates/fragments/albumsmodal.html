@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="albumsmodal(album,users,userAlbums,currentUser,userCount,sharedAlbums)">
+<div class="modal fade" th:id="'propalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${album.id}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Share <th:block th:text="${album.name}"></th:block></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:id="'saveData'+${album.id}">
+                    <input type="hidden" name="id" th:value="${album.id}">
+                    <th:block th:if="${sharedAlbums !=''}">
+                        <th:block th:each="sharedAlbumsMap: ${sharedAlbums}">
+                            <th:block th:if="${album.id == sharedAlbumsMap.get('albumId')}">
+                                <div class="col-auto form-check">
+                                    <th:block th:if="${sharedAlbumsMap.get('isShared') == 1}">
+                                        <input type="checkbox" class="form-check-input" th:id="'id-'+${sharedAlbumsMap.get('userId')}+'-'+${sharedAlbumsMap.get('albumId')}" th:name="'userShare'+${sharedAlbumsMap.get('albumId')}" checked>
+                                    </th:block>
+                                    <th:block th:if="${sharedAlbumsMap.get('isShared')} == 0">
+                                        <input type="checkbox" class="form-check-input" th:id="'id-'+${sharedAlbumsMap.get('userId')}+'-'+${sharedAlbumsMap.get('albumId')}" th:name="'userShare'+${sharedAlbumsMap.get('albumId')}">
+                                    </th:block>
+                                    <label class="form-check-label" th:text="${sharedAlbumsMap.get('username')}"></label>
+                                </div>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                </form>
+                <div class="col-sm">
+                    <span th:id="'msg'+${album.id}"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" th:id="'saveUserShare'+${album.id}">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+            <script type="text/javascript">
+                /*<![CDATA[*/
+                $("#saveUserShare[[${album.id}]]").click(function(e) {
+                    e.preventDefault();
+
+                    let albumId = "[[${album.id}]]";
+                    let userShareMap = {};
+                    $('input[name^="userShare[[${album.id}]]"]').each( function() {
+                        let checkboxId = $(this).attr('id');
+                        let isChecked = $(this).prop("checked");
+
+                        let checkboxIdArray = checkboxId.split("-");
+                        let userId = checkboxIdArray[1];
+                        userShareMap[userId] = isChecked
+                    });
+
+                    let json = {albumId: albumId,userShareMap: JSON.stringify(userShareMap)}
+                    const posting = $.post({
+                        url: "/album/share/" + albumId,
+                        data: JSON.stringify(json),
+                        contentType: 'application/json; charset=utf-8'
+                    });
+
+                    posting.done(function (data) {
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            let message = "Error";
+                            if (data["status"] === "success") {
+                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            } else {
+                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            }
+                            $("#albumsMessage").html(message);
+                        }
+                        $("#propalbums[[${album.id}]]").modal('hide');
+                    });
+
+                });
+                /*]]>*/
+            </script>
+        </div>
+    </div>
+</div>
+</body>
+</html>

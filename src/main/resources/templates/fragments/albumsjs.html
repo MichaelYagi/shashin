@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="albumsjs(album)">
+<script type="text/javascript">
+    /*<![CDATA[*/
+    $("#share[[${album.id}]]").click(function(e) {
+        e.preventDefault();
+
+        $("#propalbums[[${album.id}]]").modal('show');
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>

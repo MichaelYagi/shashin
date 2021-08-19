@@ -72,7 +72,6 @@ CREATE TABLE `useralbum` (
     `albumId` INTEGER,
     `createdAt` datetime DEFAULT NULL,
     `modifiedAt` datetime DEFAULT NULL,
-    UNIQUE(`albumId`, `userId`) ON CONFLICT IGNORE,
     FOREIGN KEY (`albumId`) REFERENCES album(`id`),
     FOREIGN KEY (`userId`) REFERENCES user(`id`)
 );
@@ -84,7 +83,6 @@ CREATE TABLE `albumphoto` (
      `albumId` INTEGER,
      `createdAt` datetime DEFAULT NULL,
      `modifiedAt` datetime DEFAULT NULL,
-     UNIQUE(`albumId`, `metadataId`) ON CONFLICT IGNORE,
     FOREIGN KEY (`albumId`) REFERENCES album(`id`),
     FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`)
 );
