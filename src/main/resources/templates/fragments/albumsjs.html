@@ -8,6 +8,12 @@
 
         $("#propalbums[[${album.id}]]").modal('show');
     });
+
+    $("#trash[[${album.id}]]").click(function(e) {
+        e.preventDefault();
+
+        window.top.location = window.top.location
+    });
     /*]]>*/
 </script>
 
