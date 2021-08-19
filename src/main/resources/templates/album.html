@@ -25,17 +25,19 @@
                                 </div>
                             </th:block>
 
-                            <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
-                                <a href="#" th:id="'select'+${metadata.id}">
-                                    <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: steelblue;"></span>
-                                </a>
-                            </div>
+                            <th:block th:if="${authority == 'ADMIN'}">
+                                <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                                    <a href="#" th:id="'select'+${metadata.id}">
+                                        <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: steelblue;"></span>
+                                    </a>
+                                </div>
 
-                            <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                <a href="#" data-toggle="modal" th:data-target="'#propalbum'+${metadata.id}">
-                                    <span class="bi-pencil" style="font-size: 1rem;color: steelblue;"></span>
-                                </a>
-                            </div>
+                                <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
+                                    <a href="#" data-toggle="modal" th:data-target="'#propalbum'+${metadata.id}">
+                                        <span class="bi-pencil" style="font-size: 1rem;color: steelblue;"></span>
+                                    </a>
+                                </div>
+                            </th:block>
 
                             <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                                 <th:block th:unless="${metadata.type.contains('video')}">

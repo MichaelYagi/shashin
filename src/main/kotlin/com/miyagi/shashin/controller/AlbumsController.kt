@@ -46,14 +46,19 @@ class AlbumsController {
         model["data"] = "There are no albums."
         model["albumsList"] = ""
         model["albumsCount"] = ""
+        model["users"] = ""
+        model["currentUser"] = ""
+        model["userAlbums"] = ""
+        model["userCount"] = ""
 
         val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
         if (currentUserObj != null) {
             val userAlbums = userAlbumRepository.findAllByUserId(currentUserObj.getId())
+
             if (userAlbums != null) {
                 if (userAlbums.count() > 0) {
                     val albums = ArrayList<Album>()
-                    val albumCounts = ArrayList<Int>()
+                    val albumsCount = ArrayList<Int>()
                     var albumCount = 0
                     for (userAlbum in userAlbums) {
                         if (userAlbum?.getAlbumId() != null) {
@@ -63,13 +68,32 @@ class AlbumsController {
                             if (albumPhotoCount != null) {
                                 albumCount = albumPhotoCount
                             }
-                            albumCounts.add(albumCount)
+                            albumsCount.add(albumCount)
                             albums.add(albumObj.get())
                         }
                     }
+
                     if (albums.count() > 0) {
                         model["albumsList"] = albums
-                        model["albumsCount"] = albumCounts
+                        model["albumsCount"] = albumsCount
+                        val userCount = userRepository.count()
+                        if (userCount > 1) {
+                            model["users"] = userRepository.findAll()
+                            model["currentUser"] = currentUserObj
+                            model["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
+                            model["userCount"] = userCount
+                            val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
+                            val sharedAlbums = userRepository.findUserBySharedAlbum(currentUserObj.getId())
+                            for (sharedAlbum in sharedAlbums) {
+                                val sharedAlbumsMap = HashMap<String, Any>()
+                                sharedAlbumsMap["userId"] = sharedAlbum.getUserId().toString().toInt()
+                                sharedAlbumsMap["albumId"] = sharedAlbum.getAlbumId().toString().toInt()
+                                sharedAlbumsMap["username"] = sharedAlbum.getUsername().toString()
+                                sharedAlbumsMap["isShared"] = sharedAlbum.getIsShared().toString().toInt()
+                                sharedAlbumsList.add(sharedAlbumsMap)
+                            }
+                            model["sharedAlbums"] = sharedAlbumsList
+                        }
                         model["data"] = ""
                     }
                 }
@@ -182,6 +206,43 @@ class AlbumsController {
             }
 
             resp["msg"] = "Saved!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
+        val shareAlbum = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (shareAlbum.containsKey("albumId") && shareAlbum.containsKey("userShareMap")) {
+            val userMapObj = mapper.readTree(shareAlbum["userShareMap"].toString())
+            val userMap = mapper.convertValue(userMapObj, object : TypeReference<Map<String, Boolean>>() {})
+            val shareAlbumId = shareAlbum["albumId"].toString().toInt();
+            for ((userId, share) in userMap) {
+                if (share) {
+                    val countUserAlbum = userAlbumRepository.countByUserIdAndAlbumId(userId.toInt(), albumId)
+                    if (countUserAlbum == 0) {
+                        val userAlbumObj = UserAlbum()
+                        userAlbumObj.setUserId(userId.toInt())
+                        userAlbumObj.setAlbumId(shareAlbumId)
+                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        val now = LocalDateTime.now()
+                        userAlbumObj.setCreatedAt(dtf.format(now))
+                        userAlbumObj.setModifiedAt(dtf.format(now))
+                        userAlbumRepository.save(userAlbumObj)
+                    }
+                } else {
+                    userAlbumRepository.deleteByUserIdAndAlbumId(userId.toInt(),shareAlbumId)
+                }
+            }
+
+            resp["msg"] = "Shared!"
             resp["status"] = "success"
             return mapper.writeValueAsString(resp)
         }

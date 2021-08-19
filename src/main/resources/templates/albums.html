@@ -10,6 +10,7 @@
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar}, ${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <div id="albumsMessage"></div>
 
             <th:block th:if="${albumsList != '' and albumsCount != ''}">
                 <div class="row">
@@ -17,12 +18,15 @@
                         <div class="card" style="width: 209px;">
                             <a th:href="'/album/'+${album.id}"  style="text-decoration: none !important;color: black;" th:id="'album'+${album.id}">
                                 <img class="card-img-top" th:src="${album.coverUrl}" th:alt="${album.name}">
-                                <div class="card-body">
-                                    <p class="card-text"><strong th:text="${album.name}"></strong></p>
-                                    <p class="card-text"><small class="text-muted" th:text="${albumsCount[iterStat.index] + ' items'}"></small></p>
-                                </div>
                             </a>
+                            <div class="card-body">
+                                <p class="card-text"><strong th:text="${album.name}"></strong><th:block th:if="${authority == 'ADMIN'}"><a href="#" th:id="'share'+${album.id}"><span class="bi-share" style="float: right"></span></a></th:block></p>
+                                <p class="card-text"><small class="text-muted" th:text="${albumsCount[iterStat.index] + ' items'}"></small></p>
+                            </div>
                         </div>
+
+                        <div th:replace="fragments/albumsmodal :: albumsmodal(${album},${users},${userAlbums},${currentUser},${userCount},${sharedAlbums})"></div>
+                        <div th:replace="fragments/albumsjs :: albumsjs(${album})"></div>
                     </th:block>
                 </div>
             </th:block>
