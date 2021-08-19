@@ -105,6 +105,31 @@ class AlbumsController {
         return module
     }
 
+    @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
+        val albumDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (albumDeleteMap.containsKey("albumId") && albumDeleteMap.containsKey("delete")) {
+            val albumIdRequest = albumDeleteMap["albumId"].toString().toInt()
+            val deleteFlag = albumDeleteMap["delete"].toString().toBoolean()
+
+            if (deleteFlag && albumId == albumIdRequest) {
+                userAlbumRepository.deleteByAlbumId(albumId)
+                albumPhotoRepository.deleteByAlbumId(albumId)
+                albumRepository.deleteById(albumId)
+            }
+
+            resp["msg"] = "Success!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
     @RequestMapping(value = ["/album/delete/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -152,7 +177,7 @@ class AlbumsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/album/update/{metadataId}/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/album/update"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun updateAlbum(@RequestBody requestBody: JsonNode): String? {
