@@ -81,6 +81,53 @@ class AlbumsController {
         return module
     }
 
+    @RequestMapping(value = ["/album/delete/batch"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode): String? {
+        val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (batchMetadataMap.containsKey("metadataIdList") && batchMetadataMap.containsKey("albumId")) {
+            val idArray = batchMetadataMap["metadataIdList"] as ArrayList<String>
+            val albumId = batchMetadataMap["albumId"].toString().toInt()
+
+            for (metadataId in idArray) {
+                albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
+                val count = albumPhotoRepository.countByAlbumId(albumId)
+                if (count != null && count.toInt() > 0) {
+                    var metadataObj = metadataRepository.findById(metadataId)
+                    val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
+                    val album = albumRepository.findById(albumId)
+                    if (album.get().getCoverUrl() == coverAlbumUrl) {
+                        // Use the first photo in album
+                        val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
+                        if (albumPhoto != null) {
+                            metadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
+                            album.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                            albumRepository.save(album.get())
+                        }
+                    }
+                }
+            }
+
+            val count = albumPhotoRepository.countByAlbumId(albumId)
+            if (count != null && count.toInt() == 0) {
+                userAlbumRepository.deleteByAlbumId(albumId)
+                albumRepository.deleteById(albumId)
+                resp["msg"] = "/albums"
+                resp["status"] = "redirect"
+                return mapper.writeValueAsString(resp)
+            }
+
+            resp["msg"] = "Saved!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
     @RequestMapping(value = ["/album/update/{metadataId}/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
