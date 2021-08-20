@@ -14,6 +14,12 @@
 
         $("#proptrashalbums[[${album.id}]]").modal('show');
     });
+
+    $("#comment[[${album.id}]]").click(function(e) {
+        e.preventDefault();
+
+        $("#propcommentalbums[[${album.id}]]").modal('show');
+    });
     /*]]>*/
 </script>
 
