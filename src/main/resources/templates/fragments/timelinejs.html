@@ -74,6 +74,35 @@
     });
 
     /*<![CDATA[*/
+    $("#favorite[[${metadata.id}]]").click(function(e) {
+        e.preventDefault();
+
+        var metadataId = "[[${metadata.id}]]";
+
+        if ($("#bricon"+metadataId).attr("class") === "bi-suit-heart") {
+            $("#bricon"+metadataId).attr("class","bi-suit-heart-fill");
+        } else if ($("#bricon"+metadataId).attr("class") === "bi-suit-heart-fill") {
+            $("#bricon"+metadataId).attr("class","bi-suit-heart");
+        }
+
+        var json = {metadataId:metadataId,isFavorite:($("#bricon"+metadataId).attr("class") === "bi-suit-heart-fill")}
+
+        const posting = $.post({
+            url: "/favorite/save",
+            data: JSON.stringify(json),
+            contentType: 'application/json; charset=utf-8'
+        });
+
+        posting.done(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                // console.log(data["status"]);
+                // console.log(data["msg"]);
+            }
+        });
+
+        return false;
+    });
+
     $("#select[[${metadata.id}]]").click(function(e) {
         e.preventDefault();
 
@@ -190,6 +219,23 @@
         $(this).siblings(".thumbnail-tl").css("display", "none");
         $(this).siblings(".thumbnail-centered").css("display", "none");
         $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+    });
+
+    $("#tntr[[${metadata.id}]]").hover(function() {
+        $("#image[[${metadata.id}]]").css("opacity", 0.3);
+        if ($("#tlicon[[${metadata.id}]]").attr("class") === "bi-circle-fill") {
+            $("#tntl[[${metadata.id}]]").css("display", "block");
+            $("#tnbl[[${metadata.id}]]").css("display", "none");
+            $("#tncentered[[${metadata.id}]]").css("display", "none");
+        } else {
+            $("#tncentered[[${metadata.id}]]").css("display", "block");
+            $("#tntl[[${metadata.id}]]").css("display", "block");
+            $("#tnbl[[${metadata.id}]]").css("display", "block");
+        }
+        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            $('.thumbnail-bl').hide();
+            $('.thumbnail-centered').hide();
+        }
     });
 
     $("#tntr[[${metadata.id}]]").hover(function() {

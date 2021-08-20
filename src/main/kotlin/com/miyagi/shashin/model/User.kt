@@ -1,5 +1,7 @@
 package com.miyagi.shashin.model
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import java.io.IOException
 import javax.persistence.*
 import javax.validation.constraints.NotBlank;
 import java.util.Objects;
@@ -97,11 +99,18 @@ class User {
     }
 
     override fun toString(): String {
-        return "User{" +
-                "id=" + this.id +
-                ", username='" + this.username + '\'' +
-                ", authority='" + this.authority + '\'' +
-                ", loggedIn=" + this.loggedIn +
-                '}'
+        val map = mutableMapOf<String, Any?>()
+        map["id"] = this.id
+        map["username"] = this.username
+        map["authority"] = this.authority
+        map["loggedIn"] = this.loggedIn
+        val mapper = ObjectMapper()
+        var mapJson: String? = "{}"
+        try {
+            mapJson = mapper.writeValueAsString(map)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return mapJson.toString()
     }
 }

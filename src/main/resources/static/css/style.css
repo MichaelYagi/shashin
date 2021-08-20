@@ -96,6 +96,13 @@ body {
   position: relative;
 }
 
+.thumbnail-br {
+  background-color: transparent;
+  bottom:11px;
+  right:11px;
+  position: absolute;
+}
+
 .thumbnail-bl {
   display: none;
   background-color: transparent;

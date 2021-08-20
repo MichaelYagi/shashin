@@ -1,5 +1,7 @@
 package com.miyagi.shashin.model
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import java.io.IOException
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
@@ -54,9 +56,16 @@ class Album {
     }
 
     override fun toString(): String {
-        return "Album{" +
-                "id=" + this.id +
-                ", name='" + this.name + '\'' +
-                '}'
+        val map = mutableMapOf<String, Any?>()
+        map["id"] = this.id
+        map["name"] = this.name
+        val mapper = ObjectMapper()
+        var mapJson: String? = "{}"
+        try {
+            mapJson = mapper.writeValueAsString(map)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return mapJson.toString()
     }
 }

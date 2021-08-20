@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body>
+
+<div th:replace="fragments/topnav :: topnav(${authority})"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar}, ${authority})"></div>
+        <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+            <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <div class="row">
+                <th:block th:if="${metadataList != ''}">
+                    <th:block th:each="metadata, iterStat: ${metadataList}">
+                        <div class="photo-thumbnail-container photo-thumbnail">
+                            <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+
+                            <th:block th:if="${metadata.type.contains('video')}">
+                                <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
+                                </div>
+                            </th:block>
+
+                            <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
+                                <th:block th:unless="${metadata.type.contains('video')}">
+                                    <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
+                                        <span class="bi-play-circle" style="font-size: 4rem;color: steelblue;"></span>
+                                    </a>
+                                </th:block>
+                                <th:block th:if="${metadata.type.contains('video')}">
+                                    <a th:href="${metadata.videoUrl}"
+                                       data-featherlight="iframe"
+                                       data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
+                                       data-featherlight-iframe-frameborder="0"
+                                       data-featherlight-iframe-allowfullscreen="true">
+                                        <span class="bi-play-circle" style="font-size: 4rem;color: steelblue;"></span>
+                                    </a>
+                                </th:block>
+                            </div>
+                        </div>
+
+                        <div th:replace="fragments/favoritesjs :: favoritesjs(${metadata})"></div>
+
+                    </th:block>
+                </th:block>
+            </div>
+
+            <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal()"></div>
+            <div th:replace="fragments/addalbummodal :: addalbummodal(${albumList})"></div>
+
+            <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear})"></div>
+        </main>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    });
+</script>
+
+</body>
+</html>

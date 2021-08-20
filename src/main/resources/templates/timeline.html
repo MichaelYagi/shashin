@@ -47,6 +47,12 @@
                             </a>
                         </div>
 
+                        <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
+                            <a href="#" th:id="'favorite'+${metadata.id}">
+                                <span th:id="'bricon'+${metadata.id}" th:class="${favorites.get(metadata.id)} ? 'bi-suit-heart-fill' : 'bi-suit-heart'" style="font-size: 1rem;color: red;"></span>
+                            </a>
+                        </div>
+
                         <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
                             <a href="#" data-toggle="modal" th:data-target="'#prop'+${metadata.id}">
                                 <span class="bi-pencil" style="font-size: 1rem;color: steelblue;"></span>

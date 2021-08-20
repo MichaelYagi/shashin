@@ -3,11 +3,9 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.repository.MediaDirectoryRepository
-import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.AlbumPhotoRepository
-import com.miyagi.shashin.repository.AlbumRepository
+import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +16,8 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 @Controller
@@ -38,12 +38,28 @@ class TimelineController {
     @Autowired
     private val albumRepository: AlbumRepository? = null
 
+    @Autowired
+    private lateinit var favoriteRepository: FavoriteRepository
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
     @GetMapping("/timeline")
     fun getTimeline(model: Model): String {
         val module = "timeline"
+        val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+        val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
+        val favoritesMap = HashMap<String, Boolean>()
+        if (favorites != null) {
+            for (favorite in favorites) {
+                if (favorite != null) {
+                    favoritesMap[favorite.getMetadataId().toString()] = true
+                }
+            }
+        }
 
         model["data"] = "There are no photos. Please setup directories in Settings and scan ."
 
@@ -54,9 +70,11 @@ class TimelineController {
         )
 
         model["metadataList"] = ""
+        model["favorites"] = ""
         val metadataList = metadataRepository?.findAll(sort)
         if (metadataList != null) {
             model["metadataList"] = metadataList
+            model["favorites"] = favoritesMap
             if (metadataList.count() > 0) {
                 model["data"] = ""
             }

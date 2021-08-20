@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="favoritesjs(metadata)">
+<script type="text/javascript">
+    /*<![CDATA[*/
+    $("#image[[${metadata.id}]]").hover(function() {
+        $(this).css("opacity", 0.3);
+        $(this).siblings(".thumbnail-centered").css("display", "block");
+    }, function() {
+        $(this).css("opacity", 1.0);
+        $(this).siblings(".thumbnail-centered").css("display", "none");
+    });
+
+    $("#tncentered[[${metadata.id}]]").hover(function() {
+        $(this).css("display", "block");
+        $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+    }, function() {
+        $(this).css("display", "none");
+        $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>
