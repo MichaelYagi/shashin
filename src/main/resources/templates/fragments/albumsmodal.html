@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="albumsmodal(album,users,userAlbums,currentUser,userCount,sharedAlbums)">
+<body th:fragment="albumsmodal(album,users,userAlbums,currentUser,userCount,sharedAlbums,albumsCommentsMap)">
 
 <div class="modal fade" th:id="'propalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${album.id}" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
@@ -140,34 +140,61 @@
                 </button>
             </div>
             <div class="modal-body">
-                <ul class="list-group" id="commentList">
-                    <li class="list-group-item">
-                        <p>Dapibus ac facilisis in</p>
-                        <small>3 days ago</small>
-                    </li>
-                    <li class="list-group-item list-group-item-primary">
-                        <p>Dapibus ac facilisis in</p>
-                        <small>3 days ago</small>
-                    </li>
-                    <li class="list-group-item list-group-item-secondary">
-                        <p>Dapibus ac facilisis in</p>
-                        <small>3 days ago</small>
-                    </li>
-                    <li class="list-group-item list-group-item-success" id="commenttest123">
-                        <span id="commentcontainertest123">
-                            <p id="commentcontenttest123">Dapibus ac facilisis in</p>
-                            <small>3 days ago<span style="float: right"><a href="#" id="test123"><span class="bi-pencil"></span></a></span></small>
-                        </span>
-                        <span id="textareacontainertest123"></span>
-                    </li>
-                    <li class="list-group-item list-group-item-danger">
-                        <p>Dapibus ac facilisis in</p>
-                        <small>3 days ago</small>
-                    </li>
-                    <li class="list-group-item list-group-item-warning">
-                        <p>Dapibus ac facilisis in</p>
-                        <small>3 days ago</small>
-                    </li>
+                <input type="hidden" th:id="'currentCommentId'+${album.id}" th:name="'currentCommentId'+${album.id}">
+                <ul class="list-group" th:id="'commentList'+${album.id}">
+                    <th:block th:if="${albumCommentsMap != ''}" th:each="comments: ${albumsCommentsMap.get(album.id)}">
+                        <li th:id="'comment'+${comments.get('commentId')}" th:class="'list-group-item'+${comments.get('userId') == currentUser.id ? ' list-group-item-secondary' : ''}">
+                            <span th:id="'commentcontainer'+${comments.get('commentId')}">
+                                <p th:id="'commentcontent'+${comments.get('commentId')}" th:text="${comments.get('comment')}"></p>
+                                <small th:text="${comments.get('username')}"></small>
+                                <th:block th:if="${comments.get('userId') == currentUser.id}">
+                                    <small><span style="float: right">
+                                        <a href="#" th:id="'edit'+${comments.get('commentId')}"><span class="bi-pencil"></span></a>
+                                    </span></small>
+                                </th:block>
+                            </span>
+                            <span th:id="'textareacontainer'+${comments.get('commentId')}"></span>
+                        </li>
+
+                        <script type="text/javascript">
+                            /*<![CDATA[*/
+                            $("#edit[[${comments.get('commentId')}]]").click(function(e) {
+                                e.preventDefault();
+
+                                if ($("#currentCommentId[[${album.id}]]").val() === "") {
+                                    var commentId = "[[${comments.get('commentId')}]]";
+                                    $("#currentCommentId[[${album.id}]]").val(commentId);
+
+                                    $("#saveCommentAlbum[[${album.id}]]").hide();
+                                    $("#dismissModalCommentAlbum[[${album.id}]]").hide();
+                                    $("#updateCommentAlbum[[${album.id}]]").show();
+                                    $("#cancelEditCommentAlbum[[${album.id}]]").show();
+
+                                    $("#commentcontainer[[${comments.get('commentId')}]]").hide();
+                                    $("#textareacontainer[[${comments.get('commentId')}]]").show();
+                                    $("#textareacontainer[[${comments.get('commentId')}]]").html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2"></textarea>');
+                                }
+                            });
+                            /*]]>*/
+                        </script>
+
+                        <!--                        <li class="list-group-item">-->
+                        <!--                            <p>Dapibus ac facilisis in</p>-->
+                        <!--                            <small>3 days ago</small>-->
+                        <!--                        </li>-->
+                        <!--                        <li class="list-group-item list-group-item-secondary" id="commenttest123">-->
+                        <!--                            <span id="commentcontainertest123">-->
+                        <!--                                <p id="commentcontenttest123">Dapibus ac facilisis in</p>-->
+                        <!--                                <small>3 days ago</small>-->
+                        <!--                                <small><span style="float: right"><a href="#" id="test123"><span class="bi-pencil"></span></a></span></small>-->
+                        <!--                            </span>-->
+                        <!--                            <span id="textareacontainertest123"></span>-->
+                        <!--                        </li>-->
+                        <!--                        <li class="list-group-item">-->
+                        <!--                            <p>Dapibus ac facilisis in</p>-->
+                        <!--                            <small>3 days ago</small>-->
+                        <!--                        </li>-->
+                    </th:block>
                 </ul>
             </div>
             <div class="modal-footer">
@@ -181,6 +208,21 @@
                 /*<![CDATA[*/
                 $("#updateCommentAlbum[[${album.id}]]").hide();
                 $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+
+                $("#cancelEditCommentAlbum[[${album.id}]]").click(function (e) {
+                    var currentCommentId = $("#currentCommentId[[${album.id}]]").val()
+
+                    $("#saveCommentAlbum[[${album.id}]]").show();
+                    $("#dismissModalCommentAlbum[[${album.id}]]").show();
+                    $("#updateCommentAlbum[[${album.id}]]").hide();
+                    $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+
+                    $("#commentcontainer"+currentCommentId).show();
+                    $("#textareacontainer"+currentCommentId).html('');
+                    $("#textareacontainer"+currentCommentId).hide();
+
+                    $("#currentCommentId[[${album.id}]]").val("");
+                });
 
                 $("#saveCommentAlbum[[${album.id}]]").click(function(e) {
                     e.preventDefault();
@@ -214,34 +256,10 @@
                                     '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="editcomment'+commentId+'"><span class="bi-pencil"></span></a></span></small></span>' +
                                     '<span id="textareacontainer'+commentId+'"></span></li>';
                                 $("#commentText[[${album.id}]]").val("")
-                                $("#commentList").prepend(commentItem);
+                                $("#commentList[[${album.id}]]").prepend(commentItem);
                             }
                         });
                     }
-                });
-
-                $("#test123").click(function(e) {
-                    e.preventDefault();
-
-                    $("#saveCommentAlbum[[${album.id}]]").hide();
-                    $("#dismissModalCommentAlbum[[${album.id}]]").hide();
-                    $("#updateCommentAlbum[[${album.id}]]").show();
-                    $("#cancelEditCommentAlbum[[${album.id}]]").show();
-
-                    $("#commentcontainertest123").hide();
-                    $("#textareacontainertest123").show();
-                    $("#textareacontainertest123").html('<textarea class="form-control" id="test123text" rows="2"></textarea>');
-                });
-
-                $("#cancelEditCommentAlbum[[${album.id}]]").click(function (e) {
-                    $("#saveCommentAlbum[[${album.id}]]").show();
-                    $("#dismissModalCommentAlbum[[${album.id}]]").show();
-                    $("#updateCommentAlbum[[${album.id}]]").hide();
-                    $("#cancelEditCommentAlbum[[${album.id}]]").hide();
-
-                    $("#commentcontainertest123").show();
-                    $("#textareacontainertest123").html('');
-                    $("#textareacontainertest123").hide();
                 });
                 /*]]>*/
             </script>

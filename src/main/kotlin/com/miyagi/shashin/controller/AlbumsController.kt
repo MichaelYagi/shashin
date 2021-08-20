@@ -37,6 +37,9 @@ class AlbumsController {
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
 
+    @Autowired
+    private lateinit var commentRepository: CommentRepository
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -50,6 +53,7 @@ class AlbumsController {
         model["currentUser"] = ""
         model["userAlbums"] = ""
         model["userCount"] = ""
+        model["albumsCommentsMap"] = ""
 
         val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
         if (currentUserObj != null) {
@@ -57,6 +61,9 @@ class AlbumsController {
 
             if (userAlbums != null) {
                 if (userAlbums.count() > 0) {
+                    val albumCommentsList = ArrayList<HashMap<String, Any>>()
+                    val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
+
                     val albums = ArrayList<Album>()
                     val albumsCount = ArrayList<Int>()
                     var albumCount = 0
@@ -70,11 +77,25 @@ class AlbumsController {
                             }
                             albumsCount.add(albumCount)
                             albums.add(albumObj.get())
+
+                            // Get comments for this album
+                            val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
+                            for (albumComment in albumComments) {
+                                val albumCommentMap = HashMap<String, Any>()
+                                albumCommentMap["comment"] = albumComment.getComment().toString()
+                                albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
+                                albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
+                                albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
+                                albumCommentMap["username"] = albumComment.getUsername().toString()
+                                albumCommentsList.add(albumCommentMap)
+                            }
+                            albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
                         }
                     }
 
                     if (albums.count() > 0) {
                         model["albumsList"] = albums
+                        model["albumsCommentsMap"] = albumsCommentsMap
                         model["albumsCount"] = albumsCount
                         val userCount = userRepository.count()
                         if (userCount > 1) {
@@ -99,6 +120,7 @@ class AlbumsController {
                 }
             }
         }
+
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
