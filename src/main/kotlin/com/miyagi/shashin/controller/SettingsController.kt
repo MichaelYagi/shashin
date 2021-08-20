@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -58,11 +59,13 @@ class SettingsController {
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["message"] = ""
+        model["alertClass"] = ""
         return module
     }
 
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
-    fun postSettings(model: Model, @RequestParam("mediaDirList") mediaDirList: String): String {
+    fun postSettings(model: Model, redirectAttributes: RedirectAttributes, @RequestParam("mediaDirList") mediaDirList: String): String {
         if (!mediaDirList.isNullOrBlank()) {
             val mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -91,6 +94,8 @@ class SettingsController {
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["message"] = "Success"
+        model["alertClass"] = "alert-success"
         return module
     }
 

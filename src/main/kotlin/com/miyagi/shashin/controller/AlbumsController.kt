@@ -242,7 +242,6 @@ class AlbumsController {
 
     @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    @Transactional
     fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
         val shareAlbum = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (shareAlbum.containsKey("albumId") && shareAlbum.containsKey("userShareMap")) {
@@ -250,6 +249,7 @@ class AlbumsController {
             val userMap = mapper.convertValue(userMapObj, object : TypeReference<Map<String, Boolean>>() {})
             val shareAlbumId = shareAlbum["albumId"].toString().toInt();
             val userAlbumList = mutableListOf<UserAlbum>()
+            val deleteUserAlbumList = mutableListOf<UserAlbum>()
 
             for ((userId, share) in userMap) {
                 if (share) {
@@ -265,13 +265,20 @@ class AlbumsController {
                         userAlbumList.add(userAlbumObj)
                     }
                 } else {
-                    userAlbumRepository.deleteByUserIdAndAlbumId(userId.toInt(),shareAlbumId)
+                    val userAlbumObj = userAlbumRepository.findByUserIdAndAlbumId(userId.toInt(),shareAlbumId)
+                    if (userAlbumObj != null) {
+                        deleteUserAlbumList.add(userAlbumObj)
+                    }
                 }
             }
 
             if (userAlbumList.count() > 0) {
                 userAlbumRepository.saveAll(userAlbumList)
             }
+            if (deleteUserAlbumList.count() > 0) {
+                userAlbumRepository.deleteAll(deleteUserAlbumList)
+            }
+
 
             resp["msg"] = "Shared!"
             resp["status"] = "success"
