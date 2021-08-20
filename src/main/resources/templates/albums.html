@@ -25,7 +25,7 @@
                             </div>
                         </div>
 
-                        <div th:replace="fragments/albumsmodal :: albumsmodal(${album},${users},${userAlbums},${currentUser},${userCount},${sharedAlbums})"></div>
+                        <div th:replace="fragments/albumsmodal :: albumsmodal(${album},${users},${userAlbums},${currentUser},${userCount},${sharedAlbums},${albumsCommentsMap})"></div>
                         <div th:replace="fragments/albumsjs :: albumsjs(${album})"></div>
                     </th:block>
                 </div>
