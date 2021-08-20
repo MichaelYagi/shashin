@@ -134,13 +134,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="commentModalLabel">Comments for  <th:block th:text="${album.name}"></th:block></h5>
+<!--                <span th:id="'albumCommentMessage'+${album.id}"></span>-->
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <div th:id="'albumCommentMessage'+${album.id}"></div>
-                <ul class="list-group">
+                <ul class="list-group" id="commentList">
                     <li class="list-group-item">
                         <p>Dapibus ac facilisis in</p>
                         <small>3 days ago</small>
@@ -187,26 +187,37 @@
 
                     let comment = $.trim($("#commentText[[${album.id}]]").val());
 
-                    let json = {albumId: [[${album.id}]], comment: comment}
-                    console.log(json);
-                    // const posting = $.post({
-                    //     url: "/comments/add/" + albumId,
-                    //     data: JSON.stringify(json),
-                    //     contentType: 'application/json; charset=utf-8'
-                    // });
-                    //
-                    // posting.done(function (data) {
-                    //     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    //         let message = "Error";
-                    //         if (data["status"] === "success") {
-                    //             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    //         } else {
-                    //             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    //         }
-                    //         $("#albumCommentMessage"+albumId).html(message);
-                    //     }
-                    // });
+                    if (comment.length > 0) {
+                        let json = {albumId: [[${album.id}]], comment: comment}
 
+                        const posting = $.post({
+                            url: "/comment/album/save/",
+                            data: JSON.stringify(json),
+                            contentType: 'application/json; charset=utf-8'
+                        });
+
+                        posting.done(function (data) {
+                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                                let commentId = data["commentId"];
+                                let message = "Error";
+                                if (data["status"] === "success") {
+                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                } else {
+                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                }
+
+                                //$("#albumCommentMessage[[${album.id}]]").html(message);
+
+                                // Insert comment at top of list
+                                var commentItem = '<li class="list-group-item list-group-item-secondary" id="comment'+commentId+'">\n' +
+                                    '<span id="commentcontainer'+commentId+'">\n<p id="commentcontent'+commentId+'">'+comment+'</p>\n' +
+                                    '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="editcomment'+commentId+'"><span class="bi-pencil"></span></a></span></small></span>' +
+                                    '<span id="textareacontainer'+commentId+'"></span></li>';
+                                $("#commentText[[${album.id}]]").val("")
+                                $("#commentList").prepend(commentItem);
+                            }
+                        });
+                    }
                 });
 
                 $("#test123").click(function(e) {

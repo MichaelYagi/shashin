@@ -6,14 +6,11 @@ import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
 @Entity
-@Table(name = "albumcomment", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("commentId", "userId", "albumId"))])
+@Table(name = "albumcomment", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("commentId", "albumId"))])
 class AlbumComment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private var id: Int = 0
-
-    @NotBlank
-    private var userId: Int? = null
 
     @NotBlank
     private var commentId: Int? = null
@@ -33,14 +30,6 @@ class AlbumComment {
 
     fun setId(id: Int) {
         this.id = id
-    }
-
-    fun getUserId(): Int? {
-        return this.userId
-    }
-
-    fun setUserId(userId: Int?) {
-        this.userId = userId
     }
 
     fun getAlbumId(): Int? {
@@ -78,7 +67,6 @@ class AlbumComment {
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
-        map["userId"] = this.userId
         map["commentId"] = this.commentId
         map["albumId"] = this.albumId
         val mapper = ObjectMapper()
