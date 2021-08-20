@@ -17,12 +17,12 @@
                     <span class="bi-images" style="font-size: 2rem;"></span>
                 </a>
             </li>
-            <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='comments' ? ' active' : ''}" href="/comments" data-toggle="tooltip"  data-placement="bottom" title="Comments">
-                    <span class="bi-chat-right-text" style="font-size: 2rem;"></span>
-                </a>
-            </li>
             <th:block th:if="${authority == 'ADMIN'}">
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites" data-toggle="tooltip"  data-placement="bottom" title="Favorites">
+                        <span class="bi-suit-heart" style="font-size: 2rem;"></span>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' ? ' active' : ''}" href="/settings" data-toggle="tooltip"  data-placement="bottom" title="Settings">
                         <span class="bi-wrench" style="font-size: 2rem;"></span>

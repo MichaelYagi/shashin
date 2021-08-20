@@ -6,8 +6,8 @@ import javax.persistence.*
 import javax.validation.constraints.NotBlank
 
 @Entity
-@Table(name = "useralbum", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("albumId", "userId"))])
-class UserAlbum {
+@Table(name = "favorite", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("metadataId", "userId"))])
+class Favorite {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private var id: Int = 0
@@ -16,16 +16,20 @@ class UserAlbum {
     private var userId: Int? = null
 
     @NotBlank
-    private var albumId: Int? = null
+    private var metadataId: String? = null
 
     private var createdAt: String? = null
 
     private var modifiedAt: String? = null
 
-    fun UserAlbum() {}
+    fun Favorite() {}
 
     fun getId(): Int {
         return this.id
+    }
+
+    fun setId(id: Int) {
+        this.id = id
     }
 
     fun getUserId(): Int? {
@@ -36,12 +40,12 @@ class UserAlbum {
         this.userId = userId
     }
 
-    fun getAlbumId(): Int? {
-        return this.albumId
+    fun getMetadataId(): String? {
+        return this.metadataId
     }
 
-    fun setAlbumId(albumId: Int?) {
-        this.albumId = albumId
+    fun setMetadataId(metadataId: String?) {
+        this.metadataId = metadataId
     }
 
     fun getCreatedAt(): String? {
@@ -64,7 +68,7 @@ class UserAlbum {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["userId"] = this.userId
-        map["albumId"] = this.albumId
+        map["metadataId"] = this.metadataId
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

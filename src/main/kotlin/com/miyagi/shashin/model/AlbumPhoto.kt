@@ -1,7 +1,10 @@
 package com.miyagi.shashin.model
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import java.io.IOException
 import javax.persistence.*
 import javax.validation.constraints.NotBlank
+
 
 @Entity
 @Table(name = "albumphoto", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("albumId", "metadataId"))])
@@ -59,10 +62,17 @@ class AlbumPhoto {
     }
 
     override fun toString(): String {
-        return "AlbumPhoto{" +
-                "id=" + this.id +
-                ", metadataId='" + this.metadataId + '\'' +
-                ", albumId=" + this.albumId +
-                '}'
+        val map = mutableMapOf<String, Any?>()
+        map["id"] = this.id
+        map["metadataId"] = this.metadataId
+        map["albumId"] = this.albumId
+        val mapper = ObjectMapper()
+        var mapJson: String? = "{}"
+        try {
+            mapJson = mapper.writeValueAsString(map)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return mapJson.toString()
     }
 }

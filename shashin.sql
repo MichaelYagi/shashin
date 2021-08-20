@@ -87,4 +87,15 @@ CREATE TABLE `albumphoto` (
     FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`)
 );
 
+DROP TABLE IF EXISTS `favorite`;
+CREATE TABLE `favorite` (
+     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+     `userId` INTEGER,
+     `metadataId` INTEGER,
+     `createdAt` datetime DEFAULT NULL,
+     `modifiedAt` datetime DEFAULT NULL,
+     FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`),
+     FOREIGN KEY (`userId`) REFERENCES user(`id`)
+);
+
 INSERT INTO `hibernate_sequence` VALUES (362);
