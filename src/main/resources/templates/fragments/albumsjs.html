@@ -12,7 +12,7 @@
     $("#trash[[${album.id}]]").click(function(e) {
         e.preventDefault();
 
-        window.top.location = window.top.location
+        $("#proptrashalbums[[${album.id}]]").modal('show');
     });
     /*]]>*/
 </script>

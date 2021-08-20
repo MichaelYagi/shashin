@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="albumsmodal(album,users,userAlbums,currentUser,userCount,sharedAlbums)">
 <div class="modal fade" th:id="'propalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${album.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Share <th:block th:text="${album.name}"></th:block></h5>
@@ -81,7 +81,7 @@
 </div>
 
 <div class="modal fade" th:id="'proptrashalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeltrash'+${album.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="trashModalLabel">Delete <th:block th:text="${album.name}"></th:block></h5>
@@ -118,7 +118,7 @@
                             }
                             $("#albumsMessage").html(message);
                         }
-                        $("#proptrashalbums[[${album.id}]]").modal('hide');
+                        window.top.location = window.top.location
                     });
 
                 });
