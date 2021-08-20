@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.ArrayList
+import javax.transaction.Transactional
 
 @Controller
 class FavoritesController {
@@ -72,6 +73,7 @@ class FavoritesController {
 
     @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST])
     @ResponseBody
+    @Transactional
     fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {
