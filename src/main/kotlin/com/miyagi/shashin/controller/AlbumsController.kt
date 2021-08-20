@@ -40,6 +40,9 @@ class AlbumsController {
     @Autowired
     private lateinit var commentRepository: CommentRepository
 
+    @Autowired
+    private lateinit var albumCommentRepository: AlbumCommentRepository
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -140,6 +143,21 @@ class AlbumsController {
                 userAlbumRepository.deleteByAlbumId(albumId)
                 albumPhotoRepository.deleteByAlbumId(albumId)
                 albumRepository.deleteById(albumId)
+                // Delete comments
+                val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                if (albumComments != null) {
+                    val commentIdList = ArrayList<Int>()
+                    for (albumComment in albumComments) {
+                        if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
+                            commentIdList.add(albumComment.getCommentId()!!)
+                        }
+                    }
+
+                    if (commentIdList.count() > 0) {
+                        commentRepository.deleteAllById(commentIdList)
+                        albumCommentRepository.deleteByAlbumId(albumId)
+                    }
+                }
             }
 
             resp["msg"] = "Success!"
@@ -184,6 +202,22 @@ class AlbumsController {
             if (count != null && count.toInt() == 0) {
                 userAlbumRepository.deleteByAlbumId(albumId)
                 albumRepository.deleteById(albumId)
+                // Delete comments
+                val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                if (albumComments != null) {
+                    val commentIdList = ArrayList<Int>()
+                    for (albumComment in albumComments) {
+                        if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
+                            commentIdList.add(albumComment.getCommentId()!!)
+                        }
+                    }
+
+                    if (commentIdList.count() > 0) {
+                        commentRepository.deleteAllById(commentIdList)
+                        albumCommentRepository.deleteByAlbumId(albumId)
+                    }
+                }
+
                 resp["msg"] = "/albums"
                 resp["status"] = "redirect"
                 return mapper.writeValueAsString(resp)
@@ -236,6 +270,23 @@ class AlbumsController {
                     } else {
                         userAlbumRepository.deleteByAlbumId(albumId)
                         albumRepository.deleteById(albumId)
+                        // Delete comments
+                        val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                        if (albumComments != null) {
+                            val commentIdList = ArrayList<Int>()
+                            for (albumComment in albumComments) {
+                                if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
+                                    commentIdList.add(albumComment.getCommentId()!!)
+                                }
+                            }
+
+                            if (commentIdList.count() > 0) {
+                                commentRepository.deleteAllById(commentIdList)
+                                albumCommentRepository.deleteByAlbumId(albumId)
+                            }
+
+                        }
+                        
                         resp["msg"] = "/albums"
                         resp["status"] = "redirect"
                         return mapper.writeValueAsString(resp)
