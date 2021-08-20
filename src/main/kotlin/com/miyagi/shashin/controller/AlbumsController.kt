@@ -279,7 +279,6 @@ class AlbumsController {
                 userAlbumRepository.deleteAll(deleteUserAlbumList)
             }
 
-
             resp["msg"] = "Shared!"
             resp["status"] = "success"
             return mapper.writeValueAsString(resp)

@@ -15,6 +15,9 @@ class Comment {
     @NotBlank
     private var comment: String? = null
 
+    @NotBlank
+    private var userId: Int? = null
+
     private var createdAt: String? = null
 
     private var modifiedAt: String? = null
@@ -27,6 +30,14 @@ class Comment {
 
     fun setId(id: Int) {
         this.id = id
+    }
+
+    fun getUserId(): Int? {
+        return this.userId
+    }
+
+    fun setUserId(userId: Int?) {
+        this.userId = userId
     }
 
     fun getComment(): String? {
@@ -56,6 +67,7 @@ class Comment {
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
+        map["userId"] = this.userId
         map["comment"] = this.comment
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

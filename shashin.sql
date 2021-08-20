@@ -1,39 +1,39 @@
 DROP TABLE IF EXISTS `hibernate_sequence`;
 CREATE TABLE `hibernate_sequence` (
-    `next_val` bigint(20) DEFAULT NULL
+    `next_val` BIGINT(20) DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS `metadata`;
 CREATE TABLE `metadata` (
-    `id` varchar(36) NOT NULL DEFAULT '00000000-00000000-00000000-00000000',
-    `timeZone` varchar(20) DEFAULT NULL,
-    `takenAt` datetime DEFAULT NULL,
-    `year` int(4) DEFAULT NULL,
-    `month` int(2) DEFAULT NULL,
-    `day` int(2) DEFAULT NULL,
-    `path` varchar(255) DEFAULT NULL,
-    `fileName` varchar(255) DEFAULT NULL,
-    `thumbnailPathSmall` varchar(255) DEFAULT NULL,
-    `thumbnailUrlSmall` varchar (255) DEFAULT NULL,
-    `thumbnailPathCentered` varchar(255) DEFAULT NULL,
-    `thumbnailUrlCentered` varchar (255) DEFAULT NULL,
-    `thumbnailPathOriginal` varchar(255) DEFAULT NULL,
-    `thumbnailUrlOriginal` varchar (255) DEFAULT NULL,
-    `videoUrl` varchar (255) DEFAULT NULL,
-    `type` varchar(20) DEFAULT NULL,
-    `lat` varchar(20) DEFAULT NULL,
-    `lng` varchar(20) DEFAULT NULL,
-    `camera` varchar(255) DEFAULT NULL,
-    `lens` varchar(255) DEFAULT NULL,
-    `quality` varchar(20) DEFAULT NULL,
-    `iso` int(10) DEFAULT NULL,
-    `exposure` varchar(20) DEFAULT NULL,
-    `fNumber` real(10) DEFAULT NULL,
-    `focalLength` real(10) DEFAULT NULL,
-    `keywords` varchar(500) DEFAULT NULL,
-    `createdAt` datetime DEFAULT NULL,
-    `modifiedAt` datetime DEFAULT NULL,
-    `lastAccessedAt` datetime DEFAULT NULL,
+    `id` VARCHAR(36) NOT NULL DEFAULT '00000000-00000000-00000000-00000000',
+    `timeZone` VARCHAR(20) DEFAULT NULL,
+    `takenAt` DATETIME DEFAULT NULL,
+    `year` INT(4) DEFAULT NULL,
+    `month` INT(2) DEFAULT NULL,
+    `day` INT(2) DEFAULT NULL,
+    `path` VARCHAR(255) DEFAULT NULL,
+    `fileName` VARCHAR(255) DEFAULT NULL,
+    `thumbnailPathSmall` VARCHAR(255) DEFAULT NULL,
+    `thumbnailUrlSmall` VARCHAR (255) DEFAULT NULL,
+    `thumbnailPathCentered` VARCHAR(255) DEFAULT NULL,
+    `thumbnailUrlCentered` VARCHAR (255) DEFAULT NULL,
+    `thumbnailPathOriginal` VARCHAR(255) DEFAULT NULL,
+    `thumbnailUrlOriginal` VARCHAR (255) DEFAULT NULL,
+    `videoUrl` VARCHAR (255) DEFAULT NULL,
+    `type` VARCHAR(20) DEFAULT NULL,
+    `lat` VARCHAR(20) DEFAULT NULL,
+    `lng` VARCHAR(20) DEFAULT NULL,
+    `camera` VARCHAR(255) DEFAULT NULL,
+    `lens` VARCHAR(255) DEFAULT NULL,
+    `quality` VARCHAR(20) DEFAULT NULL,
+    `iso` INT(10) DEFAULT NULL,
+    `exposure` VARCHAR(20) DEFAULT NULL,
+    `fNumber` REAL(10) DEFAULT NULL,
+    `focalLength` REAL(10) DEFAULT NULL,
+    `keywords` VARCHAR(500) DEFAULT NULL,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL,
+    `lastAccessedAt` DATETIME DEFAULT NULL,
     PRIMARY KEY (`id`)
 );
 
@@ -105,6 +105,7 @@ DROP TABLE IF EXISTS `comment`;
 CREATE TABLE `comment` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `comment` VARCHAR,
+    `userId` INT,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL
 );
@@ -113,13 +114,11 @@ DROP TABLE IF EXISTS `albumcomment`;
 CREATE TABLE `albumcomment` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `albumId` INT,
-    `userId` INT,
     `commentId` INT,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL,
-    UNIQUE(`commentId`,`userId`,`albumId`) ON CONFLICT IGNORE,
+    UNIQUE(`commentId`,`albumId`) ON CONFLICT IGNORE,
     FOREIGN KEY (`commentId`) REFERENCES comment(`id`),
-    FOREIGN KEY (`userId`) REFERENCES user(`id`),
     FOREIGN KEY (`albumId`) REFERENCES album(`id`)
 );
 
