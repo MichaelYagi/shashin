@@ -413,6 +413,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
     private fun scaleImage(source: BufferedImage, w: Int, h: Int): BufferedImage {
         val bi = getCompatibleImage(w, h)
         val g2d = bi.createGraphics()
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
         val xScale = w.toDouble() / source.width
         val yScale = h.toDouble() / source.height
         val at = AffineTransform.getScaleInstance(xScale, yScale)
