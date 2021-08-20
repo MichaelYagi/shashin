@@ -143,57 +143,72 @@
                 <input type="hidden" th:id="'currentCommentId'+${album.id}" th:name="'currentCommentId'+${album.id}">
                 <ul class="list-group" th:id="'commentList'+${album.id}">
                     <th:block th:if="${albumCommentsMap != ''}" th:each="comments: ${albumsCommentsMap.get(album.id)}">
-                        <li th:id="'comment'+${comments.get('commentId')}" th:class="'list-group-item'+${comments.get('userId') == currentUser.id ? ' list-group-item-secondary' : ''}">
-                            <span th:id="'commentcontainer'+${comments.get('commentId')}">
-                                <p th:id="'commentcontent'+${comments.get('commentId')}" th:text="${comments.get('comment')}"></p>
-                                <small th:text="${comments.get('username')}"></small>
-                                <th:block th:if="${comments.get('userId') == currentUser.id}">
-                                    <small><span style="float: right">
-                                        <a href="#" th:id="'edit'+${comments.get('commentId')}"><span class="bi-pencil"></span></a>
-                                    </span></small>
-                                </th:block>
-                            </span>
-                            <span th:id="'textareacontainer'+${comments.get('commentId')}"></span>
-                        </li>
+                        <th:block th:if="${comments.get('albumId') == album.id}">
+                            <li th:id="'comment'+${comments.get('commentId')}" th:class="'list-group-item'+${comments.get('userId') == currentUser.id ? ' list-group-item-secondary' : ''}">
+                                <span th:id="'commentcontainer'+${comments.get('commentId')}">
+                                    <p th:id="'commentcontent'+${comments.get('commentId')}" th:text="${comments.get('comment')}"></p>
+                                    <small th:text="${comments.get('username')}"></small>
+                                    <th:block th:if="${comments.get('userId') == currentUser.id}">
+                                        <small><span style="float: right">
+                                            <a href="#" th:id="'deletecomment'+${comments.get('commentId')}"><span class="bi-trash"></span></a>&nbsp;&nbsp;
+                                            <a href="#" th:id="'editcomment'+${comments.get('commentId')}"><span class="bi-pencil"></span></a>
+                                        </span></small>
+                                    </th:block>
+                                </span>
+                                <span th:id="'textareacontainer'+${comments.get('commentId')}"></span>
+                            </li>
 
-                        <script type="text/javascript">
-                            /*<![CDATA[*/
-                            $("#edit[[${comments.get('commentId')}]]").click(function(e) {
-                                e.preventDefault();
+                            <script type="text/javascript">
+                                /*<![CDATA[*/
+                                $("#deletecomment[[${comments.get('commentId')}]]").click(function(e) {
+                                    e.preventDefault();
 
-                                if ($("#currentCommentId[[${album.id}]]").val() === "") {
-                                    var commentId = "[[${comments.get('commentId')}]]";
-                                    $("#currentCommentId[[${album.id}]]").val(commentId);
+                                    let json = {commentId: [[${comments.get('commentId')}]]}
 
-                                    $("#saveCommentAlbum[[${album.id}]]").hide();
-                                    $("#dismissModalCommentAlbum[[${album.id}]]").hide();
-                                    $("#updateCommentAlbum[[${album.id}]]").show();
-                                    $("#cancelEditCommentAlbum[[${album.id}]]").show();
+                                    const posting = $.post({
+                                        url: "/comment/album/delete/",
+                                        data: JSON.stringify(json),
+                                        contentType: 'application/json; charset=utf-8'
+                                    });
 
-                                    $("#commentcontainer[[${comments.get('commentId')}]]").hide();
-                                    $("#textareacontainer[[${comments.get('commentId')}]]").show();
-                                    $("#textareacontainer[[${comments.get('commentId')}]]").html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2"></textarea>');
-                                }
-                            });
-                            /*]]>*/
-                        </script>
+                                    posting.done(function (data) {
+                                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                                            let commentId = data["commentId"];
+                                            let message = "Error";
+                                            if (data["status"] === "success") {
+                                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
 
-                        <!--                        <li class="list-group-item">-->
-                        <!--                            <p>Dapibus ac facilisis in</p>-->
-                        <!--                            <small>3 days ago</small>-->
-                        <!--                        </li>-->
-                        <!--                        <li class="list-group-item list-group-item-secondary" id="commenttest123">-->
-                        <!--                            <span id="commentcontainertest123">-->
-                        <!--                                <p id="commentcontenttest123">Dapibus ac facilisis in</p>-->
-                        <!--                                <small>3 days ago</small>-->
-                        <!--                                <small><span style="float: right"><a href="#" id="test123"><span class="bi-pencil"></span></a></span></small>-->
-                        <!--                            </span>-->
-                        <!--                            <span id="textareacontainertest123"></span>-->
-                        <!--                        </li>-->
-                        <!--                        <li class="list-group-item">-->
-                        <!--                            <p>Dapibus ac facilisis in</p>-->
-                        <!--                            <small>3 days ago</small>-->
-                        <!--                        </li>-->
+                                                // Delete comment
+                                                $("#comment"+commentId).remove();
+                                            } else {
+                                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                            }
+                                        }
+                                    });
+
+                                    $("#currentCommentId[[${album.id}]]").val("");
+                                });
+
+                                $("#editcomment[[${comments.get('commentId')}]]").click(function(e) {
+                                    e.preventDefault();
+
+                                    if ($("#currentCommentId[[${album.id}]]").val() === "") {
+                                        var commentId = "[[${comments.get('commentId')}]]";
+                                        $("#currentCommentId[[${album.id}]]").val(commentId);
+
+                                        $("#saveCommentAlbum[[${album.id}]]").hide();
+                                        $("#dismissModalCommentAlbum[[${album.id}]]").hide();
+                                        $("#updateCommentAlbum[[${album.id}]]").show();
+                                        $("#cancelEditCommentAlbum[[${album.id}]]").show();
+
+                                        $("#commentcontainer[[${comments.get('commentId')}]]").hide();
+                                        $("#textareacontainer[[${comments.get('commentId')}]]").show();
+                                        $("#textareacontainer[[${comments.get('commentId')}]]").html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2"></textarea>');
+                                    }
+                                });
+                                /*]]>*/
+                            </script>
+                        </th:block>
                     </th:block>
                 </ul>
             </div>
@@ -212,16 +227,72 @@
                 $("#cancelEditCommentAlbum[[${album.id}]]").click(function (e) {
                     var currentCommentId = $("#currentCommentId[[${album.id}]]").val()
 
-                    $("#saveCommentAlbum[[${album.id}]]").show();
-                    $("#dismissModalCommentAlbum[[${album.id}]]").show();
-                    $("#updateCommentAlbum[[${album.id}]]").hide();
-                    $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+                    if (currentCommentId !== "") {
+                        $("#saveCommentAlbum[[${album.id}]]").show();
+                        $("#dismissModalCommentAlbum[[${album.id}]]").show();
+                        $("#updateCommentAlbum[[${album.id}]]").hide();
+                        $("#cancelEditCommentAlbum[[${album.id}]]").hide();
 
-                    $("#commentcontainer"+currentCommentId).show();
-                    $("#textareacontainer"+currentCommentId).html('');
-                    $("#textareacontainer"+currentCommentId).hide();
+                        $("#commentcontainer" + currentCommentId).show();
+                        $("#textareacontainer" + currentCommentId).html('');
+                        $("#textareacontainer" + currentCommentId).hide();
 
-                    $("#currentCommentId[[${album.id}]]").val("");
+                        $("#currentCommentId[[${album.id}]]").val("");
+                    }
+                });
+
+                $("#updateCommentAlbum[[${album.id}]]").click(function (e) {
+                    var currentCommentId = $("#currentCommentId[[${album.id}]]").val()
+
+                    if (currentCommentId !== "") {
+                        var updatedComment = $.trim($("#commenttext"+currentCommentId).val());
+
+                        if (updatedComment.length > 0) {
+                            let json = {commentId: currentCommentId, comment: updatedComment}
+
+                            const posting = $.post({
+                                url: "/comment/album/update/",
+                                data: JSON.stringify(json),
+                                contentType: 'application/json; charset=utf-8'
+                            });
+
+                            posting.done(function (data) {
+                                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                                    let commentId = data["commentId"];
+                                    let message = "Error";
+                                    if (data["status"] === "success") {
+                                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                    } else {
+                                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                    }
+
+                                    // Update comment
+                                    $("#commentcontent"+commentId).text(updatedComment);
+
+                                    $("#saveCommentAlbum[[${album.id}]]").show();
+                                    $("#dismissModalCommentAlbum[[${album.id}]]").show();
+                                    $("#updateCommentAlbum[[${album.id}]]").hide();
+                                    $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+
+                                    $("#commentcontainer" + commentId).show();
+                                    $("#textareacontainer" + commentId).html('');
+                                    $("#textareacontainer" + commentId).hide();
+                                    $("#commenttext"+commentId).val("");
+                                }
+                            });
+                        }
+
+                        $("#saveCommentAlbum[[${album.id}]]").show();
+                        $("#dismissModalCommentAlbum[[${album.id}]]").show();
+                        $("#updateCommentAlbum[[${album.id}]]").hide();
+                        $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+
+                        $("#commentcontainer" + currentCommentId).show();
+                        $("#textareacontainer" + currentCommentId).html('');
+                        $("#textareacontainer" + currentCommentId).hide();
+
+                        $("#currentCommentId[[${album.id}]]").val("");
+                    }
                 });
 
                 $("#saveCommentAlbum[[${album.id}]]").click(function(e) {
@@ -253,7 +324,7 @@
                                 // Insert comment at top of list
                                 var commentItem = '<li class="list-group-item list-group-item-secondary" id="comment'+commentId+'">\n' +
                                     '<span id="commentcontainer'+commentId+'">\n<p id="commentcontent'+commentId+'">'+comment+'</p>\n' +
-                                    '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="editcomment'+commentId+'"><span class="bi-pencil"></span></a></span></small></span>' +
+                                    '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="deletecomment'+commentId+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment'+commentId+'"><span class="bi-pencil"></span></a></span></small></span>' +
                                     '<span id="textareacontainer'+commentId+'"></span></li>';
                                 $("#commentText[[${album.id}]]").val("")
                                 $("#commentList[[${album.id}]]").prepend(commentItem);
