@@ -36,7 +36,7 @@ class CommentsController {
 
     @RequestMapping(value = ["/comment/album/save"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postSaveComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment")) {
             val albumId = commentMap["albumId"].toString().toInt()
@@ -72,6 +72,71 @@ class CommentsController {
         }
 
         resp["msg"] = "Could not save to comment"
+        resp["status"] = "fail"
+        resp["commentId"] = ""
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/comment/album/update"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun postUpdateComment(model: Model, @RequestBody requestBody: JsonNode): String {
+        val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (commentMap.containsKey("commentId") && commentMap.containsKey("comment")) {
+            val commentId = commentMap["commentId"].toString().toInt()
+            val commentText = commentMap["comment"].toString()
+
+            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+
+            if (currentUserObj != null) {
+                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val now = LocalDateTime.now()
+
+                // Update comment
+                val commentObj = commentRepository.findById(commentId)
+                if (currentUserObj.getId() == commentObj.get().getId()) {
+                    commentObj.get().setComment(commentText)
+                    commentObj.get().setModifiedAt(dtf.format(now))
+                    val savedCommentObj = commentRepository.save(commentObj.get())
+
+                    resp["msg"] = "Comment saved!"
+                    resp["status"] = "success"
+                    resp["commentId"] = commentObj.get().getId().toString()
+                    return mapper.writeValueAsString(resp)
+                }
+            }
+        }
+
+        resp["msg"] = "Could not update comment"
+        resp["status"] = "fail"
+        resp["commentId"] = ""
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/comment/album/delete"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun postDeleteComment(model: Model, @RequestBody requestBody: JsonNode): String {
+        val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (commentMap.containsKey("commentId")) {
+            val commentId = commentMap["commentId"].toString().toInt()
+            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+
+            if (currentUserObj != null) {
+                // Delete comment
+                val commentObj = commentRepository.findById(commentId)
+                if (currentUserObj.getId() == commentObj.get().getUserId()) {
+                    albumCommentRepository.deleteByCommentId(commentId)
+                    commentRepository.deleteById(commentId)
+
+                    resp["msg"] = "Comment deleted"
+                    resp["status"] = "success"
+                    resp["commentId"] = commentId.toString()
+                    return mapper.writeValueAsString(resp)
+                }
+            }
+        }
+
+        resp["msg"] = "Could not delete comment"
         resp["status"] = "fail"
         resp["commentId"] = ""
         return mapper.writeValueAsString(resp)
