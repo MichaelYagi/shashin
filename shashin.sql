@@ -40,29 +40,29 @@ CREATE TABLE `metadata` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `username` char(50) NOT NULL,
-    `password` char(50) NOT NULL,
+    `username` VARCHAR(50) NOT NULL,
+    `password` VARCHAR(50) NOT NULL,
     `authority` VARCHAR(50) NOT NULL,
     `loggedIn` BOOLEAN DEFAULT NULL CHECK (`loggedIn` IN (0, 1)),
-    `createdAt` datetime DEFAULT NULL,
-    `modifiedAt` datetime DEFAULT NULL
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS `mediadir`;
 CREATE TABLE `mediadir` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `directory` char(150) NOT NULL,
-    `createdAt` datetime DEFAULT NULL,
-    `modifiedAt` datetime DEFAULT NULL
+    `directory` VARCHAR(150) NOT NULL,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS `album`;
 CREATE TABLE `album` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `name` varchar(100) NOT NULL UNIQUE,
-    `coverUrl` varchar(255) DEFAULT NULL,
-    `createdAt` datetime DEFAULT NULL,
-    `modifiedAt` datetime DEFAULT NULL
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `coverUrl` VARCHAR(255) DEFAULT NULL,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS `useralbum`;
@@ -70,19 +70,21 @@ CREATE TABLE `useralbum` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `userId` INTEGER,
     `albumId` INTEGER,
-    `createdAt` datetime DEFAULT NULL,
-    `modifiedAt` datetime DEFAULT NULL,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL,
+    UNIQUE(`userId`,`albumId`) ON CONFLICT IGNORE,
     FOREIGN KEY (`albumId`) REFERENCES album(`id`),
     FOREIGN KEY (`userId`) REFERENCES user(`id`)
 );
 
 DROP TABLE IF EXISTS `albumphoto`;
 CREATE TABLE `albumphoto` (
-     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-     `metadataId` varchar(36),
-     `albumId` INTEGER,
-     `createdAt` datetime DEFAULT NULL,
-     `modifiedAt` datetime DEFAULT NULL,
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `metadataId` VARCHAR(36),
+    `albumId` INTEGER,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL,
+    UNIQUE(`metadataId`,`albumId`) ON CONFLICT IGNORE,
     FOREIGN KEY (`albumId`) REFERENCES album(`id`),
     FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`)
 );
@@ -92,10 +94,33 @@ CREATE TABLE `favorite` (
      `id` INTEGER PRIMARY KEY AUTOINCREMENT,
      `userId` INTEGER,
      `metadataId` INTEGER,
-     `createdAt` datetime DEFAULT NULL,
-     `modifiedAt` datetime DEFAULT NULL,
+     `createdAt` DATETIME DEFAULT NULL,
+     `modifiedAt` DATETIME DEFAULT NULL,
+     UNIQUE(`metadataId`,`userId`) ON CONFLICT IGNORE,
      FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`),
      FOREIGN KEY (`userId`) REFERENCES user(`id`)
+);
+
+DROP TABLE IF EXISTS `comment`;
+CREATE TABLE `comment` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `comment` VARCHAR,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL
+);
+
+DROP TABLE IF EXISTS `albumcomment`;
+CREATE TABLE `albumcomment` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `albumId` INT,
+    `userId` INT,
+    `commentId` INT,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL,
+    UNIQUE(`commentId`,`userId`,`albumId`) ON CONFLICT IGNORE,
+    FOREIGN KEY (`commentId`) REFERENCES comment(`id`),
+    FOREIGN KEY (`userId`) REFERENCES user(`id`),
+    FOREIGN KEY (`albumId`) REFERENCES album(`id`)
 );
 
 INSERT INTO `hibernate_sequence` VALUES (362);
