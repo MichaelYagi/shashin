@@ -1,7 +1,6 @@
 package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.AlbumPhoto
-import com.miyagi.shashin.model.UserAlbum
 import org.springframework.data.repository.CrudRepository
 
 interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
