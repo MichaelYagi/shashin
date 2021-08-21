@@ -1,11 +1,26 @@
 package com.miyagi.shashin.util
 
 import org.springframework.stereotype.Component
+import java.text.SimpleDateFormat
 import java.util.*
 
 @Component
 class TextUtils {
     companion object {
+        fun formatToLongDate(oldDate: String): String {
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val newSdf = SimpleDateFormat("EEE, MMM dd, yyyy")
+            val temp = sdf.parse(oldDate)
+            return newSdf.format(temp)
+        }
+
+        fun formatToLongDateWithTime(oldDate: String): String {
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val newSdf = SimpleDateFormat("EEE, MMM dd, yyyy  'at' h:mm aa")
+            val temp = sdf.parse(oldDate)
+            return newSdf.format(temp)
+        }
+
         fun capitalized(str: String): String {
             return str.replaceFirstChar {
                 if (it.isLowerCase())

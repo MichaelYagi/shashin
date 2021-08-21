@@ -7,4 +7,5 @@ interface AlbumPhotoComments {
     fun getAlbumId(): Int?
     fun getUserId(): Int?
     fun getUsername(): String?
+    fun getCreatedAt(): String?
 }
