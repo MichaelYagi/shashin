@@ -12,9 +12,11 @@
     });
 
     $("#tncentered[[${metadata.id}]]").hover(function() {
+        $('.bi-play-circle').css("color", "darkorange");
         $(this).css("display", "block");
         $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
     }, function() {
+        $('.bi-play-circle').css("color", "lightgray");
         $(this).css("display", "none");
         $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
     });
