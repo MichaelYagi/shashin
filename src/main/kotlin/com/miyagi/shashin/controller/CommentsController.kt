@@ -3,10 +3,9 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.AlbumComment
-import com.miyagi.shashin.model.Comment
-import com.miyagi.shashin.model.Favorite
+import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.AlbumCommentRepository
+import com.miyagi.shashin.repository.AlbumPhotoCommentRepository
 import com.miyagi.shashin.repository.CommentRepository
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -30,6 +29,9 @@ class CommentsController {
 
     @Autowired
     private lateinit var albumCommentRepository: AlbumCommentRepository
+
+    @Autowired
+    private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -77,7 +79,52 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/album/update"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/comment/albumphoto/save"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun postSaveAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
+        val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (commentMap.containsKey("albumId") && commentMap.containsKey("comment") && commentMap.containsKey("metadataId")) {
+            val albumId = commentMap["albumId"].toString().toInt()
+            val metadataId = commentMap["metadataId"].toString()
+            val commentText = commentMap["comment"].toString()
+
+            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+
+            if (currentUserObj != null) {
+                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val now = LocalDateTime.now()
+
+                // Insert into comments
+                val comment = Comment()
+                comment.setUserId(currentUserObj.getId())
+                comment.setComment(commentText)
+                comment.setCreatedAt(dtf.format(now))
+                comment.setModifiedAt(dtf.format(now))
+                val savedCommentObj = commentRepository.save(comment)
+
+                // Insert into album photo comment
+                val albumPhotoComment = AlbumPhotoComment()
+                albumPhotoComment.setCommentId(savedCommentObj.getId())
+                albumPhotoComment.setMetadataId(metadataId)
+                albumPhotoComment.setAlbumId(albumId)
+                albumPhotoComment.setCreatedAt(dtf.format(now))
+                albumPhotoComment.setModifiedAt(dtf.format(now))
+                albumPhotoCommentRepository.save(albumPhotoComment)
+
+                resp["msg"] = "Comment saved!"
+                resp["status"] = "success"
+                resp["commentId"] = savedCommentObj.getId().toString()
+                return mapper.writeValueAsString(resp)
+            }
+        }
+
+        resp["msg"] = "Could not save to comment"
+        resp["status"] = "fail"
+        resp["commentId"] = ""
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/comment/update"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun postUpdateComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -93,7 +140,7 @@ class CommentsController {
 
                 // Update comment
                 val commentObj = commentRepository.findById(commentId)
-                if (currentUserObj.getId() == commentObj.get().getId()) {
+                if (currentUserObj.getId() == commentObj.get().getUserId()) {
                     commentObj.get().setComment(commentText)
                     commentObj.get().setModifiedAt(dtf.format(now))
                     val savedCommentObj = commentRepository.save(commentObj.get())
@@ -107,6 +154,37 @@ class CommentsController {
         }
 
         resp["msg"] = "Could not update comment"
+        resp["status"] = "fail"
+        resp["commentId"] = ""
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/comment/albumphoto/delete"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun postDeleteAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
+        val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (commentMap.containsKey("commentId") && commentMap.containsKey("metadataId")) {
+            val commentId = commentMap["commentId"].toString().toInt()
+            val metadataId = commentMap["metadataId"].toString()
+            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+
+            if (currentUserObj != null) {
+                // Delete comment
+                val commentObj = commentRepository.findById(commentId)
+                if (currentUserObj.getId() == commentObj.get().getUserId()) {
+                    albumPhotoCommentRepository.deleteByCommentId(commentId)
+                    commentRepository.deleteById(commentId)
+
+                    resp["msg"] = "Comment deleted"
+                    resp["status"] = "success"
+                    resp["commentId"] = commentId.toString()
+                    return mapper.writeValueAsString(resp)
+                }
+            }
+        }
+
+        resp["msg"] = "Could not delete comment"
         resp["status"] = "fail"
         resp["commentId"] = ""
         return mapper.writeValueAsString(resp)

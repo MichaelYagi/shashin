@@ -122,4 +122,18 @@ CREATE TABLE `albumcomment` (
     FOREIGN KEY (`albumId`) REFERENCES album(`id`)
 );
 
+DROP TABLE IF EXISTS `albumphotocomment`;
+CREATE TABLE `albumphotocomment` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `metadataId` INT,
+    `albumId` INT,
+    `commentId` INT,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL,
+    UNIQUE(`commentId`,`metadataId`,`albumId`) ON CONFLICT IGNORE,
+    FOREIGN KEY (`commentId`) REFERENCES comment(`id`),
+    FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`),
+    FOREIGN KEY (`albumId`) REFERENCES album(`id`)
+);
+
 INSERT INTO `hibernate_sequence` VALUES (362);
