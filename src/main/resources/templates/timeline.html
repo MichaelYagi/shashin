@@ -43,7 +43,7 @@
 
                         <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
                             <a href="#" th:id="'select'+${metadata.id}">
-                                <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: steelblue;"></span>
+                                <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
                             </a>
                         </div>
 
@@ -55,14 +55,14 @@
 
                         <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
                             <a href="#" data-toggle="modal" th:data-target="'#prop'+${metadata.id}">
-                                <span class="bi-pencil" style="font-size: 1rem;color: steelblue;"></span>
+                                <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
                             </a>
                         </div>
 
                         <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                             <th:block th:unless="${metadata.type.contains('video')}">
                                 <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
-                                    <span class="bi-play-circle" style="font-size: 4rem;color: steelblue;"></span>
+                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                 </a>
                             </th:block>
                             <th:block th:if="${metadata.type.contains('video')}">
@@ -71,7 +71,7 @@
                                    data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
                                    data-featherlight-iframe-frameborder="0"
                                    data-featherlight-iframe-allowfullscreen="true">
-                                    <span class="bi-play-circle" style="font-size: 4rem;color: steelblue;"></span>
+                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                 </a>
                             </th:block>
                         </div>

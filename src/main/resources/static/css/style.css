@@ -137,7 +137,7 @@ body {
 
 .photo-thumbnail {
   margin: 0px 4px 4px 0px;
-  background-color: rgba(209,220,255,0.3);
+  background-color: rgba(0,0,0,0.5);
 }
 
 .photo-thumbnail-image {

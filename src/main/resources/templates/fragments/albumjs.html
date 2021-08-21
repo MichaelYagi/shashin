@@ -114,6 +114,7 @@
     });
 
     $("#tncentered[[${metadata.id}]]").hover(function() {
+        $('.bi-play-circle').css("color", "darkorange");
         $(this).css("display", "block");
         $(this).siblings(".thumbnail-tl").css("display", "block");
         $(this).siblings(".thumbnail-bl").css("display", "block");
@@ -123,6 +124,7 @@
             $('.thumbnail-centered').hide();
         }
     }, function() {
+        $('.bi-play-circle').css("color", "lightgray");
         $(this).css("display", "none");
         $(this).siblings(".thumbnail-tl").css("display", "none");
         $(this).siblings(".thumbnail-bl").css("display", "none");
