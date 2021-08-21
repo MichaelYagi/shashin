@@ -39,6 +39,12 @@
                                 </div>
                             </th:block>
 
+                            <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
+                                <a href="#" data-toggle="modal" th:data-target="'#propalbumphotocomment'+${metadata.id}">
+                                    <span th:id="'bricon'+${metadata.id}" class="bi-chat-square" style="font-size: 1rem;color: steelblue;"></span>
+                                </a>
+                            </div>
+
                             <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                                 <th:block th:unless="${metadata.type.contains('video')}">
                                     <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
@@ -57,8 +63,8 @@
                             </div>
                         </div>
 
-                        <div th:replace="fragments/albummodal :: albummodal(${album}, ${metadata})"></div>
-                        <div th:replace="fragments/albumjs :: albumjs(${album}, ${metadata})"></div>
+                        <div th:replace="fragments/albummodal :: albummodal(${album},${metadata},${currentUser},${albumPhotoCommentsMap})"></div>
+                        <div th:replace="fragments/albumjs :: albumjs(${album},${metadata})"></div>
                     </th:block>
                 </div>
             </th:block>

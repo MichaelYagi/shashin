@@ -43,6 +43,9 @@ class AlbumsController {
     @Autowired
     private lateinit var albumCommentRepository: AlbumCommentRepository
 
+    @Autowired
+    private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -156,6 +159,7 @@ class AlbumsController {
                     if (commentIdList.count() > 0) {
                         commentRepository.deleteAllById(commentIdList)
                         albumCommentRepository.deleteByAlbumId(albumId)
+                        albumPhotoCommentRepository.deleteByAlbumId(albumId)
                     }
                 }
             }
@@ -215,6 +219,7 @@ class AlbumsController {
                     if (commentIdList.count() > 0) {
                         commentRepository.deleteAllById(commentIdList)
                         albumCommentRepository.deleteByAlbumId(albumId)
+                        albumPhotoCommentRepository.deleteByAlbumId(albumId)
                     }
                 }
 
@@ -283,10 +288,11 @@ class AlbumsController {
                             if (commentIdList.count() > 0) {
                                 commentRepository.deleteAllById(commentIdList)
                                 albumCommentRepository.deleteByAlbumId(albumId)
+                                albumPhotoCommentRepository.deleteByAlbumId(albumId)
                             }
 
                         }
-                        
+
                         resp["msg"] = "/albums"
                         resp["status"] = "redirect"
                         return mapper.writeValueAsString(resp)
@@ -372,6 +378,8 @@ class AlbumsController {
 
         model["album"] = ""
         model["albumMetadataList"] = ""
+        model["albumPhotoCommentsMap"] = ""
+        model["currentUser"] = ""
 
         val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
         if (currentUserObj != null && albumId > 0) {
@@ -381,18 +389,36 @@ class AlbumsController {
                 val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
+                    val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
+                    val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
+
                     for (albumPhoto in albumPhotos) {
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                             albumMetadataList.add(metadata.get())
+
+                            // Get comments for this photo
+                            val albumPhotoComments = commentRepository.findCommentsByAlbumIdAndMetadataId(albumId,albumPhoto.getMetadataId()!!)
+                            for (albumPhotoComment in albumPhotoComments) {
+                                val albumPhotoCommentMap = HashMap<String, Any>()
+                                albumPhotoCommentMap["comment"] = albumPhotoComment.getComment().toString()
+                                albumPhotoCommentMap["commentId"] = albumPhotoComment.getCommentId().toString().toInt()
+                                albumPhotoCommentMap["metadataId"] = albumPhotoComment.getMetadataId().toString()
+                                albumPhotoCommentMap["albumId"] = albumPhotoComment.getAlbumId().toString().toInt()
+                                albumPhotoCommentMap["userId"] = albumPhotoComment.getUserId().toString().toInt()
+                                albumPhotoCommentMap["username"] = albumPhotoComment.getUsername().toString()
+                                albumPhotoCommentsList.add(albumPhotoCommentMap)
+                            }
+                            albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
                         }
                     }
                     if (albumMetadataList.count() > 0) {
                         val album = albumRepository.findById(albumId)
+                        model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         model["album"] = album.get()
                         model["albumMetadataList"] = albumMetadataList
+                        model["currentUser"] = currentUserObj
                         model["data"] = ""
-
                     }
                 }
             }

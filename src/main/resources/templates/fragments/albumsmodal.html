@@ -203,7 +203,8 @@
 
                                         $("#commentcontainer[[${comments.get('commentId')}]]").hide();
                                         $("#textareacontainer[[${comments.get('commentId')}]]").show();
-                                        $("#textareacontainer[[${comments.get('commentId')}]]").html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2"></textarea>');
+                                        var commentText = $("#commentcontent[[${comments.get('commentId')}]]").text();
+                                        $("#textareacontainer[[${comments.get('commentId')}]]").html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
                                     }
                                 });
                                 /*]]>*/
@@ -225,6 +226,8 @@
                 $("#cancelEditCommentAlbum[[${album.id}]]").hide();
 
                 $("#cancelEditCommentAlbum[[${album.id}]]").click(function (e) {
+                    e.preventDefault();
+
                     var currentCommentId = $("#currentCommentId[[${album.id}]]").val()
 
                     if (currentCommentId !== "") {
@@ -242,6 +245,8 @@
                 });
 
                 $("#updateCommentAlbum[[${album.id}]]").click(function (e) {
+                    e.preventDefault();
+
                     var currentCommentId = $("#currentCommentId[[${album.id}]]").val()
 
                     if (currentCommentId !== "") {
@@ -251,7 +256,7 @@
                             let json = {commentId: currentCommentId, comment: updatedComment}
 
                             const posting = $.post({
-                                url: "/comment/album/update/",
+                                url: "/comment/update",
                                 data: JSON.stringify(json),
                                 contentType: 'application/json; charset=utf-8'
                             });
