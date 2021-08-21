@@ -183,3 +183,13 @@ footer {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+/*Map*/
+
+.scroll {
+  height: 100%;
+}
+
+#map {
+  height: 100%;
+}
