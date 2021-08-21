@@ -86,13 +86,24 @@
             $("#bricon"+metadataId).attr("class","bi-suit-heart");
         }
 
-        var json = {metadataId:metadataId,isFavorite:($("#bricon"+metadataId).attr("class") === "bi-suit-heart-fill")}
+        var isFavorite = ($("#bricon"+metadataId).attr("class") === "bi-suit-heart-fill");
 
-        const posting = $.post({
-            url: "/favorite/save",
-            data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8'
-        });
+        var json = {metadataId:metadataId,isFavorite:isFavorite}
+        var posting;
+
+        if (isFavorite === true) {
+            posting = $.post({
+                url: "/favorite/save",
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8'
+            });
+        } else {
+            posting = $.post({
+                url: "/favorite/delete",
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8'
+            });
+        }
 
         posting.done(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
