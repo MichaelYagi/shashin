@@ -117,7 +117,7 @@
                             <li th:id="'comment'+${comments.get('commentId')}" th:class="'list-group-item'+${comments.get('userId') == currentUser.id ? ' list-group-item-secondary' : ''}">
                                 <span th:id="'commentcontainer'+${comments.get('commentId')}">
                                     <p th:id="'commentcontent'+${comments.get('commentId')}" th:text="${comments.get('comment')}"></p>
-                                    <small th:text="${comments.get('username')}"></small>
+                                    <small><strong th:text="${comments.get('username')}"></strong><span th:text="' on '+${comments.get('createdAt')}"></span></small>
                                     <th:block th:if="${comments.get('userId') == currentUser.id}">
                                         <small><span style="float: right">
                                             <a href="#" th:id="'deletecomment'+${comments.get('commentId')}"><span class="bi-trash"></span></a>&nbsp;&nbsp;

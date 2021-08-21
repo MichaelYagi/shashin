@@ -14,8 +14,10 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import javax.transaction.Transactional
 
 
@@ -93,6 +95,7 @@ class AlbumsController {
                                 albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
                                 albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
                                 albumCommentMap["username"] = albumComment.getUsername().toString()
+                                albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
                                 albumCommentsList.add(albumCommentMap)
                             }
                             albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
@@ -407,6 +410,7 @@ class AlbumsController {
                                 albumPhotoCommentMap["albumId"] = albumPhotoComment.getAlbumId().toString().toInt()
                                 albumPhotoCommentMap["userId"] = albumPhotoComment.getUserId().toString().toInt()
                                 albumPhotoCommentMap["username"] = albumPhotoComment.getUsername().toString()
+                                albumPhotoCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumPhotoComment.getCreatedAt().toString())
                                 albumPhotoCommentsList.add(albumPhotoCommentMap)
                             }
                             albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
