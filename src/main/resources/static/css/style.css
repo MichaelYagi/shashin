@@ -136,7 +136,12 @@ body {
 }
 
 .photo-thumbnail {
-  padding: 0px 4px 4px 0px;
+  margin: 0px 4px 4px 0px;
+  background-color: rgba(209,220,255,0.3);
+}
+
+.photo-thumbnail-image {
+  z-index: -1;
 }
 
 footer {
