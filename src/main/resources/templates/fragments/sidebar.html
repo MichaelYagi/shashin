@@ -17,6 +17,11 @@
                     <span class="bi-images" style="font-size: 2rem;"></span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='map' ? ' active' : ''}" href="/map" data-toggle="tooltip"  data-placement="bottom" title="Map">
+                    <span class="bi-map" style="font-size: 2rem;"></span>
+                </a>
+            </li>
             <th:block th:if="${authority == 'ADMIN'}">
                 <li class="nav-item">
                     <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites" data-toggle="tooltip"  data-placement="bottom" title="Favorites">
