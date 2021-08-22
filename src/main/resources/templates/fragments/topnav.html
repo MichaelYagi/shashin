@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="topnav(authority)">
+<body th:fragment="topnav(authority,username)">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-2 col-md-1 mr-0" th:href="${authority == 'ADMIN' ? '/timeline' : '/albums'}">Shashin</a>
     <input id="appSearch" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
@@ -13,11 +13,17 @@
         <a href="#" id="albumAppToolsAddAlbum" data-toggle="tooltip" data-placement="bottom" title="Remove From Album"><span class="bi-bookmark-x" style="font-size: 1.5rem;color: whitesmoke;"></span></a>&nbsp;&nbsp;
         <a href="#" id="albumAppToolsDeselectAll" data-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: whitesmoke;"></span></a>
     </div>
-    <ul class="navbar-nav px-3">
-        <li class="nav-item text-nowrap">
-            <a class="nav-link" href="/users/logout">Sign out</a>
-        </li>
-    </ul>
+    <div class="px-3 top-bar-margin-top">
+        <div class="dropdown">
+            <a id="dLabel" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color: white;">
+                <span class="top-bar-app-links make-it-regular" th:text="${username}"></span>
+                <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dLabel">
+                <li><a href="/users/logout">Sign out</a></li>
+            </ul>
+        </div>
+    </div>
 </nav>
 </body>
 </html>

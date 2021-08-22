@@ -3,11 +3,11 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 
-<div th:replace="fragments/topnav :: topnav(${authority})"></div>
+<div th:replace="fragments/topnav :: topnav(${authority},${username})"></div>
 
 <div class="container-fluid">
     <div class="row">
-    <div th:replace="fragments/sidebar :: sidebar(${activeSidebar}, ${authority})"></div>
+    <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
             <div id="albumMessage"></div>
@@ -50,6 +50,35 @@
                                     <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
                                         <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                     </a>
+                                    <script type="text/javascript">
+                                        var lat = "[[${metadata.lat}]]";
+                                        var lng = "[[${metadata.lng}]]";
+                                        var year = "[[${metadata.year}]]";
+                                        var month = "[[${metadata.month}]]";
+                                        var day = "[[${metadata.day}]]";
+                                        var dateTaken = "";
+                                        if (year !== "" || month !== "" || day !== "") {
+                                            var dateTaken = new Date(year, month - 1, day);
+                                            dateTaken = dateTaken.toDateString()
+                                        }
+                                        $.featherlight.prototype.afterOpen = function(lat, lng, dateTaken) {
+                                            if (lat !== "" || lng !== "") {
+                                                $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
+                                                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country + "<br>";
+
+                                                    if (dateTaken !== "") {
+                                                        html += dateTaken;
+                                                    }
+
+                                                    $('.caption').remove();
+                                                    $('<div class="caption">').html(html).appendTo($('.featherlight-content'));
+                                                });
+                                            } else if (dateTaken !== "") {
+                                                $('.caption').remove();
+                                                $('<div class="caption">').html(dateTaken).appendTo($('.featherlight-content'));
+                                            }
+                                        }(lat, lng, dateTaken);
+                                    </script>
                                 </th:block>
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <a th:href="${metadata.videoUrl}"

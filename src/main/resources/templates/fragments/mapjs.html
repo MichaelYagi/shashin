@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="mapjs(mapdata)">
+
+<div id="map" class="map" style="z-index: 0"></div>
+
+<script type="text/javascript">
+    /*<![CDATA[*/
+    var mapdata = JSON.parse(decodeHtml("[[${mapdata}]]"));
+    /*]]>*/
+
+    var map = new ol.Map({
+        target: 'map',
+        layers: [
+            new ol.layer.Tile({
+                source: new ol.source.OSM()
+            })
+        ],
+        view: new ol.View({
+            center: ol.proj.fromLonLat([-73.1234, 45.678]),
+            zoom: 2
+        })
+    });
+
+    var iconFeatures=[];
+
+    for (index in mapdata) {
+        var data = mapdata[index];
+
+        if (data["lat"] !== "" && data["lng"] !== "") {
+            var lat = data["lat"];
+            var lng = data["lng"];
+
+            var year = data["year"];
+            var month = data["month"];
+            var day = data["day"];
+            var filename = data["fileName"];
+            var mapMarkerUrl = data["mapMarkerUrl"];
+            var thumbnailUrlOriginal = data["thumbnailUrlOriginal"];
+            var videoUrl = data["videoUrl"];
+            var type = data["type"];
+
+            var dateTaken = new Date(year, month-1, day);
+            dateTaken = dateTaken.toDateString()
+
+            var iconFeature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913')),
+                name: filename,
+                photoUrl: thumbnailUrlOriginal,
+                videoUrl: videoUrl,
+                dateTaken: dateTaken,
+                type: type
+            });
+            var iconStyle = new ol.style.Style({
+                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                    anchor: [0.5, 46],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    opacity: 0.75,
+                    src: mapMarkerUrl
+                }))
+            });
+            iconFeature.setStyle(iconStyle);
+            iconFeatures.push(iconFeature);
+        }
+    }
+    if (iconFeatures.length > 0) {
+        var vectorSource = new ol.source.Vector({
+            features: iconFeatures //add an array of features
+        });
+        var layer = new ol.layer.Vector({
+            source: vectorSource
+        });
+        map.addLayer(layer);
+    }
+
+    map.on("click", function(e) {
+        // Return first feature
+        const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
+            return feature;
+        });
+
+        if(typeof feature !== 'undefined' && feature.getProperties) {
+            var featureProperties = feature.getProperties();
+            // console.log(featureProperties);
+            // console.log(featureProperties.name);
+            // console.log(featureProperties.photoUrl);
+            // console.log(featureProperties.dateTaken);
+            // console.log(featureProperties.type);
+
+            var geometry = feature.getGeometry();
+            var coordinates = geometry.getCoordinates();
+
+            var lngLat = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
+            var lng = lngLat[0];
+            var lat = lngLat[1];
+
+            // Get geo information
+            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat="+lat+"&lon="+lng, function( data ) {
+                // console.log(data);
+
+                if (featureProperties.type.includes("image")) {
+                    $.featherlight(featureProperties.photoUrl, {type: "image"});
+                } else if (featureProperties.type.includes("video")) {
+                    $.featherlight(featureProperties.videoUrl, {type: "iframe"});
+                    $.featherlight({
+                        iframe: featureProperties.videoUrl,
+                        iframeMaxWidth: '100%',
+                        iframeWidth: 500,
+                        iframeHeight: 300
+                    });
+                }
+
+                $.featherlight.prototype.afterOpen = function() {
+                    var html = data.address.road+", "+data.address.city+", "+data.address.state+" "+data.address.country+"<br>";
+                    html += featureProperties.dateTaken;
+
+                    this.$instance.find('.caption').remove();
+                    $('<div class="caption">').html(html).appendTo(this.$instance.find('.featherlight-content'));
+                };
+                return false;
+            });
+        }
+    });
+
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+</script>
+</body>
+</html>
