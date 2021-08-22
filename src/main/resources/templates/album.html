@@ -64,10 +64,10 @@
                                         $.featherlight.prototype.afterOpen = function(lat, lng, dateTaken) {
                                             if (lat !== "" || lng !== "") {
                                                 $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
-                                                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country + "<br>";
+                                                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
 
                                                     if (dateTaken !== "") {
-                                                        html += dateTaken;
+                                                        html += "<br>"+dateTaken;
                                                     }
 
                                                     $('.caption').remove();
