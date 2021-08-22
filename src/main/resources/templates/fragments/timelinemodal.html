@@ -44,12 +44,8 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label th:for="'lat'+${metadata.id}" class="col-form-label">Latitude</label>
-                                    <input type="text" class="form-control" th:id="'lat'+${metadata.id}" name="lat" th:value="${metadata.lat}">
-                                </div>
-                                <div class="col-sm">
-                                    <label th:for="'lng'+${metadata.id}" class="col-form-label">Longitude</label>
-                                    <input type="text" class="form-control" th:id="'lng'+${metadata.id}" name="lng" th:value="${metadata.lng}">
+                                    <label th:for="'latlng'+${metadata.id}" class="col-form-label">Latitude, Longitude</label>
+                                    <input type="text" class="form-control" th:id="'latlng'+${metadata.id}" name="latlng" th:value="${metadata.lat}+', '+${metadata.lng}">
                                 </div>
                             </div>
                         </form>
@@ -94,8 +90,7 @@
                         $("#dayTaken[[${metadata.id}]]").val(),
                         $("#monthTaken[[${metadata.id}]]").val(),
                         $("#yearTaken[[${metadata.id}]]").val(),
-                        $("#lat[[${metadata.id}]]").val(),
-                        $("#lng[[${metadata.id}]]").val(),
+                        $("#latlng[[${metadata.id}]]").val(),
                         "msg[[${metadata.id}]]"
                     ) === true) {
                         const posting = $.post({
