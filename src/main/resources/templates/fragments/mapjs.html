@@ -27,7 +27,8 @@
     for (index in mapdata) {
         var data = mapdata[index];
 
-        if (data["lat"] !== "" && data["lng"] !== "") {
+        if (data["lat"] !== null && data["lng"] !== null &&
+            data["lat"] !== "" && data["lng"] !== "") {
             var lat = data["lat"];
             var lng = data["lng"];
 
@@ -105,22 +106,28 @@
                 if (featureProperties.type.includes("image")) {
                     $.featherlight(featureProperties.photoUrl, {type: "image"});
                 } else if (featureProperties.type.includes("video")) {
-                    $.featherlight(featureProperties.videoUrl, {type: "iframe"});
-                    $.featherlight({
-                        iframe: featureProperties.videoUrl,
-                        iframeMaxWidth: '100%',
-                        iframeWidth: 500,
-                        iframeHeight: 300
-                    });
+                    $.featherlight(featureProperties.videoUrl,
+                        {
+                            type: "iframe"
+                        }
+                    );
+                    // $.featherlight({
+                    //     iframe: featureProperties.videoUrl,
+                    //     iframeMaxWidth: '100%',
+                    //     // iframeWidth: 500,
+                    //     iframeHeight: '100%'
+                    // });
                 }
 
                 $.featherlight.prototype.afterOpen = function() {
                     var html = data.address.road+", "+data.address.city+", "+data.address.state+" "+data.address.country;
-                    if (featureProperties.dateTaken !== "") {
+                    if (featureProperties.dateTaken !== "" && featureProperties.dateTaken !== null) {
                         html += "<br>"+featureProperties.dateTaken;
                     }
 
                     this.$instance.find('.caption').remove();
+                    this.$instance.find('.featherlight-content iframe').css("height","85vh");
+                    this.$instance.find('.featherlight-content iframe').css("width","85vw");
                     $('<div class="caption">').html(html).appendTo(this.$instance.find('.featherlight-content'));
                 };
                 return false;

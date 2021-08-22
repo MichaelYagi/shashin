@@ -114,6 +114,11 @@
     });
 
     $("#tncentered[[${metadata.id}]]").hover(function() {
+        $('#currentlat').val("[[${metadata.lat}]]");
+        $('#currentlng').val("[[${metadata.lng}]]");
+        $('#currentyear').val("[[${metadata.year}]]");
+        $('#currentmonth').val("[[${metadata.month}]]");
+        $('#currentday').val("[[${metadata.day}]]");
         $('.bi-play-circle').css("color", "darkorange");
         $(this).css("display", "block");
         $(this).siblings(".thumbnail-tl").css("display", "block");
