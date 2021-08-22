@@ -13,10 +13,10 @@
             <div class="modal-body">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link show active" data-toggle="tab" th:href="'#general'+${metadata.id}">General</a>
+                        <a class="nav-link show active" data-toggle="tab" th:id="'generaltablink'+${metadata.id}" th:href="'#general'+${metadata.id}">General</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" th:href="'#details'+${metadata.id}">Details</a>
+                        <a class="nav-link" data-toggle="tab" th:id="'detailstablink'+${metadata.id}" th:href="'#details'+${metadata.id}">Details</a>
                     </li>
                 </ul>
 
@@ -166,6 +166,13 @@
                 };
 
                 /*<![CDATA[*/
+                $("#detailstablink[[${metadata.id}]]").click(function (e) {
+                    $("#saveMetadata[[${metadata.id}]]").prop('disabled', true);
+                });
+                $("#generaltablink[[${metadata.id}]]").click(function (e) {
+                    $("#saveMetadata[[${metadata.id}]]").prop('disabled', false);
+                });
+
                 $("#saveMetadata[[${metadata.id}]]").click(function (e) {
                     e.preventDefault();
 
