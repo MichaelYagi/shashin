@@ -103,7 +103,7 @@ class Metadata {
     fun setDay(day: Int?) {
         this.day = day
     }
-    fun setISO(iso: Int?) {
+    fun setIso(iso: Int?) {
         this.iso = iso
     }
     fun setExposure(exposure: String?) {
@@ -197,7 +197,7 @@ class Metadata {
     fun getDay(): Int? {
         return this.day
     }
-    fun getISO(): Int? {
+    fun getIso(): Int? {
         return this.iso
     }
     fun getExposure(): String? {

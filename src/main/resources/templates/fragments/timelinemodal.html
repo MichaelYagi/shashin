@@ -16,9 +16,6 @@
                         <a class="nav-link show active" data-toggle="tab" th:href="'#general'+${metadata.id}">General</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" th:href="'#labels'+${metadata.id}">Labels</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" th:href="'#details'+${metadata.id}">Details</a>
                     </li>
                 </ul>
@@ -57,7 +54,90 @@
                         </form>
                     </div>
                     <div class="tab-pane container fade" th:id="'details'+${metadata.id}">
-                        Details of the photo/video
+                        <div class="row">
+                            <th:block th:if="${metadata.thumbnailPathOriginal != null}">
+                                <strong>File:&nbsp;</strong>
+                                <span th:text="${metadata.thumbnailPathOriginal}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.type != null}">
+                                <strong>File type:&nbsp;</strong>
+                                <span th:text="${metadata.type}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.iso != null}">
+                                <strong>ISO:&nbsp;</strong>
+                                <span th:text="${metadata.iso}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.exposure != null}">
+                                <strong>Exposure:&nbsp;</strong>
+                                <span th:text="${metadata.exposure}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.fNumber != null}">
+                                <strong>F-stop:&nbsp;</strong>
+                                <span th:text="${metadata.fNumber}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.focalLength != null}">
+                                <strong>Focal length:&nbsp;</strong>
+                                <span th:text="${metadata.focalLength}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.camera != null}">
+                                <strong>Camera:&nbsp;</strong>
+                                <span th:text="${metadata.camera}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.lens != null}">
+                                <strong>Lens:&nbsp;</strong>
+                                <span th:text="${metadata.lens}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.quality != null}">
+                                <strong>Quality:&nbsp;</strong>
+                                <span th:text="${metadata.quality}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.createdAt != null}">
+                                <strong>Created:&nbsp;</strong>
+                                <span th:text="${metadata.createdAt}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.modifiedAt != null}">
+                                <strong>Modified:&nbsp;</strong>
+                                <span th:text="${metadata.modifiedAt}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.takenAt != null}">
+                                <strong>Processed taken:&nbsp;</strong>
+                                <span th:text="${metadata.takenAt}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.year != null or metadata.month != null or metadata.day != null}">
+                                <strong>Adjusted taken:&nbsp;</strong>
+                                <span th:text="${metadata.year + '-' + metadata.month + '-' + metadata.day}"></span>
+                            </th:block>
+                        </div>
+                        <div class="row">
+                            <th:block th:if="${metadata.timeZone != null}">
+                                <strong>Time zone:&nbsp;</strong>
+                                <span th:text="${metadata.timeZone}"></span>
+                            </th:block>
+                        </div>
                     </div>
                     <div class="col-sm">
                         <span th:id="'msg'+${metadata.id}"></span>
