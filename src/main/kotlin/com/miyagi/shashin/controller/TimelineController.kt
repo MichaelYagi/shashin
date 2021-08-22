@@ -95,8 +95,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun updateMetadata(@RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
-//        println(metadataFormUpdateData.toString())
-        println(requestBody)
+//        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         if (metadataMap.containsKey("id") &&
@@ -110,6 +109,9 @@ class TimelineController {
                 metadataObj.get().setYear(metadataMap["year"].toString().toInt())
                 metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
                 metadataObj.get().setDay(metadataMap["day"].toString().toInt())
+                val keywordArray = metadataMap["keywords"].toString().split(",")
+                val keywords = keywordArray.joinToString { it.trim() }
+                metadataObj.get().setKeywords(keywords)
                 var latlng = metadataMap["latlng"].toString()
                 latlng = latlng.replace("\\s".toRegex(), "")
                 val latlngArr = latlng.split(",")
@@ -159,6 +161,7 @@ class TimelineController {
         var monthTaken: Int? = null
         var yearTaken: Int? = null
         var latlng: String? = null
+        var keywords: String? = null
 
         for ((k, v) in batchMetadataMap) {
             if (v != "") {
@@ -178,6 +181,9 @@ class TimelineController {
                     }
                     "latlngBatchData" -> {
                         latlng = v.toString()
+                    }
+                    "keywordsBatchData"  -> {
+                        keywords = v.toString()
                     }
                 }
             }
@@ -208,6 +214,12 @@ class TimelineController {
                             metadata.setLat(latlngArr[0])
                             metadata.setLng(latlngArr[1])
                         }
+                    }
+                    if (keywords != null) {
+                        val keywordArray = keywords.toString().split(",")
+                        val trimmedKeywords = keywordArray.joinToString { it.trim() }
+                        metadataObj.get().setKeywords(trimmedKeywords)
+
                     }
 
                     metadataList.add(metadata)

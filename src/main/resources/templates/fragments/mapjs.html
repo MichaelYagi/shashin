@@ -122,7 +122,7 @@
                 $.featherlight.prototype.afterOpen = function() {
                     var html = data.address.road+", "+data.address.city+", "+data.address.state+" "+data.address.country;
                     if (featureProperties.dateTaken !== "" && featureProperties.dateTaken !== null) {
-                        html += "<br>"+featureProperties.dateTaken;
+                        html += "<br>" + featureProperties.dateTaken;
                     }
 
                     this.$instance.find('.caption').remove();
