@@ -4700,3 +4700,410 @@ com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot deserialize 
 2021-08-22 14:29:25,391 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
 2021-08-22 14:29:25,392 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
 2021-08-22 14:29:25,394 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-22 14:45:57,218 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-22 14:45:57,288 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-22 14:45:57,316 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-22 14:46:11,461 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 18860 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-22 14:46:11,465 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-22 14:46:11,569 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacv\1.4.1\javacv-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/javacpp-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/opencv-3.4.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/ffmpeg-3.4.2-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flycapture-2.11.3.121-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libdc1394-2.2.5-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect-0.5.3-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect2-0.2.0-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/librealsense-1.12.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/videoinput-0.200-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/artoolkitplus-2.3.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flandmark-1.07-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/android-4.1.1.4.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/javacpp.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/opencv.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/ffmpeg.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flycapture.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libdc1394.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect2.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/librealsense.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/videoinput.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/artoolkitplus.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flandmark.jar
+2021-08-22 14:46:11,570 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\opencv\3.4.1-1.4.1\opencv-3.4.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv/3.4.1-1.4.1/javacpp.jar
+2021-08-22 14:46:11,570 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\ffmpeg\3.4.2-1.4.1\ffmpeg-3.4.2-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg/3.4.2-1.4.1/javacpp.jar
+2021-08-22 14:46:11,570 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\flycapture\2.11.3.121-1.4.1\flycapture-2.11.3.121-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/flycapture/2.11.3.121-1.4.1/javacpp.jar
+2021-08-22 14:46:11,571 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libdc1394\2.2.5-1.4.1\libdc1394-2.2.5-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libdc1394/2.2.5-1.4.1/javacpp.jar
+2021-08-22 14:46:11,571 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libfreenect\0.5.3-1.4.1\libfreenect-0.5.3-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libfreenect/0.5.3-1.4.1/javacpp.jar
+2021-08-22 14:46:11,571 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libfreenect2\0.2.0-1.4.1\libfreenect2-0.2.0-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libfreenect2/0.2.0-1.4.1/javacpp.jar
+2021-08-22 14:46:11,571 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\librealsense\1.12.1-1.4.1\librealsense-1.12.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/librealsense/1.12.1-1.4.1/javacpp.jar
+2021-08-22 14:46:11,571 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\videoinput\0.200-1.4.1\videoinput-0.200-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/videoinput/0.200-1.4.1/javacpp.jar
+2021-08-22 14:46:11,572 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\artoolkitplus\2.3.1-1.4.1\artoolkitplus-2.3.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/artoolkitplus/2.3.1-1.4.1/javacpp.jar
+2021-08-22 14:46:11,572 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\flandmark\1.07-1.4.1\flandmark-1.07-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/flandmark/1.07-1.4.1/javacpp.jar
+2021-08-22 14:46:11,572 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\opencv-platform\3.4.1-1.4.1\opencv-platform-3.4.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-armhf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-ppc64le.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-macosx-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-windows-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-windows-x86_64.jar
+2021-08-22 14:46:11,572 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\ffmpeg-platform\3.4.2-1.4.1\ffmpeg-platform-3.4.2-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-armhf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-ppc64le.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-macosx-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-windows-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-windows-x86_64.jar
+2021-08-22 14:46:11,572 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-22 14:46:11,573 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-22 14:46:13,812 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-22 14:46:14,023 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 189 ms. Found 11 JPA repository interfaces.
+2021-08-22 14:46:16,070 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-22 14:46:16,086 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-22 14:46:16,087 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-22 14:46:16,088 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-22 14:46:16,322 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-22 14:46:16,324 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 4749 ms
+2021-08-22 14:46:16,870 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-22 14:46:17,053 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-22 14:46:17,059 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-22 14:46:17,158 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-22 14:46:17,191 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-22 14:46:17,430 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-22 14:46:18,285 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-22 14:46:18,299 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-22 14:46:18,343 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-22 14:46:18,960 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-22 14:46:20,345 INFO org.springframework.security.web.DefaultSecurityFilterChain [restartedMain] Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@eed9b14, org.springframework.security.web.context.SecurityContextPersistenceFilter@9417817, org.springframework.security.web.header.HeaderWriterFilter@74b853d0, org.springframework.security.web.authentication.logout.LogoutFilter@74466673, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@5d192d17, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@44550c02, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5c904963, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@74db4948, org.springframework.security.web.session.SessionManagementFilter@1969b958, org.springframework.security.web.access.ExceptionTranslationFilter@3563fbc3, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@5dc47d3d]
+2021-08-22 14:46:20,620 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-22 14:46:20,705 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [restartedMain] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-22 14:46:21,097 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-22 14:46:21,119 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-22 14:46:21,171 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-22 14:46:21,189 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 10.952 seconds (JVM running for 12.818)
+2021-08-22 14:46:29,380 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-22 14:46:29,381 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-22 14:46:29,383 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 2 ms
+2021-08-22 14:46:33,557 WARN com.miyagi.shashin.controller.BaseController [http-nio-8080-exec-4] Error getting authority: null cannot be cast to non-null type org.springframework.security.core.context.SecurityContext
+2021-08-22 14:46:59,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thread created: Thread-7.shashinscan
+2021-08-22 14:46:59,743 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG_209.jpg
+2021-08-22 14:46:59,849 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG_centered.jpg
+2021-08-22 14:46:59,859 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG_original.jpg
+2021-08-22 14:47:01,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG_mapmarker.jpg
+2021-08-22 14:47:01,302 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1061.JPG.exif.yaml
+2021-08-22 14:47:01,357 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1061.JPG.yaml
+2021-08-22 14:47:02,363 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG_209.jpg
+2021-08-22 14:47:02,375 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG_centered.jpg
+2021-08-22 14:47:02,383 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG_original.jpg
+2021-08-22 14:47:03,704 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG_mapmarker.jpg
+2021-08-22 14:47:03,742 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1062.JPG.exif.yaml
+2021-08-22 14:47:03,758 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1062.JPG.yaml
+2021-08-22 14:47:04,409 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG_209.jpg
+2021-08-22 14:47:04,421 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG_centered.jpg
+2021-08-22 14:47:04,428 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG_original.jpg
+2021-08-22 14:47:05,380 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG_mapmarker.jpg
+2021-08-22 14:47:05,392 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1063.JPG.exif.yaml
+2021-08-22 14:47:05,397 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1063.JPG.yaml
+2021-08-22 14:47:06,440 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG_209.jpg
+2021-08-22 14:47:06,453 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG_centered.jpg
+2021-08-22 14:47:06,461 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG_original.jpg
+2021-08-22 14:47:07,447 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG_mapmarker.jpg
+2021-08-22 14:47:07,460 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1080.JPG.exif.yaml
+2021-08-22 14:47:07,465 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1080.JPG.yaml
+2021-08-22 14:47:07,896 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG_209.jpg
+2021-08-22 14:47:07,907 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG_centered.jpg
+2021-08-22 14:47:07,914 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG_original.jpg
+2021-08-22 14:47:08,957 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG_mapmarker.jpg
+2021-08-22 14:47:08,971 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1074.JPG.exif.yaml
+2021-08-22 14:47:08,976 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1074.JPG.yaml
+2021-08-22 14:47:09,451 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG_209.jpg
+2021-08-22 14:47:09,460 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG_centered.jpg
+2021-08-22 14:47:09,466 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG_original.jpg
+2021-08-22 14:47:10,326 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG_mapmarker.jpg
+2021-08-22 14:47:10,338 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1075.JPG.exif.yaml
+2021-08-22 14:47:10,343 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1075.JPG.yaml
+2021-08-22 14:47:10,724 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG_209.jpg
+2021-08-22 14:47:10,734 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG_centered.jpg
+2021-08-22 14:47:10,742 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG_original.jpg
+2021-08-22 14:47:11,729 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG_mapmarker.jpg
+2021-08-22 14:47:11,741 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1076.JPG.exif.yaml
+2021-08-22 14:47:11,745 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1076.JPG.yaml
+2021-08-22 14:47:12,170 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG_209.jpg
+2021-08-22 14:47:12,180 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG_centered.jpg
+2021-08-22 14:47:12,189 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG_original.jpg
+2021-08-22 14:47:13,078 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG_mapmarker.jpg
+2021-08-22 14:47:13,089 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1077.JPG.exif.yaml
+2021-08-22 14:47:13,093 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1077.JPG.yaml
+2021-08-22 14:47:13,461 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG_209.jpg
+2021-08-22 14:47:13,473 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG_centered.jpg
+2021-08-22 14:47:13,480 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG_original.jpg
+2021-08-22 14:47:14,219 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG_mapmarker.jpg
+2021-08-22 14:47:14,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1078.JPG.exif.yaml
+2021-08-22 14:47:14,231 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1078.JPG.yaml
+2021-08-22 14:47:14,665 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG_209.jpg
+2021-08-22 14:47:14,671 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG_centered.jpg
+2021-08-22 14:47:14,676 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG_original.jpg
+2021-08-22 14:47:15,476 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG_mapmarker.jpg
+2021-08-22 14:47:15,496 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1079.JPG.exif.yaml
+2021-08-22 14:47:15,500 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1079.JPG.yaml
+2021-08-22 14:47:15,695 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200905_100554.jpg_209.jpg
+2021-08-22 14:47:15,702 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200905_100554.jpg_centered.jpg
+2021-08-22 14:47:15,708 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200905_100554.jpg_original.jpg
+2021-08-22 14:47:16,246 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200905_100554.jpg_mapmarker.jpg
+2021-08-22 14:47:16,349 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: IMG_20200905_100554.jpg.exif.yaml
+2021-08-22 14:47:16,351 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: IMG_20200905_100554.jpg.yaml
+2021-08-22 14:47:16,502 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200911_142553.jpg_209.jpg
+2021-08-22 14:47:16,508 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200911_142553.jpg_centered.jpg
+2021-08-22 14:47:16,514 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200911_142553.jpg_original.jpg
+2021-08-22 14:47:16,977 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200911_142553.jpg_mapmarker.jpg
+2021-08-22 14:47:16,991 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: IMG_20200911_142553.jpg.exif.yaml
+2021-08-22 14:47:16,994 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: IMG_20200911_142553.jpg.yaml
+2021-08-22 14:47:17,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201211_131005.jpg_209.jpg
+2021-08-22 14:47:17,213 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201211_131005.jpg_centered.jpg
+2021-08-22 14:47:17,219 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201211_131005.jpg_original.jpg
+2021-08-22 14:47:17,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201211_131005.jpg_mapmarker.jpg
+2021-08-22 14:47:17,824 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: IMG_20201211_131005.jpg.exif.yaml
+2021-08-22 14:47:17,827 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: IMG_20201211_131005.jpg.yaml
+2021-08-22 14:47:18,017 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201223_094103.jpg_209.jpg
+2021-08-22 14:47:18,024 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201223_094103.jpg_centered.jpg
+2021-08-22 14:47:18,031 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201223_094103.jpg_original.jpg
+2021-08-22 14:47:18,567 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201223_094103.jpg_mapmarker.jpg
+2021-08-22 14:47:18,575 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: IMG_20201223_094103.jpg.exif.yaml
+2021-08-22 14:47:18,577 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: IMG_20201223_094103.jpg.yaml
+2021-08-22 14:47:18,590 WARN com.miyagi.shashin.util.ImageProcessingUtils [Thread-7] File not supported: RAW_NIKON_D1.NEF
+2021-08-22 14:47:18,633 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: RAW_NIKON_D1.NEF.exif.yaml
+2021-08-22 14:47:18,636 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: RAW_NIKON_D1.NEF.yaml
+2021-08-22 14:47:20,781 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: PXL_20210725_213342002.mp4_209.jpg
+2021-08-22 14:47:20,786 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: PXL_20210725_213342002.mp4_centered.jpg
+2021-08-22 14:47:20,791 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: PXL_20210725_213342002.mp4_original.jpg
+2021-08-22 14:47:20,891 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: PXL_20210725_213342002.mp4_mapmarker.jpg
+2021-08-22 14:47:20,957 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: PXL_20210725_213342002.mp4.exif.yaml
+2021-08-22 14:47:20,960 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: PXL_20210725_213342002.mp4.yaml
+2021-08-22 14:47:21,045 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_209.jpg
+2021-08-22 14:47:21,052 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_centered.jpg
+2021-08-22 14:47:21,057 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_original.jpg
+2021-08-22 14:47:21,087 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_mapmarker.jpg
+2021-08-22 14:47:21,097 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: reface-2021-05-16-06-12-30.mp4.exif.yaml
+2021-08-22 14:47:21,100 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: reface-2021-05-16-06-12-30.mp4.yaml
+2021-08-22 14:49:04,998 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-22 14:49:05,131 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-22 14:49:05,175 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-22 14:49:19,462 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 9200 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-22 14:49:19,466 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-22 14:49:19,563 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacv\1.4.1\javacv-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/javacpp-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/opencv-3.4.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/ffmpeg-3.4.2-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flycapture-2.11.3.121-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libdc1394-2.2.5-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect-0.5.3-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect2-0.2.0-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/librealsense-1.12.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/videoinput-0.200-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/artoolkitplus-2.3.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flandmark-1.07-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/android-4.1.1.4.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/javacpp.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/opencv.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/ffmpeg.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flycapture.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libdc1394.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect2.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/librealsense.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/videoinput.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/artoolkitplus.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flandmark.jar
+2021-08-22 14:49:19,564 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\opencv\3.4.1-1.4.1\opencv-3.4.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv/3.4.1-1.4.1/javacpp.jar
+2021-08-22 14:49:19,564 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\ffmpeg\3.4.2-1.4.1\ffmpeg-3.4.2-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg/3.4.2-1.4.1/javacpp.jar
+2021-08-22 14:49:19,564 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\flycapture\2.11.3.121-1.4.1\flycapture-2.11.3.121-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/flycapture/2.11.3.121-1.4.1/javacpp.jar
+2021-08-22 14:49:19,565 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libdc1394\2.2.5-1.4.1\libdc1394-2.2.5-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libdc1394/2.2.5-1.4.1/javacpp.jar
+2021-08-22 14:49:19,565 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libfreenect\0.5.3-1.4.1\libfreenect-0.5.3-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libfreenect/0.5.3-1.4.1/javacpp.jar
+2021-08-22 14:49:19,565 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libfreenect2\0.2.0-1.4.1\libfreenect2-0.2.0-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libfreenect2/0.2.0-1.4.1/javacpp.jar
+2021-08-22 14:49:19,565 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\librealsense\1.12.1-1.4.1\librealsense-1.12.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/librealsense/1.12.1-1.4.1/javacpp.jar
+2021-08-22 14:49:19,565 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\videoinput\0.200-1.4.1\videoinput-0.200-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/videoinput/0.200-1.4.1/javacpp.jar
+2021-08-22 14:49:19,565 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\artoolkitplus\2.3.1-1.4.1\artoolkitplus-2.3.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/artoolkitplus/2.3.1-1.4.1/javacpp.jar
+2021-08-22 14:49:19,565 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\flandmark\1.07-1.4.1\flandmark-1.07-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/flandmark/1.07-1.4.1/javacpp.jar
+2021-08-22 14:49:19,565 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\opencv-platform\3.4.1-1.4.1\opencv-platform-3.4.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-armhf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-ppc64le.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-macosx-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-windows-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-windows-x86_64.jar
+2021-08-22 14:49:19,566 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\ffmpeg-platform\3.4.2-1.4.1\ffmpeg-platform-3.4.2-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-armhf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-ppc64le.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-macosx-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-windows-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-windows-x86_64.jar
+2021-08-22 14:49:19,566 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-22 14:49:19,567 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-22 14:49:21,933 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-22 14:49:22,208 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 259 ms. Found 11 JPA repository interfaces.
+2021-08-22 14:49:23,376 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-22 14:49:23,387 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-22 14:49:23,387 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-22 14:49:23,387 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-22 14:49:23,502 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-22 14:49:23,503 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 3934 ms
+2021-08-22 14:49:23,865 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-22 14:49:23,998 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-22 14:49:24,003 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-22 14:49:24,066 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-22 14:49:24,086 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-22 14:49:24,265 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-22 14:49:24,726 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-22 14:49:24,736 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-22 14:49:24,769 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-22 14:49:25,295 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-22 14:49:26,710 INFO org.springframework.security.web.DefaultSecurityFilterChain [restartedMain] Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@2c427d8d, org.springframework.security.web.context.SecurityContextPersistenceFilter@29f7fbc4, org.springframework.security.web.header.HeaderWriterFilter@637b2d9f, org.springframework.security.web.authentication.logout.LogoutFilter@2a2fb9d6, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@6b9e89c7, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@42954b0b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@56f24d9b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@498953e9, org.springframework.security.web.session.SessionManagementFilter@15d43d74, org.springframework.security.web.access.ExceptionTranslationFilter@7b4e7207, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@8104082]
+2021-08-22 14:49:27,010 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-22 14:49:27,088 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [restartedMain] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-22 14:49:27,452 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-22 14:49:27,479 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-22 14:49:27,531 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-22 14:49:27,551 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 9.156 seconds (JVM running for 10.883)
+2021-08-22 14:49:39,004 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-22 14:49:39,005 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-22 14:49:39,007 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-22 14:49:39,308 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thread created: Thread-7.shashinscan
+2021-08-22 14:49:39,902 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG_209.jpg
+2021-08-22 14:49:40,001 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG_centered.jpg
+2021-08-22 14:49:40,008 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG_original.jpg
+2021-08-22 14:49:41,517 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1061.JPG_mapmarker.jpg
+2021-08-22 14:49:41,624 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1061.JPG.exif.yaml
+2021-08-22 14:49:41,705 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1061.JPG.yaml
+2021-08-22 14:49:42,562 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG_209.jpg
+2021-08-22 14:49:42,596 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG_centered.jpg
+2021-08-22 14:49:42,605 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG_original.jpg
+2021-08-22 14:49:43,788 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1062.JPG_mapmarker.jpg
+2021-08-22 14:49:43,801 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1062.JPG.exif.yaml
+2021-08-22 14:49:43,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1062.JPG.yaml
+2021-08-22 14:49:45,037 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG_209.jpg
+2021-08-22 14:49:45,068 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG_centered.jpg
+2021-08-22 14:49:45,100 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG_original.jpg
+2021-08-22 14:49:46,664 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1063.JPG_mapmarker.jpg
+2021-08-22 14:49:46,678 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1063.JPG.exif.yaml
+2021-08-22 14:49:46,684 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1063.JPG.yaml
+2021-08-22 14:49:47,145 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG_209.jpg
+2021-08-22 14:49:47,157 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG_centered.jpg
+2021-08-22 14:49:47,162 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG_original.jpg
+2021-08-22 14:49:47,995 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1080.JPG_mapmarker.jpg
+2021-08-22 14:49:48,007 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1080.JPG.exif.yaml
+2021-08-22 14:49:48,011 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1080.JPG.yaml
+2021-08-22 14:49:48,399 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG_209.jpg
+2021-08-22 14:49:48,409 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG_centered.jpg
+2021-08-22 14:49:48,415 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG_original.jpg
+2021-08-22 14:49:49,259 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1074.JPG_mapmarker.jpg
+2021-08-22 14:49:49,276 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1074.JPG.exif.yaml
+2021-08-22 14:49:49,281 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1074.JPG.yaml
+2021-08-22 14:49:49,718 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG_209.jpg
+2021-08-22 14:49:49,728 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG_centered.jpg
+2021-08-22 14:49:49,734 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG_original.jpg
+2021-08-22 14:49:50,538 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1075.JPG_mapmarker.jpg
+2021-08-22 14:49:50,548 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1075.JPG.exif.yaml
+2021-08-22 14:49:50,551 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1075.JPG.yaml
+2021-08-22 14:49:50,939 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG_209.jpg
+2021-08-22 14:49:50,946 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG_centered.jpg
+2021-08-22 14:49:50,953 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG_original.jpg
+2021-08-22 14:49:51,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1076.JPG_mapmarker.jpg
+2021-08-22 14:49:51,820 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1076.JPG.exif.yaml
+2021-08-22 14:49:51,823 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1076.JPG.yaml
+2021-08-22 14:49:52,220 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG_209.jpg
+2021-08-22 14:49:52,231 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG_centered.jpg
+2021-08-22 14:49:52,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG_original.jpg
+2021-08-22 14:49:53,010 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1077.JPG_mapmarker.jpg
+2021-08-22 14:49:53,020 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1077.JPG.exif.yaml
+2021-08-22 14:49:53,024 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1077.JPG.yaml
+2021-08-22 14:49:53,389 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG_209.jpg
+2021-08-22 14:49:53,400 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG_centered.jpg
+2021-08-22 14:49:53,406 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG_original.jpg
+2021-08-22 14:49:54,188 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1078.JPG_mapmarker.jpg
+2021-08-22 14:49:54,197 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1078.JPG.exif.yaml
+2021-08-22 14:49:54,200 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1078.JPG.yaml
+2021-08-22 14:49:54,559 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG_209.jpg
+2021-08-22 14:49:54,567 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG_centered.jpg
+2021-08-22 14:49:54,574 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG_original.jpg
+2021-08-22 14:49:55,329 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: DSCF1079.JPG_mapmarker.jpg
+2021-08-22 14:49:55,336 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: DSCF1079.JPG.exif.yaml
+2021-08-22 14:49:55,339 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: DSCF1079.JPG.yaml
+2021-08-22 14:49:55,547 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200905_100554.jpg_209.jpg
+2021-08-22 14:49:55,556 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200905_100554.jpg_centered.jpg
+2021-08-22 14:49:55,564 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200905_100554.jpg_original.jpg
+2021-08-22 14:49:56,181 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200905_100554.jpg_mapmarker.jpg
+2021-08-22 14:49:56,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: IMG_20200905_100554.jpg.exif.yaml
+2021-08-22 14:49:56,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: IMG_20200905_100554.jpg.yaml
+2021-08-22 14:49:56,396 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200911_142553.jpg_209.jpg
+2021-08-22 14:49:56,403 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200911_142553.jpg_centered.jpg
+2021-08-22 14:49:56,408 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200911_142553.jpg_original.jpg
+2021-08-22 14:49:56,859 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20200911_142553.jpg_mapmarker.jpg
+2021-08-22 14:49:56,872 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: IMG_20200911_142553.jpg.exif.yaml
+2021-08-22 14:49:56,876 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: IMG_20200911_142553.jpg.yaml
+2021-08-22 14:49:57,081 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201211_131005.jpg_209.jpg
+2021-08-22 14:49:57,090 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201211_131005.jpg_centered.jpg
+2021-08-22 14:49:57,096 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201211_131005.jpg_original.jpg
+2021-08-22 14:49:57,682 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201211_131005.jpg_mapmarker.jpg
+2021-08-22 14:49:57,693 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: IMG_20201211_131005.jpg.exif.yaml
+2021-08-22 14:49:57,696 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: IMG_20201211_131005.jpg.yaml
+2021-08-22 14:49:57,905 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201223_094103.jpg_209.jpg
+2021-08-22 14:49:57,914 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201223_094103.jpg_centered.jpg
+2021-08-22 14:49:57,920 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201223_094103.jpg_original.jpg
+2021-08-22 14:49:58,482 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: IMG_20201223_094103.jpg_mapmarker.jpg
+2021-08-22 14:49:58,490 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: IMG_20201223_094103.jpg.exif.yaml
+2021-08-22 14:49:58,493 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: IMG_20201223_094103.jpg.yaml
+2021-08-22 14:49:58,530 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: RAW_NIKON_D1.NEF_209.jpg
+2021-08-22 14:49:58,545 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: RAW_NIKON_D1.NEF_centered.jpg
+2021-08-22 14:49:58,552 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: RAW_NIKON_D1.NEF_original.jpg
+2021-08-22 14:49:58,558 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: RAW_NIKON_D1.NEF_mapmarker.jpg
+2021-08-22 14:49:58,572 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: RAW_NIKON_D1.NEF.exif.yaml
+2021-08-22 14:49:58,574 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: RAW_NIKON_D1.NEF.yaml
+2021-08-22 14:50:00,187 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: PXL_20210725_213342002.mp4_209.jpg
+2021-08-22 14:50:00,193 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: PXL_20210725_213342002.mp4_centered.jpg
+2021-08-22 14:50:00,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: PXL_20210725_213342002.mp4_original.jpg
+2021-08-22 14:50:00,301 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: PXL_20210725_213342002.mp4_mapmarker.jpg
+2021-08-22 14:50:00,397 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: PXL_20210725_213342002.mp4.exif.yaml
+2021-08-22 14:50:00,400 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: PXL_20210725_213342002.mp4.yaml
+2021-08-22 14:50:00,474 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_209.jpg
+2021-08-22 14:50:00,481 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_centered.jpg
+2021-08-22 14:50:00,488 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_original.jpg
+2021-08-22 14:50:00,513 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail already exists: reface-2021-05-16-06-12-30.mp4_mapmarker.jpg
+2021-08-22 14:50:00,522 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif already exists: reface-2021-05-16-06-12-30.mp4.exif.yaml
+2021-08-22 14:50:00,524 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata already exists: reface-2021-05-16-06-12-30.mp4.yaml
+2021-08-22 14:51:03,583 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thread created: Thread-8.shashinscan
+2021-08-22 14:51:04,125 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1061.JPG_209.jpg
+2021-08-22 14:51:04,134 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1061.JPG_centered.jpg
+2021-08-22 14:51:04,160 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1061.JPG_original.jpg
+2021-08-22 14:51:05,267 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1061.JPG_mapmarker.jpg
+2021-08-22 14:51:05,280 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1061.JPG.exif.yaml
+2021-08-22 14:51:05,284 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1061.JPG.yaml
+2021-08-22 14:51:05,870 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1062.JPG_209.jpg
+2021-08-22 14:51:05,880 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1062.JPG_centered.jpg
+2021-08-22 14:51:05,888 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1062.JPG_original.jpg
+2021-08-22 14:51:06,879 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1062.JPG_mapmarker.jpg
+2021-08-22 14:51:06,889 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1062.JPG.exif.yaml
+2021-08-22 14:51:06,894 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1062.JPG.yaml
+2021-08-22 14:51:07,336 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1063.JPG_209.jpg
+2021-08-22 14:51:07,347 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1063.JPG_centered.jpg
+2021-08-22 14:51:07,354 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1063.JPG_original.jpg
+2021-08-22 14:51:08,983 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1063.JPG_mapmarker.jpg
+2021-08-22 14:51:08,995 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1063.JPG.exif.yaml
+2021-08-22 14:51:09,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1063.JPG.yaml
+2021-08-22 14:51:09,570 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1080.JPG_209.jpg
+2021-08-22 14:51:09,579 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1080.JPG_centered.jpg
+2021-08-22 14:51:09,586 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1080.JPG_original.jpg
+2021-08-22 14:51:10,416 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1080.JPG_mapmarker.jpg
+2021-08-22 14:51:10,425 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1080.JPG.exif.yaml
+2021-08-22 14:51:10,428 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1080.JPG.yaml
+2021-08-22 14:51:10,817 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1074.JPG_209.jpg
+2021-08-22 14:51:10,828 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1074.JPG_centered.jpg
+2021-08-22 14:51:10,836 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1074.JPG_original.jpg
+2021-08-22 14:51:11,627 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1074.JPG_mapmarker.jpg
+2021-08-22 14:51:11,634 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1074.JPG.exif.yaml
+2021-08-22 14:51:11,638 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1074.JPG.yaml
+2021-08-22 14:51:12,006 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1075.JPG_209.jpg
+2021-08-22 14:51:12,015 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1075.JPG_centered.jpg
+2021-08-22 14:51:12,022 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1075.JPG_original.jpg
+2021-08-22 14:51:12,784 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1075.JPG_mapmarker.jpg
+2021-08-22 14:51:12,792 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1075.JPG.exif.yaml
+2021-08-22 14:51:12,796 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1075.JPG.yaml
+2021-08-22 14:51:13,171 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1076.JPG_209.jpg
+2021-08-22 14:51:13,180 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1076.JPG_centered.jpg
+2021-08-22 14:51:13,187 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1076.JPG_original.jpg
+2021-08-22 14:51:13,983 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1076.JPG_mapmarker.jpg
+2021-08-22 14:51:13,992 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1076.JPG.exif.yaml
+2021-08-22 14:51:13,996 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1076.JPG.yaml
+2021-08-22 14:51:14,430 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1077.JPG_209.jpg
+2021-08-22 14:51:14,440 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1077.JPG_centered.jpg
+2021-08-22 14:51:14,446 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1077.JPG_original.jpg
+2021-08-22 14:51:15,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1077.JPG_mapmarker.jpg
+2021-08-22 14:51:15,218 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1077.JPG.exif.yaml
+2021-08-22 14:51:15,222 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1077.JPG.yaml
+2021-08-22 14:51:15,591 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1078.JPG_209.jpg
+2021-08-22 14:51:15,598 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1078.JPG_centered.jpg
+2021-08-22 14:51:15,603 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1078.JPG_original.jpg
+2021-08-22 14:51:16,461 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1078.JPG_mapmarker.jpg
+2021-08-22 14:51:16,470 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1078.JPG.exif.yaml
+2021-08-22 14:51:16,474 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1078.JPG.yaml
+2021-08-22 14:51:16,926 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1079.JPG_209.jpg
+2021-08-22 14:51:16,938 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1079.JPG_centered.jpg
+2021-08-22 14:51:16,944 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1079.JPG_original.jpg
+2021-08-22 14:51:17,833 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: DSCF1079.JPG_mapmarker.jpg
+2021-08-22 14:51:17,843 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: DSCF1079.JPG.exif.yaml
+2021-08-22 14:51:17,848 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: DSCF1079.JPG.yaml
+2021-08-22 14:51:18,067 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20200905_100554.jpg_209.jpg
+2021-08-22 14:51:18,077 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20200905_100554.jpg_centered.jpg
+2021-08-22 14:51:18,085 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20200905_100554.jpg_original.jpg
+2021-08-22 14:51:18,619 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20200905_100554.jpg_mapmarker.jpg
+2021-08-22 14:51:18,632 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: IMG_20200905_100554.jpg.exif.yaml
+2021-08-22 14:51:18,635 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: IMG_20200905_100554.jpg.yaml
+2021-08-22 14:51:18,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20200911_142553.jpg_209.jpg
+2021-08-22 14:51:18,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20200911_142553.jpg_centered.jpg
+2021-08-22 14:51:18,817 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20200911_142553.jpg_original.jpg
+2021-08-22 14:51:19,306 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20200911_142553.jpg_mapmarker.jpg
+2021-08-22 14:51:19,314 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: IMG_20200911_142553.jpg.exif.yaml
+2021-08-22 14:51:19,318 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: IMG_20200911_142553.jpg.yaml
+2021-08-22 14:51:19,539 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20201211_131005.jpg_209.jpg
+2021-08-22 14:51:19,546 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20201211_131005.jpg_centered.jpg
+2021-08-22 14:51:19,551 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20201211_131005.jpg_original.jpg
+2021-08-22 14:51:20,193 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20201211_131005.jpg_mapmarker.jpg
+2021-08-22 14:51:20,200 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: IMG_20201211_131005.jpg.exif.yaml
+2021-08-22 14:51:20,202 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: IMG_20201211_131005.jpg.yaml
+2021-08-22 14:51:20,397 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20201223_094103.jpg_209.jpg
+2021-08-22 14:51:20,405 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20201223_094103.jpg_centered.jpg
+2021-08-22 14:51:20,411 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20201223_094103.jpg_original.jpg
+2021-08-22 14:51:20,957 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: IMG_20201223_094103.jpg_mapmarker.jpg
+2021-08-22 14:51:20,966 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: IMG_20201223_094103.jpg.exif.yaml
+2021-08-22 14:51:20,970 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: IMG_20201223_094103.jpg.yaml
+2021-08-22 14:51:20,986 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: RAW_NIKON_D1.NEF_209.jpg
+2021-08-22 14:51:20,996 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: RAW_NIKON_D1.NEF_centered.jpg
+2021-08-22 14:51:21,003 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: RAW_NIKON_D1.NEF_original.jpg
+2021-08-22 14:51:21,008 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: RAW_NIKON_D1.NEF_mapmarker.jpg
+2021-08-22 14:51:21,015 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: RAW_NIKON_D1.NEF.exif.yaml
+2021-08-22 14:51:21,017 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: RAW_NIKON_D1.NEF.yaml
+2021-08-22 14:51:21,379 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: PXL_20210725_213342002.mp4_209.jpg
+2021-08-22 14:51:21,385 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: PXL_20210725_213342002.mp4_centered.jpg
+2021-08-22 14:51:21,389 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: PXL_20210725_213342002.mp4_original.jpg
+2021-08-22 14:51:21,494 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: PXL_20210725_213342002.mp4_mapmarker.jpg
+2021-08-22 14:51:21,502 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: PXL_20210725_213342002.mp4.exif.yaml
+2021-08-22 14:51:21,505 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: PXL_20210725_213342002.mp4.yaml
+2021-08-22 14:51:21,571 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: reface-2021-05-16-06-12-30.mp4_209.jpg
+2021-08-22 14:51:21,578 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: reface-2021-05-16-06-12-30.mp4_centered.jpg
+2021-08-22 14:51:21,585 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: reface-2021-05-16-06-12-30.mp4_original.jpg
+2021-08-22 14:51:21,608 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail created: reface-2021-05-16-06-12-30.mp4_mapmarker.jpg
+2021-08-22 14:51:21,615 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif created: reface-2021-05-16-06-12-30.mp4.exif.yaml
+2021-08-22 14:51:21,618 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata created: reface-2021-05-16-06-12-30.mp4.yaml
