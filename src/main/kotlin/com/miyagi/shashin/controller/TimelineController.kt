@@ -94,39 +94,55 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun updateMetadata(@RequestBody metadataFormUpdateData: Metadata, @PathVariable metadataId: String): String? {
-        val metadataObj: Optional<Metadata?>? = metadataRepository?.findById(metadataId)
-        if (metadataObj != null) {
-            metadataObj.get().setYear(metadataFormUpdateData.getYear())
-            metadataObj.get().setMonth(metadataFormUpdateData.getMonth())
-            metadataObj.get().setDay(metadataFormUpdateData.getDay())
-            metadataObj.get().setLat(metadataFormUpdateData.getLat())
-            metadataObj.get().setLng(metadataFormUpdateData.getLng())
+    fun updateMetadata(@RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
+//        println(metadataFormUpdateData.toString())
+        println(requestBody)
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
-            // Update DB
-            metadataRepository?.save(metadataObj.get())
-            // Update MD file
-            val imageProcessingUtils = ImageProcessingUtils(apiVersion)
-            val originalImagePath = metadataObj.get().getPath()
-            var rootDir: String? = null
-            val rootMediaDirs = mediaDirRepository?.findAll()
-            if (rootMediaDirs != null) {
-                for (rootmediaDir in rootMediaDirs) {
-                    if (originalImagePath != null && rootmediaDir != null) {
-                        if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
-                            rootDir = rootmediaDir.getDirectory()
-                            break
+        if (metadataMap.containsKey("id") &&
+            metadataMap.containsKey("year") &&
+            metadataMap.containsKey("month") &&
+            metadataMap.containsKey("day") &&
+            metadataMap.containsKey("latlng")
+        ) {
+            val metadataObj = metadataRepository?.findById(metadataMap["id"].toString())
+            if (metadataObj != null) {
+                metadataObj.get().setYear(metadataMap["year"].toString().toInt())
+                metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
+                metadataObj.get().setDay(metadataMap["day"].toString().toInt())
+                var latlng = metadataMap["latlng"].toString()
+                latlng = latlng.replace("\\s".toRegex(), "")
+                val latlngArr = latlng.split(",")
+                if (latlngArr.count() == 2) {
+                    metadataObj.get().setLat(latlngArr[0])
+                    metadataObj.get().setLng(latlngArr[1])
+                }
+
+                // Update DB
+                metadataRepository?.save(metadataObj.get())
+                // Update MD file
+                val imageProcessingUtils = ImageProcessingUtils(apiVersion)
+                val originalImagePath = metadataObj.get().getPath()
+                var rootDir: String? = null
+                val rootMediaDirs = mediaDirRepository?.findAll()
+                if (rootMediaDirs != null) {
+                    for (rootmediaDir in rootMediaDirs) {
+                        if (originalImagePath != null && rootmediaDir != null) {
+                            if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                                rootDir = rootmediaDir.getDirectory()
+                                break
+                            }
                         }
                     }
                 }
-            }
 
-            if (rootDir != null) {
-                imageProcessingUtils.saveMetadata(metadataObj.get(), relativeSidecarDir, rootDir)
+                if (rootDir != null) {
+                    imageProcessingUtils.saveMetadata(metadataObj.get(), relativeSidecarDir, rootDir)
+                }
+                resp["msg"] = "Saved!"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
             }
-            resp["msg"] = "Saved!"
-            resp["status"] = "success"
-            return mapper.writeValueAsString(resp)
         }
         resp["msg"] = "Could not save"
         resp["status"] = "fail"
@@ -136,15 +152,13 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/update/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun updateBatchMetadata(@RequestBody requestBody: JsonNode): String? {
-        val mapper = ObjectMapper()
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         var idArray: Array<String>? = null
         var dayTaken: Int? = null
         var monthTaken: Int? = null
         var yearTaken: Int? = null
-        var lat: String? = null
-        var lng: String? = null
+        var latlng: String? = null
 
         for ((k, v) in batchMetadataMap) {
             if (v != "") {
@@ -162,11 +176,8 @@ class TimelineController {
                     "yearTakenBatchData" -> {
                         yearTaken = v.toString().toInt()
                     }
-                    "latBatchData" -> {
-                        lat = v.toString()
-                    }
-                    "lngBatchData" -> {
-                        lng = v.toString()
+                    "latlngBatchData" -> {
+                        latlng = v.toString()
                     }
                 }
             }
@@ -190,13 +201,15 @@ class TimelineController {
                     if (yearTaken != null) {
                         metadata.setYear(yearTaken)
                     }
-                    if (lat != null) {
-                        metadata.setLat(lat)
+                    if (latlng != null) {
+                        latlng = latlng.replace("\\s".toRegex(), "")
+                        val latlngArr = latlng.split(",")
+                        if (latlngArr.count() == 2) {
+                            metadata.setLat(latlngArr[0])
+                            metadata.setLng(latlngArr[1])
+                        }
                     }
-                    if (lng != null) {
-                        metadata.setLng(lng)
-                    }
-
+                    
                     metadataList.add(metadata)
                 }
             }

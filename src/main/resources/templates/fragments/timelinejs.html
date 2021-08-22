@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="timelinejs(metadata)">
 <script type="text/javascript">
-    function validateInputs(day, month, year, lat, lng, msgId) {
+    function validateInputs(day, month, year, latlng, msgId) {
         var dayValidate = "([1-9]|[12]\d|3[01])";
         var monthValidate = "^(0?[1-9]|1[012])$";
 
@@ -19,12 +19,13 @@
             msg = "Enter Valid Year";
         }
 
-        if (lat !== "" && lat % 1 === 0) {
-            msg = "Enter Valid Latitude";
-        }
+        if (latlng !== "") {
+            latlng = $.trim(latlng);
+            var latlngArr = latlng.split(",");
 
-        if (lng !== "" && lng % 1 === 0) {
-            msg = "Enter Valid Longitude";
+            if (latlngArr.length !== 2 || latlng.split(".").length !== 3) {
+                msg = "Enter Valid Latitude/Longitude";
+            }
         }
 
         if (msg !== "") {
