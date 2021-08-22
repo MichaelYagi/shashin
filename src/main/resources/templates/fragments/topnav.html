@@ -3,7 +3,10 @@
 <body th:fragment="topnav(authority,username)">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
     <a class="navbar-brand col-sm-2 col-md-1 mr-0" th:href="${authority == 'ADMIN' ? '/timeline' : '/albums'}">Shashin</a>
-    <input id="appSearch" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+    <form id="appSearch" class="form-control-dark w-100" action="/search" method="post">
+        <input id="appSearchInput" name="appSearchInput" class="form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+        <input type="submit" style="position: absolute; left: -9999px"/>
+    </form>
     <div id="timelineAppTools">
         <a href="#" id="appToolsBatchEdit" data-toggle="tooltip" data-placement="bottom" title="Edit Photos"><span class="bi-pencil" style="font-size: 1.5rem;color: whitesmoke;"></span></a>&nbsp;&nbsp;
         <a href="#" id="appToolsAddAlbum" data-toggle="tooltip" data-placement="bottom" title="Add To Album"><span class="bi-images" style="font-size: 1.5rem;color: whitesmoke;"></span></a>&nbsp;&nbsp;
@@ -25,5 +28,38 @@
         </div>
     </div>
 </nav>
+<script type="text/javascript">
+    // $('#appSearch').keypress(function(event){
+    //     var keycode = (event.keyCode ? event.keyCode : event.which);
+    //     if(keycode === 13){
+    //         var searchTerm = $('#appSearch').val().trim();
+    //         if (searchTerm !== "") {
+    //             let json = {searchTerm:searchTerm}
+    //
+    //             const posting = $.post({
+    //                 url: "/search",
+    //                 data: JSON.stringify(json),
+    //                 contentType: 'application/json; charset=utf-8'
+    //             });
+    //
+    //             posting.done(function (data) {
+    //                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+    //                     if (data["status"] === "redirect") {
+    //                         window.location.replace(data["msg"]);
+    //                     } else {
+    //                         let message = "Error";
+    //                         if (data["status"] === "success") {
+    //                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+    //                         } else {
+    //                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+    //                         }
+    //                         $("#albumMessage").html(message);
+    //                     }
+    //                 }
+    //             });
+    //         }
+    //     }
+    // });
+</script>
 </body>
 </html>
