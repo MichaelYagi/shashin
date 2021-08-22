@@ -5,60 +5,45 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos</th:block></h5>
+                <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos</th:block> <span id="editPhotosNamesModalLabel"></span></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link show active" data-toggle="tab" href="#generalBatchMetadata">General</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#labelsBatchMetadata">Labels</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#detailsBatchMetadata">Details</a>
-                    </li>
-                </ul>
+                <form id="saveBatchData">
+                    <input type="hidden" id="batchMetadataIds" name="batchMetadataIds" value="">
+                    <input type="hidden" id="batchFilenames" name="batchFilenames" value="">
 
-                <div class="tab-content">
-                    <div class="tab-pane container show active" id="generalBatchMetadata">
-                        <form id="saveBatchData">
-                            <input type="hidden" id="batchMetadataIds" name="batchMetadataIds" value="">
-
-                            <div class="form-group row">
-                                <div class="col-sm">
-                                    <label for="dayTakenBatchData" class="col-form-label">Day</label>
-                                    <input type="text" class="form-control" id="dayTakenBatchData" name="dayTakenBatchData" value="">
-                                </div>
-                                <div class="col-sm">
-                                    <label for="monthTakenBatchData" class="col-form-label">Month</label>
-                                    <input type="text" class="form-control" id="monthTakenBatchData" name="monthTakenBatchData" value="">
-                                </div>
-                                <div class="col-sm">
-                                    <label for="yearTakenBatchData" class="col-form-label">Year</label>
-                                    <input type="text" class="form-control" id="yearTakenBatchData" name="yearTakenBatchData" value="">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm">
-                                    <label for="latlngBatchData" class="col-form-label">Latitude, Longitude</label>
-                                    <input type="text" class="form-control" id="latlngBatchData" name="latlngBatchData" value="">
-                                </div>
-                            </div>
-                        </form>
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <label for="dayTakenBatchData" class="col-form-label">Day</label>
+                            <input type="text" class="form-control" id="dayTakenBatchData" name="dayTakenBatchData" value="">
+                        </div>
+                        <div class="col-sm">
+                            <label for="monthTakenBatchData" class="col-form-label">Month</label>
+                            <input type="text" class="form-control" id="monthTakenBatchData" name="monthTakenBatchData" value="">
+                        </div>
+                        <div class="col-sm">
+                            <label for="yearTakenBatchData" class="col-form-label">Year</label>
+                            <input type="text" class="form-control" id="yearTakenBatchData" name="yearTakenBatchData" value="">
+                        </div>
                     </div>
-                    <div class="tab-pane container fade" id="labelsBatchMetadata">
-                        Labels Form
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <label for="latlngBatchData" class="col-form-label">Latitude, Longitude</label>
+                            <input type="text" class="form-control" id="latlngBatchData" name="latlngBatchData" value="">
+                        </div>
                     </div>
-                    <div class="tab-pane container fade" id="detailsBatchMetadata">
-                        Details of the photo/video
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <label for="keywordsBatchData" class="col-form-label">Keywords (comma seperated)</label>
+                            <input type="text" class="form-control" id="keywordsBatchData" name="keywordsBatchData" value="">
+                        </div>
                     </div>
-                    <div class="col-sm">
-                        <span id="msgBatchMetadata"></span>
-                    </div>
+                </form>
+                <div class="col-sm">
+                    <span id="msgBatchMetadata"></span>
                 </div>
             </div>
             <div class="modal-footer">

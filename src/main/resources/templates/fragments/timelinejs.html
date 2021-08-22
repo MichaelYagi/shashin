@@ -47,11 +47,18 @@
         e.preventDefault();
 
         let metadataIdList = [];
+        let filenameList = "";
         $('.bi-circle-fill').each(function(i, obj) {
-            metadataIdList.push(obj.id.substring(6, obj.id.length));
+            var metadataId = obj.id.substring(6, obj.id.length);
+            metadataIdList.push(metadataId);
+            filenameList += $("#filename"+metadataId).val().trim()+", ";
         });
+        filenameList = filenameList.replace(/,\s*$/, "");
 
         $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
+        if (filenameList !== "") {
+            $("#editPhotosNamesModalLabel").text(filenameList);
+        }
         $("#propBatchMetadata").modal('show');
     });
 
@@ -194,6 +201,7 @@
     $("#tncentered[[${metadata.id}]]").hover(function() {
         $('#currentlat').val("[[${metadata.lat}]]");
         $('#currentlng').val("[[${metadata.lng}]]");
+        $('#currentfilename').val("[[${metadata.fileName}]]");
         $('.bi-play-circle').css("color", "darkorange");
         $(this).css("display", "block");
         $(this).siblings(".thumbnail-tl").css("display", "block");
