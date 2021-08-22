@@ -10,6 +10,12 @@
     <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <input type="hidden" id="currentlat" name="currentlat">
+            <input type="hidden" id="currentlng" name="currentlng">
+            <input type="hidden" id="currentyear" name="currentyear">
+            <input type="hidden" id="currentmonth" name="currentmonth">
+            <input type="hidden" id="currentday" name="currentday">
+
             <div id="albumMessage"></div>
             <th:block th:if="${album != '' and albumMetadataList != ''}">
                 <h1 th:text="${album.name}"></h1>
@@ -50,35 +56,6 @@
                                     <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
                                         <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                     </a>
-                                    <script type="text/javascript">
-                                        var lat = "[[${metadata.lat}]]";
-                                        var lng = "[[${metadata.lng}]]";
-                                        var year = "[[${metadata.year}]]";
-                                        var month = "[[${metadata.month}]]";
-                                        var day = "[[${metadata.day}]]";
-                                        var dateTaken = "";
-                                        if (year !== "" || month !== "" || day !== "") {
-                                            var dateTaken = new Date(year, month - 1, day);
-                                            dateTaken = dateTaken.toDateString()
-                                        }
-                                        $.featherlight.prototype.afterOpen = function(lat, lng, dateTaken) {
-                                            if (lat !== "" || lng !== "") {
-                                                $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
-                                                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
-
-                                                    if (dateTaken !== "") {
-                                                        html += "<br>"+dateTaken;
-                                                    }
-
-                                                    $('.caption').remove();
-                                                    $('<div class="caption">').html(html).appendTo($('.featherlight-content'));
-                                                });
-                                            } else if (dateTaken !== "") {
-                                                $('.caption').remove();
-                                                $('<div class="caption">').html(dateTaken).appendTo($('.featherlight-content'));
-                                            }
-                                        }(lat, lng, dateTaken);
-                                    </script>
                                 </th:block>
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <a th:href="${metadata.videoUrl}"
@@ -140,6 +117,42 @@
             });
         }
     });
+
+    $.featherlight.prototype.afterOpen = function() {
+        var lat = $("#currentlat").val();
+        var lng = $("#currentlng").val();
+        var year = $("#currentyear").val();
+        var month = $("#currentmonth").val();
+        var day = $("#currentday").val();
+        var dateTaken = "";
+        if (year !== "" || month !== "" || day !== "") {
+            var dateTaken = new Date(year, month - 1, day);
+            dateTaken = dateTaken.toDateString();
+        }
+
+        if (lat !== null && lng !== null &&
+            lat !== "" && lng !== "") {
+            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
+                var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
+
+                if (dateTaken !== "" && dateTaken !== null) {
+                    html += "<br>"+dateTaken;
+                }
+
+                $('.caption').remove();
+                $('<div class="caption">').html(html).appendTo($('.featherlight-content'));
+            });
+        } else if (dateTaken !== "") {
+            $('.caption').remove();
+            $('<div class="caption">').html(dateTaken).appendTo($('.featherlight-content'));
+        }
+
+        $('#currentlat').val("");
+        $('#currentlng').val("");
+        $('#currentyear').val("");
+        $('#currentmonth').val("");
+        $('#currentday').val("");
+    };
 
     $(document).ready(function(){
         $(function() {
