@@ -213,7 +213,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                         metadataObj.setLng(lngDecimal)
                     }
                     "ISO Speed Ratings" -> {
-                        metadataObj.setISO(tag.description.toInt())
+                        metadataObj.setIso(tag.description.toInt())
                     }
                     "Exposure Time" -> {
                         val exposureArray = tag.description.split(" ")
@@ -267,7 +267,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                 metadataObj.getCreatedAt(),
                 metadataObj.getType(),
                 metadataObj.getFNumber(),
-                metadataObj.getISO(),
+                metadataObj.getIso(),
                 metadataObj.getExposure(),
                 metadataObj.getLat(),
                 metadataObj.getLng()
