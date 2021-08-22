@@ -290,7 +290,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
 
         var img: BufferedImage? = null
-        if (supportedImageFormats.contains(file.extension.lowercase())) {
+        if (supportedImageFormats.contains(file.extension.lowercase()) || FileUtils.isRaw(file.extension.lowercase())) {
             img = ImageIO.read(file)
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
             // Grab screen shot

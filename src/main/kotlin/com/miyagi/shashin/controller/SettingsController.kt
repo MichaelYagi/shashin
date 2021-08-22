@@ -272,22 +272,26 @@ class SettingsController {
                         }
 
                         // TODO: If RAW then convert to jpeg
-                        if (FileUtils.isRaw(file.extension.lowercase())) {
-
-                        } else {
+//                        if (FileUtils.isRaw(file.extension.lowercase())) {
+//
+//                        } else {
                             // TODO: Check if mapped sidecar file exists, if it does, skip creating them
                             if (false) {
 
                             } else {
-                                val imageProcessingUtils = ImageProcessingUtils(apiVersion)
-                                var metadataObj: Metadata? = Metadata()
-                                metadataObj = imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
-                                metadataObj = imageProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
-                                if (metadataObj != null) {
-                                    metadataRepository?.save(metadataObj)
+                                if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                                    val imageProcessingUtils = ImageProcessingUtils(apiVersion)
+                                    var metadataObj: Metadata? = Metadata()
+                                    metadataObj =
+                                        imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
+                                    metadataObj =
+                                        imageProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
+                                    if (metadataObj != null) {
+                                        metadataRepository?.save(metadataObj)
+                                    }
                                 }
                             }
-                        }
+//                        }
                     }
                 }
 
