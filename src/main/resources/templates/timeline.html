@@ -3,11 +3,11 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 
-<div th:replace="fragments/topnav :: topnav(${authority})"></div>
+<div th:replace="fragments/topnav :: topnav(${authority},${username})"></div>
 
 <div class="container-fluid">
     <div class="row">
-        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar}, ${authority})"></div>
+        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
 
@@ -64,6 +64,20 @@
                                 <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
                                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                 </a>
+                                <script type="text/javascript">
+                                    var lat = "[[${metadata.lat}]]";
+                                    var lng = "[[${metadata.lng}]]";
+
+                                    $.featherlight.prototype.afterOpen = function(lat, lng) {
+                                        if (lat !== "" || lng !== "") {
+                                            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
+                                                var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
+                                                $('.caption').remove();
+                                                $('<div class="caption">').html(html).appendTo($('.featherlight-content'));
+                                            });
+                                        }
+                                    }(lat, lng);
+                                </script>
                             </th:block>
                             <th:block th:if="${metadata.type.contains('video')}">
                                 <a th:href="${metadata.videoUrl}"

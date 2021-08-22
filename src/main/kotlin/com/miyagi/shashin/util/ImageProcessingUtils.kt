@@ -11,6 +11,9 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.core.io.FileSystemResource
 import java.awt.RenderingHints
 import java.awt.geom.AffineTransform
+import java.awt.geom.Arc2D
+import java.awt.geom.Area
+import java.awt.geom.Ellipse2D
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
@@ -322,6 +325,16 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                 ImageIO.write(scaled, "jpg", tnFile)
                 metadataObj?.setThumbnailPathOriginal(tnFile.path)
                 metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+            }
+
+            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"
+            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            if (tnFile != null) {
+                val scaled: BufferedImage = scaleImageByHeight(img, 45)
+                val square: BufferedImage = getSquareThumbnail(scaled)
+                ImageIO.write(square, "jpg", tnFile)
+                metadataObj?.setMapMarkerPath(tnFile.path)
+                metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)

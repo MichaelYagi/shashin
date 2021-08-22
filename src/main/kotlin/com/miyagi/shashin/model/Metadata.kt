@@ -1,5 +1,7 @@
 package com.miyagi.shashin.model
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import java.io.IOException
 import javax.persistence.*
 
 @Entity
@@ -14,6 +16,8 @@ class Metadata {
     private var thumbnailUrlCentered: String? = null
     private var thumbnailPathOriginal: String? = null
     private var thumbnailUrlOriginal: String? = null
+    private var mapMarkerPath: String? = null
+    private var mapMarkerUrl: String? = null
     private var videoUrl: String? = null
     private var takenAt: String? = null
     private var type: String? = null
@@ -59,6 +63,12 @@ class Metadata {
     }
     fun setThumbnailUrlOriginal(thumbnailUrlOriginal: String?) {
         this.thumbnailUrlOriginal = thumbnailUrlOriginal
+    }
+    fun setMapMarkerPath(mapMarkerPath: String?) {
+        this.mapMarkerPath = mapMarkerPath
+    }
+    fun setMapMarkerUrl(mapMarkerUrl: String?) {
+        this.mapMarkerUrl = mapMarkerUrl
     }
     fun setVideoUrl(videoUrl: String?) {
         this.videoUrl = videoUrl
@@ -148,6 +158,12 @@ class Metadata {
     fun getThumbnailUrlOriginal(): String? {
         return this.thumbnailUrlOriginal
     }
+    fun getMapMarkerPath(): String? {
+        return this.mapMarkerPath
+    }
+    fun getMapMarkerUrl(): String? {
+        return this.mapMarkerUrl
+    }
     fun getVideoUrl(): String? {
         return this.videoUrl
     }
@@ -213,5 +229,44 @@ class Metadata {
     }
     fun getLastAccessedAt(): String? {
         return this.lastAccessedAt
+    }
+
+    override fun toString(): String {
+        val map = mutableMapOf<String, Any?>()
+        map["id"] = this.id
+        map["thumbnailUrlSmall"] = this.thumbnailUrlSmall
+        map["thumbnailUrlCentered"] = this.thumbnailUrlCentered
+        map["thumbnailUrlOriginal"] = this.thumbnailUrlOriginal
+        map["mapMarkerUrl"] = this.mapMarkerUrl
+        map["videoUrl"] = this.videoUrl
+        map["takenAt"] = this.takenAt
+        map["type"] = this.type
+        map["fileName"] = this.fileName
+        map["timeZone"] = this.timeZone
+        map["lat"] = this.lat
+        map["lng"] = this.lng
+        map["year"] = this.year
+        map["month"] = this.month
+        map["day"] = this.day
+        map["iso"] = this.iso
+        map["exposure"] = this.exposure
+        map["fNumber"] = this.fNumber
+        map["focalLength"] = this.focalLength
+        map["camera"] = this.camera
+        map["lens"] = this.lens
+        map["quality"] = this.quality
+        map["keywords"] = this.keywords
+        map["createdAt"] = this.createdAt
+        map["modifiedAt"] = this.modifiedAt
+        map["lastAccessedAt"] = this.lastAccessedAt
+
+        val mapper = ObjectMapper()
+        var mapJson: String? = "{}"
+        try {
+            mapJson = mapper.writeValueAsString(map)
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return mapJson.toString()
     }
 }
