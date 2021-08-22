@@ -209,7 +209,7 @@ class TimelineController {
                             metadata.setLng(latlngArr[1])
                         }
                     }
-                    
+
                     metadataList.add(metadata)
                 }
             }

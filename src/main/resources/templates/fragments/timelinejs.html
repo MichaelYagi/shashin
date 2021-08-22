@@ -23,7 +23,7 @@
             latlng = $.trim(latlng);
             var latlngArr = latlng.split(",");
 
-            if (latlngArr.length !== 2 || latlng.split(".").length !== 3) {
+            if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !isNumeric(latlngArr[0]) || !isNumeric(latlngArr[1])) {
                 msg = "Enter Valid Latitude/Longitude";
             }
         }
@@ -35,6 +35,12 @@
             return true;
         }
 
+    }
+
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+            !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
     }
 
     $("#appToolsBatchEdit").click(function(e) {
