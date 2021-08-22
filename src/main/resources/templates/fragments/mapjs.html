@@ -135,6 +135,17 @@
         }
     });
 
+    map.on("pointermove", function (evt) {
+        var hit = this.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
+            return true;
+        });
+        if (hit) {
+            this.getTargetElement().style.cursor = 'pointer';
+        } else {
+            this.getTargetElement().style.cursor = '';
+        }
+    });
+
     function decodeHtml(html) {
         var txt = document.createElement("textarea");
         txt.innerHTML = html;
