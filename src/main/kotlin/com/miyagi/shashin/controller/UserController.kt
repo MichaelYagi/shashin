@@ -47,7 +47,6 @@ class UserController {
 
     @GetMapping("/users/update")
     fun getUpdateUser(model: Model): String {
-
         model["data"] = ""
         model["user"] = ""
         model["message"] = ""
@@ -239,26 +238,31 @@ class UserController {
 
     @RequestMapping(value = ["/users/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun deleteUser(@ModelAttribute user: @Valid User?): String? {
-        val users: List<User?> = userRepository?.findAll() as List<User?>
-        for (other in users) {
-            if (other != null && user != null) {
-                if (other.equals(user)) {
-                    user.setLoggedIn(false)
-                    userRepository?.delete(user)
+    fun deleteUser(model: Model, @ModelAttribute user: @Valid User?): String? {
+        resp["status"] = "fail"
 
-                    resp["msg"] = "Deleted user " + user.getUsername()
-                    resp["status"] = "success"
-                    return mapper.writeValueAsString(resp)
+        if (model.getAttribute("authority").toString() == adminRole) {
+
+            val users: List<User?> = userRepository?.findAll() as List<User?>
+            for (other in users) {
+                if (other != null && user != null) {
+                    if (other.equals(user)) {
+                        user.setLoggedIn(false)
+                        userRepository?.delete(user)
+
+                        resp["msg"] = "Deleted user " + user.getUsername()
+                        resp["status"] = "success"
+                        return mapper.writeValueAsString(resp)
+                    }
                 }
             }
-        }
 
-        resp["msg"] = "Could not delete user"
-        if (user != null) {
-            resp["msg"] = "Could not delete user " + user.getUsername()
+            resp["msg"] = "Could not delete user"
+            if (user != null) {
+                resp["msg"] = "Could not delete user " + user.getUsername()
+            }
+            resp["status"] = "fail"
         }
-        resp["status"] = "fail"
         return mapper.writeValueAsString(resp)
     }
 }

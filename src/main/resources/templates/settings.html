@@ -9,23 +9,25 @@
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
-            <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
-            <br>
-            <form id="saveSettingsForm" method="post" action="/settings">
-                <th:block th:if="${message != '' and alertClass != ''}">
-                    <div class="col-12">
-                        <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
-                    </div>
-                </th:block>
-                <div class="col-12">
-                    <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma seperated)</strong></label>
-                    <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
-                </div>
+            <th:block th:if="${authority == 'ADMIN'}">
+                <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
                 <br>
-                <div class="col-12">
-                    <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
-                </div>
-            </form>
+                <form id="saveSettingsForm" method="post" action="/settings">
+                    <th:block th:if="${message != '' and alertClass != ''}">
+                        <div class="col-12">
+                            <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+                        </div>
+                    </th:block>
+                    <div class="col-12">
+                        <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma seperated)</strong></label>
+                        <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                    </div>
+                    <br>
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
+                    </div>
+                </form>
+            </th:block>
 
             <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>
