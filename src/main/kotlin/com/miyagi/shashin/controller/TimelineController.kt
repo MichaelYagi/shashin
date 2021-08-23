@@ -16,6 +16,7 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
+import kotlin.collections.HashMap
 
 
 @Controller
@@ -48,7 +49,7 @@ class TimelineController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    @GetMapping("/timeline")
+    @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
     fun getTimeline(model: Model): String {
         val module = "timeline"
         val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
@@ -72,7 +73,7 @@ class TimelineController {
 
         val pageRequest = PageRequest.of(
             0,
-            metadataRepository?.count()!!.toInt(),//queryLimit!!,
+            queryLimit!!,
             sort
         )
 
@@ -99,6 +100,64 @@ class TimelineController {
         return module
     }
 
+    @RequestMapping(value = ["/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedTimeline(model: Model, @PathVariable page: Int): String {
+        val response = mutableMapOf<String, Any?>()
+
+        if (page > 0) {
+            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
+            val favoritesMap = HashMap<String, Boolean>()
+            if (favorites != null) {
+                for (favorite in favorites) {
+                    if (favorite != null) {
+                        favoritesMap[favorite.getMetadataId().toString()] = true
+                    }
+                }
+            }
+
+            val sort = Sort.by(
+                Sort.Order.desc("year"),
+                Sort.Order.desc("month"),
+                Sort.Order.desc("day")
+            )
+
+            val pageRequest = PageRequest.of(
+                page,
+                queryLimit!!,
+                sort
+            )
+
+            val metadataList = metadataRepository?.findAll(pageRequest)?.toList()
+            if (metadataList != null) {
+                response["metadataList"] = ""
+                response["favorites"] = ""
+                response["albumList"] = ""
+                response["msg"] = "Results"
+                response["status"] = "success"
+                if (metadataList.isNotEmpty()) {
+                    val albumList = albumRepository?.findAll()
+                    if (albumList != null && albumList.count() > 0) {
+                        response["albumList"] = albumList
+                    }
+                    response["metadataList"] = metadataList
+                    response["favorites"] = favoritesMap
+                    response["msg"] = "Results"
+                    response["status"] = "success"
+                }
+                return mapper.writeValueAsString(response)
+            }
+
+
+        }
+
+        resp["msg"] = "Could not get results"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+
     @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun updateMetadata(@RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
@@ -113,9 +172,21 @@ class TimelineController {
         ) {
             val metadataObj = metadataRepository?.findById(metadataMap["id"].toString())
             if (metadataObj != null) {
-                metadataObj.get().setYear(metadataMap["year"].toString().toInt())
-                metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
-                metadataObj.get().setDay(metadataMap["day"].toString().toInt())
+                if (metadataMap["year"].toString() == "") {
+                    metadataObj.get().setYear(null)
+                } else {
+                    metadataObj.get().setYear(metadataMap["year"].toString().toInt())
+                }
+                if (metadataMap["month"].toString() == "") {
+                    metadataObj.get().setMonth(null)
+                } else {
+                    metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
+                }
+                if (metadataMap["day"].toString() == "") {
+                    metadataObj.get().setDay(null)
+                } else {
+                    metadataObj.get().setDay(metadataMap["day"].toString().toInt())
+                }
                 val keywordArray = metadataMap["keywords"].toString().split(",")
                 val keywords = keywordArray.joinToString { it.trim() }
                 metadataObj.get().setKeywords(keywords)
