@@ -1,6 +1,7 @@
 package com.miyagi.shashin.component
 
 import com.miyagi.shashin.repository.UserRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.DefaultRedirectStrategy
@@ -22,11 +23,11 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     @Value("\${app.role.user}")
     private var userRole: String? = null
 
+    @Autowired
     var userRepository: UserRepository? = null
 
     @Throws(IOException::class)
     override fun handle(request: HttpServletRequest?, response: HttpServletResponse?, authentication: Authentication?) {
-
         if (authentication != null) {
             val user = userRepository?.findByUsername(authentication.name)
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
