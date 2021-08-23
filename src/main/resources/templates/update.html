@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body>
+
+<div th:replace="fragments/topnav :: topnav(${authority},${username})"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
+        <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+            <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <div class="row">
+                <form action="/users/update" method="post">
+                    <h2 class="form-signin-heading">Change Password</h2>
+                    <th:block th:if="${message != '' and alertClass != ''}">
+                        <div class="col-12">
+                            <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+                        </div>
+                    </th:block>
+                    <p>
+                        <label for="oldpassword" class="sr-only">Old Password</label>
+                        <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" required autofocus>
+                    </p>
+                    <p>
+                        <label for="newpassword" class="sr-only">New Password</label>
+                        <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" required>
+                    </p>
+                    <p>
+                        <label for="newpasswordconfirm" class="sr-only">New Password Confirm</label>
+                        <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" required>
+                    </p>
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
+                </form>
+            </div>
+
+            <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear})"></div>
+        </main>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    });
+</script>
+
+</body>
+</html>
