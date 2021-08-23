@@ -5,11 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.io.FileSystemResource
-import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 import org.springframework.web.servlet.resource.PathResourceResolver
-import java.io.File
 import java.nio.file.Paths
 
 @Configuration
@@ -17,8 +15,10 @@ class MvcConfig : WebMvcConfigurer {
 
     @Value("\${app.sidecar.path}")
     private val relativeSidecarDir: String? = null
+
     @Value("\${app.api.version}")
     private val apiVersion: String? = null
+
     @Autowired
     private val mediaDirRepository: MediaDirectoryRepository? = null
 
