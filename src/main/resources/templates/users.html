@@ -29,7 +29,7 @@
                             <tr>
                                 <td><span th:text="${user.username}"></span></td>
                                 <td>
-                                    <a href="#" th:id="${'permissiontoggle' + user.id}" data-toggle="tooltip" data-placement="right" title="Role">
+                                    <a href="#" th:id="${'permissiontoggle' + user.id}">
                                         <th:block th:if="${user.authority == 'ADMIN'}">
                                             <span class="bi-person-badge" style="font-size: 1rem;color: black;"></span>
                                         </th:block>
@@ -49,7 +49,7 @@
                                     </th:block>
                                 </td>
                                 <td>
-                                    <a href="#" th:id="${'trash' + user.id}" data-toggle="tooltip" data-placement="right" title="Delete user">
+                                    <a href="#" th:id="${'trash' + user.id}">
                                         <span class="bi-trash" style="font-size: 1rem;color: lightcoral;"></span>
                                     </a>
                                 </td>
