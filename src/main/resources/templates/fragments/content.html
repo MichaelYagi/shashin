@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="content(data,activePage)">
-<th:block th:if="${activePage == 'settings' or activePage == 'scan'}">
+<th:block th:if="${activePage == 'settings' or activePage == 'scan' or activePage == 'users'}">
     <div th:replace="fragments/settings :: settings(${activePage})"></div>
 </th:block>
 <th:block th:if="${data != ''}">

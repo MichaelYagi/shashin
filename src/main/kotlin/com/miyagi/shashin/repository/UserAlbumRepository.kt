@@ -10,4 +10,5 @@ interface UserAlbumRepository : CrudRepository<UserAlbum?, Int?> {
     fun findAllByOrderByUserIdAsc(): MutableIterable<UserAlbum?>?
     fun deleteByAlbumId(albumId: Int?): Long?
     fun deleteByUserIdAndAlbumId(userId: Int?, albumId: Int?): Long?
+    fun deleteByUserId(userId: Int?): Long?
 }
