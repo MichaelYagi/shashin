@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body>
+
+<div th:replace="fragments/topnav :: topnav(${authority},${username})"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
+        <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+            <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <table class="table">
+                <th:block th:if="${users != ''}">
+                    <thead>
+                        <tr>
+                            <th scope="col">Username</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Created</th>
+                            <th scope="col">Modified</th>
+                            <th scope="col">Logged in</th>
+                            <th scope="col">Delete user</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="user: ${users}">
+                        <th:block th:if="${user.id != currentUser.id}">
+                            <tr>
+                                <td><span th:text="${user.username}"></span></td>
+                                <td>
+                                    <a href="#" th:id="${'permissiontoggle' + user.id}" data-toggle="tooltip" data-placement="right" title="Role">
+                                        <th:block th:if="${user.authority == 'ADMIN'}">
+                                            <span class="bi-person-badge" style="font-size: 1rem;color: black;"></span>
+                                        </th:block>
+                                        <th:block th:if="${user.authority == 'USER'}">
+                                            <span class="bi-person" style="font-size: 1rem;color: black;"></span>
+                                        </th:block>
+                                    </a>
+                                </td>
+                                <td><span th:text="${user.createdAt}"></span></td>
+                                <td><span th:text="${user.modifiedAt}"></span></td>
+                                <td>
+                                    <th:block th:if="${user.loggedIn}">
+                                        <span class="bi-circle-fill" style="font-size: 1rem;color: lightgreen;"></span>
+                                    </th:block>
+                                    <th:block th:unless="${user.loggedIn}">
+                                        <span class="bi-circle" style="font-size: 1rem;color: lightsalmon;"></span>
+                                    </th:block>
+                                </td>
+                                <td>
+                                    <a href="#" th:id="${'trash' + user.id}" data-toggle="tooltip" data-placement="right" title="Delete user">
+                                        <span class="bi-trash" style="font-size: 1rem;color: lightcoral;"></span>
+                                    </a>
+                                </td>
+                            </tr>
+
+                            <script type="text/javascript">
+                                /*<![CDATA[*/
+                                $("#trash[[${user.id}]]").click(function(e) {
+                                    e.preventDefault();
+
+                                    $("#proptrashuser[[${user.id}]]").modal('show');
+                                });
+                                $("#permissiontoggle[[${user.id}]]").click(function(e) {
+                                    e.preventDefault();
+
+                                    $("#proproleuser[[${user.id}]]").modal('show');
+                                });
+                                /*]]>*/
+                            </script>
+
+                            <div th:replace="fragments/usersettingsmodal :: usersettingsmodal(${user})"></div>
+                        </th:block>
+                    </th:block>
+                    </tbody>
+                </th:block>
+            </table>
+            <div th:replace="fragments/footer :: footer(${copyrightYear})"></div>
+        </main>
+    </div>
+</div>
+
+<script type="text/babel">
+    $("#scanPhotos").submit(function (e) {
+        e.preventDefault();
+
+        postToScan(false);
+    });
+
+    function postToScan(isCheckOnly) {
+
+        let posting = $.post(
+            "/settings/scan",
+            { "submit": "Scan", "isCheckOnly": isCheckOnly }
+        );
+
+        posting.done(function( data ) {
+            $("#msg").text(data.hasOwnProperty("msg") ? data["msg"] : "");
+        });
+
+        // initial call, or just call refresh directly
+        //setTimeout(refresh, 2000);
+
+        return false;
+    }
+
+    function refresh() {
+        postToScan(true);
+        let msgId = "#msg";
+        if ($(msgId).text() !== "Start Scanning" && $(msgId).text() !== "Scan Complete") {
+            setTimeout(refresh, 2000);
+        }
+    }
+</script>
+</body>
+</html>

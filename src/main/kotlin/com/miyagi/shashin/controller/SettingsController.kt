@@ -1,16 +1,18 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.repository.MediaDirectoryRepository
-import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -25,6 +27,7 @@ import java.time.format.DateTimeFormatter
 import java.util.ArrayList
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.transaction.Transactional
 
 @Controller
 class SettingsController {
@@ -40,6 +43,24 @@ class SettingsController {
 
     @Autowired
     private val mediaDirRepository: MediaDirectoryRepository? = null
+
+    @Autowired
+    private val userRepository: UserRepository? = null
+
+    @Autowired
+    private val userAlbumRepository: UserAlbumRepository? = null
+
+    @Autowired
+    private val favoriteRepository: FavoriteRepository? = null
+
+    @Autowired
+    private val commentRepository: CommentRepository? = null
+
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
+    @Value("\${app.role.user}")
+    private var userRole: String? = null
 
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
@@ -97,6 +118,88 @@ class SettingsController {
         model["message"] = "Success"
         model["alertClass"] = "alert-success"
         return module
+    }
+
+    @GetMapping("/settings/users")
+    fun getUsers(model: Model): String {
+        val module = "users"
+        model["users"] = ""
+        model["currentUser"] = ""
+
+        if (model.getAttribute("authority").toString() == adminRole) {
+            val sort = Sort.by(
+                Sort.Order.asc("username")
+            )
+            val users = userRepository?.findAll(sort)
+            if (users != null) {
+                model["users"] = users
+                val currentUserObj = userRepository?.findByUsername(model.getAttribute("username").toString())
+                if (currentUserObj != null) {
+                    model["currentUser"] = currentUserObj
+                }
+            }
+        }
+
+        model["data"] = ""
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/settings/user/delete/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun deleteUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
+        val userDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (userDeleteMap.containsKey("userId") && userDeleteMap.containsKey("delete") && model.getAttribute("authority").toString() == adminRole) {
+            val userIdRequest = userDeleteMap["userId"].toString().toInt()
+            val deleteFlag = userDeleteMap["delete"].toString().toBoolean()
+
+            if (deleteFlag && userId == userIdRequest) {
+                userRepository?.deleteById(userId)
+                userAlbumRepository?.deleteByUserId(userId)
+                favoriteRepository?.deleteByUserId(userId)
+                commentRepository?.deleteByUserId(userId)
+            }
+
+            resp["msg"] = "Success!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/settings/user/role/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun changeUserRole(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
+        val userRoleChangeMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (userRoleChangeMap.containsKey("userId") && userRoleChangeMap.containsKey("changeTo") && model.getAttribute("authority").toString() == adminRole) {
+            val userIdRequest = userRoleChangeMap["userId"].toString().toInt()
+            val changeRoleTo = userRoleChangeMap["changeTo"].toString()
+
+            if (userId == userIdRequest) {
+                val userObj = userRepository?.findById(userId)?.get()
+                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val now = LocalDateTime.now()
+                if (userObj != null) {
+                    userObj.setModifiedAt(dtf.format(now))
+                    userObj.setAuthority(changeRoleTo)
+                    userRepository?.save(userObj)
+                }
+            }
+
+            resp["msg"] = "Success!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
     }
 
     @GetMapping("/settings/scan")
