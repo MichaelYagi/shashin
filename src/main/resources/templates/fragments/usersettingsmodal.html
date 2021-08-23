@@ -50,7 +50,7 @@
     </div>
 </div>
 
-<div class="modal fade" th:id="'proproleuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeltrash'+${user.id}" aria-hidden="true">
+<div class="modal fade" th:id="'proproleuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelroleuser'+${user.id}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -66,33 +66,6 @@
             </div>
             <script type="text/javascript">
                 /*<![CDATA[*/
-                $("#deleteUser[[${user.id}]]").click(function(e) {
-                    e.preventDefault();
-
-                    let userId = "[[${user.id}]]";
-
-                    let json = {userId: userId, delete: true}
-                    const posting = $.post({
-                        url: "/settings/user/delete/"+userId,
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8'
-                    });
-
-                    posting.done(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            // $("#usersSettingsMessage").html(message);
-                        }
-                        window.location.replace("/settings/users");
-                    });
-
-                });
-
                 $("#roleUser[[${user.id}]]").click(function(e) {
                     e.preventDefault();
 

@@ -74,7 +74,7 @@ class SettingsController {
         val module = "settings"
         model["data"] = ""
         model["mediaDirList"] = ""
-        if (mediaDirectories != null) {
+        if (model.getAttribute("authority").toString() == adminRole && mediaDirectories != null) {
             model["mediaDirList"] = mediaDirectories.joinToString { it -> "${it?.getDirectory()}" }
         }
         model["activePage"] = module
@@ -87,7 +87,7 @@ class SettingsController {
 
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
     fun postSettings(model: Model, redirectAttributes: RedirectAttributes, @RequestParam("mediaDirList") mediaDirList: String): String {
-        if (!mediaDirList.isNullOrBlank()) {
+        if (model.getAttribute("authority").toString() == adminRole && !mediaDirList.isNullOrBlank()) {
             val mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
@@ -152,7 +152,7 @@ class SettingsController {
     @Transactional
     fun deleteUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
         val userDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (userDeleteMap.containsKey("userId") && userDeleteMap.containsKey("delete") && model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == adminRole && userDeleteMap.containsKey("userId") && userDeleteMap.containsKey("delete") && model.getAttribute("authority").toString() == adminRole) {
             val userIdRequest = userDeleteMap["userId"].toString().toInt()
             val deleteFlag = userDeleteMap["delete"].toString().toBoolean()
 
@@ -175,12 +175,16 @@ class SettingsController {
 
     @RequestMapping(value = ["/settings/user/role/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @Transactional
     fun changeUserRole(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
         val userRoleChangeMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (userRoleChangeMap.containsKey("userId") && userRoleChangeMap.containsKey("changeTo") && model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == adminRole && userRoleChangeMap.containsKey("userId") && userRoleChangeMap.containsKey("changeTo") && model.getAttribute("authority").toString() == adminRole) {
             val userIdRequest = userRoleChangeMap["userId"].toString().toInt()
             val changeRoleTo = userRoleChangeMap["changeTo"].toString()
 
+            if (changeRoleTo == userRole) {
+                favoriteRepository?.deleteByUserId(userIdRequest)
+            }
             if (userId == userIdRequest) {
                 val userObj = userRepository?.findById(userId)?.get()
                 val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -204,81 +208,89 @@ class SettingsController {
 
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
-        val module = "scan"
-        model["data"] = "Scan photos"
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
+        if (model.getAttribute("authority").toString() == adminRole) {
+            val module = "scan"
+            model["data"] = "Scan photos"
+            model["activePage"] = module
+            model["activeSidebar"] = module
+            model["titleDescriptor"] = TextUtils.capitalized(module)
+            return module
+        } else {
+            return "albums"
+        }
     }
 
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun postScan(@RequestParam submit: String, @RequestParam isCheckOnly: Boolean): String {
-        if (isCheckOnly) {
-            if (!checkThreadFileAlive()) {
-                resp["msg"] = "Scan complete"
+    fun postScan(model: Model, @RequestParam submit: String, @RequestParam isCheckOnly: Boolean): String {
+        resp["msg"] = "Nothing to see here"
+
+        if (model.getAttribute("authority").toString() == adminRole) {
+            if (isCheckOnly) {
+                if (!checkThreadFileAlive()) {
+                    resp["msg"] = "Scan complete"
+                    return mapper.writeValueAsString(resp)
+                }
+
+                val threadFileContent = readThreadFile()
+                if (threadFileContent != null) {
+                    resp["msg"] = "Scanning " + threadFileContent.replace("\\","\\\\")
+                    return mapper.writeValueAsString(resp)
+                }
+                resp["msg"] = "Start scanning"
                 return mapper.writeValueAsString(resp)
-            }
+            } else if (submit == "Scan") {
+                val mediaDirs = mediaDirRepository?.findAll()
 
-            val threadFileContent = readThreadFile()
-            if (threadFileContent != null) {
-                resp["msg"] = "Scanning " + threadFileContent.replace("\\","\\\\")
-                return mapper.writeValueAsString(resp)
-            }
-            resp["msg"] = "Start scanning"
-            return mapper.writeValueAsString(resp)
-        } else if (submit == "Scan") {
-            val mediaDirs = mediaDirRepository?.findAll()
+                if (mediaDirs != null) {
+                    if (mediaDirs.count() > 0) {
+                        if (!checkThreadFileAlive()) {
+                            // Clean up any existing thread files
+                            deleteThreadFiles()
 
-            if (mediaDirs != null) {
-                if (mediaDirs.count() > 0) {
-                    if (!checkThreadFileAlive()) {
-                        // Clean up any existing thread files
-                        deleteThreadFiles()
+                            val rootPath = FileSystemResource("").file.absolutePath
+                            val sidecarDir = rootPath + relativeSidecarDir
 
-                        val rootPath = FileSystemResource("").file.absolutePath
-                        val sidecarDir = rootPath + relativeSidecarDir
-
-                        // Iterate through directory in another thread
-                        Thread {
-                            //Create file with thread name and write file name iterated
-                            val tempDir = System.getProperty("java.io.tmpdir")
-                            val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
-                            if (threadFile != null) {
-                                if (mediaDirs != null) {
-                                    for (mediaDir in mediaDirs) {
-                                        if (mediaDir != null) {
-                                            getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
+                            // Iterate through directory in another thread
+                            Thread {
+                                //Create file with thread name and write file name iterated
+                                val tempDir = System.getProperty("java.io.tmpdir")
+                                val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
+                                if (threadFile != null) {
+                                    if (mediaDirs != null) {
+                                        for (mediaDir in mediaDirs) {
+                                            if (mediaDir != null) {
+                                                getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
+                                            }
                                         }
                                     }
+
+                                    // Delete thread file
+                                    if (threadFile.delete()) {
+                                        logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
+                                    } else {
+                                        logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
+                                    }
                                 }
+                            }.start()
 
-                                // Delete thread file
-                                if (threadFile.delete()) {
-                                    logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
-                                } else {
-                                    logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
-                                }
-                            }
-                        }.start()
+                            resp["msg"] = "Scan started"
+                            return mapper.writeValueAsString(resp)
+                        }
 
-                        resp["msg"] = "Scan started"
-                        return mapper.writeValueAsString(resp)
+                        val threadFileContent = readThreadFile()
+                        if (threadFileContent != null) {
+                            resp["msg"] = "Scanning " + threadFileContent.replace("\\","\\\\")
+                            return mapper.writeValueAsString(resp)
+                        } else {
+                            resp["msg"] = "Scan in progress"
+                            return mapper.writeValueAsString(resp)
+                        }
                     }
-
-                    val threadFileContent = readThreadFile()
-                    if (threadFileContent != null) {
-                        resp["msg"] = "Scanning " + threadFileContent.replace("\\","\\\\")
-                        return mapper.writeValueAsString(resp)
-                    } else {
-                        resp["msg"] = "Scan in progress"
-                        return mapper.writeValueAsString(resp)
-                    }
+                    resp["msg"] = "No directories configured"
                 }
                 resp["msg"] = "No directories configured"
             }
-            resp["msg"] = "No directories configured"
         }
 
         return mapper.writeValueAsString(resp)
