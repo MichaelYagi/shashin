@@ -8,11 +8,12 @@
 <div class="container-fluid">
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
-        <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+        <main role="main" class="col-md-11 col-lg-11 pt-3 px-4" id="timelineMain">
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentlat" name="currentlat">
             <input type="hidden" id="currentlng" name="currentlng">
             <input type="hidden" id="currentfilename" name="currentfilename">
+            <input type="hidden" id="currentPage" name="currentPage" value="0">
 
             <th:block th:if="${metadataList != ''}">
                 <th:block th:each="metadata, iterStat: ${metadataList}">
@@ -23,14 +24,18 @@
 
                         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                             <p><strong>Undated</strong></p>
-                            <div class="row">
+                            <div class="row" id="undatedPhotos">
                         </th:block>
 
                         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                 <p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p>
+                                <span style="display: none;" class="dateTakenHeading" th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></span>
                             </th:block>
                             <div class="row">
+                                <span style="display: none;" class="yearTaken" th:text="${metadata.year}"></span>
+                                <span style="display: none;" class="monthTaken" th:text="${metadata.month}"></span>
+                                <span style="display: none;" class="dayTaken" th:text="${metadata.day}"></span>
                         </th:block>
 
                     </th:block>
@@ -94,6 +99,7 @@
             <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal()"></div>
             <div th:replace="fragments/addalbummodal :: addalbummodal(${albumList})"></div>
 
+            <div id="msgTimeline"></div>
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear})"></div>
         </main>
     </div>
@@ -105,6 +111,94 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
     });
+
+    // Detect scrolling to bottom of page
+    $(window).on('scroll', function() {
+        // Uset to detect near bottom
+        var offset = 0; //100
+        if(($(this).scrollTop() + $(this).height()) === $(document).height()-offset) {
+            var currentPage = parseInt($("#currentPage").val());
+            var nextPage = currentPage+1;
+            // console.log("currentPage:" + currentPage);
+            // console.log("nextPage:" + nextPage);
+
+            var yearTakenCount = $(".yearTaken").length;
+            var monthTakenCount = $(".monthTaken").length;
+            var dayTakenCount = $(".dayTaken").length;
+            var dateTakenHeadingCount = $(".dateTakenHeading").length;
+
+            if (yearTakenCount > 0 && monthTakenCount > 0 && dayTakenCount > 0) {
+                var lastYearTaken = $(".yearTaken").get(yearTakenCount - 1).innerText
+                var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
+                var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
+                var lastDateTakenHeading = $(".dateTakenHeading").get(dateTakenHeadingCount - 1).innerText
+
+                // console.log(lastYearTaken);
+                // console.log(lastMonthTaken);
+                // console.log(lastDayTaken);
+
+                // Get paged results
+                const posting = $.get({
+                    url: "/timeline/"+nextPage,
+                    contentType: 'application/json; charset=utf-8'
+                });
+
+                posting.done(function (data) {
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("favorites") && data.hasOwnProperty("albumList")) {
+                                var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                                var favoritesList = data["favorites"] === "" ? null : data["favorites"];
+                                var albumList = data["albumList"] === "" ? null : data["albumList"];
+
+                                // console.log(metadataList);
+                                // console.log(favoritesList);
+                                // console.log(albumList);
+
+                                for (var index in metadataList) {
+                                    var metadata = metadataList[index];
+                                    var currentDateTaken = metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"];
+                                    console.log(lastDateTakenHeading);
+                                    console.log(currentDateTaken);
+
+                                    // Undated
+                                    if (metadata["year"] === null ||
+                                        metadata["month"] === null ||
+                                        metadata["day"] === null)
+                                    {
+                                        console.log("undated");
+                                        if ($('#undatedPhotos').length > 0) {
+                                            // Append
+                                        } else {
+                                            // Create new
+                                        }
+                                    } else if (lastYearTaken === metadata["year"] && // Append (test: 1st photo set has 10 photos within date)
+                                        lastMontTaken === metadata["month"] &&
+                                        lastdayTaken === metadata["day"] &&
+                                        lastDateTakenHeading === currentDateTaken)
+                                    {
+                                        console.log("append date");
+
+                                    } else { // New date div
+                                        console.log("new date");
+                                    }
+                                }
+
+                            }
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            $("#msgTimeline").html(message);
+                        }
+                    }
+                });
+
+                // If last year/month/day matches with first in list, append
+                // else create new row with date
+                // If not date, append to id=undatedPhotos
+            }
+        }
+    })
 
     $.featherlight.prototype.afterOpen = function() {
         var lat = $("#currentlat").val();
