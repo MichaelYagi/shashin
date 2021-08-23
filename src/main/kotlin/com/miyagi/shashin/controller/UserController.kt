@@ -6,6 +6,7 @@ import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.MediaType
 import org.springframework.security.authentication.AnonymousAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
@@ -13,8 +14,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.support.SessionStatus
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -29,8 +32,6 @@ import javax.validation.Valid
 class UserController {
 
     private var logger: Logger = Logger.getLogger(UserController::class.simpleName)
-    @Autowired
-    var userRepository: UserRepository? = null
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
     var bcrypt = BCryptPasswordEncoder()
@@ -40,6 +41,61 @@ class UserController {
 
     @Value("\${app.role.user}")
     private var userRole: String? = null
+
+    @Autowired
+    var userRepository: UserRepository? = null
+
+    @GetMapping("/users/update")
+    fun getUpdateUser(model: Model): String {
+
+        model["data"] = ""
+        model["user"] = ""
+        model["message"] = ""
+        model["alertClass"] = ""
+
+        val currentUserObj = userRepository?.findByUsername(model.getAttribute("username").toString())
+        if (currentUserObj != null) {
+            model["user"] = currentUserObj
+        }
+
+        val module = "update"
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
+        model["message"] = "Could not save password"
+        model["alertClass"] = "alert-danger"
+        if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
+            val oldPassword = java.lang.String.valueOf(formData.getFirst("oldpassword"))
+            val newPassword = java.lang.String.valueOf(formData.getFirst("newpassword"))
+            val newPasswordConfirm = java.lang.String.valueOf(formData.getFirst("newpasswordconfirm"))
+            val currentUserObj = userRepository?.findByUsername(model.getAttribute("username").toString())
+            if (currentUserObj != null) {
+                if (newPassword == newPasswordConfirm) {
+                    if (bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
+                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        val now = LocalDateTime.now()
+                        currentUserObj.setModifiedAt(dtf.format(now))
+                        currentUserObj.setPassword(bcrypt.encode(newPassword))
+                        userRepository?.save(currentUserObj)
+                        model["message"] = "Success"
+                        model["alertClass"] = "alert-success"
+                    }
+                }
+            }
+        }
+
+        val module = "update"
+        model["data"] = ""
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
 
     @GetMapping("/users/register")
     fun getRegisterUser(model: Model): String {
