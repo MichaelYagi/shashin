@@ -70,7 +70,7 @@
                     }
 
                     const posting = $.post({
-                        url: "/album/update/[[${metadata.id}]]/[[${album.id}]]",
+                        url: "/album/update",
                         data: JSON.stringify(requestJson),
                         contentType: 'application/json; charset=utf-8'
                     });
