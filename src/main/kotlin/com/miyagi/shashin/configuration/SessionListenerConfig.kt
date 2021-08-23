@@ -3,9 +3,7 @@ package com.miyagi.shashin.configuration
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Configuration
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContext
-import org.springframework.ui.set
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import javax.servlet.http.HttpSessionEvent
@@ -13,7 +11,7 @@ import javax.servlet.http.HttpSessionEvent
 import javax.servlet.http.HttpSessionListener
 
 @Configuration
-internal class SessionListener : HttpSessionListener {
+internal class SessionListenerConfig : HttpSessionListener {
 
     @Autowired
     var userRepository: UserRepository? = null
