@@ -3,21 +3,19 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 @Controller
@@ -31,6 +29,9 @@ class TimelineController {
 
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
+
+    @Value("\${app.query.limit}")
+    private var queryLimit: Int? = null
 
     @Autowired
     private val mediaDirRepository: MediaDirectoryRepository? = null
@@ -69,9 +70,15 @@ class TimelineController {
             Sort.Order.desc("day")
         )
 
+        val pageRequest = PageRequest.of(
+            0,
+            metadataRepository?.count()!!.toInt(),//queryLimit!!,
+            sort
+        )
+
         model["metadataList"] = ""
         model["favorites"] = ""
-        val metadataList = metadataRepository?.findAll(sort)
+        val metadataList = metadataRepository?.findAll(pageRequest)?.toList()
         if (metadataList != null) {
             model["metadataList"] = metadataList
             model["favorites"] = favoritesMap
