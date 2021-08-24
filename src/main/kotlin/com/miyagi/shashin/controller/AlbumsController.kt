@@ -10,6 +10,7 @@ import com.miyagi.shashin.model.UserAlbum
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -47,6 +48,9 @@ class AlbumsController {
 
     @Autowired
     private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
+
+    @Value("\${app.query.limit}")
+    private var queryLimit: Int? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -389,7 +393,7 @@ class AlbumsController {
             val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             if (userAlbums != null) {
                 // Get album photos
-                val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+                val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,0, queryLimit!!)
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
@@ -429,6 +433,68 @@ class AlbumsController {
         }
 
         return module
+    }
+
+    @RequestMapping(value = ["/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
+        val response = mutableMapOf<String, Any?>()
+        response["albumPhotoCommentsMap"] = ""
+        response["album"] = ""
+        response["albumMetadataList"] = ""
+        response["currentUser"] = ""
+        response["data"] = ""
+
+        if (page > 0) {
+            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            if (currentUserObj != null && albumId > 0) {
+                val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+                if (userAlbums != null) {
+                    // Get album photos
+                    val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,(page*queryLimit!!), queryLimit!!)
+                    val albumMetadataList = ArrayList<Metadata>()
+                    if (albumPhotos != null) {
+                        val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
+                        val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
+
+                        for (albumPhoto in albumPhotos) {
+                            if (albumPhoto != null) {
+                                val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                                albumMetadataList.add(metadata.get())
+
+                                // Get comments for this photo
+                                val albumPhotoComments = commentRepository.findCommentsByAlbumIdAndMetadataId(albumId,albumPhoto.getMetadataId()!!)
+                                for (albumPhotoComment in albumPhotoComments) {
+                                    val albumPhotoCommentMap = HashMap<String, Any>()
+                                    albumPhotoCommentMap["comment"] = albumPhotoComment.getComment().toString()
+                                    albumPhotoCommentMap["commentId"] = albumPhotoComment.getCommentId().toString().toInt()
+                                    albumPhotoCommentMap["metadataId"] = albumPhotoComment.getMetadataId().toString()
+                                    albumPhotoCommentMap["albumId"] = albumPhotoComment.getAlbumId().toString().toInt()
+                                    albumPhotoCommentMap["userId"] = albumPhotoComment.getUserId().toString().toInt()
+                                    albumPhotoCommentMap["username"] = albumPhotoComment.getUsername().toString()
+                                    albumPhotoCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumPhotoComment.getCreatedAt().toString())
+                                    albumPhotoCommentsList.add(albumPhotoCommentMap)
+                                }
+                                albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
+                            }
+                        }
+                        if (albumMetadataList.count() > 0) {
+                            val album = albumRepository.findById(albumId)
+                            response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
+                            response["album"] = album.get()
+                            response["albumMetadataList"] = albumMetadataList
+                            response["currentUser"] = currentUserObj
+                            response["data"] = ""
+                        }
+                        return mapper.writeValueAsString(response)
+                    }
+                }
+            }
+        }
+
+        response["msg"] = "Could not get results"
+        response["status"] = "fail"
+        return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/albums/add"], method = [RequestMethod.POST], produces = ["application/json"])

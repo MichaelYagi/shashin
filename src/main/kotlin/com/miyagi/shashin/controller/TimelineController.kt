@@ -126,9 +126,9 @@ class TimelineController {
             }
         }
 
-        resp["msg"] = "Could not get results"
-        resp["status"] = "fail"
-        return mapper.writeValueAsString(resp)
+        response["msg"] = "Could not get results"
+        response["status"] = "fail"
+        return mapper.writeValueAsString(response)
     }
 
 
