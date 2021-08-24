@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="appjs()">
+<script type="text/javascript">
+    $.fn.serializeObject = function() {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function() {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
+
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+            !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+    }
+
+    function validateMetadataInputs(day, month, year, latlng, msgId) {
+        var dayValidate = "([1-9]|[12]\d|3[01])";
+        var monthValidate = "^(0?[1-9]|1[012])$";
+
+        var msg = "";
+        if (day !== "" && !day.match(dayValidate)) {
+            msg = "Enter Valid Day";
+        }
+
+        if (month !== "" && !month.match(monthValidate)) {
+            msg = "Enter Valid Month";
+        }
+
+        if (year !== "" && !(+year >= 1888 && +year <= new Date().getFullYear())) {
+            msg = "Enter Valid Year";
+        }
+
+        if (latlng !== "") {
+            latlng = $.trim(latlng);
+            var latlngArr = latlng.split(",");
+
+            if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !isNumeric(latlngArr[0]) || !isNumeric(latlngArr[1])) {
+                msg = "Enter Valid Latitude/Longitude";
+            }
+        }
+
+        if (msg !== "") {
+            $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    function decodeHtml(html) {
+        var txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    $("#appToolsBatchEdit").click(function(e) {
+        e.preventDefault();
+
+        let metadataIdList = [];
+        let filenameList = "";
+        $('.bi-circle-fill').each(function(i, obj) {
+            var metadataId = obj.id.substring(6, obj.id.length);
+            metadataIdList.push(metadataId);
+            filenameList += $("#filename"+metadataId).val().trim()+", ";
+        });
+        filenameList = filenameList.replace(/,\s*$/, "");
+
+        $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
+        if (filenameList !== "") {
+            $("#editPhotosNamesModalLabel").text(filenameList);
+        }
+        $("#propBatchMetadata").modal('show');
+    });
+
+    $("#appToolsDeselectAll").click(function(e) {
+        e.preventDefault();
+
+        $(".thumbnail-centered").css("display", "none");
+        $(".thumbnail-bl").css("display", "none");
+        $(".thumbnail-tl").css("display", "none");
+        $(".photo-thumbnail-image").css("opacity", 1.0);
+        $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
+
+        $("#appSearch").css("display", "block");
+        $("#timelineAppTools").css("display", "none");
+        $("#albumAppTools").css("display", "none");
+    })
+
+    $("#appToolsAddAlbum").click(function(e) {
+        e.preventDefault();
+
+        let metadataIdList = [];
+        $('.bi-circle-fill').each(function(i, obj) {
+            metadataIdList.push(obj.id.substring(6, obj.id.length));
+        });
+
+        $("#albumMetadataIds").val(JSON.stringify(metadataIdList));
+        $("#propAddAlbum").modal('show');
+    });
+
+    function updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading,undatedPhotoCount) {
+        // console.log(lastYearTaken);
+        // console.log(lastMonthTaken);
+        // console.log(lastDayTaken);
+
+        // Get paged results
+        const posting = $.get({
+            url: "/timeline/"+nextPage,
+            contentType: 'application/json; charset=utf-8'
+        });
+
+        posting.done(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === "success") {
+                    if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("favorites") && data.hasOwnProperty("albumList")) {
+                        var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                        var favoritesList = data["favorites"] === "" ? null : data["favorites"];
+                        var albumList = data["albumList"] === "" ? null : data["albumList"];
+
+                        // console.log(metadataList);
+                        // console.log(favoritesList);
+                        // console.log(albumList);
+
+                        for (var index in metadataList) {
+                            var metadata = metadataList[index];
+                            var currentDateTaken = metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"];
+                            lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                            lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                            lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+
+                            // console.log(lastDateTakenHeading);
+                            // console.log(currentDateTaken);
+                            //
+                            // console.log(lastYearTaken);
+                            // console.log(lastMonthTaken);
+                            // console.log(lastDayTaken);
+                            //
+                            // console.log(metadata["year"]);
+                            // console.log(metadata["month"]);
+                            // console.log(metadata["day"]);
+
+                            // Undated
+                            if (metadata["year"] === null ||
+                              metadata["month"] === null ||
+                              metadata["day"] === null)
+                            {
+                                console.log("undated");
+                                if (undatedPhotoCount > 0) {
+                                    // Append
+                                } else {
+                                    // Create new
+                                }
+                            } else if (lastYearTaken === metadata["year"] && // Append (test: 1st photo set has 10 photos within date)
+                              lastMonthTaken === metadata["month"] &&
+                              lastDayTaken === metadata["day"] &&
+                              lastDateTakenHeading === currentDateTaken)
+                            {
+                                console.log("append date");
+
+                            } else { // New date div
+                                console.log("new date");
+
+                            }
+                        }
+
+                    }
+                } else {
+                  message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                  $("#msgTimeline").html(message);
+                }
+            }
+        });
+
+      // If last year/month/day matches with first in list, append
+      // else create new row with date
+      // If not date, append to id=undatedPhotos
+
+    }
+</script>
+
+</body>
+</html>
