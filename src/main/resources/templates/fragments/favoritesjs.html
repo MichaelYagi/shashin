@@ -70,7 +70,7 @@
                             }
                             html += '</div></div>\n';
 
-                            $(html).insertAfter($(".appendMetadataPhotos").last())
+                            $(html).insertBefore($(".appendMetadataPhotos").last())
 
                             var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
                             activateFavoritesListeners(htmlEncodedMetadata);

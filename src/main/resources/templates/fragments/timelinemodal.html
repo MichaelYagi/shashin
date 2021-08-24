@@ -30,15 +30,15 @@
             '               <div class="form-group row">\n' +
             '                   <div class="col-sm">\n' +
             '                       <label for="dayTaken'+metadata.id+'" class="col-form-label">Day</label>\n' +
-            '                       <input type="text" class="form-control" id="dayTaken'+metadata.id+'" name="day" value="'+metadata.day+'">\n' +
+            '                       <input type="text" class="form-control" id="dayTaken'+metadata.id+'" name="day" value="'+(metadata.day === null ? "" : metadata.day)+'">\n' +
             '                   </div>\n' +
             '                   <div class="col-sm">\n' +
             '                       <label for="monthTaken'+metadata.id+'" class="col-form-label">Month</label>\n' +
-            '                       <input type="text" class="form-control" id="monthTaken'+metadata.id+'" name="month" value="'+metadata.month+'">\n' +
+            '                       <input type="text" class="form-control" id="monthTaken'+metadata.id+'" name="month" value="'+(metadata.month === null ? "" : metadata.month)+'">\n' +
             '                   </div>\n' +
             '                   <div class="col-sm">\n' +
             '                       <label for="yearTaken'+metadata.id+'" class="col-form-label">Year</label>\n' +
-            '                       <input type="text" class="form-control" id="yearTaken'+metadata.id+'" name="year" value="'+metadata.year+'">\n' +
+            '                       <input type="text" class="form-control" id="yearTaken'+metadata.id+'" name="year" value="'+(metadata.year === null ? "" : metadata.year)+'">\n' +
             '                   </div>\n' +
             '               </div>\n' +
             '               <div class="form-group row">\n' +
@@ -128,9 +128,16 @@
                 $("#latlng"+metadata.id).val(),
                 "msg"+metadata.id
             ) === true) {
+                var json = {
+                    id:metadata.id,
+                    year:$("#yearTaken"+metadata.id).val(),
+                    month:$("#monthTaken"+metadata.id).val(),
+                    day:$("#dayTaken"+metadata.id).val(),
+                    latlng:$("#latlng"+metadata.id).val()
+                }
                 const posting = $.post({
                     url: "/timeline/update/"+metadata.id,
-                    data: JSON.stringify($('#saveData'+metadata.id).serializeObject()),
+                    data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8'
                 });
 
@@ -139,11 +146,11 @@
                         let message = "Error";
                         if (data["status"] === "success") {
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            window.top.location = window.top.location
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
                         $("#msg"+metadata.id).html(message);
-                        window.top.location = window.top.location
                     }
                 });
             }

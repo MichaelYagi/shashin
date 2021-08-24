@@ -22,6 +22,7 @@
                         // console.log(albumMetadataList);
                         // console.log(albumPhotoCommentsMap);
                         // console.log(currentUser);
+                        // console.log(albumMetadataList.length);
 
                         for (var index in albumMetadataList) {
                             var metadata = albumMetadataList[index];
@@ -75,21 +76,20 @@
                             html +=
                                 '   </div>\n' +
                                 '</div>\n' +
-                                '<div id="albummodal'+metadata.id+'"></div>\n' +
-                                '<span class="appendAlbumPhotos"></span>';
+                                '<div id="albummodal'+metadata.id+'"></div>\n';
+
+                            // Append HTML
+                            $(html).insertBefore($(".appendAlbumPhotos").last())
+
+                            // Call JS and modal
+                            var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                            var htmlEncodedAlbumData = encodeHtml(JSON.stringify(albumData));
+                            var htmlEncodedCurrentUser = encodeHtml(JSON.stringify(currentUser));
+                            var htmlEncodedalbumPhotoCommentsMap = encodeHtml(JSON.stringify(albumPhotoCommentsMap));
+
+                            renderAlbumModal(htmlEncodedAlbumData,htmlEncodedMetadata,htmlEncodedCurrentUser,htmlEncodedalbumPhotoCommentsMap);
+                            activateAlbumListeners(htmlEncodedMetadata);
                         }
-
-                        // Append HTML
-                        $(html).insertAfter($(".appendAlbumPhotos").last())
-
-                        // Call JS and modal
-                        var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                        var htmlEncodedAlbumData = encodeHtml(JSON.stringify(albumData));
-                        var htmlEncodedCurrentUser = encodeHtml(JSON.stringify(currentUser));
-                        var htmlEncodedalbumPhotoCommentsMap = encodeHtml(JSON.stringify(albumPhotoCommentsMap));
-
-                        renderAlbumModal(htmlEncodedAlbumData,htmlEncodedMetadata,htmlEncodedCurrentUser,htmlEncodedalbumPhotoCommentsMap);
-                        activateAlbumListeners(htmlEncodedMetadata);
                     }
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
