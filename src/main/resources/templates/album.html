@@ -104,7 +104,11 @@
             // console.log("currentPage:"+currentPage);
             // console.log("nextPage:"+nextPage);
 
-            //updateAlbum(nextPage);
+            /*<![CDATA[*/
+            var albumId = [[${album.id}]];
+            /*]]>*/
+
+            updateAlbum(albumId, nextPage);
             $("#currentPage").val(nextPage);
         }
     })

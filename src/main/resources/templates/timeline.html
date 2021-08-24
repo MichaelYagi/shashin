@@ -25,7 +25,6 @@
                         <br>
                         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                             <p><strong>Undated</strong></p>
-                            <div class="row" id="undatedPhotos">
                         </th:block>
 
                         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
@@ -143,9 +142,8 @@
                 lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
                 lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
-                var undatedPhotoCount = $('#undatedPhotos').length;
 
-                updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading,undatedPhotoCount);
+                updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading);
                 $("#currentPage").val(nextPage);
             }
         }

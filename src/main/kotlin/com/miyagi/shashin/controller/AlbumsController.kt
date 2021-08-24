@@ -484,6 +484,8 @@ class AlbumsController {
                             response["album"] = album.get()
                             response["albumMetadataList"] = albumMetadataList
                             response["currentUser"] = currentUserObj
+                            response["msg"] = "Results retrieved"
+                            response["status"] = "success"
                             response["data"] = ""
                         }
                         return mapper.writeValueAsString(response)
