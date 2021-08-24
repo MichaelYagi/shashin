@@ -1,216 +1,425 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="albumjs(album, metadata)">
+<body th:fragment="albumjs()">
 <script type="text/javascript">
-    $("#appToolsBatchEdit").click(function(e) {
-        e.preventDefault();
+    function activateAlbumListeners(rawMetadata) {
+        var metadata = JSON.parse(decodeHtml(rawMetadata));
 
-        let metadataIdList = [];
-        $('.bi-circle-fill').each(function(i, obj) {
-            metadataIdList.push(obj.id.substring(6, obj.id.length));
+        $("#appToolsBatchEdit").click(function(e) {
+            e.preventDefault();
+
+            let metadataIdList = [];
+            $('.bi-circle-fill').each(function(i, obj) {
+                metadataIdList.push(obj.id.substring(6, obj.id.length));
+            });
+
+            $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
+            $("#propBatchMetadata").modal('show');
         });
 
-        $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
-        $("#propBatchMetadata").modal('show');
-    });
+        $("#albumAppToolsDeselectAll").click(function(e) {
+            e.preventDefault();
 
-    $("#albumAppToolsDeselectAll").click(function(e) {
-        e.preventDefault();
+            $(".thumbnail-centered").css("display", "none");
+            $(".thumbnail-bl").css("display", "none");
+            $(".thumbnail-tl").css("display", "none");
+            $(".photo-thumbnail-image").css("opacity", 1.0);
+            $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
-        $(".thumbnail-centered").css("display", "none");
-        $(".thumbnail-bl").css("display", "none");
-        $(".thumbnail-tl").css("display", "none");
-        $(".photo-thumbnail-image").css("opacity", 1.0);
-        $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
-
-        $("#appSearch").css("display", "block");
-        $("#albumAppTools").css("display", "none");
-    })
-
-    $("#appToolsAddAlbum").click(function(e) {
-        e.preventDefault();
-
-        let metadataIdList = [];
-        $('.bi-circle-fill').each(function(i, obj) {
-            metadataIdList.push(obj.id.substring(6, obj.id.length));
-        });
-
-        $("#albumMetadataIds").val(JSON.stringify(metadataIdList));
-        $("#propAddAlbum").modal('show');
-    });
-
-    /*<![CDATA[*/
-    $("#select[[${metadata.id}]]").click(function(e) {
-        e.preventDefault();
-
-        if ($("#tlicon[[${metadata.id}]]").attr("class") === "bi-circle") {
-            $("#tlicon[[${metadata.id}]]").addClass('bi-circle-fill').removeClass('bi-circle');
-            $("#image[[${metadata.id}]]").css("opacity", 0.3);
-            $("#tncentered[[${metadata.id}]]").css("display", "none");
-            $("#tnbl[[${metadata.id}]]").css("display", "none");
-            $("#tnbr[[${metadata.id}]]").css("display", "none");
-        } else {
-            $("#tlicon[[${metadata.id}]]").addClass('bi-circle').removeClass('bi-circle-fill');
-            $("#image[[${metadata.id}]]").css("opacity", 1.0);
-            $("#tncentered[[${metadata.id}]]").css("display", "block");
-            $("#tnbl[[${metadata.id}]]").css("display", "block");
-            $("#tnbr[[${metadata.id}]]").css("display", "block");
-        }
-
-        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
-            $("#appSearch").css("display", "none");
-            $("#albumAppTools").css("display", "block");
-
-            // Hide all center and bottom left icons
-            $('.thumbnail-bl').hide();
-            $('.thumbnail-centered').hide();
-        } else {
             $("#appSearch").css("display", "block");
-            $("#timelineAppTools").css("display", "none");
             $("#albumAppTools").css("display", "none");
-        }
-    });
+        })
 
-    $("#image[[${metadata.id}]]").click(function(e) {
-        e.preventDefault();
+        $("#appToolsAddAlbum").click(function(e) {
+            e.preventDefault();
 
-        // Fill top left icon when clicking anywhere on thumbnail
-        if ($('.bi-circle-fill')[0]) {
-            if ($("#tlicon[[${metadata.id}]]").attr("class") === "bi-circle-fill") {
-                $("#tlicon[[${metadata.id}]]").addClass('bi-circle').removeClass('bi-circle-fill');
+            let metadataIdList = [];
+            $('.bi-circle-fill').each(function(i, obj) {
+                metadataIdList.push(obj.id.substring(6, obj.id.length));
+            });
+
+            $("#albumMetadataIds").val(JSON.stringify(metadataIdList));
+            $("#propAddAlbum").modal('show');
+        });
+
+        $("#select"+metadata.id).click(function(e) {
+            e.preventDefault();
+
+            if ($("#tlicon"+metadata.id).attr("class") === "bi-circle") {
+                $("#tlicon"+metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
+                $("#image"+metadata.id).css("opacity", 0.3);
+                $("#tncentered"+metadata.id).css("display", "none");
+                $("#tnbl"+metadata.id).css("display", "none");
+                $("#tnbr"+metadata.id).css("display", "none");
             } else {
-                $("#tlicon[[${metadata.id}]]").addClass('bi-circle-fill').removeClass('bi-circle');
+                $("#tlicon"+metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
+                $("#image"+metadata.id).css("opacity", 1.0);
+                $("#tncentered"+metadata.id).css("display", "block");
+                $("#tnbl"+metadata.id).css("display", "block");
+                $("#tnbr"+metadata.id).css("display", "block");
             }
-        }
-    });
 
-    $("#image[[${metadata.id}]]").hover(function() {
-        $(this).css("opacity", 0.3);
-        $(this).siblings().css("display", "block");
-        if ($("#tlicon[[${metadata.id}]]").attr("class") === "bi-circle-fill") {
-            $("#tncentered[[${metadata.id}]]").css("display", "none");
-            $("#tnbl[[${metadata.id}]]").css("display", "none");
-            $("#tnbr[[${metadata.id}]]").css("display", "none");
-        }
-        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
-            $('.thumbnail-bl').hide();
-            $('.thumbnail-centered').hide();
-        }
-    }, function() {
-        if ($("#tlicon[[${metadata.id}]]").attr("class") !== "bi-circle-fill") {
-            $(this).css("opacity", 1.0);
-            $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-bl").css("display", "none");
-            $(this).siblings(".thumbnail-centered").css("display", "none");
-        } else {
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                $("#appSearch").css("display", "none");
+                $("#albumAppTools").css("display", "block");
+
+                // Hide all center and bottom left icons
+                $('.thumbnail-bl').hide();
+                $('.thumbnail-centered').hide();
+            } else {
+                $("#appSearch").css("display", "block");
+                $("#timelineAppTools").css("display", "none");
+                $("#albumAppTools").css("display", "none");
+            }
+        });
+
+        $("#image"+metadata.id).click(function(e) {
+            e.preventDefault();
+
+            // Fill top left icon when clicking anywhere on thumbnail
+            if ($('.bi-circle-fill')[0]) {
+                if ($("#tlicon"+metadata.id).attr("class") === "bi-circle-fill") {
+                    $("#tlicon"+metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
+                } else {
+                    $("#tlicon"+metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
+                }
+            }
+        });
+
+        $("#image"+metadata.id).hover(function() {
+            $(this).css("opacity", 0.3);
+            $(this).siblings().css("display", "block");
+            if ($("#tlicon"+metadata.id).attr("class") === "bi-circle-fill") {
+                $("#tncentered"+metadata.id).css("display", "none");
+                $("#tnbl"+metadata.id).css("display", "none");
+                $("#tnbr"+metadata.id).css("display", "none");
+            }
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
             }
-            $("#tncentered[[${metadata.id}]]").css("display", "none");
-            $("#tnbl[[${metadata.id}]]").css("display", "none");
-            $("#tnbr[[${metadata.id}]]").css("display", "none");
-        }
-    });
+        }, function() {
+            if ($("#tlicon"+metadata.id).attr("class") !== "bi-circle-fill") {
+                $(this).css("opacity", 1.0);
+                $(this).siblings(".thumbnail-tl").css("display", "none");
+                $(this).siblings(".thumbnail-bl").css("display", "none");
+                $(this).siblings(".thumbnail-centered").css("display", "none");
+            } else {
+                if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                    $('.thumbnail-bl').hide();
+                    $('.thumbnail-centered').hide();
+                }
+                $("#tncentered"+metadata.id).css("display", "none");
+                $("#tnbl"+metadata.id).css("display", "none");
+                $("#tnbr"+metadata.id).css("display", "none");
+            }
+        });
 
-    $("#tncentered[[${metadata.id}]]").hover(function() {
-        $('#currentlat').val("[[${metadata.lat}]]");
-        $('#currentlng').val("[[${metadata.lng}]]");
-        $('#currentyear').val("[[${metadata.year}]]");
-        $('#currentmonth').val("[[${metadata.month}]]");
-        $('#currentday').val("[[${metadata.day}]]");
-        $('.bi-play-circle').css("color", "darkorange");
-        $(this).css("display", "block");
-        $(this).siblings(".thumbnail-tl").css("display", "block");
-        $(this).siblings(".thumbnail-bl").css("display", "block");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
-            $('.thumbnail-bl').hide();
-            $('.thumbnail-centered').hide();
-        }
-    }, function() {
-        $('.bi-play-circle').css("color", "lightgray");
-        $(this).css("display", "none");
-        $(this).siblings(".thumbnail-tl").css("display", "none");
-        $(this).siblings(".thumbnail-bl").css("display", "none");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
-    });
-
-    $("#tntl[[${metadata.id}]]").hover(function() {
-        if ($("#tlicon[[${metadata.id}]]").attr("class") !== "bi-circle-fill") {
+        $("#tncentered"+metadata.id).hover(function() {
+            $('#currentlat').val(metadata.lat === null ? "" : metadata.lat);
+            $('#currentlng').val(metadata.lng === null ? "" : metadata.lng);
+            $('#currentyear').val(metadata.year === null ? "" : metadata.year);
+            $('#currentmonth').val(metadata.month === null ? "" : metadata.month);
+            $('#currentday').val(metadata.day === null ? "" : metadata.day);
+            $('.bi-play-circle').css("color", "darkorange");
             $(this).css("display", "block");
-            $(this).siblings(".thumbnail-centered").css("display", "block");
+            $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
             }
-        }
-    }, function() {
-        $(this).css("display", "none");
-        $(this).siblings(".thumbnail-centered").css("display", "none");
-        $(this).siblings(".thumbnail-bl").css("display", "none");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
-    });
+        }, function() {
+            $('.bi-play-circle').css("color", "lightgray");
+            $(this).css("display", "none");
+            $(this).siblings(".thumbnail-tl").css("display", "none");
+            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+        });
 
-    $("#tnbl[[${metadata.id}]]").hover(function() {
-        $(this).css("display", "block");
-        $(this).siblings(".thumbnail-tl").css("display", "block");
-        $(this).siblings(".thumbnail-centered").css("display", "block");
-        $(this).siblings(".thumbnail-br").css("display", "block");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
-            $('.thumbnail-bl').hide();
-            $('.thumbnail-br').hide();
-            $('.thumbnail-centered').hide();
-        }
-    }, function() {
-        $(this).css("display", "none");
-        $(this).siblings(".thumbnail-tl").css("display", "none");
-        $(this).siblings(".thumbnail-br").css("display", "none");
-        $(this).siblings(".thumbnail-centered").css("display", "none");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
-    });
+        $("#tntl"+metadata.id).hover(function() {
+            if ($("#tlicon"+metadata.id).attr("class") !== "bi-circle-fill") {
+                $(this).css("display", "block");
+                $(this).siblings(".thumbnail-centered").css("display", "block");
+                $(this).siblings(".thumbnail-bl").css("display", "block");
+                $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+                if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                    $('.thumbnail-bl').hide();
+                    $('.thumbnail-centered').hide();
+                }
+            }
+        }, function() {
+            $(this).css("display", "none");
+            $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+        });
 
-    $("#tnbr[[${metadata.id}]]").hover(function() {
-        $(this).css("display", "block");
-        $(this).siblings(".thumbnail-tl").css("display", "block");
-        $(this).siblings(".thumbnail-centered").css("display", "block");
-        $(this).siblings(".thumbnail-bl").css("display", "block");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
-            $('.thumbnail-bl').hide();
-            $('.thumbnail-br').hide();
-            $('.thumbnail-centered').hide();
-        }
-    }, function() {
-        $(this).css("display", "none");
-        $(this).siblings(".thumbnail-tl").css("display", "none");
-        $(this).siblings(".thumbnail-bl").css("display", "none");
-        $(this).siblings(".thumbnail-centered").css("display", "none");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
-    });
+        $("#tnbl"+metadata.id).hover(function() {
+            $(this).css("display", "block");
+            $(this).siblings(".thumbnail-tl").css("display", "block");
+            $(this).siblings(".thumbnail-centered").css("display", "block");
+            $(this).siblings(".thumbnail-br").css("display", "block");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                $('.thumbnail-bl').hide();
+                $('.thumbnail-br').hide();
+                $('.thumbnail-centered').hide();
+            }
+        }, function() {
+            $(this).css("display", "none");
+            $(this).siblings(".thumbnail-tl").css("display", "none");
+            $(this).siblings(".thumbnail-br").css("display", "none");
+            $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+        });
 
-    $("#tntr[[${metadata.id}]]").hover(function() {
-        $("#image[[${metadata.id}]]").css("opacity", 0.3);
-        if ($("#tlicon[[${metadata.id}]]").attr("class") === "bi-circle-fill") {
-            $("#tntl[[${metadata.id}]]").css("display", "block");
-            $("#tnbl[[${metadata.id}]]").css("display", "none");
-            $("#tnbr[[${metadata.id}]]").css("display", "none");
-            $("#tncentered[[${metadata.id}]]").css("display", "none");
-        } else {
-            $("#tncentered[[${metadata.id}]]").css("display", "block");
-            $("#tntl[[${metadata.id}]]").css("display", "block");
-            $("#tnbl[[${metadata.id}]]").css("display", "block");
-            $("#tnbr[[${metadata.id}]]").css("display", "block");
-        }
-        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
-            $('.thumbnail-bl').hide();
-            $('.thumbnail-centered').hide();
-        }
-    });
-    /*]]>*/
+        $("#tnbr"+metadata.id).hover(function() {
+            $(this).css("display", "block");
+            $(this).siblings(".thumbnail-tl").css("display", "block");
+            $(this).siblings(".thumbnail-centered").css("display", "block");
+            $(this).siblings(".thumbnail-bl").css("display", "block");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                $('.thumbnail-bl').hide();
+                $('.thumbnail-br').hide();
+                $('.thumbnail-centered').hide();
+            }
+        }, function() {
+            $(this).css("display", "none");
+            $(this).siblings(".thumbnail-tl").css("display", "none");
+            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+        });
+
+        $("#tntr"+metadata.id).hover(function() {
+            $("#image"+metadata.id).css("opacity", 0.3);
+            if ($("#tlicon"+metadata.id).attr("class") === "bi-circle-fill") {
+                $("#tntl"+metadata.id).css("display", "block");
+                $("#tnbl"+metadata.id).css("display", "none");
+                $("#tnbr"+metadata.id).css("display", "none");
+                $("#tncentered"+metadata.id).css("display", "none");
+            } else {
+                $("#tncentered"+metadata.id).css("display", "block");
+                $("#tntl"+metadata.id).css("display", "block");
+                $("#tnbl"+metadata.id).css("display", "block");
+                $("#tnbr"+metadata.id).css("display", "block");
+            }
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                $('.thumbnail-bl').hide();
+                $('.thumbnail-centered').hide();
+            }
+        });
+
+        $('#removeFromAlbum'+metadata.id).change(function() {
+            if (this.checked) {
+                $('#setCoverAlbum'+metadata.id).prop("checked", false);
+                $('#setCoverAlbum'+metadata.id).attr("disabled", true);
+            } else {
+                $('#setCoverAlbum'+metadata.id).removeAttr("disabled");
+            }
+        });
+
+        $('#saveAlbum'+metadata.id).click(function (e) {
+            e.preventDefault();
+            let requestJson = {
+                removeFromAlbum:$('#removeFromAlbum'+metadata.id).prop("checked"),
+                setCoverAlbum:$('#setCoverAlbum'+metadata.id).prop("checked"),
+                metadataId:metadata.id,
+                albumId:album.id
+            }
+
+            const posting = $.post({
+                url: "/album/update",
+                data: JSON.stringify(requestJson),
+                contentType: 'application/json; charset=utf-8'
+            });
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data["status"] === "redirect") {
+                        window.location.replace(data["msg"]);
+                    } else {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        }
+                        $('#msg'+metadata.id).html(message);
+                        window.top.location = window.top.location;
+                    }
+                }
+            });
+            return false;
+        });
+    }
+
+    function albumCommentsDeleteEditModalListener(commentId, metadata) {
+        $("#deletecomment" + commentId).click(function (e) {
+            e.preventDefault();
+
+            let json = {commentId: commentId, metadataId: metadata.id}
+
+            const posting = $.post({
+                url: "/comment/albumphoto/delete/",
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8'
+            });
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                    let commentId = data["commentId"];
+                    let message = "Error";
+                    if (data["status"] === "success") {
+                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        // Delete comment
+                        $("#comment" + commentId).remove();
+                    } else {
+                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    }
+                }
+            });
+
+            $("#currentCommentId" + metadata.id).val("");
+        });
+
+        $("#editcomment" + commentId).click(function (e) {
+            e.preventDefault();
+
+            if ($("#currentCommentId" + metadata.id).val() === "") {
+                $("#currentCommentId" + metadata.id).val(commentId);
+
+                $("#saveCommentMetadata" + metadata.id).hide();
+                $("#dismissModalCommentMetadata" + metadata.id).hide();
+                $("#updateCommentMetadata" + metadata.id).show();
+                $("#cancelEditCommentMetadata" + metadata.id).show();
+
+                $("#commentcontainer" + commentId).hide();
+                $("#textareacontainer" + commentId).show();
+                var commentText = $("#commentcontent" + commentId).text();
+                $("#textareacontainer" + commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">' + commentText + '</textarea>');
+            }
+        });
+    }
+
+    function albumCommentsUpdateSaveModalListener(metadata, album, currentUser) {
+        $("#updateCommentMetadata"+metadata.id).hide();
+        $("#cancelEditCommentMetadata"+metadata.id).hide();
+
+        $("#cancelEditCommentMetadata"+metadata.id).click(function (e) {
+            e.preventDefault();
+
+            var currentCommentId = $("#currentCommentId"+metadata.id).val()
+
+            if (currentCommentId !== "") {
+                $("#saveCommentMetadata"+metadata.id).show();
+                $("#dismissModalCommentMetadata"+metadata.id).show();
+                $("#updateCommentMetadata"+metadata.id).hide();
+                $("#cancelEditCommentMetadata"+metadata.id).hide();
+
+                $("#commentcontainer" + currentCommentId).show();
+                $("#textareacontainer" + currentCommentId).html('');
+                $("#textareacontainer" + currentCommentId).hide();
+
+                $("#currentCommentId"+metadata.id).val("");
+            }
+        });
+
+        $("#updateCommentMetadata"+metadata.id).click(function (e) {
+            e.preventDefault();
+
+            var currentCommentId = $("#currentCommentId"+metadata.id).val()
+
+            if (currentCommentId !== "") {
+                var updatedComment = $.trim($("#commenttext"+currentCommentId).val());
+
+                if (updatedComment.length > 0) {
+                    let json = {commentId: currentCommentId, comment: updatedComment}
+
+                    const posting = $.post({
+                        url: "/comment/update",
+                        data: JSON.stringify(json),
+                        contentType: 'application/json; charset=utf-8'
+                    });
+
+                    posting.done(function (data) {
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                            let commentId = data["commentId"];
+                            let message = "Error";
+                            if (data["status"] === "success") {
+                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            } else {
+                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            }
+
+                            // Update comment
+                            $("#commentcontent"+commentId).text(updatedComment);
+
+                            $("#saveCommentMetadata"+metadata.id).show();
+                            $("#dismissModalCommentMetadata"+metadata.id).show();
+                            $("#updateCommentMetadata"+metadata.id).hide();
+                            $("#cancelEditCommentMetadata"+metadata.id).hide();
+
+                            $("#commentcontainer" + commentId).show();
+                            $("#textareacontainer" + commentId).html('');
+                            $("#textareacontainer" + commentId).hide();
+                            $("#commenttext"+commentId).val("");
+                        }
+                    });
+                }
+
+                $("#saveCommentMetadata"+metadata.id).show();
+                $("#dismissModalCommentMetadata"+metadata.id).show();
+                $("#updateCommentMetadata"+metadata.id).hide();
+                $("#cancelEditCommentMetadata"+metadata.id).hide();
+
+                $("#commentcontainer" + currentCommentId).show();
+                $("#textareacontainer" + currentCommentId).html('');
+                $("#textareacontainer" + currentCommentId).hide();
+
+                $("#currentCommentId"+metadata.id).val("");
+            }
+        });
+
+        $("#saveCommentMetadata"+metadata.id).click(function(e) {
+            e.preventDefault();
+
+            let comment = $.trim($("#commentText"+metadata.id).val());
+
+            if (comment.length > 0) {
+                let json = {metadataId: metadata.id, albumId: album.id, comment: comment};
+
+                const posting = $.post({
+                    url: "/comment/albumphoto/save/",
+                    data: JSON.stringify(json),
+                    contentType: 'application/json; charset=utf-8'
+                });
+
+                posting.done(function (data) {
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                        let commentId = data["commentId"];
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        }
+
+                        // Insert comment at top of list
+                        var commentItem = '<li class="list-group-item list-group-item-secondary" id="comment'+commentId+'">\n' +
+                            '<span id="commentcontainer'+commentId+'">\n<p id="commentcontent'+commentId+'">'+comment+'</p>\n' +
+                            '<small>'+currentUser.username+'<span style="float: right"><a href="#" id="deletecomment'+commentId+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment'+commentId+'"><span class="bi-pencil"></span></a></span></small></span>' +
+                            '<span id="textareacontainer'+commentId+'"></span></li>';
+                        $("#commentText"+metadata.id).val("")
+                        $("#commentList"+metadata.id).prepend(commentItem);
+                    }
+                });
+            }
+        });
+    }
 </script>
 
 </body>

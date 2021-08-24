@@ -128,6 +128,43 @@
         $("#albumMetadataIds").val(JSON.stringify(metadataIdList));
         $("#propAddAlbum").modal('show');
     });
+
+    $("#albumAppToolsAddAlbum").click(function(e) {
+        e.preventDefault();
+
+        let metadataIdList = [];
+        $('.bi-circle-fill').each(function(i, obj) {
+            metadataIdList.push(obj.id.substring(6, obj.id.length));
+        });
+
+        let albumId = $('#albumId').text();
+        if (metadataIdList.length > 0 && albumId.length > 0) {
+            let json = {metadataIdList: metadataIdList, albumId: parseInt(albumId)}
+
+            const posting = $.post({
+                url: "/album/delete/batch",
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8'
+            });
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data["status"] === "redirect") {
+                        window.location.replace(data["msg"]);
+                    } else {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        }
+                        $("#albumMessage").html(message);
+                        window.top.location = window.top.location
+                    }
+                }
+            });
+        }
+    });
 </script>
 
 </body>
