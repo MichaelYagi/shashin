@@ -7,6 +7,8 @@
         var metadata = JSON.parse(decodeHtml(rawMetadata));
         // console.log(metadata);
         var latlngValue = (metadata.lat != null || metadata.lng != null) ? (metadata.lat+', '+metadata.lng) : '';
+        var keywordsList = (metadata.keywords === null) ? "" : metadata.keywords;
+
         var html = '<div class="modal fade" id="prop'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
             '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
             '<button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
@@ -48,14 +50,14 @@
             '               <div class="form-group row">\n' +
             '                   <div class="col-sm">\n' +
             '                       <label for="keywords'+metadata.id+'" class="col-form-label">Keywords (comma seperated)</label>\n' +
-            '                       <input type="text" class="form-control" id="keywords'+metadata.id+'" name="keywords" value="'+metadata.keywords+'">\n' +
+            '                       <input type="text" class="form-control" id="keywords'+metadata.id+'" name="keywords" value="'+keywordsList+'">\n' +
             '                   </div>\n' +
             '               </div>\n' +
             '           </form>\n' +
             '       </div>' +
             '       <div class="tab-pane container fade" id="details'+metadata.id+'">\n';
-        if (metadata.thumbnailPathOriginal !== null) {
-            html += '<div class="row"><strong>File:&nbsp;</strong>'+metadata.thumbnailPathOriginal+'</div>\n';
+        if (metadata.path !== null) {
+            html += '<div class="row"><strong>File name:&nbsp;</strong>'+metadata.path+'</div>\n';
         }
         if (metadata.type !== null) {
             html += '<div class="row"><strong>File type:&nbsp;</strong>'+metadata.type+'</div>\n';

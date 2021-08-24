@@ -338,11 +338,6 @@
                                     '   </a>\n';
                             }
                             html += '</div></div>\n<div id="timelinemodal'+metadata.id+'"></div>\n';
-                            var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                            html += '<script type="text/javascript">' +
-                                'renderTimelineModal(\''+htmlEncodedMetadata+'\');' +
-                                'activateMetadataListeners(\''+htmlEncodedMetadata+'\');' +
-                                '<\/script>';
 
                             if (appended === true) {
                                 // Append
@@ -351,6 +346,11 @@
                                 html += '</div><span class="attachMetadataPhotos"></span>';
                                 $(html).insertAfter($(".attachMetadataPhotos").last())
                             }
+
+                            var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                            renderTimelineModal(htmlEncodedMetadata);
+                            activateMetadataListeners(htmlEncodedMetadata);
+
                             html = "";
                         }
                     }
