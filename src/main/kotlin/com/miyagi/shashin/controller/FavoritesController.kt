@@ -29,6 +29,9 @@ class FavoritesController {
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
 
+    @Value("\${app.query.limit}")
+    private var queryLimit: Int? = null
+
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
 
@@ -48,9 +51,9 @@ class FavoritesController {
         model["metadataList"] = ""
 
         val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
-        val favoriteList = favoriteRepository.findAllByUserId(currentUserObj?.getId())
-        if (favoriteList != null) {
-            if (favoriteList.count() > 0) {
+        if (currentUserObj != null) {
+            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),0, queryLimit!!)
+            if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
                 model["data"] = ""
                 for (favorite in favoriteList) {
@@ -69,6 +72,40 @@ class FavoritesController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @RequestMapping(value = ["/favorites/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
+        val response = mutableMapOf<String, Any?>()
+        response["metadataList"] = ""
+
+        if (page > 0) {
+            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            if (currentUserObj != null) {
+                val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*queryLimit!!), queryLimit!!)
+                if (favoriteList != null && favoriteList.count() > 0) {
+                    val metadataList = ArrayList<Metadata>()
+                    model["data"] = ""
+                    for (favorite in favoriteList) {
+                        if (favorite != null) {
+                            val metadataObj = metadataRepository.findById(favorite.getMetadataId().toString())
+                            metadataList.add(metadataObj.get())
+                        }
+                    }
+                    if (metadataList.count() > 0) {
+                        response["metadataList"] = metadataList
+                    }
+                    response["msg"] = "Results"
+                    response["status"] = "success"
+                    return mapper.writeValueAsString(response)
+                }
+            }
+        }
+
+        resp["msg"] = "Could not get results"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
     }
 
     @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST])

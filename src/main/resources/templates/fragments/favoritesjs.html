@@ -1,26 +1,90 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="favoritesjs(metadata)">
+<body th:fragment="favoritesjs()">
 <script type="text/javascript">
-    /*<![CDATA[*/
-    $("#image[[${metadata.id}]]").hover(function() {
-        $(this).css("opacity", 0.3);
-        $(this).siblings(".thumbnail-centered").css("display", "block");
-    }, function() {
-        $(this).css("opacity", 1.0);
-        $(this).siblings(".thumbnail-centered").css("display", "none");
-    });
+    function activateFavoritesListeners(rawMetadata) {
+        var metadata = JSON.parse(decodeHtml(rawMetadata));
 
-    $("#tncentered[[${metadata.id}]]").hover(function() {
-        $('.bi-play-circle').css("color", "darkorange");
-        $(this).css("display", "block");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-    }, function() {
-        $('.bi-play-circle').css("color", "lightgray");
-        $(this).css("display", "none");
-        $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
-    });
-    /*]]>*/
+        $("#image"+metadata.id).hover(function () {
+            $(this).css("opacity", 0.3);
+            $(this).siblings(".thumbnail-centered").css("display", "block");
+        }, function () {
+            $(this).css("opacity", 1.0);
+            $(this).siblings(".thumbnail-centered").css("display", "none");
+        });
+
+        $("#tncentered"+metadata.id).hover(function () {
+            $('.bi-play-circle').css("color", "darkorange");
+            $(this).css("display", "block");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+        }, function () {
+            $('.bi-play-circle').css("color", "lightgray");
+            $(this).css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+        });
+    }
+
+    function updateFavorites(nextPage) {
+        // Get paged results
+        const posting = $.get({
+            url: "/favorites/"+nextPage,
+            contentType: 'application/json; charset=utf-8'
+        });
+
+        posting.done(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === "success") {
+                    if (data.hasOwnProperty("metadataList")) {
+                        var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+
+                        var html = "";
+
+                        for (var index in metadataList) {
+                            var metadata = metadataList[index];
+
+                            html += '<div class="photo-thumbnail-container photo-thumbnail">\n' +
+                                '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'">\n';
+
+                            if (metadata.type.includes("video")) {
+                                html +=
+                                    '   <div class="thumbnail-tr" id="tntr'+metadata.id+'">\n' +
+                                    '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>\n' +
+                                    '   </div>\n';
+                            }
+                            html += '<div class="thumbnail-centered" id="tncentered'+metadata.id+'">\n';
+                            if (metadata.type.includes("video")) {
+                                html +=
+                                    '   <a href="'+metadata.videoUrl+'"\n' +
+                                    '       data-featherlight="iframe"\n' +
+                                    '       data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"\n' +
+                                    '       data-featherlight-iframe-frameborder="0"\n' +
+                                    '       data-featherlight-iframe-allowfullscreen="true">\n' +
+                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                    '   </a>\n';
+                            } else {
+                                html +=
+                                    '   <a href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image">\n' +
+                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                    '   </a>\n';
+                            }
+                            html += '</div></div>\n';
+
+                            $(html).insertAfter($(".appendMetadataPhotos").last())
+
+                            var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                            activateFavoritesListeners(htmlEncodedMetadata);
+
+                            html = "";
+                        }
+                    }
+                } else {
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#msgTimeline").html(message);
+                }
+            }
+        });
+    }
 </script>
 
 </body>

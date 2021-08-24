@@ -9,9 +9,14 @@
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+            <input type="hidden" id="currentPage" name="currentPage" value="0">
+
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
             <div class="row">
                 <th:block th:if="${metadataList != ''}">
+                    <div th:replace="fragments/appjs :: appjs()"></div>
+                    <div th:replace="fragments/favoritesjs :: favoritesjs()"></div>
+
                     <th:block th:each="metadata, iterStat: ${metadataList}">
                         <div class="photo-thumbnail-container photo-thumbnail">
                             <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
@@ -40,7 +45,12 @@
                             </div>
                         </div>
 
-                        <div th:replace="fragments/favoritesjs :: favoritesjs(${metadata})"></div>
+                        <script type="text/javascript">
+                            /*<![CDATA[*/
+                            activateFavoritesListeners("[[${metadata}]]")
+                            /*]]>*/
+                        </script>
+                        <span class="appendMetadataPhotos"></span>
 
                     </th:block>
                 </th:block>
@@ -57,6 +67,20 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
     });
+
+    $(window).on('scroll', function() {
+        // Uset to detect near bottom
+        if (atEndOfPage()) {
+            // console.log("scroll bottom");
+            var currentPage = parseInt($("#currentPage").val());
+            var nextPage = currentPage+1;
+            // console.log("currentPage:"+currentPage);
+            // console.log("nextPage:"+nextPage);
+
+            updateFavorites(nextPage);
+            $("#currentPage").val(nextPage);
+        }
+    })
 </script>
 
 </body>
