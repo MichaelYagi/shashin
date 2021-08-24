@@ -1,214 +1,154 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="timelinemodal(metadata)">
-<div class="modal fade" th:id="'prop'+${metadata.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${metadata.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit <th:block th:text="${metadata.fileName}"></th:block></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link show active" data-toggle="tab" th:id="'generaltablink'+${metadata.id}" th:href="'#general'+${metadata.id}">General</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" th:id="'detailstablink'+${metadata.id}" th:href="'#details'+${metadata.id}">Details</a>
-                    </li>
-                </ul>
+<body th:fragment="timelinemodal()">
 
-                <div class="tab-content">
-                    <div class="tab-pane container show active" th:id="'general'+${metadata.id}">
-                        <form th:id="'saveData'+${metadata.id}">
-                            <input type="hidden" name="id" th:value="${metadata.id}">
+<script type="text/javascript">
+    function renderTimelineModal(rawMetadata) {
+        var metadata = JSON.parse(decodeHtml(rawMetadata));
+        var latlngValue = (metadata.lat != null || metadata.lng != null) ? (metadata.lat+', '+metadata.lng) : '';
+        var html = '<div class="modal fade" id="prop'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
+            '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
+            '<button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+            '   <span aria-hidden="true">&times;</span>\n' +
+            '</button></div>\n' +
+            '<div class="modal-body">\n' +
+            '   <ul class="nav nav-tabs">\n' +
+            '       <li class="nav-item">\n' +
+            '           <a class="nav-link show active" data-toggle="tab" id="generaltablink'+metadata.id+'" href="#general'+metadata.id+'">General</a>\n' +
+            '       </li>\n' +
+            '       <li class="nav-item">\n' +
+            '           <a class="nav-link" data-toggle="tab" id="detailstablink'+metadata.id+'" href="#details'+metadata.id+'">Details</a>\n' +
+            '       </li>\n' +
+            '   </ul>\n' +
+            '   <div class="tab-content">\n' +
+            '       <div class="tab-pane container show active" id="general'+metadata.id+'">\n' +
+            '           <form th:id="saveData'+metadata.id+'">\n' +
+            '               <input type="hidden" name="id" value="'+metadata.id+'">\n' +
+            '               <div class="form-group row">\n' +
+            '                   <div class="col-sm">\n' +
+            '                       <label for="dayTaken'+metadata.id+'" class="col-form-label">Day</label>\n' +
+            '                       <input type="text" class="form-control" id="dayTaken'+metadata.id+'" name="day" value="'+metadata.day+'">\n' +
+            '                   </div>\n' +
+            '                   <div class="col-sm">\n' +
+            '                       <label for="monthTaken'+metadata.id+'" class="col-form-label">Month</label>\n' +
+            '                       <input type="text" class="form-control" id="monthTaken'+metadata.id+'" name="month" value="'+metadata.month+'">\n' +
+            '                   </div>\n' +
+            '                   <div class="col-sm">\n' +
+            '                       <label for="yearTaken'+metadata.id+'" class="col-form-label">Year</label>\n' +
+            '                       <input type="text" class="form-control" id="yearTaken'+metadata.id+'" name="year" value="'+metadata.year+'">\n' +
+            '                   </div>\n' +
+            '               </div>\n' +
+            '               <div class="form-group row">\n' +
+            '                   <div class="col-sm">\n' +
+            '                       <label for="latlng'+metadata.id+'" class="col-form-label">Latitude, Longitude</label>\n' +
+            '                       <input type="text" class="form-control" id="latlng'+metadata.id+'" name="latlng" value="'+latlngValue+'">\n' +
+            '                   </div>\n' +
+            '               </div>\n' +
+            '               <div class="form-group row">\n' +
+            '                   <div class="col-sm">\n' +
+            '                       <label for="keywords'+metadata.id+'" class="col-form-label">Keywords (comma seperated)</label>\n' +
+            '                       <input type="text" class="form-control" id="keywords'+metadata.id+'" name="keywords" value="'+metadata.keywords+'">\n' +
+            '                   </div>\n' +
+            '               </div>\n' +
+            '           </form>\n' +
+            '       </div>' +
+            '       <div class="tab-pane container fade" id="details'+metadata.id+'">\n';
+        if (metadata.thumbnailPathOriginal !== null) {
+            html += '<div class="row"><strong>File:&nbsp;</strong>'+metadata.thumbnailPathOriginal+'</div>\n';
+        }
+        if (metadata.type !== null) {
+            html += '<div class="row"><strong>File type:&nbsp;</strong>'+metadata.type+'</div>\n';
+        }
+        if (metadata.iso !== null) {
+            html += '<div class="row"><strong>ISO:&nbsp;</strong>'+metadata.iso+'</div>\n';
+        }
+        if (metadata.exposure !== null) {
+            html += '<div class="row"><strong>Exposure:&nbsp;</strong>'+metadata.exposure+'</div>\n';
+        }
+        if (metadata.fNumber !== null) {
+            html += '<div class="row"><strong>F-stop:&nbsp;</strong>'+metadata.fNumber+'</div>\n';
+        }
+        if (metadata.focalLength !== null) {
+            html += '<div class="row"><strong>Focal length:&nbsp;</strong>'+metadata.focalLength+'</div>\n';
+        }
+        if (metadata.camera !== null) {
+            html += '<div class="row"><strong>Camera:&nbsp;</strong>'+metadata.camera+'</div>\n';
+        }
+        if (metadata.lens !== null) {
+            html += '<div class="row"><strong>Lens:&nbsp;</strong>'+metadata.lens+'</div>\n';
+        }
+        if (metadata.quality !== null) {
+            html += '<div class="row"><strong>Quality:&nbsp;</strong>'+metadata.quality+'</div>\n';
+        }
+        if (metadata.createdAt !== null) {
+            html += '<div class="row"><strong>Created:&nbsp;</strong>'+metadata.createdAt+'</div>\n';
+        }
+        if (metadata.modifiedAt !== null) {
+            html += '<div class="row"><strong>Modified:&nbsp;</strong>'+metadata.modifiedAt+'</div>\n';
+        }
+        if (metadata.takenAt !== null) {
+            html += '<div class="row"><strong>Taken:&nbsp;</strong>'+metadata.takenAt+'</div>\n';
+        }
+        if (metadata.year !== null || metadata.month !== null || metadata.day !== null) {
+            html += '<div class="row"><strong>Manually Adjusted Taken:&nbsp;</strong>'+metadata.year+'-'+metadata.month+'-'+metadata.day+'</div>\n';
+        }
+        if (metadata.timeZone !== null) {
+            html += '<div class="row"><strong>Time zone:&nbsp;</strong>'+metadata.timeZone+'</div>\n';
+        }
+        html += '</div>\n' +
+            '       <div class="col-sm">\n' +
+            '           <span id="msg'+metadata.id+'"></span>\n' +
+            '       </div>\n' +
+            '   </div>\n' +
+            '</div>\n' +
+            '<div class="modal-footer">\n' +
+            '   <button type="button" class="btn btn-primary" id="saveMetadata'+metadata.id+'">Save</button>\n' +
+            '   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>\n' +
+            '</div></div></div></div>';
 
-                            <div class="form-group row">
-                                <div class="col-sm">
-                                    <label th:for="'dayTaken'+${metadata.id}" class="col-form-label">Day</label>
-                                    <input type="text" class="form-control" th:id="'dayTaken'+${metadata.id}" name="day" th:value="${metadata.day}">
-                                </div>
-                                <div class="col-sm">
-                                    <label th:for="'monthTaken'+${metadata.id}" class="col-form-label">Month</label>
-                                    <input type="text" class="form-control" th:id="'monthTaken'+${metadata.id}" name="month" th:value="${metadata.month}">
-                                </div>
-                                <div class="col-sm">
-                                    <label th:for="'yearTaken'+${metadata.id}" class="col-form-label">Year</label>
-                                    <input type="text" class="form-control" th:id="'yearTaken'+${metadata.id}" name="year" th:value="${metadata.year}">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm">
-                                    <label th:for="'latlng'+${metadata.id}" class="col-form-label">Latitude, Longitude</label>
-                                    <input type="text" class="form-control" th:id="'latlng'+${metadata.id}" name="latlng" th:value="${(metadata.lat != null || metadata.lng != null) ? (metadata.lat+', '+metadata.lng) : ''}">
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm">
-                                    <label th:for="'keywords'+${metadata.id}" class="col-form-label">Keywords (comma seperated)</label>
-                                    <input type="text" class="form-control" th:id="'keywords'+${metadata.id}" name="keywords" th:value="${metadata.keywords}">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="tab-pane container fade" th:id="'details'+${metadata.id}">
-                        <div class="row">
-                            <th:block th:if="${metadata.thumbnailPathOriginal != null}">
-                                <strong>File:&nbsp;</strong>
-                                <span th:text="${metadata.thumbnailPathOriginal}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.type != null}">
-                                <strong>File type:&nbsp;</strong>
-                                <span th:text="${metadata.type}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.iso != null}">
-                                <strong>ISO:&nbsp;</strong>
-                                <span th:text="${metadata.iso}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.exposure != null}">
-                                <strong>Exposure:&nbsp;</strong>
-                                <span th:text="${metadata.exposure}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.fNumber != null}">
-                                <strong>F-stop:&nbsp;</strong>
-                                <span th:text="${metadata.fNumber}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.focalLength != null}">
-                                <strong>Focal length:&nbsp;</strong>
-                                <span th:text="${metadata.focalLength}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.camera != null}">
-                                <strong>Camera:&nbsp;</strong>
-                                <span th:text="${metadata.camera}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.lens != null}">
-                                <strong>Lens:&nbsp;</strong>
-                                <span th:text="${metadata.lens}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.quality != null}">
-                                <strong>Quality:&nbsp;</strong>
-                                <span th:text="${metadata.quality}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.createdAt != null}">
-                                <strong>Created:&nbsp;</strong>
-                                <span th:text="${metadata.createdAt}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.modifiedAt != null}">
-                                <strong>Modified:&nbsp;</strong>
-                                <span th:text="${metadata.modifiedAt}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.takenAt != null}">
-                                <strong>Processed taken:&nbsp;</strong>
-                                <span th:text="${metadata.takenAt}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.year != null or metadata.month != null or metadata.day != null}">
-                                <strong>Adjusted taken:&nbsp;</strong>
-                                <span th:text="${metadata.year + '-' + metadata.month + '-' + metadata.day}"></span>
-                            </th:block>
-                        </div>
-                        <div class="row">
-                            <th:block th:if="${metadata.timeZone != null}">
-                                <strong>Time zone:&nbsp;</strong>
-                                <span th:text="${metadata.timeZone}"></span>
-                            </th:block>
-                        </div>
-                    </div>
-                    <div class="col-sm">
-                        <span th:id="'msg'+${metadata.id}"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" th:id="'saveMetadata'+${metadata.id}">Save</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            </div>
-            <script type="text/javascript">
-                $.fn.serializeObject = function() {
-                    var o = {};
-                    var a = this.serializeArray();
-                    $.each(a, function() {
-                        if (o[this.name]) {
-                            if (!o[this.name].push) {
-                                o[this.name] = [o[this.name]];
-                            }
-                            o[this.name].push(this.value || '');
+        $("#timelinemodal"+metadata.id).after(html);
+
+        $("#detailstablink"+metadata.id).click(function (e) {
+            $("#saveMetadata"+metadata.id).prop('disabled', true);
+        });
+        $("#generaltablink"+metadata.id).click(function (e) {
+            $("#saveMetadata"+metadata.id).prop('disabled', false);
+        });
+
+        $("#saveMetadata"+metadata.id).click(function (e) {
+            e.preventDefault();
+
+            if (validateMetadataInputs(
+                $("#dayTaken"+metadata.id).val(),
+                $("#monthTaken"+metadata.id).val(),
+                $("#yearTaken"+metadata.id).val(),
+                $("#latlng"+metadata.id).val(),
+                "msg"+metadata.id
+            ) === true) {
+                const posting = $.post({
+                    url: "/timeline/update/"+metadata.id,
+                    data: JSON.stringify($('#saveData'+metadata.id).serializeObject()),
+                    contentType: 'application/json; charset=utf-8'
+                });
+
+                posting.done(function (data) {
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                         } else {
-                            o[this.name] = this.value || '';
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
-                    });
-                    return o;
-                };
-
-                /*<![CDATA[*/
-                $("#detailstablink[[${metadata.id}]]").click(function (e) {
-                    $("#saveMetadata[[${metadata.id}]]").prop('disabled', true);
-                });
-                $("#generaltablink[[${metadata.id}]]").click(function (e) {
-                    $("#saveMetadata[[${metadata.id}]]").prop('disabled', false);
-                });
-
-                $("#saveMetadata[[${metadata.id}]]").click(function (e) {
-                    e.preventDefault();
-
-                    if (validateInputs(
-                        $("#dayTaken[[${metadata.id}]]").val(),
-                        $("#monthTaken[[${metadata.id}]]").val(),
-                        $("#yearTaken[[${metadata.id}]]").val(),
-                        $("#latlng[[${metadata.id}]]").val(),
-                        "msg[[${metadata.id}]]"
-                    ) === true) {
-                        const posting = $.post({
-                            url: "/timeline/update/[[${metadata.id}]]",
-                            data: JSON.stringify($('#saveData[[${metadata.id}]]').serializeObject()),
-                            contentType: 'application/json; charset=utf-8'
-                        });
-
-                        posting.done(function (data) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                let message = "Error";
-                                if (data["status"] === "success") {
-                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                } else {
-                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                }
-                                $("#msg[[${metadata.id}]]").html(message);
-                                window.top.location = window.top.location
-                            }
-                        });
+                        $("#msg"+metadata.id).html(message);
+                        window.top.location = window.top.location
                     }
-
-                    return false;
                 });
-                /*]]>*/
-            </script>
-        </div>
-    </div>
-</div>
+            }
+
+            return false;
+        });
+    }
+</script>
+
 </body>
 </html>

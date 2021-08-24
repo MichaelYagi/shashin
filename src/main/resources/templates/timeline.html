@@ -16,12 +16,13 @@
             <input type="hidden" id="currentPage" name="currentPage" value="0">
 
             <th:block th:if="${metadataList != ''}">
+                <div th:replace="fragments/appjs :: appjs()"></div>
+                <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
+                <div th:replace="fragments/timelinejs :: timelinejs()"></div>
+
                 <th:block th:each="metadata, iterStat: ${metadataList}">
-
                     <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
-
                         <br>
-
                         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                             <p><strong>Undated</strong></p>
                             <div class="row" id="undatedPhotos">
@@ -86,8 +87,13 @@
                         </div>
                     </div>
 
-                    <div th:replace="fragments/timelinemodal :: timelinemodal(${metadata})"></div>
-                    <div th:replace="fragments/timelinejs :: timelinejs(${metadata})"></div>
+                    <div th:id="'timelinemodal'+${metadata.id}"></div>
+                    <script type="text/javascript">
+                        /*<![CDATA[*/
+                        renderTimelineModal("[[${metadata}]]")
+                        activateMetadataListeners("[[${metadata}]]")
+                        /*]]>*/
+                    </script>
 
                     <th:block th:if="${iterStat.count > 0 and {iterStat.last or {!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}}}">
                         <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
@@ -119,8 +125,6 @@
         if(($(this).scrollTop() + $(this).height()) === $(document).height()-offset) {
             var currentPage = parseInt($("#currentPage").val());
             var nextPage = currentPage+1;
-            // console.log("currentPage:" + currentPage);
-            // console.log("nextPage:" + nextPage);
 
             var yearTakenCount = $(".yearTaken").length;
             var monthTakenCount = $(".monthTaken").length;
@@ -132,70 +136,12 @@
                 var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
                 var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
                 var lastDateTakenHeading = $(".dateTakenHeading").get(dateTakenHeadingCount - 1).innerText
+                lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+                var undatedPhotoCount = $('#undatedPhotos').length;
 
-                // console.log(lastYearTaken);
-                // console.log(lastMonthTaken);
-                // console.log(lastDayTaken);
-
-                // Get paged results
-                const posting = $.get({
-                    url: "/timeline/"+nextPage,
-                    contentType: 'application/json; charset=utf-8'
-                });
-
-                posting.done(function (data) {
-                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                        let message = "Error";
-                        if (data["status"] === "success") {
-                            if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("favorites") && data.hasOwnProperty("albumList")) {
-                                var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
-                                var favoritesList = data["favorites"] === "" ? null : data["favorites"];
-                                var albumList = data["albumList"] === "" ? null : data["albumList"];
-
-                                // console.log(metadataList);
-                                // console.log(favoritesList);
-                                // console.log(albumList);
-
-                                for (var index in metadataList) {
-                                    var metadata = metadataList[index];
-                                    var currentDateTaken = metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"];
-                                    console.log(lastDateTakenHeading);
-                                    console.log(currentDateTaken);
-
-                                    // Undated
-                                    if (metadata["year"] === null ||
-                                        metadata["month"] === null ||
-                                        metadata["day"] === null)
-                                    {
-                                        console.log("undated");
-                                        if ($('#undatedPhotos').length > 0) {
-                                            // Append
-                                        } else {
-                                            // Create new
-                                        }
-                                    } else if (lastYearTaken === metadata["year"] && // Append (test: 1st photo set has 10 photos within date)
-                                        lastMontTaken === metadata["month"] &&
-                                        lastdayTaken === metadata["day"] &&
-                                        lastDateTakenHeading === currentDateTaken)
-                                    {
-                                        console.log("append date");
-
-                                    } else { // New date div
-                                        console.log("new date");
-                                    }
-                                }
-
-                            }
-                        } else {
-                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            $("#msgTimeline").html(message);
-                        }
-                    }
-                });
-
-                // If last year/month/day matches with first in list, append
-                // else create new row with date
-                // If not date, append to id=undatedPhotos
+                updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading,undatedPhotoCount);
             }
         }
     })
