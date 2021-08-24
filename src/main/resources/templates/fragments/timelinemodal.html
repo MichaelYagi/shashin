@@ -5,6 +5,7 @@
 <script type="text/javascript">
     function renderTimelineModal(rawMetadata) {
         var metadata = JSON.parse(decodeHtml(rawMetadata));
+        // console.log(metadata);
         var latlngValue = (metadata.lat != null || metadata.lng != null) ? (metadata.lat+', '+metadata.lng) : '';
         var html = '<div class="modal fade" id="prop'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
             '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
