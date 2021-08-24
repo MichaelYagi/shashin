@@ -203,6 +203,148 @@
             }
         });
     }
+
+    function updateTimeline(
+        nextPage,
+        lastYearTaken,
+        lastMonthTaken,
+        lastDayTaken,
+        lastDateTakenHeading,
+        undatedPhotoCount
+    ) {
+        // console.log(lastYearTaken);
+        // console.log(lastMonthTaken);
+        // console.log(lastDayTaken);
+        // console.log("nextPage:"+nextPage);
+
+        // Get paged results
+        const posting = $.get({
+            url: "/timeline/"+nextPage,
+            contentType: 'application/json; charset=utf-8'
+        });
+
+        posting.done(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === "success") {
+                    if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("favorites") && data.hasOwnProperty("albumList")) {
+                        var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                        var favoritesList = data["favorites"] === "" ? null : data["favorites"];
+                        var albumList = data["albumList"] === "" ? null : data["albumList"];
+
+                        // console.log(favoritesList);
+                        // console.log(albumList);
+                        var html = "";
+                        for (var index in metadataList) {
+                            var metadata = metadataList[index];
+                            var currentDateTaken = metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"];
+                            lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                            lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                            lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+
+                            // console.log(lastDateTakenHeading);
+                            // console.log(currentDateTaken);
+                            //
+                            // console.log(lastYearTaken);
+                            // console.log(lastMonthTaken);
+                            // console.log(lastDayTaken);
+                            //
+                            // console.log(metadata["year"]);
+                            // console.log(metadata["month"]);
+                            // console.log(metadata["day"]);
+
+
+
+                            // Undated
+                            if (metadata["year"] === null ||
+                                metadata["month"] === null ||
+                                metadata["day"] === null)
+                            {
+                                console.log("undated");
+                                if (undatedPhotoCount > 0) {
+                                    // Append
+                                } else {
+                                    // Create new
+                                }
+                            } else if (lastYearTaken === metadata["year"] && // Append (test: 1st photo set has 10 photos within date)
+                                lastMonthTaken === metadata["month"] &&
+                                lastDayTaken === metadata["day"] &&
+                                lastDateTakenHeading === currentDateTaken)
+                            {
+                                console.log("append date");
+
+
+                            } else { // New date div
+                                console.log("new date");
+
+                            }
+
+                            html += '<div class="photo-thumbnail-container photo-thumbnail">\n' +
+                                    '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'">\n' +
+                                    '   <input type="hidden" name="filename'+metadata.id+'" id="filename'+metadata.id+'" value="'+metadata.fileName+'">\n';
+                            if (metadata.type.includes("video")) {
+                                html +=
+                                    '   <div class="thumbnail-tr" id="tntr'+metadata.id+'">\n' +
+                                    '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>\n' +
+                                    '   </div>\n';
+                            }
+                            var favoriteIcon = favoritesList[metadata.id] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                            html += '   <div class="thumbnail-tl" id="tntl'+metadata.id+'">\n' +
+                                    '       <a href="#" id="select'+metadata.id+'">\n' +
+                                    '           <span id="tlicon'+metadata.id+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                    '       </a>\n' +
+                                    '   </div>\n' +
+                                    '   <div class="thumbnail-br" id="tnbr'+metadata.id+'">\n' +
+                                    '       <a href="#" id="favorite'+metadata.id+'">\n' +
+                                    '           <span id="bricon'+metadata.id+'" class="'+favoriteIcon+'" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '       </a>\n' +
+                                    '   </div>\n' +
+                                    '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
+                                    '       <a href="#" data-toggle="modal" data-target="#prop'+metadata.id+'">\n' +
+                                    '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                    '       </a>\n' +
+                                    '   </div>\n' +
+                                    '   <div class="thumbnail-centered" tid="tncentered'+metadata.id+'">\n';
+                            if (metadata.type.includes("video")) {
+                                html +=
+                                    '   <a href="'+metadata.videoUrl+'"\n' +
+                                    '       data-featherlight="iframe"\n' +
+                                    '       data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"\n' +
+                                    '       data-featherlight-iframe-frameborder="0"\n' +
+                                    '       data-featherlight-iframe-allowfullscreen="true">\n' +
+                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                    '   </a>\n';
+                            } else {
+                                html +=
+                                    '   <a href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image">\n' +
+                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                    '   </a>\n';
+                            }
+                            html += '</div></div>\n<div id="timelinemodal'+metadata.id+'"></div>\n';
+
+
+                            renderTimelineModal(JSON.stringify(metadataList));
+                            activateMetadataListeners(JSON.stringify(metadataList));
+                        }
+                        var attachMetadataPhotosCount = $(".attachMetadataPhotos").length;
+                        if (attachMetadataPhotosCount > 0) {
+                            html += '<span class="attachMetadataPhotos"></span>';
+                            $(html).insertAfter($(".attachMetadataPhotos").last())
+                        }
+
+                    }
+                } else {
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#msgTimeline").html(message);
+                }
+            }
+        });
+
+        // If last year/month/day matches with first in list, append
+        // else create new row with date
+        // If not date, append to id=undatedPhotos
+
+    }
 </script>
 
 </body>
