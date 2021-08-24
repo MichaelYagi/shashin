@@ -2,6 +2,103 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="albumjs()">
 <script type="text/javascript">
+    function updateAlbum(albumId, nextPage) {
+        const posting = $.get({
+            url: "/album/"+albumId+"/page/"+nextPage,
+            contentType: 'application/json; charset=utf-8'
+        });
+
+        posting.done(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === "success") {
+                    if (data.hasOwnProperty("album") && data.hasOwnProperty("albumMetadataList") && data.hasOwnProperty("albumPhotoCommentsMap") && data.hasOwnProperty("currentUser")) {
+                        var albumData = data["album"] === "" ? null : data["album"];
+                        var albumMetadataList = data["albumMetadataList"] === "" ? null : data["albumMetadataList"];
+                        var albumPhotoCommentsMap = data["albumPhotoCommentsMap"] === "" ? null : data["albumPhotoCommentsMap"];
+                        var currentUser = data["currentUser"] === "" ? null : data["currentUser"];
+
+                        // console.log(albumData);
+                        // console.log(albumMetadataList);
+                        // console.log(albumPhotoCommentsMap);
+                        // console.log(currentUser);
+
+                        for (var index in albumMetadataList) {
+                            var metadata = albumMetadataList[index];
+                            var html = 
+                                '<div class="photo-thumbnail-container photo-thumbnail">\n' +
+                                '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'">\n';
+                            if (metadata.type.includes("video")) {
+                                html +=
+                                '   <div class="thumbnail-tr" id="tntr'+metadata.id+'">\n' +
+                                '       <span class="bi-camera-video-fill style="font-size: 1rem;color: lightcoral;"></span>\n' +
+                                '   </div>\n';
+                            }
+
+                            if (currentUser.authority === "ADMIN") {
+                                html +=
+                                '   <div class="thumbnail-tl" id="tntl'+metadata.id+'">\n' +
+                                '       <a href="#" id="select'+metadata.id+'">\n' +
+                                '           <span id="tlicon'+metadata.id+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                '       </a>\n' +
+                                '   </div>\n' +
+                                '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
+                                '       <a href="#" data-toggle="modal" data-target="#propalbum'+metadata.id+'">\n' +
+                                '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                '       </a>\n' +
+                                '   </div>\n';
+                            }
+                            html +=
+                                '   <div class="thumbnail-br" id="tnbr'+metadata.id+'">\n' +
+                                '       <a href="#" data-toggle="modal" data-target="#propalbumphotocomment'+metadata.id+'">\n' +
+                                '           <span id="bricon'+metadata.id+'" class="bi-chat-square-fill" style="font-size: 1rem;color: darkorange;"></span>\n' +
+                                '       </a>\n' +
+                                '   </div>\n' +
+                                '   <div class="thumbnail-centered" id="tncentered'+metadata.id+'">\n';
+
+                            if (metadata.type.includes("video")) {
+                                html +=
+                                '       <a href="'+metadata.videoUrl+'"\n' +
+                                '           data-featherlight="iframe"\n' +
+                                '           data-featherlight-iframe-style="display:block;border:none;height:85vh;wid85vw;"\n' +
+                                '           data-featherlight-iframe-frameborder="0"\n' +
+                                '           data-featherlight-iframe-allowfullscreen="true">\n' +
+                                '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                '       </a>\n';
+                            } else {
+                                html +=
+                                '       <a href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image">\n' +
+                                '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                '       </a>\n';
+                            }
+
+                            html +=
+                                '   </div>\n' +
+                                '</div>\n' +
+                                '<div id="albummodal'+metadata.id+'"></div>\n' +
+                                '<span class="appendAlbumPhotos"></span>';
+                        }
+
+                        // Append HTML
+                        $(html).insertAfter($(".appendAlbumPhotos").last())
+
+                        // Call JS and modal
+                        var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                        var htmlEncodedAlbumData = encodeHtml(JSON.stringify(albumData));
+                        var htmlEncodedCurrentUser = encodeHtml(JSON.stringify(currentUser));
+                        var htmlEncodedalbumPhotoCommentsMap = encodeHtml(JSON.stringify(albumPhotoCommentsMap));
+
+                        renderAlbumModal(htmlEncodedAlbumData,htmlEncodedMetadata,htmlEncodedCurrentUser,htmlEncodedalbumPhotoCommentsMap);
+                        activateAlbumListeners(htmlEncodedMetadata);
+                    }
+                } else {
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#msgTimeline").html(message);
+                }
+            }
+        });
+    }
+
     function activateAlbumListeners(rawMetadata) {
         var metadata = JSON.parse(decodeHtml(rawMetadata));
 

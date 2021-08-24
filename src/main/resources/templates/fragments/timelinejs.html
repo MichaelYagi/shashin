@@ -210,8 +210,7 @@
         lastYearTaken,
         lastMonthTaken,
         lastDayTaken,
-        lastDateTakenHeading,
-        undatedPhotoCount
+        lastDateTakenHeading
     ) {
         // console.log(lastYearTaken);
         // console.log(lastMonthTaken);
@@ -270,7 +269,7 @@
                                     appended = true;
                                 } else {
                                     // Create new
-                                    html += '<br><p><strong>Undated</strong></p>\n<div class="row" id="undatedPhotos">\n';
+                                    html += '<br><p><strong>Undated</strong></p>\n';
                                 }
                                 undatedCount++;
                             } else if (lastYearTaken === metadata["year"] && // Append (test: 1st photo set has 10 photos within date)
@@ -360,11 +359,6 @@
                 }
             }
         });
-
-        // If last year/month/day matches with first in list, append
-        // else create new row with date
-        // If not date, append to id=undatedPhotos
-
     }
 </script>
 
