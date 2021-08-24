@@ -65,21 +65,9 @@ class TimelineController {
 
         model["data"] = "There are no photos. Please setup directories in Settings and scan ."
 
-        val sort = Sort.by(
-            Sort.Order.desc("year"),
-            Sort.Order.desc("month"),
-            Sort.Order.desc("day")
-        )
-
-        val pageRequest = PageRequest.of(
-            0,
-            queryLimit!!,
-            sort
-        )
-
         model["metadataList"] = ""
         model["favorites"] = ""
-        val metadataList = metadataRepository?.findAll(pageRequest)?.toList()
+        val metadataList = metadataRepository?.findAllByOffsetAndLimit(0, queryLimit!!)?.toList()
         if (metadataList != null) {
             model["metadataList"] = metadataList
             model["favorites"] = favoritesMap
@@ -117,19 +105,15 @@ class TimelineController {
                 }
             }
 
-            val sort = Sort.by(
-                Sort.Order.desc("year"),
-                Sort.Order.desc("month"),
-                Sort.Order.desc("day")
-            )
-
-            val pageRequest = PageRequest.of(
-                page,
-                queryLimit!!,
-                sort
-            )
-
-            val metadataList = metadataRepository?.findAll(pageRequest)?.toList()
+            val metadataList = metadataRepository?.findAllByOffsetAndLimit((page*queryLimit!!), queryLimit!!)?.toList()
+            if (metadataList != null) {
+                println(page)
+                for (metadata in metadataList) {
+                    if (metadata != null) {
+                        println(metadata.getId())
+                    }
+                }
+            }
             if (metadataList != null) {
                 response["metadataList"] = ""
                 response["favorites"] = ""
