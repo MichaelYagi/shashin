@@ -107,14 +107,6 @@ class TimelineController {
 
             val metadataList = metadataRepository?.findAllByOffsetAndLimit((page*queryLimit!!), queryLimit!!)?.toList()
             if (metadataList != null) {
-                println(page)
-                for (metadata in metadataList) {
-                    if (metadata != null) {
-                        println(metadata.getId())
-                    }
-                }
-            }
-            if (metadataList != null) {
                 response["metadataList"] = ""
                 response["favorites"] = ""
                 response["albumList"] = ""

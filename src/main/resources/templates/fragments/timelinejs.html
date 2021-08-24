@@ -4,6 +4,7 @@
 <script type="text/javascript">
     function activateMetadataListeners(rawMetadata) {
         var metadata = JSON.parse(decodeHtml(rawMetadata));
+        // console.log(metadata.id);
 
         $("#favorite"+metadata.id).click(function (e) {
             e.preventDefault();
@@ -235,12 +236,15 @@
                         // console.log(favoritesList);
                         // console.log(albumList);
                         var html = "";
+                        var undatedCount = 0;
+                        lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                        lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                        lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+
+
                         for (var index in metadataList) {
                             var metadata = metadataList[index];
                             var currentDateTaken = metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"];
-                            lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-                            lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-                            lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
                             // console.log(lastDateTakenHeading);
                             // console.log(currentDateTaken);
@@ -253,30 +257,43 @@
                             // console.log(metadata["month"]);
                             // console.log(metadata["day"]);
 
-
+                            var appended = false;
 
                             // Undated
                             if (metadata["year"] === null ||
                                 metadata["month"] === null ||
                                 metadata["day"] === null)
                             {
-                                console.log("undated");
-                                if (undatedPhotoCount > 0) {
+                                // console.log("undated");
+                                if (undatedCount > 0) {
                                     // Append
+                                    appended = true;
                                 } else {
                                     // Create new
+                                    html += '<br><p><strong>Undated</strong></p>\n<div class="row" id="undatedPhotos">\n';
                                 }
+                                undatedCount++;
                             } else if (lastYearTaken === metadata["year"] && // Append (test: 1st photo set has 10 photos within date)
                                 lastMonthTaken === metadata["month"] &&
                                 lastDayTaken === metadata["day"] &&
                                 lastDateTakenHeading === currentDateTaken)
                             {
-                                console.log("append date");
-
-
+                                // console.log("append date");
+                                appended = true;
                             } else { // New date div
-                                console.log("new date");
+                                // console.log("new date");
+                                let date = new Date(metadata["year"], metadata["month"], metadata["day"]);
+                                let dayOfWeek = getShortDay(date.getDay());
+                                let shortMonth = getShortMonths(date.getMonth());
+                                let day = ('0' + date.getDate()).slice(-2);
+                                let dateString = dayOfWeek+", "+shortMonth+" "+day+", "+metadata["year"];
 
+                                html += '<br><p><strong>'+dateString+'</strong></p>\n' +
+                                    '<span style="display: none;" class="dateTakenHeading">'+metadata["year"]+'-'+metadata["month"]+'-'+metadata["day"]+'</span>\n' +
+                                    '<div class="row">\n' +
+                                    '<span style="display: none;" class="yearTaken">'+metadata["year"]+'</span>\n' +
+                                    '<span style="display: none;" class="monthTaken">'+metadata["month"]+'</span>\n' +
+                                    '<span style="display: none;" class="dayTaken">'+metadata["day"]+'</span>\n';
                             }
 
                             html += '<div class="photo-thumbnail-container photo-thumbnail">\n' +
@@ -321,17 +338,21 @@
                                     '   </a>\n';
                             }
                             html += '</div></div>\n<div id="timelinemodal'+metadata.id+'"></div>\n';
+                            var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                            html += '<script type="text/javascript">' +
+                                'renderTimelineModal(\''+htmlEncodedMetadata+'\');' +
+                                'activateMetadataListeners(\''+htmlEncodedMetadata+'\');' +
+                                '<\/script>';
 
-
-                            renderTimelineModal(JSON.stringify(metadataList));
-                            activateMetadataListeners(JSON.stringify(metadataList));
+                            if (appended === true) {
+                                // Append
+                                $(html).insertAfter($(".appendMetadataPhotos").last())
+                            } else {
+                                html += '</div><span class="attachMetadataPhotos"></span>';
+                                $(html).insertAfter($(".attachMetadataPhotos").last())
+                            }
+                            html = "";
                         }
-                        var attachMetadataPhotosCount = $(".attachMetadataPhotos").length;
-                        if (attachMetadataPhotosCount > 0) {
-                            html += '<span class="attachMetadataPhotos"></span>';
-                            $(html).insertAfter($(".attachMetadataPhotos").last())
-                        }
-
                     }
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';

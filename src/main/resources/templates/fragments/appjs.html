@@ -18,6 +18,15 @@
         return o;
     };
 
+    function getShortDay(index) {
+        var days = ['Thu','Fri','Sat','Sun','Mon','Tue','Wed'];
+        return days[index];
+    }
+    function getShortMonths(index) {
+        var months = ['Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
+        return months[index];
+    }
+
     function isNumeric(str) {
         if (typeof str != "string") return false // we only process strings!
         return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -63,6 +72,10 @@
         var txt = document.createElement("textarea");
         txt.innerHTML = html;
         return txt.value;
+    }
+
+    function encodeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     $("#appToolsBatchEdit").click(function(e) {

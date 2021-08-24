@@ -96,8 +96,9 @@
                     </script>
 
                     <th:block th:if="${iterStat.count > 0 and {iterStat.last or {!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}}}">
-                        <span class="attachMetadataPhotos"></span>
+                        <span class="appendMetadataPhotos"></span>
                         <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
+                        <span class="attachMetadataPhotos"></span>
                     </th:block>
 
                 </th:block>
