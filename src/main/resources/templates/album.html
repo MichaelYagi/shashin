@@ -15,9 +15,15 @@
             <input type="hidden" id="currentyear" name="currentyear">
             <input type="hidden" id="currentmonth" name="currentmonth">
             <input type="hidden" id="currentday" name="currentday">
+            <input type="hidden" id="currentPage" name="currentPage" value="0">
 
             <div id="albumMessage"></div>
+
             <th:block th:if="${album != '' and albumMetadataList != ''}">
+                <div th:replace="fragments/appjs :: appjs()"></div>
+                <div th:replace="fragments/albumjs :: albumjs()"></div>
+                <div th:replace="fragments/albummodal :: albummodal()"></div>
+
                 <h1 th:text="${album.name}"></h1>
                 <span id="albumId" style="display: none" th:text="${album.id}"></span>
                 <div class="row">
@@ -69,8 +75,16 @@
                             </div>
                         </div>
 
-                        <div th:replace="fragments/albummodal :: albummodal(${album},${metadata},${currentUser},${albumPhotoCommentsMap})"></div>
-                        <div th:replace="fragments/albumjs :: albumjs(${album},${metadata})"></div>
+                        <div th:id="'albummodal'+${metadata.id}"></div>
+
+                        <script type="text/javascript">
+                            /*<![CDATA[*/
+                            renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMap}]]")
+                            activateAlbumListeners("[[${metadata}]]")
+                            /*]]>*/
+                        </script>
+
+                        <span class="appendAlbumPhotos"></span>
                     </th:block>
                 </div>
             </th:block>
@@ -81,42 +95,19 @@
 </div>
 
 <script type="text/javascript">
-    $("#albumAppToolsAddAlbum").click(function(e) {
-        e.preventDefault();
+    $(window).on('scroll', function() {
+        // Uset to detect near bottom
+        if (atEndOfPage()) {
+            // console.log("scroll bottom");
+            var currentPage = parseInt($("#currentPage").val());
+            var nextPage = currentPage+1;
+            // console.log("currentPage:"+currentPage);
+            // console.log("nextPage:"+nextPage);
 
-        let metadataIdList = [];
-        $('.bi-circle-fill').each(function(i, obj) {
-            metadataIdList.push(obj.id.substring(6, obj.id.length));
-        });
-
-        let albumId = $('#albumId').text();
-        if (metadataIdList.length > 0 && albumId.length > 0) {
-            let json = {metadataIdList: metadataIdList, albumId: parseInt(albumId)}
-
-            const posting = $.post({
-                url: "/album/delete/batch",
-                data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8'
-            });
-
-            posting.done(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    if (data["status"] === "redirect") {
-                        window.location.replace(data["msg"]);
-                    } else {
-                        let message = "Error";
-                        if (data["status"] === "success") {
-                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        } else {
-                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                        }
-                        $("#albumMessage").html(message);
-                        window.top.location = window.top.location
-                    }
-                }
-            });
+            //updateAlbum(nextPage);
+            $("#currentPage").val(nextPage);
         }
-    });
+    })
 
     $.featherlight.prototype.afterOpen = function() {
         var lat = $("#currentlat").val();

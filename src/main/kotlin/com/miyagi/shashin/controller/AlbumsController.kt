@@ -422,7 +422,7 @@ class AlbumsController {
                     }
                     if (albumMetadataList.count() > 0) {
                         val album = albumRepository.findById(albumId)
-                        model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
+                        model["albumPhotoCommentsMap"] = mapper.writeValueAsString(albumPhotosCommentsMap)
                         model["album"] = album.get()
                         model["albumMetadataList"] = albumMetadataList
                         model["currentUser"] = currentUserObj
@@ -435,7 +435,7 @@ class AlbumsController {
         return module
     }
 
-    @RequestMapping(value = ["/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/album/{albumId}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
         val response = mutableMapOf<String, Any?>()

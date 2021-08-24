@@ -1,315 +1,104 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="albummodal(album, metadata, currentUser, albumPhotoCommentsMap)">
+<body th:fragment="albummodal()">
 
-<div class="modal fade" th:id="'propalbum'+${metadata.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${metadata.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit <th:block th:text="${metadata.fileName}"></th:block></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form th:id="'saveData'+${metadata.id}">
-                    <input type="hidden" name="id" th:value="${metadata.id}">
+<script type="text/javascript">
+    function renderAlbumModal(rawAlbumData,rawMetadata,rawCurrentUser,rawAlbumPhotoCommentsMap) {
+        var albumData = JSON.parse(decodeHtml(rawAlbumData));
+        var metadata = JSON.parse(decodeHtml(rawMetadata));
+        var currentUser = JSON.parse(decodeHtml(rawCurrentUser));
+        var albumPhotoCommentsMap = rawAlbumPhotoCommentsMap !== '' ? JSON.parse(decodeHtml(rawAlbumPhotoCommentsMap)) : {};
 
-                    <div class="col-auto form-check">
-                        <input type="checkbox" class="form-check-input" th:id="'removeFromAlbum'+${metadata.id}" name="removeFromAlbum">
-                        <label class="form-check-label" th:for="'removeFromAlbum'+${metadata.id}">Remove from album</label>
-                    </div>
-                    <div class="col-auto form-check">
-                        <input type="checkbox" class="form-check-input" th:id="'setCoverAlbum'+${metadata.id}" name="setCoverAlbum">
-                        <label class="form-check-label" th:for="'setCoverAlbum'+${metadata.id}">Set as album cover</label>
-                    </div>
-                </form>
-                <div class="col-sm">
-                    <span th:id="'msg'+${metadata.id}"></span>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" th:id="'saveAlbum'+${metadata.id}">Save</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            </div>
-            <script type="text/javascript">
-                $.fn.serializeObject = function() {
-                    var o = {};
-                    var a = this.serializeArray();
-                    $.each(a, function() {
-                        if (o[this.name]) {
-                            if (!o[this.name].push) {
-                                o[this.name] = [o[this.name]];
-                            }
-                            o[this.name].push(this.value || '');
-                        } else {
-                            o[this.name] = this.value || '';
-                        }
-                    });
-                    return o;
-                };
+        html =
+            '<div class="modal fade" id="propalbum'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true">\n' +
+            '    <div class="modal-dialog modal-lg" role="document">\n' +
+            '        <div class="modal-content">\n' +
+            '            <div class="modal-header">\n' +
+            '                <h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
+            '                <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+            '                    <span aria-hidden="true">&times;</span>\n' +
+            '                </button>\n' +
+            '            </div>\n' +
+            '            <div class="modal-body">\n' +
+            '                <form id="saveData'+metadata.id+'">\n' +
+            '                    <input type="hidden" name="id" value="'+metadata.id+'">\n' +
+            '                    <div class="col-auto form-check">\n' +
+            '                        <input type="checkbox" class="form-check-input" id="removeFromAlbum'+metadata.id+'" name="removeFromAlbum">\n' +
+            '                        <label class="form-check-label" for="removeFromAlbum'+metadata.id+'">Remove from album</label>\n' +
+            '                    </div>\n' +
+            '                    <div class="col-auto form-check">\n' +
+            '                        <input type="checkbox" class="form-check-input" id="setCoverAlbum'+metadata.id+'" name="setCoverAlbum">\n' +
+            '                        <label class="form-check-label" for="setCoverAlbum'+metadata.id+'">Set as album cover</label>\n' +
+            '                    </div>\n' +
+            '                </form>\n' +
+            '                <div class="col-sm">\n' +
+            '                    <span id="msg'+metadata.id+'"></span>\n' +
+            '                </div>\n' +
+            '            </div>\n' +
+            '            <div class="modal-footer">\n' +
+            '                <button type="button" class="btn btn-primary" id="saveAlbum'+metadata.id+'">Save</button>\n' +
+            '                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>\n' +
+            '            </div>\n' +
+            '        </div>\n'+
+            '    </div>\n'+
+            '</div>';
 
-                $('#removeFromAlbum[[${metadata.id}]]').change(function() {
-                    if (this.checked) {
-                        $('#setCoverAlbum[[${metadata.id}]]').prop("checked", false);
-                        $('#setCoverAlbum[[${metadata.id}]]').attr("disabled", true);
-                    } else {
-                        $('#setCoverAlbum[[${metadata.id}]]').removeAttr("disabled");
+        html +=
+            '<div class="modal fade" id="propalbumphotocomment'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true">\n' +
+            '    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">\n' +
+            '        <div class="modal-content">\n' +
+            '            <div class="modal-header">\n' +
+            '                <h5 class="modal-title" id="commentModalLabel">Comments for '+metadata.fileName+'</h5>\n' +
+            '                <button type="button" class="close" data-dismiss="modal" aria-label="Close">\n' +
+            '                    <span aria-hidden="true">&times;</span>\n' +
+            '                </button>\n' +
+            '            </div>\n' +
+            '            <div class="modal-body">\n' +
+            '                <input type="hidden" id="currentCommentId'+metadata.id+'" name="currentCommentId'+metadata.id+'">\n' +
+            '                <ul class="list-group" id="commentList'+metadata.id+'">\n';
+        for (var key in albumPhotoCommentsMap) {
+            if (albumPhotoCommentsMap[key] === metadata.id) {
+                var comments = albumPhotoCommentsMap[key];
+                albumCommentsDeleteEditModalListener(comments["commentId"], metadata);
+
+                html +=
+                    '       <li id="comment'+comments["commentId"]+'" class="list-group-item'+(comments['userId'] === currentUser.id ? ' list-group-item-secondary' : '')+'">\n' +
+                    '           <span id="commentcontainer'+comments["commentId"]+'">\n' +
+                    '               <p id="commentcontent'+comments["commentId"]+'">'+comments["comment"]+'</p>\n' +
+                    '               <small><strong>'+comments["username"]+'</strong><span> on '+comments["createdAt"]+'</span></small>';
+                    if (comments["userId"] === currentUser.id) {
+                        html +=
+                            '       <small><span style="float: right">\n' +
+                            '           <a href="#" id="deletecomment'+comments["commentId"]+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;\n' +
+                            '           <a href="#" id="editcomment'+comments["commentId"]+'"><span class="bi-pencil"></span></a>\n' +
+                            '       </span></small>\n';
                     }
-                });
+                    html +=
+                        '       </span>\n' +
+                        '       <span id="textareacontainer'+comments["commentId"]+'"></span>\n' +
+                        '   </li>';
 
-                /*<![CDATA[*/
-                $("#saveAlbum[[${metadata.id}]]").click(function (e) {
-                    e.preventDefault();
+            }
+        }
 
-                    let requestJson = {
-                        removeFromAlbum:$("#removeFromAlbum[[${metadata.id}]]").prop("checked"),
-                        setCoverAlbum:$("#setCoverAlbum[[${metadata.id}]]").prop("checked"),
-                        metadataId:"[[${metadata.id}]]",
-                        albumId:[[${album.id}]]
-                    }
+        html +=
+            '             </ul>\n' +
+            '           </div>\n' +
+            '           <div class="modal-footer">\n' +
+            '               <textarea class="form-control" id="commentText'+metadata.id+'" rows="2"></textarea>\n' +
+            '               <button type="button" class="btn btn-primary" id="saveCommentMetadata'+metadata.id+'">Save</button>\n' +
+            '               <button type="button" class="btn btn-primary" id="updateCommentMetadata'+metadata.id+'">Update</button>\n' +
+            '               <button type="button" class="btn btn-secondary" id="dismissModalCommentMetadata'+metadata.id+'" data-dismiss="modal">Cancel</button>\n' +
+            '               <button type="button" class="btn btn-secondary" id="cancelEditCommentMetadata'+metadata.id+'">Cancel</button>\n' +
+            '           </div>\n' +
+            '       </div>\n' +
+            '   </div>\n' +
+            '</div>';
 
-                    const posting = $.post({
-                        url: "/album/update",
-                        data: JSON.stringify(requestJson),
-                        contentType: 'application/json; charset=utf-8'
-                    });
-
-                    posting.done(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            if (data["status"] === "redirect") {
-                                window.location.replace(data["msg"]);
-                            } else {
-                                let message = "Error";
-                                if (data["status"] === "success") {
-                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                } else {
-                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                }
-                                $("#msg[[${metadata.id}]]").html(message);
-                                window.top.location = window.top.location
-                            }
-                        }
-                    });
-
-                    return false;
-                });
-                /*]]>*/
-            </script>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" th:id="'propalbumphotocomment'+${metadata.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${metadata.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="commentModalLabel">Comments for  <th:block th:text="${metadata.fileName}"></th:block></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" th:id="'currentCommentId'+${metadata.id}" th:name="'currentCommentId'+${metadata.id}">
-                <ul class="list-group" th:id="'commentList'+${metadata.id}">
-                    <th:block th:if="${albumPhotoCommentsMap != ''}" th:each="comments: ${albumPhotoCommentsMap.get(metadata.id)}">
-                        <th:block th:if="${comments.get('metadataId') == metadata.id}">
-                            <li th:id="'comment'+${comments.get('commentId')}" th:class="'list-group-item'+${comments.get('userId') == currentUser.id ? ' list-group-item-secondary' : ''}">
-                                <span th:id="'commentcontainer'+${comments.get('commentId')}">
-                                    <p th:id="'commentcontent'+${comments.get('commentId')}" th:text="${comments.get('comment')}"></p>
-                                    <small><strong th:text="${comments.get('username')}"></strong><span th:text="' on '+${comments.get('createdAt')}"></span></small>
-                                    <th:block th:if="${comments.get('userId') == currentUser.id}">
-                                        <small><span style="float: right">
-                                            <a href="#" th:id="'deletecomment'+${comments.get('commentId')}"><span class="bi-trash"></span></a>&nbsp;&nbsp;
-                                            <a href="#" th:id="'editcomment'+${comments.get('commentId')}"><span class="bi-pencil"></span></a>
-                                        </span></small>
-                                    </th:block>
-                                </span>
-                                <span th:id="'textareacontainer'+${comments.get('commentId')}"></span>
-                            </li>
-
-                            <script type="text/javascript">
-                                /*<![CDATA[*/
-                                $("#deletecomment[[${comments.get('commentId')}]]").click(function(e) {
-                                    e.preventDefault();
-
-                                    let json = {commentId: [[${comments.get('commentId')}]],metadataId: "[[${comments.get('metadataId')}]]"}
-
-                                    const posting = $.post({
-                                        url: "/comment/albumphoto/delete/",
-                                        data: JSON.stringify(json),
-                                        contentType: 'application/json; charset=utf-8'
-                                    });
-
-                                    posting.done(function (data) {
-                                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                                            let commentId = data["commentId"];
-                                            let message = "Error";
-                                            if (data["status"] === "success") {
-                                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-
-                                                // Delete comment
-                                                $("#comment"+commentId).remove();
-                                            } else {
-                                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                            }
-                                        }
-                                    });
-
-                                    $("#currentCommentId[[${metadata.id}]]").val("");
-                                });
-
-                                $("#editcomment[[${comments.get('commentId')}]]").click(function(e) {
-                                    e.preventDefault();
-
-                                    if ($("#currentCommentId[[${metadata.id}]]").val() === "") {
-                                        var commentId = "[[${comments.get('commentId')}]]";
-                                        $("#currentCommentId[[${metadata.id}]]").val(commentId);
-
-                                        $("#saveCommentMetadata[[${metadata.id}]]").hide();
-                                        $("#dismissModalCommentMetadata[[${metadata.id}]]").hide();
-                                        $("#updateCommentMetadata[[${metadata.id}]]").show();
-                                        $("#cancelEditCommentMetadata[[${metadata.id}]]").show();
-
-                                        $("#commentcontainer[[${comments.get('commentId')}]]").hide();
-                                        $("#textareacontainer[[${comments.get('commentId')}]]").show();
-                                        var commentText = $("#commentcontent[[${comments.get('commentId')}]]").text();
-                                        $("#textareacontainer[[${comments.get('commentId')}]]").html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
-                                    }
-                                });
-                                /*]]>*/
-                            </script>
-                        </th:block>
-                    </th:block>
-                </ul>
-            </div>
-            <div class="modal-footer">
-                <textarea class="form-control" th:id="'commentText'+${metadata.id}" rows="2"></textarea>
-                <button type="button" class="btn btn-primary" th:id="'saveCommentMetadata'+${metadata.id}">Save</button>
-                <button type="button" class="btn btn-primary" th:id="'updateCommentMetadata'+${metadata.id}">Update</button>
-                <button type="button" class="btn btn-secondary" th:id="'dismissModalCommentMetadata'+${metadata.id}" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-secondary" th:id="'cancelEditCommentMetadata'+${metadata.id}">Cancel</button>
-            </div>
-            <script type="text/javascript">
-                /*<![CDATA[*/
-                $("#updateCommentMetadata[[${metadata.id}]]").hide();
-                $("#cancelEditCommentMetadata[[${metadata.id}]]").hide();
-
-                $("#cancelEditCommentMetadata[[${metadata.id}]]").click(function (e) {
-                    e.preventDefault();
-
-                    var currentCommentId = $("#currentCommentId[[${metadata.id}]]").val()
-
-                    if (currentCommentId !== "") {
-                        $("#saveCommentMetadata[[${metadata.id}]]").show();
-                        $("#dismissModalCommentMetadata[[${metadata.id}]]").show();
-                        $("#updateCommentMetadata[[${metadata.id}]]").hide();
-                        $("#cancelEditCommentMetadata[[${metadata.id}]]").hide();
-
-                        $("#commentcontainer" + currentCommentId).show();
-                        $("#textareacontainer" + currentCommentId).html('');
-                        $("#textareacontainer" + currentCommentId).hide();
-
-                        $("#currentCommentId[[${metadata.id}]]").val("");
-                    }
-                });
-
-                $("#updateCommentMetadata[[${metadata.id}]]").click(function (e) {
-                    e.preventDefault();
-
-                    var currentCommentId = $("#currentCommentId[[${metadata.id}]]").val()
-
-                    if (currentCommentId !== "") {
-                        var updatedComment = $.trim($("#commenttext"+currentCommentId).val());
-
-                        if (updatedComment.length > 0) {
-                            let json = {commentId: currentCommentId, comment: updatedComment}
-
-                            const posting = $.post({
-                                url: "/comment/update",
-                                data: JSON.stringify(json),
-                                contentType: 'application/json; charset=utf-8'
-                            });
-
-                            posting.done(function (data) {
-                                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                                    let commentId = data["commentId"];
-                                    let message = "Error";
-                                    if (data["status"] === "success") {
-                                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                    } else {
-                                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                    }
-
-                                    // Update comment
-                                    $("#commentcontent"+commentId).text(updatedComment);
-
-                                    $("#saveCommentMetadata[[${metadata.id}]]").show();
-                                    $("#dismissModalCommentMetadata[[${metadata.id}]]").show();
-                                    $("#updateCommentMetadata[[${metadata.id}]]").hide();
-                                    $("#cancelEditCommentMetadata[[${metadata.id}]]").hide();
-
-                                    $("#commentcontainer" + commentId).show();
-                                    $("#textareacontainer" + commentId).html('');
-                                    $("#textareacontainer" + commentId).hide();
-                                    $("#commenttext"+commentId).val("");
-                                }
-                            });
-                        }
-
-                        $("#saveCommentMetadata[[${metadata.id}]]").show();
-                        $("#dismissModalCommentMetadata[[${metadata.id}]]").show();
-                        $("#updateCommentMetadata[[${metadata.id}]]").hide();
-                        $("#cancelEditCommentMetadata[[${metadata.id}]]").hide();
-
-                        $("#commentcontainer" + currentCommentId).show();
-                        $("#textareacontainer" + currentCommentId).html('');
-                        $("#textareacontainer" + currentCommentId).hide();
-
-                        $("#currentCommentId[[${metadata.id}]]").val("");
-                    }
-                });
-
-                $("#saveCommentMetadata[[${metadata.id}]]").click(function(e) {
-                    e.preventDefault();
-
-                    let comment = $.trim($("#commentText[[${metadata.id}]]").val());
-
-                    if (comment.length > 0) {
-                        let json = {metadataId: "[[${metadata.id}]]", albumId: [[${album.id}]], comment: comment}
-
-                        const posting = $.post({
-                            url: "/comment/albumphoto/save/",
-                            data: JSON.stringify(json),
-                            contentType: 'application/json; charset=utf-8'
-                        });
-
-                        posting.done(function (data) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                                let commentId = data["commentId"];
-                                let message = "Error";
-                                if (data["status"] === "success") {
-                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                } else {
-                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                }
-
-                                // Insert comment at top of list
-                                var commentItem = '<li class="list-group-item list-group-item-secondary" id="comment'+commentId+'">\n' +
-                                    '<span id="commentcontainer'+commentId+'">\n<p id="commentcontent'+commentId+'">'+comment+'</p>\n' +
-                                    '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="deletecomment'+commentId+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment'+commentId+'"><span class="bi-pencil"></span></a></span></small></span>' +
-                                    '<span id="textareacontainer'+commentId+'"></span></li>';
-                                $("#commentText[[${metadata.id}]]").val("")
-                                $("#commentList[[${metadata.id}]]").prepend(commentItem);
-                            }
-                        });
-                    }
-                });
-                /*]]>*/
-            </script>
-        </div>
-    </div>
-</div>
+        $("#albummodal"+metadata.id).after(html);
+        albumCommentsUpdateSaveModalListener(metadata, albumData, currentUser);
+    }
+</script>
 
 </body>
 </html>
