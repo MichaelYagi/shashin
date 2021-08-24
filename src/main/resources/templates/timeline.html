@@ -121,14 +121,9 @@
         })
     });
 
-    // Detect scrolling to bottom of page
-    function atEnd() {
-        var c = [document.scrollingElement.scrollHeight, document.body.scrollHeight, document.body.offsetHeight].sort(function(a,b){return b-a}) // select longest candidate for scrollable length
-        return (window.innerHeight + window.scrollY + 2 >= c[0]) // compare with scroll position + some give
-    }
     $(window).on('scroll', function() {
         // Uset to detect near bottom
-        if (atEnd()) {
+        if (atEndOfPage()) {
             // console.log("scroll bottom");
             var currentPage = parseInt($("#currentPage").val());
             var nextPage = currentPage+1;

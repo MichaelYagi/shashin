@@ -124,8 +124,6 @@ class TimelineController {
                 }
                 return mapper.writeValueAsString(response)
             }
-
-
         }
 
         resp["msg"] = "Could not get results"
