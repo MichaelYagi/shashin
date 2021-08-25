@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://thymeleaf.org">
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 <div th:replace="fragments/loginregcontent :: loginregcontent(${activePage}, ${data})" class="col-sm p-3 min-vh-100"></div>

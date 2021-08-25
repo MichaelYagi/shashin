@@ -1,21 +1,14 @@
-package com.miyagi.shashin.controller
+package com.miyagi.shashin
 
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.client.TestRestTemplate
-
 import org.springframework.boot.web.server.LocalServerPort
 
-
-
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TimelineControllerTests {
-    @Autowired
-    private val timelineController: TimelineController? = null
-
+class IndexPageTest {
     @LocalServerPort
     private val port = 0
 
@@ -24,12 +17,12 @@ class TimelineControllerTests {
 
     @Test
     @Throws(Exception::class)
-    fun timelineShouldReturnLoginIfNotLoggedIn() {
-        assertThat(
+    fun welcomePageShouldReturnDefaultMessage() {
+        Assertions.assertThat(
             this.restTemplate?.getForObject(
-                "http://localhost:" + port.toString() + "/timeline",
+                "http://localhost:" + port.toString(),
                 String::class.java
             )
-        ).contains("Please Login")
+        ).contains("Welcome to Shashin")
     }
 }

@@ -8,11 +8,9 @@ import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.UserAlbumRepository
-import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -23,12 +21,10 @@ import java.util.ArrayList
 import javax.transaction.Transactional
 
 @Controller
+@Secured("ROLE_ADMIN")
 class FavoritesController {
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository

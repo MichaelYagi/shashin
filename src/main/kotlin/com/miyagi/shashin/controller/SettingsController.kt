@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.data.domain.Sort
+import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -30,6 +31,7 @@ import java.util.logging.Logger
 import javax.transaction.Transactional
 
 @Controller
+@Secured("ROLE_ADMIN")
 class SettingsController {
 
     @Value("\${app.api.version}")

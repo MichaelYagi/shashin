@@ -54,7 +54,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="roleuserModalLabel">Change <th:block th:text="${user.username}"></th:block> to <th:block th:text="${user.authority == 'ADMIN' ? 'user' : 'admin'}"></th:block></h5>
+                <h5 class="modal-title" id="roleuserModalLabel">Change <th:block th:text="${user.username}"></th:block> to <th:block th:text="${user.authority == 'ROLE_ADMIN' ? 'user' : 'admin'}"></th:block></h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -71,7 +71,7 @@
 
                     let userId = "[[${user.id}]]";
                     let currentRole = "[[${user.authority}]]";
-                    let changeTo = currentRole === "USER" ? "ADMIN" : "USER";
+                    let changeTo = currentRole === "ROLE_USER" ? "ROLE_ADMIN" : "ROLE_USER";
 
                     let json = {userId: userId, changeTo: changeTo}
                     const posting = $.post({

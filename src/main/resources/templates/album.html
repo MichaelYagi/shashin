@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://thymeleaf.org">
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 
@@ -37,7 +37,7 @@
                                 </div>
                             </th:block>
 
-                            <th:block th:if="${authority == 'ADMIN'}">
+                            <th:block th:if="${authority == 'ROLE_ADMIN'}">
                                 <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
                                     <a href="#" th:id="'select'+${metadata.id}">
                                         <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>

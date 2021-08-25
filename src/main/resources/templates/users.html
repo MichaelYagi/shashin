@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://thymeleaf.org">
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 
@@ -30,10 +30,10 @@
                                 <td><span th:text="${user.username}"></span></td>
                                 <td>
                                     <a href="#" th:id="${'permissiontoggle' + user.id}">
-                                        <th:block th:if="${user.authority == 'ADMIN'}">
+                                        <th:block th:if="${user.authority == 'ROLE_ADMIN'}">
                                             <span class="bi-person-badge" style="font-size: 1rem;color: black;"></span>
                                         </th:block>
-                                        <th:block th:if="${user.authority == 'USER'}">
+                                        <th:block th:if="${user.authority == 'ROLE_USER'}">
                                             <span class="bi-person" style="font-size: 1rem;color: black;"></span>
                                         </th:block>
                                     </a>
