@@ -90,6 +90,7 @@
                     <div th:id="'timelinemodal'+${metadata.id}"></div>
                     <script type="text/javascript">
                         /*<![CDATA[*/
+                        setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                         renderTimelineModal("[[${metadata}]]")
                         activateMetadataListeners("[[${metadata}]]")
                         /*]]>*/
@@ -140,8 +141,9 @@
                 lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
                 lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
-
-                updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading);
+                /*<![CDATA[*/
+                updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading,"[[${activePage}]]");
+                /*]]>*/
                 $("#currentPage").val(nextPage);
             }
         }

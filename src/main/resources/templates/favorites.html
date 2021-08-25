@@ -53,7 +53,7 @@
 
                         <script type="text/javascript">
                             /*<![CDATA[*/
-                            activateFavoritesListeners("[[${metadata}]]")
+                            setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                             /*]]>*/
                         </script>
                         <span class="appendMetadataPhotos"></span>
@@ -76,7 +76,9 @@
         function loadNextPage() {
             var currentPage = parseInt($("#currentPage").val());
             var nextPage = currentPage+1;
-            updateFavorites(nextPage);
+            /*<![CDATA[*/
+            updateFavorites(nextPage, "[[${activePage}]]");
+            /*]]>*/
             $("#currentPage").val(nextPage);
         }
         if (!$(window).hasScrollBar()) {

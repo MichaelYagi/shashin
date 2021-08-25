@@ -79,6 +79,7 @@
 
                         <script type="text/javascript">
                             /*<![CDATA[*/
+                            setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                             renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
                             activateAlbumListeners("[[${metadata}]]","[[${album}]]")
                             /*]]>*/
@@ -100,9 +101,8 @@
             var currentPage = parseInt($("#currentPage").val());
             var nextPage = currentPage+1;
             /*<![CDATA[*/
-            var albumId = [[${album.id}]];
+            updateAlbum([[${album.id}]], nextPage, "[[${activePage}]]");
             /*]]>*/
-            updateAlbum(albumId, nextPage);
             $("#currentPage").val(nextPage);
         }
         if (!$(window).hasScrollBar()) {
