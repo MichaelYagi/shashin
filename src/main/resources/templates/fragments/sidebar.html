@@ -5,7 +5,7 @@
 <div class="bg-light" style="width: 4.5rem;">
     <div class="sidebar-sticky">
         <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
-            <th:block th:if="${authority == 'ADMIN'}">
+            <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
                     <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline" data-toggle="tooltip" data-placement="top" title="Timeline">
                         <span class="bi-calendar4" style="font-size: 2rem;"></span>
@@ -22,7 +22,7 @@
                     <span class="bi-map" style="font-size: 2rem;"></span>
                 </a>
             </li>
-            <th:block th:if="${authority == 'ADMIN'}">
+            <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
                     <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites" data-toggle="tooltip" data-placement="top" title="Favorites">
                         <span class="bi-suit-heart" style="font-size: 2rem;"></span>

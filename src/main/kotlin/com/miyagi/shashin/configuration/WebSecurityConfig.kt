@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
@@ -17,6 +18,7 @@ import javax.sql.DataSource
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true)
 class WebSecurityConfig: WebSecurityConfigurerAdapter() {
 
     @Autowired
@@ -59,9 +61,9 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
             .headers().frameOptions().sameOrigin()
                 .and()
             .authorizeRequests()
-                .antMatchers("/css/**", "/js/**", "/users/register", "/users/login", "/users/logout").permitAll()
-                .antMatchers("settings/**", "settings", "settings/users", "settings/scan", "favorites", "timeline", "users/delete", "albums/add").hasRole(adminRole)
-                .antMatchers("comments/**", "albums", "api/**", "map/**").hasAnyRole(userRole, adminRole)
+                .antMatchers("/", "/css/**", "/js/**", "/users/register", "/users/login", "/users/logout").permitAll()
+                .antMatchers("settings/**", "settings", "settings/users", "settings/scan", "favorites", "timeline", "users/delete", "albums/add").hasRole(adminRole.toString().replace("ROLE_", ""))
+                .antMatchers("comments/**", "albums", "api/**", "map/**").hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""))
                 .anyRequest().authenticated()
                 .and()
             .formLogin()

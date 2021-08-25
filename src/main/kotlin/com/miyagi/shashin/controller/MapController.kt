@@ -28,7 +28,7 @@ class MapController {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
 
-        // If ADMIN get lat lng for timeline
+        // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
             if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 model["mapdata"] = metadataRepository!!.findAll()

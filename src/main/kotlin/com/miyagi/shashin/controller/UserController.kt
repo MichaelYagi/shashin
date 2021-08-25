@@ -7,6 +7,7 @@ import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
+import org.springframework.security.access.annotation.Secured
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
@@ -133,9 +134,9 @@ class UserController {
             val encodedPassword: String = bcrypt.encode(newUser.getPassword())
             newUser.setPassword(encodedPassword)
             if ((userCount != null) && (userCount.toInt() == 0)) {
-                newUser.setAuthority("ADMIN")
+                newUser.setAuthority("ROLE_ADMIN")
             } else {
-                newUser.setAuthority("USER")
+                newUser.setAuthority("ROLE_USER")
             }
 
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -228,6 +229,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @Secured("ROLE_ADMIN")
     fun deleteUser(model: Model, @ModelAttribute user: @Valid User?): String? {
         resp["status"] = "fail"
 
