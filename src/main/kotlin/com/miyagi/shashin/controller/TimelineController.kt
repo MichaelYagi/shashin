@@ -282,8 +282,11 @@ class TimelineController {
                     }
                     if (keywords != null) {
                         val keywordArray = keywords.toString().split(",")
-                        val trimmedKeywords = keywordArray.joinToString { it.trim() }
-                        metadataObj.get().setKeywords(trimmedKeywords)
+                        keywords = keywordArray.joinToString { it.trim() }.trim()
+                        if (keywords.last() == ',') {
+                            keywords = keywords.dropLast(1)
+                        }
+                        metadata.setKeywords(keywords)
 
                     }
 
