@@ -7,8 +7,6 @@ import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
-import org.springframework.security.authentication.AnonymousAuthenticationToken
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
@@ -20,13 +18,10 @@ import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.validation.Valid
-
 
 @Controller
 class UserController {
@@ -35,12 +30,6 @@ class UserController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
     var bcrypt = BCryptPasswordEncoder()
-
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Value("\${app.role.user}")
-    private var userRole: String? = null
 
     @Autowired
     var userRepository: UserRepository? = null
@@ -52,7 +41,7 @@ class UserController {
         model["message"] = ""
         model["alertClass"] = ""
 
-        val currentUserObj = userRepository?.findByUsername(model.getAttribute("username").toString())
+        val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             model["user"] = currentUserObj
         }
@@ -72,7 +61,8 @@ class UserController {
             val oldPassword = java.lang.String.valueOf(formData.getFirst("oldpassword"))
             val newPassword = java.lang.String.valueOf(formData.getFirst("newpassword"))
             val newPasswordConfirm = java.lang.String.valueOf(formData.getFirst("newpasswordconfirm"))
-            val currentUserObj = userRepository?.findByUsername(model.getAttribute("username").toString())
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 if (newPassword == newPasswordConfirm) {
                     if (bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
@@ -167,9 +157,9 @@ class UserController {
     fun getLoginUser(model: Model, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
         val module = "login"
 
-        if (model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
             return "redirect:/timeline"
-        } else if (model.getAttribute("authority").toString() == userRole) {
+        } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
         } else {
             model["user"] = User()
@@ -241,7 +231,7 @@ class UserController {
     fun deleteUser(model: Model, @ModelAttribute user: @Valid User?): String? {
         resp["status"] = "fail"
 
-        if (model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
 
             val users: List<User?> = userRepository?.findAll() as List<User?>
             for (other in users) {

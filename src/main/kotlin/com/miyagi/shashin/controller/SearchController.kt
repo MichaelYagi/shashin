@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
@@ -22,12 +23,6 @@ import javax.servlet.http.HttpServletRequest
 @Controller
 class SearchController {
 
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Value("\${app.role.user}")
-    private var userRole: String? = null
-
     @Autowired
     private val searchRepository: SearchRepository? = null
 
@@ -42,11 +37,11 @@ class SearchController {
         val searchTerm = request.getParameter("searchTerm")
         if (!searchTerm.isNullOrBlank()) {
             model["searchTerm"] = searchTerm
-            if (model.getAttribute("authority").toString() == adminRole) {
+            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
                 val metadataList = searchRepository?.findMetadataBySearchTerm(searchTerm)
                 model["metadataSearchList"] = metadataList as MutableIterable<Metadata>
-            } else if (model.getAttribute("authority").toString() == userRole) {
-                val currentUserObj = userRepository?.findByUsername(model.getAttribute("username").toString())
+            } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
+                val currentUserObj = model.getAttribute("currentUser") as User?
                 if (currentUserObj != null) {
                     val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(searchTerm, currentUserObj.getId())
                     model["metadataSearchList"] = metadataList as MutableIterable<Metadata>

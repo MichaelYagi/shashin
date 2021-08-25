@@ -32,9 +32,6 @@ import javax.transaction.Transactional
 @Controller
 class SettingsController {
 
-    @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String? = null
-
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
 
@@ -56,12 +53,6 @@ class SettingsController {
     @Autowired
     private val commentRepository: CommentRepository? = null
 
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Value("\${app.role.user}")
-    private var userRole: String? = null
-
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     val mapper = ObjectMapper()
@@ -74,7 +65,7 @@ class SettingsController {
         val module = "settings"
         model["data"] = ""
         model["mediaDirList"] = ""
-        if (model.getAttribute("authority").toString() == adminRole && mediaDirectories != null) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirectories != null) {
             model["mediaDirList"] = mediaDirectories.joinToString { it -> "${it?.getDirectory()}" }
         }
         model["activePage"] = module
@@ -87,7 +78,7 @@ class SettingsController {
 
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
     fun postSettings(model: Model, redirectAttributes: RedirectAttributes, @RequestParam("mediaDirList") mediaDirList: String): String {
-        if (model.getAttribute("authority").toString() == adminRole && !mediaDirList.isNullOrBlank()) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && !mediaDirList.isNullOrBlank()) {
             val mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
@@ -124,19 +115,14 @@ class SettingsController {
     fun getUsers(model: Model): String {
         val module = "users"
         model["users"] = ""
-        model["currentUser"] = ""
 
-        if (model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
             val sort = Sort.by(
                 Sort.Order.asc("username")
             )
             val users = userRepository?.findAll(sort)
             if (users != null) {
                 model["users"] = users
-                val currentUserObj = userRepository?.findByUsername(model.getAttribute("username").toString())
-                if (currentUserObj != null) {
-                    model["currentUser"] = currentUserObj
-                }
             }
         }
 
@@ -152,7 +138,7 @@ class SettingsController {
     @Transactional
     fun deleteUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
         val userDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (model.getAttribute("authority").toString() == adminRole && userDeleteMap.containsKey("userId") && userDeleteMap.containsKey("delete") && model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && userDeleteMap.containsKey("userId") && userDeleteMap.containsKey("delete") && model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
             val userIdRequest = userDeleteMap["userId"].toString().toInt()
             val deleteFlag = userDeleteMap["delete"].toString().toBoolean()
 
@@ -178,11 +164,11 @@ class SettingsController {
     @Transactional
     fun changeUserRole(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
         val userRoleChangeMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (model.getAttribute("authority").toString() == adminRole && userRoleChangeMap.containsKey("userId") && userRoleChangeMap.containsKey("changeTo") && model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && userRoleChangeMap.containsKey("userId") && userRoleChangeMap.containsKey("changeTo") && model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
             val userIdRequest = userRoleChangeMap["userId"].toString().toInt()
             val changeRoleTo = userRoleChangeMap["changeTo"].toString()
 
-            if (changeRoleTo == userRole) {
+            if (changeRoleTo == model.getAttribute("userRole")) {
                 favoriteRepository?.deleteByUserId(userIdRequest)
             }
             if (userId == userIdRequest) {
@@ -208,7 +194,7 @@ class SettingsController {
 
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
-        if (model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
             val module = "scan"
             model["data"] = "Scan photos"
             model["activePage"] = module
@@ -225,7 +211,7 @@ class SettingsController {
     fun postScan(model: Model, @RequestParam submit: String, @RequestParam isCheckOnly: Boolean): String {
         resp["msg"] = "Nothing to see here"
 
-        if (model.getAttribute("authority").toString() == adminRole) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
             if (isCheckOnly) {
                 if (!checkThreadFileAlive()) {
                     resp["msg"] = "Scan complete"
@@ -249,7 +235,7 @@ class SettingsController {
                             deleteThreadFiles()
 
                             val rootPath = FileSystemResource("").file.absolutePath
-                            val sidecarDir = rootPath + relativeSidecarDir
+                            val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
 
                             // Iterate through directory in another thread
                             Thread {
