@@ -146,14 +146,15 @@
                 $("#tlicon"+metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image"+metadata.id).css("opacity", 0.3);
                 $("#tncentered"+metadata.id).css("display", "none");
-                $("#tnbl"+metadata.id).css("display", "none");
                 $("#tnbr"+metadata.id).css("display", "none");
+                $("#tnbl"+metadata.id).css("display", "none");
             } else {
+                $(this).css("display", "block");
                 $("#tlicon"+metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                 $("#image"+metadata.id).css("opacity", 1.0);
                 $("#tncentered"+metadata.id).css("display", "block");
-                $("#tnbl"+metadata.id).css("display", "block");
                 $("#tnbr"+metadata.id).css("display", "block");
+                $("#tnbl"+metadata.id).css("display", "block");
             }
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
@@ -180,6 +181,19 @@
                 } else {
                     $("#tlicon"+metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                 }
+            }
+
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                $("#appSearch").css("display", "none");
+                $("#albumAppTools").css("display", "block");
+
+                // Hide all center and bottom left icons
+                $('.thumbnail-bl').hide();
+                $('.thumbnail-centered').hide();
+            } else {
+                $("#appSearch").css("display", "block");
+                $("#timelineAppTools").css("display", "none");
+                $("#albumAppTools").css("display", "none");
             }
         });
 
@@ -208,7 +222,6 @@
                 }
                 $("#tncentered"+metadata.id).css("display", "none");
                 $("#tnbl"+metadata.id).css("display", "none");
-                $("#tnbr"+metadata.id).css("display", "none");
             }
         });
 
@@ -257,34 +270,28 @@
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
-            $(this).siblings(".thumbnail-br").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
-                $('.thumbnail-br').hide();
                 $('.thumbnail-centered').hide();
             }
         }, function() {
             $(this).css("display", "none");
             $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-br").css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
 
         $("#tnbr"+metadata.id).hover(function() {
-            $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
-                $('.thumbnail-br').hide();
                 $('.thumbnail-centered').hide();
             }
         }, function() {
-            $(this).css("display", "none");
             $(this).siblings(".thumbnail-tl").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
@@ -296,13 +303,11 @@
             if ($("#tlicon"+metadata.id).attr("class") === "bi-circle-fill") {
                 $("#tntl"+metadata.id).css("display", "block");
                 $("#tnbl"+metadata.id).css("display", "none");
-                $("#tnbr"+metadata.id).css("display", "none");
                 $("#tncentered"+metadata.id).css("display", "none");
             } else {
                 $("#tncentered"+metadata.id).css("display", "block");
                 $("#tntl"+metadata.id).css("display", "block");
                 $("#tnbl"+metadata.id).css("display", "block");
-                $("#tnbr"+metadata.id).css("display", "block");
             }
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();

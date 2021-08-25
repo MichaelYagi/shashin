@@ -86,6 +86,19 @@
                     $("#tlicon"+metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                 }
             }
+
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                $("#appSearch").css("display", "none");
+                $("#timelineAppTools").css("display", "block");
+
+                // Hide all center and bottom left icons
+                $('.thumbnail-bl').hide();
+                $('.thumbnail-centered').hide();
+            } else {
+                $("#appSearch").css("display", "block");
+                $("#timelineAppTools").css("display", "none");
+                $("#albumAppTools").css("display", "none");
+            }
         });
 
         $("#image"+metadata.id).hover(function () {

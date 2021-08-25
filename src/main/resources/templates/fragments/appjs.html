@@ -2,6 +2,10 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="appjs()">
 <script type="text/javascript">
+    $.fn.hasScrollBar = function() {
+        return this.get(0).scrollHeight > this.height();
+    }
+
     $.fn.serializeObject = function() {
         var o = {};
         var a = this.serializeArray();
