@@ -20,7 +20,7 @@
                                 <img class="card-img-top" th:src="${album.coverUrl}" th:alt="${album.name}">
                             </a>
                             <div class="card-body">
-                                <p class="card-text"><strong th:text="${album.name}"></strong><span style="float: right"><a href="#" th:id="'comment'+${album.id}"><span class="bi-chat-square"></span></a><th:block th:if="${authority == 'ADMIN'}">&nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span class="bi-share"></span></a></th:block></span></p>
+                                <p class="card-text"><strong th:text="${album.name}"></strong><span style="float: right"><a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;"><th:block th:text="${#lists.size(albumsCommentsMap.get(album.id))}"></th:block> <span class="bi-chat-square"></span></a><th:block th:if="${authority == 'ADMIN'}">&nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span class="bi-share"></span></a></th:block></span></p>
                                 <p class="card-text"><small class="text-muted" th:text="${albumsCount[iterStat.index] + ' items'}"></small></p>
                             </div>
                         </div>

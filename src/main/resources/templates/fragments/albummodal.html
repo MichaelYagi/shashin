@@ -56,29 +56,26 @@
             '            <div class="modal-body">\n' +
             '                <input type="hidden" id="currentCommentId'+metadata.id+'" name="currentCommentId'+metadata.id+'">\n' +
             '                <ul class="list-group" id="commentList'+metadata.id+'">\n';
-        for (var key in albumPhotoCommentsMap) {
-            if (albumPhotoCommentsMap[key] === metadata.id) {
-                var comments = albumPhotoCommentsMap[key];
-                albumCommentsDeleteEditModalListener(comments["commentId"], metadata);
+        for (var index in albumPhotoCommentsMap[metadata.id]) {
+            var comments = albumPhotoCommentsMap[metadata.id][index];
+            albumCommentsDeleteEditModalListener(comments["commentId"], metadata);
 
-                html +=
-                    '       <li id="comment'+comments["commentId"]+'" class="list-group-item'+(comments['userId'] === currentUser.id ? ' list-group-item-secondary' : '')+'">\n' +
-                    '           <span id="commentcontainer'+comments["commentId"]+'">\n' +
-                    '               <p id="commentcontent'+comments["commentId"]+'">'+comments["comment"]+'</p>\n' +
-                    '               <small><strong>'+comments["username"]+'</strong><span> on '+comments["createdAt"]+'</span></small>';
-                    if (comments["userId"] === currentUser.id) {
-                        html +=
-                            '       <small><span style="float: right">\n' +
-                            '           <a href="#" id="deletecomment'+comments["commentId"]+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;\n' +
-                            '           <a href="#" id="editcomment'+comments["commentId"]+'"><span class="bi-pencil"></span></a>\n' +
-                            '       </span></small>\n';
-                    }
+            html +=
+                '       <li id="comment'+comments["commentId"]+'" class="list-group-item'+(comments['userId'] === currentUser.id ? ' list-group-item-secondary' : '')+'">\n' +
+                '           <span id="commentcontainer'+comments["commentId"]+'">\n' +
+                '               <p id="commentcontent'+comments["commentId"]+'">'+comments["comment"]+'</p>\n' +
+                '               <small><strong>'+comments["username"]+'</strong><span> on '+comments["createdAt"]+'</span></small>';
+                if (comments["userId"] === currentUser.id) {
                     html +=
-                        '       </span>\n' +
-                        '       <span id="textareacontainer'+comments["commentId"]+'"></span>\n' +
-                        '   </li>';
-
-            }
+                        '       <small><span style="float: right">\n' +
+                        '           <a href="#" id="deletecomment'+comments["commentId"]+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;\n' +
+                        '           <a href="#" id="editcomment'+comments["commentId"]+'"><span class="bi-pencil"></span></a>\n' +
+                        '       </span></small>\n';
+                }
+                html +=
+                    '       </span>\n' +
+                    '       <span id="textareacontainer'+comments["commentId"]+'"></span>\n' +
+                    '   </li>';
         }
 
         html +=

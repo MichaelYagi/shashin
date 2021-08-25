@@ -73,13 +73,13 @@ class AlbumsController {
 
             if (userAlbums != null) {
                 if (userAlbums.count() > 0) {
-                    val albumCommentsList = ArrayList<HashMap<String, Any>>()
                     val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
 
                     val albums = ArrayList<Album>()
                     val albumsCount = ArrayList<Int>()
                     var albumCount = 0
                     for (userAlbum in userAlbums) {
+                        val albumCommentsList = ArrayList<HashMap<String, Any>>()
                         if (userAlbum?.getAlbumId() != null) {
                             albumCount = 0
                             val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
@@ -396,10 +396,10 @@ class AlbumsController {
                 val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,0, queryLimit!!)
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
-                    val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
 
                     for (albumPhoto in albumPhotos) {
+                        val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                             albumMetadataList.add(metadata.get())
@@ -422,7 +422,8 @@ class AlbumsController {
                     }
                     if (albumMetadataList.count() > 0) {
                         val album = albumRepository.findById(albumId)
-                        model["albumPhotoCommentsMap"] = mapper.writeValueAsString(albumPhotosCommentsMap)
+                        model["albumPhotoCommentsMapString"] = mapper.writeValueAsString(albumPhotosCommentsMap)
+                        model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         model["album"] = album.get()
                         model["albumMetadataList"] = albumMetadataList
                         model["currentUser"] = currentUserObj
@@ -454,11 +455,11 @@ class AlbumsController {
                     val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,(page*queryLimit!!), queryLimit!!)
                     val albumMetadataList = ArrayList<Metadata>()
                     if (albumPhotos != null) {
-                        val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                         val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
 
                         for (albumPhoto in albumPhotos) {
                             if (albumPhoto != null) {
+                                val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                                 val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                                 albumMetadataList.add(metadata.get())
 

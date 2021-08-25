@@ -51,8 +51,8 @@
                             }
                             html +=
                                 '   <div class="thumbnail-br" id="tnbr'+metadata.id+'">\n' +
-                                '       <a href="#" data-toggle="modal" data-target="#propalbumphotocomment'+metadata.id+'">\n' +
-                                '           <span id="bricon'+metadata.id+'" class="bi-chat-square-fill" style="font-size: 1rem;color: darkorange;"></span>\n' +
+                                '       <a href="#" data-toggle="modal" data-target="#propalbumphotocomment'+metadata.id+'" style="text-decoration: none;color: darkorange">\n' +
+                                '           '+albumPhotoCommentsMap[metadata.id].length+' <span id="bricon'+metadata.id+'" class="bi-chat-square-fill" style="font-size: 1rem;color: darkorange;"></span>\n' +
                                 '       </a>\n' +
                                 '   </div>\n' +
                                 '   <div class="thumbnail-centered" id="tncentered'+metadata.id+'">\n';
