@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="topnav(authority,username,activePage)">
 <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-    <a class="navbar-brand col-sm-2 col-md-1 mr-0" th:href="${authority == 'ADMIN' ? '/timeline' : '/albums'}">Shashin</a>
+    <a class="navbar-brand col-sm-2 col-md-1 mr-0" th:href="${authority == 'ADMIN' ? '/timeline' : '/albums'}"><span class="lead" style="font-size: medium">Shashin</span></a>
     <form id="appSearch" class="form-control-dark w-100" action="/search" method="post">
         <input id="appSearchInput" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
         <input type="submit" style="position: absolute; left: -9999px"/>
