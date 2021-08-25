@@ -25,6 +25,7 @@
                         <br>
                         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                             <p><strong>Undated</strong></p>
+                            <div class="row">
                         </th:block>
 
                         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
