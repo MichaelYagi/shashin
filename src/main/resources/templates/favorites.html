@@ -3,14 +3,14 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 
-<div th:replace="fragments/topnav :: topnav(${authority},${username})"></div>
+<div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
 
 <div class="container-fluid">
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
-
+            <div id="favoritesMessage"></div>
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
             <div class="row">
                 <th:block th:if="${metadataList != ''}">
@@ -26,6 +26,12 @@
                                     <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
                                 </div>
                             </th:block>
+
+                            <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                                <a href="#" th:id="'select'+${metadata.id}">
+                                    <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
+                                </a>
+                            </div>
 
                             <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                                 <th:block th:unless="${metadata.type.contains('video')}">

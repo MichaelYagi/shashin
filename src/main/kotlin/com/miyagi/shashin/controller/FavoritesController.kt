@@ -196,4 +196,31 @@ class FavoritesController {
         resp["status"] = "fail"
         return mapper.writeValueAsString(resp)
     }
+
+    @RequestMapping(value = ["/favorites/delete"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun postDeleteFavorites(model: Model, @RequestBody requestBody: JsonNode): String {
+        val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (favoritesMap.containsKey("metadataIdList")) {
+            val metadataIdList = favoritesMap["metadataIdList"] as MutableList<String>
+
+            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            if (currentUserObj != null) {
+                for (metadataId in metadataIdList) {
+                    favoriteRepository.deleteByMetadataIdAndUserId(metadataId, currentUserObj.getId())
+                }
+
+                resp["msg"] = "Removed from favorites"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
+            }
+
+
+        }
+
+        resp["msg"] = "Could not remove from favorites"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
 }
