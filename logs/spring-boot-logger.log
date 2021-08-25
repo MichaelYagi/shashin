@@ -16050,3 +16050,5 @@ org.springframework.expression.spel.SpelEvaluationException: EL1004E: Method cal
 2021-08-24 22:46:19,816 WARN com.miyagi.shashin.controller.BaseController [http-nio-8080-exec-4] Error getting authority: null cannot be cast to non-null type org.springframework.security.core.context.SecurityContext
 2021-08-24 22:47:10,385 WARN com.miyagi.shashin.controller.BaseController [http-nio-8080-exec-5] Error getting authority: null cannot be cast to non-null type org.springframework.security.core.context.SecurityContext
 2021-08-24 22:47:40,020 WARN com.miyagi.shashin.controller.BaseController [http-nio-8080-exec-2] Error getting authority: null cannot be cast to non-null type org.springframework.security.core.context.SecurityContext
+2021-08-24 22:49:28,367 WARN com.miyagi.shashin.controller.BaseController [http-nio-8080-exec-5] Error getting authority: null cannot be cast to non-null type org.springframework.security.core.context.SecurityContext
+2021-08-24 22:49:35,646 WARN com.miyagi.shashin.controller.BaseController [http-nio-8080-exec-1] Error getting authority: null cannot be cast to non-null type org.springframework.security.core.context.SecurityContext
