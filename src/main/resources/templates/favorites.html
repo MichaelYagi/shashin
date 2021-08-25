@@ -62,23 +62,24 @@
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
     });
 
+    function loadNextPage() {
+        var currentPage = parseInt($("#currentPage").val());
+        var nextPage = currentPage+1;
+        updateFavorites(nextPage);
+        $("#currentPage").val(nextPage);
+    }
+    if (!$(window).hasScrollBar()) {
+        loadNextPage()
+    }
     $(window).on('scroll', function() {
-        // Uset to detect near bottom
         if (atEndOfPage()) {
-            // console.log("scroll bottom");
-            var currentPage = parseInt($("#currentPage").val());
-            var nextPage = currentPage+1;
-            // console.log("currentPage:"+currentPage);
-            // console.log("nextPage:"+nextPage);
-
-            updateFavorites(nextPage);
-            $("#currentPage").val(nextPage);
+            loadNextPage()
         }
     })
 </script>

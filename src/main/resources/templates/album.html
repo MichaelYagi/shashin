@@ -80,7 +80,7 @@
                         <script type="text/javascript">
                             /*<![CDATA[*/
                             renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMap}]]")
-                            activateAlbumListeners("[[${metadata}]]")
+                            activateAlbumListeners("[[${metadata}]]","[[${album}]]")
                             /*]]>*/
                         </script>
 
@@ -95,21 +95,23 @@
 </div>
 
 <script type="text/javascript">
+    function loadNextPage() {
+        var currentPage = parseInt($("#currentPage").val());
+        var nextPage = currentPage+1;
+        /*<![CDATA[*/
+        var albumId = [[${album.id}]];
+        /*]]>*/
+        updateAlbum(albumId, nextPage);
+        $("#currentPage").val(nextPage);
+    }
+    if (!$(window).hasScrollBar()) {
+        loadNextPage();
+    }
+
     $(window).on('scroll', function() {
         // Uset to detect near bottom
         if (atEndOfPage()) {
-            // console.log("scroll bottom");
-            var currentPage = parseInt($("#currentPage").val());
-            var nextPage = currentPage+1;
-            // console.log("currentPage:"+currentPage);
-            // console.log("nextPage:"+nextPage);
-
-            /*<![CDATA[*/
-            var albumId = [[${album.id}]];
-            /*]]>*/
-
-            updateAlbum(albumId, nextPage);
-            $("#currentPage").val(nextPage);
+            loadNextPage();
         }
     })
 
