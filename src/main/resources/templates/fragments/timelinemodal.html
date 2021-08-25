@@ -7,7 +7,7 @@
         var metadata = JSON.parse(decodeHtml(rawMetadata));
         // console.log(metadata);
         var latlngValue = (metadata.lat != null || metadata.lng != null) ? (metadata.lat+', '+metadata.lng) : '';
-        var keywordsList = (metadata.keywords === null) ? "" : metadata.keywords;
+        var keywordsList = (metadata.keywords == null) ? "" : metadata.keywords;
 
         var html = '<div class="modal fade" id="prop'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
             '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
@@ -30,15 +30,15 @@
             '               <div class="form-group row">\n' +
             '                   <div class="col-sm">\n' +
             '                       <label for="dayTaken'+metadata.id+'" class="col-form-label">Day</label>\n' +
-            '                       <input type="text" class="form-control" id="dayTaken'+metadata.id+'" name="day" value="'+(metadata.day === null ? "" : metadata.day)+'">\n' +
+            '                       <input type="text" class="form-control" id="dayTaken'+metadata.id+'" name="day" value="'+(metadata.day == null ? "" : metadata.day)+'">\n' +
             '                   </div>\n' +
             '                   <div class="col-sm">\n' +
             '                       <label for="monthTaken'+metadata.id+'" class="col-form-label">Month</label>\n' +
-            '                       <input type="text" class="form-control" id="monthTaken'+metadata.id+'" name="month" value="'+(metadata.month === null ? "" : metadata.month)+'">\n' +
+            '                       <input type="text" class="form-control" id="monthTaken'+metadata.id+'" name="month" value="'+(metadata.month == null ? "" : metadata.month)+'">\n' +
             '                   </div>\n' +
             '                   <div class="col-sm">\n' +
             '                       <label for="yearTaken'+metadata.id+'" class="col-form-label">Year</label>\n' +
-            '                       <input type="text" class="form-control" id="yearTaken'+metadata.id+'" name="year" value="'+(metadata.year === null ? "" : metadata.year)+'">\n' +
+            '                       <input type="text" class="form-control" id="yearTaken'+metadata.id+'" name="year" value="'+(metadata.year == null ? "" : metadata.year)+'">\n' +
             '                   </div>\n' +
             '               </div>\n' +
             '               <div class="form-group row">\n' +
@@ -56,46 +56,46 @@
             '           </form>\n' +
             '       </div>' +
             '       <div class="tab-pane container fade" id="details'+metadata.id+'">\n';
-        if (metadata.path !== null) {
+        if (metadata.path != null) {
             html += '<div class="row"><strong>File name:&nbsp;</strong>'+metadata.path+'</div>\n';
         }
-        if (metadata.type !== null) {
+        if (metadata.type != null) {
             html += '<div class="row"><strong>File type:&nbsp;</strong>'+metadata.type+'</div>\n';
         }
-        if (metadata.iso !== null) {
+        if (metadata.iso != null) {
             html += '<div class="row"><strong>ISO:&nbsp;</strong>'+metadata.iso+'</div>\n';
         }
-        if (metadata.exposure !== null) {
+        if (metadata.exposure != null) {
             html += '<div class="row"><strong>Exposure:&nbsp;</strong>'+metadata.exposure+'</div>\n';
         }
-        if (metadata.fNumber !== null) {
+        if (metadata.fNumber != null) {
             html += '<div class="row"><strong>F-stop:&nbsp;</strong>'+metadata.fNumber+'</div>\n';
         }
-        if (metadata.focalLength !== null) {
+        if (metadata.focalLength != null) {
             html += '<div class="row"><strong>Focal length:&nbsp;</strong>'+metadata.focalLength+'</div>\n';
         }
-        if (metadata.camera !== null) {
+        if (metadata.camera != null) {
             html += '<div class="row"><strong>Camera:&nbsp;</strong>'+metadata.camera+'</div>\n';
         }
-        if (metadata.lens !== null) {
+        if (metadata.lens != null) {
             html += '<div class="row"><strong>Lens:&nbsp;</strong>'+metadata.lens+'</div>\n';
         }
-        if (metadata.quality !== null) {
+        if (metadata.quality != null) {
             html += '<div class="row"><strong>Quality:&nbsp;</strong>'+metadata.quality+'</div>\n';
         }
-        if (metadata.createdAt !== null) {
+        if (metadata.createdAt != null) {
             html += '<div class="row"><strong>Created:&nbsp;</strong>'+metadata.createdAt+'</div>\n';
         }
-        if (metadata.modifiedAt !== null) {
+        if (metadata.modifiedAt != null) {
             html += '<div class="row"><strong>Modified:&nbsp;</strong>'+metadata.modifiedAt+'</div>\n';
         }
-        if (metadata.takenAt !== null) {
+        if (metadata.takenAt != null) {
             html += '<div class="row"><strong>Taken:&nbsp;</strong>'+metadata.takenAt+'</div>\n';
         }
-        if (metadata.year !== null || metadata.month !== null || metadata.day !== null) {
+        if (metadata.year != null || metadata.month != null || metadata.day != null) {
             html += '<div class="row"><strong>Manually Adjusted Taken:&nbsp;</strong>'+metadata.year+'-'+metadata.month+'-'+metadata.day+'</div>\n';
         }
-        if (metadata.timeZone !== null) {
+        if (metadata.timeZone != null) {
             html += '<div class="row"><strong>Time zone:&nbsp;</strong>'+metadata.timeZone+'</div>\n';
         }
         html += '</div>\n' +
@@ -133,7 +133,8 @@
                     year:$("#yearTaken"+metadata.id).val(),
                     month:$("#monthTaken"+metadata.id).val(),
                     day:$("#dayTaken"+metadata.id).val(),
-                    latlng:$("#latlng"+metadata.id).val()
+                    latlng:$("#latlng"+metadata.id).val(),
+                    keywords:$("#keywords"+metadata.id).val()
                 }
                 const posting = $.post({
                     url: "/timeline/update/"+metadata.id,

@@ -142,6 +142,7 @@ class TimelineController {
             metadataMap.containsKey("year") &&
             metadataMap.containsKey("month") &&
             metadataMap.containsKey("day") &&
+            metadataMap.containsKey("keywords") &&
             metadataMap.containsKey("latlng")
         ) {
             val metadataObj = metadataRepository?.findById(metadataMap["id"].toString())
@@ -161,15 +162,27 @@ class TimelineController {
                 } else {
                     metadataObj.get().setDay(metadataMap["day"].toString().toInt())
                 }
-                val keywordArray = metadataMap["keywords"].toString().split(",")
-                val keywords = keywordArray.joinToString { it.trim() }
-                metadataObj.get().setKeywords(keywords)
-                var latlng = metadataMap["latlng"].toString()
-                latlng = latlng.replace("\\s".toRegex(), "")
-                val latlngArr = latlng.split(",")
-                if (latlngArr.count() == 2) {
-                    metadataObj.get().setLat(latlngArr[0])
-                    metadataObj.get().setLng(latlngArr[1])
+                if (metadataMap["keywords"].toString() == "") {
+                    metadataObj.get().setKeywords(null)
+                } else {
+                    val keywordArray = metadataMap["keywords"].toString().split(",")
+                    var keywords = keywordArray.joinToString { it.trim() }.trim()
+                    if (keywords.last() == ',') {
+                        keywords = keywords.dropLast(1)
+                    }
+                    metadataObj.get().setKeywords(keywords)
+                }
+                if (metadataMap["latlng"].toString() == "") {
+                    metadataObj.get().setLat(null)
+                    metadataObj.get().setLng(null)
+                } else {
+                    var latlng = metadataMap["latlng"].toString()
+                    latlng = latlng.replace("\\s".toRegex(), "")
+                    val latlngArr = latlng.split(",")
+                    if (latlngArr.count() == 2) {
+                        metadataObj.get().setLat(latlngArr[0])
+                        metadataObj.get().setLng(latlngArr[1])
+                    }
                 }
 
                 // Update DB

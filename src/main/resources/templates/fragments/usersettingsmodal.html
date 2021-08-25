@@ -35,12 +35,12 @@
                             let message = "Error";
                             if (data["status"] === "success") {
                                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                window.location.replace("/settings/users");
                             } else {
                                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                             }
-                            // $("#usersSettingsMessage").html(message);
+                            $("#usersSettingsMessage").html(message);
                         }
-                        window.location.replace("/settings/users");
                     });
 
                 });
@@ -85,12 +85,12 @@
                             let message = "Error";
                             if (data["status"] === "success") {
                                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                window.location.replace("/settings/users");
                             } else {
                                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                             }
-                            // $("#usersSettingsMessage").html(message);
+                            $("#usersSettingsMessage").html(message);
                         }
-                        window.location.replace("/settings/users");
                     });
 
                 });
