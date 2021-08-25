@@ -89,11 +89,11 @@
                                 let message = "Error";
                                 if (data["status"] === "success") {
                                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                    window.top.location = window.top.location
                                 } else {
                                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                                 }
                                 $("#msgBatchMetadata").html(message);
-                                window.top.location = window.top.location
                             }
                         });
                     }
