@@ -60,31 +60,31 @@
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
+
+        $.featherlight.prototype.afterOpen = function() {
+            var lat = $("#currentlat").val();
+            var lng = $("#currentlng").val();
+            var filename = $("#currentfilename").val();
+
+            if (lat !== null && lng !== null && filename !== null &&
+                lat !== "" && lng !== "" && filename !== "") {
+                $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
+                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
+                    html += "<br>"+filename;
+
+                    $('.caption').remove();
+                    // Top bar
+                    $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
+                    // Push content down
+                    $(".featherlight-content").css("margin-top", "50px");
+                });
+
+                $('#currentlat').val("");
+                $('#currentlng').val("");
+                $('#currentfilename').val("");
+            }
+        };
     });
-
-    $.featherlight.prototype.afterOpen = function() {
-        var lat = $("#currentlat").val();
-        var lng = $("#currentlng").val();
-        var filename = $("#currentfilename").val();
-
-        if (lat !== null && lng !== null && filename !== null &&
-            lat !== "" && lng !== "" && filename !== "") {
-            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
-                var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
-                html += "<br>"+filename;
-
-                $('.caption').remove();
-                // Top bar
-                $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
-                // Push content down
-                $(".featherlight-content").css("margin-top", "50px");
-            });
-
-            $('#currentlat').val("");
-            $('#currentlng').val("");
-            $('#currentfilename').val("");
-        }
-    };
 </script>
 
 </body>

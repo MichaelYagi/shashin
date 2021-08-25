@@ -118,65 +118,65 @@
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
-    });
 
-    function loadNextPage() {
-        // console.log("scroll bottom");
-        var currentPage = parseInt($("#currentPage").val());
-        var nextPage = currentPage+1;
-        // console.log("currentPage:"+currentPage);
-        // console.log("nextPage:"+nextPage);
+        function loadNextPage() {
+            // console.log("scroll bottom");
+            var currentPage = parseInt($("#currentPage").val());
+            var nextPage = currentPage+1;
+            // console.log("currentPage:"+currentPage);
+            // console.log("nextPage:"+nextPage);
 
-        var yearTakenCount = $(".yearTaken").length;
-        var monthTakenCount = $(".monthTaken").length;
-        var dayTakenCount = $(".dayTaken").length;
-        var dateTakenHeadingCount = $(".dateTakenHeading").length;
+            var yearTakenCount = $(".yearTaken").length;
+            var monthTakenCount = $(".monthTaken").length;
+            var dayTakenCount = $(".dayTaken").length;
+            var dateTakenHeadingCount = $(".dateTakenHeading").length;
 
-        if (yearTakenCount > 0 && monthTakenCount > 0 && dayTakenCount > 0) {
-            var lastYearTaken = $(".yearTaken").get(yearTakenCount - 1).innerText
-            var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
-            var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
-            var lastDateTakenHeading = $(".dateTakenHeading").get(dateTakenHeadingCount - 1).innerText
-            lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-            lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-            lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+            if (yearTakenCount > 0 && monthTakenCount > 0 && dayTakenCount > 0) {
+                var lastYearTaken = $(".yearTaken").get(yearTakenCount - 1).innerText
+                var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
+                var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
+                var lastDateTakenHeading = $(".dateTakenHeading").get(dateTakenHeadingCount - 1).innerText
+                lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
-            updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading);
-            $("#currentPage").val(nextPage);
+                updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading);
+                $("#currentPage").val(nextPage);
+            }
         }
-    }
-    if (!$(window).hasScrollBar()) {
-        loadNextPage();
-    }
-    $(window).on('scroll', function() {
-        if (atEndOfPage()) {
+        if (!$(window).hasScrollBar()) {
             loadNextPage();
         }
-    })
+        $(window).on('scroll', function() {
+            if (atEndOfPage()) {
+                loadNextPage();
+            }
+        })
 
-    $.featherlight.prototype.afterOpen = function() {
-        var lat = $("#currentlat").val();
-        var lng = $("#currentlng").val();
-        var filename = $("#currentfilename").val();
+        $.featherlight.prototype.afterOpen = function() {
+            var lat = $("#currentlat").val();
+            var lng = $("#currentlng").val();
+            var filename = $("#currentfilename").val();
 
-        if (lat !== null && lng !== null && filename !== null &&
-        lat !== "" && lng !== "" && filename !== "") {
-            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
-                var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
-                html += "<br>"+filename;
+            if (lat !== null && lng !== null && filename !== null &&
+            lat !== "" && lng !== "" && filename !== "") {
+                $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
+                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
+                    html += "<br>"+filename;
 
-                $('.caption').remove();
-                // Top bar
-                $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
-                // Push content down
-                $(".featherlight-content").css("margin-top", "50px");
-            });
+                    $('.caption').remove();
+                    // Top bar
+                    $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
+                    // Push content down
+                    $(".featherlight-content").css("margin-top", "50px");
+                });
 
-            $('#currentlat').val("");
-            $('#currentlng').val("");
-            $('#currentfilename').val("");
-        }
-    };
+                $('#currentlat').val("");
+                $('#currentlng').val("");
+                $('#currentfilename').val("");
+            }
+        };
+    });
 </script>
 
 </body>

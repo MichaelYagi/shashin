@@ -95,69 +95,69 @@
 </div>
 
 <script type="text/javascript">
-    function loadNextPage() {
-        var currentPage = parseInt($("#currentPage").val());
-        var nextPage = currentPage+1;
-        /*<![CDATA[*/
-        var albumId = [[${album.id}]];
-        /*]]>*/
-        updateAlbum(albumId, nextPage);
-        $("#currentPage").val(nextPage);
-    }
-    if (!$(window).hasScrollBar()) {
-        loadNextPage();
-    }
-
-    $(window).on('scroll', function() {
-        // Uset to detect near bottom
-        if (atEndOfPage()) {
+    $(document).ready(function() {
+        function loadNextPage() {
+            var currentPage = parseInt($("#currentPage").val());
+            var nextPage = currentPage+1;
+            /*<![CDATA[*/
+            var albumId = [[${album.id}]];
+            /*]]>*/
+            updateAlbum(albumId, nextPage);
+            $("#currentPage").val(nextPage);
+        }
+        if (!$(window).hasScrollBar()) {
             loadNextPage();
         }
-    })
 
-    $.featherlight.prototype.afterOpen = function() {
-        var lat = $("#currentlat").val();
-        var lng = $("#currentlng").val();
-        var year = $("#currentyear").val();
-        var month = $("#currentmonth").val();
-        var day = $("#currentday").val();
-        var dateTaken = "";
-        if (year !== "" || month !== "" || day !== "") {
-            var dateTaken = new Date(year, month - 1, day);
-            dateTaken = dateTaken.toDateString();
-        }
+        $(window).on('scroll', function() {
+            // Uset to detect near bottom
+            if (atEndOfPage()) {
+                loadNextPage();
+            }
+        })
 
-        if (lat !== null && lng !== null &&
-            lat !== "" && lng !== "") {
-            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
-                var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
+        $.featherlight.prototype.afterOpen = function() {
+            var lat = $("#currentlat").val();
+            var lng = $("#currentlng").val();
+            var year = $("#currentyear").val();
+            var month = $("#currentmonth").val();
+            var day = $("#currentday").val();
+            var dateTaken = "";
+            if (year !== "" || month !== "" || day !== "") {
+                var dateTaken = new Date(year, month - 1, day);
+                dateTaken = dateTaken.toDateString();
+            }
 
-                if (dateTaken !== "" && dateTaken !== null) {
-                    html += "<br>"+dateTaken;
-                }
+            if (lat !== null && lng !== null &&
+                lat !== "" && lng !== "") {
+                $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
+                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
 
+                    if (dateTaken !== "" && dateTaken !== null) {
+                        html += "<br>"+dateTaken;
+                    }
+
+                    $('.caption').remove();
+                    // Top bar
+                    $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
+                    // Push content down
+                    $(".featherlight-content").css("margin-top", "50px");
+                });
+            } else if (dateTaken !== "") {
                 $('.caption').remove();
                 // Top bar
-                $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
+                $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+dateTaken+'</p></div>').prependTo(".featherlight");
                 // Push content down
                 $(".featherlight-content").css("margin-top", "50px");
-            });
-        } else if (dateTaken !== "") {
-            $('.caption').remove();
-            // Top bar
-            $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+dateTaken+'</p></div>').prependTo(".featherlight");
-            // Push content down
-            $(".featherlight-content").css("margin-top", "50px");
-        }
+            }
 
-        $('#currentlat').val("");
-        $('#currentlng').val("");
-        $('#currentyear').val("");
-        $('#currentmonth').val("");
-        $('#currentday').val("");
-    };
+            $('#currentlat').val("");
+            $('#currentlng').val("");
+            $('#currentyear').val("");
+            $('#currentmonth').val("");
+            $('#currentday').val("");
+        };
 
-    $(document).ready(function(){
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
