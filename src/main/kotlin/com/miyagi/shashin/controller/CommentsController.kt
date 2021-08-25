@@ -44,7 +44,7 @@ class CommentsController {
             val albumId = commentMap["albumId"].toString().toInt()
             val commentText = commentMap["comment"].toString()
 
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            val currentUserObj = model.getAttribute("currentUser") as User?
 
             if (currentUserObj != null) {
                 val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -88,8 +88,7 @@ class CommentsController {
             val metadataId = commentMap["metadataId"].toString()
             val commentText = commentMap["comment"].toString()
 
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
-
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                 val now = LocalDateTime.now()
@@ -132,8 +131,7 @@ class CommentsController {
             val commentId = commentMap["commentId"].toString().toInt()
             val commentText = commentMap["comment"].toString()
 
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
-
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                 val now = LocalDateTime.now()
@@ -167,8 +165,8 @@ class CommentsController {
         if (commentMap.containsKey("commentId") && commentMap.containsKey("metadataId")) {
             val commentId = commentMap["commentId"].toString().toInt()
             val metadataId = commentMap["metadataId"].toString()
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
 
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 // Delete comment
                 val commentObj = commentRepository.findById(commentId)
@@ -197,8 +195,8 @@ class CommentsController {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("commentId")) {
             val commentId = commentMap["commentId"].toString().toInt()
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
 
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 // Delete comment
                 val commentObj = commentRepository.findById(commentId)

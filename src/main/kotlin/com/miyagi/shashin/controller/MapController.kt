@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
@@ -13,12 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping
 @Controller
 class MapController {
 
-    @Value("\${app.role.admin}")
-    private var adminRole: String? = null
-
-    @Value("\${app.role.user}")
-    private var userRole: String? = null
-
     @Autowired
     private lateinit var userRepository: UserRepository
 
@@ -31,11 +26,11 @@ class MapController {
         model["data"] = ""
         model["mapdata"] = ""
 
-        val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+        val currentUserObj = model.getAttribute("currentUser") as User?
 
         // If ADMIN get lat lng for timeline
         if (currentUserObj != null) {
-            if (currentUserObj.getAuthority() == adminRole) {
+            if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 model["mapdata"] = metadataRepository!!.findAll()
             } else {
                 model["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserId(currentUserObj.getId())

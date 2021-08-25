@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserAlbumRepository
@@ -23,15 +24,6 @@ import javax.transaction.Transactional
 
 @Controller
 class FavoritesController {
-    @Value("\${app.sidecar.path}")
-    private var relativeSidecarDir: String? = null
-
-    @Value("\${app.api.version}")
-    private var apiVersion: String? = null
-
-    @Value("\${app.query.limit}")
-    private var queryLimit: Int? = null
-
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
 
@@ -50,9 +42,9 @@ class FavoritesController {
         model["data"] = "There are no photos."
         model["metadataList"] = ""
 
-        val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+        val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),0, queryLimit!!)
+            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),0, model.getAttribute("queryLimit").toString().toInt())
             if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
                 model["data"] = ""
@@ -81,9 +73,9 @@ class FavoritesController {
         response["metadataList"] = ""
 
         if (page > 0) {
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*queryLimit!!), queryLimit!!)
+                val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
                 if (favoriteList != null && favoriteList.count() > 0) {
                     val metadataList = ArrayList<Metadata>()
                     model["data"] = ""
@@ -116,7 +108,7 @@ class FavoritesController {
             val metadataId = favoritesMap["metadataId"].toString()
             val isFavorite = favoritesMap["isFavorite"].toString().toBoolean()
 
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            val currentUserObj = model.getAttribute("currentUser") as User?
             val favorite = Favorite()
             if (currentUserObj != null) {
                 favorite.setUserId(currentUserObj.getId())
@@ -161,7 +153,7 @@ class FavoritesController {
             val metadataId = favoritesMap["metadataId"].toString()
             val isFavorite = favoritesMap["isFavorite"].toString().toBoolean()
 
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            val currentUserObj = model.getAttribute("currentUser") as User?
             val favorite = Favorite()
             if (currentUserObj != null) {
                 favorite.setUserId(currentUserObj.getId())
@@ -205,7 +197,7 @@ class FavoritesController {
         if (favoritesMap.containsKey("metadataIdList")) {
             val metadataIdList = favoritesMap["metadataIdList"] as MutableList<String>
 
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 for (metadataId in metadataIdList) {
                     favoriteRepository.deleteByMetadataIdAndUserId(metadataId, currentUserObj.getId())

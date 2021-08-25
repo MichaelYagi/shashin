@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
@@ -25,15 +26,6 @@ class TimelineController {
     @Autowired
     private val metadataRepository: MetadataRepository? = null
 
-    @Value("\${app.sidecar.path}")
-    private lateinit var relativeSidecarDir: String
-
-    @Value("\${app.api.version}")
-    private var apiVersion: String? = null
-
-    @Value("\${app.query.limit}")
-    private var queryLimit: Int? = null
-
     @Autowired
     private val mediaDirRepository: MediaDirectoryRepository? = null
 
@@ -52,7 +44,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
     fun getTimeline(model: Model): String {
         val module = "timeline"
-        val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+        val currentUserObj = model.getAttribute("currentUser") as User?
         val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
         val favoritesMap = HashMap<String, Boolean>()
         if (favorites != null) {
@@ -67,7 +59,7 @@ class TimelineController {
 
         model["metadataList"] = ""
         model["favorites"] = ""
-        val metadataList = metadataRepository?.findAllByOffsetAndLimit(0, queryLimit!!)?.toList()
+        val metadataList = metadataRepository?.findAllByOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())?.toList()
         if (metadataList != null) {
             model["metadataList"] = metadataList
             model["favorites"] = favoritesMap
@@ -94,7 +86,7 @@ class TimelineController {
         val response = mutableMapOf<String, Any?>()
 
         if (page > 0) {
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            val currentUserObj = model.getAttribute("currentUser") as User?
             val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
             val favoritesMap = HashMap<String, Boolean>()
             if (favorites != null) {
@@ -105,7 +97,7 @@ class TimelineController {
                 }
             }
 
-            val metadataList = metadataRepository?.findAllByOffsetAndLimit((page*queryLimit!!), queryLimit!!)?.toList()
+            val metadataList = metadataRepository?.findAllByOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())?.toList()
             if (metadataList != null) {
                 response["metadataList"] = ""
                 response["favorites"] = ""
@@ -134,7 +126,7 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun updateMetadata(@RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
+    fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -188,7 +180,7 @@ class TimelineController {
                 // Update DB
                 metadataRepository?.save(metadataObj.get())
                 // Update MD file
-                val imageProcessingUtils = ImageProcessingUtils(apiVersion)
+                val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString())
                 val originalImagePath = metadataObj.get().getPath()
                 var rootDir: String? = null
                 val rootMediaDirs = mediaDirRepository?.findAll()
@@ -204,7 +196,7 @@ class TimelineController {
                 }
 
                 if (rootDir != null) {
-                    imageProcessingUtils.saveMetadata(metadataObj.get(), relativeSidecarDir, rootDir)
+                    imageProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString(), rootDir)
                 }
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
@@ -218,7 +210,7 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun updateBatchMetadata(@RequestBody requestBody: JsonNode): String? {
+    fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         var idArray: Array<String>? = null
@@ -299,7 +291,7 @@ class TimelineController {
                 metadataRepository?.saveAll(metadataList)
 
                 // Update MD file
-                val imageProcessingUtils = ImageProcessingUtils(apiVersion)
+                val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString())
                 for (metadata in metadataList) {
                     val originalImagePath = metadata.getPath()
                     var rootDir: String? = null
@@ -315,7 +307,7 @@ class TimelineController {
                         }
                     }
                     if (rootDir != null) {
-                        imageProcessingUtils.saveMetadata(metadata, relativeSidecarDir, rootDir)
+                        imageProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString(), rootDir)
                     }
                 }
                 resp["msg"] = "Saved!"

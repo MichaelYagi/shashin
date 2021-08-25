@@ -3,10 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Album
-import com.miyagi.shashin.model.AlbumPhoto
-import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.UserAlbum
+import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -49,9 +46,6 @@ class AlbumsController {
     @Autowired
     private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
 
-    @Value("\${app.query.limit}")
-    private var queryLimit: Int? = null
-
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -62,12 +56,11 @@ class AlbumsController {
         model["albumsList"] = ""
         model["albumsCount"] = ""
         model["users"] = ""
-        model["currentUser"] = ""
         model["userAlbums"] = ""
         model["userCount"] = ""
         model["albumsCommentsMap"] = ""
 
-        val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+        val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val userAlbums = userAlbumRepository.findAllByUserId(currentUserObj.getId())
 
@@ -113,7 +106,6 @@ class AlbumsController {
                         val userCount = userRepository.count()
                         if (userCount > 1) {
                             model["users"] = userRepository.findAll()
-                            model["currentUser"] = currentUserObj
                             model["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
                             model["userCount"] = userCount
                             val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
@@ -386,14 +378,13 @@ class AlbumsController {
         model["album"] = ""
         model["albumMetadataList"] = ""
         model["albumPhotoCommentsMap"] = ""
-        model["currentUser"] = ""
 
-        val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+        val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
             val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             if (userAlbums != null) {
                 // Get album photos
-                val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,0, queryLimit!!)
+                val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,0, model.getAttribute("queryLimit").toString().toInt())
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
@@ -426,7 +417,6 @@ class AlbumsController {
                         model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         model["album"] = album.get()
                         model["albumMetadataList"] = albumMetadataList
-                        model["currentUser"] = currentUserObj
                         model["data"] = ""
                     }
                 }
@@ -447,12 +437,12 @@ class AlbumsController {
         response["data"] = ""
 
         if (page > 0) {
-            val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+            val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null && albumId > 0) {
                 val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
                 if (userAlbums != null) {
                     // Get album photos
-                    val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,(page*queryLimit!!), queryLimit!!)
+                    val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,(page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
                     val albumMetadataList = ArrayList<Metadata>()
                     if (albumPhotos != null) {
                         val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
@@ -531,7 +521,7 @@ class AlbumsController {
             albumId = albumIdString.toInt()
         }
 
-        val currentUserObj = userRepository.findByUsername(model.getAttribute("username").toString())
+        val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             if (userAlbumCount == 0) {
