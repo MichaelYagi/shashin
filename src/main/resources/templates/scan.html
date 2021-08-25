@@ -19,36 +19,38 @@
 </div>
 
 <script type="text/babel">
-    $("#scanPhotos").submit(function (e) {
-        e.preventDefault();
+    $(document).ready(function() {
+        $("#scanPhotos").submit(function (e) {
+            e.preventDefault();
 
-        postToScan(false);
-    });
-
-    function postToScan(isCheckOnly) {
-
-        let posting = $.post(
-            "/settings/scan",
-            { "submit": "Scan", "isCheckOnly": isCheckOnly }
-        );
-
-        posting.done(function( data ) {
-            $("#msg").text(data.hasOwnProperty("msg") ? data["msg"] : "");
+            postToScan(false);
         });
 
-        // initial call, or just call refresh directly
-        //setTimeout(refresh, 2000);
+        function postToScan(isCheckOnly) {
 
-        return false;
-    }
+            let posting = $.post(
+                "/settings/scan",
+                {"submit": "Scan", "isCheckOnly": isCheckOnly}
+            );
 
-    function refresh() {
-        postToScan(true);
-        let msgId = "#msg";
-        if ($(msgId).text() !== "Start Scanning" && $(msgId).text() !== "Scan Complete") {
-            setTimeout(refresh, 2000);
+            posting.done(function (data) {
+                $("#msg").text(data.hasOwnProperty("msg") ? data["msg"] : "");
+            });
+
+            // initial call, or just call refresh directly
+            //setTimeout(refresh, 2000);
+
+            return false;
         }
-    }
+
+        function refresh() {
+            postToScan(true);
+            let msgId = "#msg";
+            if ($(msgId).text() !== "Start Scanning" && $(msgId).text() !== "Scan Complete") {
+                setTimeout(refresh, 2000);
+            }
+        }
+    });
 </script>
 </body>
 </html>

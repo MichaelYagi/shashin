@@ -72,22 +72,22 @@
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
-    });
 
-    function loadNextPage() {
-        var currentPage = parseInt($("#currentPage").val());
-        var nextPage = currentPage+1;
-        updateFavorites(nextPage);
-        $("#currentPage").val(nextPage);
-    }
-    if (!$(window).hasScrollBar()) {
-        loadNextPage()
-    }
-    $(window).on('scroll', function() {
-        if (atEndOfPage()) {
+        function loadNextPage() {
+            var currentPage = parseInt($("#currentPage").val());
+            var nextPage = currentPage+1;
+            updateFavorites(nextPage);
+            $("#currentPage").val(nextPage);
+        }
+        if (!$(window).hasScrollBar()) {
             loadNextPage()
         }
-    })
+        $(window).on('scroll', function() {
+            if (atEndOfPage()) {
+                loadNextPage()
+            }
+        })
+    });
 </script>
 
 </body>
