@@ -15,6 +15,9 @@
             <input type="hidden" id="currentfilename" name="currentfilename">
 
             <th:block th:if="${searchTerm != '' and metadataSearchList != ''}">
+                <div th:replace="fragments/appjs :: appjs()"></div>
+                <div th:replace="fragments/timelinejs :: timelinejs()"></div>
+
                 <h1 th:text="'Results for \''+${searchTerm}+'\''"></h1>
                 <div class="row">
                     <th:block th:each="metadata, iterStat: ${metadataSearchList}">
@@ -29,8 +32,9 @@
 
                             <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                                 <th:block th:unless="${metadata.type.contains('video')}">
-                                    <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
-                                        <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                    <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image"
+                                       th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">
+                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                     </a>
                                 </th:block>
                                 <th:block th:if="${metadata.type.contains('video')}">
@@ -38,14 +42,21 @@
                                        data-featherlight="iframe"
                                        data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
                                        data-featherlight-iframe-frameborder="0"
-                                       data-featherlight-iframe-allowfullscreen="true">
+                                       data-featherlight-iframe-allowfullscreen="true"
+                                       th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">>
                                         <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                     </a>
                                 </th:block>
                             </div>
                         </div>
 
-                        <div th:replace="fragments/timelinejs :: timelinejs(${metadata})"></div>
+                        <script type="text/javascript">
+                            /*<![CDATA[*/
+                            setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                            activateMetadataListeners("[[${metadata}]]");
+                            /*]]>*/
+                        </script>
+
                     </th:block>
                 </div>
             </th:block>
@@ -61,29 +72,29 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
 
-        $.featherlight.prototype.afterOpen = function() {
-            var lat = $("#currentlat").val();
-            var lng = $("#currentlng").val();
-            var filename = $("#currentfilename").val();
-
-            if (lat !== null && lng !== null && filename !== null &&
-                lat !== "" && lng !== "" && filename !== "") {
-                $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
-                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
-                    html += "<br>"+filename;
-
-                    $('.caption').remove();
-                    // Top bar
-                    $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
-                    // Push content down
-                    $(".featherlight-content").css("margin-top", "50px");
-                });
-
-                $('#currentlat').val("");
-                $('#currentlng').val("");
-                $('#currentfilename').val("");
-            }
-        };
+        // $.featherlight.prototype.afterOpen = function() {
+        //     var lat = $("#currentlat").val();
+        //     var lng = $("#currentlng").val();
+        //     var filename = $("#currentfilename").val();
+        //
+        //     if (lat !== null && lng !== null && filename !== null &&
+        //         lat !== "" && lng !== "" && filename !== "") {
+        //         $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
+        //             var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
+        //             html += "<br>"+filename;
+        //
+        //             $('.caption').remove();
+        //             // Top bar
+        //             $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
+        //             // Push content down
+        //             $(".featherlight-content").css("margin-top", "50px");
+        //         });
+        //
+        //         $('#currentlat').val("");
+        //         $('#currentlng').val("");
+        //         $('#currentfilename').val("");
+        //     }
+        // };
     });
 </script>
 
