@@ -11,12 +11,12 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.core.io.FileSystemResource
 import java.awt.RenderingHints
 import java.awt.geom.AffineTransform
-import java.awt.geom.Arc2D
-import java.awt.geom.Area
-import java.awt.geom.Ellipse2D
 import java.awt.image.BufferedImage
+import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
+import java.io.InputStreamReader
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
@@ -27,7 +27,7 @@ import javax.imageio.ImageIO
 
 
 @ComponentScan
-class ImageProcessingUtils(private var apiVersion: String?) {
+class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUrl: String?) {
 
     private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
 
@@ -102,6 +102,8 @@ class ImageProcessingUtils(private var apiVersion: String?) {
             var cameraModel: String? = null
             var lensMake: String? = null
             var lensModel: String? = null
+            var lat: String? = null
+            var lng: String? = null
 
             for (tag in directory.tags) {
                 val tagName = tag.tagName.replace(" ", "").replace("/", "")
@@ -111,10 +113,6 @@ class ImageProcessingUtils(private var apiVersion: String?) {
 //                println(tag.tagName)
 //                println(tag.description)
 //                println()
-
-                // TODO: Get this info into exif file
-
-
                 when (tag.tagName) {
                     "Date/Time", "Creation Time" -> {
                         val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
@@ -194,6 +192,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                             val latTotalSeconds = (((latMinute * 60) + latSeconds) / 3600)
                             latDecimal = latDegree.toString().dropLast(1) + latTotalSeconds.toString().drop(2)
                         }
+                        lat = latDecimal
                         metadataObj.setLat(latDecimal)
                     }
                     "GPS Longitude", "Longitude" -> {
@@ -210,6 +209,7 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                             val lngTotalSeconds = (((lngMinute * 60) + lngSeconds) / 3600)
                             lngDecimal = lngDegree.toString().dropLast(1) + lngTotalSeconds.toString().drop(2)
                         }
+                        lng = lngDecimal
                         metadataObj.setLng(lngDecimal)
                     }
                     "ISO Speed Ratings" -> {
@@ -255,6 +255,31 @@ class ImageProcessingUtils(private var apiVersion: String?) {
                 if (!lensMake.isNullOrBlank() && !lensModel.isNullOrBlank()) {
                     val lens = "$lensMake $lensModel"
                     metadataObj.setLens(lens.trim())
+                }
+            }
+            if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
+                val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng
+                val response: String? = readUrl(geoLookupUrl)
+                val mapper = ObjectMapper()
+                val addressObj = mapper.readTree(response)
+
+                if (!addressObj.isNull) {
+                    var buildPlace = ""
+                    if (addressObj.get("address").get("road") != null) {
+                        buildPlace += addressObj.get("address").get("road").textValue()+", "
+                    }
+                    if (addressObj.get("address").get("city") != null) {
+                        buildPlace += addressObj.get("address").get("city").textValue()+", "
+                    }
+                    if (addressObj.get("address").get("state") != null) {
+                        buildPlace += addressObj.get("address").get("state").textValue()+" "
+                    }
+                    if (addressObj.get("address").get("country") != null) {
+                        buildPlace += addressObj.get("address").get("country").textValue()
+                    }
+                    if (!buildPlace.isNullOrBlank()) {
+                        metadataObj.setPlaceName(buildPlace)
+                    }
                 }
             }
         }
@@ -378,6 +403,22 @@ class ImageProcessingUtils(private var apiVersion: String?) {
         } catch (e: IOException) {
             logger.log(Level.WARNING, "Could not convert video " + file.name + ": " + e.message)
             return null
+        }
+    }
+
+    @Throws(java.lang.Exception::class)
+    private fun readUrl(urlString: String): String? {
+        var reader: BufferedReader? = null
+        return try {
+            val url = URL(urlString)
+            reader = BufferedReader(InputStreamReader(url.openStream()))
+            val buffer = StringBuffer()
+            var read: Int
+            val chars = CharArray(1024)
+            while (reader.read(chars).also { read = it } != -1) buffer.append(chars, 0, read)
+            buffer.toString()
+        } finally {
+            reader?.close()
         }
     }
 

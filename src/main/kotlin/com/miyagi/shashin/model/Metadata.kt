@@ -25,6 +25,7 @@ class Metadata {
     private var timeZone: String? = null
     private var lat: String? = null
     private var lng: String? = null
+    private var placeName: String? = null
     private var year: Int? = null
     private var month: Int? = null
     private var day: Int? = null
@@ -93,6 +94,9 @@ class Metadata {
     }
     fun setLng(lng: String?) {
         this.lng = lng
+    }
+    fun setPlaceName(placeName: String?) {
+        this.placeName = placeName
     }
     fun setYear(year: Int?) {
         this.year = year
@@ -188,6 +192,9 @@ class Metadata {
     fun getLng(): String? {
         return this.lng
     }
+    fun getPlacename(): String? {
+        return this.placeName
+    }
     fun getYear(): Int? {
         return this.year
     }
@@ -245,6 +252,7 @@ class Metadata {
         map["timeZone"] = this.timeZone
         map["lat"] = this.lat
         map["lng"] = this.lng
+        map["placeName"] = this.placeName
         map["year"] = this.year
         map["month"] = this.month
         map["day"] = this.day

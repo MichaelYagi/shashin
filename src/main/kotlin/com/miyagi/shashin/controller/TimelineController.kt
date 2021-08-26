@@ -179,7 +179,7 @@ class TimelineController {
                 // Update DB
                 metadataRepository?.save(metadataObj.get())
                 // Update MD file
-                val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString())
+                val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
                 val originalImagePath = metadataObj.get().getPath()
                 var rootDir: String? = null
                 val rootMediaDirs = mediaDirRepository?.findAll()
@@ -290,7 +290,7 @@ class TimelineController {
                 metadataRepository?.saveAll(metadataList)
 
                 // Update MD file
-                val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString())
+                val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
                 for (metadata in metadataList) {
                     val originalImagePath = metadata.getPath()
                     var rootDir: String? = null
