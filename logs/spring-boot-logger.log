@@ -11479,3 +11479,5 @@ Using generated security password: d2cf1248-a877-4c3a-987e-0869857a5a8b
 2021-08-26 11:57:16,998 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
 2021-08-26 11:57:16,998 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
 2021-08-26 11:57:17,000 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-26 11:58:01,294 WARN com.miyagi.shashin.controller.BaseController [http-nio-8080-exec-8] Error getting authority: null cannot be cast to non-null type org.springframework.security.core.context.SecurityContext
+2021-08-26 11:58:04,001 WARN com.miyagi.shashin.controller.BaseController [http-nio-8080-exec-1] Error getting authority: null cannot be cast to non-null type org.springframework.security.core.context.SecurityContext
