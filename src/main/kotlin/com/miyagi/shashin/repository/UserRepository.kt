@@ -6,7 +6,9 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 
+@Repository
 interface UserRepository : CrudRepository<User?, Int?> {
     fun findAll(sort: Sort?): MutableIterable<User?>?
     fun findByUsername(username: String?): User?

@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import javax.sql.DataSource
 
 @Configuration
-@EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 class WebSecurityConfig: WebSecurityConfigurerAdapter() {
 

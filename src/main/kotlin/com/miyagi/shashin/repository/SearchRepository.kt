@@ -4,7 +4,9 @@ import com.miyagi.shashin.model.Metadata
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 
+@Repository
 interface SearchRepository : CrudRepository<Metadata?, String?> {
     @Query("SELECT * FROM metadata WHERE keywords LIKE %:searchTerm% OR file_name LIKE %:searchTerm%", nativeQuery = true)
     fun findMetadataBySearchTerm(@Param("searchTerm") searchTerm: String): MutableIterable<Metadata>
