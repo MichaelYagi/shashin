@@ -173,12 +173,14 @@
                                     '       data-featherlight="iframe"\n' +
                                     '       data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"\n' +
                                     '       data-featherlight-iframe-frameborder="0"\n' +
-                                    '       data-featherlight-iframe-allowfullscreen="true">\n' +
+                                    '       data-featherlight-iframe-allowfullscreen="true"\n' +
+                                    '       data-featherlight-after-open="featherlightAfterOpen(\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
                                     '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                     '   </a>\n';
                             } else {
                                 html +=
-                                    '   <a href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image">\n' +
+                                    '   <a href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image"' +
+                                    '       data-featherlight-after-open="featherlightAfterOpen(\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
                                     '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                     '   </a>\n';
                             }

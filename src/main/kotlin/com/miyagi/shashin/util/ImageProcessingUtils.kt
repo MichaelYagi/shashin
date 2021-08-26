@@ -278,6 +278,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
                         buildPlace += addressObj.get("address").get("country").textValue()
                     }
                     if (!buildPlace.isNullOrBlank()) {
+                        buildPlace = buildPlace.trim()
                         metadataObj.setPlaceName(buildPlace)
                     }
                 }
