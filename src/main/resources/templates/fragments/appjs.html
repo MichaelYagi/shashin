@@ -111,7 +111,7 @@
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $("#appSearch").css("display", "none");
-                if (view === "album") {
+                if (view === "album" || view === "favorites") {
                     $("#albumAppTools").css("display", "block");
                 } else if (view === "timeline") {
                     $("#timelineAppTools").css("display", "block");
@@ -143,7 +143,7 @@
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $("#appSearch").css("display", "none");
-                if (view === "album") {
+                if (view === "album" || view === "favorites") {
                     $("#albumAppTools").css("display", "block");
                 } else if (view === "timeline") {
                     $("#timelineAppTools").css("display", "block");
