@@ -89,7 +89,7 @@
 
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
                             renderAlbumModal(htmlEncodedAlbumData,htmlEncodedMetadata,htmlEncodedCurrentUser,htmlEncodedalbumPhotoCommentsMap);
-                            activateAlbumListeners(htmlEncodedMetadata);
+                            activateAlbumListeners(htmlEncodedMetadata,htmlEncodedAlbumData);
                         }
                     }
                 } else {
@@ -100,8 +100,9 @@
         });
     }
 
-    function activateAlbumListeners(rawMetadata) {
+    function activateAlbumListeners(rawMetadata,rawAlbumData) {
         var metadata = JSON.parse(decodeHtml(rawMetadata));
+        var album = JSON.parse(decodeHtml(rawAlbumData));
 
         $('#removeFromAlbum'+metadata.id).change(function() {
             if (this.checked) {
