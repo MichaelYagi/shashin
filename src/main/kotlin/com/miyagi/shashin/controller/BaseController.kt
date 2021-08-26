@@ -41,6 +41,9 @@ class BaseController {
     @Value("\${app.role.user}")
     private lateinit var userRole: String
 
+    @Value("\${app.endpoint.url.geocode}")
+    private lateinit var geocodeUrl: String
+
     @ModelAttribute
     fun addAttributes(model: Model) {
         model["userRole"] = userRole
@@ -48,6 +51,7 @@ class BaseController {
         model["queryLimit"] = queryLimit!!.toInt()
         model["apiVersion"] = apiVersion
         model["relativeSidecarDir"] = relativeSidecarDir
+        model["geocodeUrl"] = geocodeUrl
 
         model["currentUser"] = ""
 

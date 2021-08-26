@@ -37,6 +37,9 @@ class SettingsController {
     @Value("\${app.api.version}")
     private var apiVersion: String? = null
 
+    @Value("\${app.endpoint.url.geocode}")
+    private var geocodeUrl: String? = null
+
     @Autowired
     private val metadataRepository: MetadataRepository? = null
 
@@ -383,7 +386,7 @@ class SettingsController {
 
                             } else {
                                 if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                                    val imageProcessingUtils = ImageProcessingUtils(apiVersion)
+                                    val imageProcessingUtils = ImageProcessingUtils(apiVersion,geocodeUrl)
                                     var metadataObj: Metadata? = Metadata()
                                     metadataObj =
                                         imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
