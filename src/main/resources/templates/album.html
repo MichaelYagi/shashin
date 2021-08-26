@@ -59,8 +59,9 @@
 
                             <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                                 <th:block th:unless="${metadata.type.contains('video')}">
-                                    <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image">
-                                        <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                    <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image"
+                                       th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">
+                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                     </a>
                                 </th:block>
                                 <th:block th:if="${metadata.type.contains('video')}">
@@ -68,7 +69,8 @@
                                        data-featherlight="iframe"
                                        data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
                                        data-featherlight-iframe-frameborder="0"
-                                       data-featherlight-iframe-allowfullscreen="true">
+                                       data-featherlight-iframe-allowfullscreen="true"
+                                       th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">>
                                         <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                     </a>
                                 </th:block>
@@ -115,48 +117,6 @@
                 loadNextPage();
             }
         })
-
-        $.featherlight.prototype.afterOpen = function() {
-            var lat = $("#currentlat").val();
-            var lng = $("#currentlng").val();
-            var year = $("#currentyear").val();
-            var month = $("#currentmonth").val();
-            var day = $("#currentday").val();
-            var dateTaken = "";
-            if (year !== "" || month !== "" || day !== "") {
-                var dateTaken = new Date(year, month - 1, day);
-                dateTaken = dateTaken.toDateString();
-            }
-
-            if (lat !== null && lng !== null &&
-                lat !== "" && lng !== "") {
-                $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lng, function (data) {
-                    var html = data.address.road + ", " + data.address.city + ", " + data.address.state + " " + data.address.country;
-
-                    if (dateTaken !== "" && dateTaken !== null) {
-                        html += "<br>"+dateTaken;
-                    }
-
-                    $('.caption').remove();
-                    // Top bar
-                    $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
-                    // Push content down
-                    $(".featherlight-content").css("margin-top", "50px");
-                });
-            } else if (dateTaken !== "") {
-                $('.caption').remove();
-                // Top bar
-                $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+dateTaken+'</p></div>').prependTo(".featherlight");
-                // Push content down
-                $(".featherlight-content").css("margin-top", "50px");
-            }
-
-            $('#currentlat').val("");
-            $('#currentlng').val("");
-            $('#currentyear').val("");
-            $('#currentmonth').val("");
-            $('#currentday').val("");
-        };
 
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()

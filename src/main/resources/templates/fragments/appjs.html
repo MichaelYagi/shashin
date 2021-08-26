@@ -22,6 +22,32 @@
         return o;
     };
 
+    function featherlightAfterOpen(placeName,year,month,day,fileName) {
+        console.log(placeName);
+        var html = "";
+        if (placeName !== null && placeName !== 'null') {
+            html += placeName;
+        }
+        if (html !== "") {
+            html += "<br>";
+        }
+        if (fileName !== null && fileName !== 'null') {
+            html += fileName;
+        }
+        if (year !== null && year !== 'null' &&
+            month !== null && month !== 'null' &&
+            day !== null && day !== 'null') {
+            var dateTaken = new Date(year, month - 1, day);
+            html += ' taken on '+dateTaken.toDateString()
+        }
+
+        $('.caption').remove();
+        // Top bar
+        $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
+        // Push content down
+        $(".featherlight-content").css("margin-top", "50px");
+    }
+
     function getShortDay(index) {
         var days = ['Thu','Fri','Sat','Sun','Mon','Tue','Wed'];
         return days[index];

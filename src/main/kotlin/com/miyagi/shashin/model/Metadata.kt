@@ -192,7 +192,7 @@ class Metadata {
     fun getLng(): String? {
         return this.lng
     }
-    fun getPlacename(): String? {
+    fun getPlaceName(): String? {
         return this.placeName
     }
     fun getYear(): Int? {
