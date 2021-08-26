@@ -26,19 +26,16 @@ import kotlin.collections.HashMap
 class TimelineController {
 
     @Autowired
-    private val metadataRepository: MetadataRepository? = null
+    private lateinit var metadataRepository: MetadataRepository
 
     @Autowired
-    private val mediaDirRepository: MediaDirectoryRepository? = null
+    private lateinit var mediaDirRepository: MediaDirectoryRepository
 
     @Autowired
-    private val albumRepository: AlbumRepository? = null
+    private lateinit var albumRepository: AlbumRepository
 
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()

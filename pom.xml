@@ -63,8 +63,10 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
+            <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>org.thymeleaf.extras</groupId>-->
 <!--            <artifactId>thymeleaf-extras-springsecurity5</artifactId>-->

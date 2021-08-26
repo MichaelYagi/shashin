@@ -5,7 +5,9 @@ import com.miyagi.shashin.model.Metadata
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 
+@Repository
 interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     fun findByMetadataIdAndUserId(metdataId: String?, userId: Int?): Favorite?
     @Query("SELECT * FROM favorite WHERE user_id = :userId LIMIT :offset, :limit", nativeQuery = true)
