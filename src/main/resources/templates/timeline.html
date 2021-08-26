@@ -133,18 +133,10 @@
             var yearTakenCount = $(".yearTaken").length;
             var monthTakenCount = $(".monthTaken").length;
             var dayTakenCount = $(".dayTaken").length;
-            var dateTakenHeadingCount = $(".dateTakenHeading").length;
 
             if (yearTakenCount > 0 && monthTakenCount > 0 && dayTakenCount > 0) {
-                var lastYearTaken = $(".yearTaken").get(yearTakenCount - 1).innerText
-                var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
-                var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
-                var lastDateTakenHeading = $(".dateTakenHeading").get(dateTakenHeadingCount - 1).innerText
-                lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-                lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-                lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
                 /*<![CDATA[*/
-                updateTimeline(nextPage,lastYearTaken,lastMonthTaken,lastDayTaken,lastDateTakenHeading,"[[${activePage}]]");
+                updateTimeline(nextPage,"[[${activePage}]]");
                 /*]]>*/
                 $("#currentPage").val(nextPage);
             }

@@ -47,17 +47,7 @@
         });
     }
 
-    function updateTimeline(
-        nextPage,
-        lastYearTaken,
-        lastMonthTaken,
-        lastDayTaken,
-        lastDateTakenHeading,
-        activePage
-    ) {
-        // console.log(lastYearTaken);
-        // console.log(lastMonthTaken);
-        // console.log(lastDayTaken);
+    function updateTimeline(nextPage, activePage) {
         // console.log("nextPage:"+nextPage);
 
         // Get paged results
@@ -79,25 +69,33 @@
                         // console.log(albumList);
                         var html = "";
                         var undatedCount = 0;
-                        lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-                        lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-                        lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
-
 
                         for (var index in metadataList) {
                             var metadata = metadataList[index];
                             var currentDateTaken = metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"];
 
-                            // console.log(lastDateTakenHeading);
-                            // console.log(currentDateTaken);
-                            //
-                            // console.log(lastYearTaken);
-                            // console.log(lastMonthTaken);
-                            // console.log(lastDayTaken);
-                            //
-                            // console.log(metadata["year"]);
-                            // console.log(metadata["month"]);
-                            // console.log(metadata["day"]);
+                            var yearTakenCount = $(".yearTaken").length;
+                            var monthTakenCount = $(".monthTaken").length;
+                            var dayTakenCount = $(".dayTaken").length;
+                            var dateTakenHeadingCount = $(".dateTakenHeading").length;
+                            var lastYearTaken = $(".yearTaken").get(yearTakenCount - 1).innerText
+                            var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
+                            var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
+                            var lastDateTakenHeading = $(".dateTakenHeading").get(dateTakenHeadingCount - 1).innerText
+                            lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                            lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                            lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+
+                            console.log(lastDateTakenHeading);
+                            console.log(currentDateTaken);
+
+                            console.log(lastYearTaken);
+                            console.log(lastMonthTaken);
+                            console.log(lastDayTaken);
+
+                            console.log(metadata["year"]);
+                            console.log(metadata["month"]);
+                            console.log(metadata["day"]);
 
                             var appended = false;
 
