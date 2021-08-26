@@ -8,6 +8,7 @@ import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
+import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest
 
 
 @Controller
+@Secured("ROLE_ADMIN","ROLE_USER")
 class SearchController {
 
     @Autowired
