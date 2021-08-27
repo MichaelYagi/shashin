@@ -92,16 +92,6 @@
                     <div th:id="'timelinemodal'+${metadata.id}"></div>
                     <script type="text/javascript">
                         /*<![CDATA[*/
-                        $('a.gallery').featherlightGallery({
-                            previousIcon: '«',
-                            nextIcon: '»'
-                        });
-                        // $(".featherlight-previous").click(function (e) {
-                        //     console.log("previous clicked");
-                        // });
-                        // $(".featherlight-next").click(function (e) {
-                        //     console.log("next clicked");
-                        // });
                         setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                         renderTimelineModal("[[${metadata}]]");
                         activateMetadataListeners("[[${metadata}]]");
@@ -150,6 +140,10 @@
                 /*]]>*/
                 $("#currentPage").val(nextPage);
             }
+            $('a.gallery').featherlightGallery({
+                previousIcon: '«',
+                nextIcon: '»'
+            });
         }
         if (!$(window).hasScrollBar()) {
             loadNextPage();

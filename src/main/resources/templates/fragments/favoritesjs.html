@@ -60,10 +60,6 @@
                             $(html).insertBefore($(".appendMetadataPhotos").last())
 
                             var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                            $('a.gallery').featherlightGallery({
-                                previousIcon: '«',
-                                nextIcon: '»'
-                            });
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
 
                             html = "";

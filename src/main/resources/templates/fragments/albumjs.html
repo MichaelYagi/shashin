@@ -89,10 +89,6 @@
                             var htmlEncodedCurrentUser = encodeHtml(JSON.stringify(currentUser));
                             var htmlEncodedalbumPhotoCommentsMap = encodeHtml(JSON.stringify(albumPhotoCommentsMap));
 
-                            $('a.gallery').featherlightGallery({
-                                previousIcon: '«',
-                                nextIcon: '»'
-                            });
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
                             renderAlbumModal(htmlEncodedAlbumData,htmlEncodedMetadata,htmlEncodedCurrentUser,htmlEncodedalbumPhotoCommentsMap);
                             activateAlbumListeners(htmlEncodedMetadata,htmlEncodedAlbumData);
