@@ -33,7 +33,7 @@
                             <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                                 <th:block th:unless="${metadata.type.contains('video')}">
                                     <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image"
-                                       th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">
+                                       th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.id}+'\',\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">
                                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                     </a>
                                 </th:block>
@@ -43,7 +43,7 @@
                                        data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
                                        data-featherlight-iframe-frameborder="0"
                                        data-featherlight-iframe-allowfullscreen="true"
-                                       th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">>
+                                       th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.id}+'\',\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">>
                                         <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                     </a>
                                 </th:block>

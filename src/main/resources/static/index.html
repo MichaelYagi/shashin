@@ -43,18 +43,20 @@
 
     <main class="px-3">
         <h1>Welcome to Shashin</h1>
-        <p class="lead">Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.</p>
+        <p class="lead">Cupcake ipsum dolor sit amet lemon drops tiramisu sweet. Carrot cake chocolate cake gingerbread tiramisu fruitcake candy canes tart chocolate cake. Macaroon halvah apple pie ice cream wafer.</p>
         <p class="lead">
             <a href="/features.html" class="btn btn-lg btn-primary fw-bold">Learn more</a>
         </p>
     </main>
 
     <footer class="mt-auto text-black-50">
-        <p>by Michael Yagi</p>
+        <p>&copy; <span id="copyrightYear"></span> Shashin</p>
     </footer>
 </div>
 
-
+<script type="text/javascript">
+    $("#copyrightYear").text(new Date().getFullYear());
+</script>
 
 </body>
 </html>

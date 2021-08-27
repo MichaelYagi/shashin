@@ -71,18 +71,18 @@
 
                         <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                             <th:block th:unless="${metadata.type.contains('video')}">
-                                <a th:href="${metadata.thumbnailUrlOriginal}" data-featherlight="image"
-                                   th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">
+                                <a class="gallery" th:href="${metadata.thumbnailUrlOriginal}"
+                                   th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.id}+'\',\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">
                                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                 </a>
                             </th:block>
                             <th:block th:if="${metadata.type.contains('video')}">
-                                <a th:href="${metadata.videoUrl}"
+                                <a class="gallery" th:href="${metadata.videoUrl}"
                                    data-featherlight="iframe"
                                    data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
                                    data-featherlight-iframe-frameborder="0"
                                    data-featherlight-iframe-allowfullscreen="true"
-                                   th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">>
+                                   th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.id}+'\',\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">>
                                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                 </a>
                             </th:block>
@@ -92,6 +92,16 @@
                     <div th:id="'timelinemodal'+${metadata.id}"></div>
                     <script type="text/javascript">
                         /*<![CDATA[*/
+                        $('a.gallery').featherlightGallery({
+                            previousIcon: '«',
+                            nextIcon: '»'
+                        });
+                        // $(".featherlight-previous").click(function (e) {
+                        //     console.log("previous clicked");
+                        // });
+                        // $(".featherlight-next").click(function (e) {
+                        //     console.log("next clicked");
+                        // });
                         setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                         renderTimelineModal("[[${metadata}]]");
                         activateMetadataListeners("[[${metadata}]]");

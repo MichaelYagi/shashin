@@ -59,18 +59,18 @@
 
                             if (metadata.type.includes("video")) {
                                 html +=
-                                '       <a href="'+metadata.videoUrl+'"\n' +
+                                '       <a class="gallery" href="'+metadata.videoUrl+'"\n' +
                                 '           data-featherlight="iframe"\n' +
                                 '           data-featherlight-iframe-style="display:block;border:none;height:85vh;wid85vw;"\n' +
                                 '           data-featherlight-iframe-frameborder="0"\n' +
                                 '           data-featherlight-iframe-allowfullscreen="true"\n' +
-                                '           data-featherlight-after-open="featherlightAfterOpen(\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
+                                '           data-featherlight-after-open="featherlightAfterOpen(\''+metadata.id+'\',\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
                                 '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                 '       </a>\n';
                             } else {
                                 html +=
-                                '       <a href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image"\n' +
-                                '           data-featherlight-after-open="featherlightAfterOpen(\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
+                                '       <a class="gallery" href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image"\n' +
+                                '           data-featherlight-after-open="featherlightAfterOpen(\''+metadata.id+'\',\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
                                 '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                 '       </a>\n';
                             }
@@ -89,6 +89,10 @@
                             var htmlEncodedCurrentUser = encodeHtml(JSON.stringify(currentUser));
                             var htmlEncodedalbumPhotoCommentsMap = encodeHtml(JSON.stringify(albumPhotoCommentsMap));
 
+                            $('a.gallery').featherlightGallery({
+                                previousIcon: '«',
+                                nextIcon: '»'
+                            });
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
                             renderAlbumModal(htmlEncodedAlbumData,htmlEncodedMetadata,htmlEncodedCurrentUser,htmlEncodedalbumPhotoCommentsMap);
                             activateAlbumListeners(htmlEncodedMetadata,htmlEncodedAlbumData);
