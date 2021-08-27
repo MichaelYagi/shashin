@@ -117,9 +117,8 @@
                 // });
             }
 
-
             $.featherlight.prototype.afterOpen = function() {
-                featherlightAfterOpen(featureProperties.id,featureProperties.placeName,featureProperties.year,featureProperties.month,featureProperties.day,featureProperties.fileName)
+                featherlightAfterOpen(featureProperties.placeName+'|'+featureProperties.year+'|'+featureProperties.month+'|'+featureProperties.day+'|'+featureProperties.fileName)
             };
         }
     });

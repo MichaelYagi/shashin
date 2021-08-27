@@ -72,17 +72,18 @@
                         <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
                             <th:block th:unless="${metadata.type.contains('video')}">
                                 <a class="gallery" th:href="${metadata.thumbnailUrlOriginal}"
-                                   th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.id}+'\',\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">
+                                   th:alt="${metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName}">
                                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                 </a>
                             </th:block>
                             <th:block th:if="${metadata.type.contains('video')}">
                                 <a class="gallery" th:href="${metadata.videoUrl}"
-                                   data-featherlight="iframe"
-                                   data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"
-                                   data-featherlight-iframe-frameborder="0"
-                                   data-featherlight-iframe-allowfullscreen="true"
-                                   th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.id}+'\',\''+${metadata.placeName}+'\',\''+${metadata.year}+'\',\''+${metadata.month}+'\',\''+${metadata.day}+'\',\''+${metadata.fileName}+'\')'">>
+                                    data-featherlight="iframe"
+                                    data-featherlight-iframe-style="display:block;border:none;height:85vh;"
+                                    data-featherlight-iframe-frameborder="0"
+                                    data-featherlight-iframe-allowfullscreen="true"
+                                    th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'|'+${metadata.year}+'|'+${metadata.month}+'|'+${metadata.day}+'|'+${metadata.fileName}+'\')'"
+                                    th:alt="${metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName}">
                                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                 </a>
                             </th:block>
@@ -123,6 +124,17 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
 
+        $('a.gallery').featherlightGallery({
+            previousIcon: '«',
+            nextIcon: '»',
+            afterContent: function() {
+                featherlightAfterOpen(this.$currentTarget.attr('alt'));
+            },
+            afterOpen: function() {
+                featherlightAfterOpen(this.$currentTarget.attr('alt'));
+            }
+        });
+
         function loadNextPage() {
             // console.log("scroll bottom");
             var currentPage = parseInt($("#currentPage").val());
@@ -140,10 +152,6 @@
                 /*]]>*/
                 $("#currentPage").val(nextPage);
             }
-            $('a.gallery').featherlightGallery({
-                previousIcon: '«',
-                nextIcon: '»'
-            });
         }
         if (!$(window).hasScrollBar()) {
             loadNextPage();

@@ -208,3 +208,7 @@ footer {
 #map {
   height: 100%;
 }
+
+.lightbox {
+  display: none;
+}

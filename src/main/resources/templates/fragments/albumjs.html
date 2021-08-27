@@ -59,18 +59,18 @@
 
                             if (metadata.type.includes("video")) {
                                 html +=
-                                '       <a class="gallery" href="'+metadata.videoUrl+'"\n' +
-                                '           data-featherlight="iframe"\n' +
-                                '           data-featherlight-iframe-style="display:block;border:none;height:85vh;wid85vw;"\n' +
-                                '           data-featherlight-iframe-frameborder="0"\n' +
-                                '           data-featherlight-iframe-allowfullscreen="true"\n' +
-                                '           data-featherlight-after-open="featherlightAfterOpen(\''+metadata.id+'\',\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
-                                '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                '       </a>\n';
+                                    '   <a class="gallery" href="'+metadata.videoUrl+'"\n' +
+                                    '       data-featherlight="iframe"\n' +
+                                    '       data-featherlight-iframe-style="display:block;border:none;height:85vh;"\n' +
+                                    '       data-featherlight-iframe-frameborder="0"\n' +
+                                    '       data-featherlight-iframe-allowfullscreen="true"\n' +
+                                    '       alt="'+metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName+'">\n' +
+                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                    '   </a>\n';
                             } else {
                                 html +=
                                 '       <a class="gallery" href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image"\n' +
-                                '           data-featherlight-after-open="featherlightAfterOpen(\''+metadata.id+'\',\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
+                                '           alt="'+metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName+'">\n' +
                                 '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                 '       </a>\n';
                             }
@@ -92,6 +92,16 @@
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
                             renderAlbumModal(htmlEncodedAlbumData,htmlEncodedMetadata,htmlEncodedCurrentUser,htmlEncodedalbumPhotoCommentsMap);
                             activateAlbumListeners(htmlEncodedMetadata,htmlEncodedAlbumData);
+                            $('a.gallery').featherlightGallery({
+                                previousIcon: '«',
+                                nextIcon: '»',
+                                afterContent: function() {
+                                    featherlightAfterOpen(this.$currentTarget.attr('alt'));
+                                },
+                                afterOpen: function() {
+                                    featherlightAfterOpen(this.$currentTarget.attr('alt'));
+                                }
+                            });
                         }
                     }
                 } else {
