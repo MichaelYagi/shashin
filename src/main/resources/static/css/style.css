@@ -8,16 +8,6 @@ body {
   vertical-align: text-bottom;
 }
 
-.featherlight .featherlight-content .caption {
-  font-size: 90%;
-  color: #868e96;
-  display: block;
-  position: absolute;
-  bottom: 0;
-  background-color: rgba(255, 255, 255, .9);
-  padding: 0 1rem;
-}
-
 /*
  * Sidebar
  */

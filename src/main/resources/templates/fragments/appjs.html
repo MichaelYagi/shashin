@@ -22,6 +22,16 @@
         return o;
     };
 
+    function getLightGalleryConfigs() {
+        return {
+            plugins: [lgZoom, lgVideo, lgRelativeCaption],
+            counter: false,
+            download: true,
+            videojs: true,
+            licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
+        }
+    }
+
     function getShortDay(index) {
         var days = ['Thu','Fri','Sat','Sun','Mon','Tue','Wed'];
         return days[index];

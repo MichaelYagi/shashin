@@ -92,17 +92,6 @@
         if(typeof feature !== 'undefined' && feature.getProperties) {
             var featureProperties = feature.getProperties();
             // console.log(featureProperties);
-            // console.log(featureProperties.name);
-            // console.log(featureProperties.photoUrl);
-            // console.log(featureProperties.dateTaken);
-            // console.log(featureProperties.type);
-
-            var geometry = feature.getGeometry();
-            var coordinates = geometry.getCoordinates();
-
-            var lngLat = ol.proj.transform(coordinates, 'EPSG:3857', 'EPSG:4326');
-            var lng = lngLat[0];
-            var lat = lngLat[1];
 
             let dateString = "";
             if (featureProperties["year"] !== null &&
@@ -115,16 +104,6 @@
                 dateString = dayOfWeek + ", " + shortMonth + " " + day + ", " + featureProperties["year"];
             }
 
-            // if (featureProperties.type.includes("image")) {
-            //     $.featherlight(featureProperties.photoUrl, {type: "image"});
-            // } else if (featureProperties.type.includes("video")) {
-            //     $.featherlight(featureProperties.videoUrl,
-            //         {
-            //             type: "iframe"
-            //         }
-            //     );
-            // }
-
             var mediaContent = {}
             if (featureProperties.type.includes("image")) {
                 mediaContent = {
@@ -132,34 +111,22 @@
                     subHtml: featureProperties.placeName+'<br>'+featureProperties.fileName+(dateString !== "" ? ' taken on '+dateString : '')
                 }
             } else if (featureProperties.type.includes("video")) {
-                // mediaContent = {
-                //     source: [
-                //         {
-                //             src: featureProperties.videoUrl,
-                //             type: featureProperties.type
-                //         },
-                //     ],
-                //     attributes: {preload: false, controls: true}
-                // }
-
                 mediaContent = {
                     video: {"source": [{"src":featureProperties.videoUrl, "type":featureProperties.type}], "attributes": {"preload": false, "controls": true}},
                     subHtml: featureProperties.placeName+'<br>'+featureProperties.fileName+(dateString !== "" ? ' taken on '+dateString : '')
                 }
             }
 
+            const lightGalleryConfigs = getLightGalleryConfigs();
+            console.log(lightGalleryConfigs);
+            lightGalleryConfigs["controls"] = false;
+            lightGalleryConfigs["dynamic"] = true;
+            lightGalleryConfigs["dynamicEl"] = [
+                mediaContent
+            ];
+
             const $dynamicGallery = document.getElementById('light-gallery-photo');
-            const dynamicGallery = lightGallery($dynamicGallery, {
-                dynamic: true,
-                dynamicEl: [
-                    mediaContent
-                ],
-                plugins: [lgZoom, lgVideo, lgRelativeCaption],
-                counter: false,
-                download: true,
-                videojs: true,
-                controls: false
-            });
+            const dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
             dynamicGallery.openGallery(0);
         }
     });

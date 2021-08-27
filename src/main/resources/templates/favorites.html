@@ -99,13 +99,9 @@
         const $infiniteScrollGallery = document.getElementById(
             'infinite-scroll-gallery',
         );
-        var lg = lightGallery($infiniteScrollGallery, {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption],
-            selector: '.mediaLink',
-            counter: false,
-            download: true,
-            videojs: true
-        });
+        const lightGalleryConfigs = getLightGalleryConfigs();
+        lightGalleryConfigs["selector"] = '.mediaLink';
+        var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
 
         function loadNextPage() {
             var currentPage = parseInt($("#currentPage").val());
@@ -116,13 +112,7 @@
             $("#currentPage").val(nextPage);
             lg.destroy();
             setTimeout(() => {
-                lg = lightGallery($infiniteScrollGallery, {
-                    plugins: [lgZoom, lgVideo, lgRelativeCaption],
-                    selector: '.mediaLink',
-                    counter: false,
-                    download: true,
-                    videojs: true
-                });
+                lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
             }, 500);
         }
         if (!$(window).hasScrollBar()) {
