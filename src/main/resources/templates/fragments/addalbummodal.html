@@ -104,7 +104,7 @@
                                 let message = "Error";
                                 if (data["status"] === "success") {
                                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                    window.top.location = window.top.location
+                                    //window.top.location = window.top.location
                                 } else {
                                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                                 }
@@ -116,6 +116,17 @@
                     }
 
                     return false;
+                });
+
+                // Clear message on modal close
+                $('#propAddAlbum').on('hidden.bs.modal', function () {
+                    $("#albumResponseMsg").html("");
+                    clearTimelineSelection();
+                });
+
+                // Clear message on input editing
+                $('#propAddAlbum').bind('keypress', function() {
+                    $("#albumResponseMsg").html("");
                 });
             </script>
         </div>

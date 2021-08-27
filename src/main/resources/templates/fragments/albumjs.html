@@ -148,7 +148,7 @@
                         let message = "Error";
                         if (data["status"] === "success") {
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            window.top.location = window.top.location;
+                            // window.top.location = window.top.location;
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
@@ -157,6 +157,16 @@
                 }
             });
             return false;
+        });
+
+        // Clear message on modal close
+        $('#propalbum'+metadata.id).on('hidden.bs.modal', function () {
+            $("#msg"+metadata.id).html("");
+        });
+
+        // Clear message on input editing
+        $('#propalbum'+metadata.id+' input').bind('keypress', function() {
+            $("#msg"+metadata.id).html("");
         });
     }
 
