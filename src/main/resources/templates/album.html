@@ -81,10 +81,6 @@
 
                         <script type="text/javascript">
                             /*<![CDATA[*/
-                            $('a.gallery').featherlightGallery({
-                                previousIcon: '«',
-                                nextIcon: '»'
-                            });
                             setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                             renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
                             activateAlbumListeners("[[${metadata}]]","[[${album}]]")
@@ -110,6 +106,10 @@
             updateAlbum([[${album.id}]], nextPage, "[[${activePage}]]");
             /*]]>*/
             $("#currentPage").val(nextPage);
+            $('a.gallery').featherlightGallery({
+                previousIcon: '«',
+                nextIcon: '»'
+            });
         }
         if (!$(window).hasScrollBar()) {
             loadNextPage();
