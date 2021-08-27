@@ -26,70 +26,90 @@
 
                 <h1 th:text="${album.name}"></h1>
                 <span id="albumId" style="display: none" th:text="${album.id}"></span>
-                <div class="row">
-                    <th:block th:each="metadata, iterStat: ${albumMetadataList}">
-                        <div class="photo-thumbnail-container photo-thumbnail">
-                            <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+                <div id="infinite-scroll-gallery">
+                    <div class="row">
+                        <th:block th:each="metadata, iterStat: ${albumMetadataList}">
+                            <div class="photo-thumbnail-container photo-thumbnail">
+                                <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
 
-                            <th:block th:if="${metadata.type.contains('video')}">
-                                <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
-                                </div>
-                            </th:block>
-
-                            <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
-                                    <a href="#" th:id="'select'+${metadata.id}">
-                                        <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
-                                    </a>
-                                </div>
-
-                                <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                    <a href="#" data-toggle="modal" th:data-target="'#propalbum'+${metadata.id}">
-                                        <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
-                                    </a>
-                                </div>
-                            </th:block>
-
-                            <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
-                                <a href="#" data-toggle="modal" th:data-target="'#propalbumphotocomment'+${metadata.id}" style="text-decoration: none;color: darkorange">
-                                    <th:block th:text="${#lists.size(albumPhotoCommentsMap.get(metadata.id))}"></th:block> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square-fill" style="font-size: 1rem;color: darkorange;"></span>
-                                </a>
-                            </div>
-
-                            <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
-                                <th:block th:unless="${metadata.type.contains('video')}">
-                                    <a class="gallery" th:href="${metadata.thumbnailUrlOriginal}"
-                                       th:alt="${metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName}">
-                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                    </a>
-                                </th:block>
                                 <th:block th:if="${metadata.type.contains('video')}">
-                                    <a class="gallery" th:href="${metadata.videoUrl}"
-                                        data-featherlight="iframe"
-                                        data-featherlight-iframe-style="display:block;border:none;height:85vh;"
-                                        data-featherlight-iframe-frameborder="0"
-                                        data-featherlight-iframe-allowfullscreen="true"
-                                        th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'|'+${metadata.year}+'|'+${metadata.month}+'|'+${metadata.day}+'|'+${metadata.fileName}+'\')'"
-                                        th:alt="${metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName}">
-                                        <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                    </a>
+                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                        <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
+                                    </div>
                                 </th:block>
+
+                                <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                    <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                                        <a href="#" th:id="'select'+${metadata.id}">
+                                            <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                    </div>
+
+                                    <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
+                                        <a href="#" data-toggle="modal" th:data-target="'#propalbum'+${metadata.id}">
+                                            <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                    </div>
+                                </th:block>
+
+                                <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
+                                    <a href="#" data-toggle="modal" th:data-target="'#propalbumphotocomment'+${metadata.id}" style="text-decoration: none;color: darkorange">
+                                        <th:block th:text="${#lists.size(albumPhotoCommentsMap.get(metadata.id))}"></th:block> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square-fill" style="font-size: 1rem;color: darkorange;"></span>
+                                    </a>
+                                </div>
+
+                                <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
+                                    <th:block th:unless="${metadata.type.contains('video')}">
+                                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                                <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                                   th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                               th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName}">
+                                                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+
+                                    <th:block th:if="${metadata.type.contains('video')}">
+                                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                                <a class="mediaLink"
+                                                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                                   th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <a class="mediaLink"
+                                               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                               th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName}">
+                                                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+                                </div>
                             </div>
-                        </div>
 
-                        <div th:id="'albummodal'+${metadata.id}"></div>
+                            <div th:id="'albummodal'+${metadata.id}"></div>
 
-                        <script type="text/javascript">
-                            /*<![CDATA[*/
-                            setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                            renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
-                            activateAlbumListeners("[[${metadata}]]","[[${album}]]")
-                            /*]]>*/
-                        </script>
+                            <script type="text/javascript">
+                                /*<![CDATA[*/
+                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
+                                activateAlbumListeners("[[${metadata}]]","[[${album}]]")
+                                /*]]>*/
+                            </script>
 
-                        <span class="appendAlbumPhotos"></span>
-                    </th:block>
+                            <span class="appendAlbumPhotos"></span>
+                        </th:block>
+                    </div>
                 </div>
             </th:block>
 
@@ -100,15 +120,15 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('a.gallery').featherlightGallery({
-            previousIcon: '«',
-            nextIcon: '»',
-            afterContent: function() {
-                featherlightAfterOpen(this.$currentTarget.attr('alt'));
-            },
-            afterOpen: function() {
-                featherlightAfterOpen(this.$currentTarget.attr('alt'));
-            }
+        const $infiniteScrollGallery = document.getElementById(
+            'infinite-scroll-gallery',
+        );
+        var lg = lightGallery($infiniteScrollGallery, {
+            plugins: [lgZoom, lgVideo, lgRelativeCaption],
+            selector: '.mediaLink',
+            counter: false,
+            download: true,
+            videojs: true
         });
 
         function loadNextPage() {
@@ -118,6 +138,16 @@
             updateAlbum([[${album.id}]], nextPage, "[[${activePage}]]");
             /*]]>*/
             $("#currentPage").val(nextPage);
+            lg.destroy();
+            setTimeout(() => {
+                lg = lightGallery($infiniteScrollGallery, {
+                    plugins: [lgZoom, lgVideo, lgRelativeCaption],
+                    selector: '.mediaLink',
+                    counter: false,
+                    download: true,
+                    videojs: true
+                });
+            }, 500);
         }
         if (!$(window).hasScrollBar()) {
             loadNextPage();

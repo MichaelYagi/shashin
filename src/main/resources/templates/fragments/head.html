@@ -11,10 +11,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <link href="/css/style.css" rel="stylesheet" type="text/css">
     <th:block th:if="${titleDescriptor == 'Timeline' or titleDescriptor == 'Album' or titleDescriptor == 'Favorites' or titleDescriptor == 'Map' or titleDescriptor == 'Search'}">
-        <link href="//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.min.css" type="text/css" rel="stylesheet" />
-        <link href="//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.gallery.min.css" type="text/css" rel="stylesheet" />
-        <script src="//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
-        <script src="//cdn.jsdelivr.net/npm/featherlight@1.7.14/release/featherlight.gallery.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/lightgallery.min.js" integrity="sha512-wS35bm4wRerHT4pd7T3W8ZVVtweBwkS/0TMhs7OoekrIAphl2nPqsFtbLQ1BPumsH3R/dkqvcBPA06SRtgyxyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/plugins/video/lg-video.min.js" integrity="sha512-U8ZkbLkTj8Vws1nw0vqB/cRx8Cnj0I4YZZRBp5GvbeHBcto1lAknO2YpEpT3ZNvvnz49UwEHMYHLK3jhoZTe6Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/plugins/video/lg-video.min.js" integrity="sha512-U8ZkbLkTj8Vws1nw0vqB/cRx8Cnj0I4YZZRBp5GvbeHBcto1lAknO2YpEpT3ZNvvnz49UwEHMYHLK3jhoZTe6Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/plugins/zoom/lg-zoom.min.js" integrity="sha512-xWb9PdluFVMUplDHeQ7f48sgl8nx6+OfjvNJ1QKiVDeHQaoFndokj4GtbVjRomwruTNFALUcExNVjzlKy8HF0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/plugins/relativeCaption/lg-relative-caption.min.js" integrity="sha512-jX4n+7mmrp3/MdkoUmvb8ibZ0g9qsp6nCL3uwW/BPlOL5nvNQlmw/6+Fkxn6ueQi5lDBvgb14ZYpEEeSRdPj9w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/css/lightgallery.min.css" integrity="sha512-LeCCaxc1iF2UArsp3NWiOAz1mSLXFXmuiOm2n8gxOSnCXIltE27/NV9yGshWgHSCKNigfDiJUskpRiithdGc3A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/css/lg-video.min.css" integrity="sha512-89gDQOHnYjji90NPJ7+M5tgA/0E+fjL4KuSFhi6tjH6sZ54yUEogPMmOAgbI599fW1CtCyrsJbch8k/QzuoXzw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/css/lg-zoom.min.css" integrity="sha512-SGo05yQXwPFKXE+GtWCn7J4OZQBaQIakZSxQSqUyVWqO0TAv3gaF/Vox1FmG4IyXJWDwu/lXzXqPOnfX1va0+A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/css/lg-relative-caption.min.css" integrity="sha512-Tmsr0HjMvS/ReZR65bmX26m60EJjZw5AAKpnkPouiNfRqwIficKDk6x6/B3I8XdPfhTAVhGX7MkLrqZTGUn4og==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     </th:block>
     <th:block th:if="${titleDescriptor == 'Map'}">
         <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.6.1/build/ol.js"></script>

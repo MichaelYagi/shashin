@@ -20,93 +20,112 @@
                 <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
                 <div th:replace="fragments/timelinejs :: timelinejs()"></div>
 
-                <th:block th:each="metadata, iterStat: ${metadataList}">
-                    <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
-                        <br>
-                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                            <p><strong>Undated</strong></p>
-                            <div class="row">
-                        </th:block>
-
-                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p>
-                                <span style="display: none;" class="dateTakenHeading" th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></span>
+                <div id="infinite-scroll-gallery">
+                    <th:block th:each="metadata, iterStat: ${metadataList}">
+                        <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
+                            <br>
+                            <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                <p><strong>Undated</strong></p>
+                                <div class="row">
                             </th:block>
-                            <div class="row">
-                                <span style="display: none;" class="yearTaken" th:text="${metadata.year}"></span>
-                                <span style="display: none;" class="monthTaken" th:text="${metadata.month}"></span>
-                                <span style="display: none;" class="dayTaken" th:text="${metadata.day}"></span>
-                        </th:block>
 
-                    </th:block>
-
-                    <div class="photo-thumbnail-container photo-thumbnail">
-                        <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
-                        <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
-
-                        <th:block th:if="${metadata.type.contains('video')}">
-                            <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
-                            </div>
-                        </th:block>
-
-                        <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
-                            <a href="#" th:id="'select'+${metadata.id}">
-                                <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
-                            </a>
-                        </div>
-
-                        <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
-                            <a href="#" th:id="'favorite'+${metadata.id}">
-                                <span th:id="'bricon'+${metadata.id}" th:class="${favorites.get(metadata.id)} ? 'bi-suit-heart-fill' : 'bi-suit-heart'" style="font-size: 1rem;color: red;"></span>
-                            </a>
-                        </div>
-
-                        <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                            <a href="#" data-toggle="modal" th:data-target="'#prop'+${metadata.id}">
-                                <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
-                            </a>
-                        </div>
-
-                        <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
-                            <th:block th:unless="${metadata.type.contains('video')}">
-                                <a class="gallery" th:href="${metadata.thumbnailUrlOriginal}"
-                                   th:alt="${metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName}">
-                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                </a>
+                            <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                    <p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p>
+                                    <span style="display: none;" class="dateTakenHeading" th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></span>
+                                </th:block>
+                                <div class="row">
+                                    <span style="display: none;" class="yearTaken" th:text="${metadata.year}"></span>
+                                    <span style="display: none;" class="monthTaken" th:text="${metadata.month}"></span>
+                                    <span style="display: none;" class="dayTaken" th:text="${metadata.day}"></span>
                             </th:block>
+
+                        </th:block>
+
+                        <div class="photo-thumbnail-container photo-thumbnail">
+                            <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+                            <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
+
                             <th:block th:if="${metadata.type.contains('video')}">
-                                <a class="gallery" th:href="${metadata.videoUrl}"
-                                    data-featherlight="iframe"
-                                    data-featherlight-iframe-style="display:block;border:none;height:85vh;"
-                                    data-featherlight-iframe-frameborder="0"
-                                    data-featherlight-iframe-allowfullscreen="true"
-                                    th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'|'+${metadata.year}+'|'+${metadata.month}+'|'+${metadata.day}+'|'+${metadata.fileName}+'\')'"
-                                    th:alt="${metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName}">
-                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                </a>
+                                <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
+                                </div>
                             </th:block>
+
+                            <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                                <a href="#" th:id="'select'+${metadata.id}">
+                                    <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
+                                </a>
+                            </div>
+
+                            <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
+                                <a href="#" th:id="'favorite'+${metadata.id}">
+                                    <span th:id="'bricon'+${metadata.id}" th:class="${favorites.get(metadata.id)} ? 'bi-suit-heart-fill' : 'bi-suit-heart'" style="font-size: 1rem;color: red;"></span>
+                                </a>
+                            </div>
+
+                            <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
+                                <a href="#" data-toggle="modal" th:data-target="'#prop'+${metadata.id}">
+                                    <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+                                </a>
+                            </div>
+
+                            <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
+                                <th:block th:unless="${metadata.type.contains('video')}">
+                                    <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                        <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                            <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                               th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+                                    <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                        <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                           th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName}">
+                                            <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                        </a>
+                                    </th:block>
+                                </th:block>
+
+                                <th:block th:if="${metadata.type.contains('video')}">
+                                    <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                        <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                            <a class="mediaLink"
+                                               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                               th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+                                    <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                        <a class="mediaLink"
+                                           th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                           th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName}">
+                                            <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                        </a>
+                                    </th:block>
+                                </th:block>
+                            </div>
                         </div>
-                    </div>
 
-                    <div th:id="'timelinemodal'+${metadata.id}"></div>
-                    <script type="text/javascript">
-                        /*<![CDATA[*/
-                        setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                        renderTimelineModal("[[${metadata}]]");
-                        activateMetadataListeners("[[${metadata}]]");
-                        /*]]>*/
-                    </script>
+                        <div th:id="'timelinemodal'+${metadata.id}"></div>
+                        <script type="text/javascript">
+                            /*<![CDATA[*/
+                            setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                            renderTimelineModal("[[${metadata}]]");
+                            activateMetadataListeners("[[${metadata}]]");
+                            /*]]>*/
+                        </script>
 
-                    <th:block th:if="${iterStat.count > 0 and {iterStat.last or {!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}}}">
-                        <span class="appendMetadataPhotos"></span>
-                        <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
-                        <span class="attachMetadataPhotos"></span>
+                        <th:block th:if="${iterStat.count > 0 and {iterStat.last or {!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}}}">
+                            <span class="appendMetadataPhotos"></span>
+                            <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
+                            <span class="attachMetadataPhotos"></span>
+                        </th:block>
+
                     </th:block>
-
-                </th:block>
-
+                </div>
             </th:block>
 
             <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal()"></div>
@@ -124,15 +143,15 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
 
-        $('a.gallery').featherlightGallery({
-            previousIcon: '«',
-            nextIcon: '»',
-            afterContent: function() {
-                featherlightAfterOpen(this.$currentTarget.attr('alt'));
-            },
-            afterOpen: function() {
-                featherlightAfterOpen(this.$currentTarget.attr('alt'));
-            }
+        const $infiniteScrollGallery = document.getElementById(
+            'infinite-scroll-gallery',
+        );
+        var lg = lightGallery($infiniteScrollGallery, {
+            plugins: [lgZoom, lgVideo, lgRelativeCaption],
+            selector: '.mediaLink',
+            counter: false,
+            download: true,
+            videojs: true
         });
 
         function loadNextPage() {
@@ -152,6 +171,17 @@
                 /*]]>*/
                 $("#currentPage").val(nextPage);
             }
+
+            lg.destroy();
+            setTimeout(() => {
+                lg = lightGallery($infiniteScrollGallery, {
+                    plugins: [lgZoom, lgVideo, lgRelativeCaption],
+                    selector: '.mediaLink',
+                    counter: false,
+                    download: true,
+                    videojs: true
+                });
+            }, 500);
         }
         if (!$(window).hasScrollBar()) {
             loadNextPage();
