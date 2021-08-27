@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="mapjs(mapdata)">
+<div th:replace="fragments/appjs :: appjs()"></div>
 
 <div id="map" class="map" style="z-index: 0"></div>
 
@@ -35,24 +36,24 @@
             var year = data["year"];
             var month = data["month"];
             var day = data["day"];
-            var filename = data["fileName"];
+            var fileName = data["fileName"];
             var mapMarkerUrl = data["mapMarkerUrl"];
             var thumbnailUrlOriginal = data["thumbnailUrlOriginal"];
             var videoUrl = data["videoUrl"];
             var type = data["type"];
-
-            var dateTaken = "";
-            if (year !== "" || month !== "" || day !== "") {
-                dateTaken = new Date(year, month - 1, day);
-                dateTaken = dateTaken.toDateString()
-            }
+            var placeName = data["placeName"];
+            var metadataId = data["id"];
 
             var iconFeature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913')),
-                name: filename,
+                fileName: fileName,
                 photoUrl: thumbnailUrlOriginal,
                 videoUrl: videoUrl,
-                dateTaken: dateTaken,
+                year: year,
+                month: month,
+                day: day,
+                placeName: placeName,
+                metadataId: metadataId,
                 type: type
             });
             var iconStyle = new ol.style.Style({
@@ -99,43 +100,27 @@
             var lng = lngLat[0];
             var lat = lngLat[1];
 
-            // Get geo information
-            $.getJSON("https://nominatim.openstreetmap.org/reverse?format=json&lat="+lat+"&lon="+lng, function( data ) {
-                // console.log(data);
-
-                if (featureProperties.type.includes("image")) {
-                    $.featherlight(featureProperties.photoUrl, {type: "image"});
-                } else if (featureProperties.type.includes("video")) {
-                    $.featherlight(featureProperties.videoUrl,
-                        {
-                            type: "iframe"
-                        }
-                    );
-                    // $.featherlight({
-                    //     iframe: featureProperties.videoUrl,
-                    //     iframeMaxWidth: '100%',
-                    //     // iframeWidth: 500,
-                    //     iframeHeight: '100%'
-                    // });
-                }
-
-                $.featherlight.prototype.afterOpen = function() {
-                    var html = data.address.road+", "+data.address.city+", "+data.address.state+" "+data.address.country;
-                    if (featureProperties.dateTaken !== "" && featureProperties.dateTaken !== null) {
-                        html += "<br>" + featureProperties.dateTaken;
+            // console.log(data);
+            if (featureProperties.type.includes("image")) {
+                $.featherlight(featureProperties.photoUrl, {type: "image"});
+            } else if (featureProperties.type.includes("video")) {
+                $.featherlight(featureProperties.videoUrl,
+                    {
+                        type: "iframe"
                     }
+                );
+                // $.featherlight({
+                //     iframe: featureProperties.videoUrl,
+                //     iframeMaxWidth: '100%',
+                //     // iframeWidth: 500,
+                //     iframeHeight: '100%'
+                // });
+            }
 
-                    this.$instance.find('.caption').remove();
-                    this.$instance.find('.featherlight-content iframe').css("height","85vh");
-                    this.$instance.find('.featherlight-content iframe').css("width","85vw");
 
-                    // Top bar
-                    $('<div style="position: absolute; top: 0; right: 0; width: 100%;height:50px; vertical-align: middle;background-color:black;color:white;"><p style="margin: 0;position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);">'+html+'</p></div>').prependTo(".featherlight");
-                    // Push content down
-                    $(".featherlight-content").css("margin-top", "50px");
-                };
-                return false;
-            });
+            $.featherlight.prototype.afterOpen = function() {
+                featherlightAfterOpen(featureProperties.id,featureProperties.placeName,featureProperties.year,featureProperties.month,featureProperties.day,featureProperties.fileName)
+            };
         }
     });
 
