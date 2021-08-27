@@ -3,7 +3,9 @@
 <body th:fragment="mapjs(mapdata)">
 <div th:replace="fragments/appjs :: appjs()"></div>
 
-<div id="map" class="map" style="z-index: 0"></div>
+<div id="map" class="map" style="z-index: 0">
+    <div id="light-gallery-photo"></div>
+</div>
 
 <script type="text/javascript">
     /*<![CDATA[*/
@@ -39,6 +41,7 @@
             var fileName = data["fileName"];
             var mapMarkerUrl = data["mapMarkerUrl"];
             var thumbnailUrlOriginal = data["thumbnailUrlOriginal"];
+            var thumbnailUrlSmall = data["thumbnailUrlSmall"];
             var videoUrl = data["videoUrl"];
             var type = data["type"];
             var placeName = data["placeName"];
@@ -47,6 +50,7 @@
             var iconFeature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913')),
                 fileName: fileName,
+                thumbnailUrlSmall: thumbnailUrlSmall,
                 photoUrl: thumbnailUrlOriginal,
                 videoUrl: videoUrl,
                 year: year,
@@ -100,26 +104,63 @@
             var lng = lngLat[0];
             var lat = lngLat[1];
 
-            // console.log(data);
-            if (featureProperties.type.includes("image")) {
-                $.featherlight(featureProperties.photoUrl, {type: "image"});
-            } else if (featureProperties.type.includes("video")) {
-                $.featherlight(featureProperties.videoUrl,
-                    {
-                        type: "iframe"
-                    }
-                );
-                // $.featherlight({
-                //     iframe: featureProperties.videoUrl,
-                //     iframeMaxWidth: '100%',
-                //     // iframeWidth: 500,
-                //     iframeHeight: '100%'
-                // });
+            let dateString = "";
+            if (featureProperties["year"] !== null &&
+                featureProperties["month"] !== null &&
+                featureProperties["day"] !== null) {
+                let date = new Date(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
+                let dayOfWeek = getShortDay(date.getDay());
+                let shortMonth = getShortMonths(date.getMonth());
+                let day = ('0' + date.getDate()).slice(-2);
+                dateString = dayOfWeek + ", " + shortMonth + " " + day + ", " + featureProperties["year"];
             }
 
-            $.featherlight.prototype.afterOpen = function() {
-                featherlightAfterOpen(featureProperties.placeName+'|'+featureProperties.year+'|'+featureProperties.month+'|'+featureProperties.day+'|'+featureProperties.fileName)
-            };
+            // if (featureProperties.type.includes("image")) {
+            //     $.featherlight(featureProperties.photoUrl, {type: "image"});
+            // } else if (featureProperties.type.includes("video")) {
+            //     $.featherlight(featureProperties.videoUrl,
+            //         {
+            //             type: "iframe"
+            //         }
+            //     );
+            // }
+
+            var mediaContent = {}
+            if (featureProperties.type.includes("image")) {
+                mediaContent = {
+                    src: featureProperties.photoUrl,
+                    subHtml: featureProperties.placeName+'<br>'+featureProperties.fileName+(dateString !== "" ? ' taken on '+dateString : '')
+                }
+            } else if (featureProperties.type.includes("video")) {
+                // mediaContent = {
+                //     source: [
+                //         {
+                //             src: featureProperties.videoUrl,
+                //             type: featureProperties.type
+                //         },
+                //     ],
+                //     attributes: {preload: false, controls: true}
+                // }
+
+                mediaContent = {
+                    video: {"source": [{"src":featureProperties.videoUrl, "type":featureProperties.type}], "attributes": {"preload": false, "controls": true}},
+                    subHtml: featureProperties.placeName+'<br>'+featureProperties.fileName+(dateString !== "" ? ' taken on '+dateString : '')
+                }
+            }
+
+            const $dynamicGallery = document.getElementById('light-gallery-photo');
+            const dynamicGallery = lightGallery($dynamicGallery, {
+                dynamic: true,
+                dynamicEl: [
+                    mediaContent
+                ],
+                plugins: [lgZoom, lgVideo, lgRelativeCaption],
+                counter: false,
+                download: true,
+                videojs: true,
+                controls: false
+            });
+            dynamicGallery.openGallery(0);
         }
     });
 

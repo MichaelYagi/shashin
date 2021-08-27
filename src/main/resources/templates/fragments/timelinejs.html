@@ -99,6 +99,17 @@
 
                             var appended = false;
 
+                            let dateString = "";
+                            if (metadata["year"] !== null &&
+                                metadata["month"] !== null &&
+                                metadata["day"] !== null) {
+                                let date = new Date(metadata["year"], metadata["month"], metadata["day"]);
+                                let dayOfWeek = getShortDay(date.getDay());
+                                let shortMonth = getShortMonths(date.getMonth());
+                                let day = ('0' + date.getDate()).slice(-2);
+                                dateString = dayOfWeek + ", " + shortMonth + " " + day + ", " + metadata["year"];
+                            }
+
                             // Undated
                             if (metadata["year"] === null ||
                                 metadata["month"] === null ||
@@ -125,11 +136,6 @@
                                 appended = true;
                             } else { // New date div
                                 // console.log("new date");
-                                let date = new Date(metadata["year"], metadata["month"], metadata["day"]);
-                                let dayOfWeek = getShortDay(date.getDay());
-                                let shortMonth = getShortMonths(date.getMonth());
-                                let day = ('0' + date.getDate()).slice(-2);
-                                let dateString = dayOfWeek+", "+shortMonth+" "+day+", "+metadata["year"];
 
                                 html += '<br><p><strong>'+dateString+'</strong></p>\n' +
                                     '<span style="display: none;" class="dateTakenHeading">'+metadata["year"]+'-'+metadata["month"]+'-'+metadata["day"]+'</span>\n' +
@@ -167,20 +173,17 @@
                                     '   <div class="thumbnail-centered" id="tncentered'+metadata.id+'">\n';
                             if (metadata.type.includes("video")) {
                                 html +=
-                                    '   <a class="gallery" href="'+metadata.videoUrl+'"\n' +
-                                    '       data-featherlight="iframe"\n' +
-                                    '       data-featherlight-iframe-style="display:block;border:none;height:85vh;"\n' +
-                                    '       data-featherlight-iframe-frameborder="0"\n' +
-                                    '       data-featherlight-iframe-allowfullscreen="true"\n' +
-                                    '       alt="'+metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName+'">\n' +
-                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                    '   </a>\n';
+                                    '       <a class="mediaLink"\n' +
+                                    '           data-video=\'{"source": [{"src":"'+metadata.videoUrl+'", "type":"'+metadata.type+'"}], "attributes": {"preload": false, "controls": true}}\'\n' +
+                                    '           data-sub-html="'+metadata.placeName+'<br>'+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
+                                    '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                    '       </a>\n';
                             } else {
                                 html +=
-                                    '   <a class="gallery" href="'+metadata.thumbnailUrlOriginal+'"' +
-                                    '       alt="'+metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName+'">\n' +
-                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                    '   </a>\n';
+                                    '       <a class="mediaLink" data-src="'+metadata.thumbnailUrlOriginal+'" href="'+metadata.thumbnailUrlOriginal+'"' +
+                                    '           data-sub-html="'+metadata.placeName+'<br>'+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
+                                    '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                    '       </a>\n';
                             }
                             html += '</div></div>\n<div id="timelinemodal'+metadata.id+'"></div><span class="appendMetadataPhotos"></span>\n';
 
@@ -196,16 +199,6 @@
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
                             renderTimelineModal(htmlEncodedMetadata);
                             activateMetadataListeners(htmlEncodedMetadata);
-                            $('a.gallery').featherlightGallery({
-                                previousIcon: '«',
-                                nextIcon: '»',
-                                afterContent: function() {
-                                    featherlightAfterOpen(this.$currentTarget.attr('alt'));
-                                },
-                                afterOpen: function() {
-                                    featherlightAfterOpen(this.$currentTarget.attr('alt'));
-                                }
-                            });
 
                             html = "";
                         }

@@ -12,57 +12,77 @@
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <div id="favoritesMessage"></div>
             <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
-            <div class="row">
-                <th:block th:if="${metadataList != ''}">
-                    <div th:replace="fragments/appjs :: appjs()"></div>
-                    <div th:replace="fragments/favoritesjs :: favoritesjs()"></div>
+            <div id="infinite-scroll-gallery">
+                <div class="row">
+                    <th:block th:if="${metadataList != ''}">
+                        <div th:replace="fragments/appjs :: appjs()"></div>
+                        <div th:replace="fragments/favoritesjs :: favoritesjs()"></div>
 
-                    <th:block th:each="metadata, iterStat: ${metadataList}">
-                        <div class="photo-thumbnail-container photo-thumbnail">
-                            <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+                        <th:block th:each="metadata, iterStat: ${metadataList}">
+                            <div class="photo-thumbnail-container photo-thumbnail">
+                                <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
 
-                            <th:block th:if="${metadata.type.contains('video')}">
-                                <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
-                                </div>
-                            </th:block>
-
-                            <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
-                                <a href="#" th:id="'select'+${metadata.id}">
-                                    <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
-                                </a>
-                            </div>
-
-                            <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
-                                <th:block th:unless="${metadata.type.contains('video')}">
-                                    <a class="gallery" th:href="${metadata.thumbnailUrlOriginal}"
-                                       th:alt="${metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName}">
-                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                    </a>
-                                </th:block>
                                 <th:block th:if="${metadata.type.contains('video')}">
-                                    <a class="gallery" th:href="${metadata.videoUrl}"
-                                        data-featherlight="iframe"
-                                        data-featherlight-iframe-style="display:block;border:none;height:85vh;"
-                                        data-featherlight-iframe-frameborder="0"
-                                        data-featherlight-iframe-allowfullscreen="true"
-                                        th:data-featherlight-after-open="'featherlightAfterOpen(\''+${metadata.placeName}+'|'+${metadata.year}+'|'+${metadata.month}+'|'+${metadata.day}+'|'+${metadata.fileName}+'\')'"
-                                        th:alt="${metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName}">
-                                        <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                    </a>
+                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                        <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
+                                    </div>
                                 </th:block>
+
+                                <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                                    <a href="#" th:id="'select'+${metadata.id}">
+                                        <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
+                                    </a>
+                                </div>
+
+                                <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
+                                    <th:block th:unless="${metadata.type.contains('video')}">
+                                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                                <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                                   th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                               th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName}">
+                                                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+
+                                    <th:block th:if="${metadata.type.contains('video')}">
+                                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                                <a class="mediaLink"
+                                                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                                   th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <a class="mediaLink"
+                                               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                               th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName}">
+                                                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+                                </div>
                             </div>
-                        </div>
 
-                        <script type="text/javascript">
-                            /*<![CDATA[*/
-                            setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                            /*]]>*/
-                        </script>
-                        <span class="appendMetadataPhotos"></span>
+                            <script type="text/javascript">
+                                /*<![CDATA[*/
+                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                /*]]>*/
+                            </script>
+                            <span class="appendMetadataPhotos"></span>
 
+                        </th:block>
                     </th:block>
-                </th:block>
+                </div>
             </div>
 
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear})"></div>
@@ -76,15 +96,15 @@
             $('[data-toggle="tooltip"]').tooltip()
         })
 
-        $('a.gallery').featherlightGallery({
-            previousIcon: '«',
-            nextIcon: '»',
-            afterContent: function() {
-                featherlightAfterOpen(this.$currentTarget.attr('alt'));
-            },
-            afterOpen: function() {
-                featherlightAfterOpen(this.$currentTarget.attr('alt'));
-            }
+        const $infiniteScrollGallery = document.getElementById(
+            'infinite-scroll-gallery',
+        );
+        var lg = lightGallery($infiniteScrollGallery, {
+            plugins: [lgZoom, lgVideo, lgRelativeCaption],
+            selector: '.mediaLink',
+            counter: false,
+            download: true,
+            videojs: true
         });
 
         function loadNextPage() {
@@ -94,6 +114,16 @@
             updateFavorites(nextPage, "[[${activePage}]]");
             /*]]>*/
             $("#currentPage").val(nextPage);
+            lg.destroy();
+            setTimeout(() => {
+                lg = lightGallery($infiniteScrollGallery, {
+                    plugins: [lgZoom, lgVideo, lgRelativeCaption],
+                    selector: '.mediaLink',
+                    counter: false,
+                    download: true,
+                    videojs: true
+                });
+            }, 500);
         }
         if (!$(window).hasScrollBar()) {
             loadNextPage()
