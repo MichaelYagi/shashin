@@ -258,29 +258,9 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
                 }
             }
             if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
-                val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng
-                val response: String? = readUrl(geoLookupUrl)
-                val mapper = ObjectMapper()
-                val addressObj = mapper.readTree(response)
-
-                if (!addressObj.isNull) {
-                    var buildPlace = ""
-                    if (addressObj.get("address").get("road") != null) {
-                        buildPlace += addressObj.get("address").get("road").textValue()+", "
-                    }
-                    if (addressObj.get("address").get("city") != null) {
-                        buildPlace += addressObj.get("address").get("city").textValue()+", "
-                    }
-                    if (addressObj.get("address").get("state") != null) {
-                        buildPlace += addressObj.get("address").get("state").textValue()+" "
-                    }
-                    if (addressObj.get("address").get("country") != null) {
-                        buildPlace += addressObj.get("address").get("country").textValue()
-                    }
-                    if (!buildPlace.isNullOrBlank()) {
-                        buildPlace = buildPlace.trim()
-                        metadataObj.setPlaceName(buildPlace)
-                    }
+                val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,lat, lng)
+                if (!buildPlace.isNullOrBlank()) {
+                    metadataObj.setPlaceName(buildPlace)
                 }
             }
         }
@@ -404,22 +384,6 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
         } catch (e: IOException) {
             logger.log(Level.WARNING, "Could not convert video " + file.name + ": " + e.message)
             return null
-        }
-    }
-
-    @Throws(java.lang.Exception::class)
-    private fun readUrl(urlString: String): String? {
-        var reader: BufferedReader? = null
-        return try {
-            val url = URL(urlString)
-            reader = BufferedReader(InputStreamReader(url.openStream()))
-            val buffer = StringBuffer()
-            var read: Int
-            val chars = CharArray(1024)
-            while (reader.read(chars).also { read = it } != -1) buffer.append(chars, 0, read)
-            buffer.toString()
-        } finally {
-            reader?.close()
         }
     }
 

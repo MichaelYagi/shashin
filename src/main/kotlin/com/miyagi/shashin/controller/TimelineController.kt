@@ -37,6 +37,9 @@ class TimelineController {
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
 
+    @Value("\${app.endpoint.url.geocode}")
+    private var geocodeUrl: String? = null
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -173,6 +176,10 @@ class TimelineController {
                     if (latlngArr.count() == 2) {
                         metadataObj.get().setLat(latlngArr[0])
                         metadataObj.get().setLng(latlngArr[1])
+                        val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,latlngArr[0], latlngArr[1])
+                        if (!buildPlace.isNullOrBlank()) {
+                            metadataObj.get().setPlaceName(buildPlace)
+                        }
                     }
                 }
 
@@ -269,6 +276,10 @@ class TimelineController {
                         if (latlngArr.count() == 2) {
                             metadata.setLat(latlngArr[0])
                             metadata.setLng(latlngArr[1])
+                            val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,latlngArr[0], latlngArr[1])
+                            if (!buildPlace.isNullOrBlank()) {
+                                metadataObj.get().setPlaceName(buildPlace)
+                            }
                         }
                     }
                     if (keywords != null) {
