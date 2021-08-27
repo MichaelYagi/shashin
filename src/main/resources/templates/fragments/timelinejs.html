@@ -169,16 +169,16 @@
                                 html +=
                                     '   <a class="gallery" href="'+metadata.videoUrl+'"\n' +
                                     '       data-featherlight="iframe"\n' +
-                                    '       data-featherlight-iframe-style="display:block;border:none;height:85vh;width:85vw;"\n' +
+                                    '       data-featherlight-iframe-style="display:block;border:none;height:85vh;"\n' +
                                     '       data-featherlight-iframe-frameborder="0"\n' +
                                     '       data-featherlight-iframe-allowfullscreen="true"\n' +
-                                    '       data-featherlight-after-open="featherlightAfterOpen(\''+metadata.id+'\',\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
+                                    '       alt="'+metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName+'">\n' +
                                     '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                     '   </a>\n';
                             } else {
                                 html +=
-                                    '   <a class="gallery" href="'+metadata.thumbnailUrlOriginal+'" data-featherlight="image"' +
-                                    '       data-featherlight-after-open="featherlightAfterOpen(\''+metadata.id+'\',\''+metadata.placeName+'\',\''+metadata.year+'\',\''+metadata.month+'\',\''+metadata.day+'\',\''+metadata.fileName+'\')">\n' +
+                                    '   <a class="gallery" href="'+metadata.thumbnailUrlOriginal+'"' +
+                                    '       alt="'+metadata.placeName+'|'+metadata.year+'|'+metadata.month+'|'+metadata.day+'|'+metadata.fileName+'">\n' +
                                     '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                     '   </a>\n';
                             }
@@ -196,6 +196,16 @@
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
                             renderTimelineModal(htmlEncodedMetadata);
                             activateMetadataListeners(htmlEncodedMetadata);
+                            $('a.gallery').featherlightGallery({
+                                previousIcon: '«',
+                                nextIcon: '»',
+                                afterContent: function() {
+                                    featherlightAfterOpen(this.$currentTarget.attr('alt'));
+                                },
+                                afterOpen: function() {
+                                    featherlightAfterOpen(this.$currentTarget.attr('alt'));
+                                }
+                            });
 
                             html = "";
                         }
