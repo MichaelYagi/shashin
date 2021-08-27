@@ -96,14 +96,10 @@
         const $infiniteScrollGallery = document.getElementById(
             'scroll-gallery',
         );
-        var lg = lightGallery($infiniteScrollGallery, {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption],
-            selector: '.mediaLink',
-            counter: false,
-            download: true,
-            videojs: true,
-            controls: false
-        });
+        const lightGalleryConfigs = getLightGalleryConfigs();
+        lightGalleryConfigs["controls"] = false;
+        lightGalleryConfigs["selector"] = '.mediaLink';
+        var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
     });
 </script>
 
