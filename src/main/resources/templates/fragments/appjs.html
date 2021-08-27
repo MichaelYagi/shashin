@@ -337,6 +337,10 @@
     $("#appToolsDeselectAll").click(function(e) {
         e.preventDefault();
 
+        clearTimelineSelection();
+    })
+
+    function clearTimelineSelection() {
         $(".thumbnail-centered").css("display", "none");
         $(".thumbnail-bl").css("display", "none");
         $(".thumbnail-tl").css("display", "none");
@@ -346,7 +350,7 @@
         $("#appSearch").css("display", "block");
         $("#timelineAppTools").css("display", "none");
         $("#albumAppTools").css("display", "none");
-    })
+    }
 
     $("#appToolsAddAlbum").click(function(e) {
         e.preventDefault();

@@ -89,7 +89,7 @@
                                 let message = "Error";
                                 if (data["status"] === "success") {
                                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                    window.top.location = window.top.location
+                                    // window.top.location = window.top.location
                                 } else {
                                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                                 }
@@ -99,6 +99,17 @@
                     }
 
                     return false;
+                });
+
+                // Clear message on modal close
+                $('#propBatchMetadata').on('hidden.bs.modal', function () {
+                    $("#msgBatchMetadata").html("");
+                    clearTimelineSelection();
+                });
+
+                // Clear message on input editing
+                $('#propBatchMetadata').bind('keypress', function() {
+                    $("#msgBatchMetadata").html("");
                 });
             </script>
         </div>
