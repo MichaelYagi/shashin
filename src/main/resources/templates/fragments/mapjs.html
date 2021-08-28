@@ -8,145 +8,153 @@
 </div>
 
 <script type="text/javascript">
-    /*<![CDATA[*/
-    var mapdata = JSON.parse(decodeHtml("[[${mapdata}]]"));
-    /*]]>*/
+    $(document).ready(function() {
+        /*<![CDATA[*/
+        var mapdata = JSON.parse(decodeHtml("[[${mapdata}]]"));
+        /*]]>*/
 
-    var map = new ol.Map({
-        target: 'map',
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM()
+        const lightGalleryConfigs = getLightGalleryConfigs();
+        lightGalleryConfigs["controls"] = false;
+        lightGalleryConfigs["dynamic"] = true;
+        const $dynamicGallery = document.getElementById('light-gallery-photo');
+        var dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
+
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([-73.1234, 45.678]),
+                zoom: 2
             })
-        ],
-        view: new ol.View({
-            center: ol.proj.fromLonLat([-73.1234, 45.678]),
-            zoom: 2
-        })
-    });
-
-    var iconFeatures=[];
-
-    for (index in mapdata) {
-        var data = mapdata[index];
-
-        if (data["lat"] !== null && data["lng"] !== null &&
-            data["lat"] !== "" && data["lng"] !== "") {
-            var lat = data["lat"];
-            var lng = data["lng"];
-
-            var year = data["year"];
-            var month = data["month"];
-            var day = data["day"];
-            var fileName = data["fileName"];
-            var mapMarkerUrl = data["mapMarkerUrl"];
-            var thumbnailUrlOriginal = data["thumbnailUrlOriginal"];
-            var thumbnailUrlSmall = data["thumbnailUrlSmall"];
-            var videoUrl = data["videoUrl"];
-            var type = data["type"];
-            var placeName = data["placeName"];
-            var metadataId = data["id"];
-
-            var iconFeature = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913')),
-                fileName: fileName,
-                thumbnailUrlSmall: thumbnailUrlSmall,
-                photoUrl: thumbnailUrlOriginal,
-                videoUrl: videoUrl,
-                year: year,
-                month: month,
-                day: day,
-                placeName: placeName,
-                metadataId: metadataId,
-                type: type
-            });
-            var iconStyle = new ol.style.Style({
-                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                    anchor: [0.5, 46],
-                    anchorXUnits: 'fraction',
-                    anchorYUnits: 'pixels',
-                    opacity: 1.0,
-                    src: mapMarkerUrl
-                }))
-            });
-            iconFeature.setStyle(iconStyle);
-            iconFeatures.push(iconFeature);
-        }
-    }
-    if (iconFeatures.length > 0) {
-        var vectorSource = new ol.source.Vector({
-            features: iconFeatures //add an array of features
-        });
-        var layer = new ol.layer.Vector({
-            source: vectorSource
-        });
-        map.addLayer(layer);
-    }
-
-    map.on("click", function(e) {
-        // Return first feature
-        const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
-            return feature;
         });
 
-        if(typeof feature !== 'undefined' && feature.getProperties) {
-            var featureProperties = feature.getProperties();
-            // console.log(featureProperties);
+        var iconFeatures = [];
 
-            let dateString = "";
-            if (featureProperties["year"] !== null &&
-                featureProperties["month"] !== null &&
-                featureProperties["day"] !== null) {
-                let date = new Date(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
-                let dayOfWeek = getShortDay(date.getDay());
-                let shortMonth = getShortMonths(date.getMonth());
-                let day = ('0' + date.getDate()).slice(-2);
-                dateString = dayOfWeek + ", " + shortMonth + " " + day + ", " + featureProperties["year"];
+        for (index in mapdata) {
+            var data = mapdata[index];
+
+            if (data["lat"] !== null && data["lng"] !== null &&
+                data["lat"] !== "" && data["lng"] !== "") {
+                var lat = data["lat"];
+                var lng = data["lng"];
+
+                var year = data["year"];
+                var month = data["month"];
+                var day = data["day"];
+                var fileName = data["fileName"];
+                var mapMarkerUrl = data["mapMarkerUrl"];
+                var thumbnailUrlOriginal = data["thumbnailUrlOriginal"];
+                var thumbnailUrlSmall = data["thumbnailUrlSmall"];
+                var videoUrl = data["videoUrl"];
+                var type = data["type"];
+                var placeName = data["placeName"];
+                var metadataId = data["id"];
+
+                var iconFeature = new ol.Feature({
+                    geometry: new ol.geom.Point(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913')),
+                    fileName: fileName,
+                    thumbnailUrlSmall: thumbnailUrlSmall,
+                    photoUrl: thumbnailUrlOriginal,
+                    videoUrl: videoUrl,
+                    year: year,
+                    month: month,
+                    day: day,
+                    placeName: placeName,
+                    metadataId: metadataId,
+                    type: type
+                });
+                var iconStyle = new ol.style.Style({
+                    image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                        anchor: [0.5, 46],
+                        anchorXUnits: 'fraction',
+                        anchorYUnits: 'pixels',
+                        opacity: 1.0,
+                        src: mapMarkerUrl
+                    }))
+                });
+                iconFeature.setStyle(iconStyle);
+                iconFeatures.push(iconFeature);
             }
+        }
+        if (iconFeatures.length > 0) {
+            var vectorSource = new ol.source.Vector({
+                features: iconFeatures //add an array of features
+            });
+            var layer = new ol.layer.Vector({
+                source: vectorSource
+            });
+            map.addLayer(layer);
+        }
 
-            var mediaContent = {}
-            if (featureProperties.type.includes("image")) {
-                mediaContent = {
-                    src: featureProperties.photoUrl,
-                    subHtml: featureProperties.placeName+'<br>'+featureProperties.fileName+(dateString !== "" ? ' taken on '+dateString : '')
+        map.on("click", function (e) {
+            // Return first feature
+            const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
+                return feature;
+            });
+
+            if (typeof feature !== 'undefined' && feature.getProperties) {
+                var featureProperties = feature.getProperties();
+                // console.log(featureProperties);
+
+                let dateString = "";
+                if (featureProperties["year"] !== null &&
+                    featureProperties["month"] !== null &&
+                    featureProperties["day"] !== null) {
+                    let date = new Date(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
+                    let dayOfWeek = getShortDay(date.getDay());
+                    let shortMonth = getShortMonths(date.getMonth());
+                    let day = ('0' + date.getDate()).slice(-2);
+                    dateString = dayOfWeek + ", " + shortMonth + " " + day + ", " + featureProperties["year"];
                 }
-            } else if (featureProperties.type.includes("video")) {
-                mediaContent = {
-                    video: {"source": [{"src":featureProperties.videoUrl, "type":featureProperties.type}], "attributes": {"preload": false, "controls": true}},
-                    subHtml: featureProperties.placeName+'<br>'+featureProperties.fileName+(dateString !== "" ? ' taken on '+dateString : '')
+
+                var mediaContent = {}
+                if (featureProperties.type.includes("image")) {
+                    mediaContent = {
+                        src: featureProperties.photoUrl,
+                        subHtml: featureProperties.placeName + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                    }
+                } else if (featureProperties.type.includes("video")) {
+                    mediaContent = {
+                        video: {
+                            "source": [{"src": featureProperties.videoUrl, "type": featureProperties.type}],
+                            "attributes": {"preload": false, "controls": true}
+                        },
+                        subHtml: featureProperties.placeName + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                    }
                 }
+
+                dynamicGallery.destroy();
+                lightGalleryConfigs["dynamicEl"] = [
+                    mediaContent
+                ];
+                setTimeout(() => {
+                    dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
+                    dynamicGallery.openGallery(0);
+                }, 500);
             }
-
-            const lightGalleryConfigs = getLightGalleryConfigs();
-            console.log(lightGalleryConfigs);
-            lightGalleryConfigs["controls"] = false;
-            lightGalleryConfigs["dynamic"] = true;
-            lightGalleryConfigs["dynamicEl"] = [
-                mediaContent
-            ];
-
-            const $dynamicGallery = document.getElementById('light-gallery-photo');
-            const dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
-            dynamicGallery.openGallery(0);
-        }
-    });
-
-    map.on("pointermove", function (evt) {
-        var hit = this.forEachFeatureAtPixel(evt.pixel, function(feature, layer) {
-            return true;
         });
-        if (hit) {
-            this.getTargetElement().style.cursor = 'pointer';
-        } else {
-            this.getTargetElement().style.cursor = '';
+
+        map.on("pointermove", function (evt) {
+            var hit = this.forEachFeatureAtPixel(evt.pixel, function (feature, layer) {
+                return true;
+            });
+            if (hit) {
+                this.getTargetElement().style.cursor = 'pointer';
+            } else {
+                this.getTargetElement().style.cursor = '';
+            }
+        });
+
+        function decodeHtml(html) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
         }
     });
-
-    function decodeHtml(html) {
-        var txt = document.createElement("textarea");
-        txt.innerHTML = html;
-        return txt.value;
-    }
 </script>
 </body>
 </html>
