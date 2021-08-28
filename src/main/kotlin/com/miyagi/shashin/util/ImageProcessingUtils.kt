@@ -346,9 +346,6 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
             var thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
             var tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             var scaled209: BufferedImage = scaleImageByHeight(img, 209)
-            if (rotation > 0) {
-                scaled209 = rotateImage(scaled209, rotation.toDouble())
-            }
             if (tnFile != null) {
                 ImageIO.write(scaled209, "jpg", tnFile)
                 metadataObj?.setThumbnailPathSmall(tnFile.path)
@@ -358,10 +355,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                var square: BufferedImage = getSquareThumbnail(scaled209)
-                if (rotation > 0) {
-                    square = rotateImage(square, rotation.toDouble())
-                }
+                val square: BufferedImage = getSquareThumbnail(scaled209)
                 ImageIO.write(square, "jpg", tnFile)
                 metadataObj?.setThumbnailPathCentered(tnFile.path)
                 metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
@@ -370,10 +364,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                var scaled: BufferedImage = scaleImageByRatio(img, 1.0)
-                if (rotation > 0) {
-                    scaled = rotateImage(scaled, rotation.toDouble())
-                }
+                val scaled: BufferedImage = scaleImageByRatio(img, 1.0)
                 ImageIO.write(scaled, "jpg", tnFile)
                 metadataObj?.setThumbnailPathOriginal(tnFile.path)
                 metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
@@ -383,10 +374,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
                 val scaled: BufferedImage = scaleImageByHeight(img, 45)
-                var square: BufferedImage = getSquareThumbnail(scaled)
-                if (rotation > 0) {
-                    square = rotateImage(square, rotation.toDouble())
-                }
+                val square: BufferedImage = getSquareThumbnail(scaled)
                 ImageIO.write(square, "jpg", tnFile)
                 metadataObj?.setMapMarkerPath(tnFile.path)
                 metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
@@ -445,7 +433,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
         val nWidth = Math.floor(width.toDouble() * cos + height.toDouble() * sin).toInt()
         val nHeight = Math.floor(height.toDouble() * cos + width.toDouble() * sin).toInt()
         val rotatedImage = BufferedImage(
-            nWidth, nHeight, BufferedImage.TYPE_INT_ARGB
+            nWidth, nHeight, BufferedImage.TYPE_INT_RGB
         )
         val graphics = rotatedImage.createGraphics()
         graphics.setRenderingHint(
