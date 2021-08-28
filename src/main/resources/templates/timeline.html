@@ -168,7 +168,7 @@
                 $("#currentPage").val(nextPage);
             }
 
-            lg.destroy();
+            lg.destroy(true);
             setTimeout(() => {
                 lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
             }, 500);
