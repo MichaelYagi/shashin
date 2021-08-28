@@ -557,3 +557,980 @@ Using generated security password: 257839e6-4aa7-48ef-8c73-85e469eb8b67
 2021-08-28 00:02:52,590 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
 2021-08-28 00:02:52,591 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
 2021-08-28 00:02:52,592 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-28 00:10:50,639 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thread created: Thread-7.shashinscan
+2021-08-28 00:10:51,561 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG_209.jpg
+2021-08-28 00:10:51,670 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG_centered.jpg
+2021-08-28 00:10:51,683 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG_original.jpg
+2021-08-28 00:10:52,792 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1061.JPG_mapmarker.jpg
+2021-08-28 00:10:53,595 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1061.JPG.exif.yaml
+2021-08-28 00:10:53,640 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1061.JPG.yaml
+2021-08-28 00:10:54,188 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG_209.jpg
+2021-08-28 00:10:54,197 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG_centered.jpg
+2021-08-28 00:10:54,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG_original.jpg
+2021-08-28 00:10:55,128 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1062.JPG_mapmarker.jpg
+2021-08-28 00:10:55,341 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1062.JPG.exif.yaml
+2021-08-28 00:10:55,349 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1062.JPG.yaml
+2021-08-28 00:10:55,765 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG_209.jpg
+2021-08-28 00:10:55,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG_centered.jpg
+2021-08-28 00:10:55,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG_original.jpg
+2021-08-28 00:10:56,649 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1063.JPG_mapmarker.jpg
+2021-08-28 00:10:56,769 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1063.JPG.exif.yaml
+2021-08-28 00:10:56,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1063.JPG.yaml
+2021-08-28 00:10:57,194 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG_209.jpg
+2021-08-28 00:10:57,202 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG_centered.jpg
+2021-08-28 00:10:57,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG_original.jpg
+2021-08-28 00:10:58,012 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1080.JPG_mapmarker.jpg
+2021-08-28 00:10:58,062 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1080.JPG.exif.yaml
+2021-08-28 00:10:58,066 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1080.JPG.yaml
+2021-08-28 00:10:58,586 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162214741.jpg_209.jpg
+2021-08-28 00:10:58,594 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162214741.jpg_centered.jpg
+2021-08-28 00:10:58,598 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162214741.jpg_original.jpg
+2021-08-28 00:10:59,134 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162214741.jpg_mapmarker.jpg
+2021-08-28 00:10:59,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_162214741.jpg.exif.yaml
+2021-08-28 00:10:59,237 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_162214741.jpg.yaml
+2021-08-28 00:10:59,708 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162228882.jpg_209.jpg
+2021-08-28 00:10:59,715 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162228882.jpg_centered.jpg
+2021-08-28 00:10:59,721 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162228882.jpg_original.jpg
+2021-08-28 00:11:00,296 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162228882.jpg_mapmarker.jpg
+2021-08-28 00:11:00,352 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_162228882.jpg.exif.yaml
+2021-08-28 00:11:00,356 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_162228882.jpg.yaml
+2021-08-28 00:11:00,848 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162426584.jpg_209.jpg
+2021-08-28 00:11:00,855 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162426584.jpg_centered.jpg
+2021-08-28 00:11:00,860 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162426584.jpg_original.jpg
+2021-08-28 00:11:01,505 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162426584.jpg_mapmarker.jpg
+2021-08-28 00:11:01,565 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_162426584.jpg.exif.yaml
+2021-08-28 00:11:01,569 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_162426584.jpg.yaml
+2021-08-28 00:11:02,073 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162433161.jpg_209.jpg
+2021-08-28 00:11:02,079 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162433161.jpg_centered.jpg
+2021-08-28 00:11:02,083 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162433161.jpg_original.jpg
+2021-08-28 00:11:02,689 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162433161.jpg_mapmarker.jpg
+2021-08-28 00:11:02,739 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_162433161.jpg.exif.yaml
+2021-08-28 00:11:02,744 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_162433161.jpg.yaml
+2021-08-28 00:11:03,389 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162453255.jpg_209.jpg
+2021-08-28 00:11:03,396 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162453255.jpg_centered.jpg
+2021-08-28 00:11:03,401 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162453255.jpg_original.jpg
+2021-08-28 00:11:04,066 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162453255.jpg_mapmarker.jpg
+2021-08-28 00:11:04,114 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_162453255.jpg.exif.yaml
+2021-08-28 00:11:04,120 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_162453255.jpg.yaml
+2021-08-28 00:11:04,657 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162459473.jpg_209.jpg
+2021-08-28 00:11:04,662 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162459473.jpg_centered.jpg
+2021-08-28 00:11:04,666 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162459473.jpg_original.jpg
+2021-08-28 00:11:05,322 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_162459473.jpg_mapmarker.jpg
+2021-08-28 00:11:05,374 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_162459473.jpg.exif.yaml
+2021-08-28 00:11:05,378 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_162459473.jpg.yaml
+2021-08-28 00:11:05,821 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_163753322.jpg_209.jpg
+2021-08-28 00:11:05,828 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_163753322.jpg_centered.jpg
+2021-08-28 00:11:05,833 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_163753322.jpg_original.jpg
+2021-08-28 00:11:06,333 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_163753322.jpg_mapmarker.jpg
+2021-08-28 00:11:06,398 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_163753322.jpg.exif.yaml
+2021-08-28 00:11:06,400 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_163753322.jpg.yaml
+2021-08-28 00:11:06,860 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_163756597.jpg_209.jpg
+2021-08-28 00:11:06,865 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_163756597.jpg_centered.jpg
+2021-08-28 00:11:06,869 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_163756597.jpg_original.jpg
+2021-08-28 00:11:07,455 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_163756597.jpg_mapmarker.jpg
+2021-08-28 00:11:07,506 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_163756597.jpg.exif.yaml
+2021-08-28 00:11:07,509 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_163756597.jpg.yaml
+2021-08-28 00:11:07,999 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_164528303.jpg_209.jpg
+2021-08-28 00:11:08,007 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_164528303.jpg_centered.jpg
+2021-08-28 00:11:08,012 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_164528303.jpg_original.jpg
+2021-08-28 00:11:08,648 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210405_164528303.jpg_mapmarker.jpg
+2021-08-28 00:11:08,694 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210405_164528303.jpg.exif.yaml
+2021-08-28 00:11:08,697 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210405_164528303.jpg.yaml
+2021-08-28 00:11:09,159 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210409_233343452.jpg_209.jpg
+2021-08-28 00:11:09,165 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210409_233343452.jpg_centered.jpg
+2021-08-28 00:11:09,169 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210409_233343452.jpg_original.jpg
+2021-08-28 00:11:09,653 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210409_233343452.jpg_mapmarker.jpg
+2021-08-28 00:11:09,721 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210409_233343452.jpg.exif.yaml
+2021-08-28 00:11:09,726 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210409_233343452.jpg.yaml
+2021-08-28 00:11:10,299 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_202709022.jpg_209.jpg
+2021-08-28 00:11:10,308 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_202709022.jpg_centered.jpg
+2021-08-28 00:11:10,315 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_202709022.jpg_original.jpg
+2021-08-28 00:11:10,987 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_202709022.jpg_mapmarker.jpg
+2021-08-28 00:11:11,033 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210411_202709022.jpg.exif.yaml
+2021-08-28 00:11:11,038 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210411_202709022.jpg.yaml
+2021-08-28 00:11:11,541 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_203510718.jpg_209.jpg
+2021-08-28 00:11:11,548 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_203510718.jpg_centered.jpg
+2021-08-28 00:11:11,553 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_203510718.jpg_original.jpg
+2021-08-28 00:11:12,100 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_203510718.jpg_mapmarker.jpg
+2021-08-28 00:11:12,151 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210411_203510718.jpg.exif.yaml
+2021-08-28 00:11:12,155 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210411_203510718.jpg.yaml
+2021-08-28 00:11:12,628 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_203517457.jpg_209.jpg
+2021-08-28 00:11:12,633 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_203517457.jpg_centered.jpg
+2021-08-28 00:11:12,637 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_203517457.jpg_original.jpg
+2021-08-28 00:11:13,188 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_203517457.jpg_mapmarker.jpg
+2021-08-28 00:11:13,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210411_203517457.jpg.exif.yaml
+2021-08-28 00:11:13,237 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210411_203517457.jpg.yaml
+2021-08-28 00:11:13,729 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204509025.jpg_209.jpg
+2021-08-28 00:11:13,735 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204509025.jpg_centered.jpg
+2021-08-28 00:11:13,740 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204509025.jpg_original.jpg
+2021-08-28 00:11:14,331 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204509025.jpg_mapmarker.jpg
+2021-08-28 00:11:14,379 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210411_204509025.jpg.exif.yaml
+2021-08-28 00:11:14,382 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210411_204509025.jpg.yaml
+2021-08-28 00:11:14,847 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204514975.jpg_209.jpg
+2021-08-28 00:11:14,854 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204514975.jpg_centered.jpg
+2021-08-28 00:11:14,860 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204514975.jpg_original.jpg
+2021-08-28 00:11:15,444 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204514975.jpg_mapmarker.jpg
+2021-08-28 00:11:15,487 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210411_204514975.jpg.exif.yaml
+2021-08-28 00:11:15,492 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210411_204514975.jpg.yaml
+2021-08-28 00:11:15,971 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204518574.jpg_209.jpg
+2021-08-28 00:11:15,977 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204518574.jpg_centered.jpg
+2021-08-28 00:11:15,983 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204518574.jpg_original.jpg
+2021-08-28 00:11:16,616 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204518574.jpg_mapmarker.jpg
+2021-08-28 00:11:16,671 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210411_204518574.jpg.exif.yaml
+2021-08-28 00:11:16,675 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210411_204518574.jpg.yaml
+2021-08-28 00:11:17,140 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204534724.jpg_209.jpg
+2021-08-28 00:11:17,146 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204534724.jpg_centered.jpg
+2021-08-28 00:11:17,151 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204534724.jpg_original.jpg
+2021-08-28 00:11:17,740 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210411_204534724.jpg_mapmarker.jpg
+2021-08-28 00:11:17,791 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210411_204534724.jpg.exif.yaml
+2021-08-28 00:11:17,795 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210411_204534724.jpg.yaml
+2021-08-28 00:11:18,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210413_164549893.jpg_209.jpg
+2021-08-28 00:11:18,215 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210413_164549893.jpg_centered.jpg
+2021-08-28 00:11:18,219 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210413_164549893.jpg_original.jpg
+2021-08-28 00:11:18,707 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210413_164549893.jpg_mapmarker.jpg
+2021-08-28 00:11:18,798 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210413_164549893.jpg.exif.yaml
+2021-08-28 00:11:18,803 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210413_164549893.jpg.yaml
+2021-08-28 00:11:19,263 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201756161.jpg_209.jpg
+2021-08-28 00:11:19,268 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201756161.jpg_centered.jpg
+2021-08-28 00:11:19,272 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201756161.jpg_original.jpg
+2021-08-28 00:11:19,816 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201756161.jpg_mapmarker.jpg
+2021-08-28 00:11:19,878 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210417_201756161.jpg.exif.yaml
+2021-08-28 00:11:19,883 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210417_201756161.jpg.yaml
+2021-08-28 00:11:20,354 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201758348.jpg_209.jpg
+2021-08-28 00:11:20,359 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201758348.jpg_centered.jpg
+2021-08-28 00:11:20,364 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201758348.jpg_original.jpg
+2021-08-28 00:11:20,931 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201758348.jpg_mapmarker.jpg
+2021-08-28 00:11:20,981 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210417_201758348.jpg.exif.yaml
+2021-08-28 00:11:20,984 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210417_201758348.jpg.yaml
+2021-08-28 00:11:21,420 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201915323.jpg_209.jpg
+2021-08-28 00:11:21,426 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201915323.jpg_centered.jpg
+2021-08-28 00:11:21,431 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201915323.jpg_original.jpg
+2021-08-28 00:11:21,962 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_201915323.jpg_mapmarker.jpg
+2021-08-28 00:11:22,010 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210417_201915323.jpg.exif.yaml
+2021-08-28 00:11:22,013 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210417_201915323.jpg.yaml
+2021-08-28 00:11:22,481 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_231431006.jpg_209.jpg
+2021-08-28 00:11:22,488 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_231431006.jpg_centered.jpg
+2021-08-28 00:11:22,493 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_231431006.jpg_original.jpg
+2021-08-28 00:11:23,061 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_231431006.jpg_mapmarker.jpg
+2021-08-28 00:11:23,111 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210417_231431006.jpg.exif.yaml
+2021-08-28 00:11:23,114 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210417_231431006.jpg.yaml
+2021-08-28 00:11:23,595 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_231443029.jpg_209.jpg
+2021-08-28 00:11:23,602 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_231443029.jpg_centered.jpg
+2021-08-28 00:11:23,607 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_231443029.jpg_original.jpg
+2021-08-28 00:11:24,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210417_231443029.jpg_mapmarker.jpg
+2021-08-28 00:11:24,258 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210417_231443029.jpg.exif.yaml
+2021-08-28 00:11:24,262 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210417_231443029.jpg.yaml
+2021-08-28 00:11:24,705 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_172602856.jpg_209.jpg
+2021-08-28 00:11:24,712 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_172602856.jpg_centered.jpg
+2021-08-28 00:11:24,719 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_172602856.jpg_original.jpg
+2021-08-28 00:11:25,274 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_172602856.jpg_mapmarker.jpg
+2021-08-28 00:11:25,591 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210418_172602856.jpg.exif.yaml
+2021-08-28 00:11:25,597 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210418_172602856.jpg.yaml
+2021-08-28 00:11:26,053 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_175014479.jpg_209.jpg
+2021-08-28 00:11:26,058 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_175014479.jpg_centered.jpg
+2021-08-28 00:11:26,063 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_175014479.jpg_original.jpg
+2021-08-28 00:11:26,638 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_175014479.jpg_mapmarker.jpg
+2021-08-28 00:11:26,685 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210418_175014479.jpg.exif.yaml
+2021-08-28 00:11:26,688 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210418_175014479.jpg.yaml
+2021-08-28 00:11:27,134 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_175023717.jpg_209.jpg
+2021-08-28 00:11:27,140 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_175023717.jpg_centered.jpg
+2021-08-28 00:11:27,144 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_175023717.jpg_original.jpg
+2021-08-28 00:11:27,747 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_175023717.jpg_mapmarker.jpg
+2021-08-28 00:11:27,794 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210418_175023717.jpg.exif.yaml
+2021-08-28 00:11:27,799 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210418_175023717.jpg.yaml
+2021-08-28 00:11:28,267 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_194523110.jpg_209.jpg
+2021-08-28 00:11:28,273 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_194523110.jpg_centered.jpg
+2021-08-28 00:11:28,280 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_194523110.jpg_original.jpg
+2021-08-28 00:11:28,930 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_194523110.jpg_mapmarker.jpg
+2021-08-28 00:11:28,978 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210418_194523110.jpg.exif.yaml
+2021-08-28 00:11:28,981 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210418_194523110.jpg.yaml
+2021-08-28 00:11:29,439 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_194529345.jpg_209.jpg
+2021-08-28 00:11:29,446 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_194529345.jpg_centered.jpg
+2021-08-28 00:11:29,451 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_194529345.jpg_original.jpg
+2021-08-28 00:11:29,982 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210418_194529345.jpg_mapmarker.jpg
+2021-08-28 00:11:30,029 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210418_194529345.jpg.exif.yaml
+2021-08-28 00:11:30,033 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210418_194529345.jpg.yaml
+2021-08-28 00:11:30,460 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014523474.jpg_209.jpg
+2021-08-28 00:11:30,465 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014523474.jpg_centered.jpg
+2021-08-28 00:11:30,469 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014523474.jpg_original.jpg
+2021-08-28 00:11:30,971 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014523474.jpg_mapmarker.jpg
+2021-08-28 00:11:31,048 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210421_014523474.jpg.exif.yaml
+2021-08-28 00:11:31,054 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210421_014523474.jpg.yaml
+2021-08-28 00:11:31,492 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014540319.jpg_209.jpg
+2021-08-28 00:11:31,497 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014540319.jpg_centered.jpg
+2021-08-28 00:11:31,502 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014540319.jpg_original.jpg
+2021-08-28 00:11:32,099 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014540319.jpg_mapmarker.jpg
+2021-08-28 00:11:32,144 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210421_014540319.jpg.exif.yaml
+2021-08-28 00:11:32,147 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210421_014540319.jpg.yaml
+2021-08-28 00:11:32,625 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014541632.jpg_209.jpg
+2021-08-28 00:11:32,631 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014541632.jpg_centered.jpg
+2021-08-28 00:11:32,636 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014541632.jpg_original.jpg
+2021-08-28 00:11:33,218 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210421_014541632.jpg_mapmarker.jpg
+2021-08-28 00:11:33,289 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210421_014541632.jpg.exif.yaml
+2021-08-28 00:11:33,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210421_014541632.jpg.yaml
+2021-08-28 00:11:33,762 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020549381.jpg_209.jpg
+2021-08-28 00:11:33,767 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020549381.jpg_centered.jpg
+2021-08-28 00:11:33,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020549381.jpg_original.jpg
+2021-08-28 00:11:34,318 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020549381.jpg_mapmarker.jpg
+2021-08-28 00:11:34,367 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210422_020549381.jpg.exif.yaml
+2021-08-28 00:11:34,370 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210422_020549381.jpg.yaml
+2021-08-28 00:11:34,797 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020550865.jpg_209.jpg
+2021-08-28 00:11:34,801 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020550865.jpg_centered.jpg
+2021-08-28 00:11:34,806 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020550865.jpg_original.jpg
+2021-08-28 00:11:35,296 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020550865.jpg_mapmarker.jpg
+2021-08-28 00:11:35,372 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210422_020550865.jpg.exif.yaml
+2021-08-28 00:11:35,377 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210422_020550865.jpg.yaml
+2021-08-28 00:11:35,796 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020552449.jpg_209.jpg
+2021-08-28 00:11:35,800 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020552449.jpg_centered.jpg
+2021-08-28 00:11:35,805 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020552449.jpg_original.jpg
+2021-08-28 00:11:36,286 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210422_020552449.jpg_mapmarker.jpg
+2021-08-28 00:11:36,373 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210422_020552449.jpg.exif.yaml
+2021-08-28 00:11:36,377 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210422_020552449.jpg.yaml
+2021-08-28 00:11:36,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030806483.jpg_209.jpg
+2021-08-28 00:11:36,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030806483.jpg_centered.jpg
+2021-08-28 00:11:36,816 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030806483.jpg_original.jpg
+2021-08-28 00:11:37,276 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030806483.jpg_mapmarker.jpg
+2021-08-28 00:11:37,368 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_030806483.jpg.exif.yaml
+2021-08-28 00:11:37,370 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_030806483.jpg.yaml
+2021-08-28 00:11:37,790 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030818103.jpg_209.jpg
+2021-08-28 00:11:37,795 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030818103.jpg_centered.jpg
+2021-08-28 00:11:37,799 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030818103.jpg_original.jpg
+2021-08-28 00:11:38,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030818103.jpg_mapmarker.jpg
+2021-08-28 00:11:38,371 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_030818103.jpg.exif.yaml
+2021-08-28 00:11:38,377 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_030818103.jpg.yaml
+2021-08-28 00:11:38,794 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030824155.jpg_209.jpg
+2021-08-28 00:11:38,798 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030824155.jpg_centered.jpg
+2021-08-28 00:11:38,802 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030824155.jpg_original.jpg
+2021-08-28 00:11:39,279 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030824155.jpg_mapmarker.jpg
+2021-08-28 00:11:39,371 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_030824155.jpg.exif.yaml
+2021-08-28 00:11:39,376 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_030824155.jpg.yaml
+2021-08-28 00:11:39,781 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030825254.jpg_209.jpg
+2021-08-28 00:11:39,788 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030825254.jpg_centered.jpg
+2021-08-28 00:11:39,793 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030825254.jpg_original.jpg
+2021-08-28 00:11:40,305 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_030825254.jpg_mapmarker.jpg
+2021-08-28 00:11:40,374 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_030825254.jpg.exif.yaml
+2021-08-28 00:11:40,377 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_030825254.jpg.yaml
+2021-08-28 00:11:40,865 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_032149337.jpg_209.jpg
+2021-08-28 00:11:40,872 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_032149337.jpg_centered.jpg
+2021-08-28 00:11:40,879 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_032149337.jpg_original.jpg
+2021-08-28 00:11:41,469 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_032149337.jpg_mapmarker.jpg
+2021-08-28 00:11:41,519 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_032149337.jpg.exif.yaml
+2021-08-28 00:11:41,522 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_032149337.jpg.yaml
+2021-08-28 00:11:42,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160104195.jpg_209.jpg
+2021-08-28 00:11:42,004 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160104195.jpg_centered.jpg
+2021-08-28 00:11:42,008 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160104195.jpg_original.jpg
+2021-08-28 00:11:42,611 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160104195.jpg_mapmarker.jpg
+2021-08-28 00:11:42,660 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_160104195.jpg.exif.yaml
+2021-08-28 00:11:42,663 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_160104195.jpg.yaml
+2021-08-28 00:11:43,153 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160104971.jpg_209.jpg
+2021-08-28 00:11:43,159 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160104971.jpg_centered.jpg
+2021-08-28 00:11:43,164 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160104971.jpg_original.jpg
+2021-08-28 00:11:43,725 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160104971.jpg_mapmarker.jpg
+2021-08-28 00:11:43,785 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_160104971.jpg.exif.yaml
+2021-08-28 00:11:43,788 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_160104971.jpg.yaml
+2021-08-28 00:11:44,301 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160106000.jpg_209.jpg
+2021-08-28 00:11:44,306 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160106000.jpg_centered.jpg
+2021-08-28 00:11:44,311 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160106000.jpg_original.jpg
+2021-08-28 00:11:44,827 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_160106000.jpg_mapmarker.jpg
+2021-08-28 00:11:45,024 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_160106000.jpg.exif.yaml
+2021-08-28 00:11:45,030 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_160106000.jpg.yaml
+2021-08-28 00:11:45,451 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_165030285.jpg_209.jpg
+2021-08-28 00:11:45,457 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_165030285.jpg_centered.jpg
+2021-08-28 00:11:45,462 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_165030285.jpg_original.jpg
+2021-08-28 00:11:45,946 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_165030285.jpg_mapmarker.jpg
+2021-08-28 00:11:46,001 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_165030285.jpg.exif.yaml
+2021-08-28 00:11:46,004 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_165030285.jpg.yaml
+2021-08-28 00:11:46,412 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_165036676.jpg_209.jpg
+2021-08-28 00:11:46,417 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_165036676.jpg_centered.jpg
+2021-08-28 00:11:46,421 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_165036676.jpg_original.jpg
+2021-08-28 00:11:46,897 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_165036676.jpg_mapmarker.jpg
+2021-08-28 00:11:46,994 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_165036676.jpg.exif.yaml
+2021-08-28 00:11:46,996 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_165036676.jpg.yaml
+2021-08-28 00:11:47,403 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_222309184.jpg_209.jpg
+2021-08-28 00:11:47,409 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_222309184.jpg_centered.jpg
+2021-08-28 00:11:47,414 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_222309184.jpg_original.jpg
+2021-08-28 00:11:47,904 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210424_222309184.jpg_mapmarker.jpg
+2021-08-28 00:11:48,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210424_222309184.jpg.exif.yaml
+2021-08-28 00:11:48,005 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210424_222309184.jpg.yaml
+2021-08-28 00:11:48,451 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210429_010736421.jpg_209.jpg
+2021-08-28 00:11:48,456 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210429_010736421.jpg_centered.jpg
+2021-08-28 00:11:48,460 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210429_010736421.jpg_original.jpg
+2021-08-28 00:11:48,994 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210429_010736421.jpg_mapmarker.jpg
+2021-08-28 00:11:49,044 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210429_010736421.jpg.exif.yaml
+2021-08-28 00:11:49,047 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210429_010736421.jpg.yaml
+2021-08-28 00:11:49,535 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210501_150908581.jpg_209.jpg
+2021-08-28 00:11:49,540 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210501_150908581.jpg_centered.jpg
+2021-08-28 00:11:49,545 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210501_150908581.jpg_original.jpg
+2021-08-28 00:11:50,157 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210501_150908581.jpg_mapmarker.jpg
+2021-08-28 00:11:50,208 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210501_150908581.jpg.exif.yaml
+2021-08-28 00:11:50,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210501_150908581.jpg.yaml
+2021-08-28 00:11:50,986 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210501_150910318.jpg_209.jpg
+2021-08-28 00:11:50,993 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210501_150910318.jpg_centered.jpg
+2021-08-28 00:11:51,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210501_150910318.jpg_original.jpg
+2021-08-28 00:11:51,754 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210501_150910318.jpg_mapmarker.jpg
+2021-08-28 00:11:51,847 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210501_150910318.jpg.exif.yaml
+2021-08-28 00:11:51,850 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210501_150910318.jpg.yaml
+2021-08-28 00:11:52,356 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165021218.jpg_209.jpg
+2021-08-28 00:11:52,367 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165021218.jpg_centered.jpg
+2021-08-28 00:11:52,372 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165021218.jpg_original.jpg
+2021-08-28 00:11:52,991 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165021218.jpg_mapmarker.jpg
+2021-08-28 00:11:53,043 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210502_165021218.jpg.exif.yaml
+2021-08-28 00:11:53,046 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210502_165021218.jpg.yaml
+2021-08-28 00:11:53,617 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165038748.jpg_209.jpg
+2021-08-28 00:11:53,627 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165038748.jpg_centered.jpg
+2021-08-28 00:11:53,633 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165038748.jpg_original.jpg
+2021-08-28 00:11:54,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165038748.jpg_mapmarker.jpg
+2021-08-28 00:11:54,283 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210502_165038748.jpg.exif.yaml
+2021-08-28 00:11:54,286 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210502_165038748.jpg.yaml
+2021-08-28 00:11:54,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165336256.jpg_209.jpg
+2021-08-28 00:11:54,783 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165336256.jpg_centered.jpg
+2021-08-28 00:11:54,788 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165336256.jpg_original.jpg
+2021-08-28 00:11:55,412 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210502_165336256.jpg_mapmarker.jpg
+2021-08-28 00:11:55,475 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210502_165336256.jpg.exif.yaml
+2021-08-28 00:11:55,479 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210502_165336256.jpg.yaml
+2021-08-28 00:11:56,120 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184313442.jpg_209.jpg
+2021-08-28 00:11:56,128 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184313442.jpg_centered.jpg
+2021-08-28 00:11:56,134 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184313442.jpg_original.jpg
+2021-08-28 00:11:56,934 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184313442.jpg_mapmarker.jpg
+2021-08-28 00:11:57,007 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210507_184313442.jpg.exif.yaml
+2021-08-28 00:11:57,013 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210507_184313442.jpg.yaml
+2021-08-28 00:11:57,759 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184315387.jpg_209.jpg
+2021-08-28 00:11:57,768 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184315387.jpg_centered.jpg
+2021-08-28 00:11:57,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184315387.jpg_original.jpg
+2021-08-28 00:11:58,539 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184315387.jpg_mapmarker.jpg
+2021-08-28 00:11:58,591 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210507_184315387.jpg.exif.yaml
+2021-08-28 00:11:58,594 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210507_184315387.jpg.yaml
+2021-08-28 00:11:59,423 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184326200.jpg_209.jpg
+2021-08-28 00:11:59,453 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184326200.jpg_centered.jpg
+2021-08-28 00:11:59,459 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184326200.jpg_original.jpg
+2021-08-28 00:12:00,399 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184326200.jpg_mapmarker.jpg
+2021-08-28 00:12:00,452 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210507_184326200.jpg.exif.yaml
+2021-08-28 00:12:00,455 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210507_184326200.jpg.yaml
+2021-08-28 00:12:01,115 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184346599.jpg_209.jpg
+2021-08-28 00:12:01,125 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184346599.jpg_centered.jpg
+2021-08-28 00:12:01,133 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184346599.jpg_original.jpg
+2021-08-28 00:12:01,825 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210507_184346599.jpg_mapmarker.jpg
+2021-08-28 00:12:01,875 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210507_184346599.jpg.exif.yaml
+2021-08-28 00:12:01,878 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210507_184346599.jpg.yaml
+2021-08-28 00:12:02,649 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_004600650.jpg_209.jpg
+2021-08-28 00:12:02,659 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_004600650.jpg_centered.jpg
+2021-08-28 00:12:02,669 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_004600650.jpg_original.jpg
+2021-08-28 00:12:03,371 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_004600650.jpg_mapmarker.jpg
+2021-08-28 00:12:03,522 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210510_004600650.jpg.exif.yaml
+2021-08-28 00:12:03,528 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210510_004600650.jpg.yaml
+2021-08-28 00:12:03,960 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022313047.jpg_209.jpg
+2021-08-28 00:12:03,968 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022313047.jpg_centered.jpg
+2021-08-28 00:12:03,971 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022313047.jpg_original.jpg
+2021-08-28 00:12:04,535 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022313047.jpg_mapmarker.jpg
+2021-08-28 00:12:04,595 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210510_022313047.jpg.exif.yaml
+2021-08-28 00:12:04,598 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210510_022313047.jpg.yaml
+2021-08-28 00:12:05,047 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022436675.jpg_209.jpg
+2021-08-28 00:12:05,054 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022436675.jpg_centered.jpg
+2021-08-28 00:12:05,059 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022436675.jpg_original.jpg
+2021-08-28 00:12:05,605 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022436675.jpg_mapmarker.jpg
+2021-08-28 00:12:05,653 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210510_022436675.jpg.exif.yaml
+2021-08-28 00:12:05,657 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210510_022436675.jpg.yaml
+2021-08-28 00:12:06,205 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022601650.jpg_209.jpg
+2021-08-28 00:12:06,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022601650.jpg_centered.jpg
+2021-08-28 00:12:06,219 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022601650.jpg_original.jpg
+2021-08-28 00:12:06,860 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022601650.jpg_mapmarker.jpg
+2021-08-28 00:12:06,911 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210510_022601650.jpg.exif.yaml
+2021-08-28 00:12:06,915 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210510_022601650.jpg.yaml
+2021-08-28 00:12:07,461 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022857946.jpg_209.jpg
+2021-08-28 00:12:07,470 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022857946.jpg_centered.jpg
+2021-08-28 00:12:07,475 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022857946.jpg_original.jpg
+2021-08-28 00:12:08,040 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_022857946.jpg_mapmarker.jpg
+2021-08-28 00:12:08,089 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210510_022857946.jpg.exif.yaml
+2021-08-28 00:12:08,092 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210510_022857946.jpg.yaml
+2021-08-28 00:12:08,709 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_023650758.jpg_209.jpg
+2021-08-28 00:12:08,719 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_023650758.jpg_centered.jpg
+2021-08-28 00:12:08,728 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_023650758.jpg_original.jpg
+2021-08-28 00:12:09,438 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_023650758.jpg_mapmarker.jpg
+2021-08-28 00:12:09,486 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210510_023650758.jpg.exif.yaml
+2021-08-28 00:12:09,488 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210510_023650758.jpg.yaml
+2021-08-28 00:12:10,063 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_025231682.jpg_209.jpg
+2021-08-28 00:12:10,069 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_025231682.jpg_centered.jpg
+2021-08-28 00:12:10,075 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_025231682.jpg_original.jpg
+2021-08-28 00:12:10,853 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210510_025231682.jpg_mapmarker.jpg
+2021-08-28 00:12:10,906 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210510_025231682.jpg.exif.yaml
+2021-08-28 00:12:10,910 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210510_025231682.jpg.yaml
+2021-08-28 00:12:11,612 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210515_222850764.jpg_209.jpg
+2021-08-28 00:12:11,621 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210515_222850764.jpg_centered.jpg
+2021-08-28 00:12:11,628 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210515_222850764.jpg_original.jpg
+2021-08-28 00:12:12,759 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210515_222850764.jpg_mapmarker.jpg
+2021-08-28 00:12:12,846 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210515_222850764.jpg.exif.yaml
+2021-08-28 00:12:12,860 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210515_222850764.jpg.yaml
+2021-08-28 00:12:13,680 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210516_180035382.jpg_209.jpg
+2021-08-28 00:12:13,686 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210516_180035382.jpg_centered.jpg
+2021-08-28 00:12:13,691 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210516_180035382.jpg_original.jpg
+2021-08-28 00:12:14,443 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210516_180035382.jpg_mapmarker.jpg
+2021-08-28 00:12:14,508 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210516_180035382.jpg.exif.yaml
+2021-08-28 00:12:14,511 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210516_180035382.jpg.yaml
+2021-08-28 00:12:15,024 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210518_044949666.jpg_209.jpg
+2021-08-28 00:12:15,030 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210518_044949666.jpg_centered.jpg
+2021-08-28 00:12:15,036 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210518_044949666.jpg_original.jpg
+2021-08-28 00:12:15,655 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210518_044949666.jpg_mapmarker.jpg
+2021-08-28 00:12:15,715 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210518_044949666.jpg.exif.yaml
+2021-08-28 00:12:15,718 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210518_044949666.jpg.yaml
+2021-08-28 00:12:16,166 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210520_014218908.jpg_209.jpg
+2021-08-28 00:12:16,171 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210520_014218908.jpg_centered.jpg
+2021-08-28 00:12:16,174 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210520_014218908.jpg_original.jpg
+2021-08-28 00:12:16,710 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210520_014218908.jpg_mapmarker.jpg
+2021-08-28 00:12:16,761 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210520_014218908.jpg.exif.yaml
+2021-08-28 00:12:16,764 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210520_014218908.jpg.yaml
+2021-08-28 00:12:17,217 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210520_014226049.jpg_209.jpg
+2021-08-28 00:12:17,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210520_014226049.jpg_centered.jpg
+2021-08-28 00:12:17,228 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210520_014226049.jpg_original.jpg
+2021-08-28 00:12:17,741 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210520_014226049.jpg_mapmarker.jpg
+2021-08-28 00:12:17,791 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210520_014226049.jpg.exif.yaml
+2021-08-28 00:12:17,795 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210520_014226049.jpg.yaml
+2021-08-28 00:12:18,365 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_192104201.jpg_209.jpg
+2021-08-28 00:12:18,372 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_192104201.jpg_centered.jpg
+2021-08-28 00:12:18,377 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_192104201.jpg_original.jpg
+2021-08-28 00:12:19,007 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_192104201.jpg_mapmarker.jpg
+2021-08-28 00:12:19,172 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210522_192104201.jpg.exif.yaml
+2021-08-28 00:12:19,176 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210522_192104201.jpg.yaml
+2021-08-28 00:12:20,162 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_193257428.PORTRAIT.jpg_209.jpg
+2021-08-28 00:12:20,168 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_193257428.PORTRAIT.jpg_centered.jpg
+2021-08-28 00:12:20,172 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_193257428.PORTRAIT.jpg_original.jpg
+2021-08-28 00:12:20,611 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_193257428.PORTRAIT.jpg_mapmarker.jpg
+2021-08-28 00:12:20,693 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210522_193257428.PORTRAIT.jpg.exif.yaml
+2021-08-28 00:12:20,696 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210522_193257428.PORTRAIT.jpg.yaml
+2021-08-28 00:12:21,241 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_212720138.jpg_209.jpg
+2021-08-28 00:12:21,250 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_212720138.jpg_centered.jpg
+2021-08-28 00:12:21,257 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_212720138.jpg_original.jpg
+2021-08-28 00:12:21,927 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_212720138.jpg_mapmarker.jpg
+2021-08-28 00:12:21,975 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210522_212720138.jpg.exif.yaml
+2021-08-28 00:12:21,978 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210522_212720138.jpg.yaml
+2021-08-28 00:12:22,545 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_212726118.jpg_209.jpg
+2021-08-28 00:12:22,555 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_212726118.jpg_centered.jpg
+2021-08-28 00:12:22,563 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_212726118.jpg_original.jpg
+2021-08-28 00:12:23,176 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_212726118.jpg_mapmarker.jpg
+2021-08-28 00:12:23,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210522_212726118.jpg.exif.yaml
+2021-08-28 00:12:23,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210522_212726118.jpg.yaml
+2021-08-28 00:12:23,835 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213805452.jpg_209.jpg
+2021-08-28 00:12:23,841 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213805452.jpg_centered.jpg
+2021-08-28 00:12:23,845 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213805452.jpg_original.jpg
+2021-08-28 00:12:24,503 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213805452.jpg_mapmarker.jpg
+2021-08-28 00:12:24,552 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210522_213805452.jpg.exif.yaml
+2021-08-28 00:12:24,556 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210522_213805452.jpg.yaml
+2021-08-28 00:12:25,004 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213813533.jpg_209.jpg
+2021-08-28 00:12:25,012 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213813533.jpg_centered.jpg
+2021-08-28 00:12:25,018 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213813533.jpg_original.jpg
+2021-08-28 00:12:25,623 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213813533.jpg_mapmarker.jpg
+2021-08-28 00:12:25,669 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210522_213813533.jpg.exif.yaml
+2021-08-28 00:12:25,672 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210522_213813533.jpg.yaml
+2021-08-28 00:12:26,140 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213815901.jpg_209.jpg
+2021-08-28 00:12:26,152 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213815901.jpg_centered.jpg
+2021-08-28 00:12:26,162 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213815901.jpg_original.jpg
+2021-08-28 00:12:26,781 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210522_213815901.jpg_mapmarker.jpg
+2021-08-28 00:12:26,846 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210522_213815901.jpg.exif.yaml
+2021-08-28 00:12:26,851 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210522_213815901.jpg.yaml
+2021-08-28 00:12:27,279 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201017631.jpg_209.jpg
+2021-08-28 00:12:27,286 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201017631.jpg_centered.jpg
+2021-08-28 00:12:27,291 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201017631.jpg_original.jpg
+2021-08-28 00:12:27,826 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201017631.jpg_mapmarker.jpg
+2021-08-28 00:12:27,882 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210523_201017631.jpg.exif.yaml
+2021-08-28 00:12:27,887 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210523_201017631.jpg.yaml
+2021-08-28 00:12:28,355 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201020354.jpg_209.jpg
+2021-08-28 00:12:28,360 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201020354.jpg_centered.jpg
+2021-08-28 00:12:28,367 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201020354.jpg_original.jpg
+2021-08-28 00:12:28,907 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201020354.jpg_mapmarker.jpg
+2021-08-28 00:12:28,961 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210523_201020354.jpg.exif.yaml
+2021-08-28 00:12:28,966 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210523_201020354.jpg.yaml
+2021-08-28 00:12:29,449 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201022214.jpg_209.jpg
+2021-08-28 00:12:29,456 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201022214.jpg_centered.jpg
+2021-08-28 00:12:29,460 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201022214.jpg_original.jpg
+2021-08-28 00:12:29,993 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201022214.jpg_mapmarker.jpg
+2021-08-28 00:12:30,037 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210523_201022214.jpg.exif.yaml
+2021-08-28 00:12:30,041 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210523_201022214.jpg.yaml
+2021-08-28 00:12:30,486 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201023748.jpg_209.jpg
+2021-08-28 00:12:30,492 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201023748.jpg_centered.jpg
+2021-08-28 00:12:30,496 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201023748.jpg_original.jpg
+2021-08-28 00:12:31,014 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201023748.jpg_mapmarker.jpg
+2021-08-28 00:12:31,061 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210523_201023748.jpg.exif.yaml
+2021-08-28 00:12:31,065 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210523_201023748.jpg.yaml
+2021-08-28 00:12:31,532 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201233068.jpg_209.jpg
+2021-08-28 00:12:31,537 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201233068.jpg_centered.jpg
+2021-08-28 00:12:31,542 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201233068.jpg_original.jpg
+2021-08-28 00:12:32,120 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201233068.jpg_mapmarker.jpg
+2021-08-28 00:12:32,166 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210523_201233068.jpg.exif.yaml
+2021-08-28 00:12:32,169 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210523_201233068.jpg.yaml
+2021-08-28 00:12:32,603 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201233947.jpg_209.jpg
+2021-08-28 00:12:32,611 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201233947.jpg_centered.jpg
+2021-08-28 00:12:32,617 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201233947.jpg_original.jpg
+2021-08-28 00:12:33,119 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201233947.jpg_mapmarker.jpg
+2021-08-28 00:12:33,167 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210523_201233947.jpg.exif.yaml
+2021-08-28 00:12:33,170 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210523_201233947.jpg.yaml
+2021-08-28 00:12:33,638 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201235238.jpg_209.jpg
+2021-08-28 00:12:33,643 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201235238.jpg_centered.jpg
+2021-08-28 00:12:33,648 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201235238.jpg_original.jpg
+2021-08-28 00:12:34,128 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201235238.jpg_mapmarker.jpg
+2021-08-28 00:12:34,180 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210523_201235238.jpg.exif.yaml
+2021-08-28 00:12:34,184 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210523_201235238.jpg.yaml
+2021-08-28 00:12:34,615 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201236229.jpg_209.jpg
+2021-08-28 00:12:34,621 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201236229.jpg_centered.jpg
+2021-08-28 00:12:34,626 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201236229.jpg_original.jpg
+2021-08-28 00:12:35,096 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210523_201236229.jpg_mapmarker.jpg
+2021-08-28 00:12:35,172 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210523_201236229.jpg.exif.yaml
+2021-08-28 00:12:35,176 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210523_201236229.jpg.yaml
+2021-08-28 00:12:35,606 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210530_185402762.jpg_209.jpg
+2021-08-28 00:12:35,612 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210530_185402762.jpg_centered.jpg
+2021-08-28 00:12:35,617 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210530_185402762.jpg_original.jpg
+2021-08-28 00:12:36,094 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210530_185402762.jpg_mapmarker.jpg
+2021-08-28 00:12:36,177 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210530_185402762.jpg.exif.yaml
+2021-08-28 00:12:36,181 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210530_185402762.jpg.yaml
+2021-08-28 00:12:36,610 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_154231248.jpg_209.jpg
+2021-08-28 00:12:36,616 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_154231248.jpg_centered.jpg
+2021-08-28 00:12:36,622 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_154231248.jpg_original.jpg
+2021-08-28 00:12:37,158 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_154231248.jpg_mapmarker.jpg
+2021-08-28 00:12:37,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210531_154231248.jpg.exif.yaml
+2021-08-28 00:12:37,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210531_154231248.jpg.yaml
+2021-08-28 00:12:37,669 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_190032259.jpg_209.jpg
+2021-08-28 00:12:37,676 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_190032259.jpg_centered.jpg
+2021-08-28 00:12:37,684 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_190032259.jpg_original.jpg
+2021-08-28 00:12:38,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_190032259.jpg_mapmarker.jpg
+2021-08-28 00:12:38,256 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210531_190032259.jpg.exif.yaml
+2021-08-28 00:12:38,262 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210531_190032259.jpg.yaml
+2021-08-28 00:12:38,753 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_190208798.jpg_209.jpg
+2021-08-28 00:12:38,759 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_190208798.jpg_centered.jpg
+2021-08-28 00:12:38,764 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_190208798.jpg_original.jpg
+2021-08-28 00:12:39,336 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_190208798.jpg_mapmarker.jpg
+2021-08-28 00:12:39,381 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210531_190208798.jpg.exif.yaml
+2021-08-28 00:12:39,385 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210531_190208798.jpg.yaml
+2021-08-28 00:12:39,844 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194031869.jpg_209.jpg
+2021-08-28 00:12:39,852 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194031869.jpg_centered.jpg
+2021-08-28 00:12:39,858 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194031869.jpg_original.jpg
+2021-08-28 00:12:40,416 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194031869.jpg_mapmarker.jpg
+2021-08-28 00:12:40,463 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210531_194031869.jpg.exif.yaml
+2021-08-28 00:12:40,465 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210531_194031869.jpg.yaml
+2021-08-28 00:12:40,932 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194155976.jpg_209.jpg
+2021-08-28 00:12:40,939 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194155976.jpg_centered.jpg
+2021-08-28 00:12:40,944 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194155976.jpg_original.jpg
+2021-08-28 00:12:41,527 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194155976.jpg_mapmarker.jpg
+2021-08-28 00:12:41,633 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210531_194155976.jpg.exif.yaml
+2021-08-28 00:12:41,636 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210531_194155976.jpg.yaml
+2021-08-28 00:12:42,076 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194416533.jpg_209.jpg
+2021-08-28 00:12:42,083 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194416533.jpg_centered.jpg
+2021-08-28 00:12:42,088 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194416533.jpg_original.jpg
+2021-08-28 00:12:42,652 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194416533.jpg_mapmarker.jpg
+2021-08-28 00:12:42,699 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210531_194416533.jpg.exif.yaml
+2021-08-28 00:12:42,702 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210531_194416533.jpg.yaml
+2021-08-28 00:12:42,984 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194416533~2.jpg_209.jpg
+2021-08-28 00:12:42,991 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194416533~2.jpg_centered.jpg
+2021-08-28 00:12:42,997 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194416533~2.jpg_original.jpg
+2021-08-28 00:12:43,400 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194416533~2.jpg_mapmarker.jpg
+2021-08-28 00:12:43,695 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210531_194416533~2.jpg.exif.yaml
+2021-08-28 00:12:43,698 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210531_194416533~2.jpg.yaml
+2021-08-28 00:12:44,129 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194432903.jpg_209.jpg
+2021-08-28 00:12:44,135 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194432903.jpg_centered.jpg
+2021-08-28 00:12:44,140 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194432903.jpg_original.jpg
+2021-08-28 00:12:44,690 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210531_194432903.jpg_mapmarker.jpg
+2021-08-28 00:12:44,735 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210531_194432903.jpg.exif.yaml
+2021-08-28 00:12:44,738 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210531_194432903.jpg.yaml
+2021-08-28 00:12:45,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210603_141638689.jpg_209.jpg
+2021-08-28 00:12:45,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210603_141638689.jpg_centered.jpg
+2021-08-28 00:12:45,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210603_141638689.jpg_original.jpg
+2021-08-28 00:12:45,795 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210603_141638689.jpg_mapmarker.jpg
+2021-08-28 00:12:45,850 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210603_141638689.jpg.exif.yaml
+2021-08-28 00:12:45,855 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210603_141638689.jpg.yaml
+2021-08-28 00:12:46,312 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210604_231018862.jpg_209.jpg
+2021-08-28 00:12:46,317 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210604_231018862.jpg_centered.jpg
+2021-08-28 00:12:46,322 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210604_231018862.jpg_original.jpg
+2021-08-28 00:12:46,884 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210604_231018862.jpg_mapmarker.jpg
+2021-08-28 00:12:46,939 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210604_231018862.jpg.exif.yaml
+2021-08-28 00:12:46,944 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210604_231018862.jpg.yaml
+2021-08-28 00:12:47,426 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210606_173934755.jpg_209.jpg
+2021-08-28 00:12:47,432 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210606_173934755.jpg_centered.jpg
+2021-08-28 00:12:47,437 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210606_173934755.jpg_original.jpg
+2021-08-28 00:12:48,021 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210606_173934755.jpg_mapmarker.jpg
+2021-08-28 00:12:48,066 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210606_173934755.jpg.exif.yaml
+2021-08-28 00:12:48,070 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210606_173934755.jpg.yaml
+2021-08-28 00:12:48,536 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210606_173940070.jpg_209.jpg
+2021-08-28 00:12:48,686 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210606_173940070.jpg_centered.jpg
+2021-08-28 00:12:48,694 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210606_173940070.jpg_original.jpg
+2021-08-28 00:12:49,268 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210606_173940070.jpg_mapmarker.jpg
+2021-08-28 00:12:49,320 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210606_173940070.jpg.exif.yaml
+2021-08-28 00:12:49,324 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210606_173940070.jpg.yaml
+2021-08-28 00:12:49,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_132815148.jpg_209.jpg
+2021-08-28 00:12:49,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_132815148.jpg_centered.jpg
+2021-08-28 00:12:49,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_132815148.jpg_original.jpg
+2021-08-28 00:12:50,380 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_132815148.jpg_mapmarker.jpg
+2021-08-28 00:12:50,431 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210612_132815148.jpg.exif.yaml
+2021-08-28 00:12:50,434 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210612_132815148.jpg.yaml
+2021-08-28 00:12:50,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_132854206.jpg_209.jpg
+2021-08-28 00:12:50,820 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_132854206.jpg_centered.jpg
+2021-08-28 00:12:50,825 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_132854206.jpg_original.jpg
+2021-08-28 00:12:51,322 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_132854206.jpg_mapmarker.jpg
+2021-08-28 00:12:51,430 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210612_132854206.jpg.exif.yaml
+2021-08-28 00:12:51,432 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210612_132854206.jpg.yaml
+2021-08-28 00:12:51,902 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_160155279.jpg_209.jpg
+2021-08-28 00:12:51,910 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_160155279.jpg_centered.jpg
+2021-08-28 00:12:51,915 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_160155279.jpg_original.jpg
+2021-08-28 00:12:52,484 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210612_160155279.jpg_mapmarker.jpg
+2021-08-28 00:12:52,530 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210612_160155279.jpg.exif.yaml
+2021-08-28 00:12:52,534 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210612_160155279.jpg.yaml
+2021-08-28 00:12:52,945 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210615_033340152.jpg_209.jpg
+2021-08-28 00:12:52,951 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210615_033340152.jpg_centered.jpg
+2021-08-28 00:12:52,960 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210615_033340152.jpg_original.jpg
+2021-08-28 00:12:53,431 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210615_033340152.jpg_mapmarker.jpg
+2021-08-28 00:12:53,529 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210615_033340152.jpg.exif.yaml
+2021-08-28 00:12:53,534 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210615_033340152.jpg.yaml
+2021-08-28 00:12:53,973 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210618_163052413.jpg_209.jpg
+2021-08-28 00:12:53,979 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210618_163052413.jpg_centered.jpg
+2021-08-28 00:12:53,985 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210618_163052413.jpg_original.jpg
+2021-08-28 00:12:54,481 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210618_163052413.jpg_mapmarker.jpg
+2021-08-28 00:12:54,539 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210618_163052413.jpg.exif.yaml
+2021-08-28 00:12:54,542 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210618_163052413.jpg.yaml
+2021-08-28 00:12:55,030 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210618_210726607.jpg_209.jpg
+2021-08-28 00:12:55,036 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210618_210726607.jpg_centered.jpg
+2021-08-28 00:12:55,041 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210618_210726607.jpg_original.jpg
+2021-08-28 00:12:55,626 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210618_210726607.jpg_mapmarker.jpg
+2021-08-28 00:12:55,683 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210618_210726607.jpg.exif.yaml
+2021-08-28 00:12:55,687 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210618_210726607.jpg.yaml
+2021-08-28 00:12:56,095 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_152703598.jpg_209.jpg
+2021-08-28 00:12:56,101 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_152703598.jpg_centered.jpg
+2021-08-28 00:12:56,105 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_152703598.jpg_original.jpg
+2021-08-28 00:12:56,582 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_152703598.jpg_mapmarker.jpg
+2021-08-28 00:12:56,689 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_152703598.jpg.exif.yaml
+2021-08-28 00:12:56,693 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_152703598.jpg.yaml
+2021-08-28 00:12:57,131 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_153849917.jpg_209.jpg
+2021-08-28 00:12:57,138 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_153849917.jpg_centered.jpg
+2021-08-28 00:12:57,146 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_153849917.jpg_original.jpg
+2021-08-28 00:12:57,659 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_153849917.jpg_mapmarker.jpg
+2021-08-28 00:12:57,707 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_153849917.jpg.exif.yaml
+2021-08-28 00:12:57,711 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_153849917.jpg.yaml
+2021-08-28 00:12:58,129 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_153901395.jpg_209.jpg
+2021-08-28 00:12:58,134 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_153901395.jpg_centered.jpg
+2021-08-28 00:12:58,138 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_153901395.jpg_original.jpg
+2021-08-28 00:12:58,651 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_153901395.jpg_mapmarker.jpg
+2021-08-28 00:12:58,711 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_153901395.jpg.exif.yaml
+2021-08-28 00:12:58,715 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_153901395.jpg.yaml
+2021-08-28 00:12:59,148 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_162227949.jpg_209.jpg
+2021-08-28 00:12:59,153 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_162227949.jpg_centered.jpg
+2021-08-28 00:12:59,157 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_162227949.jpg_original.jpg
+2021-08-28 00:12:59,668 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_162227949.jpg_mapmarker.jpg
+2021-08-28 00:12:59,717 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_162227949.jpg.exif.yaml
+2021-08-28 00:12:59,721 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_162227949.jpg.yaml
+2021-08-28 00:13:00,174 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_164213821.jpg_209.jpg
+2021-08-28 00:13:00,179 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_164213821.jpg_centered.jpg
+2021-08-28 00:13:00,184 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_164213821.jpg_original.jpg
+2021-08-28 00:13:00,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_164213821.jpg_mapmarker.jpg
+2021-08-28 00:13:00,821 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_164213821.jpg.exif.yaml
+2021-08-28 00:13:00,825 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_164213821.jpg.yaml
+2021-08-28 00:13:01,316 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_164216171.jpg_209.jpg
+2021-08-28 00:13:01,323 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_164216171.jpg_centered.jpg
+2021-08-28 00:13:01,327 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_164216171.jpg_original.jpg
+2021-08-28 00:13:01,888 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_164216171.jpg_mapmarker.jpg
+2021-08-28 00:13:01,930 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_164216171.jpg.exif.yaml
+2021-08-28 00:13:01,934 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_164216171.jpg.yaml
+2021-08-28 00:13:02,455 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_165250894.jpg_209.jpg
+2021-08-28 00:13:02,463 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_165250894.jpg_centered.jpg
+2021-08-28 00:13:02,469 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_165250894.jpg_original.jpg
+2021-08-28 00:13:03,008 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_165250894.jpg_mapmarker.jpg
+2021-08-28 00:13:03,099 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_165250894.jpg.exif.yaml
+2021-08-28 00:13:03,106 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_165250894.jpg.yaml
+2021-08-28 00:13:03,668 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_165730018.jpg_209.jpg
+2021-08-28 00:13:03,675 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_165730018.jpg_centered.jpg
+2021-08-28 00:13:03,680 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_165730018.jpg_original.jpg
+2021-08-28 00:13:04,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_165730018.jpg_mapmarker.jpg
+2021-08-28 00:13:04,301 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_165730018.jpg.exif.yaml
+2021-08-28 00:13:04,304 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_165730018.jpg.yaml
+2021-08-28 00:13:04,803 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_210705511.jpg_209.jpg
+2021-08-28 00:13:04,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_210705511.jpg_centered.jpg
+2021-08-28 00:13:04,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_210705511.jpg_original.jpg
+2021-08-28 00:13:05,333 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210619_210705511.jpg_mapmarker.jpg
+2021-08-28 00:13:05,382 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210619_210705511.jpg.exif.yaml
+2021-08-28 00:13:05,386 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210619_210705511.jpg.yaml
+2021-08-28 00:13:05,849 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210620_143251347.jpg_209.jpg
+2021-08-28 00:13:05,854 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210620_143251347.jpg_centered.jpg
+2021-08-28 00:13:05,857 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210620_143251347.jpg_original.jpg
+2021-08-28 00:13:06,418 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210620_143251347.jpg_mapmarker.jpg
+2021-08-28 00:13:06,466 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210620_143251347.jpg.exif.yaml
+2021-08-28 00:13:06,469 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210620_143251347.jpg.yaml
+2021-08-28 00:13:06,922 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG_209.jpg
+2021-08-28 00:13:06,929 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG_centered.jpg
+2021-08-28 00:13:06,933 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG_original.jpg
+2021-08-28 00:13:07,723 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1074.JPG_mapmarker.jpg
+2021-08-28 00:13:07,984 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1074.JPG.exif.yaml
+2021-08-28 00:13:07,988 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1074.JPG.yaml
+2021-08-28 00:13:08,353 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG_209.jpg
+2021-08-28 00:13:08,359 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG_centered.jpg
+2021-08-28 00:13:08,364 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG_original.jpg
+2021-08-28 00:13:09,146 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1075.JPG_mapmarker.jpg
+2021-08-28 00:13:09,193 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1075.JPG.exif.yaml
+2021-08-28 00:13:09,195 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1075.JPG.yaml
+2021-08-28 00:13:09,582 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG_209.jpg
+2021-08-28 00:13:09,589 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG_centered.jpg
+2021-08-28 00:13:09,593 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG_original.jpg
+2021-08-28 00:13:10,364 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1076.JPG_mapmarker.jpg
+2021-08-28 00:13:10,410 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1076.JPG.exif.yaml
+2021-08-28 00:13:10,414 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1076.JPG.yaml
+2021-08-28 00:13:10,783 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG_209.jpg
+2021-08-28 00:13:10,789 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG_centered.jpg
+2021-08-28 00:13:10,793 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG_original.jpg
+2021-08-28 00:13:11,580 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1077.JPG_mapmarker.jpg
+2021-08-28 00:13:11,723 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1077.JPG.exif.yaml
+2021-08-28 00:13:11,727 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1077.JPG.yaml
+2021-08-28 00:13:12,118 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG_209.jpg
+2021-08-28 00:13:12,126 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG_centered.jpg
+2021-08-28 00:13:12,132 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG_original.jpg
+2021-08-28 00:13:12,948 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1078.JPG_mapmarker.jpg
+2021-08-28 00:13:12,995 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1078.JPG.exif.yaml
+2021-08-28 00:13:13,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1078.JPG.yaml
+2021-08-28 00:13:13,375 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG_209.jpg
+2021-08-28 00:13:13,381 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG_centered.jpg
+2021-08-28 00:13:13,386 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG_original.jpg
+2021-08-28 00:13:14,146 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSCF1079.JPG_mapmarker.jpg
+2021-08-28 00:13:14,194 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSCF1079.JPG.exif.yaml
+2021-08-28 00:13:14,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSCF1079.JPG.yaml
+2021-08-28 00:13:14,414 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200905_100554.jpg_209.jpg
+2021-08-28 00:13:14,422 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200905_100554.jpg_centered.jpg
+2021-08-28 00:13:14,426 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200905_100554.jpg_original.jpg
+2021-08-28 00:13:14,975 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200905_100554.jpg_mapmarker.jpg
+2021-08-28 00:13:14,981 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: IMG_20200905_100554.jpg.exif.yaml
+2021-08-28 00:13:14,983 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: IMG_20200905_100554.jpg.yaml
+2021-08-28 00:13:15,137 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200911_142553.jpg_209.jpg
+2021-08-28 00:13:15,142 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200911_142553.jpg_centered.jpg
+2021-08-28 00:13:15,146 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200911_142553.jpg_original.jpg
+2021-08-28 00:13:15,602 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20200911_142553.jpg_mapmarker.jpg
+2021-08-28 00:13:15,820 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: IMG_20200911_142553.jpg.exif.yaml
+2021-08-28 00:13:15,823 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: IMG_20200911_142553.jpg.yaml
+2021-08-28 00:13:16,015 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20201223_094103.jpg_209.jpg
+2021-08-28 00:13:16,021 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20201223_094103.jpg_centered.jpg
+2021-08-28 00:13:16,026 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20201223_094103.jpg_original.jpg
+2021-08-28 00:13:16,546 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20201223_094103.jpg_mapmarker.jpg
+2021-08-28 00:13:16,551 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: IMG_20201223_094103.jpg.exif.yaml
+2021-08-28 00:13:16,553 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: IMG_20201223_094103.jpg.yaml
+2021-08-28 00:13:16,767 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: RAW_NIKON_D1.NEF_209.jpg
+2021-08-28 00:13:16,795 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: RAW_NIKON_D1.NEF_centered.jpg
+2021-08-28 00:13:16,799 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: RAW_NIKON_D1.NEF_original.jpg
+2021-08-28 00:13:16,806 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: RAW_NIKON_D1.NEF_mapmarker.jpg
+2021-08-28 00:13:16,820 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: RAW_NIKON_D1.NEF.exif.yaml
+2021-08-28 00:13:16,822 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: RAW_NIKON_D1.NEF.yaml
+2021-08-28 00:13:17,611 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04477.jpg_209.jpg
+2021-08-28 00:13:17,617 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04477.jpg_centered.jpg
+2021-08-28 00:13:17,622 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04477.jpg_original.jpg
+2021-08-28 00:13:17,937 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04477.jpg_mapmarker.jpg
+2021-08-28 00:13:17,945 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04477.jpg.exif.yaml
+2021-08-28 00:13:17,947 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04477.jpg.yaml
+2021-08-28 00:13:18,680 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04507.jpg_209.jpg
+2021-08-28 00:13:18,689 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04507.jpg_centered.jpg
+2021-08-28 00:13:18,695 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04507.jpg_original.jpg
+2021-08-28 00:13:19,018 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04507.jpg_mapmarker.jpg
+2021-08-28 00:13:19,035 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04507.jpg.exif.yaml
+2021-08-28 00:13:19,038 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04507.jpg.yaml
+2021-08-28 00:13:19,805 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04548.jpg_209.jpg
+2021-08-28 00:13:19,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04548.jpg_centered.jpg
+2021-08-28 00:13:19,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04548.jpg_original.jpg
+2021-08-28 00:13:20,139 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04548.jpg_mapmarker.jpg
+2021-08-28 00:13:20,145 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04548.jpg.exif.yaml
+2021-08-28 00:13:20,147 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04548.jpg.yaml
+2021-08-28 00:13:20,897 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04552.jpg_209.jpg
+2021-08-28 00:13:20,902 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04552.jpg_centered.jpg
+2021-08-28 00:13:20,906 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04552.jpg_original.jpg
+2021-08-28 00:13:21,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04552.jpg_mapmarker.jpg
+2021-08-28 00:13:21,220 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04552.jpg.exif.yaml
+2021-08-28 00:13:21,222 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04552.jpg.yaml
+2021-08-28 00:13:21,381 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04571.jpg_209.jpg
+2021-08-28 00:13:21,388 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04571.jpg_centered.jpg
+2021-08-28 00:13:21,393 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04571.jpg_original.jpg
+2021-08-28 00:13:21,687 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04571.jpg_mapmarker.jpg
+2021-08-28 00:13:21,696 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04571.jpg.exif.yaml
+2021-08-28 00:13:21,698 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04571.jpg.yaml
+2021-08-28 00:13:21,865 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04574.jpg_209.jpg
+2021-08-28 00:13:21,871 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04574.jpg_centered.jpg
+2021-08-28 00:13:21,875 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04574.jpg_original.jpg
+2021-08-28 00:13:22,170 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04574.jpg_mapmarker.jpg
+2021-08-28 00:13:22,174 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04574.jpg.exif.yaml
+2021-08-28 00:13:22,177 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04574.jpg.yaml
+2021-08-28 00:13:22,358 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04576.jpg_209.jpg
+2021-08-28 00:13:22,365 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04576.jpg_centered.jpg
+2021-08-28 00:13:22,371 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04576.jpg_original.jpg
+2021-08-28 00:13:22,690 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04576.jpg_mapmarker.jpg
+2021-08-28 00:13:22,693 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04576.jpg.exif.yaml
+2021-08-28 00:13:22,695 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04576.jpg.yaml
+2021-08-28 00:13:22,868 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04577.jpg_209.jpg
+2021-08-28 00:13:22,877 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04577.jpg_centered.jpg
+2021-08-28 00:13:22,883 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04577.jpg_original.jpg
+2021-08-28 00:13:23,232 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04577.jpg_mapmarker.jpg
+2021-08-28 00:13:23,237 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04577.jpg.exif.yaml
+2021-08-28 00:13:23,240 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04577.jpg.yaml
+2021-08-28 00:13:23,404 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04579.jpg_209.jpg
+2021-08-28 00:13:23,413 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04579.jpg_centered.jpg
+2021-08-28 00:13:23,419 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04579.jpg_original.jpg
+2021-08-28 00:13:23,758 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04579.jpg_mapmarker.jpg
+2021-08-28 00:13:23,764 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04579.jpg.exif.yaml
+2021-08-28 00:13:23,768 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04579.jpg.yaml
+2021-08-28 00:13:23,921 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04581.jpg_209.jpg
+2021-08-28 00:13:23,927 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04581.jpg_centered.jpg
+2021-08-28 00:13:23,934 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04581.jpg_original.jpg
+2021-08-28 00:13:24,267 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04581.jpg_mapmarker.jpg
+2021-08-28 00:13:24,271 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04581.jpg.exif.yaml
+2021-08-28 00:13:24,273 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04581.jpg.yaml
+2021-08-28 00:13:24,993 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04589.jpg_209.jpg
+2021-08-28 00:13:24,999 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04589.jpg_centered.jpg
+2021-08-28 00:13:25,002 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04589.jpg_original.jpg
+2021-08-28 00:13:25,287 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04589.jpg_mapmarker.jpg
+2021-08-28 00:13:25,291 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04589.jpg.exif.yaml
+2021-08-28 00:13:25,294 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04589.jpg.yaml
+2021-08-28 00:13:26,012 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04601.jpg_209.jpg
+2021-08-28 00:13:26,018 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04601.jpg_centered.jpg
+2021-08-28 00:13:26,023 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04601.jpg_original.jpg
+2021-08-28 00:13:26,342 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04601.jpg_mapmarker.jpg
+2021-08-28 00:13:26,347 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04601.jpg.exif.yaml
+2021-08-28 00:13:26,349 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04601.jpg.yaml
+2021-08-28 00:13:27,084 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04602.jpg_209.jpg
+2021-08-28 00:13:27,088 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04602.jpg_centered.jpg
+2021-08-28 00:13:27,092 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04602.jpg_original.jpg
+2021-08-28 00:13:27,417 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04602.jpg_mapmarker.jpg
+2021-08-28 00:13:27,422 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04602.jpg.exif.yaml
+2021-08-28 00:13:27,424 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04602.jpg.yaml
+2021-08-28 00:13:28,167 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04605.jpg_209.jpg
+2021-08-28 00:13:28,173 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04605.jpg_centered.jpg
+2021-08-28 00:13:28,177 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04605.jpg_original.jpg
+2021-08-28 00:13:28,494 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04605.jpg_mapmarker.jpg
+2021-08-28 00:13:28,499 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04605.jpg.exif.yaml
+2021-08-28 00:13:28,501 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04605.jpg.yaml
+2021-08-28 00:13:29,220 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04622.jpg_209.jpg
+2021-08-28 00:13:29,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04622.jpg_centered.jpg
+2021-08-28 00:13:29,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04622.jpg_original.jpg
+2021-08-28 00:13:29,519 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04622.jpg_mapmarker.jpg
+2021-08-28 00:13:29,524 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04622.jpg.exif.yaml
+2021-08-28 00:13:29,528 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04622.jpg.yaml
+2021-08-28 00:13:29,669 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04627.jpg_209.jpg
+2021-08-28 00:13:29,674 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04627.jpg_centered.jpg
+2021-08-28 00:13:29,679 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04627.jpg_original.jpg
+2021-08-28 00:13:29,992 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04627.jpg_mapmarker.jpg
+2021-08-28 00:13:29,998 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04627.jpg.exif.yaml
+2021-08-28 00:13:30,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04627.jpg.yaml
+2021-08-28 00:13:30,046 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04719.jpg_209.jpg
+2021-08-28 00:13:30,053 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04719.jpg_centered.jpg
+2021-08-28 00:13:30,058 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04719.jpg_original.jpg
+2021-08-28 00:13:30,155 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04719.jpg_mapmarker.jpg
+2021-08-28 00:13:30,160 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04719.jpg.exif.yaml
+2021-08-28 00:13:30,162 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04719.jpg.yaml
+2021-08-28 00:13:30,213 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04720.jpg_209.jpg
+2021-08-28 00:13:30,221 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04720.jpg_centered.jpg
+2021-08-28 00:13:30,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04720.jpg_original.jpg
+2021-08-28 00:13:30,333 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04720.jpg_mapmarker.jpg
+2021-08-28 00:13:30,341 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04720.jpg.exif.yaml
+2021-08-28 00:13:30,345 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04720.jpg.yaml
+2021-08-28 00:13:30,426 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04721.jpg_209.jpg
+2021-08-28 00:13:30,435 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04721.jpg_centered.jpg
+2021-08-28 00:13:30,441 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04721.jpg_original.jpg
+2021-08-28 00:13:30,567 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04721.jpg_mapmarker.jpg
+2021-08-28 00:13:30,575 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04721.jpg.exif.yaml
+2021-08-28 00:13:30,578 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04721.jpg.yaml
+2021-08-28 00:13:30,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04745.jpg_209.jpg
+2021-08-28 00:13:30,784 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04745.jpg_centered.jpg
+2021-08-28 00:13:30,791 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04745.jpg_original.jpg
+2021-08-28 00:13:31,148 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04745.jpg_mapmarker.jpg
+2021-08-28 00:13:31,154 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04745.jpg.exif.yaml
+2021-08-28 00:13:31,157 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04745.jpg.yaml
+2021-08-28 00:13:31,331 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04747.jpg_209.jpg
+2021-08-28 00:13:31,338 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04747.jpg_centered.jpg
+2021-08-28 00:13:31,345 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04747.jpg_original.jpg
+2021-08-28 00:13:31,687 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04747.jpg_mapmarker.jpg
+2021-08-28 00:13:31,691 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04747.jpg.exif.yaml
+2021-08-28 00:13:31,694 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04747.jpg.yaml
+2021-08-28 00:13:31,852 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04753.jpg_209.jpg
+2021-08-28 00:13:31,858 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04753.jpg_centered.jpg
+2021-08-28 00:13:31,862 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04753.jpg_original.jpg
+2021-08-28 00:13:32,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04753.jpg_mapmarker.jpg
+2021-08-28 00:13:32,216 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04753.jpg.exif.yaml
+2021-08-28 00:13:32,219 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04753.jpg.yaml
+2021-08-28 00:13:32,238 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04775.jpg_209.jpg
+2021-08-28 00:13:32,244 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04775.jpg_centered.jpg
+2021-08-28 00:13:32,248 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04775.jpg_original.jpg
+2021-08-28 00:13:32,262 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04775.jpg_mapmarker.jpg
+2021-08-28 00:13:32,268 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04775.jpg.exif.yaml
+2021-08-28 00:13:32,271 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04775.jpg.yaml
+2021-08-28 00:13:32,289 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04789.jpg_209.jpg
+2021-08-28 00:13:32,295 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04789.jpg_centered.jpg
+2021-08-28 00:13:32,299 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04789.jpg_original.jpg
+2021-08-28 00:13:32,312 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04789.jpg_mapmarker.jpg
+2021-08-28 00:13:32,317 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04789.jpg.exif.yaml
+2021-08-28 00:13:32,320 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04789.jpg.yaml
+2021-08-28 00:13:33,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04861.jpg_209.jpg
+2021-08-28 00:13:33,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04861.jpg_centered.jpg
+2021-08-28 00:13:33,220 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04861.jpg_original.jpg
+2021-08-28 00:13:33,581 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04861.jpg_mapmarker.jpg
+2021-08-28 00:13:33,586 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04861.jpg.exif.yaml
+2021-08-28 00:13:33,589 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04861.jpg.yaml
+2021-08-28 00:13:33,618 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04867.jpg_209.jpg
+2021-08-28 00:13:33,624 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04867.jpg_centered.jpg
+2021-08-28 00:13:33,629 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04867.jpg_original.jpg
+2021-08-28 00:13:33,665 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04867.jpg_mapmarker.jpg
+2021-08-28 00:13:33,670 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04867.jpg.exif.yaml
+2021-08-28 00:13:33,673 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04867.jpg.yaml
+2021-08-28 00:13:33,701 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04906.jpg_209.jpg
+2021-08-28 00:13:33,707 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04906.jpg_centered.jpg
+2021-08-28 00:13:33,711 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04906.jpg_original.jpg
+2021-08-28 00:13:33,754 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04906.jpg_mapmarker.jpg
+2021-08-28 00:13:33,760 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04906.jpg.exif.yaml
+2021-08-28 00:13:33,763 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04906.jpg.yaml
+2021-08-28 00:13:33,796 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04913.jpg_209.jpg
+2021-08-28 00:13:33,804 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04913.jpg_centered.jpg
+2021-08-28 00:13:33,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04913.jpg_original.jpg
+2021-08-28 00:13:33,862 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04913.jpg_mapmarker.jpg
+2021-08-28 00:13:33,870 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04913.jpg.exif.yaml
+2021-08-28 00:13:33,873 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04913.jpg.yaml
+2021-08-28 00:13:33,908 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04916.jpg_209.jpg
+2021-08-28 00:13:33,918 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04916.jpg_centered.jpg
+2021-08-28 00:13:33,924 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04916.jpg_original.jpg
+2021-08-28 00:13:33,967 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04916.jpg_mapmarker.jpg
+2021-08-28 00:13:33,972 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04916.jpg.exif.yaml
+2021-08-28 00:13:33,975 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04916.jpg.yaml
+2021-08-28 00:13:34,002 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04917.jpg_209.jpg
+2021-08-28 00:13:34,007 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04917.jpg_centered.jpg
+2021-08-28 00:13:34,011 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04917.jpg_original.jpg
+2021-08-28 00:13:34,047 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC04917.jpg_mapmarker.jpg
+2021-08-28 00:13:34,053 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC04917.jpg.exif.yaml
+2021-08-28 00:13:34,055 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC04917.jpg.yaml
+2021-08-28 00:13:34,943 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05028.jpg_209.jpg
+2021-08-28 00:13:34,949 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05028.jpg_centered.jpg
+2021-08-28 00:13:34,955 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05028.jpg_original.jpg
+2021-08-28 00:13:35,290 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05028.jpg_mapmarker.jpg
+2021-08-28 00:13:35,297 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC05028.jpg.exif.yaml
+2021-08-28 00:13:35,301 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC05028.jpg.yaml
+2021-08-28 00:13:36,081 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05036.jpg_209.jpg
+2021-08-28 00:13:36,085 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05036.jpg_centered.jpg
+2021-08-28 00:13:36,089 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05036.jpg_original.jpg
+2021-08-28 00:13:36,450 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05036.jpg_mapmarker.jpg
+2021-08-28 00:13:36,456 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC05036.jpg.exif.yaml
+2021-08-28 00:13:36,458 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC05036.jpg.yaml
+2021-08-28 00:13:37,330 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05042.jpg_209.jpg
+2021-08-28 00:13:37,337 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05042.jpg_centered.jpg
+2021-08-28 00:13:37,341 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05042.jpg_original.jpg
+2021-08-28 00:13:37,700 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05042.jpg_mapmarker.jpg
+2021-08-28 00:13:37,707 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC05042.jpg.exif.yaml
+2021-08-28 00:13:37,711 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC05042.jpg.yaml
+2021-08-28 00:13:38,510 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05044.jpg_209.jpg
+2021-08-28 00:13:38,515 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05044.jpg_centered.jpg
+2021-08-28 00:13:38,519 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05044.jpg_original.jpg
+2021-08-28 00:13:38,842 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: DSC05044.jpg_mapmarker.jpg
+2021-08-28 00:13:38,849 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: DSC05044.jpg.exif.yaml
+2021-08-28 00:13:38,851 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: DSC05044.jpg.yaml
+2021-08-28 00:13:39,139 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20181224_155727.jpg_209.jpg
+2021-08-28 00:13:39,148 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20181224_155727.jpg_centered.jpg
+2021-08-28 00:13:39,154 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20181224_155727.jpg_original.jpg
+2021-08-28 00:13:39,486 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: IMG_20181224_155727.jpg_mapmarker.jpg
+2021-08-28 00:13:40,492 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: IMG_20181224_155727.jpg.exif.yaml
+2021-08-28 00:13:40,505 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: IMG_20181224_155727.jpg.yaml
+2021-08-28 00:13:42,414 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210725_213342002.mp4_209.jpg
+2021-08-28 00:13:42,421 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210725_213342002.mp4_centered.jpg
+2021-08-28 00:13:42,426 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210725_213342002.mp4_original.jpg
+2021-08-28 00:13:42,540 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: PXL_20210725_213342002.mp4_mapmarker.jpg
+2021-08-28 00:13:42,666 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: PXL_20210725_213342002.mp4.exif.yaml
+2021-08-28 00:13:42,669 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: PXL_20210725_213342002.mp4.yaml
+2021-08-28 00:13:42,733 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: reface-2021-05-16-06-12-30.mp4_209.jpg
+2021-08-28 00:13:42,740 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: reface-2021-05-16-06-12-30.mp4_centered.jpg
+2021-08-28 00:13:42,745 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: reface-2021-05-16-06-12-30.mp4_original.jpg
+2021-08-28 00:13:42,785 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Thumbnail created: reface-2021-05-16-06-12-30.mp4_mapmarker.jpg
+2021-08-28 00:13:42,790 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] Exif created: reface-2021-05-16-06-12-30.mp4.exif.yaml
+2021-08-28 00:13:42,792 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-7] YAML metadata created: reface-2021-05-16-06-12-30.mp4.yaml
+2021-08-28 00:13:42,801 INFO com.miyagi.shashin.controller.SettingsController [Thread-7] Scan completed
+2021-08-28 00:21:14,152 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-28 00:21:14,292 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-28 00:21:14,337 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
