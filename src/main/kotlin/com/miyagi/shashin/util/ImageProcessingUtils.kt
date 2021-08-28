@@ -12,11 +12,8 @@ import org.springframework.core.io.FileSystemResource
 import java.awt.RenderingHints
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
-import java.io.BufferedReader
 import java.io.File
 import java.io.IOException
-import java.io.InputStreamReader
-import java.net.URL
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
@@ -48,7 +45,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
                 .disable(YAMLGenerator.Feature.SPLIT_LINES)
                 .build()
             val om = ObjectMapper(yamlFactory)
-            om.writeValue(mdFile, metadataObj);
+            om.writeValue(mdFile, metadataObj)
             return metadataObj
         }
 
@@ -68,7 +65,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
         val sourceFormatMS = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
         val destFormat = SimpleDateFormat(datePattern)
-        var date: Date? = null
+        var date: Date?
 
         val creationTime = attr.creationTime().toString()
         date = if (creationTime.contains(".")) {
@@ -123,13 +120,13 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
                         } catch(e: Exception) {
                             try {
                                 // Sun Jul 25 14:34:09 PDT 2021
-                                val sourceFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
-                                date = sourceFormat.parse(tag.description)
+                                val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+                                date = sourceDateFormat.parse(tag.description)
                             } catch(e: Exception) {
                                 try {
                                     // Sun Jul 25 14:34:09 -07:00 2021
-                                    val sourceFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy")
-                                    date = sourceFormat.parse(tag.description)
+                                    val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy")
+                                    date = sourceDateFormat.parse(tag.description)
                                 } catch(e: Exception) {
                                     // Do nothing
                                 }
@@ -154,13 +151,13 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
                         } catch(e: Exception) {
                             try {
                                 // Sun Jul 25 14:34:09 PDT 2021
-                                val sourceFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
-                                date = sourceFormat.parse(tag.description)
+                                val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+                                date = sourceDateFormat.parse(tag.description)
                             } catch(e: Exception) {
                                 try {
                                     // Sun Jul 25 14:34:09 -07:00 2021
-                                    val sourceFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy")
-                                    date = sourceFormat.parse(tag.description)
+                                    val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy")
+                                    date = sourceDateFormat.parse(tag.description)
                                 } catch(e: Exception) {
                                     // Do nothing
                                 }
@@ -259,7 +256,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
             }
             if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
                 val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,lat, lng)
-                if (!buildPlace.isNullOrBlank()) {
+                if (buildPlace.isNotBlank()) {
                     metadataObj.setPlaceName(buildPlace)
                 }
             }
@@ -387,7 +384,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
         }
     }
 
-    private fun rotateImage(buffImage: BufferedImage, angle: Double): BufferedImage? {
+    private fun rotateImage(buffImage: BufferedImage, angle: Double): BufferedImage {
         val radian = Math.toRadians(angle)
         val sin = Math.abs(Math.sin(radian))
         val cos = Math.abs(Math.cos(radian))
@@ -485,7 +482,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
             val sidecarDir = rootPath + _sidecarDir
             val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
             val rootDirFile = File(rootDir)
-            val photoFile = File(metadataObj.getPath())
+            val photoFile = File(metadataObj.getPath()!!)
             var fileRootDir: String =
                 photoFile.parent.replace('\\', '/').lowercase().replace(rootDirFile.parent.replace('\\', '/').lowercase(), "")
             fileRootDir = fileRootDir.replace('\\', '/')
@@ -496,7 +493,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
                 .disable(YAMLGenerator.Feature.SPLIT_LINES)
                 .build()
             val om = ObjectMapper(yamlFactory)
-            om.writeValue(mdFile, metadataObj);
+            om.writeValue(mdFile, metadataObj)
         }
     }
 }

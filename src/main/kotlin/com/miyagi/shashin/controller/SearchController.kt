@@ -3,10 +3,8 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.SearchRepository
-import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -27,9 +25,6 @@ class SearchController {
 
     @Autowired
     private val searchRepository: SearchRepository? = null
-
-    @Autowired
-    private val userRepository: UserRepository? = null
 
     @GetMapping("/search")
     fun getSearch(model: Model, request: HttpServletRequest): String {
@@ -64,7 +59,7 @@ class SearchController {
         model["searchTerm"] = ""
         if (formData.containsKey("appSearchInput")) {
             val searchTerm: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
-            redirectAttributes.addAttribute("searchTerm", searchTerm);
+            redirectAttributes.addAttribute("searchTerm", searchTerm)
         }
 
         val module = "search"

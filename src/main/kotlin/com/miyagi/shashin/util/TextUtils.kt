@@ -89,7 +89,7 @@ class TextUtils {
                 if (addressObj.get("address").get("country") != null) {
                     buildPlace += addressObj.get("address").get("country").textValue()
                 }
-                if (!buildPlace.isNullOrBlank()) {
+                if (buildPlace.isNotBlank()) {
                     buildPlace = buildPlace.trim()
                 }
             }

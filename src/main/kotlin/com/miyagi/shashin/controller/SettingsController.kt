@@ -71,7 +71,7 @@ class SettingsController {
         model["data"] = ""
         model["mediaDirList"] = ""
         if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirectories != null) {
-            model["mediaDirList"] = mediaDirectories.joinToString { it -> "${it?.getDirectory()}" }
+            model["mediaDirList"] = mediaDirectories.joinToString { "${it?.getDirectory()}" }
         }
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -83,7 +83,7 @@ class SettingsController {
 
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
     fun postSettings(model: Model, redirectAttributes: RedirectAttributes, @RequestParam("mediaDirList") mediaDirList: String): String {
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && !mediaDirList.isNullOrBlank()) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirList.isNotBlank()) {
             val mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
@@ -199,15 +199,15 @@ class SettingsController {
 
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+        return if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
             val module = "scan"
             model["data"] = "Scan photos"
             model["activePage"] = module
             model["activeSidebar"] = module
             model["titleDescriptor"] = TextUtils.capitalized(module)
-            return module
+            module
         } else {
-            return "albums"
+            "albums"
         }
     }
 
@@ -248,11 +248,9 @@ class SettingsController {
                                 val tempDir = System.getProperty("java.io.tmpdir")
                                 val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
                                 if (threadFile != null) {
-                                    if (mediaDirs != null) {
-                                        for (mediaDir in mediaDirs) {
-                                            if (mediaDir != null) {
-                                                getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
-                                            }
+                                    for (mediaDir in mediaDirs) {
+                                        if (mediaDir != null) {
+                                            getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
                                         }
                                     }
 
@@ -359,9 +357,6 @@ class SettingsController {
         if (files != null) {
             for (i in files.indices) {
 
-                // TODO: Remove this test
-                //Thread.sleep(4000);
-
                 val file: File = files[i]
 
                 if (file.isFile) {
@@ -377,27 +372,19 @@ class SettingsController {
 
                         }
 
-                        // TODO: If RAW then convert to jpeg
-//                        if (FileUtils.isRaw(file.extension.lowercase())) {
-//
-//                        } else {
-                            // TODO: Check if mapped sidecar file exists, if it does, skip creating them
-                            if (false) {
+                        // TODO: Check if mapped sidecar file exists, if it does, skip creating them
 
-                            } else {
-                                if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                                    val imageProcessingUtils = ImageProcessingUtils(apiVersion,geocodeUrl)
-                                    var metadataObj: Metadata? = Metadata()
-                                    metadataObj =
-                                        imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
-                                    metadataObj =
-                                        imageProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
-                                    if (metadataObj != null) {
-                                        metadataRepository?.save(metadataObj)
-                                    }
-                                }
+                        if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                            val imageProcessingUtils = ImageProcessingUtils(apiVersion,geocodeUrl)
+                            var metadataObj: Metadata? = Metadata()
+                            metadataObj =
+                                imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
+                            metadataObj =
+                                imageProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
+                            if (metadataObj != null) {
+                                metadataRepository?.save(metadataObj)
                             }
-//                        }
+                        }
                     }
                 }
 

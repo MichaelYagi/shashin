@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter
 import java.util.ArrayList
 import javax.transaction.Transactional
 
+@Suppress("UNCHECKED_CAST")
 @Controller
 @Secured("ROLE_ADMIN")
 class FavoritesController {

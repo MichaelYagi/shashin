@@ -7,7 +7,6 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.AlbumCommentRepository
 import com.miyagi.shashin.repository.AlbumPhotoCommentRepository
 import com.miyagi.shashin.repository.CommentRepository
-import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -21,8 +20,6 @@ import javax.transaction.Transactional
 
 @Controller
 class CommentsController {
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     @Autowired
     private lateinit var commentRepository: CommentRepository
@@ -141,7 +138,7 @@ class CommentsController {
                 if (currentUserObj.getId() == commentObj.get().getUserId()) {
                     commentObj.get().setComment(commentText)
                     commentObj.get().setModifiedAt(dtf.format(now))
-                    val savedCommentObj = commentRepository.save(commentObj.get())
+                    commentRepository.save(commentObj.get())
 
                     resp["msg"] = "Comment saved!"
                     resp["status"] = "success"
@@ -164,7 +161,6 @@ class CommentsController {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("commentId") && commentMap.containsKey("metadataId")) {
             val commentId = commentMap["commentId"].toString().toInt()
-            val metadataId = commentMap["metadataId"].toString()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
