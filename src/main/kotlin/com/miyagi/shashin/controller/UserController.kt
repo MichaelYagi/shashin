@@ -5,7 +5,6 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.core.context.SecurityContextHolder
@@ -24,6 +23,7 @@ import java.util.logging.Logger
 import javax.servlet.http.HttpSession
 import javax.validation.Valid
 
+@Suppress("UNCHECKED_CAST")
 @Controller
 class UserController {
 
@@ -175,8 +175,6 @@ class UserController {
             model["titleDescriptor"] = TextUtils.capitalized(module)
             return module
         }
-
-        return module
     }
 
     @RequestMapping(value = ["/users/login"], method = [RequestMethod.POST], produces = ["application/json"])
@@ -216,14 +214,14 @@ class UserController {
                 userRepository?.save(user)
             }
 
-            status.setComplete();
-            httpsession.invalidate();
-            SecurityContextHolder.clearContext();
+            status.setComplete()
+            httpsession.invalidate()
+            SecurityContextHolder.clearContext()
             return "redirect:/users/login"
         }
-        status.setComplete();
-        httpsession.invalidate();
-        SecurityContextHolder.clearContext();
+        status.setComplete()
+        httpsession.invalidate()
+        SecurityContextHolder.clearContext()
         return "redirect:/users/login"
     }
 

@@ -7,18 +7,16 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.transaction.Transactional
 
-
+@Suppress("UNCHECKED_CAST")
 @Controller
 class AlbumsController {
 
@@ -70,7 +68,7 @@ class AlbumsController {
 
                     val albums = ArrayList<Album>()
                     val albumsCount = ArrayList<Int>()
-                    var albumCount = 0
+                    var albumCount: Int
                     for (userAlbum in userAlbums) {
                         val albumCommentsList = ArrayList<HashMap<String, Any>>()
                         if (userAlbum?.getAlbumId() != null) {
@@ -325,7 +323,7 @@ class AlbumsController {
         if (shareAlbum.containsKey("albumId") && shareAlbum.containsKey("userShareMap")) {
             val userMapObj = mapper.readTree(shareAlbum["userShareMap"].toString())
             val userMap = mapper.convertValue(userMapObj, object : TypeReference<Map<String, Boolean>>() {})
-            val shareAlbumId = shareAlbum["albumId"].toString().toInt();
+            val shareAlbumId = shareAlbum["albumId"].toString().toInt()
             val userAlbumList = mutableListOf<UserAlbum>()
             val deleteUserAlbumList = mutableListOf<UserAlbum>()
 
@@ -495,18 +493,18 @@ class AlbumsController {
     fun postAddAlbum(model: Model, @RequestBody requestBody: JsonNode): String? {
         val albumData = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
-        var albumId: Int? = null
+        val albumId: Int?
         val albumIdString = albumData["albumId"].toString()
         val albumName = albumData["albumName"].toString()
         val albumMetadataIdList = mapper.convertValue(albumData["albumMetadataIds"], object : TypeReference<Array<String>>() {})
 
-        var albumPhotoObj = AlbumPhoto()
+        var albumPhotoObj: AlbumPhoto
         var albumObj = Album()
 
         val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val now = LocalDateTime.now()
 
-        if (albumIdString.isNullOrBlank()) {
+        if (albumIdString.isBlank()) {
             if (albumMetadataIdList.count() > 0) {
                 // Get the first one and set as album cover
                 val metadataObj = metadataRepository.findById(albumMetadataIdList[0])
@@ -535,7 +533,7 @@ class AlbumsController {
         }
 
 
-        var albumPhotoCount = 0
+        var albumPhotoCount: Int
         for (metadataId in albumMetadataIdList) {
             albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
             if (albumPhotoCount == 0) {

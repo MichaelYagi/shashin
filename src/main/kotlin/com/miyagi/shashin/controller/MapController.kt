@@ -2,10 +2,8 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -13,9 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping
 
 @Controller
 class MapController {
-
-    @Autowired
-    private lateinit var userRepository: UserRepository
 
     @Autowired
     private val metadataRepository: MetadataRepository? = null

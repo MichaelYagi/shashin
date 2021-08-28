@@ -10,15 +10,12 @@ import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
-import javax.annotation.security.RolesAllowed
 import kotlin.collections.HashMap
 
 @Controller
@@ -61,18 +58,17 @@ class TimelineController {
 
         model["metadataList"] = ""
         model["favorites"] = ""
-        val metadataList = metadataRepository?.findAllByOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())?.toList()
-        if (metadataList != null) {
-            model["metadataList"] = metadataList
-            model["favorites"] = favoritesMap
-            if (metadataList.count() > 0) {
-                model["data"] = ""
-            }
+        val metadataList =
+            metadataRepository.findAllByOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt()).toList()
+        model["metadataList"] = metadataList
+        model["favorites"] = favoritesMap
+        if (metadataList.count() > 0) {
+            model["data"] = ""
         }
 
         model["albumList"] = ""
-        val albumList = albumRepository?.findAll()
-        if (albumList != null && albumList.count() > 0) {
+        val albumList = albumRepository.findAll()
+        if (albumList.count() > 0) {
             model["albumList"] = albumList
         }
 
@@ -99,25 +95,25 @@ class TimelineController {
                 }
             }
 
-            val metadataList = metadataRepository?.findAllByOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())?.toList()
-            if (metadataList != null) {
-                response["metadataList"] = ""
-                response["favorites"] = ""
-                response["albumList"] = ""
+            val metadataList =
+                metadataRepository.findAllByOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
+                    .toList()
+            response["metadataList"] = ""
+            response["favorites"] = ""
+            response["albumList"] = ""
+            response["msg"] = "Results"
+            response["status"] = "success"
+            if (metadataList.isNotEmpty()) {
+                val albumList = albumRepository.findAll()
+                if (albumList.count() > 0) {
+                    response["albumList"] = albumList
+                }
+                response["metadataList"] = metadataList
+                response["favorites"] = favoritesMap
                 response["msg"] = "Results"
                 response["status"] = "success"
-                if (metadataList.isNotEmpty()) {
-                    val albumList = albumRepository?.findAll()
-                    if (albumList != null && albumList.count() > 0) {
-                        response["albumList"] = albumList
-                    }
-                    response["metadataList"] = metadataList
-                    response["favorites"] = favoritesMap
-                    response["msg"] = "Results"
-                    response["status"] = "success"
-                }
-                return mapper.writeValueAsString(response)
             }
+            return mapper.writeValueAsString(response)
         }
 
         response["msg"] = "Could not get results"
@@ -139,75 +135,71 @@ class TimelineController {
             metadataMap.containsKey("keywords") &&
             metadataMap.containsKey("latlng")
         ) {
-            val metadataObj = metadataRepository?.findById(metadataMap["id"].toString())
-            if (metadataObj != null) {
-                if (metadataMap["year"].toString() == "") {
-                    metadataObj.get().setYear(null)
-                } else {
-                    metadataObj.get().setYear(metadataMap["year"].toString().toInt())
-                }
-                if (metadataMap["month"].toString() == "") {
-                    metadataObj.get().setMonth(null)
-                } else {
-                    metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
-                }
-                if (metadataMap["day"].toString() == "") {
-                    metadataObj.get().setDay(null)
-                } else {
-                    metadataObj.get().setDay(metadataMap["day"].toString().toInt())
-                }
-                if (metadataMap["keywords"].toString() == "") {
-                    metadataObj.get().setKeywords(null)
-                } else {
-                    val keywordArray = metadataMap["keywords"].toString().split(",")
-                    var keywords = keywordArray.joinToString { it.trim() }.trim()
-                    if (keywords.last() == ',') {
-                        keywords = keywords.dropLast(1)
-                    }
-                    metadataObj.get().setKeywords(keywords)
-                }
-                if (metadataMap["latlng"].toString() == "") {
-                    metadataObj.get().setLat(null)
-                    metadataObj.get().setLng(null)
-                } else {
-                    var latlng = metadataMap["latlng"].toString()
-                    latlng = latlng.replace("\\s".toRegex(), "")
-                    val latlngArr = latlng.split(",")
-                    if (latlngArr.count() == 2) {
-                        metadataObj.get().setLat(latlngArr[0])
-                        metadataObj.get().setLng(latlngArr[1])
-                        val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,latlngArr[0], latlngArr[1])
-                        if (!buildPlace.isNullOrBlank()) {
-                            metadataObj.get().setPlaceName(buildPlace)
-                        }
-                    }
-                }
-
-                // Update DB
-                metadataRepository?.save(metadataObj.get())
-                // Update MD file
-                val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-                val originalImagePath = metadataObj.get().getPath()
-                var rootDir: String? = null
-                val rootMediaDirs = mediaDirRepository?.findAll()
-                if (rootMediaDirs != null) {
-                    for (rootmediaDir in rootMediaDirs) {
-                        if (originalImagePath != null && rootmediaDir != null) {
-                            if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
-                                rootDir = rootmediaDir.getDirectory()
-                                break
-                            }
-                        }
-                    }
-                }
-
-                if (rootDir != null) {
-                    imageProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString(), rootDir)
-                }
-                resp["msg"] = "Saved!"
-                resp["status"] = "success"
-                return mapper.writeValueAsString(resp)
+            val metadataObj = metadataRepository.findById(metadataMap["id"].toString())
+            if (metadataMap["year"].toString() == "") {
+                metadataObj.get().setYear(null)
+            } else {
+                metadataObj.get().setYear(metadataMap["year"].toString().toInt())
             }
+            if (metadataMap["month"].toString() == "") {
+                metadataObj.get().setMonth(null)
+            } else {
+                metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
+            }
+            if (metadataMap["day"].toString() == "") {
+                metadataObj.get().setDay(null)
+            } else {
+                metadataObj.get().setDay(metadataMap["day"].toString().toInt())
+            }
+            if (metadataMap["keywords"].toString() == "") {
+                metadataObj.get().setKeywords(null)
+            } else {
+                val keywordArray = metadataMap["keywords"].toString().split(",")
+                var keywords = keywordArray.joinToString { it.trim() }.trim()
+                if (keywords.last() == ',') {
+                    keywords = keywords.dropLast(1)
+                }
+                metadataObj.get().setKeywords(keywords)
+            }
+            if (metadataMap["latlng"].toString() == "") {
+                metadataObj.get().setLat(null)
+                metadataObj.get().setLng(null)
+            } else {
+                var latlng = metadataMap["latlng"].toString()
+                latlng = latlng.replace("\\s".toRegex(), "")
+                val latlngArr = latlng.split(",")
+                if (latlngArr.count() == 2) {
+                    metadataObj.get().setLat(latlngArr[0])
+                    metadataObj.get().setLng(latlngArr[1])
+                    val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,latlngArr[0], latlngArr[1])
+                    if (buildPlace.isNotBlank()) {
+                        metadataObj.get().setPlaceName(buildPlace)
+                    }
+                }
+            }
+
+            // Update DB
+            metadataRepository.save(metadataObj.get())
+            // Update MD file
+            val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+            val originalImagePath = metadataObj.get().getPath()
+            var rootDir: String? = null
+            val rootMediaDirs = mediaDirRepository.findAll()
+            for (rootmediaDir in rootMediaDirs) {
+                if (originalImagePath != null && rootmediaDir != null) {
+                    if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                        rootDir = rootmediaDir.getDirectory()
+                        break
+                    }
+                }
+            }
+
+            if (rootDir != null) {
+                imageProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString(), rootDir)
+            }
+            resp["msg"] = "Saved!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
         }
         resp["msg"] = "Could not save"
         resp["status"] = "fail"
@@ -256,63 +248,59 @@ class TimelineController {
             val metadataList: ArrayList<Metadata> = ArrayList()
 
             for (id in idArray) {
-                val metadataObj: Optional<Metadata?>? = metadataRepository?.findById(id)
+                val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
 
-                if (metadataObj != null) {
-                    val metadata = metadataObj.get()
+                val metadata = metadataObj.get()
 
-                    if (dayTaken != null) {
-                        metadata.setDay(dayTaken)
-                    }
-                    if (monthTaken != null) {
-                        metadata.setMonth(monthTaken)
-                    }
-                    if (yearTaken != null) {
-                        metadata.setYear(yearTaken)
-                    }
-                    if (latlng != null) {
-                        latlng = latlng.replace("\\s".toRegex(), "")
-                        val latlngArr = latlng.split(",")
-                        if (latlngArr.count() == 2) {
-                            metadata.setLat(latlngArr[0])
-                            metadata.setLng(latlngArr[1])
-                            val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,latlngArr[0], latlngArr[1])
-                            if (!buildPlace.isNullOrBlank()) {
-                                metadataObj.get().setPlaceName(buildPlace)
-                            }
-                        }
-                    }
-                    if (keywords != null) {
-                        val keywordArray = keywords.toString().split(",")
-                        keywords = keywordArray.joinToString { it.trim() }.trim()
-                        if (keywords.last() == ',') {
-                            keywords = keywords.dropLast(1)
-                        }
-                        metadata.setKeywords(keywords)
-
-                    }
-
-                    metadataList.add(metadata)
+                if (dayTaken != null) {
+                    metadata.setDay(dayTaken)
                 }
+                if (monthTaken != null) {
+                    metadata.setMonth(monthTaken)
+                }
+                if (yearTaken != null) {
+                    metadata.setYear(yearTaken)
+                }
+                if (latlng != null) {
+                    latlng = latlng.replace("\\s".toRegex(), "")
+                    val latlngArr = latlng.split(",")
+                    if (latlngArr.count() == 2) {
+                        metadata.setLat(latlngArr[0])
+                        metadata.setLng(latlngArr[1])
+                        val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,latlngArr[0], latlngArr[1])
+                        if (buildPlace.isNotBlank()) {
+                            metadataObj.get().setPlaceName(buildPlace)
+                        }
+                    }
+                }
+                if (keywords != null) {
+                    val keywordArray = keywords.toString().split(",")
+                    keywords = keywordArray.joinToString { it.trim() }.trim()
+                    if (keywords.last() == ',') {
+                        keywords = keywords.dropLast(1)
+                    }
+                    metadata.setKeywords(keywords)
+
+                }
+
+                metadataList.add(metadata)
             }
 
             if (metadataList.isNotEmpty()) {
                 // Update DB
-                metadataRepository?.saveAll(metadataList)
+                metadataRepository.saveAll(metadataList)
 
                 // Update MD file
                 val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
                 for (metadata in metadataList) {
                     val originalImagePath = metadata.getPath()
                     var rootDir: String? = null
-                    val rootMediaDirs = mediaDirRepository?.findAll()
-                    if (rootMediaDirs != null) {
-                        for (rootmediaDir in rootMediaDirs) {
-                            if (originalImagePath != null && rootmediaDir != null) {
-                                if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
-                                    rootDir = rootmediaDir.getDirectory()
-                                    break
-                                }
+                    val rootMediaDirs = mediaDirRepository.findAll()
+                    for (rootmediaDir in rootMediaDirs) {
+                        if (originalImagePath != null && rootmediaDir != null) {
+                            if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                                rootDir = rootmediaDir.getDirectory()
+                                break
                             }
                         }
                     }

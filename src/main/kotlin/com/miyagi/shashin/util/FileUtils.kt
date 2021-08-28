@@ -3,7 +3,6 @@ package com.miyagi.shashin.util
 import org.springframework.stereotype.Component
 import java.io.File
 import java.io.IOException
-import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
