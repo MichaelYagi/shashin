@@ -45,7 +45,8 @@ class FileUtils {
                     return someFile
                 } else {
                     logger.log(Level.INFO, type + " already exists: " + someFile.name)
-                    return someFile
+                    //return someFile
+                    return null
                 }
             } catch (e: IOException) {
                 logger.log(Level.SEVERE, type + " creation error: " + e.message)

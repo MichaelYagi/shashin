@@ -14,6 +14,7 @@ import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
+import java.lang.Double.parseDouble
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
@@ -111,6 +112,9 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
 //                println(tag.description)
 //                println()
                 when (tag.tagName) {
+                    "Orientation" -> {
+
+                    }
                     "Date/Time", "Creation Time" -> {
                         val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
                         date = null
@@ -281,6 +285,39 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
     }
 
     fun createThumbnails(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata?): Metadata? {
+        // Check rotation
+        var rotation = 0
+        val fileMetadata = ImageMetadataReader.readMetadata(file)
+        var breakOuter = false
+        for (directory in fileMetadata.directories) {
+            for (tag in directory.tags) {
+                when (tag.tagName) {
+                    "Orientation" -> {
+                        if (tag.description.contains("(Rotate")) {
+                            val processedTag = tag.description.substringAfterLast("(Rotate ")
+                            val tagArr = processedTag.split(" ");
+                            var numeric = true
+
+                            try {
+                                val num = parseDouble(tagArr[0])
+                            } catch (e: NumberFormatException) {
+                                numeric = false
+                            }
+                            if (numeric) {
+                                rotation = tagArr[0].toInt()
+                            }
+                        }
+                        breakOuter = true
+                        break;
+                    }
+                }
+            }
+            if (breakOuter) {
+                break;
+            }
+        }
+//        println("rotation:$rotation")
+
         val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
 
         // Map path to sidecar file
@@ -295,6 +332,9 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
         var img: BufferedImage? = null
         if (supportedImageFormats.contains(file.extension.lowercase()) || FileUtils.isRaw(file.extension.lowercase())) {
             img = ImageIO.read(file)
+            if (rotation > 0) {
+                img = rotateImage(img, rotation.toDouble())
+            }
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
             // Grab screen shot
             img = grabScreenshot(file)

@@ -9,4 +9,6 @@ import org.springframework.stereotype.Repository
 interface AlbumPhotoCommentRepository : CrudRepository<AlbumPhotoComment?, Int?> {
     fun deleteByCommentId(commentId: Int): Long
     fun deleteByAlbumId(albumId: Int): Long
+    fun findByMetadataId(metadataId: String): MutableIterable<AlbumPhotoComment?>?
+    fun deleteByMetadataId(metadataId: String): Long
 }
