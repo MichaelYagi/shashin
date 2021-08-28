@@ -300,8 +300,12 @@ class SettingsController {
                                     }
                                 }
                                 albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId())
+                                logger.log(Level.INFO, "Removed comment records for: " + metadata.getId())
+
                                 // Delete from favorites
                                 favoriteRepository?.deleteByMetadataId(metadata.getId())
+                                logger.log(Level.INFO, "Removed favorite records for: " + metadata.getId())
+
                                 // Delete from album
                                 albumPhotoRepository?.deleteByMetadataId(metadata.getId())
                                 val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
@@ -316,8 +320,11 @@ class SettingsController {
                                         }
                                     }
                                 }
+                                logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
+
                                 // Delete from Metadata
                                 metadataRepository?.deleteById(metadata.getId())
+                                logger.log(Level.INFO, "Removed metadata records for: " + metadata.getId())
                             }
                         }
                     }
