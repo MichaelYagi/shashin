@@ -15,4 +15,5 @@ interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     fun findAllByUserId(userId: Int?): MutableIterable<Favorite?>?
     fun deleteByMetadataIdAndUserId(metadataId: String?, userId: Int?): Long
     fun deleteByUserId(userId: Int?): Long
+    fun deleteByMetadataId(metadataId: String?): Long
 }

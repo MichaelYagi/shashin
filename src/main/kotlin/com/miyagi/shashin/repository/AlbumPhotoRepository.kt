@@ -17,4 +17,5 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun findFirstByOrderByIdAsc(): AlbumPhoto?
     fun deleteByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Long?
     fun deleteByAlbumId(albumId: Int?): Long?
+    fun deleteByMetadataId(metadataId: String?): Long?
 }
