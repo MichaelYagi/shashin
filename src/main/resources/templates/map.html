@@ -9,6 +9,9 @@
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col">
+            <div id="map" class="map" style="z-index: 0">
+                <div id="light-gallery-photo"></div>
+            </div>
             <div th:replace="fragments/mapjs :: mapjs(${mapdata})"></div>
         </main>
     </div>

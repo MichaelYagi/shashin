@@ -14,6 +14,7 @@
             <input type="hidden" id="currentlng" name="currentlng">
             <input type="hidden" id="currentfilename" name="currentfilename">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
+            <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
 
             <th:block th:if="${metadataList != ''}">
                 <div th:replace="fragments/appjs :: appjs()"></div>
@@ -75,7 +76,7 @@
                                     <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                             <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                               th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                               th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
                                         </th:block>
@@ -166,15 +167,19 @@
                 updateTimeline(nextPage,"[[${activePage}]]");
                 /*]]>*/
                 $("#currentPage").val(nextPage);
-            }
 
-            lg.destroy();
-            setTimeout(() => {
-                lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-            }, 500);
+                //TODO: Fix closing and navigation
+                // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                lg.destroy(); // When photos appear slower than destroy called, then there's an error
+                setTimeout(() => {
+                    lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+                }, 100);
+            }
         }
         if (!$(window).hasScrollBar()) {
-            loadNextPage();
+            setTimeout(() => {
+                loadNextPage();
+            }, 1000);
         }
         $(window).on('scroll', function() {
             if (atEndOfPage()) {

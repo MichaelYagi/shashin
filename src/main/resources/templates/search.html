@@ -36,7 +36,7 @@
                                         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                                 <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                                   th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                   th:data-sub-html="${metadata.placeName+'<br>'+metadata.fileName+' taken on  '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                                 </a>
                                             </th:block>
