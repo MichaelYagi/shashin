@@ -166,13 +166,13 @@
                                 html +=
                                     '       <a class="mediaLink"\n' +
                                     '           data-video=\'{"source": [{"src":"'+metadata.videoUrl+'", "type":"'+metadata.type+'"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                    '           data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
+                                    '           data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "<br>")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
                                     '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                     '       </a>\n';
                             } else {
                                 html +=
                                     '       <a class="mediaLink" data-src="'+metadata.thumbnailUrlOriginal+'" href="'+metadata.thumbnailUrlOriginal+'"' +
-                                    '           data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
+                                    '           data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "<br>")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
                                     '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                     '       </a>\n';
                             }

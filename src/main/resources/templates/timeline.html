@@ -76,14 +76,14 @@
                                     <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                             <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
                                         </th:block>
                                     </th:block>
                                     <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <a class="mediaLink" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '')+metadata.fileName}">
+                                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
                                             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                         </a>
                                     </th:block>
@@ -94,7 +94,7 @@
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                             <a class="mediaLink"
                                                th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
                                         </th:block>
@@ -102,7 +102,7 @@
                                     <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <a class="mediaLink"
                                            th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '')+metadata.fileName}">
+                                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
                                             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                         </a>
                                     </th:block>
@@ -168,10 +168,21 @@
                 /*]]>*/
                 $("#currentPage").val(nextPage);
 
-                //TODO: Fix closing and navigation
-                // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
-                lg.destroy(); // When photos appear slower than destroy called, then there's an error
+                lg.closeGallery(true);
+                lg.destroyModules(true);
+                lg.invalidateItems();
+                $(window).off(`.lg.global${lg.lgId}`);
+                lg.LGel.off('.lg');
                 setTimeout(() => {
+                    // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                    // Hack because lg.destroy() errors out
+                    // when photos appear slower than destroy called, then there's an error
+                    try {
+                        lg.$container.remove();
+                    } catch (e) {
+                        console.log(e);
+                    }
+
                     lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
                 }, 100);
             }
