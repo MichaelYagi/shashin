@@ -6,6 +6,12 @@
         return this.get(0).scrollHeight > this.height();
     }
 
+    // Detect scrolling to bottom of page
+    function atEndOfPage() {
+        var c = [document.scrollingElement.scrollHeight, document.body.scrollHeight, document.body.offsetHeight].sort(function(a,b){return b-a}) // select longest candidate for scrollable length
+        return (window.innerHeight + window.scrollY + 100 >= c[0]) // compare with scroll position + some give
+    }
+
     $.fn.serializeObject = function() {
         var o = {};
         var a = this.serializeArray();
@@ -104,12 +110,6 @@
 
     function encodeHtml(str) {
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    // Detect scrolling to bottom of page
-    function atEndOfPage() {
-        var c = [document.scrollingElement.scrollHeight, document.body.scrollHeight, document.body.offsetHeight].sort(function(a,b){return b-a}) // select longest candidate for scrollable length
-        return (window.innerHeight + window.scrollY + 1 >= c[0]) // compare with scroll position + some give (2)
     }
 
     function setPhotoOverlays(rawMetadata, view) {
