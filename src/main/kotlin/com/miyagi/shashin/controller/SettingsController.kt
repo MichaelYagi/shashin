@@ -90,16 +90,20 @@ class SettingsController {
     @Throws(java.lang.Exception::class)
     fun sendScanMessage(message: ScanMessage): Message? {
         //println("message:${message.getMessage()}")
-
         var msg = "Start Scan";
 
-        if (!checkThreadFileAlive()) {
-            msg = "Scan Complete"
-        }
+        val mediaDirs = mediaDirRepository?.findAll()
+        if (mediaDirs != null && mediaDirs.count() > 0) {
+            if (!checkThreadFileAlive()) {
+                msg = "Scan Complete"
+            }
 
-        val threadFileContent = readThreadFile()
-        if (threadFileContent != null) {
-            msg = "Scan in progress: " + threadFileContent.replace("\\","/")
+            val threadFileContent = readThreadFile()
+            if (threadFileContent != null) {
+                msg = "Scan in progress: " + threadFileContent.replace("\\", "/")
+            }
+        } else {
+            msg = "No directories configured"
         }
 
         val messageObj = Message()
@@ -162,13 +166,17 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
     fun postSettings(model: Model, redirectAttributes: RedirectAttributes, @RequestParam("mediaDirList") mediaDirList: String): String {
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirList.isNotBlank()) {
-            val mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
-            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            val now = LocalDateTime.now()
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+            var mediaDirs: List<String>? = null
             val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
+            if  (mediaDirList.isNotBlank()) {
+                mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
+            }
 
-            if (mediaDirs.isNotEmpty()) {
+            if (mediaDirs != null && mediaDirs.isNotEmpty()) {
+                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val now = LocalDateTime.now()
+
                 for (mediaDir in mediaDirs) {
                     var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
                     if (mediaDirObj == null) {
@@ -180,6 +188,8 @@ class SettingsController {
                     mediaDirArrayList.add(mediaDirObj)
                 }
                 mediaDirRepository?.saveAll(mediaDirArrayList)
+            } else {
+                mediaDirRepository?.deleteAll()
             }
         }
 
@@ -410,69 +420,68 @@ class SettingsController {
             // Scan files
             if (isCheckOnly) {
                 if (!checkThreadFileAlive()) {
-                    resp["msg"] = "Scan complete"
+                    resp["msg"] = "Scan Complete"
                     return mapper.writeValueAsString(resp)
                 }
 
                 val threadFileContent = readThreadFile()
                 if (threadFileContent != null) {
-                    resp["msg"] = "Scanning " + threadFileContent.replace("\\","\\\\")
+                    resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\","\\\\")
                     return mapper.writeValueAsString(resp)
                 }
-                resp["msg"] = "Start scanning"
+                resp["msg"] = "Start Scan"
                 return mapper.writeValueAsString(resp)
             } else if (submit == "Scan") {
                 val mediaDirs = mediaDirRepository?.findAll()
 
-                if (mediaDirs != null) {
-                    if (mediaDirs.count() > 0) {
-                        if (!checkThreadFileAlive()) {
-                            // Clean up any existing thread files
-                            deleteThreadFiles()
+                if (mediaDirs != null && mediaDirs.count() > 0) {
+                    if (!checkThreadFileAlive()) {
+                        // Clean up any existing thread files
+                        deleteThreadFiles()
 
-                            val rootPath = FileSystemResource("").file.absolutePath
-                            val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
+                        val rootPath = FileSystemResource("").file.absolutePath
+                        val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
 
-                            // Iterate through directory in another thread
-                            Thread {
-                                //Create file with thread name and write file name iterated
-                                val tempDir = System.getProperty("java.io.tmpdir")
-                                val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
-                                if (threadFile != null) {
-                                    // Scan for new files
-                                    for (mediaDir in mediaDirs) {
-                                        if (mediaDir != null) {
-                                            getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
-                                        }
-                                    }
-
-                                    logger.log(Level.INFO, "Scan completed")
-
-                                    // Delete thread file
-                                    if (threadFile.delete()) {
-                                        logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
-                                    } else {
-                                        logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
+                        // Iterate through directory in another thread
+                        Thread {
+                            //Create file with thread name and write file name iterated
+                            val tempDir = System.getProperty("java.io.tmpdir")
+                            val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
+                            if (threadFile != null) {
+                                // Scan for new files
+                                for (mediaDir in mediaDirs) {
+                                    if (mediaDir != null) {
+                                        getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
                                     }
                                 }
-                            }.start()
 
-                            resp["msg"] = "Scan started"
-                            return mapper.writeValueAsString(resp)
-                        }
+                                logger.log(Level.INFO, "Scan Complete")
 
-                        val threadFileContent = readThreadFile()
-                        if (threadFileContent != null) {
-                            resp["msg"] = "Scanning " + threadFileContent.replace("\\","\\\\")
-                            return mapper.writeValueAsString(resp)
-                        } else {
-                            resp["msg"] = "Scan in progress"
-                            return mapper.writeValueAsString(resp)
-                        }
+                                // Delete thread file
+                                if (threadFile.delete()) {
+                                    logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
+                                } else {
+                                    logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
+                                }
+                            }
+                        }.start()
+
+                        resp["msg"] = "Start Scan"
+                        return mapper.writeValueAsString(resp)
                     }
+
+                    val threadFileContent = readThreadFile()
+                    if (threadFileContent != null) {
+                        resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\","\\\\")
+                        return mapper.writeValueAsString(resp)
+                    } else {
+                        resp["msg"] = "Scan in progress"
+                        return mapper.writeValueAsString(resp)
+                    }
+                } else {
                     resp["msg"] = "No directories configured"
                 }
-                resp["msg"] = "No directories configured"
+                resp["msg"] = "Start Scan"
             }
         }
 
