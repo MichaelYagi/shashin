@@ -96,14 +96,17 @@ class SettingsController {
         if (mediaDirs != null && mediaDirs.count() > 0) {
             if (!checkThreadFileAlive()) {
                 msg = "Scan Complete"
+                println(msg)
             }
 
             val threadFileContent = readThreadFile()
             if (threadFileContent != null) {
                 msg = "Scan in progress: " + threadFileContent.replace("\\", "/")
+                println(msg)
             }
         } else {
             msg = "No directories configured"
+            println(msg)
         }
 
         val messageObj = Message()
@@ -426,7 +429,7 @@ class SettingsController {
 
                 val threadFileContent = readThreadFile()
                 if (threadFileContent != null) {
-                    resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\","\\\\")
+                    resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
                     return mapper.writeValueAsString(resp)
                 }
                 resp["msg"] = "Start Scan"
@@ -472,7 +475,7 @@ class SettingsController {
 
                     val threadFileContent = readThreadFile()
                     if (threadFileContent != null) {
-                        resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\","\\\\")
+                        resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
                         return mapper.writeValueAsString(resp)
                     } else {
                         resp["msg"] = "Scan in progress"

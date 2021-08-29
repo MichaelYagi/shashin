@@ -23,11 +23,11 @@
         // Web socket
         var stompClient = null;
         var scanInProgress = false;
+
         connect();
 
         $("#scanPhotos").submit(function (e) {
             e.preventDefault();
-
             postToScan(false);
         });
 
@@ -39,16 +39,21 @@
             );
 
             posting.done(function (data) {
-                $("#msg").text(data.hasOwnProperty("msg") ? data["msg"] : "");
+                showMessage(data.hasOwnProperty("msg") ? data["msg"] : "")
+                //console.log($("#msg").text());
                 if (scanInProgress === false) {
-                    refresh();
+                    // console.log($("#msg").text());
+                    if ($("#msg").text() === "Start Scan") {
+                        connect();
+                    }
+                    scanRefresh();
                 }
             });
 
             return false;
         }
 
-        function refresh() {
+        function scanRefresh() {
             sendMessage();
             let msgId = "#msg";
             if ($(msgId).text() === "No directories configured" || $(msgId).text() === "Scan Complete") {
@@ -56,7 +61,7 @@
                 disconnect();
             } else {
                 scanInProgress = true;
-                setTimeout(refresh, 5000);
+                setTimeout(scanRefresh, 5000);
             }
         }
 
@@ -67,16 +72,20 @@
             // console.log("Socket Connecting");
 
             stompClient.connect({}, function() {
+                if (scanInProgress === false) {
+                    scanRefresh();
+                }
                 // console.log( "Connected STOMP client");
                 this.subscribe("/topic/messages", function (message) {
-                    // console.log("message:"+message);
-                    showMessage(JSON.parse(message.body).content);
-                    // callback(true);
+                    let respMessage = JSON.parse(message.body).content;
+                    //console.log("message: "+message);
+                    showMessage(respMessage);
                 });
-            }, function(error) {
-                console.log( "connect() error" );
-                console.log( error );
-                // callback(false);
+            }, function(e) {
+                // console.log( "connect() error" );
+                // console.log( error );
+                showMessage("Socket connection error: " + e.toString())
+                scanInProgress = false;
             });
         }
 
@@ -91,7 +100,8 @@
             if (stompClient !== null) {
                 stompClient.send("/app/scanmessage", {}, JSON.stringify({'message': "getScanMessage"}));
             } else {
-                console.log("Trying to send message but STOMP client is null");
+                showMessage("Trying to send message but STOMP client is null")
+                scanInProgress = false;
             }
         }
 
