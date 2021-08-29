@@ -137,7 +137,12 @@
             <artifactId>ffmpeg-platform</artifactId>
             <version>3.4.2-1.4.1</version>
         </dependency>
-
+        <!-- Web sockets -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <!-- Spring framework -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
