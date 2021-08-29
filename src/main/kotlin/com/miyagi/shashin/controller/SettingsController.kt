@@ -96,17 +96,14 @@ class SettingsController {
         if (mediaDirs != null && mediaDirs.count() > 0) {
             if (!checkThreadFileAlive()) {
                 msg = "Scan Complete"
-                println(msg)
             }
 
             val threadFileContent = readThreadFile()
             if (threadFileContent != null) {
                 msg = "Scan in progress: " + threadFileContent.replace("\\", "/")
-                println(msg)
             }
         } else {
             msg = "No directories configured"
-            println(msg)
         }
 
         val messageObj = Message()
