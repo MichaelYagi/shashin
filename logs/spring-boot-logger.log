@@ -19447,3 +19447,1124 @@ Using generated security password: a4ec91ff-0539-4d35-9709-f3393db5db2b
 2021-08-29 08:38:26,667 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
 2021-08-29 08:38:26,672 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
 2021-08-29 08:38:26,682 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-29 08:40:50,777 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 4996 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-29 08:40:50,781 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-29 08:40:50,892 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacv\1.4.1\javacv-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/javacpp-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/opencv-3.4.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/ffmpeg-3.4.2-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flycapture-2.11.3.121-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libdc1394-2.2.5-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect-0.5.3-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect2-0.2.0-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/librealsense-1.12.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/videoinput-0.200-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/artoolkitplus-2.3.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flandmark-1.07-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/android-4.1.1.4.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/javacpp.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/opencv.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/ffmpeg.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flycapture.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libdc1394.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect2.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/librealsense.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/videoinput.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/artoolkitplus.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flandmark.jar
+2021-08-29 08:40:50,893 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\opencv\3.4.1-1.4.1\opencv-3.4.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv/3.4.1-1.4.1/javacpp.jar
+2021-08-29 08:40:50,894 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\ffmpeg\3.4.2-1.4.1\ffmpeg-3.4.2-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg/3.4.2-1.4.1/javacpp.jar
+2021-08-29 08:40:50,894 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\flycapture\2.11.3.121-1.4.1\flycapture-2.11.3.121-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/flycapture/2.11.3.121-1.4.1/javacpp.jar
+2021-08-29 08:40:50,894 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libdc1394\2.2.5-1.4.1\libdc1394-2.2.5-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libdc1394/2.2.5-1.4.1/javacpp.jar
+2021-08-29 08:40:50,895 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libfreenect\0.5.3-1.4.1\libfreenect-0.5.3-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libfreenect/0.5.3-1.4.1/javacpp.jar
+2021-08-29 08:40:50,895 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libfreenect2\0.2.0-1.4.1\libfreenect2-0.2.0-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libfreenect2/0.2.0-1.4.1/javacpp.jar
+2021-08-29 08:40:50,895 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\librealsense\1.12.1-1.4.1\librealsense-1.12.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/librealsense/1.12.1-1.4.1/javacpp.jar
+2021-08-29 08:40:50,896 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\videoinput\0.200-1.4.1\videoinput-0.200-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/videoinput/0.200-1.4.1/javacpp.jar
+2021-08-29 08:40:50,896 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\artoolkitplus\2.3.1-1.4.1\artoolkitplus-2.3.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/artoolkitplus/2.3.1-1.4.1/javacpp.jar
+2021-08-29 08:40:50,897 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\flandmark\1.07-1.4.1\flandmark-1.07-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/flandmark/1.07-1.4.1/javacpp.jar
+2021-08-29 08:40:50,898 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\opencv-platform\3.4.1-1.4.1\opencv-platform-3.4.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-armhf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-ppc64le.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-macosx-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-windows-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-windows-x86_64.jar
+2021-08-29 08:40:50,898 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\ffmpeg-platform\3.4.2-1.4.1\ffmpeg-platform-3.4.2-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-armhf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-ppc64le.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-macosx-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-windows-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-windows-x86_64.jar
+2021-08-29 08:40:50,899 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-29 08:40:50,900 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-29 08:40:53,185 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-29 08:40:53,411 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 214 ms. Found 11 JPA repository interfaces.
+2021-08-29 08:40:54,130 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@743015b1' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-08-29 08:40:54,136 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-08-29 08:40:54,531 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-29 08:40:54,543 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-29 08:40:54,544 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-29 08:40:54,544 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-29 08:40:54,660 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-29 08:40:54,661 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 3759 ms
+2021-08-29 08:40:55,015 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-29 08:40:55,139 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-29 08:40:55,144 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-29 08:40:55,204 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-29 08:40:55,241 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-29 08:40:55,407 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-29 08:40:55,713 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-29 08:40:55,723 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-29 08:40:55,752 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-29 08:40:56,301 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-29 08:40:58,009 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-29 08:40:58,090 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [restartedMain] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-29 08:40:58,522 INFO org.springframework.security.web.DefaultSecurityFilterChain [restartedMain] Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@5e32bce1, org.springframework.security.web.context.SecurityContextPersistenceFilter@1eec9578, org.springframework.security.web.header.HeaderWriterFilter@ce7fea4, org.springframework.security.web.authentication.logout.LogoutFilter@34e1fc51, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@65a8e08a, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@207f9039, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@cb8afb3, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@341cb75a, org.springframework.security.web.session.SessionManagementFilter@52e32272, org.springframework.security.web.access.ExceptionTranslationFilter@3ba5b51e, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@7d2e06d7]
+2021-08-29 08:40:58,632 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-29 08:40:58,655 INFO org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration [restartedMain] 
+
+Using generated security password: cfbc30f8-bc7c-4642-8938-12115c2d6cd2
+
+2021-08-29 08:40:58,671 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-29 08:40:58,717 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-29 08:40:58,721 INFO org.springframework.core.log.CompositeLog [restartedMain] Starting...
+2021-08-29 08:40:58,722 INFO org.springframework.core.log.CompositeLog [restartedMain] BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@7f9fe0d5]]
+2021-08-29 08:40:58,722 INFO org.springframework.core.log.CompositeLog [restartedMain] Started.
+2021-08-29 08:40:58,735 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 8.965 seconds (JVM running for 10.365)
+2021-08-29 08:41:07,187 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-29 08:41:07,187 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-29 08:41:07,189 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 1 ms
+2021-08-29 08:41:17,512 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thread created: Thread-8.shashinscan
+2021-08-29 08:41:18,146 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG_209.jpg
+2021-08-29 08:41:18,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG_centered.jpg
+2021-08-29 08:41:18,215 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG_original.jpg
+2021-08-29 08:41:18,217 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG_mapmarker.jpg
+2021-08-29 08:41:18,788 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1061.JPG.exif.yaml
+2021-08-29 08:41:18,791 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1061.JPG.yaml
+2021-08-29 08:41:19,189 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG_209.jpg
+2021-08-29 08:41:19,190 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG_centered.jpg
+2021-08-29 08:41:19,191 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG_original.jpg
+2021-08-29 08:41:19,192 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG_mapmarker.jpg
+2021-08-29 08:41:19,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1062.JPG.exif.yaml
+2021-08-29 08:41:19,781 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1062.JPG.yaml
+2021-08-29 08:41:20,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG_209.jpg
+2021-08-29 08:41:20,197 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG_centered.jpg
+2021-08-29 08:41:20,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG_original.jpg
+2021-08-29 08:41:20,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG_mapmarker.jpg
+2021-08-29 08:41:20,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1063.JPG.exif.yaml
+2021-08-29 08:41:20,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1063.JPG.yaml
+2021-08-29 08:41:21,153 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG_209.jpg
+2021-08-29 08:41:21,154 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG_centered.jpg
+2021-08-29 08:41:21,155 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG_original.jpg
+2021-08-29 08:41:21,156 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG_mapmarker.jpg
+2021-08-29 08:41:21,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1080.JPG.exif.yaml
+2021-08-29 08:41:21,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1080.JPG.yaml
+2021-08-29 08:41:22,257 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162214741.jpg_209.jpg
+2021-08-29 08:41:22,258 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162214741.jpg_centered.jpg
+2021-08-29 08:41:22,259 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162214741.jpg_original.jpg
+2021-08-29 08:41:22,259 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162214741.jpg_mapmarker.jpg
+2021-08-29 08:41:22,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162214741.jpg.exif.yaml
+2021-08-29 08:41:22,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162214741.jpg.yaml
+2021-08-29 08:41:23,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162228882.jpg_209.jpg
+2021-08-29 08:41:23,208 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162228882.jpg_centered.jpg
+2021-08-29 08:41:23,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162228882.jpg_original.jpg
+2021-08-29 08:41:23,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162228882.jpg_mapmarker.jpg
+2021-08-29 08:41:23,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162228882.jpg.exif.yaml
+2021-08-29 08:41:23,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162228882.jpg.yaml
+2021-08-29 08:41:24,248 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162426584.jpg_209.jpg
+2021-08-29 08:41:24,249 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162426584.jpg_centered.jpg
+2021-08-29 08:41:24,250 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162426584.jpg_original.jpg
+2021-08-29 08:41:24,251 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162426584.jpg_mapmarker.jpg
+2021-08-29 08:41:24,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162426584.jpg.exif.yaml
+2021-08-29 08:41:24,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162426584.jpg.yaml
+2021-08-29 08:41:25,289 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162433161.jpg_209.jpg
+2021-08-29 08:41:25,290 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162433161.jpg_centered.jpg
+2021-08-29 08:41:25,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162433161.jpg_original.jpg
+2021-08-29 08:41:25,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162433161.jpg_mapmarker.jpg
+2021-08-29 08:41:25,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162433161.jpg.exif.yaml
+2021-08-29 08:41:25,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162433161.jpg.yaml
+2021-08-29 08:41:26,268 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162453255.jpg_209.jpg
+2021-08-29 08:41:26,269 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162453255.jpg_centered.jpg
+2021-08-29 08:41:26,270 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162453255.jpg_original.jpg
+2021-08-29 08:41:26,270 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162453255.jpg_mapmarker.jpg
+2021-08-29 08:41:26,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162453255.jpg.exif.yaml
+2021-08-29 08:41:26,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162453255.jpg.yaml
+2021-08-29 08:41:27,271 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162459473.jpg_209.jpg
+2021-08-29 08:41:27,273 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162459473.jpg_centered.jpg
+2021-08-29 08:41:27,274 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162459473.jpg_original.jpg
+2021-08-29 08:41:27,275 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162459473.jpg_mapmarker.jpg
+2021-08-29 08:41:27,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162459473.jpg.exif.yaml
+2021-08-29 08:41:27,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162459473.jpg.yaml
+2021-08-29 08:41:28,188 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163753322.jpg_209.jpg
+2021-08-29 08:41:28,189 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163753322.jpg_centered.jpg
+2021-08-29 08:41:28,189 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163753322.jpg_original.jpg
+2021-08-29 08:41:28,190 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163753322.jpg_mapmarker.jpg
+2021-08-29 08:41:28,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_163753322.jpg.exif.yaml
+2021-08-29 08:41:28,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_163753322.jpg.yaml
+2021-08-29 08:41:29,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163756597.jpg_209.jpg
+2021-08-29 08:41:29,231 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163756597.jpg_centered.jpg
+2021-08-29 08:41:29,231 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163756597.jpg_original.jpg
+2021-08-29 08:41:29,232 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163756597.jpg_mapmarker.jpg
+2021-08-29 08:41:29,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_163756597.jpg.exif.yaml
+2021-08-29 08:41:29,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_163756597.jpg.yaml
+2021-08-29 08:41:30,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_164528303.jpg_209.jpg
+2021-08-29 08:41:30,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_164528303.jpg_centered.jpg
+2021-08-29 08:41:30,230 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_164528303.jpg_original.jpg
+2021-08-29 08:41:30,230 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_164528303.jpg_mapmarker.jpg
+2021-08-29 08:41:30,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_164528303.jpg.exif.yaml
+2021-08-29 08:41:30,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_164528303.jpg.yaml
+2021-08-29 08:41:31,167 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210409_233343452.jpg_209.jpg
+2021-08-29 08:41:31,169 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210409_233343452.jpg_centered.jpg
+2021-08-29 08:41:31,170 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210409_233343452.jpg_original.jpg
+2021-08-29 08:41:31,170 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210409_233343452.jpg_mapmarker.jpg
+2021-08-29 08:41:31,800 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210409_233343452.jpg.exif.yaml
+2021-08-29 08:41:31,801 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210409_233343452.jpg.yaml
+2021-08-29 08:41:32,370 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_202709022.jpg_209.jpg
+2021-08-29 08:41:32,371 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_202709022.jpg_centered.jpg
+2021-08-29 08:41:32,372 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_202709022.jpg_original.jpg
+2021-08-29 08:41:32,372 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_202709022.jpg_mapmarker.jpg
+2021-08-29 08:41:32,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_202709022.jpg.exif.yaml
+2021-08-29 08:41:32,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_202709022.jpg.yaml
+2021-08-29 08:41:33,241 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203510718.jpg_209.jpg
+2021-08-29 08:41:33,243 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203510718.jpg_centered.jpg
+2021-08-29 08:41:33,244 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203510718.jpg_original.jpg
+2021-08-29 08:41:33,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203510718.jpg_mapmarker.jpg
+2021-08-29 08:41:33,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_203510718.jpg.exif.yaml
+2021-08-29 08:41:33,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_203510718.jpg.yaml
+2021-08-29 08:41:34,205 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203517457.jpg_209.jpg
+2021-08-29 08:41:34,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203517457.jpg_centered.jpg
+2021-08-29 08:41:34,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203517457.jpg_original.jpg
+2021-08-29 08:41:34,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203517457.jpg_mapmarker.jpg
+2021-08-29 08:41:34,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_203517457.jpg.exif.yaml
+2021-08-29 08:41:34,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_203517457.jpg.yaml
+2021-08-29 08:41:35,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204509025.jpg_209.jpg
+2021-08-29 08:41:35,228 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204509025.jpg_centered.jpg
+2021-08-29 08:41:35,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204509025.jpg_original.jpg
+2021-08-29 08:41:35,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204509025.jpg_mapmarker.jpg
+2021-08-29 08:41:35,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_204509025.jpg.exif.yaml
+2021-08-29 08:41:35,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_204509025.jpg.yaml
+2021-08-29 08:41:36,236 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204514975.jpg_209.jpg
+2021-08-29 08:41:36,238 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204514975.jpg_centered.jpg
+2021-08-29 08:41:36,238 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204514975.jpg_original.jpg
+2021-08-29 08:41:36,238 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204514975.jpg_mapmarker.jpg
+2021-08-29 08:41:36,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_204514975.jpg.exif.yaml
+2021-08-29 08:41:36,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_204514975.jpg.yaml
+2021-08-29 08:41:37,257 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204518574.jpg_209.jpg
+2021-08-29 08:41:37,259 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204518574.jpg_centered.jpg
+2021-08-29 08:41:37,260 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204518574.jpg_original.jpg
+2021-08-29 08:41:37,260 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204518574.jpg_mapmarker.jpg
+2021-08-29 08:41:37,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_204518574.jpg.exif.yaml
+2021-08-29 08:41:37,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_204518574.jpg.yaml
+2021-08-29 08:41:38,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204534724.jpg_209.jpg
+2021-08-29 08:41:38,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204534724.jpg_centered.jpg
+2021-08-29 08:41:38,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204534724.jpg_original.jpg
+2021-08-29 08:41:38,213 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204534724.jpg_mapmarker.jpg
+2021-08-29 08:41:38,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_204534724.jpg.exif.yaml
+2021-08-29 08:41:38,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_204534724.jpg.yaml
+2021-08-29 08:41:39,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210413_164549893.jpg_209.jpg
+2021-08-29 08:41:39,197 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210413_164549893.jpg_centered.jpg
+2021-08-29 08:41:39,197 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210413_164549893.jpg_original.jpg
+2021-08-29 08:41:39,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210413_164549893.jpg_mapmarker.jpg
+2021-08-29 08:41:39,781 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210413_164549893.jpg.exif.yaml
+2021-08-29 08:41:39,782 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210413_164549893.jpg.yaml
+2021-08-29 08:41:40,217 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201756161.jpg_209.jpg
+2021-08-29 08:41:40,218 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201756161.jpg_centered.jpg
+2021-08-29 08:41:40,219 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201756161.jpg_original.jpg
+2021-08-29 08:41:40,219 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201756161.jpg_mapmarker.jpg
+2021-08-29 08:41:40,781 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210417_201756161.jpg.exif.yaml
+2021-08-29 08:41:40,782 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210417_201756161.jpg.yaml
+2021-08-29 08:41:41,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201758348.jpg_209.jpg
+2021-08-29 08:41:41,231 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201758348.jpg_centered.jpg
+2021-08-29 08:41:41,232 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201758348.jpg_original.jpg
+2021-08-29 08:41:41,232 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201758348.jpg_mapmarker.jpg
+2021-08-29 08:41:41,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210417_201758348.jpg.exif.yaml
+2021-08-29 08:41:41,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210417_201758348.jpg.yaml
+2021-08-29 08:41:42,195 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201915323.jpg_209.jpg
+2021-08-29 08:41:42,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201915323.jpg_centered.jpg
+2021-08-29 08:41:42,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201915323.jpg_original.jpg
+2021-08-29 08:41:42,197 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_201915323.jpg_mapmarker.jpg
+2021-08-29 08:41:42,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210417_201915323.jpg.exif.yaml
+2021-08-29 08:41:42,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210417_201915323.jpg.yaml
+2021-08-29 08:41:43,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_231431006.jpg_209.jpg
+2021-08-29 08:41:43,236 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_231431006.jpg_centered.jpg
+2021-08-29 08:41:43,237 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_231431006.jpg_original.jpg
+2021-08-29 08:41:43,239 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_231431006.jpg_mapmarker.jpg
+2021-08-29 08:41:43,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210417_231431006.jpg.exif.yaml
+2021-08-29 08:41:43,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210417_231431006.jpg.yaml
+2021-08-29 08:41:44,232 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_231443029.jpg_209.jpg
+2021-08-29 08:41:44,233 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_231443029.jpg_centered.jpg
+2021-08-29 08:41:44,233 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_231443029.jpg_original.jpg
+2021-08-29 08:41:44,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210417_231443029.jpg_mapmarker.jpg
+2021-08-29 08:41:44,846 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210417_231443029.jpg.exif.yaml
+2021-08-29 08:41:44,848 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210417_231443029.jpg.yaml
+2021-08-29 08:41:45,274 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_172602856.jpg_209.jpg
+2021-08-29 08:41:45,276 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_172602856.jpg_centered.jpg
+2021-08-29 08:41:45,276 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_172602856.jpg_original.jpg
+2021-08-29 08:41:45,277 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_172602856.jpg_mapmarker.jpg
+2021-08-29 08:41:45,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210418_172602856.jpg.exif.yaml
+2021-08-29 08:41:45,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210418_172602856.jpg.yaml
+2021-08-29 08:41:46,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_175014479.jpg_209.jpg
+2021-08-29 08:41:46,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_175014479.jpg_centered.jpg
+2021-08-29 08:41:46,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_175014479.jpg_original.jpg
+2021-08-29 08:41:46,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_175014479.jpg_mapmarker.jpg
+2021-08-29 08:41:46,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210418_175014479.jpg.exif.yaml
+2021-08-29 08:41:46,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210418_175014479.jpg.yaml
+2021-08-29 08:41:47,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_175023717.jpg_209.jpg
+2021-08-29 08:41:47,208 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_175023717.jpg_centered.jpg
+2021-08-29 08:41:47,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_175023717.jpg_original.jpg
+2021-08-29 08:41:47,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_175023717.jpg_mapmarker.jpg
+2021-08-29 08:41:47,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210418_175023717.jpg.exif.yaml
+2021-08-29 08:41:47,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210418_175023717.jpg.yaml
+2021-08-29 08:41:48,205 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_194523110.jpg_209.jpg
+2021-08-29 08:41:48,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_194523110.jpg_centered.jpg
+2021-08-29 08:41:48,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_194523110.jpg_original.jpg
+2021-08-29 08:41:48,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_194523110.jpg_mapmarker.jpg
+2021-08-29 08:41:48,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210418_194523110.jpg.exif.yaml
+2021-08-29 08:41:48,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210418_194523110.jpg.yaml
+2021-08-29 08:41:49,215 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_194529345.jpg_209.jpg
+2021-08-29 08:41:49,217 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_194529345.jpg_centered.jpg
+2021-08-29 08:41:49,218 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_194529345.jpg_original.jpg
+2021-08-29 08:41:49,218 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210418_194529345.jpg_mapmarker.jpg
+2021-08-29 08:41:49,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210418_194529345.jpg.exif.yaml
+2021-08-29 08:41:49,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210418_194529345.jpg.yaml
+2021-08-29 08:41:50,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014523474.jpg_209.jpg
+2021-08-29 08:41:50,200 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014523474.jpg_centered.jpg
+2021-08-29 08:41:50,200 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014523474.jpg_original.jpg
+2021-08-29 08:41:50,201 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014523474.jpg_mapmarker.jpg
+2021-08-29 08:41:50,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210421_014523474.jpg.exif.yaml
+2021-08-29 08:41:50,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210421_014523474.jpg.yaml
+2021-08-29 08:41:51,280 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014540319.jpg_209.jpg
+2021-08-29 08:41:51,282 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014540319.jpg_centered.jpg
+2021-08-29 08:41:51,283 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014540319.jpg_original.jpg
+2021-08-29 08:41:51,283 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014540319.jpg_mapmarker.jpg
+2021-08-29 08:41:51,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210421_014540319.jpg.exif.yaml
+2021-08-29 08:41:51,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210421_014540319.jpg.yaml
+2021-08-29 08:41:52,307 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014541632.jpg_209.jpg
+2021-08-29 08:41:52,309 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014541632.jpg_centered.jpg
+2021-08-29 08:41:52,309 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014541632.jpg_original.jpg
+2021-08-29 08:41:52,309 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210421_014541632.jpg_mapmarker.jpg
+2021-08-29 08:41:52,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210421_014541632.jpg.exif.yaml
+2021-08-29 08:41:52,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210421_014541632.jpg.yaml
+2021-08-29 08:41:53,453 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020549381.jpg_209.jpg
+2021-08-29 08:41:53,454 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020549381.jpg_centered.jpg
+2021-08-29 08:41:53,455 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020549381.jpg_original.jpg
+2021-08-29 08:41:53,456 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020549381.jpg_mapmarker.jpg
+2021-08-29 08:41:53,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210422_020549381.jpg.exif.yaml
+2021-08-29 08:41:53,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210422_020549381.jpg.yaml
+2021-08-29 08:41:54,524 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020550865.jpg_209.jpg
+2021-08-29 08:41:54,527 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020550865.jpg_centered.jpg
+2021-08-29 08:41:54,528 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020550865.jpg_original.jpg
+2021-08-29 08:41:54,529 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020550865.jpg_mapmarker.jpg
+2021-08-29 08:41:54,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210422_020550865.jpg.exif.yaml
+2021-08-29 08:41:54,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210422_020550865.jpg.yaml
+2021-08-29 08:41:55,253 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020552449.jpg_209.jpg
+2021-08-29 08:41:55,254 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020552449.jpg_centered.jpg
+2021-08-29 08:41:55,254 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020552449.jpg_original.jpg
+2021-08-29 08:41:55,255 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210422_020552449.jpg_mapmarker.jpg
+2021-08-29 08:41:55,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210422_020552449.jpg.exif.yaml
+2021-08-29 08:41:55,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210422_020552449.jpg.yaml
+2021-08-29 08:41:56,311 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030806483.jpg_209.jpg
+2021-08-29 08:41:56,312 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030806483.jpg_centered.jpg
+2021-08-29 08:41:56,313 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030806483.jpg_original.jpg
+2021-08-29 08:41:56,313 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030806483.jpg_mapmarker.jpg
+2021-08-29 08:41:56,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_030806483.jpg.exif.yaml
+2021-08-29 08:41:56,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_030806483.jpg.yaml
+2021-08-29 08:41:57,168 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030818103.jpg_209.jpg
+2021-08-29 08:41:57,169 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030818103.jpg_centered.jpg
+2021-08-29 08:41:57,170 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030818103.jpg_original.jpg
+2021-08-29 08:41:57,170 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030818103.jpg_mapmarker.jpg
+2021-08-29 08:41:57,755 INFO org.springframework.web.socket.config.WebSocketMessageBrokerStats [MessageBroker-2] WebSocketSession[1 current WS(1)-HttpStream(0)-HttpPoll(0), 2 total, 0 closed abnormally (0 connect failure, 0 send limit, 0 transport error)], stompSubProtocol[processed CONNECT(2)-CONNECTED(2)-DISCONNECT(1)], stompBrokerRelay[null], inboundChannel[pool size = 16, active threads = 0, queued tasks = 0, completed tasks = 48], outboundChannel[pool size = 13, active threads = 0, queued tasks = 0, completed tasks = 13], sockJsScheduler[pool size = 8, active threads = 1, queued tasks = 2, completed tasks = 10]
+2021-08-29 08:41:57,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_030818103.jpg.exif.yaml
+2021-08-29 08:41:57,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_030818103.jpg.yaml
+2021-08-29 08:41:58,215 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030824155.jpg_209.jpg
+2021-08-29 08:41:58,216 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030824155.jpg_centered.jpg
+2021-08-29 08:41:58,217 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030824155.jpg_original.jpg
+2021-08-29 08:41:58,217 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030824155.jpg_mapmarker.jpg
+2021-08-29 08:41:58,781 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_030824155.jpg.exif.yaml
+2021-08-29 08:41:58,783 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_030824155.jpg.yaml
+2021-08-29 08:41:59,244 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030825254.jpg_209.jpg
+2021-08-29 08:41:59,246 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030825254.jpg_centered.jpg
+2021-08-29 08:41:59,246 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030825254.jpg_original.jpg
+2021-08-29 08:41:59,246 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_030825254.jpg_mapmarker.jpg
+2021-08-29 08:41:59,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_030825254.jpg.exif.yaml
+2021-08-29 08:41:59,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_030825254.jpg.yaml
+2021-08-29 08:42:00,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_032149337.jpg_209.jpg
+2021-08-29 08:42:00,228 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_032149337.jpg_centered.jpg
+2021-08-29 08:42:00,228 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_032149337.jpg_original.jpg
+2021-08-29 08:42:00,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_032149337.jpg_mapmarker.jpg
+2021-08-29 08:42:00,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_032149337.jpg.exif.yaml
+2021-08-29 08:42:00,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_032149337.jpg.yaml
+2021-08-29 08:42:01,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160104195.jpg_209.jpg
+2021-08-29 08:42:01,213 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160104195.jpg_centered.jpg
+2021-08-29 08:42:01,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160104195.jpg_original.jpg
+2021-08-29 08:42:01,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160104195.jpg_mapmarker.jpg
+2021-08-29 08:42:01,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_160104195.jpg.exif.yaml
+2021-08-29 08:42:01,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_160104195.jpg.yaml
+2021-08-29 08:42:02,186 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160104971.jpg_209.jpg
+2021-08-29 08:42:02,187 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160104971.jpg_centered.jpg
+2021-08-29 08:42:02,188 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160104971.jpg_original.jpg
+2021-08-29 08:42:02,190 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160104971.jpg_mapmarker.jpg
+2021-08-29 08:42:02,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_160104971.jpg.exif.yaml
+2021-08-29 08:42:02,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_160104971.jpg.yaml
+2021-08-29 08:42:03,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160106000.jpg_209.jpg
+2021-08-29 08:42:03,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160106000.jpg_centered.jpg
+2021-08-29 08:42:03,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160106000.jpg_original.jpg
+2021-08-29 08:42:03,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_160106000.jpg_mapmarker.jpg
+2021-08-29 08:42:03,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_160106000.jpg.exif.yaml
+2021-08-29 08:42:03,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_160106000.jpg.yaml
+2021-08-29 08:42:04,248 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_165030285.jpg_209.jpg
+2021-08-29 08:42:04,249 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_165030285.jpg_centered.jpg
+2021-08-29 08:42:04,249 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_165030285.jpg_original.jpg
+2021-08-29 08:42:04,250 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_165030285.jpg_mapmarker.jpg
+2021-08-29 08:42:04,784 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_165030285.jpg.exif.yaml
+2021-08-29 08:42:04,785 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_165030285.jpg.yaml
+2021-08-29 08:42:05,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_165036676.jpg_209.jpg
+2021-08-29 08:42:05,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_165036676.jpg_centered.jpg
+2021-08-29 08:42:05,228 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_165036676.jpg_original.jpg
+2021-08-29 08:42:05,228 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_165036676.jpg_mapmarker.jpg
+2021-08-29 08:42:05,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_165036676.jpg.exif.yaml
+2021-08-29 08:42:05,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_165036676.jpg.yaml
+2021-08-29 08:42:06,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_222309184.jpg_209.jpg
+2021-08-29 08:42:06,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_222309184.jpg_centered.jpg
+2021-08-29 08:42:06,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_222309184.jpg_original.jpg
+2021-08-29 08:42:06,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210424_222309184.jpg_mapmarker.jpg
+2021-08-29 08:42:06,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210424_222309184.jpg.exif.yaml
+2021-08-29 08:42:06,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210424_222309184.jpg.yaml
+2021-08-29 08:42:07,250 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210429_010736421.jpg_209.jpg
+2021-08-29 08:42:07,251 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210429_010736421.jpg_centered.jpg
+2021-08-29 08:42:07,252 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210429_010736421.jpg_original.jpg
+2021-08-29 08:42:07,253 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210429_010736421.jpg_mapmarker.jpg
+2021-08-29 08:42:07,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210429_010736421.jpg.exif.yaml
+2021-08-29 08:42:07,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210429_010736421.jpg.yaml
+2021-08-29 08:42:08,279 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210501_150908581.jpg_209.jpg
+2021-08-29 08:42:08,280 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210501_150908581.jpg_centered.jpg
+2021-08-29 08:42:08,281 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210501_150908581.jpg_original.jpg
+2021-08-29 08:42:08,282 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210501_150908581.jpg_mapmarker.jpg
+2021-08-29 08:42:08,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210501_150908581.jpg.exif.yaml
+2021-08-29 08:42:08,777 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210501_150908581.jpg.yaml
+2021-08-29 08:42:09,228 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210501_150910318.jpg_209.jpg
+2021-08-29 08:42:09,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210501_150910318.jpg_centered.jpg
+2021-08-29 08:42:09,230 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210501_150910318.jpg_original.jpg
+2021-08-29 08:42:09,230 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210501_150910318.jpg_mapmarker.jpg
+2021-08-29 08:42:09,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210501_150910318.jpg.exif.yaml
+2021-08-29 08:42:09,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210501_150910318.jpg.yaml
+2021-08-29 08:42:10,232 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165021218.jpg_209.jpg
+2021-08-29 08:42:10,233 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165021218.jpg_centered.jpg
+2021-08-29 08:42:10,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165021218.jpg_original.jpg
+2021-08-29 08:42:10,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165021218.jpg_mapmarker.jpg
+2021-08-29 08:42:10,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210502_165021218.jpg.exif.yaml
+2021-08-29 08:42:10,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210502_165021218.jpg.yaml
+2021-08-29 08:42:11,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165038748.jpg_209.jpg
+2021-08-29 08:42:11,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165038748.jpg_centered.jpg
+2021-08-29 08:42:11,208 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165038748.jpg_original.jpg
+2021-08-29 08:42:11,208 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165038748.jpg_mapmarker.jpg
+2021-08-29 08:42:11,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210502_165038748.jpg.exif.yaml
+2021-08-29 08:42:11,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210502_165038748.jpg.yaml
+2021-08-29 08:42:12,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165336256.jpg_209.jpg
+2021-08-29 08:42:12,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165336256.jpg_centered.jpg
+2021-08-29 08:42:12,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165336256.jpg_original.jpg
+2021-08-29 08:42:12,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210502_165336256.jpg_mapmarker.jpg
+2021-08-29 08:42:12,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210502_165336256.jpg.exif.yaml
+2021-08-29 08:42:12,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210502_165336256.jpg.yaml
+2021-08-29 08:42:13,243 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184313442.jpg_209.jpg
+2021-08-29 08:42:13,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184313442.jpg_centered.jpg
+2021-08-29 08:42:13,246 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184313442.jpg_original.jpg
+2021-08-29 08:42:13,247 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184313442.jpg_mapmarker.jpg
+2021-08-29 08:42:13,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210507_184313442.jpg.exif.yaml
+2021-08-29 08:42:13,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210507_184313442.jpg.yaml
+2021-08-29 08:42:14,327 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184315387.jpg_209.jpg
+2021-08-29 08:42:14,328 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184315387.jpg_centered.jpg
+2021-08-29 08:42:14,328 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184315387.jpg_original.jpg
+2021-08-29 08:42:14,329 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184315387.jpg_mapmarker.jpg
+2021-08-29 08:42:14,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210507_184315387.jpg.exif.yaml
+2021-08-29 08:42:14,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210507_184315387.jpg.yaml
+2021-08-29 08:42:15,270 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184326200.jpg_209.jpg
+2021-08-29 08:42:15,271 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184326200.jpg_centered.jpg
+2021-08-29 08:42:15,271 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184326200.jpg_original.jpg
+2021-08-29 08:42:15,272 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184326200.jpg_mapmarker.jpg
+2021-08-29 08:42:15,786 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210507_184326200.jpg.exif.yaml
+2021-08-29 08:42:15,787 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210507_184326200.jpg.yaml
+2021-08-29 08:42:16,559 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184346599.jpg_209.jpg
+2021-08-29 08:42:16,561 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184346599.jpg_centered.jpg
+2021-08-29 08:42:16,561 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184346599.jpg_original.jpg
+2021-08-29 08:42:16,562 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210507_184346599.jpg_mapmarker.jpg
+2021-08-29 08:42:16,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210507_184346599.jpg.exif.yaml
+2021-08-29 08:42:16,771 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210507_184346599.jpg.yaml
+2021-08-29 08:42:17,300 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_004600650.jpg_209.jpg
+2021-08-29 08:42:17,301 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_004600650.jpg_centered.jpg
+2021-08-29 08:42:17,302 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_004600650.jpg_original.jpg
+2021-08-29 08:42:17,302 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_004600650.jpg_mapmarker.jpg
+2021-08-29 08:42:17,784 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210510_004600650.jpg.exif.yaml
+2021-08-29 08:42:17,785 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210510_004600650.jpg.yaml
+2021-08-29 08:42:18,203 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022313047.jpg_209.jpg
+2021-08-29 08:42:18,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022313047.jpg_centered.jpg
+2021-08-29 08:42:18,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022313047.jpg_original.jpg
+2021-08-29 08:42:18,205 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022313047.jpg_mapmarker.jpg
+2021-08-29 08:42:18,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210510_022313047.jpg.exif.yaml
+2021-08-29 08:42:18,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210510_022313047.jpg.yaml
+2021-08-29 08:42:19,200 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022436675.jpg_209.jpg
+2021-08-29 08:42:19,201 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022436675.jpg_centered.jpg
+2021-08-29 08:42:19,202 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022436675.jpg_original.jpg
+2021-08-29 08:42:19,202 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022436675.jpg_mapmarker.jpg
+2021-08-29 08:42:19,802 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210510_022436675.jpg.exif.yaml
+2021-08-29 08:42:19,803 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210510_022436675.jpg.yaml
+2021-08-29 08:42:20,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022601650.jpg_209.jpg
+2021-08-29 08:42:20,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022601650.jpg_centered.jpg
+2021-08-29 08:42:20,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022601650.jpg_original.jpg
+2021-08-29 08:42:20,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022601650.jpg_mapmarker.jpg
+2021-08-29 08:42:20,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210510_022601650.jpg.exif.yaml
+2021-08-29 08:42:20,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210510_022601650.jpg.yaml
+2021-08-29 08:42:21,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022857946.jpg_209.jpg
+2021-08-29 08:42:21,213 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022857946.jpg_centered.jpg
+2021-08-29 08:42:21,213 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022857946.jpg_original.jpg
+2021-08-29 08:42:21,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_022857946.jpg_mapmarker.jpg
+2021-08-29 08:42:21,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210510_022857946.jpg.exif.yaml
+2021-08-29 08:42:21,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210510_022857946.jpg.yaml
+2021-08-29 08:42:22,160 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_023650758.jpg_209.jpg
+2021-08-29 08:42:22,161 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_023650758.jpg_centered.jpg
+2021-08-29 08:42:22,161 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_023650758.jpg_original.jpg
+2021-08-29 08:42:22,162 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_023650758.jpg_mapmarker.jpg
+2021-08-29 08:42:22,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210510_023650758.jpg.exif.yaml
+2021-08-29 08:42:22,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210510_023650758.jpg.yaml
+2021-08-29 08:42:23,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_025231682.jpg_209.jpg
+2021-08-29 08:42:23,205 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_025231682.jpg_centered.jpg
+2021-08-29 08:42:23,205 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_025231682.jpg_original.jpg
+2021-08-29 08:42:23,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210510_025231682.jpg_mapmarker.jpg
+2021-08-29 08:42:23,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210510_025231682.jpg.exif.yaml
+2021-08-29 08:42:23,779 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210510_025231682.jpg.yaml
+2021-08-29 08:42:24,194 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210515_222850764.jpg_209.jpg
+2021-08-29 08:42:24,195 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210515_222850764.jpg_centered.jpg
+2021-08-29 08:42:24,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210515_222850764.jpg_original.jpg
+2021-08-29 08:42:24,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210515_222850764.jpg_mapmarker.jpg
+2021-08-29 08:42:24,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210515_222850764.jpg.exif.yaml
+2021-08-29 08:42:24,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210515_222850764.jpg.yaml
+2021-08-29 08:42:25,270 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210516_180035382.jpg_209.jpg
+2021-08-29 08:42:25,271 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210516_180035382.jpg_centered.jpg
+2021-08-29 08:42:25,272 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210516_180035382.jpg_original.jpg
+2021-08-29 08:42:25,272 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210516_180035382.jpg_mapmarker.jpg
+2021-08-29 08:42:25,785 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210516_180035382.jpg.exif.yaml
+2021-08-29 08:42:25,787 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210516_180035382.jpg.yaml
+2021-08-29 08:42:26,172 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210518_044949666.jpg_209.jpg
+2021-08-29 08:42:26,173 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210518_044949666.jpg_centered.jpg
+2021-08-29 08:42:26,173 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210518_044949666.jpg_original.jpg
+2021-08-29 08:42:26,174 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210518_044949666.jpg_mapmarker.jpg
+2021-08-29 08:42:26,775 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210518_044949666.jpg.exif.yaml
+2021-08-29 08:42:26,776 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210518_044949666.jpg.yaml
+2021-08-29 08:42:27,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210520_014218908.jpg_209.jpg
+2021-08-29 08:42:27,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210520_014218908.jpg_centered.jpg
+2021-08-29 08:42:27,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210520_014218908.jpg_original.jpg
+2021-08-29 08:42:27,199 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210520_014218908.jpg_mapmarker.jpg
+2021-08-29 08:42:27,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210520_014218908.jpg.exif.yaml
+2021-08-29 08:42:27,783 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210520_014218908.jpg.yaml
+2021-08-29 08:42:28,181 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210520_014226049.jpg_209.jpg
+2021-08-29 08:42:28,182 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210520_014226049.jpg_centered.jpg
+2021-08-29 08:42:28,182 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210520_014226049.jpg_original.jpg
+2021-08-29 08:42:28,182 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210520_014226049.jpg_mapmarker.jpg
+2021-08-29 08:42:28,773 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210520_014226049.jpg.exif.yaml
+2021-08-29 08:42:28,774 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210520_014226049.jpg.yaml
+2021-08-29 08:42:29,314 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_192104201.jpg_209.jpg
+2021-08-29 08:42:29,316 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_192104201.jpg_centered.jpg
+2021-08-29 08:42:29,316 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_192104201.jpg_original.jpg
+2021-08-29 08:42:29,316 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_192104201.jpg_mapmarker.jpg
+2021-08-29 08:42:29,778 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210522_192104201.jpg.exif.yaml
+2021-08-29 08:42:29,780 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210522_192104201.jpg.yaml
+2021-08-29 08:42:30,735 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_193257428.PORTRAIT.jpg_209.jpg
+2021-08-29 08:42:30,736 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_193257428.PORTRAIT.jpg_centered.jpg
+2021-08-29 08:42:30,737 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_193257428.PORTRAIT.jpg_original.jpg
+2021-08-29 08:42:30,737 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_193257428.PORTRAIT.jpg_mapmarker.jpg
+2021-08-29 08:42:30,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210522_193257428.PORTRAIT.jpg.exif.yaml
+2021-08-29 08:42:30,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210522_193257428.PORTRAIT.jpg.yaml
+2021-08-29 08:42:31,299 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_212720138.jpg_209.jpg
+2021-08-29 08:42:31,301 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_212720138.jpg_centered.jpg
+2021-08-29 08:42:31,302 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_212720138.jpg_original.jpg
+2021-08-29 08:42:31,302 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_212720138.jpg_mapmarker.jpg
+2021-08-29 08:42:31,807 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210522_212720138.jpg.exif.yaml
+2021-08-29 08:42:31,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210522_212720138.jpg.yaml
+2021-08-29 08:42:32,220 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_212726118.jpg_209.jpg
+2021-08-29 08:42:32,222 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_212726118.jpg_centered.jpg
+2021-08-29 08:42:32,222 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_212726118.jpg_original.jpg
+2021-08-29 08:42:32,223 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_212726118.jpg_mapmarker.jpg
+2021-08-29 08:42:32,806 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210522_212726118.jpg.exif.yaml
+2021-08-29 08:42:32,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210522_212726118.jpg.yaml
+2021-08-29 08:42:33,243 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213805452.jpg_209.jpg
+2021-08-29 08:42:33,244 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213805452.jpg_centered.jpg
+2021-08-29 08:42:33,244 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213805452.jpg_original.jpg
+2021-08-29 08:42:33,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213805452.jpg_mapmarker.jpg
+2021-08-29 08:42:33,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210522_213805452.jpg.exif.yaml
+2021-08-29 08:42:33,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210522_213805452.jpg.yaml
+2021-08-29 08:42:34,223 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213813533.jpg_209.jpg
+2021-08-29 08:42:34,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213813533.jpg_centered.jpg
+2021-08-29 08:42:34,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213813533.jpg_original.jpg
+2021-08-29 08:42:34,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213813533.jpg_mapmarker.jpg
+2021-08-29 08:42:34,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210522_213813533.jpg.exif.yaml
+2021-08-29 08:42:34,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210522_213813533.jpg.yaml
+2021-08-29 08:42:35,232 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213815901.jpg_209.jpg
+2021-08-29 08:42:35,233 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213815901.jpg_centered.jpg
+2021-08-29 08:42:35,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213815901.jpg_original.jpg
+2021-08-29 08:42:35,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210522_213815901.jpg_mapmarker.jpg
+2021-08-29 08:42:35,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210522_213815901.jpg.exif.yaml
+2021-08-29 08:42:35,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210522_213815901.jpg.yaml
+2021-08-29 08:42:36,208 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201017631.jpg_209.jpg
+2021-08-29 08:42:36,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201017631.jpg_centered.jpg
+2021-08-29 08:42:36,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201017631.jpg_original.jpg
+2021-08-29 08:42:36,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201017631.jpg_mapmarker.jpg
+2021-08-29 08:42:36,814 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210523_201017631.jpg.exif.yaml
+2021-08-29 08:42:36,814 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210523_201017631.jpg.yaml
+2021-08-29 08:42:37,241 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201020354.jpg_209.jpg
+2021-08-29 08:42:37,242 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201020354.jpg_centered.jpg
+2021-08-29 08:42:37,243 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201020354.jpg_original.jpg
+2021-08-29 08:42:37,243 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201020354.jpg_mapmarker.jpg
+2021-08-29 08:42:37,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210523_201020354.jpg.exif.yaml
+2021-08-29 08:42:37,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210523_201020354.jpg.yaml
+2021-08-29 08:42:38,222 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201022214.jpg_209.jpg
+2021-08-29 08:42:38,223 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201022214.jpg_centered.jpg
+2021-08-29 08:42:38,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201022214.jpg_original.jpg
+2021-08-29 08:42:38,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201022214.jpg_mapmarker.jpg
+2021-08-29 08:42:38,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210523_201022214.jpg.exif.yaml
+2021-08-29 08:42:38,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210523_201022214.jpg.yaml
+2021-08-29 08:42:39,202 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201023748.jpg_209.jpg
+2021-08-29 08:42:39,203 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201023748.jpg_centered.jpg
+2021-08-29 08:42:39,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201023748.jpg_original.jpg
+2021-08-29 08:42:39,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201023748.jpg_mapmarker.jpg
+2021-08-29 08:42:39,807 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210523_201023748.jpg.exif.yaml
+2021-08-29 08:42:39,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210523_201023748.jpg.yaml
+2021-08-29 08:42:40,246 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201233068.jpg_209.jpg
+2021-08-29 08:42:40,247 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201233068.jpg_centered.jpg
+2021-08-29 08:42:40,248 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201233068.jpg_original.jpg
+2021-08-29 08:42:40,248 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201233068.jpg_mapmarker.jpg
+2021-08-29 08:42:40,806 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210523_201233068.jpg.exif.yaml
+2021-08-29 08:42:40,807 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210523_201233068.jpg.yaml
+2021-08-29 08:42:41,215 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201233947.jpg_209.jpg
+2021-08-29 08:42:41,216 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201233947.jpg_centered.jpg
+2021-08-29 08:42:41,216 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201233947.jpg_original.jpg
+2021-08-29 08:42:41,216 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201233947.jpg_mapmarker.jpg
+2021-08-29 08:42:41,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210523_201233947.jpg.exif.yaml
+2021-08-29 08:42:41,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210523_201233947.jpg.yaml
+2021-08-29 08:42:42,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201235238.jpg_209.jpg
+2021-08-29 08:42:42,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201235238.jpg_centered.jpg
+2021-08-29 08:42:42,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201235238.jpg_original.jpg
+2021-08-29 08:42:42,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201235238.jpg_mapmarker.jpg
+2021-08-29 08:42:42,801 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210523_201235238.jpg.exif.yaml
+2021-08-29 08:42:42,802 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210523_201235238.jpg.yaml
+2021-08-29 08:42:43,253 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201236229.jpg_209.jpg
+2021-08-29 08:42:43,254 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201236229.jpg_centered.jpg
+2021-08-29 08:42:43,255 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201236229.jpg_original.jpg
+2021-08-29 08:42:43,255 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210523_201236229.jpg_mapmarker.jpg
+2021-08-29 08:42:43,814 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210523_201236229.jpg.exif.yaml
+2021-08-29 08:42:43,816 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210523_201236229.jpg.yaml
+2021-08-29 08:42:44,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210530_185402762.jpg_209.jpg
+2021-08-29 08:42:44,230 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210530_185402762.jpg_centered.jpg
+2021-08-29 08:42:44,231 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210530_185402762.jpg_original.jpg
+2021-08-29 08:42:44,231 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210530_185402762.jpg_mapmarker.jpg
+2021-08-29 08:42:44,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210530_185402762.jpg.exif.yaml
+2021-08-29 08:42:44,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210530_185402762.jpg.yaml
+2021-08-29 08:42:45,243 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_154231248.jpg_209.jpg
+2021-08-29 08:42:45,244 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_154231248.jpg_centered.jpg
+2021-08-29 08:42:45,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_154231248.jpg_original.jpg
+2021-08-29 08:42:45,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_154231248.jpg_mapmarker.jpg
+2021-08-29 08:42:45,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210531_154231248.jpg.exif.yaml
+2021-08-29 08:42:45,814 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210531_154231248.jpg.yaml
+2021-08-29 08:42:46,256 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_190032259.jpg_209.jpg
+2021-08-29 08:42:46,257 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_190032259.jpg_centered.jpg
+2021-08-29 08:42:46,257 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_190032259.jpg_original.jpg
+2021-08-29 08:42:46,257 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_190032259.jpg_mapmarker.jpg
+2021-08-29 08:42:46,804 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210531_190032259.jpg.exif.yaml
+2021-08-29 08:42:46,806 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210531_190032259.jpg.yaml
+2021-08-29 08:42:47,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_190208798.jpg_209.jpg
+2021-08-29 08:42:47,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_190208798.jpg_centered.jpg
+2021-08-29 08:42:47,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_190208798.jpg_original.jpg
+2021-08-29 08:42:47,236 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_190208798.jpg_mapmarker.jpg
+2021-08-29 08:42:47,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210531_190208798.jpg.exif.yaml
+2021-08-29 08:42:47,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210531_190208798.jpg.yaml
+2021-08-29 08:42:48,233 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194031869.jpg_209.jpg
+2021-08-29 08:42:48,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194031869.jpg_centered.jpg
+2021-08-29 08:42:48,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194031869.jpg_original.jpg
+2021-08-29 08:42:48,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194031869.jpg_mapmarker.jpg
+2021-08-29 08:42:48,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210531_194031869.jpg.exif.yaml
+2021-08-29 08:42:48,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210531_194031869.jpg.yaml
+2021-08-29 08:42:49,265 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194155976.jpg_209.jpg
+2021-08-29 08:42:49,266 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194155976.jpg_centered.jpg
+2021-08-29 08:42:49,267 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194155976.jpg_original.jpg
+2021-08-29 08:42:49,267 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194155976.jpg_mapmarker.jpg
+2021-08-29 08:42:49,807 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210531_194155976.jpg.exif.yaml
+2021-08-29 08:42:49,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210531_194155976.jpg.yaml
+2021-08-29 08:42:50,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194416533.jpg_209.jpg
+2021-08-29 08:42:50,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194416533.jpg_centered.jpg
+2021-08-29 08:42:50,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194416533.jpg_original.jpg
+2021-08-29 08:42:50,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194416533.jpg_mapmarker.jpg
+2021-08-29 08:42:50,816 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210531_194416533.jpg.exif.yaml
+2021-08-29 08:42:50,817 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210531_194416533.jpg.yaml
+2021-08-29 08:42:51,088 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194416533~2.jpg_209.jpg
+2021-08-29 08:42:51,090 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194416533~2.jpg_centered.jpg
+2021-08-29 08:42:51,091 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194416533~2.jpg_original.jpg
+2021-08-29 08:42:51,091 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194416533~2.jpg_mapmarker.jpg
+2021-08-29 08:42:51,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210531_194416533~2.jpg.exif.yaml
+2021-08-29 08:42:51,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210531_194416533~2.jpg.yaml
+2021-08-29 08:42:52,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194432903.jpg_209.jpg
+2021-08-29 08:42:52,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194432903.jpg_centered.jpg
+2021-08-29 08:42:52,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194432903.jpg_original.jpg
+2021-08-29 08:42:52,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210531_194432903.jpg_mapmarker.jpg
+2021-08-29 08:42:52,806 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210531_194432903.jpg.exif.yaml
+2021-08-29 08:42:52,807 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210531_194432903.jpg.yaml
+2021-08-29 08:42:53,257 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210603_141638689.jpg_209.jpg
+2021-08-29 08:42:53,259 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210603_141638689.jpg_centered.jpg
+2021-08-29 08:42:53,259 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210603_141638689.jpg_original.jpg
+2021-08-29 08:42:53,259 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210603_141638689.jpg_mapmarker.jpg
+2021-08-29 08:42:53,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210603_141638689.jpg.exif.yaml
+2021-08-29 08:42:53,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210603_141638689.jpg.yaml
+2021-08-29 08:42:54,266 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210604_231018862.jpg_209.jpg
+2021-08-29 08:42:54,269 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210604_231018862.jpg_centered.jpg
+2021-08-29 08:42:54,269 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210604_231018862.jpg_original.jpg
+2021-08-29 08:42:54,270 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210604_231018862.jpg_mapmarker.jpg
+2021-08-29 08:42:54,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210604_231018862.jpg.exif.yaml
+2021-08-29 08:42:54,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210604_231018862.jpg.yaml
+2021-08-29 08:42:55,243 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210606_173934755.jpg_209.jpg
+2021-08-29 08:42:55,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210606_173934755.jpg_centered.jpg
+2021-08-29 08:42:55,245 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210606_173934755.jpg_original.jpg
+2021-08-29 08:42:55,246 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210606_173934755.jpg_mapmarker.jpg
+2021-08-29 08:42:55,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210606_173934755.jpg.exif.yaml
+2021-08-29 08:42:55,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210606_173934755.jpg.yaml
+2021-08-29 08:42:56,233 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210606_173940070.jpg_209.jpg
+2021-08-29 08:42:56,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210606_173940070.jpg_centered.jpg
+2021-08-29 08:42:56,235 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210606_173940070.jpg_original.jpg
+2021-08-29 08:42:56,236 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210606_173940070.jpg_mapmarker.jpg
+2021-08-29 08:42:56,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210606_173940070.jpg.exif.yaml
+2021-08-29 08:42:56,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210606_173940070.jpg.yaml
+2021-08-29 08:42:57,290 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_132815148.jpg_209.jpg
+2021-08-29 08:42:57,291 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_132815148.jpg_centered.jpg
+2021-08-29 08:42:57,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_132815148.jpg_original.jpg
+2021-08-29 08:42:57,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_132815148.jpg_mapmarker.jpg
+2021-08-29 08:42:57,816 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210612_132815148.jpg.exif.yaml
+2021-08-29 08:42:57,818 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210612_132815148.jpg.yaml
+2021-08-29 08:42:58,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_132854206.jpg_209.jpg
+2021-08-29 08:42:58,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_132854206.jpg_centered.jpg
+2021-08-29 08:42:58,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_132854206.jpg_original.jpg
+2021-08-29 08:42:58,212 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_132854206.jpg_mapmarker.jpg
+2021-08-29 08:42:58,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210612_132854206.jpg.exif.yaml
+2021-08-29 08:42:58,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210612_132854206.jpg.yaml
+2021-08-29 08:42:59,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_160155279.jpg_209.jpg
+2021-08-29 08:42:59,228 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_160155279.jpg_centered.jpg
+2021-08-29 08:42:59,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_160155279.jpg_original.jpg
+2021-08-29 08:42:59,229 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210612_160155279.jpg_mapmarker.jpg
+2021-08-29 08:42:59,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210612_160155279.jpg.exif.yaml
+2021-08-29 08:42:59,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210612_160155279.jpg.yaml
+2021-08-29 08:43:00,238 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210615_033340152.jpg_209.jpg
+2021-08-29 08:43:00,239 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210615_033340152.jpg_centered.jpg
+2021-08-29 08:43:00,240 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210615_033340152.jpg_original.jpg
+2021-08-29 08:43:00,240 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210615_033340152.jpg_mapmarker.jpg
+2021-08-29 08:43:00,822 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210615_033340152.jpg.exif.yaml
+2021-08-29 08:43:00,823 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210615_033340152.jpg.yaml
+2021-08-29 08:43:01,248 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210618_163052413.jpg_209.jpg
+2021-08-29 08:43:01,249 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210618_163052413.jpg_centered.jpg
+2021-08-29 08:43:01,250 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210618_163052413.jpg_original.jpg
+2021-08-29 08:43:01,250 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210618_163052413.jpg_mapmarker.jpg
+2021-08-29 08:43:01,819 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210618_163052413.jpg.exif.yaml
+2021-08-29 08:43:01,820 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210618_163052413.jpg.yaml
+2021-08-29 08:43:02,290 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210618_210726607.jpg_209.jpg
+2021-08-29 08:43:02,291 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210618_210726607.jpg_centered.jpg
+2021-08-29 08:43:02,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210618_210726607.jpg_original.jpg
+2021-08-29 08:43:02,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210618_210726607.jpg_mapmarker.jpg
+2021-08-29 08:43:02,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210618_210726607.jpg.exif.yaml
+2021-08-29 08:43:02,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210618_210726607.jpg.yaml
+2021-08-29 08:43:03,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_152703598.jpg_209.jpg
+2021-08-29 08:43:03,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_152703598.jpg_centered.jpg
+2021-08-29 08:43:03,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_152703598.jpg_original.jpg
+2021-08-29 08:43:03,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_152703598.jpg_mapmarker.jpg
+2021-08-29 08:43:03,814 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_152703598.jpg.exif.yaml
+2021-08-29 08:43:03,817 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_152703598.jpg.yaml
+2021-08-29 08:43:04,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_153849917.jpg_209.jpg
+2021-08-29 08:43:04,226 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_153849917.jpg_centered.jpg
+2021-08-29 08:43:04,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_153849917.jpg_original.jpg
+2021-08-29 08:43:04,227 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_153849917.jpg_mapmarker.jpg
+2021-08-29 08:43:04,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_153849917.jpg.exif.yaml
+2021-08-29 08:43:04,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_153849917.jpg.yaml
+2021-08-29 08:43:05,222 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_153901395.jpg_209.jpg
+2021-08-29 08:43:05,223 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_153901395.jpg_centered.jpg
+2021-08-29 08:43:05,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_153901395.jpg_original.jpg
+2021-08-29 08:43:05,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_153901395.jpg_mapmarker.jpg
+2021-08-29 08:43:05,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_153901395.jpg.exif.yaml
+2021-08-29 08:43:05,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_153901395.jpg.yaml
+2021-08-29 08:43:06,213 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_162227949.jpg_209.jpg
+2021-08-29 08:43:06,214 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_162227949.jpg_centered.jpg
+2021-08-29 08:43:06,215 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_162227949.jpg_original.jpg
+2021-08-29 08:43:06,216 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_162227949.jpg_mapmarker.jpg
+2021-08-29 08:43:06,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_162227949.jpg.exif.yaml
+2021-08-29 08:43:06,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_162227949.jpg.yaml
+2021-08-29 08:43:07,197 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_164213821.jpg_209.jpg
+2021-08-29 08:43:07,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_164213821.jpg_centered.jpg
+2021-08-29 08:43:07,199 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_164213821.jpg_original.jpg
+2021-08-29 08:43:07,199 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_164213821.jpg_mapmarker.jpg
+2021-08-29 08:43:07,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_164213821.jpg.exif.yaml
+2021-08-29 08:43:07,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_164213821.jpg.yaml
+2021-08-29 08:43:08,194 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_164216171.jpg_209.jpg
+2021-08-29 08:43:08,195 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_164216171.jpg_centered.jpg
+2021-08-29 08:43:08,195 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_164216171.jpg_original.jpg
+2021-08-29 08:43:08,196 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_164216171.jpg_mapmarker.jpg
+2021-08-29 08:43:08,805 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_164216171.jpg.exif.yaml
+2021-08-29 08:43:08,807 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_164216171.jpg.yaml
+2021-08-29 08:43:09,208 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_165250894.jpg_209.jpg
+2021-08-29 08:43:09,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_165250894.jpg_centered.jpg
+2021-08-29 08:43:09,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_165250894.jpg_original.jpg
+2021-08-29 08:43:09,211 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_165250894.jpg_mapmarker.jpg
+2021-08-29 08:43:09,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_165250894.jpg.exif.yaml
+2021-08-29 08:43:09,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_165250894.jpg.yaml
+2021-08-29 08:43:10,205 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_165730018.jpg_209.jpg
+2021-08-29 08:43:10,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_165730018.jpg_centered.jpg
+2021-08-29 08:43:10,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_165730018.jpg_original.jpg
+2021-08-29 08:43:10,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_165730018.jpg_mapmarker.jpg
+2021-08-29 08:43:10,808 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_165730018.jpg.exif.yaml
+2021-08-29 08:43:10,809 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_165730018.jpg.yaml
+2021-08-29 08:43:11,202 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_210705511.jpg_209.jpg
+2021-08-29 08:43:11,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_210705511.jpg_centered.jpg
+2021-08-29 08:43:11,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_210705511.jpg_original.jpg
+2021-08-29 08:43:11,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210619_210705511.jpg_mapmarker.jpg
+2021-08-29 08:43:11,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210619_210705511.jpg.exif.yaml
+2021-08-29 08:43:11,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210619_210705511.jpg.yaml
+2021-08-29 08:43:12,232 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210620_143251347.jpg_209.jpg
+2021-08-29 08:43:12,233 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210620_143251347.jpg_centered.jpg
+2021-08-29 08:43:12,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210620_143251347.jpg_original.jpg
+2021-08-29 08:43:12,234 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210620_143251347.jpg_mapmarker.jpg
+2021-08-29 08:43:12,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210620_143251347.jpg.exif.yaml
+2021-08-29 08:43:12,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210620_143251347.jpg.yaml
+2021-08-29 08:43:13,177 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1074.JPG_209.jpg
+2021-08-29 08:43:13,179 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1074.JPG_centered.jpg
+2021-08-29 08:43:13,179 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1074.JPG_original.jpg
+2021-08-29 08:43:13,179 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1074.JPG_mapmarker.jpg
+2021-08-29 08:43:13,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1074.JPG.exif.yaml
+2021-08-29 08:43:13,814 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1074.JPG.yaml
+2021-08-29 08:43:14,180 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1075.JPG_209.jpg
+2021-08-29 08:43:14,181 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1075.JPG_centered.jpg
+2021-08-29 08:43:14,182 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1075.JPG_original.jpg
+2021-08-29 08:43:14,182 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1075.JPG_mapmarker.jpg
+2021-08-29 08:43:14,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1075.JPG.exif.yaml
+2021-08-29 08:43:14,814 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1075.JPG.yaml
+2021-08-29 08:43:15,222 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1076.JPG_209.jpg
+2021-08-29 08:43:15,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1076.JPG_centered.jpg
+2021-08-29 08:43:15,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1076.JPG_original.jpg
+2021-08-29 08:43:15,225 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1076.JPG_mapmarker.jpg
+2021-08-29 08:43:15,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1076.JPG.exif.yaml
+2021-08-29 08:43:15,812 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1076.JPG.yaml
+2021-08-29 08:43:16,191 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1077.JPG_209.jpg
+2021-08-29 08:43:16,192 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1077.JPG_centered.jpg
+2021-08-29 08:43:16,192 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1077.JPG_original.jpg
+2021-08-29 08:43:16,193 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1077.JPG_mapmarker.jpg
+2021-08-29 08:43:16,817 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1077.JPG.exif.yaml
+2021-08-29 08:43:16,817 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1077.JPG.yaml
+2021-08-29 08:43:17,205 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1078.JPG_209.jpg
+2021-08-29 08:43:17,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1078.JPG_centered.jpg
+2021-08-29 08:43:17,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1078.JPG_original.jpg
+2021-08-29 08:43:17,207 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1078.JPG_mapmarker.jpg
+2021-08-29 08:43:17,810 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1078.JPG.exif.yaml
+2021-08-29 08:43:17,811 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1078.JPG.yaml
+2021-08-29 08:43:18,184 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1079.JPG_209.jpg
+2021-08-29 08:43:18,186 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1079.JPG_centered.jpg
+2021-08-29 08:43:18,186 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1079.JPG_original.jpg
+2021-08-29 08:43:18,187 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1079.JPG_mapmarker.jpg
+2021-08-29 08:43:18,821 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1079.JPG.exif.yaml
+2021-08-29 08:43:18,825 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1079.JPG.yaml
+2021-08-29 08:43:19,017 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20200905_100554.jpg_209.jpg
+2021-08-29 08:43:19,018 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20200905_100554.jpg_centered.jpg
+2021-08-29 08:43:19,019 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20200905_100554.jpg_original.jpg
+2021-08-29 08:43:19,019 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20200905_100554.jpg_mapmarker.jpg
+2021-08-29 08:43:19,022 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: IMG_20200905_100554.jpg.exif.yaml
+2021-08-29 08:43:19,023 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: IMG_20200905_100554.jpg.yaml
+2021-08-29 08:43:19,163 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20200911_142553.jpg_209.jpg
+2021-08-29 08:43:19,165 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20200911_142553.jpg_centered.jpg
+2021-08-29 08:43:19,165 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20200911_142553.jpg_original.jpg
+2021-08-29 08:43:19,166 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20200911_142553.jpg_mapmarker.jpg
+2021-08-29 08:43:19,813 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: IMG_20200911_142553.jpg.exif.yaml
+2021-08-29 08:43:19,814 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: IMG_20200911_142553.jpg.yaml
+2021-08-29 08:43:19,998 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20201223_094103.jpg_209.jpg
+2021-08-29 08:43:20,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20201223_094103.jpg_centered.jpg
+2021-08-29 08:43:20,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20201223_094103.jpg_original.jpg
+2021-08-29 08:43:20,001 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: IMG_20201223_094103.jpg_mapmarker.jpg
+2021-08-29 08:43:20,004 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: IMG_20201223_094103.jpg.exif.yaml
+2021-08-29 08:43:20,004 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: IMG_20201223_094103.jpg.yaml
+2021-08-29 08:43:20,034 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: RAW_NIKON_D1.NEF_209.jpg
+2021-08-29 08:43:20,043 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: RAW_NIKON_D1.NEF_centered.jpg
+2021-08-29 08:43:20,044 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: RAW_NIKON_D1.NEF_original.jpg
+2021-08-29 08:43:20,044 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: RAW_NIKON_D1.NEF_mapmarker.jpg
+2021-08-29 08:43:20,048 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: RAW_NIKON_D1.NEF.exif.yaml
+2021-08-29 08:43:20,049 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: RAW_NIKON_D1.NEF.yaml
+2021-08-29 08:43:20,820 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04477.jpg_209.jpg
+2021-08-29 08:43:20,822 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04477.jpg_centered.jpg
+2021-08-29 08:43:20,822 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04477.jpg_original.jpg
+2021-08-29 08:43:20,823 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04477.jpg_mapmarker.jpg
+2021-08-29 08:43:20,825 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04477.jpg.exif.yaml
+2021-08-29 08:43:20,826 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04477.jpg.yaml
+2021-08-29 08:43:21,542 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04507.jpg_209.jpg
+2021-08-29 08:43:21,544 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04507.jpg_centered.jpg
+2021-08-29 08:43:21,544 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04507.jpg_original.jpg
+2021-08-29 08:43:21,545 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04507.jpg_mapmarker.jpg
+2021-08-29 08:43:21,548 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04507.jpg.exif.yaml
+2021-08-29 08:43:21,548 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04507.jpg.yaml
+2021-08-29 08:43:22,264 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04548.jpg_209.jpg
+2021-08-29 08:43:22,266 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04548.jpg_centered.jpg
+2021-08-29 08:43:22,266 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04548.jpg_original.jpg
+2021-08-29 08:43:22,266 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04548.jpg_mapmarker.jpg
+2021-08-29 08:43:22,268 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04548.jpg.exif.yaml
+2021-08-29 08:43:22,269 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04548.jpg.yaml
+2021-08-29 08:43:23,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04552.jpg_209.jpg
+2021-08-29 08:43:23,003 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04552.jpg_centered.jpg
+2021-08-29 08:43:23,003 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04552.jpg_original.jpg
+2021-08-29 08:43:23,004 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04552.jpg_mapmarker.jpg
+2021-08-29 08:43:23,007 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04552.jpg.exif.yaml
+2021-08-29 08:43:23,008 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04552.jpg.yaml
+2021-08-29 08:43:23,166 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04571.jpg_209.jpg
+2021-08-29 08:43:23,167 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04571.jpg_centered.jpg
+2021-08-29 08:43:23,168 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04571.jpg_original.jpg
+2021-08-29 08:43:23,169 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04571.jpg_mapmarker.jpg
+2021-08-29 08:43:23,171 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04571.jpg.exif.yaml
+2021-08-29 08:43:23,172 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04571.jpg.yaml
+2021-08-29 08:43:23,329 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04574.jpg_209.jpg
+2021-08-29 08:43:23,331 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04574.jpg_centered.jpg
+2021-08-29 08:43:23,331 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04574.jpg_original.jpg
+2021-08-29 08:43:23,331 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04574.jpg_mapmarker.jpg
+2021-08-29 08:43:23,333 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04574.jpg.exif.yaml
+2021-08-29 08:43:23,334 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04574.jpg.yaml
+2021-08-29 08:43:23,497 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04576.jpg_209.jpg
+2021-08-29 08:43:23,499 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04576.jpg_centered.jpg
+2021-08-29 08:43:23,499 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04576.jpg_original.jpg
+2021-08-29 08:43:23,500 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04576.jpg_mapmarker.jpg
+2021-08-29 08:43:23,502 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04576.jpg.exif.yaml
+2021-08-29 08:43:23,502 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04576.jpg.yaml
+2021-08-29 08:43:23,672 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04577.jpg_209.jpg
+2021-08-29 08:43:23,673 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04577.jpg_centered.jpg
+2021-08-29 08:43:23,673 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04577.jpg_original.jpg
+2021-08-29 08:43:23,674 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04577.jpg_mapmarker.jpg
+2021-08-29 08:43:23,677 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04577.jpg.exif.yaml
+2021-08-29 08:43:23,677 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04577.jpg.yaml
+2021-08-29 08:43:23,840 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04579.jpg_209.jpg
+2021-08-29 08:43:23,841 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04579.jpg_centered.jpg
+2021-08-29 08:43:23,842 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04579.jpg_original.jpg
+2021-08-29 08:43:23,842 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04579.jpg_mapmarker.jpg
+2021-08-29 08:43:23,844 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04579.jpg.exif.yaml
+2021-08-29 08:43:23,845 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04579.jpg.yaml
+2021-08-29 08:43:23,996 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04581.jpg_209.jpg
+2021-08-29 08:43:23,996 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04581.jpg_centered.jpg
+2021-08-29 08:43:23,997 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04581.jpg_original.jpg
+2021-08-29 08:43:23,997 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04581.jpg_mapmarker.jpg
+2021-08-29 08:43:24,000 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04581.jpg.exif.yaml
+2021-08-29 08:43:24,001 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04581.jpg.yaml
+2021-08-29 08:43:24,745 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04589.jpg_209.jpg
+2021-08-29 08:43:24,746 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04589.jpg_centered.jpg
+2021-08-29 08:43:24,747 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04589.jpg_original.jpg
+2021-08-29 08:43:24,748 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04589.jpg_mapmarker.jpg
+2021-08-29 08:43:24,750 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04589.jpg.exif.yaml
+2021-08-29 08:43:24,750 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04589.jpg.yaml
+2021-08-29 08:43:25,504 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04601.jpg_209.jpg
+2021-08-29 08:43:25,505 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04601.jpg_centered.jpg
+2021-08-29 08:43:25,505 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04601.jpg_original.jpg
+2021-08-29 08:43:25,506 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04601.jpg_mapmarker.jpg
+2021-08-29 08:43:25,508 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04601.jpg.exif.yaml
+2021-08-29 08:43:25,509 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04601.jpg.yaml
+2021-08-29 08:43:26,264 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04602.jpg_209.jpg
+2021-08-29 08:43:26,265 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04602.jpg_centered.jpg
+2021-08-29 08:43:26,266 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04602.jpg_original.jpg
+2021-08-29 08:43:26,266 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04602.jpg_mapmarker.jpg
+2021-08-29 08:43:26,270 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04602.jpg.exif.yaml
+2021-08-29 08:43:26,271 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04602.jpg.yaml
+2021-08-29 08:43:27,044 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04605.jpg_209.jpg
+2021-08-29 08:43:27,046 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04605.jpg_centered.jpg
+2021-08-29 08:43:27,046 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04605.jpg_original.jpg
+2021-08-29 08:43:27,047 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04605.jpg_mapmarker.jpg
+2021-08-29 08:43:27,049 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04605.jpg.exif.yaml
+2021-08-29 08:43:27,050 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04605.jpg.yaml
+2021-08-29 08:43:27,767 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04622.jpg_209.jpg
+2021-08-29 08:43:27,769 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04622.jpg_centered.jpg
+2021-08-29 08:43:27,769 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04622.jpg_original.jpg
+2021-08-29 08:43:27,770 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04622.jpg_mapmarker.jpg
+2021-08-29 08:43:27,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04622.jpg.exif.yaml
+2021-08-29 08:43:27,772 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04622.jpg.yaml
+2021-08-29 08:43:27,910 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04627.jpg_209.jpg
+2021-08-29 08:43:27,911 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04627.jpg_centered.jpg
+2021-08-29 08:43:27,912 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04627.jpg_original.jpg
+2021-08-29 08:43:27,912 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04627.jpg_mapmarker.jpg
+2021-08-29 08:43:27,914 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04627.jpg.exif.yaml
+2021-08-29 08:43:27,914 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04627.jpg.yaml
+2021-08-29 08:43:27,954 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04719.jpg_209.jpg
+2021-08-29 08:43:27,955 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04719.jpg_centered.jpg
+2021-08-29 08:43:27,956 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04719.jpg_original.jpg
+2021-08-29 08:43:27,956 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04719.jpg_mapmarker.jpg
+2021-08-29 08:43:27,959 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04719.jpg.exif.yaml
+2021-08-29 08:43:27,960 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04719.jpg.yaml
+2021-08-29 08:43:28,001 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04720.jpg_209.jpg
+2021-08-29 08:43:28,002 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04720.jpg_centered.jpg
+2021-08-29 08:43:28,002 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04720.jpg_original.jpg
+2021-08-29 08:43:28,003 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04720.jpg_mapmarker.jpg
+2021-08-29 08:43:28,005 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04720.jpg.exif.yaml
+2021-08-29 08:43:28,005 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04720.jpg.yaml
+2021-08-29 08:43:28,045 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04721.jpg_209.jpg
+2021-08-29 08:43:28,046 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04721.jpg_centered.jpg
+2021-08-29 08:43:28,047 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04721.jpg_original.jpg
+2021-08-29 08:43:28,048 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04721.jpg_mapmarker.jpg
+2021-08-29 08:43:28,050 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04721.jpg.exif.yaml
+2021-08-29 08:43:28,051 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04721.jpg.yaml
+2021-08-29 08:43:28,204 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04745.jpg_209.jpg
+2021-08-29 08:43:28,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04745.jpg_centered.jpg
+2021-08-29 08:43:28,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04745.jpg_original.jpg
+2021-08-29 08:43:28,206 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSC04745.jpg_mapmarker.jpg
+2021-08-29 08:43:28,209 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSC04745.jpg.exif.yaml
+2021-08-29 08:43:28,210 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSC04745.jpg.yaml
+2021-08-29 08:43:28,292 INFO org.springframework.core.log.CompositeLog [SpringApplicationShutdownHook] Stopping...
+2021-08-29 08:43:28,293 INFO org.springframework.core.log.CompositeLog [SpringApplicationShutdownHook] BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@7f9fe0d5]]
+2021-08-29 08:43:28,293 INFO org.springframework.core.log.CompositeLog [SpringApplicationShutdownHook] Stopped.
+2021-08-29 08:43:28,354 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-29 08:43:28,358 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-29 08:43:28,362 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
+2021-08-29 08:43:51,485 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Starting ShashinApplicationKt using Java 16.0.2 on LAPTOP-KQMN93J1 with PID 15636 (C:\Users\micha\IdeaProjects\shashin\target\classes started by micha in C:\Users\micha\IdeaProjects\shashin)
+2021-08-29 08:43:51,495 INFO org.springframework.boot.SpringApplication [restartedMain] No active profile set, falling back to default profiles: default
+2021-08-29 08:43:51,612 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacv\1.4.1\javacv-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/javacpp-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/opencv-3.4.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/ffmpeg-3.4.2-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flycapture-2.11.3.121-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libdc1394-2.2.5-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect-0.5.3-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect2-0.2.0-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/librealsense-1.12.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/videoinput-0.200-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/artoolkitplus-2.3.1-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flandmark-1.07-1.4.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/android-4.1.1.4.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/gluegen-rt-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jogl-all-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-main-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-android-aarch64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-android-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-armv6.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-armv6hf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-linux-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-macosx-universal.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-solaris-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-solaris-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-windows-amd64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/jocl-2.3.1-natives-windows-i586.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/javacpp.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/opencv.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/ffmpeg.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flycapture.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libdc1394.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/libfreenect2.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/librealsense.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/videoinput.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/artoolkitplus.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacv/1.4.1/flandmark.jar
+2021-08-29 08:43:51,613 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\opencv\3.4.1-1.4.1\opencv-3.4.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv/3.4.1-1.4.1/javacpp.jar
+2021-08-29 08:43:51,613 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\ffmpeg\3.4.2-1.4.1\ffmpeg-3.4.2-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg/3.4.2-1.4.1/javacpp.jar
+2021-08-29 08:43:51,614 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\flycapture\2.11.3.121-1.4.1\flycapture-2.11.3.121-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/flycapture/2.11.3.121-1.4.1/javacpp.jar
+2021-08-29 08:43:51,614 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libdc1394\2.2.5-1.4.1\libdc1394-2.2.5-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libdc1394/2.2.5-1.4.1/javacpp.jar
+2021-08-29 08:43:51,614 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libfreenect\0.5.3-1.4.1\libfreenect-0.5.3-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libfreenect/0.5.3-1.4.1/javacpp.jar
+2021-08-29 08:43:51,615 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\libfreenect2\0.2.0-1.4.1\libfreenect2-0.2.0-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/libfreenect2/0.2.0-1.4.1/javacpp.jar
+2021-08-29 08:43:51,615 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\librealsense\1.12.1-1.4.1\librealsense-1.12.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/librealsense/1.12.1-1.4.1/javacpp.jar
+2021-08-29 08:43:51,615 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\videoinput\0.200-1.4.1\videoinput-0.200-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/videoinput/0.200-1.4.1/javacpp.jar
+2021-08-29 08:43:51,615 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\artoolkitplus\2.3.1-1.4.1\artoolkitplus-2.3.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/artoolkitplus/2.3.1-1.4.1/javacpp.jar
+2021-08-29 08:43:51,616 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\flandmark\1.07-1.4.1\flandmark-1.07-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/flandmark/1.07-1.4.1/javacpp.jar
+2021-08-29 08:43:51,616 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\opencv-platform\3.4.1-1.4.1\opencv-platform-3.4.1-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-armhf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-linux-ppc64le.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-macosx-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-windows-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/opencv-platform/3.4.1-1.4.1/opencv-windows-x86_64.jar
+2021-08-29 08:43:51,617 INFO org.springframework.boot.logging.DeferredLog [restartedMain] The Class-Path manifest attribute in C:\Users\micha\.m2\repository\org\bytedeco\javacpp-presets\ffmpeg-platform\3.4.2-1.4.1\ffmpeg-platform-3.4.2-1.4.1.jar referenced one or more files that do not exist: file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-armhf.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-linux-ppc64le.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-macosx-x86_64.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-windows-x86.jar,file:/C:/Users/micha/.m2/repository/org/bytedeco/javacpp-presets/ffmpeg-platform/3.4.2-1.4.1/ffmpeg-windows-x86_64.jar
+2021-08-29 08:43:51,617 INFO org.springframework.boot.logging.DeferredLog [restartedMain] Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2021-08-29 08:43:51,618 INFO org.springframework.boot.logging.DeferredLog [restartedMain] For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2021-08-29 08:43:53,843 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2021-08-29 08:43:54,131 INFO org.springframework.data.repository.config.RepositoryConfigurationDelegate [restartedMain] Finished Spring Data repository scanning in 279 ms. Found 11 JPA repository interfaces.
+2021-08-29 08:43:55,015 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler@51229875' of type [org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-08-29 08:43:55,022 INFO org.springframework.context.support.PostProcessorRegistrationDelegate$BeanPostProcessorChecker [restartedMain] Bean 'methodSecurityMetadataSource' of type [org.springframework.security.access.method.DelegatingMethodSecurityMetadataSource] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying)
+2021-08-29 08:43:55,458 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat initialized with port(s): 8080 (http)
+2021-08-29 08:43:55,471 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing ProtocolHandler ["http-nio-8080"]
+2021-08-29 08:43:55,472 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting service [Tomcat]
+2021-08-29 08:43:55,472 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting Servlet engine: [Apache Tomcat/9.0.50]
+2021-08-29 08:43:55,590 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Initializing Spring embedded WebApplicationContext
+2021-08-29 08:43:55,590 INFO org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext [restartedMain] Root WebApplicationContext: initialization completed in 3970 ms
+2021-08-29 08:43:56,006 INFO org.hibernate.jpa.internal.util.LogHelper [restartedMain] HHH000204: Processing PersistenceUnitInfo [
+	name: default
+	...]
+2021-08-29 08:43:56,139 INFO org.hibernate.Version [restartedMain] HHH000412: Hibernate Core {5.2.12.Final}
+2021-08-29 08:43:56,145 INFO org.hibernate.cfg.Environment [restartedMain] HHH000206: hibernate.properties not found
+2021-08-29 08:43:56,212 INFO org.hibernate.annotations.common.reflection.java.JavaReflectionManager [restartedMain] HCANN000001: Hibernate Commons Annotations {5.0.1.Final}
+2021-08-29 08:43:56,234 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: org.hibernate.dialect.SQLiteDialect
+2021-08-29 08:43:56,407 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Starting...
+2021-08-29 08:43:56,691 INFO com.zaxxer.hikari.HikariDataSource [restartedMain] HikariPool-1 - Start completed.
+2021-08-29 08:43:56,704 INFO org.hibernate.dialect.Dialect [restartedMain] HHH000400: Using dialect: com.miyagi.shashin.SQLiteDialect
+2021-08-29 08:43:56,740 INFO org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl [restartedMain] HHH000423: Disabling contextual LOB creation as JDBC driver reported JDBC version [2] less than 4
+2021-08-29 08:43:57,652 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [restartedMain] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2021-08-29 08:44:00,295 INFO org.springframework.boot.autoconfigure.web.servlet.WelcomePageHandlerMapping [restartedMain] Adding welcome page: class path resource [static/index.html]
+2021-08-29 08:44:00,370 INFO org.hibernate.hql.internal.QueryTranslatorFactoryInitiator [restartedMain] HHH000397: Using ASTQueryTranslatorFactory
+2021-08-29 08:44:00,754 INFO org.springframework.security.web.DefaultSecurityFilterChain [restartedMain] Will secure any request with [org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@118cae8f, org.springframework.security.web.context.SecurityContextPersistenceFilter@7d9332c3, org.springframework.security.web.header.HeaderWriterFilter@40b3d01d, org.springframework.security.web.authentication.logout.LogoutFilter@6ac6cd28, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@44023fb8, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@1fe59c5b, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@409f6a1b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@2604022b, org.springframework.security.web.session.SessionManagementFilter@184649a4, org.springframework.security.web.access.ExceptionTranslationFilter@7340ecdc, org.springframework.security.web.access.intercept.FilterSecurityInterceptor@53b100b9]
+2021-08-29 08:44:00,873 INFO org.springframework.boot.devtools.autoconfigure.OptionalLiveReloadServer [restartedMain] LiveReload server is running on port 35729
+2021-08-29 08:44:00,892 INFO org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration [restartedMain] 
+
+Using generated security password: daa7ba06-88bb-4281-b5ff-b277d7413a2e
+
+2021-08-29 08:44:00,907 INFO org.apache.juli.logging.DirectJDKLog [restartedMain] Starting ProtocolHandler ["http-nio-8080"]
+2021-08-29 08:44:00,948 INFO org.springframework.boot.web.embedded.tomcat.TomcatWebServer [restartedMain] Tomcat started on port(s): 8080 (http) with context path ''
+2021-08-29 08:44:00,953 INFO org.springframework.core.log.CompositeLog [restartedMain] Starting...
+2021-08-29 08:44:00,953 INFO org.springframework.core.log.CompositeLog [restartedMain] BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@90e6942]]
+2021-08-29 08:44:00,953 INFO org.springframework.core.log.CompositeLog [restartedMain] Started.
+2021-08-29 08:44:00,968 INFO org.springframework.boot.StartupInfoLogger [restartedMain] Started ShashinApplicationKt in 10.419 seconds (JVM running for 11.729)
+2021-08-29 08:44:03,584 INFO org.apache.juli.logging.DirectJDKLog [http-nio-8080-exec-1] Initializing Spring DispatcherServlet 'dispatcherServlet'
+2021-08-29 08:44:03,585 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Initializing Servlet 'dispatcherServlet'
+2021-08-29 08:44:03,587 INFO org.springframework.web.servlet.FrameworkServlet [http-nio-8080-exec-1] Completed initialization in 2 ms
+2021-08-29 08:44:13,433 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thread created: Thread-8.shashinscan
+2021-08-29 08:44:14,010 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG_209.jpg
+2021-08-29 08:44:14,074 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG_centered.jpg
+2021-08-29 08:44:14,075 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG_original.jpg
+2021-08-29 08:44:14,075 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1061.JPG_mapmarker.jpg
+2021-08-29 08:44:14,712 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1061.JPG.exif.yaml
+2021-08-29 08:44:14,715 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1061.JPG.yaml
+2021-08-29 08:44:15,146 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG_209.jpg
+2021-08-29 08:44:15,147 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG_centered.jpg
+2021-08-29 08:44:15,148 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG_original.jpg
+2021-08-29 08:44:15,148 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1062.JPG_mapmarker.jpg
+2021-08-29 08:44:15,698 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1062.JPG.exif.yaml
+2021-08-29 08:44:15,700 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1062.JPG.yaml
+2021-08-29 08:44:16,056 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG_209.jpg
+2021-08-29 08:44:16,057 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG_centered.jpg
+2021-08-29 08:44:16,058 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG_original.jpg
+2021-08-29 08:44:16,058 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1063.JPG_mapmarker.jpg
+2021-08-29 08:44:16,694 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1063.JPG.exif.yaml
+2021-08-29 08:44:16,695 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1063.JPG.yaml
+2021-08-29 08:44:17,049 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG_209.jpg
+2021-08-29 08:44:17,051 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG_centered.jpg
+2021-08-29 08:44:17,051 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG_original.jpg
+2021-08-29 08:44:17,052 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: DSCF1080.JPG_mapmarker.jpg
+2021-08-29 08:44:17,692 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: DSCF1080.JPG.exif.yaml
+2021-08-29 08:44:17,694 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: DSCF1080.JPG.yaml
+2021-08-29 08:44:18,165 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162214741.jpg_209.jpg
+2021-08-29 08:44:18,166 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162214741.jpg_centered.jpg
+2021-08-29 08:44:18,166 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162214741.jpg_original.jpg
+2021-08-29 08:44:18,167 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162214741.jpg_mapmarker.jpg
+2021-08-29 08:44:18,694 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162214741.jpg.exif.yaml
+2021-08-29 08:44:18,695 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162214741.jpg.yaml
+2021-08-29 08:44:19,152 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162228882.jpg_209.jpg
+2021-08-29 08:44:19,153 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162228882.jpg_centered.jpg
+2021-08-29 08:44:19,154 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162228882.jpg_original.jpg
+2021-08-29 08:44:19,154 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162228882.jpg_mapmarker.jpg
+2021-08-29 08:44:19,691 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162228882.jpg.exif.yaml
+2021-08-29 08:44:19,692 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162228882.jpg.yaml
+2021-08-29 08:44:20,193 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162426584.jpg_209.jpg
+2021-08-29 08:44:20,194 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162426584.jpg_centered.jpg
+2021-08-29 08:44:20,194 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162426584.jpg_original.jpg
+2021-08-29 08:44:20,195 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162426584.jpg_mapmarker.jpg
+2021-08-29 08:44:20,688 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162426584.jpg.exif.yaml
+2021-08-29 08:44:20,691 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162426584.jpg.yaml
+2021-08-29 08:44:21,149 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162433161.jpg_209.jpg
+2021-08-29 08:44:21,151 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162433161.jpg_centered.jpg
+2021-08-29 08:44:21,151 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162433161.jpg_original.jpg
+2021-08-29 08:44:21,152 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162433161.jpg_mapmarker.jpg
+2021-08-29 08:44:21,691 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162433161.jpg.exif.yaml
+2021-08-29 08:44:21,693 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162433161.jpg.yaml
+2021-08-29 08:44:22,148 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162453255.jpg_209.jpg
+2021-08-29 08:44:22,149 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162453255.jpg_centered.jpg
+2021-08-29 08:44:22,149 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162453255.jpg_original.jpg
+2021-08-29 08:44:22,150 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162453255.jpg_mapmarker.jpg
+2021-08-29 08:44:22,709 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162453255.jpg.exif.yaml
+2021-08-29 08:44:22,711 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162453255.jpg.yaml
+2021-08-29 08:44:23,336 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162459473.jpg_209.jpg
+2021-08-29 08:44:23,337 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162459473.jpg_centered.jpg
+2021-08-29 08:44:23,337 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162459473.jpg_original.jpg
+2021-08-29 08:44:23,338 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_162459473.jpg_mapmarker.jpg
+2021-08-29 08:44:23,686 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_162459473.jpg.exif.yaml
+2021-08-29 08:44:23,687 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_162459473.jpg.yaml
+2021-08-29 08:44:24,111 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163753322.jpg_209.jpg
+2021-08-29 08:44:24,112 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163753322.jpg_centered.jpg
+2021-08-29 08:44:24,113 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163753322.jpg_original.jpg
+2021-08-29 08:44:24,113 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163753322.jpg_mapmarker.jpg
+2021-08-29 08:44:24,691 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_163753322.jpg.exif.yaml
+2021-08-29 08:44:24,693 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_163753322.jpg.yaml
+2021-08-29 08:44:25,131 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163756597.jpg_209.jpg
+2021-08-29 08:44:25,132 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163756597.jpg_centered.jpg
+2021-08-29 08:44:25,132 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163756597.jpg_original.jpg
+2021-08-29 08:44:25,133 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_163756597.jpg_mapmarker.jpg
+2021-08-29 08:44:25,695 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_163756597.jpg.exif.yaml
+2021-08-29 08:44:25,696 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_163756597.jpg.yaml
+2021-08-29 08:44:26,098 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_164528303.jpg_209.jpg
+2021-08-29 08:44:26,100 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_164528303.jpg_centered.jpg
+2021-08-29 08:44:26,100 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_164528303.jpg_original.jpg
+2021-08-29 08:44:26,101 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210405_164528303.jpg_mapmarker.jpg
+2021-08-29 08:44:26,692 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210405_164528303.jpg.exif.yaml
+2021-08-29 08:44:26,694 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210405_164528303.jpg.yaml
+2021-08-29 08:44:27,075 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210409_233343452.jpg_209.jpg
+2021-08-29 08:44:27,076 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210409_233343452.jpg_centered.jpg
+2021-08-29 08:44:27,077 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210409_233343452.jpg_original.jpg
+2021-08-29 08:44:27,078 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210409_233343452.jpg_mapmarker.jpg
+2021-08-29 08:44:27,699 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210409_233343452.jpg.exif.yaml
+2021-08-29 08:44:27,702 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210409_233343452.jpg.yaml
+2021-08-29 08:44:28,197 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_202709022.jpg_209.jpg
+2021-08-29 08:44:28,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_202709022.jpg_centered.jpg
+2021-08-29 08:44:28,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_202709022.jpg_original.jpg
+2021-08-29 08:44:28,198 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_202709022.jpg_mapmarker.jpg
+2021-08-29 08:44:28,686 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_202709022.jpg.exif.yaml
+2021-08-29 08:44:28,687 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_202709022.jpg.yaml
+2021-08-29 08:44:29,133 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203510718.jpg_209.jpg
+2021-08-29 08:44:29,134 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203510718.jpg_centered.jpg
+2021-08-29 08:44:29,135 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203510718.jpg_original.jpg
+2021-08-29 08:44:29,136 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203510718.jpg_mapmarker.jpg
+2021-08-29 08:44:29,689 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_203510718.jpg.exif.yaml
+2021-08-29 08:44:29,690 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_203510718.jpg.yaml
+2021-08-29 08:44:30,134 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203517457.jpg_209.jpg
+2021-08-29 08:44:30,135 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203517457.jpg_centered.jpg
+2021-08-29 08:44:30,135 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203517457.jpg_original.jpg
+2021-08-29 08:44:30,135 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_203517457.jpg_mapmarker.jpg
+2021-08-29 08:44:30,688 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_203517457.jpg.exif.yaml
+2021-08-29 08:44:30,690 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_203517457.jpg.yaml
+2021-08-29 08:44:31,174 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204509025.jpg_209.jpg
+2021-08-29 08:44:31,175 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204509025.jpg_centered.jpg
+2021-08-29 08:44:31,176 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204509025.jpg_original.jpg
+2021-08-29 08:44:31,177 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204509025.jpg_mapmarker.jpg
+2021-08-29 08:44:31,688 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_204509025.jpg.exif.yaml
+2021-08-29 08:44:31,689 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_204509025.jpg.yaml
+2021-08-29 08:44:32,222 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204514975.jpg_209.jpg
+2021-08-29 08:44:32,223 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204514975.jpg_centered.jpg
+2021-08-29 08:44:32,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204514975.jpg_original.jpg
+2021-08-29 08:44:32,224 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204514975.jpg_mapmarker.jpg
+2021-08-29 08:44:32,690 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_204514975.jpg.exif.yaml
+2021-08-29 08:44:32,691 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_204514975.jpg.yaml
+2021-08-29 08:44:33,289 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204518574.jpg_209.jpg
+2021-08-29 08:44:33,291 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204518574.jpg_centered.jpg
+2021-08-29 08:44:33,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204518574.jpg_original.jpg
+2021-08-29 08:44:33,292 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204518574.jpg_mapmarker.jpg
+2021-08-29 08:44:33,697 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Exif already exists: PXL_20210411_204518574.jpg.exif.yaml
+2021-08-29 08:44:33,698 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] YAML metadata already exists: PXL_20210411_204518574.jpg.yaml
+2021-08-29 08:44:34,506 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204534724.jpg_209.jpg
+2021-08-29 08:44:34,508 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204534724.jpg_centered.jpg
+2021-08-29 08:44:34,508 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204534724.jpg_original.jpg
+2021-08-29 08:44:34,509 INFO com.miyagi.shashin.util.FileUtils$Companion [Thread-8] Thumbnail already exists: PXL_20210411_204534724.jpg_mapmarker.jpg
+2021-08-29 08:44:34,610 INFO org.springframework.core.log.CompositeLog [SpringApplicationShutdownHook] Stopping...
+2021-08-29 08:44:34,611 INFO org.springframework.core.log.CompositeLog [SpringApplicationShutdownHook] BrokerAvailabilityEvent[available=false, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@90e6942]]
+2021-08-29 08:44:34,611 INFO org.springframework.core.log.CompositeLog [SpringApplicationShutdownHook] Stopped.
+2021-08-29 08:44:34,675 INFO org.springframework.orm.jpa.AbstractEntityManagerFactoryBean [SpringApplicationShutdownHook] Closing JPA EntityManagerFactory for persistence unit 'default'
+2021-08-29 08:44:34,680 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown initiated...
+2021-08-29 08:44:34,683 INFO com.zaxxer.hikari.HikariDataSource [SpringApplicationShutdownHook] HikariPool-1 - Shutdown completed.
