@@ -575,8 +575,6 @@ class SettingsController {
 
                         }
 
-                        // TODO: Check if mapped sidecar file exists, if it does, skip creating them
-
                         if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
                             val imageProcessingUtils = ImageProcessingUtils(apiVersion,geocodeUrl)
                             var metadataObj: Metadata? = Metadata()
