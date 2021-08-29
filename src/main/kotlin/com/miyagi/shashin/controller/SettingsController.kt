@@ -3,6 +3,8 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.Message
+import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
@@ -11,14 +13,22 @@ import com.miyagi.shashin.util.ImageProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.event.EventListener
 import org.springframework.core.io.FileSystemResource
 import org.springframework.data.domain.Sort
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.SimpMessagingTemplate
+import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import org.springframework.web.socket.messaging.SessionConnectEvent
+import org.springframework.web.socket.messaging.SessionDisconnectEvent
+import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -27,10 +37,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 
+
 @Controller
-@Secured("ROLE_ADMIN")
 class SettingsController {
 
     @Value("\${app.api.version}")
@@ -66,11 +77,70 @@ class SettingsController {
     @Autowired
     private val albumPhotoRepository: AlbumPhotoRepository? = null
 
+    @Autowired
+    private val messagingTemplate: SimpMessagingTemplate? = null
+
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
+    @MessageMapping("/scanmessage")
+    @SendTo("/topic/messages")
+    @Throws(java.lang.Exception::class)
+    fun sendScanMessage(message: ScanMessage): Message? {
+        //println("message:${message.getMessage()}")
+
+        var msg = "Start Scan";
+
+        if (!checkThreadFileAlive()) {
+            msg = "Scan Complete"
+        }
+
+        val threadFileContent = readThreadFile()
+        if (threadFileContent != null) {
+            msg = "Scan in progress: " + threadFileContent.replace("\\","/")
+        }
+
+        val messageObj = Message()
+        messageObj.setContent(msg)
+
+        return messageObj
+    }
+
+    @SubscribeMapping("/topic/messages")
+    fun subscribe(
+        session: HttpSession,
+        @PathVariable pipelineId: String,
+        @PathVariable topic: String
+    ) {
+        //println("subscribe")
+        //println(session.id)
+//        messagingTemplate?.convertAndSend("/app/scanmessage", "testingzzz");
+
+    }
+
+    @EventListener
+    fun onApplicationEvent(event: SessionConnectEvent) {
+//        println("SessionConnectEvent")
+//        println(event.source)
+
+//        messagingTemplate?.convertAndSend("/topic/messages", "testingzzz");
+    }
+
+    @EventListener
+    fun onApplicationEvent(event: SessionDisconnectEvent) {
+//        println("SessionDisconnectEvent")
+//        println(event.sessionId)
+    }
+
+    @EventListener
+    fun handleSubscribeEvent(event: SessionSubscribeEvent) {
+//        println("SessionSubscribeEvent")
+//        println(event.message)
+    }
+
+    @Secured("ROLE_ADMIN")
     @GetMapping("/settings")
     fun getSettings(model: Model): String {
         val mediaDirectories = mediaDirRepository?.findAll()
@@ -89,6 +159,7 @@ class SettingsController {
         return module
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
     fun postSettings(model: Model, redirectAttributes: RedirectAttributes, @RequestParam("mediaDirList") mediaDirList: String): String {
         if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirList.isNotBlank()) {
@@ -124,6 +195,7 @@ class SettingsController {
         return module
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping("/settings/users")
     fun getUsers(model: Model): String {
         val module = "users"
@@ -146,6 +218,7 @@ class SettingsController {
         return module
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings/user/delete/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -172,6 +245,7 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings/user/role/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -205,11 +279,12 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_ADMIN")
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
         return if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
             val module = "scan"
-            model["data"] = "Scan photos"
+            model["data"] = "Click scan to scan photo directories"
             model["activePage"] = module
             model["activeSidebar"] = module
             model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -219,6 +294,7 @@ class SettingsController {
         }
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
