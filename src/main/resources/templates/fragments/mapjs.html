@@ -96,22 +96,13 @@
                 var featureProperties = feature.getProperties();
                 // console.log(featureProperties);
 
-                let dateString = "";
-                if (featureProperties["year"] !== null &&
-                    featureProperties["month"] !== null &&
-                    featureProperties["day"] !== null) {
-                    let date = new Date(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
-                    let dayOfWeek = getShortDay(date.getDay());
-                    let shortMonth = getShortMonths(date.getMonth());
-                    let day = ('0' + date.getDate()).slice(-2);
-                    dateString = dayOfWeek + ", " + shortMonth + " " + day + ", " + featureProperties["year"];
-                }
+                let dateString = getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
 
                 var mediaContent = {}
                 if (featureProperties.type.includes("image")) {
                     mediaContent = {
                         src: featureProperties.photoUrl,
-                        subHtml: featureProperties.placeName + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName+'<br>' : "") + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                     }
                 } else if (featureProperties.type.includes("video")) {
                     mediaContent = {
@@ -119,7 +110,7 @@
                             "source": [{"src": featureProperties.videoUrl, "type": featureProperties.type}],
                             "attributes": {"preload": false, "controls": true}
                         },
-                        subHtml: featureProperties.placeName + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName+'<br>' : "") + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                     }
                 }
 

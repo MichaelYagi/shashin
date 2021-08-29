@@ -32,12 +32,26 @@
         }
     }
 
+    function getDateString(year,month,day) {
+        if (year !== null && year !== "" &&
+            month !== null && month !== "" &&
+            day !== null && day !== ""
+        ) {
+            let date = new Date(month+"/"+day+"/"+year);
+            let shortMonth = getShortMonths(date.getMonth());
+            let adjustedDay = ('0' + date.getDate()).slice(-2);
+            let dayOfWeek = getShortDay(date.getDay());
+            return dayOfWeek + ", " + shortMonth + " " + adjustedDay + ", " + year;
+        }
+        return "";
+    }
+
     function getShortDay(index) {
-        var days = ['Thu','Fri','Sat','Sun','Mon','Tue','Wed'];
+        var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
         return days[index];
     }
     function getShortMonths(index) {
-        var months = ['Dec','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov'];
+        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
         return months[index];
     }
 

@@ -27,16 +27,7 @@
                         for (var index in albumMetadataList) {
                             var metadata = albumMetadataList[index];
 
-                            let dateString = "";
-                            if (metadata["year"] !== null &&
-                                metadata["month"] !== null &&
-                                metadata["day"] !== null) {
-                                let date = new Date(metadata["year"], metadata["month"], metadata["day"]);
-                                let dayOfWeek = getShortDay(date.getDay());
-                                let shortMonth = getShortMonths(date.getMonth());
-                                let day = ('0' + date.getDate()).slice(-2);
-                                dateString = dayOfWeek + ", " + shortMonth + " " + day + ", " + metadata["year"];
-                            }
+                            let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                             var html = 
                                 '<div class="photo-thumbnail-container photo-thumbnail">\n' +
@@ -73,13 +64,13 @@
                                 html +=
                                     '   <a class="mediaLink"\n' +
                                     '       data-video=\'{"source": [{"src":"'+metadata.videoUrl+'", "type":"'+metadata.type+'"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                    '       data-sub-html="'+metadata.placeName+'<br>'+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
+                                    '       data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
                                     '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                     '   </a>\n';
                             } else {
                                 html +=
                                     '   <a class="mediaLink" data-src="'+metadata.thumbnailUrlOriginal+'" href="'+metadata.thumbnailUrlOriginal+'"' +
-                                    '       data-sub-html="'+metadata.placeName+'<br>'+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
+                                    '       data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
                                     '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                     '   </a>\n';
                             }
