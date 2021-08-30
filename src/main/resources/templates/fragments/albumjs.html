@@ -160,51 +160,57 @@
         });
     }
 
+    function deleteComment(commentId, metadata) {
+        let json = {commentId: commentId, metadataId: metadata.id}
+
+        const posting = $.post({
+            url: "/comment/albumphoto/delete/",
+            data: JSON.stringify(json),
+            contentType: 'application/json; charset=utf-8'
+        });
+
+        posting.done(function (data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                let commentId = data["commentId"];
+                let message = "Error";
+                if (data["status"] === "success") {
+                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                    // Delete comment
+                    $("#comment" + commentId).remove();
+                } else {
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                }
+            }
+        });
+
+        $("#currentCommentId" + metadata.id).val("");
+    }
+
+    function editComment(commentId, metadata) {
+        if ($("#currentCommentId" + metadata.id).val() === "") {
+            $("#currentCommentId" + metadata.id).val(commentId);
+
+            $("#saveCommentMetadata" + metadata.id).hide();
+            $("#dismissModalCommentMetadata" + metadata.id).hide();
+            $("#updateCommentMetadata" + metadata.id).show();
+            $("#cancelEditCommentMetadata" + metadata.id).show();
+
+            $("#commentcontainer" + commentId).hide();
+            $("#textareacontainer" + commentId).show();
+            var commentText = $("#commentcontent" + commentId).text();
+            $("#textareacontainer" + commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">' + commentText + '</textarea>');
+        }
+    }
+
     function albumCommentsDeleteEditModalListener(commentId, metadata) {
         $("#deletecomment" + commentId).click(function (e) {
             e.preventDefault();
-
-            let json = {commentId: commentId, metadataId: metadata.id}
-
-            const posting = $.post({
-                url: "/comment/albumphoto/delete/",
-                data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8'
-            });
-
-            posting.done(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                    let commentId = data["commentId"];
-                    let message = "Error";
-                    if (data["status"] === "success") {
-                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        // Delete comment
-                        $("#comment" + commentId).remove();
-                    } else {
-                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    }
-                }
-            });
-
-            $("#currentCommentId" + metadata.id).val("");
+            deleteComment(commentId, metadata);
         });
 
         $("#editcomment" + commentId).click(function (e) {
             e.preventDefault();
-
-            if ($("#currentCommentId" + metadata.id).val() === "") {
-                $("#currentCommentId" + metadata.id).val(commentId);
-
-                $("#saveCommentMetadata" + metadata.id).hide();
-                $("#dismissModalCommentMetadata" + metadata.id).hide();
-                $("#updateCommentMetadata" + metadata.id).show();
-                $("#cancelEditCommentMetadata" + metadata.id).show();
-
-                $("#commentcontainer" + commentId).hide();
-                $("#textareacontainer" + commentId).show();
-                var commentText = $("#commentcontent" + commentId).text();
-                $("#textareacontainer" + commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">' + commentText + '</textarea>');
-            }
+            editComment(commentId, metadata);
         });
     }
 
@@ -321,48 +327,12 @@
 
                         $("#deletecomment" + commentId).click(function (e) {
                             e.preventDefault();
-
-                            let json = {commentId: commentId, metadataId: metadata.id}
-
-                            const posting = $.post({
-                                url: "/comment/albumphoto/delete/",
-                                data: JSON.stringify(json),
-                                contentType: 'application/json; charset=utf-8'
-                            });
-
-                            posting.done(function (data) {
-                                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                                    let commentId = data["commentId"];
-                                    let message = "Error";
-                                    if (data["status"] === "success") {
-                                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                        // Delete comment
-                                        $("#comment" + commentId).remove();
-                                    } else {
-                                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                    }
-                                }
-                            });
-
-                            $("#currentCommentId" + metadata.id).val("");
+                            deleteComment(commentId, metadata);
                         });
 
                         $("#editcomment" + commentId).click(function (e) {
                             e.preventDefault();
-
-                            if ($("#currentCommentId" + metadata.id).val() === "") {
-                                $("#currentCommentId" + metadata.id).val(commentId);
-
-                                $("#saveCommentMetadata" + metadata.id).hide();
-                                $("#dismissModalCommentMetadata" + metadata.id).hide();
-                                $("#updateCommentMetadata" + metadata.id).show();
-                                $("#cancelEditCommentMetadata" + metadata.id).show();
-
-                                $("#commentcontainer" + commentId).hide();
-                                $("#textareacontainer" + commentId).show();
-                                var commentText = $("#commentcontent" + commentId).text();
-                                $("#textareacontainer" + commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">' + commentText + '</textarea>');
-                            }
+                            editComment(commentId, metadata);
                         });
                     }
                 });
