@@ -3,5 +3,5 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 <div th:replace="fragments/loginregcontent :: loginregcontent(${activePage},${data})" class="col-sm p-3 min-vh-100"></div>
-<span style="text-align: center;" th:insert="fragments/footer :: footer(${copyrightYear})"></span>
+<span style="text-align: center;" th:insert="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo})"></span>
 </body></html>
