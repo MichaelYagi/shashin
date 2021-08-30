@@ -78,6 +78,8 @@ class BaseController {
             model["currentUser"] = ""
             logger.log(Level.WARNING, "Error getting authority: " + e.message)
         }
+        model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
+
         model["operatingSystemInfo"] = getOperatingSystemInfo()
         model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)
         model["titleDescriptor"] = ""

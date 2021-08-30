@@ -14,6 +14,7 @@ class Album {
     @NotBlank
     private var name: String? = null
     private var coverUrl: String? = null
+    private var shareUrl: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -21,6 +22,10 @@ class Album {
 
     fun getId(): Int {
         return this.id
+    }
+
+    fun setId(id: Int) {
+        this.id = id
     }
 
     fun getName(): String? {
@@ -37,6 +42,14 @@ class Album {
 
     fun setCoverUrl(coverUrl: String?) {
         this.coverUrl = coverUrl
+    }
+
+    fun getShareUrl(): String? {
+        return this.shareUrl
+    }
+
+    fun setShareUrl(shareUrl: String?) {
+        this.shareUrl = shareUrl
     }
 
     fun getCreatedAt(): String? {
@@ -59,6 +72,8 @@ class Album {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["name"] = this.name
+        map["coverUrl"] = this.coverUrl
+        map["shareUrl"] = this.shareUrl
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
