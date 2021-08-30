@@ -29,15 +29,16 @@
             '               <input type="hidden" name="id" value="'+metadata.id+'">\n' +
             '               <div class="form-group row">\n' +
             '                   <div class="col-sm">\n' +
-            '                       <label for="dayTaken'+metadata.id+'" class="col-form-label">Day</label>\n' +
+            '                       <label for="dayTaken'+metadata.id+'" class="col-form-label">Day taken</label>\n' +
             '                       <input type="text" class="form-control" id="dayTaken'+metadata.id+'" name="day" value="'+(metadata.day == null ? "" : metadata.day)+'">\n' +
+            '                       <a href="#" id="refreshTakenDate'+metadata.id+'" data-toggle="tooltip" data-placement="right" title="Sync original taken date"><span class="bi-arrow-clockwise"></span></a>\n' +
             '                   </div>\n' +
             '                   <div class="col-sm">\n' +
-            '                       <label for="monthTaken'+metadata.id+'" class="col-form-label">Month</label>\n' +
+            '                       <label for="monthTaken'+metadata.id+'" class="col-form-label">Month taken</label>\n' +
             '                       <input type="text" class="form-control" id="monthTaken'+metadata.id+'" name="month" value="'+(metadata.month == null ? "" : metadata.month)+'">\n' +
             '                   </div>\n' +
             '                   <div class="col-sm">\n' +
-            '                       <label for="yearTaken'+metadata.id+'" class="col-form-label">Year</label>\n' +
+            '                       <label for="yearTaken'+metadata.id+'" class="col-form-label">Year taken</label>\n' +
             '                       <input type="text" class="form-control" id="yearTaken'+metadata.id+'" name="year" value="'+(metadata.year == null ? "" : metadata.year)+'">\n' +
             '                   </div>\n' +
             '               </div>\n' +
@@ -155,6 +156,39 @@
                     }
                 });
             }
+
+            return false;
+        });
+
+        $("#refreshTakenDate"+metadata.id).click(function (e) {
+            e.preventDefault();
+
+            var json = {
+                id:metadata.id
+            }
+            const posting = $.post({
+                url: "/timeline/sync/"+metadata.id,
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8'
+            });
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    let message = "Error";
+                    if (data["status"] === "success") {
+                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        if (data["year"] !== "" && data["month"] !== "" && data["day"] !== "") {
+                            $("#yearTaken"+metadata.id).val(data["year"]);
+                            $("#monthTaken"+metadata.id).val(data["month"]);
+                            $("#dayTaken"+metadata.id).val(data["day"]);
+                        }
+                        // window.top.location = window.top.location
+                    } else {
+                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    }
+                    $("#msg"+metadata.id).html(message);
+                }
+            });
 
             return false;
         });

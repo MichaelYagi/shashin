@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -316,6 +317,46 @@ class TimelineController {
                 return mapper.writeValueAsString(resp)
             }
         }
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun postSyncData(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
+        val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        resp["year"] = ""
+        resp["month"] = ""
+        resp["day"] = ""
+
+        if (batchMetadataMap.containsKey("id") && batchMetadataMap["id"] == metadataId) {
+            val metadataOptional = metadataRepository.findById(metadataId)
+            val metadataObj = metadataOptional.get()
+
+            if (metadataObj.getTakenAt() != null) {
+                val datePattern = "yyyy-MM-dd HH:mm:ss"
+                val dateArray = metadataObj.getTakenAt()!!.format(datePattern).toString().split(" ")
+                val takenDateArray = dateArray[0].split("-")
+                val year = takenDateArray[0].toInt()
+                val month = takenDateArray[1].toInt()
+                val day = takenDateArray[2].toInt()
+                metadataObj.setYear(year)
+                metadataObj.setMonth(month)
+                metadataObj.setDay(day)
+                metadataRepository.save(metadataObj)
+
+                resp["year"] = year.toString()
+                resp["month"] = month.toString()
+                resp["day"] = day.toString()
+
+                resp["msg"] = "Saved"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
+            }
+        }
+
+
         resp["msg"] = "Could not save"
         resp["status"] = "fail"
         return mapper.writeValueAsString(resp)
