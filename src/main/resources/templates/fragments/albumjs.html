@@ -192,6 +192,9 @@
         $("#editcomment" + commentId).click(function (e) {
             e.preventDefault();
 
+            console.log("edit comment");
+            console.log("currentCommentId" + metadata.id);
+
             if ($("#currentCommentId" + metadata.id).val() === "") {
                 $("#currentCommentId" + metadata.id).val(commentId);
 

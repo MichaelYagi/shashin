@@ -78,11 +78,23 @@ class BaseController {
             model["currentUser"] = ""
             logger.log(Level.WARNING, "Error getting authority: " + e.message)
         }
+        model["operatingSystemInfo"] = getOperatingSystemInfo()
         model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)
         model["titleDescriptor"] = ""
         model["data"] = ""
         model["activePage"] = ""
         model["activeSidebar"] = ""
         model["titleDescriptor"] = ""
+    }
+
+    private fun getOperatingSystemInfo(): String {
+        // The key for getting operating system name
+        val name = "os.name"
+        // The key for getting operating system version
+        val version = "os.version"
+        // The key for getting operating system architecture
+        val architecture = "os.arch"
+
+        return System.getProperty(name)+" v"+System.getProperty(version)+" "+System.getProperty(architecture)
     }
 }

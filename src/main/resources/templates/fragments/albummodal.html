@@ -56,9 +56,11 @@
             '            <div class="modal-body">\n' +
             '                <input type="hidden" id="currentCommentId'+metadata.id+'" name="currentCommentId'+metadata.id+'">\n' +
             '                <ul class="list-group" id="commentList'+metadata.id+'">\n';
+
+        var commentIdArray = [];
         for (var index in albumPhotoCommentsMap[metadata.id]) {
             var comments = albumPhotoCommentsMap[metadata.id][index];
-            albumCommentsDeleteEditModalListener(comments["commentId"], metadata);
+            commentIdArray.push(comments["commentId"]);
 
             html +=
                 '       <li id="comment'+comments["commentId"]+'" class="list-group-item'+(comments['userId'] === currentUser.id ? ' list-group-item-secondary' : '')+'">\n' +
@@ -93,6 +95,11 @@
             '</div>';
 
         $("#albummodal"+metadata.id).after(html);
+        for (var index in commentIdArray) {
+            var commentId = commentIdArray[index];
+            albumCommentsDeleteEditModalListener(commentId, metadata);
+        }
+
         albumCommentsUpdateSaveModalListener(metadata, albumData, currentUser);
     }
 </script>

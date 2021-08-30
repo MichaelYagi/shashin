@@ -166,31 +166,29 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
     fun postSettings(model: Model, redirectAttributes: RedirectAttributes, @RequestParam("mediaDirList") mediaDirList: String): String {
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-            var mediaDirs: List<String>? = null
-            val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
-            if  (mediaDirList.isNotBlank()) {
-                mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
-            }
+        var mediaDirs: List<String>? = null
+        val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
+        if  (mediaDirList.isNotBlank()) {
+            mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
+        }
 
-            if (mediaDirs != null && mediaDirs.isNotEmpty()) {
-                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                val now = LocalDateTime.now()
+        if (mediaDirs != null && mediaDirs.isNotEmpty()) {
+            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val now = LocalDateTime.now()
 
-                for (mediaDir in mediaDirs) {
-                    var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
-                    if (mediaDirObj == null) {
-                        mediaDirObj = MediaDirectory()
-                        mediaDirObj.setDirectory(mediaDir)
-                    }
-                    mediaDirObj.setCreatedAt(dtf.format(now))
-                    mediaDirObj.setModifiedAt(dtf.format(now))
-                    mediaDirArrayList.add(mediaDirObj)
+            for (mediaDir in mediaDirs) {
+                var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
+                if (mediaDirObj == null) {
+                    mediaDirObj = MediaDirectory()
+                    mediaDirObj.setDirectory(mediaDir)
                 }
-                mediaDirRepository?.saveAll(mediaDirArrayList)
-            } else {
-                mediaDirRepository?.deleteAll()
+                mediaDirObj.setCreatedAt(dtf.format(now))
+                mediaDirObj.setModifiedAt(dtf.format(now))
+                mediaDirArrayList.add(mediaDirObj)
             }
+            mediaDirRepository?.saveAll(mediaDirArrayList)
+        } else {
+            mediaDirRepository?.deleteAll()
         }
 
         val module = "settings"
@@ -211,14 +209,12 @@ class SettingsController {
         val module = "users"
         model["users"] = ""
 
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-            val sort = Sort.by(
-                Sort.Order.asc("username")
-            )
-            val users = userRepository?.findAll(sort)
-            if (users != null) {
-                model["users"] = users
-            }
+        val sort = Sort.by(
+            Sort.Order.asc("username")
+        )
+        val users = userRepository?.findAll(sort)
+        if (users != null) {
+            model["users"] = users
         }
 
         model["data"] = ""
@@ -234,7 +230,7 @@ class SettingsController {
     @Transactional
     fun deleteUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
         val userDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && userDeleteMap.containsKey("userId") && userDeleteMap.containsKey("delete") && model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+        if (userDeleteMap.containsKey("userId") && userDeleteMap.containsKey("delete")) {
             val userIdRequest = userDeleteMap["userId"].toString().toInt()
             val deleteFlag = userDeleteMap["delete"].toString().toBoolean()
 
@@ -261,7 +257,7 @@ class SettingsController {
     @Transactional
     fun changeUserRole(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
         val userRoleChangeMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && userRoleChangeMap.containsKey("userId") && userRoleChangeMap.containsKey("changeTo") && model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+        if (userRoleChangeMap.containsKey("userId") && userRoleChangeMap.containsKey("changeTo")) {
             val userIdRequest = userRoleChangeMap["userId"].toString().toInt()
             val changeRoleTo = userRoleChangeMap["changeTo"].toString()
 
@@ -292,16 +288,12 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
-        return if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-            val module = "scan"
-            model["data"] = "Click scan to scan photo directories"
-            model["activePage"] = module
-            model["activeSidebar"] = module
-            model["titleDescriptor"] = TextUtils.capitalized(module)
-            module
-        } else {
-            "albums"
-        }
+        val module = "scan"
+        model["data"] = "Click scan to scan photo directories"
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @Secured("ROLE_ADMIN")
@@ -311,116 +303,161 @@ class SettingsController {
     fun postScan(model: Model, @RequestParam submit: String, @RequestParam isCheckOnly: Boolean): String {
         resp["msg"] = "Nothing to see here"
 
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-            // Check for deleted original files
-            val metadataList = metadataRepository?.findAll()
-            if (metadataList != null) {
-                for (metadata in metadataList) {
-                    if (metadata != null) {
-                        if (!metadata.getPath().isNullOrBlank()) {
-                            val checkFile = File(metadata.getPath()!!)
-                            if (!checkFile.exists()) {
-                                // Delete side car and metadata files
-                                if (!metadata.getThumbnailPathCentered().isNullOrBlank()) {
-                                    val fileObj = File(metadata.getThumbnailPathCentered()!!)
-                                    if (fileObj.delete()) {
-                                        logger.log(Level.INFO, "Deleted thumbnail centered file: " + fileObj.name)
-                                    } else {
-                                        logger.log(Level.WARNING, "Failed to delete thumbnail centered file: " + fileObj.name)
-                                    }
-                                }
-                                if (!metadata.getThumbnailPathSmall().isNullOrBlank()) {
-                                    val fileObj = File(metadata.getThumbnailPathSmall()!!)
-                                    if (fileObj.delete()) {
-                                        logger.log(Level.INFO, "Deleted thumbnail small file: " + fileObj.name)
-                                    } else {
-                                        logger.log(Level.WARNING, "Failed to delete thumbnail small file: " + fileObj.name)
-                                    }
-                                }
-                                if (!metadata.getThumbnailPathOriginal().isNullOrBlank()) {
-                                    val fileObj = File(metadata.getThumbnailPathOriginal()!!)
-                                    if (fileObj.delete()) {
-                                        logger.log(Level.INFO, "Deleted thumbnail original file: " + fileObj.name)
-                                    } else {
-                                        logger.log(Level.WARNING, "Failed to delete thumbnail original file: " + fileObj.name)
-                                    }
-                                }
-                                if (!metadata.getMapMarkerPath().isNullOrBlank()) {
-                                    val fileObj = File(metadata.getMapMarkerPath()!!)
-                                    if (fileObj.delete()) {
-                                        logger.log(Level.INFO, "Deleted map marker file: " + fileObj.name)
-                                    } else {
-                                        logger.log(Level.WARNING, "Failed to delete map marker file: " + fileObj.name)
-                                    }
-                                }
-
-                                val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-                                val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
-                                val metadataDir = sidecarDir + "metadata/"
-                                val thumbnailDir = sidecarDir.replace('\\', '/')+"thumbnails/"
-                                var relativePath: String = metadata.getThumbnailPathOriginal()!!.replace('\\', '/').lowercase().replace(thumbnailDir.lowercase(), "")
-                                relativePath = relativePath.replace("_original.jpg","")
-                                val metadataYamlFile = "$metadataDir$relativePath.yaml"
-                                var fileObj = File(metadataYamlFile)
+        // Check for deleted original files
+        val metadataList = metadataRepository?.findAll()
+        if (metadataList != null) {
+            for (metadata in metadataList) {
+                if (metadata != null) {
+                    if (!metadata.getPath().isNullOrBlank()) {
+                        val checkFile = File(metadata.getPath()!!)
+                        if (!checkFile.exists()) {
+                            // Delete side car and metadata files
+                            if (!metadata.getThumbnailPathCentered().isNullOrBlank()) {
+                                val fileObj = File(metadata.getThumbnailPathCentered()!!)
                                 if (fileObj.delete()) {
-                                    logger.log(Level.INFO, "Deleted yaml file: " + fileObj.name)
+                                    logger.log(Level.INFO, "Deleted thumbnail centered file: " + fileObj.name)
                                 } else {
-                                    logger.log(Level.WARNING, "Failed to delete yaml file: " + fileObj.name)
+                                    logger.log(Level.WARNING, "Failed to delete thumbnail centered file: " + fileObj.name)
                                 }
-                                val metadataExifFile = "$metadataDir$relativePath.exif.yaml"
-                                fileObj = File(metadataExifFile)
-                                if (fileObj.delete()) {
-                                    logger.log(Level.INFO, "Deleted EXIF file: " + fileObj.name)
-                                } else {
-                                    logger.log(Level.WARNING, "Failed to delete EXIF file: " + fileObj.name)
-                                }
-
-                                // Delete comments
-                                logger.log(Level.FINE, "File "+metadata.getPath()+" no longer exists. Deleting metadata: " + metadata.getId())
-                                val albumPhotoCommentList = albumPhotoCommentRepository?.findByMetadataId(metadata.getId())
-                                if (albumPhotoCommentList != null) {
-                                    for (albumPhotoComment in albumPhotoCommentList) {
-                                        if (albumPhotoComment != null) {
-                                            commentRepository?.deleteById(albumPhotoComment.getId())
-                                        }
-                                    }
-                                }
-                                albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId())
-                                logger.log(Level.INFO, "Removed comment records for: " + metadata.getId())
-
-                                // Delete from favorites
-                                favoriteRepository?.deleteByMetadataId(metadata.getId())
-                                logger.log(Level.INFO, "Removed favorite records for: " + metadata.getId())
-
-                                // Delete from album
-                                albumPhotoRepository?.deleteByMetadataId(metadata.getId())
-                                val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
-                                if (albumPhotoCounts != null) {
-                                    for (albumPhotoCount in albumPhotoCounts) {
-                                        if (albumPhotoCount != null) {
-                                            if (albumPhotoCount.getPhotoCount() == 0) {
-                                                // Delete the album
-                                                albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
-                                                userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
-                                            }
-                                        }
-                                    }
-                                }
-                                logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
-
-                                // Delete from Metadata
-                                metadataRepository?.deleteById(metadata.getId())
-                                logger.log(Level.INFO, "Removed metadata records for: " + metadata.getId())
                             }
+                            if (!metadata.getThumbnailPathSmall().isNullOrBlank()) {
+                                val fileObj = File(metadata.getThumbnailPathSmall()!!)
+                                if (fileObj.delete()) {
+                                    logger.log(Level.INFO, "Deleted thumbnail small file: " + fileObj.name)
+                                } else {
+                                    logger.log(Level.WARNING, "Failed to delete thumbnail small file: " + fileObj.name)
+                                }
+                            }
+                            if (!metadata.getThumbnailPathOriginal().isNullOrBlank()) {
+                                val fileObj = File(metadata.getThumbnailPathOriginal()!!)
+                                if (fileObj.delete()) {
+                                    logger.log(Level.INFO, "Deleted thumbnail original file: " + fileObj.name)
+                                } else {
+                                    logger.log(Level.WARNING, "Failed to delete thumbnail original file: " + fileObj.name)
+                                }
+                            }
+                            if (!metadata.getMapMarkerPath().isNullOrBlank()) {
+                                val fileObj = File(metadata.getMapMarkerPath()!!)
+                                if (fileObj.delete()) {
+                                    logger.log(Level.INFO, "Deleted map marker file: " + fileObj.name)
+                                } else {
+                                    logger.log(Level.WARNING, "Failed to delete map marker file: " + fileObj.name)
+                                }
+                            }
+
+                            val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                            val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
+                            val metadataDir = sidecarDir + "metadata/"
+                            val thumbnailDir = sidecarDir.replace('\\', '/')+"thumbnails/"
+                            var relativePath: String = metadata.getThumbnailPathOriginal()!!.replace('\\', '/').lowercase().replace(thumbnailDir.lowercase(), "")
+                            relativePath = relativePath.replace("_original.jpg","")
+                            val metadataYamlFile = "$metadataDir$relativePath.yaml"
+                            var fileObj = File(metadataYamlFile)
+                            if (fileObj.delete()) {
+                                logger.log(Level.INFO, "Deleted yaml file: " + fileObj.name)
+                            } else {
+                                logger.log(Level.WARNING, "Failed to delete yaml file: " + fileObj.name)
+                            }
+                            val metadataExifFile = "$metadataDir$relativePath.exif.yaml"
+                            fileObj = File(metadataExifFile)
+                            if (fileObj.delete()) {
+                                logger.log(Level.INFO, "Deleted EXIF file: " + fileObj.name)
+                            } else {
+                                logger.log(Level.WARNING, "Failed to delete EXIF file: " + fileObj.name)
+                            }
+
+                            // Delete comments
+                            logger.log(Level.FINE, "File "+metadata.getPath()+" no longer exists. Deleting metadata: " + metadata.getId())
+                            val albumPhotoCommentList = albumPhotoCommentRepository?.findByMetadataId(metadata.getId())
+                            if (albumPhotoCommentList != null) {
+                                for (albumPhotoComment in albumPhotoCommentList) {
+                                    if (albumPhotoComment != null) {
+                                        commentRepository?.deleteById(albumPhotoComment.getId())
+                                    }
+                                }
+                            }
+                            albumPhotoCommentRepository?.deleteByMetadataId(metadata.getId())
+                            logger.log(Level.INFO, "Removed comment records for: " + metadata.getId())
+
+                            // Delete from favorites
+                            favoriteRepository?.deleteByMetadataId(metadata.getId())
+                            logger.log(Level.INFO, "Removed favorite records for: " + metadata.getId())
+
+                            // Delete from album
+                            albumPhotoRepository?.deleteByMetadataId(metadata.getId())
+                            val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
+                            if (albumPhotoCounts != null) {
+                                for (albumPhotoCount in albumPhotoCounts) {
+                                    if (albumPhotoCount != null) {
+                                        if (albumPhotoCount.getPhotoCount() == 0) {
+                                            // Delete the album
+                                            albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
+                                            userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
+                                        }
+                                    }
+                                }
+                            }
+                            logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
+
+                            // Delete from Metadata
+                            metadataRepository?.deleteById(metadata.getId())
+                            logger.log(Level.INFO, "Removed metadata records for: " + metadata.getId())
                         }
                     }
                 }
             }
+        }
 
-            // Scan files
-            if (isCheckOnly) {
+        // Scan files
+        if (isCheckOnly) {
+            if (!checkThreadFileAlive()) {
+                resp["msg"] = "Scan Complete"
+                return mapper.writeValueAsString(resp)
+            }
+
+            val threadFileContent = readThreadFile()
+            if (threadFileContent != null) {
+                resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
+                return mapper.writeValueAsString(resp)
+            }
+            resp["msg"] = "Start Scan"
+            return mapper.writeValueAsString(resp)
+        } else if (submit == "Scan") {
+            val mediaDirs = mediaDirRepository?.findAll()
+
+            if (mediaDirs != null && mediaDirs.count() > 0) {
                 if (!checkThreadFileAlive()) {
-                    resp["msg"] = "Scan Complete"
+                    // Clean up any existing thread files
+                    deleteThreadFiles()
+
+                    val rootPath = FileSystemResource("").file.absolutePath
+                    val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
+
+                    // Iterate through directory in another thread
+                    Thread {
+                        //Create file with thread name and write file name iterated
+                        val tempDir = System.getProperty("java.io.tmpdir")
+                        val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
+                        if (threadFile != null) {
+                            // Scan for new files
+                            for (mediaDir in mediaDirs) {
+                                if (mediaDir != null) {
+                                    getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
+                                }
+                            }
+
+                            logger.log(Level.INFO, "Scan Complete")
+
+                            // Delete thread file
+                            if (threadFile.delete()) {
+                                logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
+                            } else {
+                                logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
+                            }
+                        }
+                    }.start()
+
+                    resp["msg"] = "Start Scan"
                     return mapper.writeValueAsString(resp)
                 }
 
@@ -428,61 +465,14 @@ class SettingsController {
                 if (threadFileContent != null) {
                     resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
                     return mapper.writeValueAsString(resp)
-                }
-                resp["msg"] = "Start Scan"
-                return mapper.writeValueAsString(resp)
-            } else if (submit == "Scan") {
-                val mediaDirs = mediaDirRepository?.findAll()
-
-                if (mediaDirs != null && mediaDirs.count() > 0) {
-                    if (!checkThreadFileAlive()) {
-                        // Clean up any existing thread files
-                        deleteThreadFiles()
-
-                        val rootPath = FileSystemResource("").file.absolutePath
-                        val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
-
-                        // Iterate through directory in another thread
-                        Thread {
-                            //Create file with thread name and write file name iterated
-                            val tempDir = System.getProperty("java.io.tmpdir")
-                            val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".shashinscan", "Thread")
-                            if (threadFile != null) {
-                                // Scan for new files
-                                for (mediaDir in mediaDirs) {
-                                    if (mediaDir != null) {
-                                        getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
-                                    }
-                                }
-
-                                logger.log(Level.INFO, "Scan Complete")
-
-                                // Delete thread file
-                                if (threadFile.delete()) {
-                                    logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
-                                } else {
-                                    logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
-                                }
-                            }
-                        }.start()
-
-                        resp["msg"] = "Start Scan"
-                        return mapper.writeValueAsString(resp)
-                    }
-
-                    val threadFileContent = readThreadFile()
-                    if (threadFileContent != null) {
-                        resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
-                        return mapper.writeValueAsString(resp)
-                    } else {
-                        resp["msg"] = "Scan in progress"
-                        return mapper.writeValueAsString(resp)
-                    }
                 } else {
-                    resp["msg"] = "No directories configured"
+                    resp["msg"] = "Scan in progress"
+                    return mapper.writeValueAsString(resp)
                 }
-                resp["msg"] = "Start Scan"
+            } else {
+                resp["msg"] = "No directories configured"
             }
+            resp["msg"] = "Start Scan"
         }
 
         return mapper.writeValueAsString(resp)
