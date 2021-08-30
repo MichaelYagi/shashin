@@ -333,6 +333,53 @@
                                     '<span id="textareacontainer'+commentId+'"></span></li>';
                                 $("#commentText[[${album.id}]]").val("")
                                 $("#commentList[[${album.id}]]").prepend(commentItem);
+
+                                $("#deletecomment"+commentId).click(function(e) {
+                                    e.preventDefault();
+
+                                    let json = {commentId: commentId}
+
+                                    const posting = $.post({
+                                        url: "/comment/album/delete/",
+                                        data: JSON.stringify(json),
+                                        contentType: 'application/json; charset=utf-8'
+                                    });
+
+                                    posting.done(function (data) {
+                                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                                            let commentId = data["commentId"];
+                                            let message = "Error";
+                                            if (data["status"] === "success") {
+                                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+
+                                                // Delete comment
+                                                $("#comment"+commentId).remove();
+                                            } else {
+                                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                            }
+                                        }
+                                    });
+
+                                    $("#currentCommentId[[${album.id}]]").val("");
+                                });
+
+                                $("#editcomment"+commentId).click(function(e) {
+                                    e.preventDefault();
+
+                                    if ($("#currentCommentId[[${album.id}]]").val() === "") {
+                                        $("#currentCommentId[[${album.id}]]").val(commentId);
+
+                                        $("#saveCommentAlbum[[${album.id}]]").hide();
+                                        $("#dismissModalCommentAlbum[[${album.id}]]").hide();
+                                        $("#updateCommentAlbum[[${album.id}]]").show();
+                                        $("#cancelEditCommentAlbum[[${album.id}]]").show();
+
+                                        $("#commentcontainer"+commentId).hide();
+                                        $("#textareacontainer"+commentId).show();
+                                        var commentText = $("#commentcontent"+commentId).text();
+                                        $("#textareacontainer"+commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
+                                    }
+                                });
                             }
                         });
                     }
