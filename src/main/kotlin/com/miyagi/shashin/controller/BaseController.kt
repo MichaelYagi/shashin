@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.ControllerAdvice
@@ -69,6 +70,9 @@ class BaseController {
             val currentUser = userRepository.findByUsername(securityContext.authentication.name)
             if (currentUser != null) {
                 model["currentUser"] = currentUser
+            } else {
+                SecurityContextHolder.clearContext();
+                session?.invalidate()
             }
         } catch(e: Exception) {
             model["currentUser"] = ""

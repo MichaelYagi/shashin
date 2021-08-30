@@ -43,33 +43,36 @@ class TimelineController {
     @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
     fun getTimeline(model: Model): String {
         val module = "timeline"
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
-        val favoritesMap = HashMap<String, Boolean>()
-        if (favorites != null) {
-            for (favorite in favorites) {
-                if (favorite != null) {
-                    favoritesMap[favorite.getMetadataId().toString()] = true
-                }
-            }
-        }
-
         model["data"] = "There are no photos. Please setup directories in Settings and scan ."
-
         model["metadataList"] = ""
         model["favorites"] = ""
-        val metadataList =
-            metadataRepository.findAllByOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt()).toList()
-        model["metadataList"] = metadataList
-        model["favorites"] = favoritesMap
-        if (metadataList.count() > 0) {
-            model["data"] = ""
-        }
-
         model["albumList"] = ""
-        val albumList = albumRepository.findAll()
-        if (albumList.count() > 0) {
-            model["albumList"] = albumList
+
+        if (model.getAttribute("currentUser") != "") {
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
+            val favoritesMap = HashMap<String, Boolean>()
+            if (favorites != null) {
+                for (favorite in favorites) {
+                    if (favorite != null) {
+                        favoritesMap[favorite.getMetadataId().toString()] = true
+                    }
+                }
+            }
+
+
+            val metadataList =
+                metadataRepository.findAllByOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt()).toList()
+            model["metadataList"] = metadataList
+            model["favorites"] = favoritesMap
+            if (metadataList.count() > 0) {
+                model["data"] = ""
+            }
+
+            val albumList = albumRepository.findAll()
+            if (albumList.count() > 0) {
+                model["albumList"] = albumList
+            }
         }
 
         model["activePage"] = module
