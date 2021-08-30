@@ -7,6 +7,8 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.annotation.Secured
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -47,6 +49,7 @@ class AlbumsController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/albums")
     fun getAlbums(model: Model): String {
         val module = "albums"
@@ -62,64 +65,62 @@ class AlbumsController {
         if (currentUserObj != null) {
             val userAlbums = userAlbumRepository.findAllByUserId(currentUserObj.getId())
 
-            if (userAlbums != null) {
-                if (userAlbums.count() > 0) {
-                    val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
+            if (userAlbums != null && userAlbums.count() > 0) {
+                val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
 
-                    val albums = ArrayList<Album>()
-                    val albumsCount = ArrayList<Int>()
-                    var albumCount: Int
-                    for (userAlbum in userAlbums) {
-                        val albumCommentsList = ArrayList<HashMap<String, Any>>()
-                        if (userAlbum?.getAlbumId() != null) {
-                            albumCount = 0
-                            val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
-                            val albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum.getAlbumId()!!)
-                            if (albumPhotoCount != null) {
-                                albumCount = albumPhotoCount
-                            }
-                            albumsCount.add(albumCount)
-                            albums.add(albumObj.get())
-
-                            // Get comments for this album
-                            val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
-                            for (albumComment in albumComments) {
-                                val albumCommentMap = HashMap<String, Any>()
-                                albumCommentMap["comment"] = albumComment.getComment().toString()
-                                albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
-                                albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
-                                albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
-                                albumCommentMap["username"] = albumComment.getUsername().toString()
-                                albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
-                                albumCommentsList.add(albumCommentMap)
-                            }
-                            albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
+                val albums = ArrayList<Album>()
+                val albumsCount = ArrayList<Int>()
+                var albumCount: Int
+                for (userAlbum in userAlbums) {
+                    val albumCommentsList = ArrayList<HashMap<String, Any>>()
+                    if (userAlbum?.getAlbumId() != null) {
+                        albumCount = 0
+                        val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
+                        val albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum.getAlbumId()!!)
+                        if (albumPhotoCount != null) {
+                            albumCount = albumPhotoCount
                         }
-                    }
+                        albumsCount.add(albumCount)
+                        albums.add(albumObj.get())
 
-                    if (albums.count() > 0) {
-                        model["albumsList"] = albums
-                        model["albumsCommentsMap"] = albumsCommentsMap
-                        model["albumsCount"] = albumsCount
-                        val userCount = userRepository.count()
-                        if (userCount > 1) {
-                            model["users"] = userRepository.findAll()
-                            model["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
-                            model["userCount"] = userCount
-                            val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
-                            val sharedAlbums = userRepository.findUserBySharedAlbum(currentUserObj.getId())
-                            for (sharedAlbum in sharedAlbums) {
-                                val sharedAlbumsMap = HashMap<String, Any>()
-                                sharedAlbumsMap["userId"] = sharedAlbum.getUserId().toString().toInt()
-                                sharedAlbumsMap["albumId"] = sharedAlbum.getAlbumId().toString().toInt()
-                                sharedAlbumsMap["username"] = sharedAlbum.getUsername().toString()
-                                sharedAlbumsMap["isShared"] = sharedAlbum.getIsShared().toString().toInt()
-                                sharedAlbumsList.add(sharedAlbumsMap)
-                            }
-                            model["sharedAlbums"] = sharedAlbumsList
+                        // Get comments for this album
+                        val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
+                        for (albumComment in albumComments) {
+                            val albumCommentMap = HashMap<String, Any>()
+                            albumCommentMap["comment"] = albumComment.getComment().toString()
+                            albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
+                            albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
+                            albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
+                            albumCommentMap["username"] = albumComment.getUsername().toString()
+                            albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
+                            albumCommentsList.add(albumCommentMap)
                         }
-                        model["data"] = ""
+                        albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
                     }
+                }
+
+                if (albums.count() > 0) {
+                    model["albumsList"] = albums
+                    model["albumsCommentsMap"] = albumsCommentsMap
+                    model["albumsCount"] = albumsCount
+                    val userCount = userRepository.count()
+                    if (userCount > 1) {
+                        model["users"] = userRepository.findAll()
+                        model["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
+                        model["userCount"] = userCount
+                        val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
+                        val sharedAlbums = userRepository.findUserBySharedAlbum(currentUserObj.getId())
+                        for (sharedAlbum in sharedAlbums) {
+                            val sharedAlbumsMap = HashMap<String, Any>()
+                            sharedAlbumsMap["userId"] = sharedAlbum.getUserId().toString().toInt()
+                            sharedAlbumsMap["albumId"] = sharedAlbum.getAlbumId().toString().toInt()
+                            sharedAlbumsMap["username"] = sharedAlbum.getUsername().toString()
+                            sharedAlbumsMap["isShared"] = sharedAlbum.getIsShared().toString().toInt()
+                            sharedAlbumsList.add(sharedAlbumsMap)
+                        }
+                        model["sharedAlbums"] = sharedAlbumsList
+                    }
+                    model["data"] = ""
                 }
             }
         }
@@ -130,6 +131,7 @@ class AlbumsController {
         return module
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -171,6 +173,7 @@ class AlbumsController {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/delete/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -235,6 +238,7 @@ class AlbumsController {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/update"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -316,6 +320,103 @@ class AlbumsController {
         return mapper.writeValueAsString(resp)
     }
 
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/album/{albumId}/save/sharelink"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
+        val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
+            val albumIdRequest = albumShareInfo["albumId"].toString().toInt()
+            val relativeShareUrl = albumShareInfo["relativeShareUrl"].toString()
+
+            if (albumId == albumIdRequest && albumId > 0 && relativeShareUrl.length > 0) {
+                val albumObj = albumRepository.findById(albumId)
+                if (albumObj.get().getId() == albumIdRequest) {
+                    albumObj.get().setShareUrl(relativeShareUrl)
+                    albumRepository.save(albumObj.get())
+
+                    resp["relativeShareUrl"] = relativeShareUrl
+                    resp["msg"] = "Share link generated"
+                    resp["status"] = "success"
+                    return mapper.writeValueAsString(resp)
+                }
+            }
+        }
+
+        resp["relativeShareLink"] = ""
+        resp["msg"] = "Could not generate link"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET])
+    fun getAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int): String? {
+        val module = "share"
+
+        val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+        val response = buildShareData(albumId,shareLink, queryLimit, 0)
+
+        model["album"] = response["album"]!!
+        model["albumMetadataList"] = response["albumMetadataList"]!!
+        model["shareLink"] = response["shareLink"]!!
+        model["data"] = response["data"]!!
+        model["msg"] = response["msg"]!!
+        model["status"] = response["status"]!!
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
+        val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+        val response = buildShareData(albumId,shareLink, queryLimit, page)
+        return mapper.writeValueAsString(response)
+    }
+
+    private fun buildShareData(albumId: Int,shareLink: String, queryLimit: Int, page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+        response["data"] = "Nothing to see here."
+        val tempAlbum = Album()
+        tempAlbum.setId(0)
+        response["album"] = tempAlbum
+        response["albumMetadataList"] = ""
+        response["shareLink"] = ""
+        response["msg"] = "No results"
+        response["status"] = "fail"
+
+        val photoObj = albumRepository.findById(albumId)
+        if (photoObj.get().getShareUrl() == shareLink) {
+            val resultPage = page*queryLimit
+            val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,resultPage,queryLimit)
+            val albumMetadataList = ArrayList<Metadata>()
+            if (albumPhotos != null) {
+                for (albumPhoto in albumPhotos) {
+                    if (albumPhoto != null) {
+                        val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                        albumMetadataList.add(metadata.get())
+                    }
+                }
+
+                if (albumMetadataList.isNotEmpty()) {
+                    val album = albumRepository.findById(albumId)
+                    response["data"] = ""
+                    response["album"] = album.get()
+                    response["albumMetadataList"] = albumMetadataList
+                    response["shareLink"] = shareLink
+                    response["msg"] = "Results"
+                    response["status"] = "success"
+                }
+            }
+        }
+
+        return response
+    }
+
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
@@ -365,6 +466,7 @@ class AlbumsController {
         return mapper.writeValueAsString(resp)
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @RequestMapping(value = ["/album/{albumId}"], method = [RequestMethod.GET])
     fun getAlbum(model: Model, @PathVariable albumId: Int): String {
         val module = "album"
@@ -424,6 +526,7 @@ class AlbumsController {
         return module
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @RequestMapping(value = ["/album/{albumId}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
@@ -488,6 +591,7 @@ class AlbumsController {
         return mapper.writeValueAsString(response)
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/albums/add"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun postAddAlbum(model: Model, @RequestBody requestBody: JsonNode): String? {

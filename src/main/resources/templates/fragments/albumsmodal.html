@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="albumsmodal(album,users,userAlbums,currentUser,userCount,sharedAlbums,albumsCommentsMap)">
+<body th:fragment="albumsmodal(album,users,userAlbums,currentUser,userCount,sharedAlbums,albumsCommentsMap,baseUrl)">
 
 <div class="modal fade" th:id="'propalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${album.id}" aria-hidden="true">
     <div class="modal-dialog modal-sm" role="document">
@@ -14,6 +14,13 @@
             <div class="modal-body">
                 <form th:id="'saveData'+${album.id}">
                     <input type="hidden" name="id" th:value="${album.id}">
+                    <div class="input-group">
+                        <input type="text" placeholder="Share Link" th:id="'shareLink'+${album.id}" th:name="'shareLink'+${album.id}" class="form-control" th:value="${album.shareUrl != null ? album.shareUrl : ''}" disabled>
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" th:id="'generateLink'+${album.id}" type="button" data-toggle="tooltip" data-placement="top" title="Generate link"><span class="bi-arrow-clockwise"></span></button>
+                            <button class="btn btn-outline-secondary" th:id="'copyLink'+${album.id}" type="button"data-toggle="tooltip" data-placement="top" title="Copy link"><span class="bi-clipboard-plus"></span></button>
+                        </div>
+                    </div><br>
                     <th:block th:if="${sharedAlbums !=''}">
                         <th:block th:each="sharedAlbumsMap: ${sharedAlbums}">
                             <th:block th:if="${album.id == sharedAlbumsMap.get('albumId')}">
@@ -30,6 +37,7 @@
                         </th:block>
                     </th:block>
                 </form>
+                <br>
                 <div class="col-sm">
                     <span th:id="'msg'+${album.id}"></span>
                 </div>
@@ -39,7 +47,107 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
+                function makeShareLinkId(minLength, maxLength) {
+                    var length = Math.floor(
+                        Math.random() * (Math.ceil(maxLength) - Math.floor(minLength) + 1) + minLength
+                    );
+                    var result           = '';
+                    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    var charactersLength = characters.length;
+                    for ( var i = 0; i < length; i++ ) {
+                        result += characters.charAt(Math.floor(Math.random() *
+                            charactersLength));
+                    }
+                    return result;
+                }
+
+                function fallbackCopyTextToClipboard(text) {
+                    var msg = "";
+                    var textArea = document.createElement("textarea");
+                    textArea.value = text;
+
+                    // Avoid scrolling to bottom
+                    textArea.style.top = "0";
+                    textArea.style.left = "0";
+                    textArea.style.position = "fixed";
+
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+
+                    try {
+                        var successful = document.execCommand('copy');
+                        msg = "<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>";
+                        if (successful === true) {
+                            msg = "<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>";
+                        }
+                    } catch (err) {
+                        msg = "<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>";
+                    }
+
+                    document.body.removeChild(textArea);
+
+                    return msg;
+                }
+
+                function copyTextToClipboard(text,albumId) {
+                    if (!navigator.clipboard) {
+                        $("#msg"+albumId).html(fallbackCopyTextToClipboard(text));
+                    }
+
+                    navigator.clipboard.writeText(text).then(function() {
+                        $("#msg"+albumId).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+                    }, function(err) {
+                        $("#msg"+albumId).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
+                    });
+                }
+
                 /*<![CDATA[*/
+                $("#generateLink[[${album.id}]]").click(function(e) {
+                    e.preventDefault();
+
+                    $(this).prop('disabled', true);
+                    $("#msg[[${album.id}]]").html("");
+                    var relativeShareLink = makeShareLinkId(8, 11);
+                    $("#shareLink[[${album.id}]]").val(relativeShareLink);
+
+                    let json = {albumId: [[${album.id}]],relativeShareUrl: relativeShareLink}
+                    const posting = $.post({
+                        url: "/album/[[${album.id}]]/save/sharelink",
+                        data: JSON.stringify(json),
+                        contentType: 'application/json; charset=utf-8'
+                    });
+
+                    posting.done(function (data) {
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {
+                            let message = "Generated link not saved";
+                            if (data["status"] === "success" && $("#shareLink[[${album.id}]]").val() === data["relativeShareUrl"]) {
+                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            } else {
+                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            }
+                            $(this).prop('disabled', false);
+                            $("#msg[[${album.id}]]").html(message);
+                        } else {
+                            $(this).prop('disabled', false);
+                            $("#msg[[${album.id}]]").html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
+                        }
+                    });
+                });
+
+                $("#copyLink[[${album.id}]]").click(function(e) {
+                    e.preventDefault();
+
+                    var shareLink = $("#shareLink[[${album.id}]]").val().trim();
+
+                    if (shareLink !== "") {
+                        var fullShareLink = "[[${baseUrl}]]share/"+shareLink+"/album/[[${album.id}]]";
+                        copyTextToClipboard(fullShareLink,[[${album.id}]]);
+                    } else {
+                        $("#msg[[${album.id}]]").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+                    }
+                });
+
                 $("#saveUserShare[[${album.id}]]").click(function(e) {
                     e.preventDefault();
 
