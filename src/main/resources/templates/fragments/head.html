@@ -3,30 +3,30 @@
 <head th:fragment="head(titleDescriptor)">
     <meta charset="UTF-8">
     <title th:text="'Shashin' + (${#strings.isEmpty(titleDescriptor)} ? ': Home' : ': ' + ${titleDescriptor})"></title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.21.1/babel.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <link href="/css/style.css" rel="stylesheet" type="text/css">
+    <script src="/js/babel.min.js"></script>
+    <script src="/js/jquery-3.5.1.min.js"></script>
+    <script src="/js/popper.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
     <th:block th:if="${titleDescriptor == 'Timeline' or titleDescriptor == 'Album' or titleDescriptor == 'Favorites' or titleDescriptor == 'Map' or titleDescriptor == 'Search'}">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/lightgallery.min.js" integrity="sha512-wS35bm4wRerHT4pd7T3W8ZVVtweBwkS/0TMhs7OoekrIAphl2nPqsFtbLQ1BPumsH3R/dkqvcBPA06SRtgyxyQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/plugins/video/lg-video.min.js" integrity="sha512-U8ZkbLkTj8Vws1nw0vqB/cRx8Cnj0I4YZZRBp5GvbeHBcto1lAknO2YpEpT3ZNvvnz49UwEHMYHLK3jhoZTe6Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/plugins/video/lg-video.min.js" integrity="sha512-U8ZkbLkTj8Vws1nw0vqB/cRx8Cnj0I4YZZRBp5GvbeHBcto1lAknO2YpEpT3ZNvvnz49UwEHMYHLK3jhoZTe6Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/plugins/zoom/lg-zoom.min.js" integrity="sha512-xWb9PdluFVMUplDHeQ7f48sgl8nx6+OfjvNJ1QKiVDeHQaoFndokj4GtbVjRomwruTNFALUcExNVjzlKy8HF0g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/plugins/relativeCaption/lg-relative-caption.min.js" integrity="sha512-jX4n+7mmrp3/MdkoUmvb8ibZ0g9qsp6nCL3uwW/BPlOL5nvNQlmw/6+Fkxn6ueQi5lDBvgb14ZYpEEeSRdPj9w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/css/lightgallery.min.css" integrity="sha512-LeCCaxc1iF2UArsp3NWiOAz1mSLXFXmuiOm2n8gxOSnCXIltE27/NV9yGshWgHSCKNigfDiJUskpRiithdGc3A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/css/lg-video.min.css" integrity="sha512-89gDQOHnYjji90NPJ7+M5tgA/0E+fjL4KuSFhi6tjH6sZ54yUEogPMmOAgbI599fW1CtCyrsJbch8k/QzuoXzw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/css/lg-zoom.min.css" integrity="sha512-SGo05yQXwPFKXE+GtWCn7J4OZQBaQIakZSxQSqUyVWqO0TAv3gaF/Vox1FmG4IyXJWDwu/lXzXqPOnfX1va0+A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/2.2.0/css/lg-relative-caption.min.css" integrity="sha512-Tmsr0HjMvS/ReZR65bmX26m60EJjZw5AAKpnkPouiNfRqwIficKDk6x6/B3I8XdPfhTAVhGX7MkLrqZTGUn4og==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <script src="/js/lightgallery.min.js"></script>
+        <script src="/js/lg-video.min.js"></script>
+        <script src="/js/lg-zoom.min.js"></script>
+        <script src="/js/lg-relative-caption.min.js"></script>
+        <link href="/css/lightgallery.min.css" rel="stylesheet">
+        <link href="/css/lg-video.min.css" rel="stylesheet">
+        <link href="/css/lg-zoom.min.css" rel="stylesheet">
+        <link href="/css/lg-relative-caption.min.css" rel="stylesheet">
     </th:block>
     <th:block th:if="${titleDescriptor == 'Scan'}">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" integrity="sha512-iKDtgDyTHjAitUDdLljGhenhPwrbBfqTKWO1mkhSFH3A7blITC9MhYon6SjnMhp4o0rADGw9yAC6EW4t5a4K3g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.2/sockjs.min.js" integrity="sha512-2hPuJOZB0q6Eu4RlRRL2/8/MZ+IoSSxgDUu+eIUNzHOoHLUwf2xvrMFN4se9mu0qCgxIjHum6jdGk/uMiQoMpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="/js/stomp.min.js"></script>
+        <script src="/js/sockjs.min.js"></script>
     </th:block>
     <th:block th:if="${titleDescriptor == 'Map'}">
-        <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.6.1/build/ol.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.6.1/css/ol.css">
+        <script src="/js/ol.js"></script>
+        <link href="/css/ol.css" rel="stylesheet">
     </th:block>
 </head>
 <body></body>

@@ -1,29 +1,34 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.repository.*
-import junit.framework.Assert.assertEquals
+import org.assertj.core.api.Assertions
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.mock.mockito.MockBean
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.http.MediaType
+import org.springframework.mock.web.MockHttpServletRequest
+import org.springframework.security.core.context.SecurityContext
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner
+import org.springframework.security.web.FilterChainProxy
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository
+import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
-import org.springframework.test.web.servlet.setup.MockMvcConfigurer
 import org.springframework.web.context.WebApplicationContext
 
 
-@RunWith(SpringJUnit4ClassRunner::class)
-@ContextConfiguration
-@WithMockUser(username="admin",roles=["ADMIN"])
+@RunWith(SpringRunner::class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TimelineControllerTests {
     @MockBean
     private lateinit var userRepository: UserRepository
@@ -40,57 +45,68 @@ class TimelineControllerTests {
     @MockBean
     private lateinit var favoriteRepository: FavoriteRepository
 
-    @LocalServerPort
-    private val port = 8080
+    private var mockMvc: MockMvc? = null;
 
     @Autowired
     private lateinit var context: WebApplicationContext
 
-    private var mvc: MockMvc? = null;
+    @LocalServerPort
+    private val port = 0
+
+    @Autowired
+    private val restTemplate: TestRestTemplate? = null
+
+    @MockBean
+    private val request: MockHttpServletRequest? = null
+
+    @MockBean
+    private val springSecurityFilterChain: FilterChainProxy? = null
 
     @Before
     fun setup() {
-        mvc = MockMvcBuilders
-            .webAppContextSetup(context)
-            .apply<DefaultMockMvcBuilder>(springSecurity())
+//        mockMvc = MockMvcBuilders
+//            .webAppContextSetup(context)
+//            .apply<DefaultMockMvcBuilder>(springSecurity())
+//            .build();
+
+        mockMvc = MockMvcBuilders.webAppContextSetup(context)
+            .addFilters<DefaultMockMvcBuilder>(springSecurityFilterChain)
             .build();
+
     }
-
-
-//    @Autowired
-//    private val restTemplate: TestRestTemplate? = null
-//
-//    @Autowired
-//    private val springSecurityFilterChain: FilterChainProxy? = null
 
     @Test
     @Throws(Exception::class)
     fun timelineShouldReturnLogin() {
-//        assertThat(
-//            this.restTemplate?.getForObject(
-//                "http://localhost:$port/timeline",
-//                String::class.java
-//            )
-//        ).contains("Please Login")
+        Assertions.assertThat(
+            this.restTemplate?.getForObject(
+                "http://localhost:$port/timeline",
+                String::class.java
+            )
+        ).contains("Please Login")
     }
 
     @Test
+    @WithMockUser(username = "username", password = "pwd", roles = ["ADMIN"])
     @Throws(Exception::class)
-//    @WithMockUser(username = "userMock1", password = "pwd", roles = ["ADMIN"])
     fun timelineShouldReturnTimeline() {
-        val res = mvc?.perform(MockMvcRequestBuilders.get("/timeline"))
-            ?.andExpect(status().isOk)
-            ?.andReturn()
-        println(res?.response?.contentAsString)
-        assertEquals(true, true);
+        val session = mockMvc!!.perform(
+            get("/users/login")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("username", "username")
+                .param("password", "pwd")
+        )
+        .andExpect(status().isOk) //.andExpect(redirectedUrl("/user/home"))
+        .andReturn()
+        .request
+        .session
 
+        request?.setSession(session!!)
 
-//        assertThat(
-//            this.restTemplate?.getForObject(
-//                "http://localhost:" + port.toString() + "/timeline",
-//                String::class.java
-//            )
-//        ).contains("Please asdf")
+        val securityContext =
+            session!!.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY) as SecurityContext
+
+        SecurityContextHolder.setContext(securityContext)
     }
 
 }
