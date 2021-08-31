@@ -11,6 +11,8 @@
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+                <div th:replace="fragments/appjs :: appjs()"></div>
+
                 <br>
                 <form id="saveSettingsForm" method="post" action="/settings">
                     <th:block th:if="${message != '' and alertClass != ''}">
@@ -26,6 +28,12 @@
                     <div class="col-12">
                         <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
                     </div>
+                    <hr>
+                    <div class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Delete Content</h4>
+                        <p><span class="exclamation-triangle-fill"></span>Warning! This will wipe all content! (Media directories will not be touched)</p>
+                        <a href="#" class="btn btn-danger" id="deleteContent">Delete</a>
+                    </div>
                 </form>
             </th:block>
 
@@ -33,6 +41,61 @@
         </main>
     </div>
 </div>
+
+<div class="modal fade" id="propDeleteContent" tabindex="-1" role="dialog" aria-labelledby="labelDeleteContent" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteContentLabel">Delete Content</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete all content?
+                <div class="col-sm"><span id="msgDeleteContent"></span></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="deleteAllContent">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+            <script type="text/javascript">
+                /*<![CDATA[*/
+                $("#deleteAllContent").click(function(e) {
+                    e.preventDefault();
+
+                    let json = {deleteContent: true}
+                    const posting = $.post({
+                        url: "/settings/content/delete",
+                        data: JSON.stringify(json),
+                        contentType: 'application/json; charset=utf-8'
+                    });
+
+                    posting.done(function (data) {
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            let message = "Error";
+                            if (data["status"] === "success") {
+                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            } else {
+                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            }
+                            $("#msgDeleteContent").html(message);
+                        }
+                    });
+
+                });
+                /*]]>*/
+            </script>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#deleteContent").click(function(e) {
+        e.preventDefault();
+        $("#propDeleteContent").modal('show');
+    });
+</script>
 
 </body>
 </html>

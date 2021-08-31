@@ -72,6 +72,9 @@ class SettingsController {
     private val albumPhotoCommentRepository: AlbumPhotoCommentRepository? = null
 
     @Autowired
+    private val albumCommentRepository: AlbumCommentRepository? = null
+
+    @Autowired
     private val albumRepository: AlbumRepository? = null
 
     @Autowired
@@ -222,6 +225,57 @@ class SettingsController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/content/delete"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun deleteContent(model: Model, @RequestBody requestBody: JsonNode): String? {
+        val userDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (userDeleteMap.containsKey("deleteContent")) {
+            val deleteContent = userDeleteMap["deleteContent"].toString().toBoolean()
+
+            if (deleteContent) {
+                metadataRepository?.deleteAll()
+                albumRepository?.deleteAll()
+                userAlbumRepository?.deleteAll()
+                albumPhotoRepository?.deleteAll()
+                favoriteRepository?.deleteAll()
+                commentRepository?.deleteAll()
+                albumCommentRepository?.deleteAll()
+                albumPhotoCommentRepository?.deleteAll()
+
+                val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
+                val sidecarDirFile = File(sidecarDir)
+                if (sidecarDirFile.exists()) {
+
+                    // Delete it
+                    val dirDeleteSuccess = sidecarDirFile.deleteRecursively()
+
+                    if (dirDeleteSuccess) {
+                        resp["msg"] = "Success!"
+                    } else {
+                        resp["msg"] = "Success, but could not delete sidecar files."
+                    }
+                    resp["status"] = "success"
+                    return mapper.writeValueAsString(resp)
+                }
+
+                resp["msg"] = "Success!"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
+            }
+
+            resp["msg"] = "Something went wrong."
+            resp["status"] = "fail"
+            return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Something went wrong."
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
     }
 
     @Secured("ROLE_ADMIN")
