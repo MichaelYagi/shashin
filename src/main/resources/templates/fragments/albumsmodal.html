@@ -3,7 +3,7 @@
 <body th:fragment="albumsmodal(album,users,userAlbums,currentUser,userCount,sharedAlbums,albumsCommentsMap,baseUrl)">
 
 <div class="modal fade" th:id="'propalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${album.id}" aria-hidden="true">
-    <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Share <th:block th:text="${album.name}"></th:block></h5>
@@ -21,7 +21,9 @@
                             <button class="btn btn-outline-secondary" th:id="'clearLink'+${album.id}" type="button" data-toggle="tooltip" data-placement="top" title="Clear link"><span class="bi-x"></span></button>
                             <button class="btn btn-outline-secondary" th:id="'copyLink'+${album.id}" type="button"data-toggle="tooltip" data-placement="top" title="Copy link"><span class="bi-clipboard-plus"></span></button>
                         </div>
-                    </div><br>
+                    </div>
+                    <div th:id="'fullShareLinkContainer'+${album.id}" class="card" th:style="${album.shareUrl == null ? 'display: none;' : ''}"><div th:id="'fullShareLink'+${album.id}" class="card-body"><a target="_blank" th:href="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}" th:text="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}"></a></div></div>
+                    <br>
                     <th:block th:if="${sharedAlbums !=''}">
                         <th:block th:each="sharedAlbumsMap: ${sharedAlbums}">
                             <th:block th:if="${album.id == sharedAlbumsMap.get('albumId')}">
@@ -144,6 +146,12 @@
                             let message = "Generated link not saved";
                             let relativeShareUrlData = data["relativeShareUrl"] === null ? "" : data["relativeShareUrl"];
                             $("#shareLink[[${album.id}]]").val(relativeShareUrlData);
+                            $("#fullShareLinkContainer[[${album.id}]]").css("display","none");
+                            $("#fullShareLink[[${album.id}]]").text("");
+                            if (relativeShareUrlData !== "") {
+                                $("#fullShareLinkContainer[[${album.id}]]").css("display","block");
+                                $("#fullShareLink[[${album.id}]]").html("<a target='_blank' href='[[${baseUrl}]]share/"+relativeShareUrlData+"/album/[[${album.id}]]'>[[${baseUrl}]]share/"+relativeShareUrlData+"/album/[[${album.id}]]</a>");
+                            }
                             if (data["status"] === "success" && $("#shareLink[[${album.id}]]").val() === relativeShareUrlData) {
                                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             } else {
