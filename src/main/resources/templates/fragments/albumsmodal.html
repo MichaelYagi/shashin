@@ -14,6 +14,7 @@
             <div class="modal-body">
                 <form th:id="'saveData'+${album.id}">
                     <input type="hidden" name="id" th:value="${album.id}">
+                    <strong>Share with other people</strong><br>
                     <div class="input-group">
                         <input type="text" placeholder="Share Link" th:id="'shareLink'+${album.id}" th:name="'shareLink'+${album.id}" class="form-control" th:value="${album.shareUrl != null ? album.shareUrl : ''}" disabled>
                         <div class="input-group-append">
@@ -25,6 +26,7 @@
                     <div th:id="'fullShareLinkContainer'+${album.id}" class="card" th:style="${album.shareUrl == null ? 'display: none;' : ''}"><div th:id="'fullShareLink'+${album.id}" class="card-body"><a target="_blank" th:href="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}" th:text="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}"></a></div></div>
                     <br>
                     <th:block th:if="${sharedAlbums !=''}">
+                        <strong>Share with other users</strong><br>
                         <th:block th:each="sharedAlbumsMap: ${sharedAlbums}">
                             <th:block th:if="${album.id == sharedAlbumsMap.get('albumId')}">
                                 <div class="col-auto form-check">
@@ -50,61 +52,6 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
-                function makeShareLinkId(minLength, maxLength) {
-                    var length = Math.floor(
-                        Math.random() * (Math.ceil(maxLength) - Math.floor(minLength) + 1) + minLength
-                    );
-                    var result           = '';
-                    var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-                    var charactersLength = characters.length;
-                    for ( var i = 0; i < length; i++ ) {
-                        result += characters.charAt(Math.floor(Math.random() *
-                            charactersLength));
-                    }
-                    return result;
-                }
-
-                function fallbackCopyTextToClipboard(text) {
-                    var msg = "";
-                    var textArea = document.createElement("textarea");
-                    textArea.value = text;
-
-                    // Avoid scrolling to bottom
-                    textArea.style.top = "0";
-                    textArea.style.left = "0";
-                    textArea.style.position = "fixed";
-
-                    document.body.appendChild(textArea);
-                    textArea.focus();
-                    textArea.select();
-
-                    try {
-                        var successful = document.execCommand('copy');
-                        msg = "<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>";
-                        if (successful === true) {
-                            msg = "<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>";
-                        }
-                    } catch (err) {
-                        msg = "<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>";
-                    }
-
-                    document.body.removeChild(textArea);
-
-                    return msg;
-                }
-
-                function copyTextToClipboard(text,albumId) {
-                    if (!navigator.clipboard) {
-                        $("#msg"+albumId).html(fallbackCopyTextToClipboard(text));
-                    }
-
-                    navigator.clipboard.writeText(text).then(function() {
-                        $("#msg"+albumId).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
-                    }, function(err) {
-                        $("#msg"+albumId).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
-                    });
-                }
-
                 /*<![CDATA[*/
                 if ($("#shareLink[[${album.id}]]").val() === "") {
                     $("#copyLink[[${album.id}]]").prop('disabled', true);
@@ -113,58 +60,13 @@
                 $("#clearLink[[${album.id}]]").click(function(e) {
                     e.preventDefault();
                     updateShareLink("clear");
+                    updateShareLink("[[${baseUrl}]]",[[${album.id}]],"clear");
                 });
 
                 $("#generateLink[[${album.id}]]").click(function(e) {
                     e.preventDefault();
-                    updateShareLink("generate");
+                    updateShareLink("[[${baseUrl}]]",[[${album.id}]],"generate");
                 });
-
-                function updateShareLink(action) {
-                    $("#generateLink[[${album.id}]]").prop('disabled', true);
-                    $("#msg[[${album.id}]]").html("");
-                    var relativeShareLink = "";
-                    if (action === "generate") {
-                        relativeShareLink = makeShareLinkId(8, 11);
-                        $("#shareLink[[${album.id}]]").val(relativeShareLink);
-                    }
-                    if ($("#shareLink[[${album.id}]]").val() !== "") {
-                        $("#copyLink[[${album.id}]]").prop('disabled', false);
-                    } else {
-                        $("#copyLink[[${album.id}]]").prop('disabled', true);
-                    }
-
-                    let json = {albumId: [[${album.id}]],relativeShareUrl: relativeShareLink}
-                    const posting = $.post({
-                        url: "/album/[[${album.id}]]/save/sharelink",
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8'
-                    });
-
-                    posting.done(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {
-                            let message = "Generated link not saved";
-                            let relativeShareUrlData = data["relativeShareUrl"] === null ? "" : data["relativeShareUrl"];
-                            $("#shareLink[[${album.id}]]").val(relativeShareUrlData);
-                            $("#fullShareLinkContainer[[${album.id}]]").css("display","none");
-                            $("#fullShareLink[[${album.id}]]").text("");
-                            if (relativeShareUrlData !== "") {
-                                $("#fullShareLinkContainer[[${album.id}]]").css("display","block");
-                                $("#fullShareLink[[${album.id}]]").html("<a target='_blank' href='[[${baseUrl}]]share/"+relativeShareUrlData+"/album/[[${album.id}]]'>[[${baseUrl}]]share/"+relativeShareUrlData+"/album/[[${album.id}]]</a>");
-                            }
-                            if (data["status"] === "success" && $("#shareLink[[${album.id}]]").val() === relativeShareUrlData) {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            $("#generateLink[[${album.id}]]").prop('disabled', false);
-                            $("#msg[[${album.id}]]").html(message);
-                        } else {
-                            $("#generateLink[[${album.id}]]").prop('disabled', false);
-                            $("#msg[[${album.id}]]").html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
-                        }
-                    });
-                }
 
                 $('#propalbums[[${album.id}]]').on('hidden.bs.modal', function (e) {
                     e.preventDefault();
