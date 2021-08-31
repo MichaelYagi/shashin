@@ -43,10 +43,44 @@ class TimelineController {
     @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
     fun getTimeline(model: Model): String {
         val module = "timeline"
-        model["data"] = "There are no photos. Please setup directories in Settings and scan ."
-        model["metadataList"] = ""
-        model["favorites"] = ""
-        model["albumList"] = ""
+        val response = buildTimelineData(model,0)
+        model["data"] = response["data"]!!
+        model["metadataList"] = response["metadataList"]!!
+        model["favorites"] = response["favorites"]!!
+        model["albumList"] = response["albumList"]!!
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedTimeline(model: Model, @PathVariable page: Int): String {
+        return mapper.writeValueAsString(buildTimelineData(model,page))
+    }
+
+    @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getTimelineJson(model: Model, @PathVariable(required = false) page: Int?): String {
+        var pageValue = 0
+        if (page != null) {
+            pageValue = page
+        }
+        return mapper.writeValueAsString(buildTimelineData(model,pageValue))
+    }
+
+    private fun buildTimelineData(model: Model,page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
+        response["data"] = "There are no photos. Please setup directories in Settings and scan ."
+        response["metadataList"] = ""
+        response["favorites"] = ""
+        response["albumList"] = ""
+
+        response["msg"] = "Could not get results"
+        response["status"] = "fail"
 
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -60,70 +94,28 @@ class TimelineController {
                 }
             }
 
-
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page*queryLimit
             val metadataList =
-                metadataRepository.findAllByOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt()).toList()
-            model["metadataList"] = metadataList
-            model["favorites"] = favoritesMap
+                metadataRepository.findAllByOffsetAndLimit(pageValue, model.getAttribute("queryLimit").toString().toInt()).toList()
+            response["metadataList"] = metadataList
+            response["favorites"] = favoritesMap
             if (metadataList.count() > 0) {
-                model["data"] = ""
+                response["data"] = ""
             }
 
             val albumList = albumRepository.findAll()
             if (albumList.count() > 0) {
-                model["albumList"] = albumList
+                response["albumList"] = albumList
             }
-        }
-
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
-    }
-
-    @RequestMapping(value = ["/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
-    @ResponseBody
-    fun getPagedTimeline(model: Model, @PathVariable page: Int): String {
-        val response = mutableMapOf<String, Any?>()
-
-        if (page > 0) {
-            val currentUserObj = model.getAttribute("currentUser") as User?
-            val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
-            val favoritesMap = HashMap<String, Boolean>()
-            if (favorites != null) {
-                for (favorite in favorites) {
-                    if (favorite != null) {
-                        favoritesMap[favorite.getMetadataId().toString()] = true
-                    }
-                }
-            }
-
-            val metadataList =
-                metadataRepository.findAllByOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
-                    .toList()
-            response["metadataList"] = ""
-            response["favorites"] = ""
-            response["albumList"] = ""
+            response["metadataList"] = metadataList
+            response["favorites"] = favoritesMap
             response["msg"] = "Results"
             response["status"] = "success"
-            if (metadataList.isNotEmpty()) {
-                val albumList = albumRepository.findAll()
-                if (albumList.count() > 0) {
-                    response["albumList"] = albumList
-                }
-                response["metadataList"] = metadataList
-                response["favorites"] = favoritesMap
-                response["msg"] = "Results"
-                response["status"] = "success"
-            }
-            return mapper.writeValueAsString(response)
         }
 
-        response["msg"] = "Could not get results"
-        response["status"] = "fail"
-        return mapper.writeValueAsString(response)
+        return response
     }
-
 
     @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
