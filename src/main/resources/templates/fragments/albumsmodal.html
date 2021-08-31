@@ -18,6 +18,7 @@
                         <input type="text" placeholder="Share Link" th:id="'shareLink'+${album.id}" th:name="'shareLink'+${album.id}" class="form-control" th:value="${album.shareUrl != null ? album.shareUrl : ''}" disabled>
                         <div class="input-group-append">
                             <button class="btn btn-outline-secondary" th:id="'generateLink'+${album.id}" type="button" data-toggle="tooltip" data-placement="top" title="Generate link"><span class="bi-arrow-clockwise"></span></button>
+                            <button class="btn btn-outline-secondary" th:id="'clearLink'+${album.id}" type="button" data-toggle="tooltip" data-placement="top" title="Clear link"><span class="bi-x"></span></button>
                             <button class="btn btn-outline-secondary" th:id="'copyLink'+${album.id}" type="button"data-toggle="tooltip" data-placement="top" title="Copy link"><span class="bi-clipboard-plus"></span></button>
                         </div>
                     </div><br>
@@ -103,13 +104,33 @@
                 }
 
                 /*<![CDATA[*/
+                if ($("#shareLink[[${album.id}]]").val() === "") {
+                    $("#copyLink[[${album.id}]]").prop('disabled', true);
+                }
+
+                $("#clearLink[[${album.id}]]").click(function(e) {
+                    e.preventDefault();
+                    updateShareLink("clear");
+                });
+
                 $("#generateLink[[${album.id}]]").click(function(e) {
                     e.preventDefault();
+                    updateShareLink("generate");
+                });
 
-                    $(this).prop('disabled', true);
+                function updateShareLink(action) {
+                    $("#generateLink[[${album.id}]]").prop('disabled', true);
                     $("#msg[[${album.id}]]").html("");
-                    var relativeShareLink = makeShareLinkId(8, 11);
-                    $("#shareLink[[${album.id}]]").val(relativeShareLink);
+                    var relativeShareLink = "";
+                    if (action === "generate") {
+                        relativeShareLink = makeShareLinkId(8, 11);
+                        $("#shareLink[[${album.id}]]").val(relativeShareLink);
+                    }
+                    if ($("#shareLink[[${album.id}]]").val() !== "") {
+                        $("#copyLink[[${album.id}]]").prop('disabled', false);
+                    } else {
+                        $("#copyLink[[${album.id}]]").prop('disabled', true);
+                    }
 
                     let json = {albumId: [[${album.id}]],relativeShareUrl: relativeShareLink}
                     const posting = $.post({
@@ -121,19 +142,26 @@
                     posting.done(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {
                             let message = "Generated link not saved";
-                            if (data["status"] === "success" && $("#shareLink[[${album.id}]]").val() === data["relativeShareUrl"]) {
+                            let relativeShareUrlData = data["relativeShareUrl"] === null ? "" : data["relativeShareUrl"];
+                            $("#shareLink[[${album.id}]]").val(relativeShareUrlData);
+                            if (data["status"] === "success" && $("#shareLink[[${album.id}]]").val() === relativeShareUrlData) {
                                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             } else {
                                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                             }
-                            $(this).prop('disabled', false);
+                            $("#generateLink[[${album.id}]]").prop('disabled', false);
                             $("#msg[[${album.id}]]").html(message);
                         } else {
-                            $(this).prop('disabled', false);
+                            $("#generateLink[[${album.id}]]").prop('disabled', false);
                             $("#msg[[${album.id}]]").html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
                         }
                     });
-                });
+                }
+
+                $('#propalbums[[${album.id}]]').on('hidden.bs.modal', function (e) {
+                    e.preventDefault();
+                    $("#msg[[${album.id}]]").html("");
+                })
 
                 $("#copyLink[[${album.id}]]").click(function(e) {
                     e.preventDefault();

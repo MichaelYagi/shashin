@@ -327,16 +327,20 @@ class AlbumsController {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
             val albumIdRequest = albumShareInfo["albumId"].toString().toInt()
-            val relativeShareUrl = albumShareInfo["relativeShareUrl"].toString()
+            var relativeShareUrl: String? = albumShareInfo["relativeShareUrl"].toString().trim()
 
-            if (albumId == albumIdRequest && albumId > 0 && relativeShareUrl.length > 0) {
+            if (albumId == albumIdRequest && albumId > 0) {
                 val albumObj = albumRepository.findById(albumId)
                 if (albumObj.get().getId() == albumIdRequest) {
+                    resp["msg"] = "Share link generated"
+                    if (relativeShareUrl != null && relativeShareUrl.isEmpty()) {
+                        relativeShareUrl = null
+                        resp["msg"] = "Share link cleared"
+                    }
                     albumObj.get().setShareUrl(relativeShareUrl)
                     albumRepository.save(albumObj.get())
 
                     resp["relativeShareUrl"] = relativeShareUrl
-                    resp["msg"] = "Share link generated"
                     resp["status"] = "success"
                     return mapper.writeValueAsString(resp)
                 }
