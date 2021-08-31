@@ -25,9 +25,9 @@ import javax.imageio.ImageIO
 
 
 @ComponentScan
-class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUrl: String?) {
+class MediaProcessingUtils(private var apiVersion: String?, private var geocodeUrl: String?) {
 
-    private var logger: Logger = Logger.getLogger(ImageProcessingUtils::class.simpleName)
+    private var logger: Logger = Logger.getLogger(MediaProcessingUtils::class.simpleName)
 
     fun populateMetadata(file: File, sidecarDir: String, rootDir: String, _metadataObj: Metadata?): Metadata? {
         val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
@@ -281,6 +281,19 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
             ).toString()
         )
 
+        val supportedImageFormats = FileUtils.allowableImageFiles()
+        val supportedVideoFormats = FileUtils.allowableVideoFiles()
+//        val supportedAudioFormats = FileUtils.allowableAudioFiles()
+
+        if (supportedImageFormats.contains(file.extension.lowercase()) || FileUtils.isRaw(file.extension.lowercase())) {
+            metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadataObj.getId()}")
+        } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
+            metadataObj.setVideoUrl("/api/$apiVersion/video/${metadataObj.getId()}")
+        }
+//        else if (supportedAudioFormats.contains(file.extension.lowercase())) {
+//            metadataObj.setVideoUrl("/api/$apiVersion/audio/${metadataObj.getId()}")
+//        }
+
         return metadataObj
     }
 
@@ -338,7 +351,7 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
             // Grab screen shot
             img = grabScreenshot(file)
-            metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
+//            metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
         }
 
         if (img != null) {
@@ -359,15 +372,6 @@ class ImageProcessingUtils(private var apiVersion: String?,private var geocodeUr
                 ImageIO.write(square, "jpg", tnFile)
                 metadataObj?.setThumbnailPathCentered(tnFile.path)
                 metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
-            }
-
-            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original.jpg"
-            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-            if (tnFile != null) {
-                val scaled: BufferedImage = scaleImageByRatio(img, 1.0)
-                ImageIO.write(scaled, "jpg", tnFile)
-                metadataObj?.setThumbnailPathOriginal(tnFile.path)
-                metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
 
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"

@@ -12,11 +12,15 @@ class FileUtils {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
         fun allowableMediaFiles(): Array<String> {
-            return arrayOf("jpeg","jpg","tiff","png","bmp","gif","webm","ico","nef","cr2","orf","arw","rw2","rwl","srw","mp4","wav","avi")
+            return arrayOf("jpeg","jpg","tiff","png","bmp","gif","webm","ico","nef","cr2","orf","arw","rw2","rwl","srw","mp4","wav","avi","3gpp","aac","flac","mpeg","mp3","mp4","ogg","wav","webm")
         }
 
         fun allowableImageFiles(): Array<String> {
             return arrayOf("jpeg","jpg","tiff","png","bmp","gif","webm","ico")
+        }
+
+        fun allowableAudioFiles(): Array<String> {
+            return arrayOf("3gpp","aac","flac","mpeg","mp3","mp4","ogg","wav","webm")
         }
 
         fun allowableVideoFiles(): Array<String> {

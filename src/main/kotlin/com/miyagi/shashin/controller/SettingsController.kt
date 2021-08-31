@@ -9,7 +9,7 @@ import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.ImageProcessingUtils
+import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -566,12 +566,17 @@ class SettingsController {
                         }
 
                         if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                            val imageProcessingUtils = ImageProcessingUtils(apiVersion,geocodeUrl)
+                            val mediaProcessingUtils = MediaProcessingUtils(apiVersion,geocodeUrl)
                             var metadataObj: Metadata? = Metadata()
+                            val supportedImageFormats = FileUtils.allowableImageFiles()
+                            val supportedVideoFormats = FileUtils.allowableVideoFiles()
+
+                            if (supportedImageFormats.contains(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase()) || FileUtils.isRaw(file.extension.lowercase())) {
+                                metadataObj =
+                                    mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
+                            }
                             metadataObj =
-                                imageProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
-                            metadataObj =
-                                imageProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
+                                mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
                             if (metadataObj != null) {
                                 metadataRepository?.save(metadataObj)
                             }

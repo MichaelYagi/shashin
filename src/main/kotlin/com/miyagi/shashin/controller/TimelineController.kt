@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.util.ImageProcessingUtils
+import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -185,7 +184,7 @@ class TimelineController {
             // Update DB
             metadataRepository.save(metadataObj.get())
             // Update MD file
-            val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+            val mediaProcessingUtils = MediaProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
             val originalImagePath = metadataObj.get().getPath()
             var rootDir: String? = null
             val rootMediaDirs = mediaDirRepository.findAll()
@@ -199,7 +198,7 @@ class TimelineController {
             }
 
             if (rootDir != null) {
-                imageProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString(), rootDir)
+                mediaProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString(), rootDir)
             }
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -295,7 +294,7 @@ class TimelineController {
                 metadataRepository.saveAll(metadataList)
 
                 // Update MD file
-                val imageProcessingUtils = ImageProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+                val mediaProcessingUtils = MediaProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
                 for (metadata in metadataList) {
                     val originalImagePath = metadata.getPath()
                     var rootDir: String? = null
@@ -309,7 +308,7 @@ class TimelineController {
                         }
                     }
                     if (rootDir != null) {
-                        imageProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString(), rootDir)
+                        mediaProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString(), rootDir)
                     }
                 }
                 resp["msg"] = "Saved!"
