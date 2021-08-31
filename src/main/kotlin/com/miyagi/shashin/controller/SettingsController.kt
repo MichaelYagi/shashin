@@ -18,7 +18,6 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.data.domain.Sort
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
-import org.springframework.messaging.simp.SimpMessagingTemplate
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -79,9 +78,6 @@ class SettingsController {
 
     @Autowired
     private val albumPhotoRepository: AlbumPhotoRepository? = null
-
-    @Autowired
-    private val messagingTemplate: SimpMessagingTemplate? = null
 
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
