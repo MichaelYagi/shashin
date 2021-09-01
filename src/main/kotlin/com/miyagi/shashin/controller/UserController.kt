@@ -1,14 +1,21 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -16,14 +23,20 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.math.BigInteger
+import java.security.MessageDigest
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.annotation.Resource
 import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.validation.Valid
+
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -34,8 +47,17 @@ class UserController {
     val resp = mutableMapOf<String, String?>()
     var bcrypt = BCryptPasswordEncoder()
 
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
+
+    @Value("\${app.rememberme.expiration.seconds}")
+    private var expirationSeconds: Int? = null
+
     @Autowired
     var userRepository: UserRepository? = null
+
+    @Resource(name = "authenticationManager")
+    private val authManager: AuthenticationManager? = null
 
     @GetMapping("/users/update")
     fun getUpdateUser(model: Model): String {
@@ -179,19 +201,62 @@ class UserController {
         }
     }
 
-    @RequestMapping(value = ["/users/login"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/login"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    fun loginUser(@ModelAttribute user: @Valid User?, @RequestParam(name="msg",required=false) message: String?): String? {
-        val users: List<User?> = userRepository?.findAll() as List<User?>
-        for (other in users) {
-            if (other != null && user != null) {
-                if (other.equals(user) && bcrypt.matches(user.getPassword(), other.getPassword())) {
-                    user.setLoggedIn(true)
-                    userRepository?.save(user)
+    fun loginUser(request: HttpServletRequest, response: HttpServletResponse, @RequestBody requestBody: JsonNode): String? {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+        if (userMap.containsKey("username") && userMap.containsKey("password")) {
+            val username = userMap["username"].toString()
+            val password = userMap["password"].toString()
+            var rememberMe = "off"
+            if (userMap.containsKey("remember-me") && userMap["remember-me"].toString().isNotEmpty()) {
+                rememberMe = userMap["remember-me"].toString()
+            }
+            val userObj = userRepository?.findByUsername(username)
 
-                    resp["msg"] = "Logged in!"
-                    resp["status"] = "success"
-                    return mapper.writeValueAsString(resp)
+            if (userObj != null) {
+                val users: List<User?> = userRepository?.findAll() as List<User?>
+                for (other in users) {
+                    if (other != null) {
+                        if (other.equals(userObj) && bcrypt.matches(password, other.getPassword())) {
+                            userObj.setLoggedIn(true)
+                            userRepository?.save(userObj)
+
+                            val authReq = UsernamePasswordAuthenticationToken(username, password)
+                            val auth: Authentication = authManager!!.authenticate(authReq)
+
+                            val sc = SecurityContextHolder.getContext()
+                            sc.authentication = auth
+                            val session: HttpSession = request.getSession(true)
+                            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc)
+
+                            if (rememberMe != "off") {
+                                val rememberMeCookieStr =
+                                    username + ":" + expirationSeconds + ":" + md5("$username:$expirationSeconds:$password:$rememberMeKey")
+                                val rememberMeCookieVal =
+                                    Base64.getEncoder().encodeToString(rememberMeCookieStr.toByteArray())
+                                val rememberMeCookieKey = "remember-me"
+                                response.setHeader(rememberMeCookieKey, rememberMeCookieVal)
+                                val cookie = Cookie(rememberMeCookieKey, rememberMeCookieVal)
+                                cookie.path = "/"
+                                cookie.maxAge = expirationSeconds!!
+                                response.addCookie(cookie)
+                            }
+
+                            response.setHeader(SPRING_SECURITY_CONTEXT_KEY, session.id)
+                            val cookie = Cookie(SPRING_SECURITY_CONTEXT_KEY, session.id)
+                            cookie.path = "/"
+                            cookie.maxAge = 1800
+                            if (rememberMe != "off") {
+                                cookie.maxAge = expirationSeconds!!
+                            }
+                            response.addCookie(cookie)
+
+                            resp["msg"] = "Logged in!"
+                            resp["status"] = "success"
+                            return mapper.writeValueAsString(resp)
+                        }
+                    }
                 }
             }
         }
@@ -201,8 +266,29 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
+    @RequestMapping(value = ["/api/v1/users/logout"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun logoutUser(httpsession: HttpSession, status: SessionStatus, response: HttpServletResponse): String {
+        logoutProcedure(httpsession, status, response)
+        val cookie = Cookie(SPRING_SECURITY_CONTEXT_KEY, null) // Not necessary, but saves bandwidth.
+        cookie.path = "/"
+        cookie.isHttpOnly = true
+        cookie.maxAge = 0
+        response.addCookie(cookie)
+
+        resp["msg"] = "Logged out!"
+        resp["status"] = "success"
+
+        return mapper.writeValueAsString(resp)
+    }
+
     @GetMapping("/users/logout")
     fun logUserOut(httpsession: HttpSession, status: SessionStatus, response: HttpServletResponse): String {
+        logoutProcedure(httpsession, status, response)
+        return "redirect:/users/login"
+    }
+
+    private fun logoutProcedure(httpsession: HttpSession, status: SessionStatus, response: HttpServletResponse) {
         val authentication = SecurityContextHolder.getContext().authentication
 
         if (!authentication.name.isNullOrBlank()) {
@@ -215,27 +301,17 @@ class UserController {
                 user.setModifiedAt(dtf.format(now))
                 userRepository?.save(user)
             }
-
-            status.setComplete()
-            httpsession.invalidate()
-            SecurityContextHolder.clearContext()
-            val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
-            cookie.path = "/"
-            cookie.isHttpOnly = true
-            cookie.maxAge = 0
-            response.addCookie(cookie)
-
-            return "redirect:/users/login"
         }
+
         status.setComplete()
         httpsession.invalidate()
         SecurityContextHolder.clearContext()
+
         val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
         cookie.path = "/"
         cookie.isHttpOnly = true
         cookie.maxAge = 0
         response.addCookie(cookie)
-        return "redirect:/users/login"
     }
 
     @RequestMapping(value = ["/users/delete"], method = [RequestMethod.POST], produces = ["application/json"])
@@ -267,5 +343,10 @@ class UserController {
             resp["status"] = "fail"
         }
         return mapper.writeValueAsString(resp)
+    }
+
+    private fun md5(input:String): String {
+        val md = MessageDigest.getInstance("MD5")
+        return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
     }
 }
