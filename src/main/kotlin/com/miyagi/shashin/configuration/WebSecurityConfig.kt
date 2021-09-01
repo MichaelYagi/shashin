@@ -71,6 +71,8 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
                 .failureHandler(authFailureHandler)
                 .permitAll()
                 .and()
+            .rememberMe().key("7430689e-3db2-40e2-8853-616c0fcc0a31").tokenValiditySeconds(86400)
+                .and()
             .csrf().disable()
     }
 }

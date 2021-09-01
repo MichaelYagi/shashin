@@ -15,6 +15,8 @@ import org.springframework.web.context.request.ServletRequestAttributes
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletResponse
 
 @ControllerAdvice
 class BaseController {
@@ -43,7 +45,7 @@ class BaseController {
     private lateinit var geocodeUrl: String
 
     @ModelAttribute
-    fun addAttributes(model: Model) {
+    fun addAttributes(model: Model, response: HttpServletResponse) {
         model["userRole"] = userRole
         model["adminRole"] = adminRole
         model["queryLimit"] = queryLimit!!.toInt()
@@ -73,9 +75,19 @@ class BaseController {
             } else {
                 SecurityContextHolder.clearContext();
                 session?.invalidate()
+                val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
+                cookie.path = "/"
+                cookie.isHttpOnly = true
+                cookie.maxAge = 0
+                response.addCookie(cookie)
             }
         } catch(e: Exception) {
             model["currentUser"] = ""
+            val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
+            cookie.path = "/"
+            cookie.isHttpOnly = true
+            cookie.maxAge = 0
+            response.addCookie(cookie)
             logger.log(Level.WARNING, "Error getting authority: " + e.message)
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);

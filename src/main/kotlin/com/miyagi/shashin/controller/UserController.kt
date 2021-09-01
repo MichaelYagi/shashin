@@ -20,6 +20,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.validation.Valid
 
@@ -200,7 +202,7 @@ class UserController {
     }
 
     @GetMapping("/users/logout")
-    fun logUserOut(httpsession: HttpSession, status: SessionStatus): String {
+    fun logUserOut(httpsession: HttpSession, status: SessionStatus, response: HttpServletResponse): String {
         val authentication = SecurityContextHolder.getContext().authentication
 
         if (!authentication.name.isNullOrBlank()) {
@@ -217,11 +219,22 @@ class UserController {
             status.setComplete()
             httpsession.invalidate()
             SecurityContextHolder.clearContext()
+            val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
+            cookie.path = "/"
+            cookie.isHttpOnly = true
+            cookie.maxAge = 0
+            response.addCookie(cookie)
+
             return "redirect:/users/login"
         }
         status.setComplete()
         httpsession.invalidate()
         SecurityContextHolder.clearContext()
+        val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
+        cookie.path = "/"
+        cookie.isHttpOnly = true
+        cookie.maxAge = 0
+        response.addCookie(cookie)
         return "redirect:/users/login"
     }
 
