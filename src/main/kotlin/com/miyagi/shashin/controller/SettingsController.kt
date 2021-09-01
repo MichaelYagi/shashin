@@ -379,14 +379,6 @@ class SettingsController {
                                     logger.log(Level.WARNING, "Failed to delete thumbnail small file: " + fileObj.name)
                                 }
                             }
-                            if (!metadata.getThumbnailPathOriginal().isNullOrBlank()) {
-                                val fileObj = File(metadata.getThumbnailPathOriginal()!!)
-                                if (fileObj.delete()) {
-                                    logger.log(Level.INFO, "Deleted thumbnail original file: " + fileObj.name)
-                                } else {
-                                    logger.log(Level.WARNING, "Failed to delete thumbnail original file: " + fileObj.name)
-                                }
-                            }
                             if (!metadata.getMapMarkerPath().isNullOrBlank()) {
                                 val fileObj = File(metadata.getMapMarkerPath()!!)
                                 if (fileObj.delete()) {
@@ -400,8 +392,8 @@ class SettingsController {
                             val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
                             val metadataDir = sidecarDir + "metadata/"
                             val thumbnailDir = sidecarDir.replace('\\', '/')+"thumbnails"
-                            var relativePath: String = metadata.getThumbnailPathOriginal()!!.replace('\\', '/').lowercase().replace(thumbnailDir.lowercase(), "")
-                            relativePath = relativePath.replace("_original.jpg","")
+                            var relativePath: String = metadata.getThumbnailPathCentered()!!.replace('\\', '/').lowercase().replace(thumbnailDir.lowercase(), "")
+                            relativePath = relativePath.replace("_centered.jpg","")
                             val metadataYamlFile = "$metadataDir$relativePath.yaml"
                             var fileObj = File(metadataYamlFile)
                             if (fileObj.delete()) {

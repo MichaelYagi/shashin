@@ -14,7 +14,6 @@ class Metadata {
     private var thumbnailUrlSmall: String? = null
     private var thumbnailPathCentered: String? = null
     private var thumbnailUrlCentered: String? = null
-    private var thumbnailPathOriginal: String? = null
     private var thumbnailUrlOriginal: String? = null
     private var mapMarkerPath: String? = null
     private var mapMarkerUrl: String? = null
@@ -58,9 +57,6 @@ class Metadata {
     }
     fun setThumbnailUrlCentered(thumbnailUrlCentered: String?) {
         this.thumbnailUrlCentered = thumbnailUrlCentered
-    }
-    fun setThumbnailPathOriginal(thumbnailPathOriginal: String?) {
-        this.thumbnailPathOriginal = thumbnailPathOriginal
     }
     fun setThumbnailUrlOriginal(thumbnailUrlOriginal: String?) {
         this.thumbnailUrlOriginal = thumbnailUrlOriginal
@@ -155,9 +151,6 @@ class Metadata {
     }
     fun getThumbnailUrlCentered(): String? {
         return this.thumbnailUrlCentered
-    }
-    fun getThumbnailPathOriginal(): String? {
-        return this.thumbnailPathOriginal
     }
     fun getThumbnailUrlOriginal(): String? {
         return this.thumbnailUrlOriginal
