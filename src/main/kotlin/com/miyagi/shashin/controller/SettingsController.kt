@@ -185,7 +185,13 @@ class SettingsController {
                 mediaDirObj.setModifiedAt(dtf.format(now))
                 mediaDirArrayList.add(mediaDirObj)
             }
+            val currMediaDirs = mediaDirRepository?.findAll()
             mediaDirRepository?.saveAll(mediaDirArrayList)
+            if (currMediaDirs != null) {
+                for (mediaDir in currMediaDirs) {
+                    mediaDirRepository?.delete(mediaDir!!)
+                }
+            }
         } else {
             mediaDirRepository?.deleteAll()
         }
