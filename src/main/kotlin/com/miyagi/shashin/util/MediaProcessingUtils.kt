@@ -30,7 +30,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
     private var logger: Logger = Logger.getLogger(MediaProcessingUtils::class.simpleName)
 
     fun populateMetadata(file: File, sidecarDir: String, rootDir: String, _metadataObj: Metadata?): Metadata? {
-        val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
+        val metadataDirectory = sidecarDir.dropLast(1) + "/metadata/"
 
         val rootDirFile = File(rootDir)
         var fileRootDir: String = file.parent.replace('\\', '/').lowercase().replace(rootDirFile.parent.replace('\\', '/').lowercase(), "")
