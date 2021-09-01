@@ -230,7 +230,7 @@ class UserController {
                             val session: HttpSession = request.getSession(true)
                             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc)
 
-                            if (rememberMe != "off") {
+                            if (rememberMe == "on") {
                                 val rememberMeCookieStr =
                                     username + ":" + expirationSeconds + ":" + md5("$username:$expirationSeconds:$password:$rememberMeKey")
                                 val rememberMeCookieVal =
