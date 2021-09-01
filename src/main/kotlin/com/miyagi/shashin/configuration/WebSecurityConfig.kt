@@ -6,15 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import javax.sql.DataSource
+
 
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true)
@@ -35,9 +36,21 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
     @Value("\${app.role.user}")
     private var userRole: String? = null
 
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
+
+    @Value("\${app.rememberme.expiration.seconds}")
+    private var expirationSeconds: Int? = null
+
     @Bean
     fun passwordEncoder(): PasswordEncoder? {
         return BCryptPasswordEncoder()
+    }
+
+    @Bean("authenticationManager")
+    @Throws(java.lang.Exception::class)
+    override fun authenticationManagerBean(): AuthenticationManager? {
+        return super.authenticationManagerBean()
     }
 
     @Throws(java.lang.Exception::class)
@@ -71,7 +84,7 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
                 .failureHandler(authFailureHandler)
                 .permitAll()
                 .and()
-            .rememberMe().key("7430689e-3db2-40e2-8853-616c0fcc0a31").tokenValiditySeconds(86400)
+            .rememberMe().key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!)
                 .and()
             .csrf().disable()
     }
