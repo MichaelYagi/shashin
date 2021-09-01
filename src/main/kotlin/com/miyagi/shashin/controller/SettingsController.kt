@@ -175,6 +175,7 @@ class SettingsController {
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
 
+            mediaDirRepository?.deleteAll()
             for (mediaDir in mediaDirs) {
                 var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
                 if (mediaDirObj == null) {
@@ -185,13 +186,7 @@ class SettingsController {
                 mediaDirObj.setModifiedAt(dtf.format(now))
                 mediaDirArrayList.add(mediaDirObj)
             }
-            val currMediaDirs = mediaDirRepository?.findAll()
             mediaDirRepository?.saveAll(mediaDirArrayList)
-            if (currMediaDirs != null) {
-                for (mediaDir in currMediaDirs) {
-                    mediaDirRepository?.delete(mediaDir!!)
-                }
-            }
         } else {
             mediaDirRepository?.deleteAll()
         }
@@ -404,7 +399,7 @@ class SettingsController {
                             val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                             val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
                             val metadataDir = sidecarDir + "metadata/"
-                            val thumbnailDir = sidecarDir.replace('\\', '/')+"thumbnails/"
+                            val thumbnailDir = sidecarDir.replace('\\', '/')+"thumbnails"
                             var relativePath: String = metadata.getThumbnailPathOriginal()!!.replace('\\', '/').lowercase().replace(thumbnailDir.lowercase(), "")
                             relativePath = relativePath.replace("_original.jpg","")
                             val metadataYamlFile = "$metadataDir$relativePath.yaml"
