@@ -298,6 +298,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
     }
 
     fun createThumbnails(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata?): Metadata? {
+        var _metadataObj = metadataObj
+
         // Check rotation
         var rotation = 0
         val fileMetadata = ImageMetadataReader.readMetadata(file)
@@ -346,7 +348,12 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
 
         var img: BufferedImage? = null
-        if (supportedImageFormats.contains(file.extension.lowercase()) || FileUtils.isRaw(file.extension.lowercase())) {
+        if (FileUtils.isRaw(file.extension.lowercase())) {
+            img = ImageIO.read(file)
+            if (rotation > 0) {
+                img = rotateImage(img, rotation.toDouble())
+            }
+        } else if (supportedImageFormats.contains(file.extension.lowercase())) {
             img = ImageIO.read(file)
             if (rotation > 0) {
                 img = rotateImage(img, rotation.toDouble())
@@ -354,7 +361,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
             // Grab screen shot
             img = grabScreenshot(file)
-//            metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
+//            _metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
         }
 
         if (img != null) {
@@ -364,20 +371,19 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original.jpg"
                 tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
                 if (tnFile != null) {
-                    val scaled: BufferedImage = scaleImageByRatio(img, 1.0)
-                    ImageIO.write(scaled, "jpg", tnFile)
-                    metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+                    ImageIO.write(img, "jpg", tnFile)
+                    _metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
                 }
             }
 
             // Scale to different sizes and save
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-            var scaled209: BufferedImage = scaleImageByHeight(img, 209)
+            val scaled209: BufferedImage = scaleImageByHeight(img, 209)
             if (tnFile != null) {
                 ImageIO.write(scaled209, "jpg", tnFile)
-                metadataObj?.setThumbnailPathSmall(tnFile.path)
-                metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+                _metadataObj?.setThumbnailPathSmall(tnFile.path)
+                _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
 
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered.jpg"
@@ -389,8 +395,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 }
                 val square: BufferedImage = getSquareThumbnail(rescaled)
                 ImageIO.write(square, "jpg", tnFile)
-                metadataObj?.setThumbnailPathCentered(tnFile.path)
-                metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+                _metadataObj?.setThumbnailPathCentered(tnFile.path)
+                _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
 
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"
@@ -404,14 +410,15 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 }
                 val square: BufferedImage = getSquareThumbnail(scaled)
                 ImageIO.write(square, "jpg", tnFile)
-                metadataObj?.setMapMarkerPath(tnFile.path)
-                metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+                _metadataObj?.setMapMarkerPath(tnFile.path)
+                _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)
+            _metadataObj = null
         }
 
-        return metadataObj
+        return _metadataObj
     }
 
     private fun grabScreenshot(file: File): BufferedImage? {
