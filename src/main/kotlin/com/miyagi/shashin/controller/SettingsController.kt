@@ -596,33 +596,34 @@ class SettingsController {
                 val file: File = files[i]
 
                 if (file.isFile) {
-                    val supportedFormats = FileUtils.allowableMediaFiles()
-                    if (supportedFormats.contains(file.extension.lowercase())) {
+                    if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+
+                        val mediaProcessingUtils = MediaProcessingUtils(apiVersion,geocodeUrl)
+                        var metadataObj: Metadata? = Metadata()
+
+                        var threadText = file.path + " NOT SUPPORTED"
+
+                        if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                            metadataObj =
+                                mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
+                            if (metadataObj != null) {
+                                metadataObj =
+                                    mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
+                            }
+                            if (metadataObj != null) {
+                                threadText = file.path
+                                metadataRepository?.save(metadataObj)
+                            }
+                        } else {
+                            logger.log(Level.WARNING, "File not supported: " + threadFile.name)
+                        }
 
                         try {
                             val writer = BufferedWriter(FileWriter(threadFile))
-                            writer.write(file.path)
+                            writer.write(threadText)
                             writer.close()
                         } catch(e: Exception) {
                             logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
-
-                        }
-
-                        if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                            val mediaProcessingUtils = MediaProcessingUtils(apiVersion,geocodeUrl)
-                            var metadataObj: Metadata? = Metadata()
-                            val supportedImageFormats = FileUtils.allowableImageFiles()
-                            val supportedVideoFormats = FileUtils.allowableVideoFiles()
-
-                            if (supportedImageFormats.contains(file.extension.lowercase()) || supportedVideoFormats.contains(file.extension.lowercase()) || FileUtils.isRaw(file.extension.lowercase())) {
-                                metadataObj =
-                                    mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
-                            }
-                            metadataObj =
-                                mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
-                            if (metadataObj != null) {
-                                metadataRepository?.save(metadataObj)
-                            }
                         }
                     }
                 }

@@ -12,7 +12,7 @@ class FileUtils {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
         fun allowableMediaFiles(): Array<String> {
-            return arrayOf("jpeg","jpg","tiff","png","bmp","gif","webm","ico","nef","cr2","orf","arw","rw2","rwl","srw","mp4","wav","avi","3gpp","aac","flac","mpeg","mp3","mp4","ogg","wav","webm")
+            return allowableImageFiles() + allowableVideoFiles() + allowableRawImageFiles()
         }
 
         fun allowableImageFiles(): Array<String> {
@@ -27,9 +27,12 @@ class FileUtils {
             return arrayOf("mp4","wav","avi")
         }
 
+        fun allowableRawImageFiles(): Array<String> {
+            return arrayOf("nef","cr2","orf","arw","rw2","rwl","srw")
+        }
+
         fun isRaw(extension: String): Boolean {
-            val rawFormats = arrayOf("nef","cr2","orf","arw","rw2","rwl","srw")
-            if (rawFormats.contains(extension.lowercase())) {
+            if (allowableRawImageFiles().contains(extension.lowercase())) {
                 return true
             }
             return false
