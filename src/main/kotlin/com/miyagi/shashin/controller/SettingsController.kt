@@ -7,6 +7,7 @@ import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MediaProcessingUtils
@@ -80,6 +81,9 @@ class SettingsController {
 
     @Autowired
     private val albumPhotoRepository: AlbumPhotoRepository? = null
+
+    @Autowired
+    private val recognitionLabelRepository: RecognitionLabelRepository? = null
 
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
@@ -271,6 +275,7 @@ class SettingsController {
                 commentRepository?.deleteAll()
                 albumCommentRepository?.deleteAll()
                 albumPhotoCommentRepository?.deleteAll()
+                recognitionLabelRepository?.deleteAll()
 
                 val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                 val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
@@ -472,6 +477,12 @@ class SettingsController {
                             logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
 
                             // Delete from Metadata
+                            if (metadata.getRecognitionLabelId() != null) {
+                                if (metadataRepository?.countByRecognitionLabelId(metadata.getRecognitionLabelId()!!) == 0) {
+                                    // Delete the label
+                                    recognitionLabelRepository?.deleteById(metadata.getRecognitionLabelId()!!)
+                                }
+                            }
                             metadataRepository?.deleteById(metadata.getId())
                             logger.log(Level.INFO, "Removed metadata records for: " + metadata.getId())
                         }
