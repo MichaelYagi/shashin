@@ -32,6 +32,8 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
@@ -151,14 +153,31 @@ class SettingsController {
         val module = "settings"
         model["data"] = ""
         model["mediaDirList"] = ""
+        model["alertClass"] = ""
+
+        var dirDneString = ""
         if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirectories != null) {
             model["mediaDirList"] = mediaDirectories.joinToString { "${it?.getDirectory()}" }
+
+            for (mediaDir in mediaDirectories) {
+                if (mediaDir != null) {
+                    val path: Path = Paths.get(mediaDir.getDirectory()!!)
+                    if (!Files.exists(path)) {
+                        dirDneString += "${mediaDir.getDirectory()},"
+                    }
+                }
+            }
+            if (dirDneString.isNotBlank()) {
+                dirDneString = "Cannot find "+dirDneString.dropLast(1)
+                model["alertClass"] = "alert-warning"
+            }
         }
+
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
-        model["message"] = ""
-        model["alertClass"] = ""
+        model["message"] = dirDneString
+
         return module
     }
 
@@ -171,6 +190,8 @@ class SettingsController {
             mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
         }
 
+        model["alertClass"] = "alert-success"
+        var dirDneString = ""
         if (mediaDirs != null && mediaDirs.isNotEmpty()) {
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
@@ -185,6 +206,15 @@ class SettingsController {
                 mediaDirObj.setCreatedAt(dtf.format(now))
                 mediaDirObj.setModifiedAt(dtf.format(now))
                 mediaDirArrayList.add(mediaDirObj)
+
+                val path: Path = Paths.get(mediaDir)
+                if (!Files.exists(path)) {
+                    dirDneString += "$mediaDir,"
+                }
+            }
+            if (dirDneString.isNotBlank()) {
+                dirDneString = "Cannot find "+dirDneString.dropLast(1)
+                model["alertClass"] = "alert-warning"
             }
             mediaDirRepository?.saveAll(mediaDirArrayList)
         } else {
@@ -198,8 +228,7 @@ class SettingsController {
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
-        model["message"] = "Success"
-        model["alertClass"] = "alert-success"
+        model["message"] = dirDneString
         return module
     }
 
