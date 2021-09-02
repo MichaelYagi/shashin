@@ -601,7 +601,7 @@ class SettingsController {
                         val mediaProcessingUtils = MediaProcessingUtils(apiVersion,geocodeUrl)
                         var metadataObj: Metadata? = Metadata()
 
-                        var threadText = file.path + " NOT SUPPORTED"
+                        var threadText = file.path + " ALREADY SCANNED"
 
                         if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
                             metadataObj =
@@ -615,6 +615,7 @@ class SettingsController {
                                 metadataRepository?.save(metadataObj)
                             }
                         } else {
+                            threadText = file.path + " NOT SUPPORTED"
                             logger.log(Level.WARNING, "File not supported: " + threadFile.name)
                         }
 
