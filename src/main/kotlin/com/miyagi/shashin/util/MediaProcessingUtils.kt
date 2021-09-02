@@ -137,14 +137,16 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             }
                         }
 
-                        metadataObj.setTakenAt(destFormat.format(date))
-                        metadataObj.setCreatedAt(destFormat.format(date))
+                        if (date != null) {
+                            metadataObj.setTakenAt(destFormat.format(date))
+                            metadataObj.setCreatedAt(destFormat.format(date))
 
-                        val dateArray = destFormat.format(date).toString().split(" ")
-                        val takenDateArray = dateArray[0].split("-")
-                        metadataObj.setYear(takenDateArray[0].toInt())
-                        metadataObj.setMonth(takenDateArray[1].toInt())
-                        metadataObj.setDay(takenDateArray[2].toInt())
+                            val dateArray = destFormat.format(date).toString().split(" ")
+                            val takenDateArray = dateArray[0].split("-")
+                            metadataObj.setYear(takenDateArray[0].toInt())
+                            metadataObj.setMonth(takenDateArray[1].toInt())
+                            metadataObj.setDay(takenDateArray[2].toInt())
+                        }
                     }
                     "Modification Time" -> {
                         val modificationFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
