@@ -371,7 +371,11 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                val square: BufferedImage = getSquareThumbnail(scaled209)
+                var rescaled: BufferedImage = scaled209
+                if (img.height > img.width) {
+                    rescaled = scaleImageByWidth(img, 209)
+                }
+                val square: BufferedImage = getSquareThumbnail(rescaled)
                 ImageIO.write(square, "jpg", tnFile)
                 metadataObj?.setThumbnailPathCentered(tnFile.path)
                 metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
@@ -380,7 +384,12 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                val scaled: BufferedImage = scaleImageByHeight(img, 45)
+                var scaled: BufferedImage
+                if (img.height > img.width) {
+                    scaled = scaleImageByWidth(img, 45)
+                } else {
+                    scaled = scaleImageByHeight(img, 45)
+                }
                 val square: BufferedImage = getSquareThumbnail(scaled)
                 ImageIO.write(square, "jpg", tnFile)
                 metadataObj?.setMapMarkerPath(tnFile.path)
@@ -487,7 +496,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
     private fun getSquareThumbnail(source: BufferedImage): BufferedImage {
         // Get a square thumbnail
-        val side = Math.min(source.width, source.height)
+        val side = source.width.coerceAtMost(source.height)
         val x = (source.width - side) / 2
         val y = (source.height - side) / 2
         return source.getSubimage(x, y, side, side)
