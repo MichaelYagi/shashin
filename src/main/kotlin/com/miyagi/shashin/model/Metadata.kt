@@ -36,6 +36,8 @@ class Metadata {
     private var lens: String? = null
     private var quality: String? = null
     private var keywords: String? = null
+    private var recognitionLabelId: Int? = null
+    private var recognitionConfidence: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
     private var lastAccessedAt: String? = null
@@ -126,6 +128,12 @@ class Metadata {
     }
     fun setKeywords(keywords: String?) {
         this.keywords = keywords
+    }
+    fun setRecognitionLabelId(recognitionLabelId: Int?) {
+        this.recognitionLabelId = recognitionLabelId
+    }
+    fun setRecognitionConfidence(recognitionConfidence: String?) {
+        this.recognitionConfidence = recognitionConfidence
     }
     fun setCreatedAt(createdAt: String?) {
         this.createdAt = createdAt
@@ -221,6 +229,12 @@ class Metadata {
     fun getKeywords(): String? {
         return this.keywords
     }
+    fun getRecognitionLabelId(): Int? {
+        return this.recognitionLabelId
+    }
+    fun getRecognitionConfidence(): String? {
+        return this.recognitionConfidence
+    }
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -257,6 +271,8 @@ class Metadata {
         map["lens"] = this.lens
         map["quality"] = this.quality
         map["keywords"] = this.keywords
+        map["recognitionLabelId"] = this.recognitionLabelId
+        map["recognitionConfidence"] = this.recognitionConfidence
         map["createdAt"] = this.createdAt
         map["modifiedAt"] = this.modifiedAt
         map["lastAccessedAt"] = this.lastAccessedAt

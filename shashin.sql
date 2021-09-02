@@ -33,10 +33,21 @@ CREATE TABLE `metadata` (
     `fNumber` REAL(10) DEFAULT NULL,
     `focalLength` REAL(10) DEFAULT NULL,
     `keywords` VARCHAR(500) DEFAULT NULL,
+    `recognitionLabelId` INT(10) DEFAULT NULL,
+    `recognitionConfidence` VARCHAR(36) NOT NULL DEFAULT '100.0', -- 100.0 to be labelled, -1.0 not a face
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL,
     `lastAccessedAt` DATETIME DEFAULT NULL,
-    PRIMARY KEY (`id`)
+    PRIMARY KEY (`id`),
+    FOREIGN KEY (`recognitionLabelId`) REFERENCES recognitionlabel(`id`)
+);
+
+DROP TABLE IF EXISTS `recognitionlabel`;
+CREATE TABLE `recognitionlabel` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `name` VARCHAR(50) NOT NULL,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL
 );
 
 DROP TABLE IF EXISTS `user`;

@@ -15,5 +15,5 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    fun findByAlbumMetadataByUserId(@Param("userId") userId: Int): MutableIterable<Metadata>
    @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
-
+   fun countByRecognitionLabelId(recognitionLabelId: Int): Int
 }
