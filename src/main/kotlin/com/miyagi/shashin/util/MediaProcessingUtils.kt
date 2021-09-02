@@ -285,7 +285,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
 //        val supportedAudioFormats = FileUtils.allowableAudioFiles()
 
-        if (supportedImageFormats.contains(file.extension.lowercase()) || FileUtils.isRaw(file.extension.lowercase())) {
+        if (supportedImageFormats.contains(file.extension.lowercase())) {
             metadataObj.setThumbnailUrlOriginal("/api/$apiVersion/image/${metadataObj.getId()}")
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
             metadataObj.setVideoUrl("/api/$apiVersion/video/${metadataObj.getId()}")
@@ -358,9 +358,21 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         }
 
         if (img != null) {
+            var thumbnailFileStr: String
+            var tnFile: File?
+            if (FileUtils.isRaw(file.extension.lowercase())) {
+                thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original.jpg"
+                tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+                if (tnFile != null) {
+                    val scaled: BufferedImage = scaleImageByRatio(img, 1.0)
+                    ImageIO.write(scaled, "jpg", tnFile)
+                    metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
+                }
+            }
+
             // Scale to different sizes and save
-            var thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
-            var tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
+            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             var scaled209: BufferedImage = scaleImageByHeight(img, 209)
             if (tnFile != null) {
                 ImageIO.write(scaled209, "jpg", tnFile)
