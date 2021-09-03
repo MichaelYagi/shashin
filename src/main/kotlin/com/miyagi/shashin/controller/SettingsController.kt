@@ -8,6 +8,7 @@ import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.RecognitionLabel
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MediaProcessingUtils
@@ -85,6 +86,9 @@ class SettingsController {
     @Autowired
     private val recognitionLabelRepository: RecognitionLabelRepository? = null
 
+    @Autowired
+    private val settingsRepository: SettingsRepository? = null
+
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     val mapper = ObjectMapper()
@@ -157,6 +161,7 @@ class SettingsController {
         val module = "settings"
         model["data"] = ""
         model["mediaDirList"] = ""
+        model["settings"] = ""
         model["alertClass"] = ""
 
         var dirDneString = ""
@@ -175,6 +180,8 @@ class SettingsController {
                 dirDneString = "Cannot find "+dirDneString.dropLast(1)
                 model["alertClass"] = "alert-warning"
             }
+            val settings = settingsRepository?.findFirstByOrderByIdAsc()
+            model["settings"] = settings as Settings
         }
 
         model["activePage"] = module
@@ -187,7 +194,11 @@ class SettingsController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
-    fun postSettings(model: Model, redirectAttributes: RedirectAttributes, @RequestParam("mediaDirList") mediaDirList: String): String {
+    fun postSettings(model: Model, redirectAttributes: RedirectAttributes,
+        @RequestParam("mediaDirList") mediaDirList: String,
+        @RequestParam("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,
+        @RequestParam("queryLimit") queryLimit: Int
+    ): String {
         var mediaDirs: List<String>? = null
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
         if  (mediaDirList.isNotBlank()) {
@@ -195,6 +206,8 @@ class SettingsController {
         }
 
         model["alertClass"] = "alert-success"
+        model["settings"] = ""
+
         var dirDneString = ""
         if (mediaDirs != null && mediaDirs.isNotEmpty()) {
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -223,6 +236,17 @@ class SettingsController {
             mediaDirRepository?.saveAll(mediaDirArrayList)
         } else {
             mediaDirRepository?.deleteAll()
+        }
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        if (recognitionConfidenceThreshold.isNotEmpty()) {
+            settings?.setRecognitionConfidenceThreshold(recognitionConfidenceThreshold)
+        }
+        if (queryLimit > 0) {
+            settings?.setQueryLimit(queryLimit)
+        }
+        if (settings != null) {
+            settingsRepository?.save(settings)
+            model["settings"] = settings as Settings
         }
 
         val module = "settings"

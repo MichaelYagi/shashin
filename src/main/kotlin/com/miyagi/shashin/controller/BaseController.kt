@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -26,14 +27,14 @@ class BaseController {
     @Autowired
     private lateinit var userRepository: UserRepository
 
+    @Autowired
+    private var settingsRepository: SettingsRepository? = null
+
     @Value("\${app.sidecar.path}")
     private lateinit var relativeSidecarDir: String
 
     @Value("\${app.api.version}")
     private lateinit var apiVersion: String
-
-    @Value("\${app.query.limit}")
-    private var queryLimit: Int? = null
 
     @Value("\${app.role.admin}")
     private lateinit var adminRole: String
@@ -48,7 +49,12 @@ class BaseController {
     fun addAttributes(model: Model, response: HttpServletResponse) {
         model["userRole"] = userRole
         model["adminRole"] = adminRole
-        model["queryLimit"] = queryLimit!!.toInt()
+        var queryLimit = 20
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        if (settings != null) {
+            queryLimit = settings.getQueryLimit()!!
+        }
+        model["queryLimit"] = queryLimit
         model["apiVersion"] = apiVersion
         model["relativeSidecarDir"] = relativeSidecarDir
         model["geocodeUrl"] = geocodeUrl
