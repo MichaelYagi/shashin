@@ -26,9 +26,11 @@
     }
 
     function renderTimelineModal(rawMetadata,rawRecognitionLabels,taggedPeopleList) {
-        var metadata = JSON.parse(decodeHtml(rawMetadata));
-        var recognitionLabels = rawRecognitionLabels.length  > 0 ? JSON.parse(decodeHtml(rawRecognitionLabels)) : "";
+        taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
+        console.log('taggedPeopleList:'+taggedPeopleList)
 
+        var metadata = JSON.parse(decodeHtml(rawMetadata));
+        var recognitionLabels = rawRecognitionLabels != "null" && rawRecognitionLabels.length  > 0 ? JSON.parse(decodeHtml(rawRecognitionLabels)) : "";
         var latlngValue = (metadata.lat != null || metadata.lng != null) ? (metadata.lat+', '+metadata.lng) : '';
         var keywordsList = (metadata.keywords == null) ? "" : metadata.keywords;
 

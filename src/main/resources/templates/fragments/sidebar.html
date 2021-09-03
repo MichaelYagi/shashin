@@ -18,6 +18,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='people' ? ' active' : ''}" href="/people" data-toggle="tooltip" data-placement="top" title="People">
+                    <span class="bi-person-square" style="font-size: 2rem;"></span>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a th:attr="class='nav-link' + ${activeSidebar=='map' ? ' active' : ''}" href="/map" data-toggle="tooltip" data-placement="top" title="Map">
                     <span class="bi-map" style="font-size: 2rem;"></span>
                 </a>

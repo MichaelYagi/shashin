@@ -40,7 +40,7 @@ class TimelineController {
     private lateinit var favoriteRepository: FavoriteRepository
 
     @Autowired
-    private lateinit var recognitionLabelRepository: RecognitionLabelRepository
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
     private lateinit var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository
@@ -109,8 +109,8 @@ class TimelineController {
                 }
             }
 
-            val recognitionLabels = recognitionLabelRepository.findAll()
-            if (recognitionLabels.count() > 0) {
+            val recognitionLabels = recognitionLabelRepository?.findAll()
+            if (recognitionLabels != null && recognitionLabels.count() > 0) {
                 response["recognitionLabels"] = recognitionLabels
             }
 
@@ -128,8 +128,10 @@ class TimelineController {
                     val recognitionLabelPhotos = recognitionLabelPhotoRepository.findByMetadataId(metadata.getId())
                     var labelString = ""
                     for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                        val recognitionLabelObj = recognitionLabelRepository.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                        labelString += recognitionLabelObj.get().getName()+","
+                        val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                        if (recognitionLabelObj != null) {
+                            labelString += recognitionLabelObj.get().getName() + ","
+                        }
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
@@ -176,7 +178,7 @@ class TimelineController {
             if (metadataMap["tagpeople"].toString() != "") {
                 val recognitionLabelArray = metadataMap["tagpeople"].toString().split(",")
                 for (recognitionLabel in recognitionLabelArray) {
-                    val recognitionLabelRecord = recognitionLabelRepository.findByNameIgnoreCase(recognitionLabel.trim())
+                    val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
                     var recognitionLabelObj = RecognitionLabel()
                     if (recognitionLabelRecord == null) {
                         recognitionLabelObj.setName(recognitionLabel.trim())
@@ -184,7 +186,7 @@ class TimelineController {
                         val now = LocalDateTime.now()
                         recognitionLabelObj.setCreatedAt(dtf.format(now))
                         recognitionLabelObj.setModifiedAt(dtf.format(now))
-                        recognitionLabelRepository.save(recognitionLabelObj)
+                        recognitionLabelRepository?.save(recognitionLabelObj)
                     } else {
                         recognitionLabelObj = recognitionLabelRecord
                     }
@@ -324,7 +326,7 @@ class TimelineController {
                 if (recognitionLabelNames.toString() != "") {
                     val recognitionLabelArray = recognitionLabelNames.toString().split(",")
                     for (recognitionLabel in recognitionLabelArray) {
-                        val recognitionLabelRecord = recognitionLabelRepository.findByNameIgnoreCase(recognitionLabel.trim())
+                        val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
                         var recognitionLabelObj = RecognitionLabel()
                         if (recognitionLabelRecord == null) {
                             recognitionLabelObj.setName(recognitionLabel.trim())
@@ -332,7 +334,7 @@ class TimelineController {
                             val now = LocalDateTime.now()
                             recognitionLabelObj.setCreatedAt(dtf.format(now))
                             recognitionLabelObj.setModifiedAt(dtf.format(now))
-                            recognitionLabelRepository.save(recognitionLabelObj)
+                            recognitionLabelRepository?.save(recognitionLabelObj)
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
                         }

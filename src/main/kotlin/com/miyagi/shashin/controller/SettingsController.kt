@@ -87,6 +87,9 @@ class SettingsController {
     private val recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
+    private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
+    @Autowired
     private val settingsRepository: SettingsRepository? = null
 
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
@@ -305,6 +308,7 @@ class SettingsController {
                 albumCommentRepository?.deleteAll()
                 albumPhotoCommentRepository?.deleteAll()
                 recognitionLabelRepository?.deleteAll()
+                recognitionLabelPhotoRepository?.deleteAll()
 
                 val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                 val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
