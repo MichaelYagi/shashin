@@ -63,12 +63,14 @@
                     if (data.hasOwnProperty("metadataList") &&
                         data.hasOwnProperty("favorites") &&
                         data.hasOwnProperty("albumList") &&
-                        data.hasOwnProperty("recognitionLabels")
+                        data.hasOwnProperty("recognitionLabels") &&
+                        data.hasOwnProperty("labelPhotoMap")
                     ) {
                         var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
                         var favoritesList = data["favorites"] === "" ? null : data["favorites"];
                         var albumList = data["albumList"] === "" ? null : data["albumList"];
                         var recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
+                        var labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
 
                         // console.log(favoritesList);
                         // console.log(albumList);
@@ -193,9 +195,10 @@
 
                             var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
                             var htmlEncodedRecognitionLabels = encodeHtml(JSON.stringify(recognitionLabels));
+                            var htmlEncodedLabelPhotoMap = encodeHtml(JSON.stringify(labelPhotoMap[metadata.id]));
 
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
-                            renderTimelineModal(htmlEncodedMetadata,htmlEncodedRecognitionLabels);
+                            renderTimelineModal(htmlEncodedMetadata,htmlEncodedRecognitionLabels,htmlEncodedLabelPhotoMap);
                             activateMetadataListeners(htmlEncodedMetadata);
 
                             html = "";

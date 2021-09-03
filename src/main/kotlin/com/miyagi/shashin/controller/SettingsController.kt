@@ -506,12 +506,12 @@ class SettingsController {
                             logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
 
                             // Delete from Metadata
-                            if (metadata.getRecognitionLabelId() != null) {
-                                if (metadataRepository?.countByRecognitionLabelId(metadata.getRecognitionLabelId()!!) == 0) {
-                                    // Delete the label
-                                    recognitionLabelRepository?.deleteById(metadata.getRecognitionLabelId()!!)
-                                }
-                            }
+//                            if (metadata.getRecognitionLabelId() != null) {
+//                                if (metadataRepository?.countByRecognitionLabelId(metadata.getRecognitionLabelId()!!) == 0) {
+//                                    // Delete the label
+//                                    recognitionLabelRepository?.deleteById(metadata.getRecognitionLabelId()!!)
+//                                }
+//                            }
                             metadataRepository?.deleteById(metadata.getId())
                             logger.log(Level.INFO, "Removed metadata records for: " + metadata.getId())
                         }
@@ -681,7 +681,6 @@ class SettingsController {
                             }
                             if (metadataObj != null) {
                                 threadText = file.path
-                                metadataObj.setRecognitionConfidence("100.0")
                                 metadataRepository?.save(metadataObj)
                             }
                         } else {
