@@ -60,10 +60,15 @@
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
-                    if (data.hasOwnProperty("metadataList") && data.hasOwnProperty("favorites") && data.hasOwnProperty("albumList")) {
+                    if (data.hasOwnProperty("metadataList") &&
+                        data.hasOwnProperty("favorites") &&
+                        data.hasOwnProperty("albumList") &&
+                        data.hasOwnProperty("recognitionLabels")
+                    ) {
                         var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
                         var favoritesList = data["favorites"] === "" ? null : data["favorites"];
                         var albumList = data["albumList"] === "" ? null : data["albumList"];
+                        var recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
 
                         // console.log(favoritesList);
                         // console.log(albumList);
@@ -187,8 +192,10 @@
                             }
 
                             var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                            var htmlEncodedRecognitionLabels = encodeHtml(JSON.stringify(recognitionLabels));
+
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
-                            renderTimelineModal(htmlEncodedMetadata);
+                            renderTimelineModal(htmlEncodedMetadata,htmlEncodedRecognitionLabels);
                             activateMetadataListeners(htmlEncodedMetadata);
 
                             html = "";

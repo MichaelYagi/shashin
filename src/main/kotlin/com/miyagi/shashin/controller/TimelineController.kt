@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.MediaProcessingUtils
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -34,6 +37,9 @@ class TimelineController {
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
 
+    @Autowired
+    private lateinit var recognitionLabelRepository: RecognitionLabelRepository
+
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
 
@@ -48,6 +54,7 @@ class TimelineController {
         model["metadataList"] = response["metadataList"]!!
         model["favorites"] = response["favorites"]!!
         model["albumList"] = response["albumList"]!!
+        model["recognitionLabels"] = response["recognitionLabels"]!!
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -78,6 +85,7 @@ class TimelineController {
         response["metadataList"] = ""
         response["favorites"] = ""
         response["albumList"] = ""
+        response["recognitionLabels"] = ""
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -93,6 +101,9 @@ class TimelineController {
                     }
                 }
             }
+
+            val recognitionLabels = recognitionLabelRepository.findAll()
+            response["recognitionLabels"] = recognitionLabels
 
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
@@ -128,9 +139,34 @@ class TimelineController {
             metadataMap.containsKey("month") &&
             metadataMap.containsKey("day") &&
             metadataMap.containsKey("keywords") &&
-            metadataMap.containsKey("latlng")
+            metadataMap.containsKey("latlng") &&
+            metadataMap.containsKey("labelId") &&
+            metadataMap.containsKey("tagperson")
         ) {
             val metadataObj = metadataRepository.findById(metadataMap["id"].toString())
+            if (metadataMap["tagperson"].toString() != "") {
+                if (metadataMap["labelId"].toString() != "" && metadataMap["labelId"].toString().toInt() > 0) {
+                    metadataObj.get().setRecognitionLabelId(metadataMap["labelId"].toString().toInt())
+                } else {
+                    val recognitionLabelRecord = recognitionLabelRepository.findByName(metadataMap["tagperson"].toString())
+                    if (recognitionLabelRecord == null ) {
+                        val recognitionLabelObj = RecognitionLabel()
+                        recognitionLabelObj.setName(metadataMap["tagperson"].toString())
+                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        val now = LocalDateTime.now()
+                        recognitionLabelObj.setCreatedAt(dtf.format(now))
+                        recognitionLabelObj.setModifiedAt(dtf.format(now))
+                        recognitionLabelRepository.save(recognitionLabelObj)
+                        metadataObj.get().setRecognitionLabelId(recognitionLabelObj.getId())
+                    } else {
+                        metadataObj.get().setRecognitionLabelId(recognitionLabelRecord.getId())
+                    }
+                }
+                metadataObj.get().setRecognitionConfidence("0.0")
+            } else {
+                metadataObj.get().setRecognitionLabelId(null)
+                metadataObj.get().setRecognitionConfidence("10.0")
+            }
             if (metadataMap["year"].toString() == "") {
                 metadataObj.get().setYear(null)
             } else {
