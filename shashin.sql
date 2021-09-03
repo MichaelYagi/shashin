@@ -33,13 +33,10 @@ CREATE TABLE `metadata` (
     `f_number` REAL(10) DEFAULT NULL,
     `focal_length` REAL(10) DEFAULT NULL,
     `keywords` VARCHAR(500) DEFAULT NULL,
-    `recognition_label_id` INT(10) DEFAULT NULL,
-    `recognition_confidence` VARCHAR(36) NOT NULL DEFAULT '100.0', -- 100.0 to be labelled, -1.0 not a face
     `created_at` DATETIME DEFAULT NULL,
     `modified_at` DATETIME DEFAULT NULL,
     `last_accessed_at` DATETIME DEFAULT NULL,
-    PRIMARY KEY (`id`),
-    FOREIGN KEY (`recognition_label_id`) REFERENCES recognitionlabel(`id`)
+    PRIMARY KEY (`id`)
 );
 
 DROP TABLE IF EXISTS `recognitionlabel`;
@@ -48,6 +45,17 @@ CREATE TABLE `recognitionlabel` (
     `name` VARCHAR(50) NOT NULL,
     `created_at` DATETIME DEFAULT NULL,
     `modified_at` DATETIME DEFAULT NULL
+);
+
+DROP TABLE IF EXISTS `recognitionlabelphoto`;
+CREATE TABLE `recognitionlabelphoto` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `recognition_label_id` VARCHAR(50) NOT NULL,
+    `metadata_id` VARCHAR(36) NOT NULL,
+    `confidence` VARCHAR(36) NOT NULL DEFAULT '100.0', -- 100.0 to be labelled, -1.0 not a face
+    UNIQUE(`recognition_label_id`,`metadata_id`) ON CONFLICT IGNORE,
+    FOREIGN KEY (`recognition_label_id`) REFERENCES recognitionlabel(`id`),
+    FOREIGN KEY (`metadata_id`) REFERENCES metadata(`id`)
 );
 
 DROP TABLE IF EXISTS `settings`;
