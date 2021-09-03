@@ -20,13 +20,29 @@
                             <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
                         </div>
                     </th:block>
-                    <div class="col-12">
-                        <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma seperated)</strong></label>
-                        <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                    <div class="row">
+                        <div class="col-12">
+                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma seperated)</strong></label>
+                            <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                        </div>
                     </div>
+                    <th:block th:if="${settings != ''}">
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.6)</strong></label>
+                            <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
+                        </div>
+                        <div class="col-6">
+                            <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit (Default 20)</strong></label>
+                            <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
+                        </div>
+                    </div>
+                    </th:block>
                     <br>
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary" name="saveSettings" id="saveSettings" value="Save">Save</button>
+                        </div>
                     </div>
                     <hr>
                     <div class="alert alert-danger" role="alert">
