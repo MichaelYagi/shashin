@@ -676,6 +676,7 @@ class SettingsController {
                             }
                             if (metadataObj != null) {
                                 threadText = file.path
+                                metadataObj.setRecognitionConfidence("100.0")
                                 metadataRepository?.save(metadataObj)
                             }
                         } else {
