@@ -3,9 +3,27 @@
 <body th:fragment="timelinemodal()">
 
 <script type="text/javascript">
-    function renderTimelineModal(rawMetadata) {
+    function populateLabel(metadataId,recognitionLabelId) {
+        $("#tagperson"+metadataId).val(decodeHtml($("#"+metadataId+"-"+recognitionLabelId).text()));
+        $("#labelid"+metadataId).val(recognitionLabelId);
+        return false;
+    }
+
+    function renderTimelineModal(rawMetadata,rawRecognitionLabels) {
         var metadata = JSON.parse(decodeHtml(rawMetadata));
-        // console.log(metadata);
+        var recognitionLabels = JSON.parse(decodeHtml(rawRecognitionLabels));
+
+        var recognitionLabelName = "";
+        var recognitionLabelId = metadata.recognitionLabelId != null ? metadata.recognitionLabelId : 0;
+        if (recognitionLabels.length > 0 && recognitionLabelId !== "") {
+            for (var index in recognitionLabels) {
+                var recognitionLabel = recognitionLabels[index];
+                if (recognitionLabelId === recognitionLabel.id) {
+                    recognitionLabelName = recognitionLabel.name;
+                    break;
+                }
+            }
+        }
         var latlngValue = (metadata.lat != null || metadata.lng != null) ? (metadata.lat+', '+metadata.lng) : '';
         var keywordsList = (metadata.keywords == null) ? "" : metadata.keywords;
 
@@ -46,6 +64,26 @@
             '                   <div class="col-sm">\n' +
             '                       <label for="latlng'+metadata.id+'" class="col-form-label">Latitude, Longitude</label>\n' +
             '                       <input type="text" class="form-control" id="latlng'+metadata.id+'" name="latlng" value="'+latlngValue+'">\n' +
+            '                   </div>\n' +
+            '                   <div class="col-sm">\n' +
+            '                       <label for="tagperson'+metadata.id+'" class="col-form-label">Tag Person</label>\n' +
+            '                       <div class="input-group">\n' +
+            '                           <input type="text" class="form-control" aria-label="Albums Name" id="tagperson'+metadata.id+'" name="tagperson" value="'+recognitionLabelName+'">\n' +
+            '                           <input type="hidden" id="labelid'+metadata.id+'" name="labelid'+metadata.id+'" value="'+recognitionLabelId+'">\n';
+        if (recognitionLabels.length > 0) {
+            html += '                   <div class="input-group-append">\n' +
+                '                           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                '                           <div class="dropdown-menu" id="recognitionLabelsList'+metadata.id+'">\n';
+            for (var index in recognitionLabels) {
+                var recognitionLabel = recognitionLabels[index];
+                html += '                       <a class="dropdown-item" href="#" onclick="return populateLabel(\''+metadata.id+'\','+recognitionLabel.id+');" id="'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</a>\n';
+            }
+            html += '                       </div>\n' +
+            '                           </div>\n' +
+            '                       </div>\n';
+
+        }
+        html +=
             '                   </div>\n' +
             '               </div>\n' +
             '               <div class="form-group row">\n' +
@@ -135,7 +173,9 @@
                     month:$("#monthTaken"+metadata.id).val(),
                     day:$("#dayTaken"+metadata.id).val(),
                     latlng:$("#latlng"+metadata.id).val(),
-                    keywords:$("#keywords"+metadata.id).val()
+                    keywords:$("#keywords"+metadata.id).val(),
+                    labelId:$("#labelid"+metadata.id).val(),
+                    tagperson:$("#tagperson"+metadata.id).val()
                 }
                 const posting = $.post({
                     url: "/timeline/update/"+metadata.id,
