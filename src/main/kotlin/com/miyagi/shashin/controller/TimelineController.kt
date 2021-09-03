@@ -248,11 +248,19 @@ class TimelineController {
         var yearTaken: Int? = null
         var latlng: String? = null
         var keywords: String? = null
+        var recognitionLabelId: Int? = null
+        var recognitionLabelName: String? = null
 
         for ((k, v) in batchMetadataMap) {
             if (v != "") {
 
                 when (k) {
+                    "labelIdBatchDataInput" -> {
+                        recognitionLabelId = v.toString().toInt()
+                    }
+                    "tagBatchDataInput" -> {
+                        recognitionLabelName = v.toString()
+                    }
                     "batchMetadataIds" -> {
                         idArray = mapper.readValue(v.toString(), Array<String>::class.java)
                     }
@@ -282,6 +290,26 @@ class TimelineController {
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
 
                 val metadata = metadataObj.get()
+
+                if (recognitionLabelId != null) {
+                    metadata.setRecognitionConfidence("0.0")
+                    metadata.setRecognitionLabelId(recognitionLabelId)
+                } else if (recognitionLabelName != null) {
+                    val recognitionLabelRecord = recognitionLabelRepository.findByName(recognitionLabelName)
+                    if (recognitionLabelRecord == null ) {
+                        val recognitionLabelObj = RecognitionLabel()
+                        recognitionLabelObj.setName(recognitionLabelName)
+                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        val now = LocalDateTime.now()
+                        recognitionLabelObj.setCreatedAt(dtf.format(now))
+                        recognitionLabelObj.setModifiedAt(dtf.format(now))
+                        recognitionLabelRepository.save(recognitionLabelObj)
+                        metadataObj.get().setRecognitionLabelId(recognitionLabelObj.getId())
+                    } else {
+                        metadataObj.get().setRecognitionLabelId(recognitionLabelRecord.getId())
+                    }
+                    metadata.setRecognitionConfidence("0.0")
+                }
 
                 if (dayTaken != null) {
                     metadata.setDay(dayTaken)
