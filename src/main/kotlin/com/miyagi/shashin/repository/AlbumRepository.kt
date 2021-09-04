@@ -1,9 +1,6 @@
 package com.miyagi.shashin.repository
 
-import com.miyagi.shashin.model.Album
-import com.miyagi.shashin.model.AlbumPhoto
-import com.miyagi.shashin.model.AlbumPhotoCount
-import com.miyagi.shashin.model.Favorite
+import com.miyagi.shashin.model.*
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
@@ -13,5 +10,6 @@ interface AlbumRepository : CrudRepository<Album?, Int?> {
     fun findByName(name: String?): Album?
     @Query("SELECT a.id as albumId, COUNT(*) as photoCount FROM album a INNER JOIN albumphoto ap ON a.id = ap.album_id GROUP BY a.id", nativeQuery = true)
     fun countNumberOfPhotosInAlbums(): MutableIterable<AlbumPhotoCount?>?
-
+    @Query("SELECT rl.*, COUNT(*) AS tag_count, m.thumbnail_url_centered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id INNER JOIN albumphoto ap ON ap.metadata_id = m.id GROUP BY rl.id", nativeQuery = true)
+    fun findAlbumPhotoByPeople(): MutableIterable<MetadataPeople>
 }
