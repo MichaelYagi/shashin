@@ -12,13 +12,13 @@ class RecognitionLabelPhoto {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private var id: Int = 0
     @NotBlank
-    private var metadataId: String? = null
-    @NotBlank
     private var recognitionLabelId: Int? = null
+    @NotBlank
+    private var metadataId: String? = null
     @NotBlank
     private var confidence: String? = null
 
-    fun RecognitionLabel() {}
+    fun RecognitionLabelPhoto() {}
 
     fun getId(): Int {
         return this.id
@@ -28,20 +28,20 @@ class RecognitionLabelPhoto {
         this.id = id
     }
 
-    fun getMetadataId(): String? {
-        return this.metadataId
-    }
-
-    fun setMetadataId(metadataId: String?) {
-        this.metadataId = metadataId
-    }
-
     fun getRecognitionLabelId(): Int? {
         return this.recognitionLabelId
     }
 
     fun setRecognitionLabelId(recognitionLabelId: Int?) {
         this.recognitionLabelId = recognitionLabelId
+    }
+
+    fun getMetadataId(): String? {
+        return this.metadataId
+    }
+
+    fun setMetadataId(metadataId: String?) {
+        this.metadataId = metadataId
     }
 
     fun getConfidence(): String? {

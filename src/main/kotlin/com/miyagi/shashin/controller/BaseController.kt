@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -50,9 +53,21 @@ class BaseController {
         model["userRole"] = userRole
         model["adminRole"] = adminRole
         var queryLimit = 20
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
-        if (settings != null) {
-            queryLimit = settings.getQueryLimit()!!
+        val settingsCount = settingsRepository?.count()
+        if (settingsCount != null && settingsCount > 0) {
+            val settings = settingsRepository?.findFirstByOrderByIdAsc()
+            if (settings != null) {
+                queryLimit = settings.getQueryLimit()!!
+            }
+        } else {
+            val settingsObj = Settings()
+            settingsObj.setQueryLimit(20)
+            settingsObj.setRecognitionConfidenceThreshold("0.6")
+            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val now = LocalDateTime.now()
+            settingsObj.setCreatedAt(dtf.format(now))
+            settingsObj.setModifiedAt(dtf.format(now))
+            settingsRepository?.save(settingsObj)
         }
         model["queryLimit"] = queryLimit
         model["apiVersion"] = apiVersion
@@ -63,8 +78,7 @@ class BaseController {
 
         model["authority"] = ""
         model["username"] = ""
-        val requestAttributes = RequestContextHolder
-            .currentRequestAttributes()
+        val requestAttributes = RequestContextHolder.currentRequestAttributes()
         val attributes = requestAttributes as ServletRequestAttributes
         val request = attributes.request
         val session = request.getSession(true)

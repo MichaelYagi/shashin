@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body>
+
+<div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
+        <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+            <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/appjs :: appjs()"></div>
+            <div id="albumsMessage"></div>
+
+            <th:block th:if="${peopleList != ''}">
+                <div class="row">
+                    <th:block th:each="person, iterStat: ${peopleList}">
+                        <div class="card" style="width: 209px;">
+                            <a th:href="'/person/'+${person.id}"  style="text-decoration: none !important;color: black;" th:id="'person'+${person.id}">
+                                <img class="card-img-top" th:src="${person.thumbnailUrlCentered}" th:alt="${person.name}">
+                            </a>
+                            <div class="card-body">
+                                <p class="card-text"><strong th:text="${person.name}"></strong></p>
+                                <p class="card-text"><small class="text-muted" th:text="${person.tagCount + ' items'}"></small></p>
+                            </div>
+                        </div>
+
+<!--                        <div th:replace="fragments/albumsmodal :: albumsmodal(${album},${users},${userAlbums},${currentUser},${userCount},${sharedAlbums},${albumsCommentsMap},${baseUrl})"></div>-->
+<!--                        <div th:replace="fragments/albumsjs :: albumsjs(${album})"></div>-->
+                    </th:block>
+                </div>
+            </th:block>
+
+            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo})"></div>
+        </main>
+    </div>
+</div>
+</body>
+</html>

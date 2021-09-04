@@ -2,6 +2,7 @@ package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.AlbumPhotoComments
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.MetadataPeople
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -15,4 +16,6 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    fun findByAlbumMetadataByUserId(@Param("userId") userId: Int): MutableIterable<Metadata>
    @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+   @Query("SELECT rl.*, COUNT(*) AS tag_count, m.thumbnail_url_centered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id GROUP BY rl.id", nativeQuery = true)
+   fun findMetadataByPeople(): MutableIterable<MetadataPeople>
 }
