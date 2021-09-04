@@ -51,6 +51,12 @@ class PeopleController {
             // Scan records of photos that haven't been scanned in a separate thread
             val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
             val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
+
+            if (trainingData != null) {
+                for (trainingObj in trainingData) {
+                    println(trainingObj.getRecognitionLabelName())
+                }
+            }
         }
 
         model["activePage"] = module
