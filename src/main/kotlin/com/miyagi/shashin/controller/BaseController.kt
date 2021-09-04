@@ -73,6 +73,7 @@ class BaseController {
         model["apiVersion"] = apiVersion
         model["relativeSidecarDir"] = relativeSidecarDir
         model["geocodeUrl"] = geocodeUrl
+        model["parameter"] = ""
 
         model["currentUser"] = ""
 

@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="content(data,activePage)">
+<body th:fragment="content(data,activePage,authority,parameter)">
 <th:block th:if="${activePage == 'settings' or activePage == 'scan' or activePage == 'users'}">
-    <div th:replace="fragments/settings :: settings(${activePage})"></div>
+    <div th:replace="fragments/settingsgroup :: settings(${activePage})"></div>
+</th:block>
+<th:block th:if="${authority == 'ROLE_ADMIN' && (activePage == 'person' or activePage == 'predicted')}">
+    <div th:replace="fragments/persongroup :: person(${activePage},${parameter})"></div>
 </th:block>
 <th:block th:if="${data != ''}">
     <p id="msg" th:text="${data}"></p>
