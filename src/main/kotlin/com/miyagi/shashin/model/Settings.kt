@@ -15,6 +15,8 @@ class Settings {
     private var recognitionConfidenceThreshold: String? = null
     @NotBlank
     private var queryLimit: Int? = null
+    @NotBlank
+    private var matchScanLimit: Int? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -30,6 +32,14 @@ class Settings {
 
     fun setRecognitionConfidenceThreshold(recognitionConfidenceThreshold: String?) {
         this.recognitionConfidenceThreshold = recognitionConfidenceThreshold
+    }
+
+    fun getMatchScanLimit(): Int? {
+        return this.matchScanLimit
+    }
+
+    fun setMatchScanLimit(matchScanLimit: Int?) {
+        this.matchScanLimit = matchScanLimit
     }
 
     fun getQueryLimit(): Int? {
@@ -61,6 +71,7 @@ class Settings {
         map["id"] = this.id
         map["recognitionConfidenceThreshold"] = this.recognitionConfidenceThreshold
         map["queryLimit"] = this.queryLimit
+        map["matchScanLimit"] = this.matchScanLimit
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

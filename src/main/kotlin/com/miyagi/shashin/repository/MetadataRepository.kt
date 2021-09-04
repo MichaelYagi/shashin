@@ -24,4 +24,6 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    fun findAlbumPhotoByPeople(): MutableIterable<MetadataPeople>
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN albumphoto ap on m.id = ap.metadata_id LEFT JOIN useralbum ua on ap.album_id = ua.album_id LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE rl.id = :recognitionLabelId AND ua.user_id = :userId LIMIT :offset, :limit", nativeQuery = true)
    fun findAlbumPhotoByPerson(@Param("recognitionLabelId") recognitionLabelId: Int,@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id WHERE confidence > :recognitionConfidenceThreshold and rlp.recognition_label_id = :recognitionLabelId LIMIT 0, :matchScanLimit", nativeQuery = true)
+   fun findLowMatchesByPerson(@Param("recognitionLabelId") recognitionLabelId: Int,@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
 }

@@ -35,14 +35,21 @@ class PeopleController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    @GetMapping("/people/matches/{personId}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @GetMapping("/person/matches/{personId}")
+    @PreAuthorize("hasRole('ADMIN')")
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
         model["data"] = ""
+        model["lowMatchResult"] = ""
 
-        // Get x records of photos that haven't been confirmed
-        // Scan x records of photos that haven't been scanned
+        val settings = model.getAttribute("settings") as Settings
+        // Get records of photos that haven't been confirmed - Threshold not 100.0 and greater than threshold configured
+        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!,settings.getMatchScanLimit()!!)
+        if (lowMatchResults != null) {
+            model["lowMatchResult"] = lowMatchResults
+        }
+
+        // Scan records of photos that haven't been scanned in a separate thread
 
 
         model["activePage"] = module

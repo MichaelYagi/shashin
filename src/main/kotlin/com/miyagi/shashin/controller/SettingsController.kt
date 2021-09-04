@@ -200,7 +200,8 @@ class SettingsController {
     fun postSettings(model: Model, redirectAttributes: RedirectAttributes,
         @RequestParam("mediaDirList") mediaDirList: String,
         @RequestParam("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,
-        @RequestParam("queryLimit") queryLimit: Int
+        @RequestParam("queryLimit") queryLimit: Int,
+        @RequestParam("matchScanLimit") matchScanLimit: Int
     ): String {
         var mediaDirs: List<String>? = null
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
@@ -209,7 +210,6 @@ class SettingsController {
         }
 
         model["alertClass"] = "alert-success"
-        model["settings"] = ""
         var message = ""
 
         var dirDneString = ""
@@ -241,12 +241,16 @@ class SettingsController {
         } else {
             mediaDirRepository?.deleteAll()
         }
+
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
         if (recognitionConfidenceThreshold.isNotEmpty()) {
             settings?.setRecognitionConfidenceThreshold(recognitionConfidenceThreshold)
         }
         if (queryLimit > 0) {
             settings?.setQueryLimit(queryLimit)
+        }
+        if (matchScanLimit > 0) {
+            settings?.setMatchScanLimit(matchScanLimit)
         }
         if (settings != null) {
             settingsRepository?.save(settings)
