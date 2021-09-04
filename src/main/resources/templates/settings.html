@@ -28,17 +28,23 @@
                     </div>
                     <th:block th:if="${settings != ''}">
                     <div class="row">
-                        <div class="col-4">
+                        <div class="col-6">
                             <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.6)</strong></label>
                             <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
                         </div>
-                        <div class="col-4">
+                        <div class="col-6">
                             <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit (Default 20)</strong></label>
                             <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
                         </div>
-                        <div class="col-4">
-                            <label for="queryLimit" class="form-label"><strong>Match Scan Limit (Default 10)</strong></label>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit (Default 10)</strong></label>
                             <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
+                        </div>
+                        <div class="col-6">
+                            <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit (Default 100)</strong></label>
+                            <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
                         </div>
                     </div>
                     </th:block>

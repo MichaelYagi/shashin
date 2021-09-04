@@ -201,7 +201,8 @@ class SettingsController {
         @RequestParam("mediaDirList") mediaDirList: String,
         @RequestParam("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,
         @RequestParam("queryLimit") queryLimit: Int,
-        @RequestParam("matchScanLimit") matchScanLimit: Int
+        @RequestParam("matchScanLimit") matchScanLimit: Int,
+        @RequestParam("trainingDataLimit") trainingDataLimit: Int
     ): String {
         var mediaDirs: List<String>? = null
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
@@ -251,6 +252,9 @@ class SettingsController {
         }
         if (matchScanLimit > 0) {
             settings?.setMatchScanLimit(matchScanLimit)
+        }
+        if (trainingDataLimit > 0) {
+            settings?.setTrainingDataLimit(trainingDataLimit)
         }
         if (settings != null) {
             settingsRepository?.save(settings)

@@ -17,6 +17,8 @@ class Settings {
     private var queryLimit: Int? = null
     @NotBlank
     private var matchScanLimit: Int? = null
+    @NotBlank
+    private var trainingDataLimit: Int? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -40,6 +42,14 @@ class Settings {
 
     fun setMatchScanLimit(matchScanLimit: Int?) {
         this.matchScanLimit = matchScanLimit
+    }
+
+    fun getTrainingDataLimit(): Int? {
+        return this.trainingDataLimit
+    }
+
+    fun setTrainingDataLimit(trainingDataLimit: Int?) {
+        this.trainingDataLimit = trainingDataLimit
     }
 
     fun getQueryLimit(): Int? {
@@ -72,6 +82,7 @@ class Settings {
         map["recognitionConfidenceThreshold"] = this.recognitionConfidenceThreshold
         map["queryLimit"] = this.queryLimit
         map["matchScanLimit"] = this.matchScanLimit
+        map["trainingDataLimit"] = this.trainingDataLimit
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
