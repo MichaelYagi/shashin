@@ -18,7 +18,6 @@ import java.util.ArrayList
 import java.util.HashMap
 
 @Controller
-@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 class PeopleController {
 
     @Autowired
@@ -36,7 +35,24 @@ class PeopleController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
+    @GetMapping("/people/predicted/{personId}")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    fun getPredictions(model: Model, @PathVariable personId: Int): String {
+        val module = "matches"
+        model["data"] = ""
+
+        // Get x records of photos that haven't been confirmed
+        // Scan x records of photos that haven't been scanned
+
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
     @GetMapping("/people")
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     fun getPeople(model: Model): String {
         val module = "people"
         model["data"] = "There are no people tagged."
@@ -46,7 +62,7 @@ class PeopleController {
         if (currentUserObj != null) {
             var peopleList: MutableIterable<MetadataPeople>? = null
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                peopleList = albumRepository?.findAlbumPhotoByPeople()
+                peopleList = metadataRepository?.findAlbumPhotoByPeople()
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 peopleList = metadataRepository?.findMetadataByPeople()
             }
@@ -63,6 +79,7 @@ class PeopleController {
     }
 
     @RequestMapping(value = ["/person/{personId}"], method = [RequestMethod.GET])
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     fun getPagedTimeline(model: Model, @PathVariable personId: Int): String {
         val module = "person"
         val page = 0
@@ -72,6 +89,7 @@ class PeopleController {
         model["recognitionLabels"] = response["recognitionLabels"]!!
         model["labelPhotoMap"] = response["labelPhotoMap"]!!
         model["personInfo"] = response["personInfo"]!!
+        model["parameter"] = response["parameter"]!!
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -87,6 +105,7 @@ class PeopleController {
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = ""
         response["personInfo"] = ""
+        response["parameter"] = personId
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -103,7 +122,7 @@ class PeopleController {
 
             var metadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
-                metadataList = albumRepository?.findAlbumPhotoByPerson(personId,currentUserObj.getId(),page,2000)
+                metadataList = metadataRepository?.findAlbumPhotoByPerson(personId,currentUserObj.getId(),page,2000)
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 val recognitionLabels = recognitionLabelRepository?.findAll()
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {

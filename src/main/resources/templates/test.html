@@ -9,7 +9,7 @@
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
-            <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo})"></div>
         </main>
     </div>

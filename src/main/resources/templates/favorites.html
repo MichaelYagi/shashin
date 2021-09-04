@@ -11,7 +11,7 @@
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <div id="favoritesMessage"></div>
-            <div th:replace="fragments/content :: content(${data},${activePage})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <div id="infinite-scroll-gallery">
                 <div class="row">
                     <th:block th:if="${metadataList != ''}">
