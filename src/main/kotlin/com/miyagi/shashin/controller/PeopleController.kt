@@ -1,21 +1,24 @@
 package com.miyagi.shashin.controller
 
-import com.miyagi.shashin.model.Album
-import com.miyagi.shashin.model.MetadataPeople
-import com.miyagi.shashin.model.User
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
+import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.repository.query.Param
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.*
 import java.util.ArrayList
 import java.util.HashMap
 
 @Controller
+@PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
 class PeopleController {
 
     @Autowired
@@ -24,7 +27,15 @@ class PeopleController {
     @Autowired
     private var albumRepository: AlbumRepository? = null
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @Autowired
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null
+
+    @Autowired
+    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
+    val mapper = ObjectMapper()
+    val resp = mutableMapOf<String, String?>()
+
     @GetMapping("/people")
     fun getPeople(model: Model): String {
         val module = "people"
@@ -40,9 +51,6 @@ class PeopleController {
                 peopleList = metadataRepository?.findMetadataByPeople()
             }
             if (peopleList != null) {
-                for (person in peopleList) {
-                    println(person.getThumbnailUrlCentered())
-                }
                 model["peopleList"] = peopleList
                 model["data"] = ""
             }
@@ -52,5 +60,87 @@ class PeopleController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @RequestMapping(value = ["/person/{personId}"], method = [RequestMethod.GET])
+    fun getPagedTimeline(model: Model, @PathVariable personId: Int): String {
+        val module = "person"
+        val page = 0
+        val response = buildPersonAlbum(model,personId,page)
+        model["data"] = response["data"]!!
+        model["metadataList"] = response["metadataList"]!!
+        model["recognitionLabels"] = response["recognitionLabels"]!!
+        model["labelPhotoMap"] = response["labelPhotoMap"]!!
+        model["personInfo"] = response["personInfo"]!!
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    private fun buildPersonAlbum(model: Model,personId: Int,page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
+        response["data"] = "There are no photos.."
+        response["metadataList"] = ""
+        response["recognitionLabels"] = ""
+        response["labelPhotoMap"] = ""
+        response["personInfo"] = ""
+
+        response["msg"] = "Could not get results"
+        response["status"] = "fail"
+
+        if (model.getAttribute("currentUser") != "") {
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page*queryLimit
+
+            val recognitionLabel = recognitionLabelRepository?.findById(personId)
+            if (recognitionLabel != null) {
+                response["personInfo"] = recognitionLabel.get()
+            }
+
+            var metadataList: MutableIterable<Metadata>? = null
+            if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
+                metadataList = albumRepository?.findAlbumPhotoByPerson(personId,currentUserObj.getId(),page,2000)
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+                val recognitionLabels = recognitionLabelRepository?.findAll()
+                if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                    response["recognitionLabels"] = recognitionLabels
+                }
+                metadataList = metadataRepository?.findMetadataByPerson(personId,page,2000)
+            }
+
+            response["metadataList"] = metadataList
+            if (metadataList != null && metadataList.count() > 0) {
+                response["data"] = ""
+
+                val labelPhotoMap = mutableMapOf<String, String>()
+                for (metadata in metadataList) {
+                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                    var labelString = ""
+                    if (recognitionLabelPhotos != null) {
+                        for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                            val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                            if (recognitionLabelObj != null) {
+                                labelString += recognitionLabelObj.get().getName() + ","
+                            }
+                        }
+                    }
+                    if (labelString.isNotBlank()) {
+                        labelString = labelString.dropLast(1)
+                    }
+                    labelPhotoMap[metadata.getId()] = labelString
+                }
+                response["labelPhotoMap"] = labelPhotoMap
+            }
+
+            response["metadataList"] = metadataList
+            response["msg"] = "Results"
+            response["status"] = "success"
+        }
+
+        return response
     }
 }

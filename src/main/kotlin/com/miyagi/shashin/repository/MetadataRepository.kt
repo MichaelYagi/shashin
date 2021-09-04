@@ -16,6 +16,8 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    fun findByAlbumMetadataByUserId(@Param("userId") userId: Int): MutableIterable<Metadata>
    @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
-   @Query("SELECT rl.*, COUNT(*) AS tag_count, m.thumbnail_url_centered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id GROUP BY rl.id", nativeQuery = true)
+   @Query("SELECT rl.*, COUNT(*) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id GROUP BY rl.id", nativeQuery = true)
    fun findMetadataByPeople(): MutableIterable<MetadataPeople>
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE rl.id = :recognitionLabelId LIMIT :offset, :limit", nativeQuery = true)
+   fun findMetadataByPerson(@Param("recognitionLabelId") recognitionLabelId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 }
