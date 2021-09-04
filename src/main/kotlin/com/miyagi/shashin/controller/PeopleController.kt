@@ -45,12 +45,13 @@ class PeopleController {
         val settings = model.getAttribute("settings") as Settings
         // Get records of photos that haven't been confirmed - Threshold not 100.0 and greater than threshold configured
         val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!,settings.getMatchScanLimit()!!)
-        if (lowMatchResults != null) {
+        if (lowMatchResults != null && lowMatchResults.count() > 0) {
             model["lowMatchResult"] = lowMatchResults
+        } else {
+            // Scan records of photos that haven't been scanned in a separate thread
+            val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
+            val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
         }
-
-        // Scan records of photos that haven't been scanned in a separate thread
-
 
         model["activePage"] = module
         model["activeSidebar"] = module

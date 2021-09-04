@@ -3,6 +3,7 @@ package com.miyagi.shashin.repository
 import com.miyagi.shashin.model.AlbumPhotoComments
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.MetadataPeople
+import com.miyagi.shashin.model.TrainingData
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -26,4 +27,8 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    fun findAlbumPhotoByPerson(@Param("recognitionLabelId") recognitionLabelId: Int,@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id WHERE confidence > :recognitionConfidenceThreshold and rlp.recognition_label_id = :recognitionLabelId LIMIT 0, :matchScanLimit", nativeQuery = true)
    fun findLowMatchesByPerson(@Param("recognitionLabelId") recognitionLabelId: Int,@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
+   @Query("SELECT DISTINCT m.* FROM metadata m WHERE m.id NOT IN (SELECT metadata_id FROM recognitionlabelphoto) LIMIT 0, :matchScanLimit",nativeQuery = true)
+   fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
+   @Query("SELECT DISTINCT m.id as metadataId,m.type,m.path,m.thumbnail_path_small as thumbnailPathSmall,rlp.recognition_label_id as recognitionLabelId,rl.name as recognitionLabelName FROM metadata m, recognitionlabelphoto rlp LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE m.id = rlp.metadata_id AND rlp.confidence <= :recognitionConfidenceThreshold LIMIT 0, :trainingDataLimit",nativeQuery = true)
+   fun findTrainingData(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("trainingDataLimit") trainingDataLimit: Int): MutableIterable<TrainingData>
 }
