@@ -35,7 +35,7 @@ class PeopleController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    @GetMapping("/people/predicted/{personId}")
+    @GetMapping("/people/matches/{personId}")
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
