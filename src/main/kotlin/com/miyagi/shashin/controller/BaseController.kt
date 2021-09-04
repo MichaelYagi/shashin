@@ -52,6 +52,8 @@ class BaseController {
     fun addAttributes(model: Model, response: HttpServletResponse) {
         model["userRole"] = userRole
         model["adminRole"] = adminRole
+        model["settings"] = ""
+
         var queryLimit = 20
         val settingsCount = settingsRepository?.count()
         if (settingsCount != null && settingsCount > 0) {
@@ -59,15 +61,21 @@ class BaseController {
             if (settings != null) {
                 queryLimit = settings.getQueryLimit()!!
             }
+            if (settings != null) {
+                model["settings"] = settings
+            }
         } else {
             val settingsObj = Settings()
             settingsObj.setQueryLimit(20)
+            settingsObj.setMatchScanLimit(10)
             settingsObj.setRecognitionConfidenceThreshold("0.6")
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
             settingsObj.setCreatedAt(dtf.format(now))
             settingsObj.setModifiedAt(dtf.format(now))
             settingsRepository?.save(settingsObj)
+
+            model["settings"] = settingsObj
         }
         model["queryLimit"] = queryLimit
         model["apiVersion"] = apiVersion
