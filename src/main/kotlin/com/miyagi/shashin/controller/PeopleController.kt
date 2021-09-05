@@ -1,21 +1,34 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.FaceRecognizer
+import com.miyagi.shashin.component.Message
+import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.AlbumRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.repository.RecognitionLabelRepository
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.event.EventListener
 import org.springframework.data.repository.query.Param
+import org.springframework.messaging.handler.annotation.MessageMapping
+import org.springframework.messaging.handler.annotation.SendTo
+import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.socket.messaging.SessionConnectEvent
+import org.springframework.web.socket.messaging.SessionDisconnectEvent
+import org.springframework.web.socket.messaging.SessionSubscribeEvent
+import java.io.File
 import java.util.ArrayList
 import java.util.HashMap
+import javax.servlet.http.HttpSession
 
 @Controller
 class PeopleController {
@@ -32,8 +45,63 @@ class PeopleController {
     @Autowired
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
 
+    private val threadExtensionName: String = "facescan_shashinscan"
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
+
+    @MessageMapping("/matchmessage")
+    @SendTo("/topic/matchmessages")
+    @Throws(java.lang.Exception::class)
+    fun sendMatcnMessage(message: ScanMessage): Message? {
+        var msg = "Start Matching";
+
+        if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
+            msg = "Matching Complete"
+        }
+
+        val threadFileContent = FileUtils.readThreadFile(threadExtensionName)
+        if (threadFileContent != null) {
+            msg = "Matching in progress: " + threadFileContent.replace("\\", "/")
+        }
+
+        val messageObj = Message()
+        messageObj.setContent(msg)
+
+        return messageObj
+    }
+
+    @SubscribeMapping("/topic/matchmessages")
+    fun subscribe(
+        session: HttpSession,
+        @PathVariable pipelineId: String,
+        @PathVariable topic: String
+    ) {
+        //println("subscribe")
+        //println(session.id)
+//        messagingTemplate?.convertAndSend("/app/scanmessage", "testingzzz");
+
+    }
+
+    @EventListener
+    fun onApplicationEvent(event: SessionConnectEvent) {
+//        println("SessionConnectEvent")
+//        println(event.source)
+
+//        messagingTemplate?.convertAndSend("/topic/messages", "testingzzz");
+    }
+
+    @EventListener
+    fun onApplicationEvent(event: SessionDisconnectEvent) {
+//        println("SessionDisconnectEvent")
+//        println(event.sessionId)
+    }
+
+    @EventListener
+    fun handleSubscribeEvent(event: SessionSubscribeEvent) {
+//        println("SessionSubscribeEvent")
+//        println(event.message)
+    }
 
     @GetMapping("/person/matches/{personId}")
     @PreAuthorize("hasRole('ADMIN')")
@@ -52,10 +120,10 @@ class PeopleController {
             val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
             val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
 
-            if (trainingData != null) {
-                for (trainingObj in trainingData) {
-                    println(trainingObj.getRecognitionLabelName())
-                }
+            if (trainingData != null && testImages != null) {
+                // Start matching in a separate thread
+                val faceRecognizer = FaceRecognizer(testImages, trainingData)
+                faceRecognizer.runRecognizer()
             }
         }
 

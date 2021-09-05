@@ -106,11 +106,11 @@ class SettingsController {
 
         val mediaDirs = mediaDirRepository?.findAll()
         if (mediaDirs != null && mediaDirs.count() > 0) {
-            if (!checkThreadFileAlive()) {
+            if (!FileUtils.checkThreadFileAlive("shashinscan")) {
                 msg = "Scan Complete"
             }
 
-            val threadFileContent = readThreadFile()
+            val threadFileContent = FileUtils.readThreadFile("shashinscan")
             if (threadFileContent != null) {
                 msg = "Scan in progress: " + threadFileContent.replace("\\", "/")
             }
@@ -534,12 +534,12 @@ class SettingsController {
 
         // Scan files
         if (isCheckOnly) {
-            if (!checkThreadFileAlive()) {
+            if (!FileUtils.checkThreadFileAlive("shashinscan")) {
                 resp["msg"] = "Scan Complete"
                 return mapper.writeValueAsString(resp)
             }
 
-            val threadFileContent = readThreadFile()
+            val threadFileContent = FileUtils.readThreadFile("shashinscan")
             if (threadFileContent != null) {
                 resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
                 return mapper.writeValueAsString(resp)
@@ -550,9 +550,9 @@ class SettingsController {
             val mediaDirs = mediaDirRepository?.findAll()
 
             if (mediaDirs != null && mediaDirs.count() > 0) {
-                if (!checkThreadFileAlive()) {
+                if (!FileUtils.checkThreadFileAlive("shashinscan")) {
                     // Clean up any existing thread files
-                    deleteThreadFiles()
+                    FileUtils.deleteThreadFiles("shashinscan")
 
                     val rootPath = FileSystemResource("").file.absolutePath
                     val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
@@ -585,7 +585,7 @@ class SettingsController {
                     return mapper.writeValueAsString(resp)
                 }
 
-                val threadFileContent = readThreadFile()
+                val threadFileContent = FileUtils.readThreadFile("shashinscan")
                 if (threadFileContent != null) {
                     resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
                     return mapper.writeValueAsString(resp)
@@ -600,72 +600,6 @@ class SettingsController {
         }
 
         return mapper.writeValueAsString(resp)
-    }
-
-    private fun threadIsAlive(threadName: String): Boolean {
-        for (t in Thread.getAllStackTraces().keys) {
-            if (t.name == threadName) {
-                return t.isAlive
-            }
-        }
-        return false
-    }
-
-    private fun readThreadFile(): String? {
-        val tempDir = System.getProperty("java.io.tmpdir")
-        val f = File(tempDir)
-        val files = f.listFiles()
-        if (files != null) {
-            for (i in files.indices) {
-                val file: File = files[i]
-
-                if (file.isFile &&
-                    file.extension.lowercase() == "shashinscan" &&
-                    threadIsAlive(file.nameWithoutExtension)
-                ) {
-                    return Files.readString(file.toPath())
-                }
-            }
-        }
-
-        return null
-    }
-
-    private fun checkThreadFileAlive(): Boolean {
-        val tempDir = System.getProperty("java.io.tmpdir")
-        val f = File(tempDir)
-        val files = f.listFiles()
-        if (files != null) {
-            for (i in files.indices) {
-                val file: File = files[i]
-
-                if (file.isFile &&
-                    file.extension.lowercase() == "shashinscan" &&
-                    threadIsAlive(file.nameWithoutExtension)
-                ) {
-                    return true
-                }
-            }
-        }
-
-        return false
-    }
-
-    private fun deleteThreadFiles() {
-        val tempDir = System.getProperty("java.io.tmpdir")
-        val f = File(tempDir)
-        val files = f.listFiles()
-        if (files != null) {
-            for (i in files.indices) {
-                val file: File = files[i]
-
-                if (file.isFile &&
-                    file.extension.lowercase() == "shashinscan"
-                ) {
-                    file.delete()
-                }
-            }
-        }
     }
 
     private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String) {
