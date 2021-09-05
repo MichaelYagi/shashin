@@ -14,7 +14,9 @@ import org.bytedeco.opencv.opencv_core.*
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier
 import org.springframework.stereotype.Component
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
 import java.net.URL
 import java.nio.IntBuffer
 import java.util.logging.Level
@@ -63,13 +65,13 @@ class FaceRecognizer() {
                 val tempDir = System.getProperty("java.io.tmpdir")
                 val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".facescan_shashinscan", "Thread")
                 if (threadFile != null) {
-                    getPrediction()
+                    getPrediction(threadFile)
                 }
             }.start()
         }
     }
 
-    private fun getPrediction() {
+    private fun getPrediction(threadFile: File) {
         val matchMap = mutableMapOf<String, Any?>()
         var totalCount = 0
 
@@ -77,6 +79,14 @@ class FaceRecognizer() {
             logger.log(Level.INFO, "Starting face matching.")
 
             for (testImage in this.testImages!!) {
+                try {
+                    val writer = BufferedWriter(FileWriter(threadFile))
+                    writer.write(testImage.getPath()!!)
+                    writer.close()
+                } catch(e: Exception) {
+                    logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
+                }
+
                 matchMap["label"] = ""
                 matchMap["confidence"] = 0.0
 
@@ -90,7 +100,8 @@ class FaceRecognizer() {
                         val testimageFaceDetections = RectVector()
                         faceDetector.detectMultiScale(testimage, testimageFaceDetections)
 
-                        logger.log(Level.INFO, "Detected "+testimageFaceDetections.size()+" faces for "+testImage.getPath())
+                        logger.log(Level.INFO, "Detected "+testimageFaceDetections.size()+" faces for "+testImage.getPath()+" using "+cascadeFile)
+                        faceDetector.close()
 
                         if (testimageFaceDetections.size() > 0) {
 
@@ -98,14 +109,18 @@ class FaceRecognizer() {
                             if (this.trainingData != null && this.trainingData!!.count() > 0) {
                                 for (trainingImage in this.trainingData!!) {
                                     val label = trainingImage.getRecognitionLabelId()!!
-                                    logger.log(Level.INFO, "Training Image processed. Label: "+label+" - image: "+trainingImage.getPath())
+                                    logger.log(Level.INFO, "Training Image processed. Label: "+label+" - image: "+trainingImage.getPath()+" using "+cascadeFile)
 
                                     val image: Mat =
                                         opencv_imgcodecs.imread(trainingImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
 
                                     // Detect faces on training image and loop through each one
+                                    var faceDetectorTrainingData = CascadeClassifier()
+                                    faceDetectorTrainingData.load(cascadeFile)
                                     val faceDetections = RectVector()
-                                    faceDetector.detectMultiScale(image, faceDetections)
+                                    faceDetectorTrainingData.detectMultiScale(image, faceDetections)
+                                    faceDetectorTrainingData.close()
+
                                     var rectCrop: Rect? = null
                                     for (i in 0 until faceDetections.size()) {
                                         // Crop and resize
@@ -119,20 +134,20 @@ class FaceRecognizer() {
                                         rectCrop = Rect(rect.x(), rect.y(), rect.width(), rect.height())
                                         val imageRoi = Mat(image, rectCrop)
 
-                                        val resizeimage = Mat()
+                                        val resizetrainingimage = Mat()
                                         // All images need to be the same size to compare
                                         val sz = Size(imageSize, imageSize)
-                                        opencv_imgproc.resize(imageRoi, resizeimage, sz)
+                                        opencv_imgproc.resize(imageRoi, resizetrainingimage, sz)
 
                                         // Test output for training data
                                         totalCount++
-                                        val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${testImage.getFileName()}.jpg"
-                                        opencv_imgcodecs.imwrite(testOutput, resizeimage)
-                                        println("\n"+testOutput)
+//                                        val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${testImage.getFileName()}.jpg"
+//                                        opencv_imgcodecs.imwrite(testOutput, resizetrainingimage)
+//                                        println("\n"+testOutput)
 
                                         // Save in map
-                                        faceMap[resizeimage] = label
-                                        resizeimage.release()
+                                        faceMap[resizetrainingimage] = label
+//                                        resizetrainingimage.release()
                                     }
                                     image.release()
                                 }
@@ -150,12 +165,14 @@ class FaceRecognizer() {
                                 val faceRecognizer: org.bytedeco.opencv.opencv_face.FaceRecognizer = FisherFaceRecognizer.create()
                                 faceRecognizer.train(images, labels)
                                 labels.release()
+                                images.clear()
                                 val label = IntPointer(1)
                                 val confidence = DoublePointer(1)
 
-                                faceDetector = CascadeClassifier()
-                                faceDetector.load(cascadeFile)
-                                faceDetector.detectMultiScale(testimage, testimageFaceDetections)
+                                val faceDetectorTestImage = CascadeClassifier()
+                                faceDetectorTestImage.load(cascadeFile)
+                                faceDetectorTestImage.detectMultiScale(testimage, testimageFaceDetections)
+                                faceDetectorTestImage.close()
 
                                 var rectCrop: Rect? = null
                                 for (i in 0 until testimageFaceDetections.size()) {
@@ -175,16 +192,16 @@ class FaceRecognizer() {
 
                                     // Test output for test data
                                     totalCount++
-                                    val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${testImage.getFileName()}.jpg"
-                                    opencv_imgcodecs.imwrite(testOutput, resizeimage)
-                                    println("\n"+testOutput)
+//                                    val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${testImage.getFileName()}.jpg"
+//                                    opencv_imgcodecs.imwrite(testOutput, resizeimage)
+//                                    println("\n"+testOutput)
 
                                     imageRoi.release()
-                                    resizeimage.release()
+//                                    resizeimage.release()
                                     faceRecognizer.predict(resizeimage, label, confidence)
                                     val predictedLabel = label[0]
 
-                                    logger.log(Level.INFO, "Predicted label: " + predictedLabel + " Distance :"+ confidence[0]/1000)
+                                    logger.log(Level.INFO, "Predicted label: "+predictedLabel+" Distance :"+confidence[0]/1000+" for "+testImage.getFileName()+" using "+cascadeFile)
                                     if ((confidence[0]/1000) > matchMap["confidence"].toString().toFloat()) {
                                         matchMap["confidence"] = (confidence[0]/1000)
                                         matchMap["label"] = predictedLabel
@@ -197,10 +214,14 @@ class FaceRecognizer() {
                         }
 
                         testimage.release()
+
+//                        if (++totalCount % 200 == 0) {
+//                            System.gc();
+//                        }
                     }
                 }
 
-                logger.log(Level.INFO, "Final outcome - Label: "+matchMap["label"]+" - Confidence: "+matchMap["confidence"]+". For " +testImage.getPath())
+                logger.log(Level.INFO, "Final outcome - Label: "+matchMap["label"]+" - Confidence: "+matchMap["confidence"]+" for " +testImage.getPath())
             }
         }
 
