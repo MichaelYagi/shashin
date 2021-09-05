@@ -3,6 +3,7 @@ package com.miyagi.shashin.util
 import org.springframework.stereotype.Component
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -59,6 +60,73 @@ class FileUtils {
                 logger.log(Level.SEVERE, type + " creation error: " + e.message)
                 return null
             }
+        }
+
+        fun threadIsAlive(threadName: String): Boolean {
+            for (t in Thread.getAllStackTraces().keys) {
+                if (t.name == threadName) {
+                    return t.isAlive
+                }
+            }
+            return false
+        }
+
+        fun checkThreadFileAlive(extension: String): Boolean {
+            val tempDir = System.getProperty("java.io.tmpdir")
+            val f = File(tempDir)
+            val files = f.listFiles()
+            if (files != null) {
+                for (i in files.indices) {
+                    val file: File = files[i]
+
+                    if (file.isFile &&
+                        file.extension.lowercase() == extension &&
+                        threadIsAlive(file.nameWithoutExtension)
+                    ) {
+                        return true
+                    }
+                }
+            }
+
+            return false
+        }
+
+        fun deleteThreadFiles(extension: String) {
+            val tempDir = System.getProperty("java.io.tmpdir")
+            val f = File(tempDir)
+            val files = f.listFiles()
+            if (files != null) {
+                for (i in files.indices) {
+                    val file: File = files[i]
+
+                    if (file.isFile &&
+                        file.extension.lowercase() == extension
+                    ) {
+                        logger.log(Level.INFO, "Thread file deleted: " + file.name)
+                        file.delete()
+                    }
+                }
+            }
+        }
+
+        fun readThreadFile(extension: String): String? {
+            val tempDir = System.getProperty("java.io.tmpdir")
+            val f = File(tempDir)
+            val files = f.listFiles()
+            if (files != null) {
+                for (i in files.indices) {
+                    val file: File = files[i]
+
+                    if (file.isFile &&
+                        file.extension.lowercase() == extension &&
+                        threadIsAlive(file.nameWithoutExtension)
+                    ) {
+                        return Files.readString(file.toPath())
+                    }
+                }
+            }
+
+            return null
         }
     }
 }

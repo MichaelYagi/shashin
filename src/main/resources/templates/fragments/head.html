@@ -27,7 +27,7 @@
         <link href="/css/lg-zoom.min.css" rel="stylesheet">
         <link href="/css/lg-relative-caption.min.css" rel="stylesheet">
     </th:block>
-    <th:block th:if="${titleDescriptor == 'Scan'}">
+    <th:block th:if="${titleDescriptor == 'Scan' or titleDescriptor == 'Matches'}">
         <script src="/js/stomp.min.js"></script>
         <script src="/js/sockjs.min.js"></script>
     </th:block>
