@@ -54,7 +54,7 @@ class PeopleController {
     @SendTo("/topic/matchmessages")
     @Throws(java.lang.Exception::class)
     fun sendMatcnMessage(message: ScanMessage): Message? {
-        var msg = "Start Matching";
+        var msg = "Start Matching"
 
         if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
             msg = "Matching Complete"
@@ -77,37 +77,37 @@ class PeopleController {
         @PathVariable pipelineId: String,
         @PathVariable topic: String
     ) {
-        //println("subscribe")
-        //println(session.id)
+        println("subscribe")
+        println(session.id)
 //        messagingTemplate?.convertAndSend("/app/scanmessage", "testingzzz");
 
     }
 
     @EventListener
     fun onApplicationEvent(event: SessionConnectEvent) {
-//        println("SessionConnectEvent")
-//        println(event.source)
+        println("SessionConnectEvent")
+        println(event.source)
 
 //        messagingTemplate?.convertAndSend("/topic/messages", "testingzzz");
     }
 
     @EventListener
     fun onApplicationEvent(event: SessionDisconnectEvent) {
-//        println("SessionDisconnectEvent")
-//        println(event.sessionId)
+        println("SessionDisconnectEvent")
+        println(event.sessionId)
     }
 
     @EventListener
     fun handleSubscribeEvent(event: SessionSubscribeEvent) {
-//        println("SessionSubscribeEvent")
-//        println(event.message)
+        println("SessionSubscribeEvent")
+        println(event.message)
     }
 
     @GetMapping("/person/matches/{personId}")
     @PreAuthorize("hasRole('ADMIN')")
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
-        model["data"] = ""
+        model["data"] = "Matching Photos ..."
         model["lowMatchResult"] = ""
 
         val settings = model.getAttribute("settings") as Settings
@@ -122,7 +122,7 @@ class PeopleController {
 
             if (trainingData != null && testImages != null) {
                 // Start matching in a separate thread
-                val faceRecognizer = FaceRecognizer(testImages, trainingData)
+                val faceRecognizer = FaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository)
                 faceRecognizer.runRecognizer()
             }
         }

@@ -61,7 +61,7 @@ CREATE TABLE `recognitionlabelphoto` (
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `recognitionConfidenceThreshold` VARCHAR(36) NOT NULL DEFAULT '0.6',
+    `recognitionConfidenceThreshold` VARCHAR(36) NOT NULL DEFAULT '0.2',
     `traininDataLimit` INTEGER NOT NULL DEFAULT 100,
     `matchScanLimit` INTEGER NOT NULL DEFAULT 10,
     `queryLimit` INTEGER NOT NULL DEFAULT 20,

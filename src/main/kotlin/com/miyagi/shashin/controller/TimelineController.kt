@@ -194,7 +194,7 @@ class TimelineController {
                     } else {
                         recognitionLabelObj = recognitionLabelRecord
                     }
-                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndAndMetadataId(recognitionLabelObj.getId(),metadataObj.get().getId())
+                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj.getId(),metadataObj.get().getId())
                     if (recognitionLabelPhotoCount == 0) {
                         val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                         recognitionLabelPhotoObj.setMetadataId(metadataObj.get().getId())
@@ -344,7 +344,7 @@ class TimelineController {
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
                         }
-                        val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndAndMetadataId(recognitionLabelObj.getId(),metadata.getId())
+                        val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj.getId(),metadata.getId())
                         if (recognitionLabelPhotoCount == 0) {
                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())

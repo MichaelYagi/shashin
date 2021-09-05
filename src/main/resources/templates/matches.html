@@ -104,71 +104,71 @@
 
 <script type="text/babel">
     $(document).ready(function () {
-        // // Web socket
-        // var stompClient = null;
-        // var scanInProgress = false;
-        // var showDebug = true;
-        //
-        // connect();
-        //
-        // function matchRefresh() {
-        //     sendMessage();
-        //     let msgId = "#msg";
-        //     if ($(msgId).text() === "Matching Complete") {
-        //         scanInProgress = false;
-        //         disconnect();
-        //     } else {
-        //         scanInProgress = true;
-        //         setTimeout(matchRefresh, 5000);
-        //     }
-        // }
-        //
-        // function connect() {
-        //     var socket = new SockJS('/websocket-endpoint');
-        //     stompClient = Stomp.over(socket);
-        //     if (showDebug === false) {
-        //         stompClient.debug = null
-        //     }
-        //
-        //     console.log("Socket Connecting");
-        //
-        //     stompClient.connect({}, function() {
-        //         if (scanInProgress === false) {
-        //             matchRefresh();
-        //         }
-        //         console.log( "Connected STOMP client");
-        //         this.subscribe("/topic/matchmessages", function (message) {
-        //             let respMessage = JSON.parse(message.body).content;
-        //             console.log("message: "+message);
-        //             showMessage(respMessage);
-        //         });
-        //     }, function(e) {
-        //         console.log( "connect() error" );
-        //         console.log( e );
-        //         showMessage("Socket connection error: " + e.toString())
-        //         scanInProgress = false;
-        //     });
-        // }
-        //
-        // function disconnect() {
-        //     if (stompClient !== null) {
-        //         stompClient.disconnect();
-        //     }
-        //     console.log("Disconnected");
-        // }
-        //
-        // function sendMessage() {
-        //     if (stompClient !== null) {
-        //         stompClient.send("/app/matchmessage", {}, JSON.stringify({'message': "getMatchMessage"}));
-        //     } else {
-        //         showMessage("Trying to send message but STOMP client is null")
-        //         scanInProgress = false;
-        //     }
-        // }
-        //
-        // function showMessage(message) {
-        //     $("#msg").text(message);
-        // }
+        // Web socket
+        var stompClient = null;
+        var scanInProgress = false;
+        var showDebug = false;
+
+        connect();
+
+        function matchRefresh() {
+            sendMessage();
+            let msgId = "#msg";
+            if ($(msgId).text() === "Matching Complete") {
+                scanInProgress = false;
+                disconnect();
+            } else {
+                scanInProgress = true;
+                setTimeout(matchRefresh, 5000);
+            }
+        }
+
+        function connect() {
+            var socket = new SockJS('/websocket-endpoint');
+            stompClient = Stomp.over(socket);
+            if (showDebug === false) {
+                stompClient.debug = null
+            }
+
+            // console.log("Socket Connecting");
+
+            stompClient.connect({}, function() {
+                if (scanInProgress === false) {
+                    matchRefresh();
+                }
+                // console.log( "Connected STOMP client");
+                this.subscribe("/topic/matchmessages", function (message) {
+                    let respMessage = JSON.parse(message.body).content;
+                    // console.log("respMessage: "+message);
+                    showMessage(respMessage);
+                });
+            }, function(e) {
+                // console.log( "connect() error" );
+                // console.log( e );
+                showMessage("Socket connection error: " + e.toString())
+                scanInProgress = false;
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            // console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            if (stompClient !== null) {
+                stompClient.send("/app/matchmessage", {}, JSON.stringify({'message': "getMatchMessage"}));
+            } else {
+                showMessage("Trying to send message but STOMP client is null")
+                scanInProgress = false;
+            }
+        }
+
+        function showMessage(message) {
+            $("#msg").text(message);
+        }
     });
 </script>
 </body>

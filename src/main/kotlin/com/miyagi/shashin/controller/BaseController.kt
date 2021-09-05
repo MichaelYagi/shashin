@@ -69,7 +69,7 @@ class BaseController {
             settingsObj.setQueryLimit(20)
             settingsObj.setMatchScanLimit(10)
             settingsObj.setTrainingDataLimit(100)
-            settingsObj.setRecognitionConfidenceThreshold("0.6")
+            settingsObj.setRecognitionConfidenceThreshold("0.2")
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
             settingsObj.setCreatedAt(dtf.format(now))
