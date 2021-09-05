@@ -1,9 +1,10 @@
 package com.miyagi.shashin.component
 
 import com.miyagi.shashin.ShashinApplication
-import com.miyagi.shashin.controller.SettingsController
+import com.miyagi.shashin.model.RecognitionLabelPhoto
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.TrainingData
+import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.util.FileUtils
 import org.bytedeco.javacpp.DoublePointer
 import org.bytedeco.javacpp.IntPointer
@@ -13,7 +14,9 @@ import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -26,15 +29,17 @@ import java.util.logging.Logger
 class FaceRecognizer() {
     private var testImages: MutableIterable<Metadata>? = null
     private var trainingData: MutableIterable<TrainingData>? = null
+    private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
     private var cascadeDir: String = "lib/cascades"
     private lateinit var cascadeFileList: MutableList<String>
     private var logger: Logger = Logger.getLogger(FaceRecognizer::class.simpleName)
     private val threadExtensionName: String = "facescan_shashinscan"
     private val imageSize: Int = 300
 
-    internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>) : this() {
+    internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?) : this() {
         this.trainingData = trainingData
         this.testImages = testImages
+        this.recognitionLabelPhotoRepository = recognitionLabelPhotoRepository
         this.cascadeFileList = mutableListOf()
         loadCascadeData()
     }
@@ -76,24 +81,17 @@ class FaceRecognizer() {
         var totalCount = 0
 
         if (this.testImages != null && this.testImages!!.count() > 0) {
-            logger.log(Level.INFO, "Starting face matching.")
+            writeToThreadFileAndLogMessage("Starting face matching.",threadFile)
 
             for (testImage in this.testImages!!) {
-                try {
-                    val writer = BufferedWriter(FileWriter(threadFile))
-                    writer.write(testImage.getPath()!!)
-                    writer.close()
-                } catch(e: Exception) {
-                    logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
-                }
-
                 matchMap["label"] = ""
                 matchMap["confidence"] = 0.0
+                writeToThreadFileAndLogMessage("matching against "+testImage.getPath()!!,threadFile)
 
                 if (this.cascadeFileList.isNotEmpty()) {
                     for (cascadeFile in this.cascadeFileList) {
                         // Load cascade file
-                        var faceDetector = CascadeClassifier()
+                        val faceDetector = CascadeClassifier()
                         faceDetector.load(cascadeFile)
 
                         val testimage: Mat = opencv_imgcodecs.imread(testImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
@@ -115,7 +113,7 @@ class FaceRecognizer() {
                                         opencv_imgcodecs.imread(trainingImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
 
                                     // Detect faces on training image and loop through each one
-                                    var faceDetectorTrainingData = CascadeClassifier()
+                                    val faceDetectorTrainingData = CascadeClassifier()
                                     faceDetectorTrainingData.load(cascadeFile)
                                     val faceDetections = RectVector()
                                     faceDetectorTrainingData.detectMultiScale(image, faceDetections)
@@ -124,7 +122,7 @@ class FaceRecognizer() {
                                     var rectCrop: Rect? = null
                                     for (i in 0 until faceDetections.size()) {
                                         // Crop and resize
-                                        var rect: Rect = faceDetections.get(i)
+                                        val rect: Rect = faceDetections.get(i)
                                         opencv_imgproc.rectangle(
                                             image,
                                             Point(rect.x(), rect.y()),
@@ -176,7 +174,7 @@ class FaceRecognizer() {
 
                                 var rectCrop: Rect? = null
                                 for (i in 0 until testimageFaceDetections.size()) {
-                                    var rect: Rect = testimageFaceDetections.get(i)
+                                    val rect: Rect = testimageFaceDetections.get(i)
                                     opencv_imgproc.rectangle(
                                         testimage,
                                         Point(rect.x(), rect.y()),
@@ -221,10 +219,44 @@ class FaceRecognizer() {
                     }
                 }
 
-                logger.log(Level.INFO, "Final outcome - Label: "+matchMap["label"]+" - Confidence: "+matchMap["confidence"]+" for " +testImage.getPath())
+                val message = "Final outcome - Label: "+matchMap["label"]+" - Confidence: "+matchMap["confidence"]+" for "+testImage.getPath()
+                writeToThreadFileAndLogMessage(message,threadFile)
+
+                // Save record
+                val labelId = matchMap["label"].toString().toInt()
+                val confidence = matchMap["confidence"].toString()
+                val recordCount = this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(labelId,testImage.getId())
+                if (recordCount == 0) {
+                    val recognitionLabelPhoto = RecognitionLabelPhoto()
+                    recognitionLabelPhoto.setMetadataId(testImage.getId())
+                    recognitionLabelPhoto.setRecognitionLabelId(labelId)
+                    val confidenceDoubleVal = confidence.toDouble()
+                    val confidenceVal: String = "%.1f".format(confidenceDoubleVal)
+                    recognitionLabelPhoto.setConfidence(confidenceVal)
+                    this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                } else {
+                    val recognitionLabelPhoto = this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(labelId,confidence)
+                    val confidenceDoubleVal = confidence.toDouble()
+                    val confidenceVal: String = "%.1f".format(confidenceDoubleVal)
+                    if (recognitionLabelPhoto != null) {
+                        recognitionLabelPhoto.setConfidence(confidenceVal)
+                        this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                    }
+                }
             }
         }
 
-        logger.log(Level.INFO, "Completed face matching.")
+        writeToThreadFileAndLogMessage("Matching Complete",threadFile)
+    }
+
+    private fun writeToThreadFileAndLogMessage(message: String, threadFile: File) {
+        try {
+            val writer = BufferedWriter(FileWriter(threadFile))
+            writer.write(message)
+            writer.close()
+        } catch(e: Exception) {
+            logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
+        }
+        logger.log(Level.INFO, message)
     }
 }
