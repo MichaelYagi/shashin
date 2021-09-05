@@ -27,7 +27,7 @@
 
     function renderTimelineModal(rawMetadata,rawRecognitionLabels,taggedPeopleList) {
         taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
-        console.log('taggedPeopleList:'+taggedPeopleList)
+        //console.log('taggedPeopleList:'+taggedPeopleList)
 
         var metadata = JSON.parse(decodeHtml(rawMetadata));
         var recognitionLabels = rawRecognitionLabels != "null" && rawRecognitionLabels.length  > 0 ? JSON.parse(decodeHtml(rawRecognitionLabels)) : "";
