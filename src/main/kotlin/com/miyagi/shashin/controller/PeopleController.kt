@@ -133,7 +133,7 @@ class PeopleController {
     @PreAuthorize("hasRole('ADMIN')")
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
-        model["data"] = "Matching Photos ..."
+        model["data"] = ""
         model["lowMatchResults"] = ""
         model["recognitionLabels"] = ""
         model["labelPhotoMap"] = ""

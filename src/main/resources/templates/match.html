@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body>
+
+<div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
+        <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+            <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+            <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
+            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo})"></div>
+        </main>
+    </div>
+</div>
+
+<script type="text/babel">
+    $(document).ready(function () {
+        $("#matchAction").click(function(e) {
+            e.preventDefault();
+
+            $.get("/person/matches/start", function(data) {
+                window.location.href = window.location.href;
+            });
+        });
+
+        // Web socket
+        var stompClient = null;
+        var scanInProgress = false;
+        var showDebug = false;
+
+        connect();
+
+        function matchRefresh() {
+            sendMessage();
+            let msgId = "#msg";
+            if ($(msgId).text() === "Matching Complete") {
+                scanInProgress = false;
+                disconnect();
+            } else {
+                scanInProgress = true;
+                setTimeout(matchRefresh, 5000);
+            }
+        }
+
+        function connect() {
+            var socket = new SockJS('/websocket-endpoint');
+            stompClient = Stomp.over(socket);
+            if (showDebug === false) {
+                stompClient.debug = null
+            }
+
+            // console.log("Socket Connecting");
+
+            stompClient.connect({}, function() {
+                if (scanInProgress === false) {
+                    matchRefresh();
+                }
+                // console.log( "Connected STOMP client");
+                this.subscribe("/topic/matchmessages", function (message) {
+                    let respMessage = JSON.parse(message.body).content;
+                    // console.log("respMessage: "+message);
+                    showMessage(respMessage);
+                });
+            }, function(e) {
+                // console.log( "connect() error" );
+                // console.log( e );
+                showMessage("Socket connection error: " + e.toString())
+                scanInProgress = false;
+            });
+        }
+
+        function disconnect() {
+            if (stompClient !== null) {
+                stompClient.disconnect();
+            }
+            // console.log("Disconnected");
+        }
+
+        function sendMessage() {
+            if (stompClient !== null) {
+                stompClient.send("/app/matchmessage", {}, JSON.stringify({'message': "getMatchMessage"}));
+            } else {
+                showMessage("Trying to send message but STOMP client is null")
+                scanInProgress = false;
+            }
+        }
+
+        function showMessage(message) {
+            $("#msg").text(message);
+        }
+    });
+</script>
+</body>
+</html>

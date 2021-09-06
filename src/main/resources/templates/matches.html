@@ -12,8 +12,6 @@
             <h1 th:text="${personInfo.name}"></h1>
             <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
 
-            <button class="btn btn-primary" id="matchAction">Scan</button><br><br>
-
             <th:block th:if="${lowMatchResults != ''}">
                 <div th:replace="fragments/appjs :: appjs()"></div>
                 <div th:replace="fragments/matchesmodal :: matchesmodal()"></div>
@@ -241,6 +239,13 @@
 
 <script type="text/babel">
     $(document).ready(function () {
+        const $infiniteScrollGallery = document.getElementById(
+            'infinite-scroll-gallery',
+        );
+        const lightGalleryConfigs = getLightGalleryConfigs();
+        lightGalleryConfigs["selector"] = '.mediaLink';
+        var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+
         $("#matchToolsBatchEdit").click(function(e) {
             e.preventDefault();
 
@@ -259,80 +264,6 @@
             }
             $("#propBatchMetadata").modal('show');
         });
-
-        $("#matchAction").click(function(e) {
-            e.preventDefault();
-
-            $.get("/person/matches/start", function(data) {
-                window.location.href = window.location.href;
-            });
-        });
-
-        // Web socket
-        var stompClient = null;
-        var scanInProgress = false;
-        var showDebug = false;
-
-        connect();
-
-        function matchRefresh() {
-            sendMessage();
-            let msgId = "#msg";
-            if ($(msgId).text() === "Matching Complete") {
-                scanInProgress = false;
-                disconnect();
-            } else {
-                scanInProgress = true;
-                setTimeout(matchRefresh, 5000);
-            }
-        }
-
-        function connect() {
-            var socket = new SockJS('/websocket-endpoint');
-            stompClient = Stomp.over(socket);
-            if (showDebug === false) {
-                stompClient.debug = null
-            }
-
-            // console.log("Socket Connecting");
-
-            stompClient.connect({}, function() {
-                if (scanInProgress === false) {
-                    matchRefresh();
-                }
-                // console.log( "Connected STOMP client");
-                this.subscribe("/topic/matchmessages", function (message) {
-                    let respMessage = JSON.parse(message.body).content;
-                    // console.log("respMessage: "+message);
-                    showMessage(respMessage);
-                });
-            }, function(e) {
-                // console.log( "connect() error" );
-                // console.log( e );
-                showMessage("Socket connection error: " + e.toString())
-                scanInProgress = false;
-            });
-        }
-
-        function disconnect() {
-            if (stompClient !== null) {
-                stompClient.disconnect();
-            }
-            // console.log("Disconnected");
-        }
-
-        function sendMessage() {
-            if (stompClient !== null) {
-                stompClient.send("/app/matchmessage", {}, JSON.stringify({'message': "getMatchMessage"}));
-            } else {
-                showMessage("Trying to send message but STOMP client is null")
-                scanInProgress = false;
-            }
-        }
-
-        function showMessage(message) {
-            $("#msg").text(message);
-        }
     });
 </script>
 </body>

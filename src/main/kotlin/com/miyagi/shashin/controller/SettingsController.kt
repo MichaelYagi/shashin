@@ -423,6 +423,17 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
+    @GetMapping("/settings/scanmatch")
+    fun getMatchScan(model: Model): String {
+        val module = "match"
+        model["data"] = "Click scan to start finding people"
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
