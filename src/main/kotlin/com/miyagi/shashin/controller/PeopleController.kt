@@ -298,7 +298,7 @@ class PeopleController {
             personMap.containsKey("isObject")
         ) {
             val metadataId = personMap.get("metadataId").toString()
-            val isObject = personMap.containsKey("isObject").toString().toBoolean()
+            val isObject = personMap.get("isObject").toString().toBoolean()
 
             if (personMap["tagpeople"].toString() != "") {
                 val recognitionLabelArray = personMap["tagpeople"].toString().split(",")

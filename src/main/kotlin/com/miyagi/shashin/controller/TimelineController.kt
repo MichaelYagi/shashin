@@ -130,7 +130,7 @@ class TimelineController {
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
                             val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                            if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != "object") {
+                            if (recognitionLabelObj != null) {
                                 labelString += recognitionLabelObj.get().getName() + ","
                             }
                         }
@@ -169,7 +169,8 @@ class TimelineController {
             metadataMap.containsKey("keywords") &&
             metadataMap.containsKey("latlng") &&
 //            metadataMap.containsKey("labelIds") &&
-            metadataMap.containsKey("tagpeople")
+            metadataMap.containsKey("tagpeople") &&
+            metadataMap.containsKey("isObject")
         ) {
             val metadataObj = metadataRepository.findById(metadataMap["id"].toString())
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataObj.get().getId())
@@ -178,6 +179,7 @@ class TimelineController {
                     recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
                 }
             }
+            val isObject = metadataMap["isObject"].toString().toBoolean()
 
             if (metadataMap["tagpeople"].toString() != "") {
                 val recognitionLabelArray = metadataMap["tagpeople"].toString().split(",")
@@ -203,7 +205,30 @@ class TimelineController {
                         recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                     }
                 }
+            } else if (isObject) {
+                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                var recognitionLabelObj = RecognitionLabel()
+                if (recognitionLabelRecord == null) {
+                    recognitionLabelObj.setName("object")
+                    val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    val now = LocalDateTime.now()
+                    recognitionLabelObj.setCreatedAt(dtf.format(now))
+                    recognitionLabelObj.setModifiedAt(dtf.format(now))
+                    recognitionLabelRepository?.save(recognitionLabelObj)
+                } else {
+                    recognitionLabelObj = recognitionLabelRecord
+                }
+
+                val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                recognitionLabelPhotoObj.setMetadataId(metadataId)
+                recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                recognitionLabelPhotoObj.setConfidence("-0.1")
+                recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+            } else if (metadataMap["tagpeople"].toString().isBlank()) {
+                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
             }
+
             if (metadataMap["year"].toString() == "") {
                 metadataObj.get().setYear(null)
             } else {
@@ -287,12 +312,18 @@ class TimelineController {
         var latlng: String? = null
         var keywords: String? = null
         var recognitionLabelNames: String? = null
+        var isObject: Boolean = false
 
         for ((k, v) in batchMetadataMap) {
             if (v != "") {
                 when (k) {
+                    "batchisobject" -> {
+                        if (v.toString() == "on") {
+                            isObject = true
+                        }
+                    }
                     "tagBatchDataInput" -> {
-                        recognitionLabelNames = v.toString()
+                        recognitionLabelNames = v.toString().trim()
                     }
                     "batchMetadataIds" -> {
                         idArray = mapper.readValue(v.toString(), Array<String>::class.java)
@@ -329,7 +360,27 @@ class TimelineController {
                     }
                 }
 
-                if (recognitionLabelNames.toString() != "") {
+                if (isObject) {
+                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
+                    val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                    var recognitionLabelObj = RecognitionLabel()
+                    if (recognitionLabelRecord == null) {
+                        recognitionLabelObj.setName("object")
+                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        val now = LocalDateTime.now()
+                        recognitionLabelObj.setCreatedAt(dtf.format(now))
+                        recognitionLabelObj.setModifiedAt(dtf.format(now))
+                        recognitionLabelRepository?.save(recognitionLabelObj)
+                    } else {
+                        recognitionLabelObj = recognitionLabelRecord
+                    }
+
+                    val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                    recognitionLabelPhotoObj.setMetadataId(metadata.getId())
+                    recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                    recognitionLabelPhotoObj.setConfidence("-0.1")
+                    recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                } else if (recognitionLabelNames.toString() != "") {
                     val recognitionLabelArray = recognitionLabelNames.toString().split(",")
                     for (recognitionLabel in recognitionLabelArray) {
                         val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
