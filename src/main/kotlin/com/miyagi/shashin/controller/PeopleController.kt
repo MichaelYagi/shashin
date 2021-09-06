@@ -1,5 +1,7 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.component.FaceRecognizer
 import com.miyagi.shashin.component.Message
@@ -19,6 +21,7 @@ import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
@@ -26,6 +29,8 @@ import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.ArrayList
 import java.util.HashMap
 import javax.servlet.http.HttpSession
@@ -108,13 +113,45 @@ class PeopleController {
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
         model["data"] = "Matching Photos ..."
-        model["lowMatchResult"] = ""
+        model["lowMatchResults"] = ""
+        model["recognitionLabels"] = ""
+        model["labelPhotoMap"] = ""
+        model["parameter"] = personId
+
+        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+        if (recognitionLabels != null && recognitionLabels.count() > 0) {
+            model["recognitionLabels"] = recognitionLabels
+        }
+
+        val recognitionLabel = recognitionLabelRepository?.findById(personId)
+        if (recognitionLabel != null) {
+            model["personInfo"] = recognitionLabel.get()
+        }
 
         val settings = model.getAttribute("settings") as Settings
         // Get records of photos that haven't been confirmed - Threshold not 100.0 and greater than threshold configured
         val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!,settings.getMatchScanLimit()!!)
         if (lowMatchResults != null && lowMatchResults.count() > 0) {
-            model["lowMatchResult"] = lowMatchResults
+            model["lowMatchResults"] = lowMatchResults
+
+            val labelPhotoMap = mutableMapOf<String, String>()
+            for (metadata in lowMatchResults) {
+                val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                var labelString = ""
+                if (recognitionLabelPhotos != null) {
+                    for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                        val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                        if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != "object") {
+                            labelString += recognitionLabelObj.get().getName() + ","
+                        }
+                    }
+                }
+                if (labelString.isNotBlank()) {
+                    labelString = labelString.dropLast(1)
+                }
+                labelPhotoMap[metadata.getId()] = labelString
+            }
+            model["labelPhotoMap"] = labelPhotoMap
         } else {
             // Scan records of photos that haven't been scanned in a separate thread
             val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
@@ -184,9 +221,9 @@ class PeopleController {
 
         response["data"] = "There are no photos.."
         response["metadataList"] = ""
-        response["recognitionLabels"] = ""
         response["labelPhotoMap"] = ""
         response["personInfo"] = ""
+        response["recognitionLabels"] = ""
         response["parameter"] = personId
 
         response["msg"] = "Could not get results"
@@ -202,15 +239,21 @@ class PeopleController {
                 response["personInfo"] = recognitionLabel.get()
             }
 
+            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+            if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                response["recognitionLabels"] = recognitionLabels
+            }
+
             var metadataList: MutableIterable<Metadata>? = null
+            val settings = model.getAttribute("settings") as Settings
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
-                metadataList = metadataRepository?.findAlbumPhotoByPerson(personId,currentUserObj.getId(),page,2000)
+                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),page,2000)
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
-                val recognitionLabels = recognitionLabelRepository?.findAll()
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
-                metadataList = metadataRepository?.findMetadataByPerson(personId,page,2000)
+                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,page,2000)
             }
 
             response["metadataList"] = metadataList
@@ -224,7 +267,7 @@ class PeopleController {
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
                             val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                            if (recognitionLabelObj != null) {
+                            if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != "object") {
                                 labelString += recognitionLabelObj.get().getName() + ","
                             }
                         }
@@ -244,4 +287,83 @@ class PeopleController {
 
         return response
     }
+
+    @RequestMapping(value = ["/person/update"], method = [RequestMethod.POST], produces = ["application/json"])
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseBody
+    fun postPersonUpdate(model: Model, @RequestBody requestBody: JsonNode): String {
+        val personMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (personMap.containsKey("metadataId") &&
+            personMap.containsKey("tagpeople") &&
+            personMap.containsKey("isObject")
+        ) {
+            val metadataId = personMap.get("metadataId").toString()
+            val isObject = personMap.containsKey("isObject").toString().toBoolean()
+
+            if (personMap["tagpeople"].toString() != "") {
+                val recognitionLabelArray = personMap["tagpeople"].toString().split(",")
+                for (recognitionLabel in recognitionLabelArray) {
+                    val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
+                    var recognitionLabelObj = RecognitionLabel()
+                    if (recognitionLabelRecord == null) {
+                        recognitionLabelObj.setName(recognitionLabel.trim())
+                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                        val now = LocalDateTime.now()
+                        recognitionLabelObj.setCreatedAt(dtf.format(now))
+                        recognitionLabelObj.setModifiedAt(dtf.format(now))
+                        recognitionLabelRepository?.save(recognitionLabelObj)
+                    } else {
+                        recognitionLabelObj = recognitionLabelRecord
+                    }
+                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj.getId(),metadataId)
+                    if (recognitionLabelPhotoCount == 0) {
+                        val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                        recognitionLabelPhotoObj.setMetadataId(metadataId)
+                        recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                        recognitionLabelPhotoObj.setConfidence("0.0")
+                        recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                    }
+                }
+
+                resp["msg"] = "Saved"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
+            } else if (isObject) {
+                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                var recognitionLabelObj = RecognitionLabel()
+                if (recognitionLabelRecord == null) {
+                    recognitionLabelObj.setName("object")
+                    val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    val now = LocalDateTime.now()
+                    recognitionLabelObj.setCreatedAt(dtf.format(now))
+                    recognitionLabelObj.setModifiedAt(dtf.format(now))
+                    recognitionLabelRepository?.save(recognitionLabelObj)
+                } else {
+                    recognitionLabelObj = recognitionLabelRecord
+                }
+
+                val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                recognitionLabelPhotoObj.setMetadataId(metadataId)
+                recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                recognitionLabelPhotoObj.setConfidence("-0.1")
+                recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+
+                resp["msg"] = "Saved"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
+            } else if (personMap["tagpeople"].toString().isBlank()) {
+                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+
+                resp["msg"] = "Saved"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
+            }
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
 }

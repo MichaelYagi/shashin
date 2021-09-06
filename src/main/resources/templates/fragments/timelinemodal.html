@@ -173,6 +173,7 @@
 
         $("#saveMetadata"+metadata.id).click(function (e) {
             e.preventDefault();
+            closeTagPeopleDropdown(metadata.id);
 
             if (validateMetadataInputs(
                 $("#dayTaken"+metadata.id).val(),

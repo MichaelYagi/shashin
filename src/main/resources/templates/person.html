@@ -9,17 +9,15 @@
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+            <h1 th:text="${personInfo.name}"></h1>
             <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentPage" name="currentPage" value="0">
 
             <div id="personMessage"></div>
-
             <th:block th:if="${metadataList != ''}">
                 <div th:replace="fragments/appjs :: appjs()"></div>
-<!--                <div th:replace="fragments/albumjs :: albumjs()"></div>-->
-<!--                <div th:replace="fragments/albummodal :: albummodal()"></div>-->
+                <div th:replace="fragments/personmodal :: personmodal()"></div>
 
-                <h1 th:text="${personInfo.name}"></h1>
                 <div id="infinite-scroll-gallery">
                     <div class="row">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
@@ -33,14 +31,8 @@
                                 </th:block>
 
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                    <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
-                                        <a href="#" th:id="'select'+${metadata.id}">
-                                            <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
-                                        </a>
-                                    </div>
-
                                     <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                        <a href="#" data-toggle="modal" th:data-target="'#propalbum'+${metadata.id}">
+                                        <a href="#" data-toggle="modal" th:data-target="'#propperson'+${metadata.id}">
                                             <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
                                         </a>
                                     </div>
@@ -85,12 +77,12 @@
                                 </div>
                             </div>
 
-                            <div th:id="'personmodal'+${metadata.id}"></div>
+                            <div th:id="'matchesmodal'+${metadata.id}"></div>
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
                                 setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                                // renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
+                                renderPersonModal("[[${metadata}]]","[[${recognitionLabels}]]","[[${labelPhotoMap.get(metadata.id)}]]");
                                 // activateAlbumListeners("[[${metadata}]]","[[${album}]]")
                                 /*]]>*/
                             </script>

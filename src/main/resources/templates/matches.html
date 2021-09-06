@@ -5,16 +5,15 @@
 
 <div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
 
-
 <div class="container-fluid">
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
+            <h1 th:text="${personInfo.name}"></h1>
             <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <th:block th:if="${lowMatchResults != ''}">
                 <div th:replace="fragments/appjs :: appjs()"></div>
-                <!--                <div th:replace="fragments/albumjs :: albumjs()"></div>-->
-                <!--                <div th:replace="fragments/albummodal :: albummodal()"></div>-->
+                <div th:replace="fragments/matchesmodal :: matchesmodal()"></div>
 
                 <div id="infinite-scroll-gallery">
                     <div class="row">
@@ -36,7 +35,7 @@
                                     </div>
 
                                     <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                        <a href="#" data-toggle="modal" th:data-target="'#propalbum'+${metadata.id}">
+                                        <a href="#" data-toggle="modal" th:data-target="'#propmatches'+${metadata.id}">
                                             <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
                                         </a>
                                     </div>
@@ -81,13 +80,12 @@
                                 </div>
                             </div>
 
-                            <div th:id="'personmodal'+${metadata.id}"></div>
+                            <div th:id="'matchesmodal'+${metadata.id}"></div>
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
                                 setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                                // renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
-                                // activateAlbumListeners("[[${metadata}]]","[[${album}]]")
+                                renderMatchesModal("[[${metadata}]]","[[${recognitionLabels}]]","[[${labelPhotoMap.get(metadata.id)}]]");
                                 /*]]>*/
                             </script>
 

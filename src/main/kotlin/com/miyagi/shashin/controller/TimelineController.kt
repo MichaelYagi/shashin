@@ -109,7 +109,7 @@ class TimelineController {
                 }
             }
 
-            val recognitionLabels = recognitionLabelRepository?.findAll()
+            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
             if (recognitionLabels != null && recognitionLabels.count() > 0) {
                 response["recognitionLabels"] = recognitionLabels
             }
@@ -130,7 +130,7 @@ class TimelineController {
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
                             val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                            if (recognitionLabelObj != null) {
+                            if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != "object") {
                                 labelString += recognitionLabelObj.get().getName() + ","
                             }
                         }
