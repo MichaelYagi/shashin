@@ -11,6 +11,9 @@
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <h1 th:text="${personInfo.name}"></h1>
             <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+
+            <button class="btn btn-primary" id="matchAction">Scan</button><br><br>
+
             <th:block th:if="${lowMatchResults != ''}">
                 <div th:replace="fragments/appjs :: appjs()"></div>
                 <div th:replace="fragments/matchesmodal :: matchesmodal()"></div>
@@ -20,6 +23,7 @@
                         <th:block th:each="metadata, iterStat: ${lowMatchResults}">
                             <div class="photo-thumbnail-container photo-thumbnail">
                                 <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+                                <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
 
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
@@ -100,8 +104,170 @@
     </div>
 </div>
 
+<div class="modal fade" id="propBatchMetadata" tabindex="-1" role="dialog" aria-labelledby="labelBatchMetadata" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos <span id="editPhotosNamesModalLabel"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Empty fields will be ignored</p>
+                <form id="saveBatchData">
+                    <input type="hidden" id="batchMetadataIds" name="batchMetadataIds" value="">
+
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <label for="tagBatchDataInput" class="col-form-label">Tag People (Comma separated)</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" onfocus="return closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+
+                                <th:block th:if="${recognitionLabels != ''}">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary dropdown-toggle" onclick="return toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+                                        <div class="dropdown-menu" id="albumNameList">
+                                            <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
+                                                <button class="dropdown-item" type="button">
+                                                    <input type="checkbox" onclick="return populateBatchLabel();" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
+                                                    <label th:for="${recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
+                                                </button>
+                                            </th:block>
+                                        </div>
+                                    </div>
+                                </th:block>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <input type="checkbox" name="batchisobject" id="batchisobject">
+                                    <label class="form-check-label" for="batchisobject">These are objects</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-sm">
+                    <span id="msgBatchMetadata"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+            <script type="text/javascript">
+                function toggleBatchTagPeopleDropdown() {
+                    $("#tagpeopledropdown").dropdown('toggle');
+                }
+
+                function closeBatchTagPeopleDropdown() {
+                    $("#tagpeopledropdown").dropdown('hide');
+                }
+
+                function populateBatchLabel() {
+                    var checkedBoxes = $('input[name="recognitionLabel[]"]:checked')
+                    var labelString = ""
+                    checkedBoxes.each(function() {
+                        labelString += $(this).val() + ",";
+                    });
+                    if (labelString.length > 0) {
+                        labelString = labelString.slice(0,-1)
+                    }
+                    $("#tagBatchDataInput").val(decodeHtml(labelString));
+                }
+
+                $.fn.serializeObject = function() {
+                    var o = {};
+                    var a = this.serializeArray();
+                    $.each(a, function() {
+                        if (o[this.name]) {
+                            if (!o[this.name].push) {
+                                o[this.name] = [o[this.name]];
+                            }
+                            o[this.name].push(this.value || '');
+                        } else {
+                            o[this.name] = this.value || '';
+                        }
+                    });
+                    return o;
+                };
+
+                $("#batchisobject").click(function (e) {
+                    closeBatchTagPeopleDropdown();
+                    if($(this).prop("checked") === true) {
+                        $("#tagBatchDataInput").val("");
+                    }
+                });
+
+                $("#saveBatchMetadata").click(function (e) {
+                    e.preventDefault();
+                    closeBatchTagPeopleDropdown();
+
+                    const posting = $.post({
+                        url: "/timeline/update/batch",
+                        data: JSON.stringify($('#saveBatchData').serializeObject()),
+                        contentType: 'application/json; charset=utf-8'
+                    });
+
+                    posting.done(function (data) {
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            let message = "Error";
+                            if (data["status"] === "success") {
+                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                // window.top.location = window.top.location
+                            } else {
+                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            }
+                            $("#msgBatchMetadata").html(message);
+                        }
+                    });
+
+                });
+
+                // Clear message on modal close
+                $('#propBatchMetadata').on('hidden.bs.modal', function () {
+                    $("#msgBatchMetadata").html("");
+                    clearTimelineSelection();
+                });
+
+                // Clear message on input editing
+                $('#propBatchMetadata').bind('keypress', function() {
+                    $("#msgBatchMetadata").html("");
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
 <script type="text/babel">
     $(document).ready(function () {
+        $("#matchToolsBatchEdit").click(function(e) {
+            e.preventDefault();
+
+            let metadataIdList = [];
+            let filenameList = "";
+            $('.bi-circle-fill').each(function(i, obj) {
+                var metadataId = obj.id.substring(6, obj.id.length);
+                metadataIdList.push(metadataId);
+                filenameList += $("#filename"+metadataId).val().trim()+", ";
+            });
+            filenameList = filenameList.replace(/,\s*$/, "");
+
+            $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
+            if (filenameList !== "") {
+                $("#editPhotosNamesModalLabel").text(filenameList);
+            }
+            $("#propBatchMetadata").modal('show');
+        });
+
+        $("#matchAction").click(function(e) {
+            e.preventDefault();
+
+            $.get("/person/matches/start", function(data) {
+                window.location.href = window.location.href;
+            });
+        });
+
         // Web socket
         var stompClient = null;
         var scanInProgress = false;
