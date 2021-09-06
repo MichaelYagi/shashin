@@ -423,7 +423,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @GetMapping("/settings/scanmatch")
+    @GetMapping("/settings/match")
     fun getMatchScan(model: Model): String {
         val module = "match"
         model["data"] = "Click scan to start finding people"
