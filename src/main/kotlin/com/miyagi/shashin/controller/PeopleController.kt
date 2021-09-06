@@ -150,8 +150,8 @@ class PeopleController {
         }
 
         val settings = model.getAttribute("settings") as Settings
-        // Get records of photos that haven't been confirmed - Threshold not 100.0 and greater than threshold configured
-        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!,settings.getMatchScanLimit()!!)
+        // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
+        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
         if (lowMatchResults != null && lowMatchResults.count() > 0) {
             model["lowMatchResults"] = lowMatchResults
 
