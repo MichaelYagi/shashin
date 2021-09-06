@@ -302,6 +302,9 @@ class PeopleController {
 
             if (personMap["tagpeople"].toString() != "") {
                 val recognitionLabelArray = personMap["tagpeople"].toString().split(",")
+                if (recognitionLabelArray.count() > 0) {
+                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                }
                 for (recognitionLabel in recognitionLabelArray) {
                     val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
                     var recognitionLabelObj = RecognitionLabel()
