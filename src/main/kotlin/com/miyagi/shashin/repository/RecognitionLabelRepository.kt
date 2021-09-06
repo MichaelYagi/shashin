@@ -6,4 +6,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface RecognitionLabelRepository : CrudRepository<RecognitionLabel?, Int?> {
     fun findByNameIgnoreCase(name: String): RecognitionLabel?
+    fun findAllByNameNotContaining(name: String): MutableIterable<RecognitionLabel>?
 }
