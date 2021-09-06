@@ -241,6 +241,8 @@
                     $("#albumAppTools").css("display", "block");
                 } else if (view === "timeline") {
                     $("#timelineAppTools").css("display", "block");
+                } else if (view === "matches") {
+                    $("#matchesAppTools").css("display", "block");
                 }
 
                 // Hide all center and bottom left icons
@@ -252,6 +254,7 @@
                 $("#appSearch").css("display", "block");
                 $("#timelineAppTools").css("display", "none");
                 $("#albumAppTools").css("display", "none");
+                $("#matchesAppTools").css("display", "none");
             }
         });
 
@@ -273,6 +276,8 @@
                     $("#albumAppTools").css("display", "block");
                 } else if (view === "timeline") {
                     $("#timelineAppTools").css("display", "block");
+                } else if (view === "matches") {
+                    $("#matchesAppTools").css("display", "block");
                 }
 
                 // Hide all center and bottom left icons
@@ -284,6 +289,7 @@
                 $('.thumbnail-br').show();
                 $("#timelineAppTools").css("display", "none");
                 $("#albumAppTools").css("display", "none");
+                $("#matchesAppTools").css("display", "none");
             }
         });
 
@@ -443,6 +449,7 @@
         $("#appSearch").css("display", "block");
         $("#timelineAppTools").css("display", "none");
         $("#albumAppTools").css("display", "none");
+        $("#matchesAppTools").css("display", "none");
     }
 
     $("#appToolsAddAlbum").click(function(e) {
