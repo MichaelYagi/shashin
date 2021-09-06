@@ -191,10 +191,12 @@ class PeopleController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             var peopleList: MutableIterable<MetadataPeople>? = null
+            val settings = model.getAttribute("settings") as Settings
+
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                peopleList = metadataRepository?.findAlbumPhotoByPeople()
+                peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!)
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
-                peopleList = metadataRepository?.findMetadataByPeople()
+                peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!)
             }
             if (peopleList != null) {
                 model["peopleList"] = peopleList

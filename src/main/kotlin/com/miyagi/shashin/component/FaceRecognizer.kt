@@ -84,6 +84,7 @@ class FaceRecognizer() {
         val faceMap = mutableMapOf<Mat,Int>()
         val trainingDataMap = mutableMapOf<String,MutableMap<Mat,Int>>()
 
+        // Process each training image through different cascades and load into map
         if (this.cascadeFileList.isNotEmpty()) {
             for (cascadeFile in this.cascadeFileList) {
                 if (this.trainingData != null && this.trainingData!!.count() > 0) {
@@ -101,6 +102,7 @@ class FaceRecognizer() {
                         faceDetectorTrainingData.detectMultiScale(image, faceDetections)
                         faceDetectorTrainingData.close()
 
+                        // Crop image into square
                         var rectCrop: Rect? = null
                         for (i in 0 until faceDetections.size()) {
                             // Crop and resize
@@ -132,6 +134,7 @@ class FaceRecognizer() {
             }
         }
 
+        // Process test images through each cascade and run against training data
         if (this.testImages != null && this.testImages!!.count() > 0) {
             writeToThreadFileAndLogMessage("Starting face matching.",threadFile)
 
@@ -179,6 +182,7 @@ class FaceRecognizer() {
                                 faceDetectorTestImage.detectMultiScale(testimage, testimageFaceDetections)
                                 faceDetectorTestImage.close()
 
+                                // Crop image into square
                                 var rectCrop: Rect? = null
                                 for (i in 0 until testimageFaceDetections.size()) {
                                     val rect: Rect = testimageFaceDetections.get(i)
@@ -202,10 +206,12 @@ class FaceRecognizer() {
 //                                    println("\n"+testOutput)
 
                                     imageRoi.release()
-//                                    resizeimage.release()
+
+                                    // Execute prediction
                                     faceRecognizer.predict(resizeimage, label, confidence)
                                     val predictedLabel = label[0]
 
+                                    // Discriminate as much as possible and pick least confident match
                                     logger.log(Level.INFO, "Predicted label: "+predictedLabel+" Distance :"+confidence[0]/1000+" for "+testImage.getFileName()+" using "+cascadeFile)
                                     if ((confidence[0]/1000) > matchMap["confidence"].toString().toFloat()) {
                                         matchMap["confidence"] = (confidence[0]/1000)
