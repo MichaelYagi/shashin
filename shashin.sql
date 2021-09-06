@@ -52,7 +52,7 @@ CREATE TABLE `recognitionlabelphoto` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `recognitionLabelId` INTEGER,
     `metadataId` VARCHAR(36),
-    `confidence` VARCHAR(36) NOT NULL DEFAULT '100.0', -- 100.0 to be labelled, -1.0 not a face
+    `confidence` VARCHAR(36) NOT NULL DEFAULT '9.0', -- 9.0 to be labelled, -1.0 not a face
     UNIQUE(`recognitionLabelId`,`metadataId`) ON CONFLICT IGNORE,
     FOREIGN KEY (`recognitionLabelId`) REFERENCES recognitionlabel(`id`),
     FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`)

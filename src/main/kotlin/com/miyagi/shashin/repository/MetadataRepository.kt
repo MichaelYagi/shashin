@@ -31,8 +31,8 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN albumphoto ap on m.id = ap.metadata_id LEFT JOIN useralbum ua on ap.album_id = ua.album_id LEFT JOIN recognitionlabelphoto rlp on m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl on rlp.recognition_label_id = rl.id WHERE rl.id = :recognitionLabelId AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold AND ua.user_id = :userId LIMIT :offset, :limit", nativeQuery = true)
    fun findAlbumPhotoByPerson(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("recognitionLabelId") recognitionLabelId: Int,@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id WHERE confidence > :recognitionConfidenceThreshold AND confidence < 100.0 AND rlp.recognition_label_id = :recognitionLabelId LIMIT 0, :matchScanLimit", nativeQuery = true)
-   fun findLowMatchesByPerson(@Param("recognitionLabelId") recognitionLabelId: Int,@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
+   @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id WHERE confidence > :recognitionConfidenceThreshold AND confidence < 9.0 AND rlp.recognition_label_id = :recognitionLabelId", nativeQuery = true) //  LIMIT 0, :matchScanLimit - ,@Param("matchScanLimit") matchScanLimit: Int
+   fun findLowMatchesByPerson(@Param("recognitionLabelId") recognitionLabelId: Int,@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String): MutableIterable<Metadata>
 
    @Query("SELECT DISTINCT m.* FROM metadata m WHERE m.id NOT IN (SELECT metadata_id FROM recognitionlabelphoto) LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
