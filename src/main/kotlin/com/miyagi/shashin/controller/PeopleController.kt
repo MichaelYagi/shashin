@@ -108,6 +108,27 @@ class PeopleController {
         println(event.message)
     }
 
+    @RequestMapping(value = ["/person/matches/start"], method = [RequestMethod.GET], produces = ["application/json"])
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseBody
+    fun startPredictions(model: Model): String {
+        val settings = model.getAttribute("settings") as Settings
+
+        // Scan records of photos that haven't been scanned in a separate thread
+        val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
+        val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
+
+        if (trainingData != null && testImages != null) {
+            // Start matching in a separate thread
+            val faceRecognizer = FaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository)
+            faceRecognizer.runRecognizer()
+        }
+
+        resp["msg"] = ""
+        resp["status"] = "success"
+        return mapper.writeValueAsString(resp)
+    }
+
     @GetMapping("/person/matches/{personId}")
     @PreAuthorize("hasRole('ADMIN')")
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
@@ -152,16 +173,6 @@ class PeopleController {
                 labelPhotoMap[metadata.getId()] = labelString
             }
             model["labelPhotoMap"] = labelPhotoMap
-        } else {
-            // Scan records of photos that haven't been scanned in a separate thread
-            val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
-            val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
-
-            if (trainingData != null && testImages != null) {
-                // Start matching in a separate thread
-                val faceRecognizer = FaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository)
-                faceRecognizer.runRecognizer()
-            }
         }
 
         model["activePage"] = module

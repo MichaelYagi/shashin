@@ -80,6 +80,58 @@ class FaceRecognizer() {
         val matchMap = mutableMapOf<String, Any?>()
         var totalCount = 0
 
+        // Load training data
+        val faceMap = mutableMapOf<Mat,Int>()
+        val trainingDataMap = mutableMapOf<String,MutableMap<Mat,Int>>()
+
+        if (this.cascadeFileList.isNotEmpty()) {
+            for (cascadeFile in this.cascadeFileList) {
+                if (this.trainingData != null && this.trainingData!!.count() > 0) {
+                    for (trainingImage in this.trainingData!!) {
+                        val label = trainingImage.getRecognitionLabelId()!!
+                        writeToThreadFileAndLogMessage("Training Image processed. Label: "+label+" - image: "+trainingImage.getPath()+" using "+cascadeFile,threadFile)
+
+                        val image: Mat =
+                            opencv_imgcodecs.imread(trainingImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
+
+                        // Detect faces on training image and loop through each one
+                        val faceDetectorTrainingData = CascadeClassifier()
+                        faceDetectorTrainingData.load(cascadeFile)
+                        val faceDetections = RectVector()
+                        faceDetectorTrainingData.detectMultiScale(image, faceDetections)
+                        faceDetectorTrainingData.close()
+
+                        var rectCrop: Rect? = null
+                        for (i in 0 until faceDetections.size()) {
+                            // Crop and resize
+                            val rect: Rect = faceDetections.get(i)
+                            opencv_imgproc.rectangle(
+                                image,
+                                Point(rect.x(), rect.y()),
+                                Point(rect.x() + rect.width(), rect.y() + rect.height()),
+                                Scalar(0.0, 255.0)
+                            )
+                            rectCrop = Rect(rect.x(), rect.y(), rect.width(), rect.height())
+                            val imageRoi = Mat(image, rectCrop)
+
+                            val resizetrainingimage = Mat()
+                            // All images need to be the same size to compare
+                            val sz = Size(imageSize, imageSize)
+                            opencv_imgproc.resize(imageRoi, resizetrainingimage, sz)
+
+                            // Test output for training data
+                            totalCount++
+
+                            // Save in map
+                            faceMap[resizetrainingimage] = label
+                            trainingDataMap[cascadeFile] = faceMap
+                        }
+                        image.release()
+                    }
+                }
+            }
+        }
+
         if (this.testImages != null && this.testImages!!.count() > 0) {
             writeToThreadFileAndLogMessage("Starting face matching.",threadFile)
 
@@ -103,59 +155,13 @@ class FaceRecognizer() {
 
                         if (testimageFaceDetections.size() > 0) {
 
-                            val faceMap = mutableMapOf<Mat,Int>()
                             if (this.trainingData != null && this.trainingData!!.count() > 0) {
-                                for (trainingImage in this.trainingData!!) {
-                                    val label = trainingImage.getRecognitionLabelId()!!
-                                    logger.log(Level.INFO, "Training Image processed. Label: "+label+" - image: "+trainingImage.getPath()+" using "+cascadeFile)
-
-                                    val image: Mat =
-                                        opencv_imgcodecs.imread(trainingImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
-
-                                    // Detect faces on training image and loop through each one
-                                    val faceDetectorTrainingData = CascadeClassifier()
-                                    faceDetectorTrainingData.load(cascadeFile)
-                                    val faceDetections = RectVector()
-                                    faceDetectorTrainingData.detectMultiScale(image, faceDetections)
-                                    faceDetectorTrainingData.close()
-
-                                    var rectCrop: Rect? = null
-                                    for (i in 0 until faceDetections.size()) {
-                                        // Crop and resize
-                                        val rect: Rect = faceDetections.get(i)
-                                        opencv_imgproc.rectangle(
-                                            image,
-                                            Point(rect.x(), rect.y()),
-                                            Point(rect.x() + rect.width(), rect.y() + rect.height()),
-                                            Scalar(0.0, 255.0)
-                                        )
-                                        rectCrop = Rect(rect.x(), rect.y(), rect.width(), rect.height())
-                                        val imageRoi = Mat(image, rectCrop)
-
-                                        val resizetrainingimage = Mat()
-                                        // All images need to be the same size to compare
-                                        val sz = Size(imageSize, imageSize)
-                                        opencv_imgproc.resize(imageRoi, resizetrainingimage, sz)
-
-                                        // Test output for training data
-                                        totalCount++
-//                                        val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${testImage.getFileName()}.jpg"
-//                                        opencv_imgcodecs.imwrite(testOutput, resizetrainingimage)
-//                                        println("\n"+testOutput)
-
-                                        // Save in map
-                                        faceMap[resizetrainingimage] = label
-//                                        resizetrainingimage.release()
-                                    }
-                                    image.release()
-                                }
-
                                 // Loop through training image map and label
                                 val images = MatVector(faceMap.size.toLong())
                                 val labels = Mat(faceMap.size, 1, opencv_core.CV_32SC1)
                                 val labelsBuf: IntBuffer = labels.createBuffer()
                                 var counter = 0
-                                for ((mat, label) in faceMap) {
+                                for ((mat, label) in trainingDataMap[cascadeFile].orEmpty()) {
                                     images.put(counter.toLong(), mat)
                                     labelsBuf.put(counter, label)
                                     counter++
@@ -164,6 +170,7 @@ class FaceRecognizer() {
                                 faceRecognizer.train(images, labels)
                                 labels.release()
                                 images.clear()
+
                                 val label = IntPointer(1)
                                 val confidence = DoublePointer(1)
 
