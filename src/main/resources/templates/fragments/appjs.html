@@ -241,7 +241,7 @@
                     $("#albumAppTools").css("display", "block");
                 } else if (view === "timeline") {
                     $("#timelineAppTools").css("display", "block");
-                } else if (view === "matches") {
+                } else if (view === "matches" || view === "person") {
                     $("#matchesAppTools").css("display", "block");
                 }
 
@@ -276,7 +276,7 @@
                     $("#albumAppTools").css("display", "block");
                 } else if (view === "timeline") {
                     $("#timelineAppTools").css("display", "block");
-                } else if (view === "matches") {
+                } else if (view === "matches" || view === "person") {
                     $("#matchesAppTools").css("display", "block");
                 }
 
@@ -534,6 +534,29 @@
 
         return false;
     });
+
+    function matchingListeners() {
+        $("#matchesAppTools").css("display", "none");
+
+        $("#matchToolsBatchEdit").click(function(e) {
+            e.preventDefault();
+
+            let metadataIdList = [];
+            let filenameList = "";
+            $('.bi-circle-fill').each(function(i, obj) {
+                var metadataId = obj.id.substring(6, obj.id.length);
+                metadataIdList.push(metadataId);
+                filenameList += $("#filename"+metadataId).val().trim()+", ";
+            });
+            filenameList = filenameList.replace(/,\s*$/, "");
+
+            $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
+            if (filenameList !== "") {
+                $("#editPhotosNamesModalLabel").text(filenameList);
+            }
+            $("#propBatchMetadata").modal('show');
+        });
+    }
 </script>
 
 </body>

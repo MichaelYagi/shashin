@@ -253,6 +253,7 @@ class FaceRecognizer() {
                         }
                     }
                 }
+                matchMap.clear()
             }
         }
 
