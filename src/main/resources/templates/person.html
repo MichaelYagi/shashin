@@ -23,6 +23,7 @@
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail">
                                 <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+                                <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
 
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
@@ -31,6 +32,12 @@
                                 </th:block>
 
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                    <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                                        <a href="#" th:id="'select'+${metadata.id}">
+                                            <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                    </div>
+
                                     <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
                                         <a href="#" data-toggle="modal" th:data-target="'#propperson'+${metadata.id}">
                                             <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
@@ -106,6 +113,8 @@
         const lightGalleryConfigs = getLightGalleryConfigs();
         lightGalleryConfigs["selector"] = '.mediaLink';
         var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+
+        matchingListeners()
 
         // function loadNextPage() {
         //     var currentPage = parseInt($("#currentPage").val());
