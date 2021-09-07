@@ -181,7 +181,7 @@ class TimelineController {
             }
             val isObject = metadataMap["isObject"].toString().toBoolean()
 
-            if (metadataMap["tagpeople"].toString() != "") {
+            if (metadataMap["tagpeople"].toString().trim() != "") {
                 val recognitionLabelArray = metadataMap["tagpeople"].toString().split(",")
                 if (recognitionLabelArray.count() > 0) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
@@ -383,7 +383,7 @@ class TimelineController {
                     recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                     recognitionLabelPhotoObj.setConfidence("-0.1")
                     recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
-                } else if (recognitionLabelNames.toString() != "") {
+                } else if (recognitionLabelNames != null && recognitionLabelNames.toString().trim() != "") {
                     val recognitionLabelArray = recognitionLabelNames.toString().split(",")
                     if (recognitionLabelArray.count() > 0) {
                         recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())

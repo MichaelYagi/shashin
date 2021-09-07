@@ -75,6 +75,7 @@ CREATE TABLE `user` (
     `username` VARCHAR(50) NOT NULL,
     `password` VARCHAR(50) NOT NULL,
     `authority` VARCHAR(50) NOT NULL,
+    `isAllowed` BOOLEAN NOT NULL DEFAULT FALSE,
     `loggedIn` BOOLEAN DEFAULT NULL CHECK (`loggedIn` IN (0, 1)),
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL

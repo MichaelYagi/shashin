@@ -16,6 +16,7 @@
                         <tr>
                             <th scope="col">Username</th>
                             <th scope="col">Role</th>
+                            <th scope="col">Is Allowed</th>
                             <th scope="col">Created</th>
                             <th scope="col">Modified</th>
                             <th scope="col">Logged in</th>
@@ -35,6 +36,16 @@
                                         </th:block>
                                         <th:block th:if="${user.authority == 'ROLE_USER'}">
                                             <span class="bi-person" style="font-size: 1rem;color: black;"></span>
+                                        </th:block>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="#" th:id="${'isallowed' + user.id}">
+                                        <th:block th:if="${user.isAllowed}">
+                                            <span class="bi-check" style="font-size: 1rem;color: lightgreen;"></span>
+                                        </th:block>
+                                        <th:block th:unless="${user.isAllowed}">
+                                            <span class="bi-x" style="font-size: 1rem;color: lightsalmon;"></span>
                                         </th:block>
                                     </a>
                                 </td>
@@ -67,6 +78,11 @@
 
                                     $("#proproleuser[[${user.id}]]").modal('show');
                                 });
+                                $("#isallowed[[${user.id}]]").click(function(e) {
+                                    e.preventDefault();
+
+                                    $("#propisalloweduser[[${user.id}]]").modal('show');
+                                });
                                 /*]]>*/
                             </script>
 
@@ -80,40 +96,5 @@
         </main>
     </div>
 </div>
-
-<script type="text/babel">
-    $(document).ready(function() {
-        $("#scanPhotos").submit(function (e) {
-            e.preventDefault();
-
-            postToScan(false);
-        });
-
-        function postToScan(isCheckOnly) {
-
-            let posting = $.post(
-                "/settings/scan",
-                {"submit": "Scan", "isCheckOnly": isCheckOnly}
-            );
-
-            posting.done(function (data) {
-                $("#msg").text(data.hasOwnProperty("msg") ? data["msg"] : "");
-            });
-
-            // initial call, or just call refresh directly
-            //setTimeout(refresh, 2000);
-
-            return false;
-        }
-
-        function refresh() {
-            postToScan(true);
-            let msgId = "#msg";
-            if ($(msgId).text() !== "Start Scanning" && $(msgId).text() !== "Scan Complete") {
-                setTimeout(refresh, 2000);
-            }
-        }
-    });
-</script>
 </body>
 </html>
