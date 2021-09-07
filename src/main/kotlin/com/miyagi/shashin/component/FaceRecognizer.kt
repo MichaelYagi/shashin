@@ -103,7 +103,7 @@ class FaceRecognizer() {
                         faceDetectorTrainingData.close()
 
                         // Crop image into square
-                        var rectCrop: Rect? = null
+                        var rectCrop: Rect?
                         for (i in 0 until faceDetections.size()) {
                             // Crop and resize
                             val rect: Rect = faceDetections.get(i)
@@ -182,7 +182,7 @@ class FaceRecognizer() {
                                 faceDetectorTestImage.close()
 
                                 // Loop through each detected face in image and crop image into square
-                                var rectCrop: Rect? = null
+                                var rectCrop: Rect?
                                 for (i in 0 until testimageFaceDetections.size()) {
                                     val rect: Rect = testimageFaceDetections.get(i)
                                     opencv_imgproc.rectangle(

@@ -44,25 +44,32 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             }
 
             if (currentAuthority != "") {
+                var isAllowed = true
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null) {
+                    val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    val now = LocalDateTime.now()
                     if (currentAuthority == userRole && user.getIsAllowed() == false) {
+                        user.setModifiedAt(dtf.format(now))
+                        user.setLoggedIn(false)
+                        userRepository?.save(user)
                         SecurityContextLogoutHandler().logout(request, response, authentication)
                         SecurityContextHolder.getContext().authentication = null
-                        redirectStrategy.sendRedirect(request, response, "/users/login")
+                        redirectStrategy.sendRedirect(request, response, "/users/login?msg=loginfail")
+                        isAllowed = false
                     } else {
-                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        val now = LocalDateTime.now()
                         user.setModifiedAt(dtf.format(now))
                         user.setLoggedIn(true)
                         userRepository?.save(user)
                     }
                 }
 
-                if (currentAuthority == adminRole) {
-                    redirectStrategy.sendRedirect(request, response, "/timeline")
-                } else {
-                    redirectStrategy.sendRedirect(request, response, "/albums")
+                if (isAllowed) {
+                    if (currentAuthority == adminRole) {
+                        redirectStrategy.sendRedirect(request, response, "/timeline")
+                    } else {
+                        redirectStrategy.sendRedirect(request, response, "/albums")
+                    }
                 }
             }
         }

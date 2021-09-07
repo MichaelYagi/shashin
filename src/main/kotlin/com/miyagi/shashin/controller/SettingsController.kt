@@ -258,7 +258,7 @@ class SettingsController {
         }
         if (settings != null) {
             settingsRepository?.save(settings)
-            model["settings"] = settings as Settings
+            model["settings"] = settings
         }
 
         if (message.isBlank() && model.getAttribute("alertClass") == "alert-success") {

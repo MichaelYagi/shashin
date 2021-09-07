@@ -173,11 +173,6 @@
             <artifactId>opencv</artifactId>
             <version>4.5.3-1.5.6</version>
         </dependency>
-        <dependency>
-            <groupId>org.bytedeco</groupId>
-            <artifactId>javacv</artifactId>
-            <version>1.5.6</version>
-        </dependency>
     </dependencies>
 
     <build>
