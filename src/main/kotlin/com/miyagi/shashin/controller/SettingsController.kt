@@ -318,6 +318,10 @@ class SettingsController {
                 recognitionLabelRepository?.deleteAll()
                 recognitionLabelPhotoRepository?.deleteAll()
 
+                // Clean up thread files
+                FileUtils.deleteThreadFiles("shashinscan")
+                FileUtils.deleteThreadFiles("facescan_shashinscan")
+
                 val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                 val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
                 val sidecarDirFile = File(sidecarDir)
@@ -412,6 +416,37 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/user/permission/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun changeUserLoginPermission(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
+        val userRoleChangeMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (userRoleChangeMap.containsKey("userId") && userRoleChangeMap.containsKey("changeTo")) {
+            val userIdRequest = userRoleChangeMap["userId"].toString().toInt()
+            val changePermissionTo = userRoleChangeMap["changeTo"].toString().toBoolean()
+
+            if (userId == userIdRequest) {
+                val userObj = userRepository?.findById(userId)?.get()
+                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                val now = LocalDateTime.now()
+                if (userObj != null) {
+                    userObj.setModifiedAt(dtf.format(now))
+                    userObj.setIsAllowed(changePermissionTo)
+                    userRepository?.save(userObj)
+                }
+            }
+
+            resp["msg"] = "Success!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_ADMIN")
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
         val module = "scan"
@@ -437,7 +472,7 @@ class SettingsController {
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postScan(model: Model, @RequestParam submit: String, @RequestParam isCheckOnly: Boolean): String {
+    fun postScan(model: Model, @RequestParam submit: String, @RequestParam deleteThread: Boolean): String {
         resp["msg"] = "Nothing to see here"
 
         // Check for deleted original files
@@ -543,20 +578,10 @@ class SettingsController {
             }
         }
 
-        // Scan files
-        if (isCheckOnly) {
-            if (!FileUtils.checkThreadFileAlive("shashinscan")) {
-                resp["msg"] = "Scan Complete"
-                return mapper.writeValueAsString(resp)
-            }
-
-            val threadFileContent = FileUtils.readThreadFile("shashinscan")
-            if (threadFileContent != null) {
-                resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
-                return mapper.writeValueAsString(resp)
-            }
-            resp["msg"] = "Start Scan"
-            return mapper.writeValueAsString(resp)
+        if (deleteThread) {
+            FileUtils.deleteThreadFiles("shashinscan")
+            logger.log(Level.INFO, "Thread file manually deleted")
+            resp["msg"] = "Thread file manually deleted"
         } else if (submit == "Scan") {
             val mediaDirs = mediaDirRepository?.findAll()
 

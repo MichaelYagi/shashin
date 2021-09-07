@@ -100,16 +100,19 @@ class BaseController {
                 model["authority"] = authority.authority
             }
             val currentUser = userRepository.findByUsername(securityContext.authentication.name)
-            if (currentUser != null) {
-                model["currentUser"] = currentUser
-            } else {
-                SecurityContextHolder.clearContext();
+            if (currentUser != null && currentUser.getAuthority() == adminRole && currentUser.getIsAllowed() == false) {
+                currentUser.setIsAllowed(true)
+            }
+            if (currentUser == null || currentUser.getIsAllowed() == false) {
+                SecurityContextHolder.clearContext()
                 session?.invalidate()
                 val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
                 cookie.path = "/"
                 cookie.isHttpOnly = true
                 cookie.maxAge = 0
                 response.addCookie(cookie)
+            } else {
+                model["currentUser"] = currentUser
             }
         } catch(e: Exception) {
             model["currentUser"] = ""

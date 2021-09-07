@@ -18,6 +18,8 @@ class User {
     private var password: String? = null
     @NotBlank
     private var loggedIn: Boolean? = false
+    @NotBlank
+    private var isAllowed: Boolean? = false
     private var authority: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
@@ -85,6 +87,14 @@ class User {
         this.loggedIn = loggedIn
     }
 
+    fun getIsAllowed(): Boolean? {
+        return this.isAllowed
+    }
+
+    fun setIsAllowed(isAllowed: Boolean?) {
+        this.isAllowed = isAllowed
+    }
+
     override fun equals(o: Any?): Boolean {
         if (this === o) return true
         if (o !is User) return false
@@ -104,6 +114,7 @@ class User {
         map["username"] = this.username
         map["authority"] = this.authority
         map["loggedIn"] = this.loggedIn
+        map["isAllowed"] = this.isAllowed
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

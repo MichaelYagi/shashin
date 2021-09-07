@@ -82,30 +82,40 @@ class PeopleController {
         @PathVariable pipelineId: String,
         @PathVariable topic: String
     ) {
-        println("subscribe")
-        println(session.id)
+//        println("subscribe")
+//        println(session.id)
 //        messagingTemplate?.convertAndSend("/app/scanmessage", "testingzzz");
 
     }
 
     @EventListener
     fun onApplicationEvent(event: SessionConnectEvent) {
-        println("SessionConnectEvent")
-        println(event.source)
+//        println("SessionConnectEvent")
+//        println(event.source)
 
 //        messagingTemplate?.convertAndSend("/topic/messages", "testingzzz");
     }
 
     @EventListener
     fun onApplicationEvent(event: SessionDisconnectEvent) {
-        println("SessionDisconnectEvent")
-        println(event.sessionId)
+//        println("SessionDisconnectEvent")
+//        println(event.sessionId)
     }
 
     @EventListener
     fun handleSubscribeEvent(event: SessionSubscribeEvent) {
-        println("SessionSubscribeEvent")
-        println(event.message)
+//        println("SessionSubscribeEvent")
+//        println(event.message)
+    }
+
+    @RequestMapping(value = ["/person/matches/deletethread"], method = [RequestMethod.GET], produces = ["application/json"])
+    @PreAuthorize("hasRole('ADMIN')")
+    @ResponseBody
+    fun deleteThread(model: Model): String {
+        FileUtils.deleteThreadFiles("facescan_shashinscan")
+        resp["msg"] = "Thread file manually deleted"
+        resp["status"] = "success"
+        return mapper.writeValueAsString(resp)
     }
 
     @RequestMapping(value = ["/person/matches/start"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -117,14 +127,19 @@ class PeopleController {
         // Scan records of photos that haven't been scanned in a separate thread
         val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
         val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
+        val distinctLabelRecords = this.recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
-        if (trainingData != null && testImages != null) {
-            // Start matching in a separate thread
+        // Start matching in a separate thread
+        if (testImages != null && trainingData != null && distinctLabelRecords != null && distinctLabelRecords.count() > 1) {
             val faceRecognizer = FaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository)
             faceRecognizer.runRecognizer()
+        } else {
+            resp["msg"] = "Training data not detected. At least 2 people must be tagged."
+            resp["status"] = "fail"
+            return mapper.writeValueAsString(resp)
         }
 
-        resp["msg"] = ""
+        resp["msg"] = "Start Matching"
         resp["status"] = "success"
         return mapper.writeValueAsString(resp)
     }

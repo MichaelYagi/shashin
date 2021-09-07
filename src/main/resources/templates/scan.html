@@ -10,9 +10,8 @@
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col-md-11 col-lg-11 pt-3 px-4">
             <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
-            <form id="scanPhotos">
-                <input class="btn btn-primary" name="submit" type="submit" value="Scan">
-            </form>
+            <button class="btn btn-primary" id="scanPhotos">Scan</button>
+            <button class="btn btn-danger" id="deleteThread">Delete Thread</button>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo})"></div>
         </main>
     </div>
@@ -27,15 +26,29 @@
 
         connect();
 
-        $("#scanPhotos").submit(function (e) {
+        $("#scanPhotos").click(function (e) {
             e.preventDefault();
             postToScan(false);
         });
 
-        function postToScan(isCheckOnly) {
+        $("#deleteThread").click(function (e) {
+            e.preventDefault();
             let posting = $.post(
                 "/settings/scan",
-                {"submit": "Scan", "isCheckOnly": isCheckOnly}
+                {"submit": "", "deleteThread": true}
+            );
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("msg")) {
+                    showMessage(data["msg"]);
+                }
+            });
+        });
+
+        function postToScan(deleteThread) {
+            let posting = $.post(
+                "/settings/scan",
+                {"submit": "Scan", "deleteThread": deleteThread}
             );
 
             posting.done(function (data) {
