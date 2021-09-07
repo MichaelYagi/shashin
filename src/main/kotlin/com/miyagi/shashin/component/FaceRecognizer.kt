@@ -1,8 +1,8 @@
 package com.miyagi.shashin.component
 
 import com.miyagi.shashin.ShashinApplication
-import com.miyagi.shashin.model.RecognitionLabelPhoto
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.RecognitionLabelPhoto
 import com.miyagi.shashin.model.TrainingData
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.util.FileUtils
@@ -14,16 +14,14 @@ import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
+import java.io.*
 import java.net.URL
 import java.nio.IntBuffer
+import java.nio.file.Files
 import java.util.logging.Level
 import java.util.logging.Logger
+
 
 @Component
 class FaceRecognizer() {
@@ -46,16 +44,35 @@ class FaceRecognizer() {
 
     private fun loadCascadeData() {
         val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
-        val cascadeDirPath: URL? = classLoader.getResource(this.cascadeDir)
-        val dir = File(cascadeDirPath?.file!!)
+        val fileListing: MutableList<File> = mutableListOf()
 
-        val directoryListing: Array<File>? = dir.listFiles()
-        if (directoryListing != null) {
-            for (child in directoryListing) {
-                if (child.isFile && child.extension == "xml") {
-                    logger.log(Level.INFO, "Cascade file loaded: " + child.name)
-                    this.cascadeFileList.add(child.absolutePath)
-                }
+        var cascadeFileStream = classLoader.getResourceAsStream(this.cascadeDir+"/haarcascade_frontalface_alt.xml")
+        var tempFilePath = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_alt.xml"
+        var tempFile = File(tempFilePath)
+        copyInputStreamToFile(cascadeFileStream!!,tempFile)
+        fileListing.add(tempFile)
+
+        cascadeFileStream = classLoader.getResourceAsStream(this.cascadeDir+"/haarcascade_frontalface_default.xml")
+        tempFilePath = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_default.xml"
+        tempFile = File(tempFilePath)
+        copyInputStreamToFile(cascadeFileStream!!,tempFile)
+        fileListing.add(tempFile)
+
+        for (child in fileListing) {
+            logger.log(Level.INFO, "Cascade file loaded: " + child.name)
+            this.cascadeFileList.add(child.absolutePath)
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun copyInputStreamToFile(inputStream: InputStream, file: File) {
+
+        // append = false
+        FileOutputStream(file, false).use { outputStream ->
+            var read: Int
+            val bytes = ByteArray(DEFAULT_BUFFER_SIZE)
+            while (inputStream.read(bytes).also { read = it } != -1) {
+                outputStream.write(bytes, 0, read)
             }
         }
     }
