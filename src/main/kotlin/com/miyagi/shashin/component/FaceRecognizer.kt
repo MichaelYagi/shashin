@@ -77,7 +77,7 @@ class FaceRecognizer() {
     }
 
     private fun getPrediction(threadFile: File) {
-        val matchMap = mutableMapOf<String, Any?>()
+        val matchMap = mutableMapOf<Int, Any?>()
         var totalCount = 0
 
         // Load training data
@@ -139,8 +139,7 @@ class FaceRecognizer() {
             writeToThreadFileAndLogMessage("Starting face matching.",threadFile)
 
             for (testImage in this.testImages!!) {
-                matchMap["label"] = ""
-                matchMap["confidence"] = 0.0
+                matchMap[0] = 0.0
                 writeToThreadFileAndLogMessage("matching against "+testImage.getPath()!!,threadFile)
 
                 if (this.cascadeFileList.isNotEmpty()) {
@@ -182,7 +181,7 @@ class FaceRecognizer() {
                                 faceDetectorTestImage.detectMultiScale(testimage, testimageFaceDetections)
                                 faceDetectorTestImage.close()
 
-                                // Crop image into square
+                                // Loop through each detected face in image and crop image into square
                                 var rectCrop: Rect? = null
                                 for (i in 0 until testimageFaceDetections.size()) {
                                     val rect: Rect = testimageFaceDetections.get(i)
@@ -213,15 +212,13 @@ class FaceRecognizer() {
 
                                     // Discriminate as much as possible and pick least confident match
                                     logger.log(Level.INFO, "Predicted label: "+predictedLabel+" Distance :"+confidence[0]/1000+" for "+testImage.getFileName()+" using "+cascadeFile)
-                                    if ((confidence[0]/1000) > matchMap["confidence"].toString().toFloat()) {
-                                        matchMap["confidence"] = (confidence[0]/1000)
-                                        matchMap["label"] = predictedLabel
+                                    if (!matchMap.containsKey(predictedLabel) || (matchMap.containsKey(predictedLabel) && ((confidence[0]/1000) > matchMap[predictedLabel].toString().toFloat()))) {
+                                        matchMap[predictedLabel] = (confidence[0]/1000)
                                     }
                                 }
                             }
                         } else {
-                            matchMap["label"] = ""
-                            matchMap["confidence"] = -1.0
+                            matchMap[0] = -1.0
                         }
 
                         testimage.release()
@@ -232,28 +229,28 @@ class FaceRecognizer() {
                     }
                 }
 
-                val message = "Final outcome - Label: "+matchMap["label"]+" - Confidence: "+matchMap["confidence"]+" for "+testImage.getPath()
-                writeToThreadFileAndLogMessage(message,threadFile)
+                for ((labelId, confidence) in matchMap) {
+                    if (labelId != 0) {
+                        val confidenceVal: String = "%.1f".format(confidence)
+                        val message =
+                            "Final outcome - Label: " + labelId + " - Confidence: " + confidence + " for " + testImage.getPath()
+                        writeToThreadFileAndLogMessage(message, threadFile)
 
-                // Save record
-                val labelId = matchMap["label"].toString().toInt()
-                val confidence = matchMap["confidence"].toString()
-                val recordCount = this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(labelId,testImage.getId())
-                if (recordCount == 0) {
-                    val recognitionLabelPhoto = RecognitionLabelPhoto()
-                    recognitionLabelPhoto.setMetadataId(testImage.getId())
-                    recognitionLabelPhoto.setRecognitionLabelId(labelId)
-                    val confidenceDoubleVal = confidence.toDouble()
-                    val confidenceVal: String = "%.1f".format(confidenceDoubleVal)
-                    recognitionLabelPhoto.setConfidence(confidenceVal)
-                    this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
-                } else {
-                    val recognitionLabelPhoto = this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(labelId,confidence)
-                    val confidenceDoubleVal = confidence.toDouble()
-                    val confidenceVal: String = "%.1f".format(confidenceDoubleVal)
-                    if (recognitionLabelPhoto != null) {
-                        recognitionLabelPhoto.setConfidence(confidenceVal)
-                        this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                        // Save record
+                        val recordCount = this.recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(labelId,testImage.getId())
+                        if (recordCount == 0) {
+                            val recognitionLabelPhoto = RecognitionLabelPhoto()
+                            recognitionLabelPhoto.setMetadataId(testImage.getId())
+                            recognitionLabelPhoto.setRecognitionLabelId(labelId)
+                            recognitionLabelPhoto.setConfidence(confidenceVal)
+                            this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                        } else {
+                            val recognitionLabelPhoto = this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(labelId,testImage.getId())
+                            if (recognitionLabelPhoto != null) {
+                                recognitionLabelPhoto.setConfidence(confidenceVal)
+                                this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                            }
+                        }
                     }
                 }
             }
