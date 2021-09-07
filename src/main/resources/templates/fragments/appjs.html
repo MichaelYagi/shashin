@@ -536,6 +536,21 @@
     });
 
     function matchingListeners() {
+        $("#matchToolsDeselectAll").click(function(e) {
+            e.preventDefault();
+
+            $(".thumbnail-centered").css("display", "none");
+            $(".thumbnail-bl").css("display", "none");
+            $(".thumbnail-tl").css("display", "none");
+            $(".photo-thumbnail-image").css("opacity", 1.0);
+            $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
+
+            $("#appSearch").css("display", "block");
+            $("#timelineAppTools").css("display", "none");
+            $("#albumAppTools").css("display", "none");
+            $("#matchesAppTools").css("display", "none");
+        })
+
         $("#matchesAppTools").css("display", "none");
 
         $("#matchToolsBatchEdit").click(function(e) {
