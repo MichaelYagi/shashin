@@ -259,17 +259,12 @@ class PeopleController {
 
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
-            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-            val pageValue = page*queryLimit
+//            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+//            val pageValue = page*queryLimit
 
             val recognitionLabel = recognitionLabelRepository?.findById(personId)
             if (recognitionLabel != null) {
                 response["personInfo"] = recognitionLabel.get()
-            }
-
-            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-            if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                response["recognitionLabels"] = recognitionLabels
             }
 
             var metadataList: MutableIterable<Metadata>? = null

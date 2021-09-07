@@ -316,7 +316,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             var numeric = true
 
                             try {
-                                val num = parseDouble(tagArr[0])
+                                parseDouble(tagArr[0])
                             } catch (e: NumberFormatException) {
                                 numeric = false
                             }

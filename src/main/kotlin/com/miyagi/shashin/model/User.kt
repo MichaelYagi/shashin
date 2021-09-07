@@ -95,10 +95,10 @@ class User {
         this.isAllowed = isAllowed
     }
 
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is User) return false
-        val user: User = o
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other !is User) return false
+        val user: User = other
         return Objects.equals(username, user.username)
     }
 

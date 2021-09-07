@@ -192,7 +192,9 @@ class UserController {
             if (error == "401") {
                 model["data"] = "Login failed"
             } else if (message == "regsuccess") {
-                model["data"] = "Registration succeful. Please login."
+                model["data"] = "Registration successful. Please login."
+            } else if (message == "loginfail") {
+                model["data"] = "Login failed"
             }
             model["activePage"] = module
             model["activeSidebar"] = module
