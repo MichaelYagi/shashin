@@ -142,8 +142,8 @@ class FaceRecognizer() {
                             totalCount++
 
                             // Test save
-                            val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${trainingImage.getMetadataId()}.jpg"
-                            opencv_imgcodecs.imwrite(testOutput, resizetrainingimage)
+//                            val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${trainingImage.getMetadataId()}.jpg"
+//                            opencv_imgcodecs.imwrite(testOutput, resizetrainingimage)
 
                             // Save in map
                             faceMap[resizetrainingimage] = label
@@ -231,8 +231,8 @@ class FaceRecognizer() {
                                     val predictedLabel = label[0]
 
                                     // Test save
-                                    val testOutput = "C:/Users/micha/Downloads/outputfolder/testimage/testImage-$predictedLabel-${confidence[0]/1000}-${testImage.getFileName()}.jpg"
-                                    opencv_imgcodecs.imwrite(testOutput, resizeimage)
+//                                    val testOutput = "C:/Users/micha/Downloads/outputfolder/testimage/testImage-$predictedLabel-${confidence[0]/1000}-${testImage.getFileName()}.jpg"
+//                                    opencv_imgcodecs.imwrite(testOutput, resizeimage)
 
                                     // Discriminate as much as possible and pick least confident match
                                     logger.log(Level.INFO, "Predicted label: "+predictedLabel+" Distance :"+confidence[0]/1000+" for "+testImage.getFileName()+" using "+cascadeFile)
