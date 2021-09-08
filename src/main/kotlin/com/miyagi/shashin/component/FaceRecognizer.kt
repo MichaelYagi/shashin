@@ -16,9 +16,7 @@ import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier
 import org.springframework.stereotype.Component
 import java.io.*
-import java.net.URL
 import java.nio.IntBuffer
-import java.nio.file.Files
 import java.util.logging.Level
 import java.util.logging.Logger
 
@@ -46,13 +44,15 @@ class FaceRecognizer() {
         val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
         val fileListing: MutableList<File> = mutableListOf()
 
+
+
         var cascadeFileStream = classLoader.getResourceAsStream(this.cascadeDir+"/haarcascade_frontalface_alt.xml")
         var tempFilePath = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_alt.xml"
         var tempFile = File(tempFilePath)
         copyInputStreamToFile(cascadeFileStream!!,tempFile)
         fileListing.add(tempFile)
 
-        cascadeFileStream = classLoader.getResourceAsStream(this.cascadeDir+"/haarcascade_frontalface_default.xml")
+        cascadeFileStream = classLoader.getResourceAsStream(this.cascadeDir+"/haarcascade_frontalface_alt2.xml")
         tempFilePath = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_default.xml"
         tempFile = File(tempFilePath)
         copyInputStreamToFile(cascadeFileStream!!,tempFile)
@@ -141,9 +141,14 @@ class FaceRecognizer() {
                             // Test output for training data
                             totalCount++
 
+                            // Test save
+                            val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${trainingImage.getMetadataId()}.jpg"
+                            opencv_imgcodecs.imwrite(testOutput, resizetrainingimage)
+
                             // Save in map
                             faceMap[resizetrainingimage] = label
                             trainingDataMap[cascadeFile] = faceMap
+
                         }
                         image.release()
                     }
@@ -161,15 +166,16 @@ class FaceRecognizer() {
 
                 if (this.cascadeFileList.isNotEmpty()) {
                     for (cascadeFile in this.cascadeFileList) {
+                        val testimage: Mat = opencv_imgcodecs.imread(testImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
+
                         // Load cascade file
                         val faceDetector = CascadeClassifier()
                         faceDetector.load(cascadeFile)
 
-                        val testimage: Mat = opencv_imgcodecs.imread(testImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
                         val testimageFaceDetections = RectVector()
                         faceDetector.detectMultiScale(testimage, testimageFaceDetections)
 
-                        logger.log(Level.INFO, "Detected "+testimageFaceDetections.size()+" faces for "+testImage.getPath()+" using "+cascadeFile)
+                        //logger.log(Level.INFO, "Detected "+testimageFaceDetections.size()+" faces for "+testImage.getPath()+" using "+cascadeFile)
                         faceDetector.close()
 
                         if (testimageFaceDetections.size() > 0) {
@@ -217,15 +223,16 @@ class FaceRecognizer() {
 
                                     // Test output for test data
                                     totalCount++
-//                                    val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${testImage.getFileName()}.jpg"
-//                                    opencv_imgcodecs.imwrite(testOutput, resizeimage)
-//                                    println("\n"+testOutput)
 
                                     imageRoi.release()
 
                                     // Execute prediction
                                     faceRecognizer.predict(resizeimage, label, confidence)
                                     val predictedLabel = label[0]
+
+                                    // Test save
+                                    val testOutput = "C:/Users/micha/Downloads/outputfolder/testimage/testImage-$predictedLabel-${confidence[0]/1000}-${testImage.getFileName()}.jpg"
+                                    opencv_imgcodecs.imwrite(testOutput, resizeimage)
 
                                     // Discriminate as much as possible and pick least confident match
                                     logger.log(Level.INFO, "Predicted label: "+predictedLabel+" Distance :"+confidence[0]/1000+" for "+testImage.getFileName()+" using "+cascadeFile)
