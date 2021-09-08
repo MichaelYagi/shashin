@@ -1,0 +1,153 @@
+Manifest-Version: 1.0
+Main-Class: 
+Class-Path: leptonica-1.81.1-1.5.6-linux-x86.jar libfreenect2-0.2.0-1.4.
+ 1.jar spring-data-commons-2.5.3.jar spring-boot-starter-security-2.5.3.
+ jar openblas-0.3.17-1.5.6-linux-ppc64le.jar libdc1394-2.2.6-1.5.6-linux
+ -x86_64.jar jakarta.transaction-api-1.3.3.jar thymeleaf-extras-java8tim
+ e-3.0.4.RELEASE.jar leptonica-1.81.1-1.5.6-linux-arm64.jar openblas-0.3
+ .17-1.5.6-ios-x86_64.jar ffmpeg-3.4.2-1.4.1-linux-x86.jar javacpp-1.5.6
+ -android-arm.jar log4j-to-slf4j-2.14.1.jar librealsense-1.12.4-1.5.6-li
+ nux-arm64.jar javax.activation-api-1.2.0.jar videoinput-0.200-1.4.1.jar
+  leptonica-1.81.1-1.5.6-windows-x86_64.jar kotlin-stdlib-jdk8-1.5.21.ja
+ r openblas-0.2.20-1.4.jar opencv-3.4.1-1.4.1-macosx-x86_64.jar openblas
+ -0.3.17-1.5.6-linux-x86_64.jar leptonica-1.81.1-1.5.6-android-x86.jar l
+ ibrealsense-platform-1.12.4-1.5.6.jar openblas-0.3.17-1.5.6-linux-armhf
+ .jar javacv-platform-1.5.6.jar opencv-4.5.3-1.5.6-android-arm64.jar spr
+ ing-jdbc-5.3.9.jar opencv-3.4.1-1.4.1-android-arm.jar openblas-0.3.17-1
+ .5.6-ios-arm64.jar videoinput-0.200-1.5.6.jar kotlin-stdlib-jdk7-1.5.21
+ .jar leptonica-1.81.1-1.5.6-macosx-x86_64.jar spring-boot-2.5.3.jar ffm
+ peg-4.4-1.5.6-linux-x86_64.jar metadata-extractor-2.16.0.jar openblas-0
+ .3.17-1.5.6-windows-x86_64.jar thymeleaf-spring5-3.0.12.RELEASE.jar lib
+ freenect-0.5.7-1.5.6-linux-arm64.jar jackson-module-kotlin-2.12.4.jar l
+ ibfreenect-0.5.3-1.4.1.jar ffmpeg-3.4.2-1.4.1-windows-x86.jar opencv-4.
+ 5.3-1.5.6-linux-arm64.jar libfreenect2-0.2.0-1.5.6-windows-x86_64.jar k
+ otlin-reflect-1.5.21.jar attoparser-2.0.5.RELEASE.jar spring-jcl-5.3.9.
+ jar tesseract-4.1.1-1.5.6-linux-x86_64.jar unbescape-1.1.6.RELEASE.jar 
+ libdc1394-2.2.6-1.5.6-linux-armhf.jar openblas-0.2.20-1.4-linux-armhf.j
+ ar javacpp-1.5.6-linux-arm64.jar flandmark-1.07-1.5.6-linux-x86_64.jar 
+ artoolkitplus-2.3.1-1.5.6-windows-x86.jar slf4j-api-1.7.32.jar opencv-4
+ .5.3-1.5.6-linux-armhf.jar librealsense2-2.44.0-1.5.6-macosx-x86_64.jar
+  aspectjweaver-1.9.7.jar tesseract-4.1.1-1.5.6-android-arm.jar javacpp-
+ 1.5.6-android-x86_64.jar javacpp-1.5.6.jar opencv-4.5.3-1.5.6-ios-arm64
+ .jar openblas-0.3.17-1.5.6-macosx-x86_64.jar javacpp-1.5.6-windows-x86.
+ jar spring-core-5.3.9.jar openblas-0.2.20-1.4-linux-x86.jar tomcat-embe
+ d-el-9.0.50.jar ffmpeg-4.4-1.5.6-android-arm.jar snakeyaml-1.28.jar ope
+ nblas-0.2.20-1.4-android-x86.jar ffmpeg-3.4.2-1.4.1-linux-x86_64.jar ar
+ toolkitplus-2.3.1-1.5.6-macosx-x86_64.jar libfreenect-0.5.7-1.5.6.jar j
+ ackson-datatype-jdk8-2.12.4.jar tesseract-4.1.1-1.5.6-windows-x86.jar o
+ penblas-0.3.17-1.5.6-linux-x86.jar jackson-module-parameter-names-2.12.
+ 4.jar tesseract-4.1.1-1.5.6-linux-ppc64le.jar opencv-4.5.3-1.5.6-androi
+ d-x86_64.jar javacpp-1.5.6-linux-x86_64.jar leptonica-1.81.1-1.5.6-wind
+ ows-x86.jar ffmpeg-3.4.2-1.4.1-android-arm.jar opencv-4.5.3-1.5.6-ios-x
+ 86_64.jar leptonica-1.81.1-1.5.6-android-x86_64.jar flycapture-2.13.3.3
+ 1-1.5.6-linux-armhf.jar opencv-3.4.1-1.4.1-ios-arm64.jar videoinput-0.2
+ 00-1.5.6-windows-x86.jar librealsense2-platform-2.44.0-1.5.6.jar spring
+ -session-core-2.5.1.jar javacpp-1.5.6-linux-x86.jar ffmpeg-4.4-1.5.6-ma
+ cosx-x86_64.jar librealsense-1.12.1-1.4.1.jar librealsense2-2.44.0-1.5.
+ 6-windows-x86.jar libdc1394-2.2.6-1.5.6-macosx-x86_64.jar ffmpeg-4.4-1.
+ 5.6-linux-armhf.jar libdc1394-2.2.6-1.5.6.jar opencv-3.4.1-1.4.1-linux-
+ ppc64le.jar javacv-1.4.1.jar libfreenect-platform-0.5.7-1.5.6.jar lepto
+ nica-platform-1.81.1-1.5.6.jar log4j-api-2.14.1.jar jboss-transaction-a
+ pi_1.2_spec-1.0.1.Final.jar librealsense-1.12.4-1.5.6-linux-x86.jar fly
+ capture-2.13.3.31-1.5.6.jar spring-boot-starter-tomcat-2.5.3.jar classm
+ ate-1.5.1.jar openblas-0.3.17-1.5.6-windows-x86.jar spring-security-cor
+ e-5.5.1.jar tesseract-platform-4.1.1-1.5.6.jar artoolkitplus-2.3.1-1.5.
+ 6-android-arm64.jar flycapture-platform-2.13.3.31-1.5.6.jar ffmpeg-4.4-
+ 1.5.6-windows-x86.jar libdc1394-2.2.6-1.5.6-linux-x86.jar ffmpeg-3.4.2-
+ 1.4.1-android-x86_64.jar jackson-dataformat-yaml-2.12.4.jar HikariCP-4.
+ 0.3.jar spring-messaging-5.3.9.jar flycapture-2.13.3.31-1.5.6-windows-x
+ 86_64.jar libdc1394-2.2.6-1.5.6-windows-x86_64.jar kotlin-stdlib-common
+ -1.5.21.jar libfreenect2-0.2.0-1.5.6-linux-x86_64.jar libfreenect2-0.2.
+ 0-1.5.6-linux-x86.jar opencv-3.4.1-1.4.1-android-x86_64.jar opencv-4.5.
+ 3-1.5.6-android-arm.jar libfreenect-0.5.7-1.5.6-windows-x86.jar artoolk
+ itplus-2.3.1-1.5.6-linux-x86.jar librealsense2-2.44.0-1.5.6-linux-x86.j
+ ar flycapture-2.13.3.31-1.5.6-windows-x86.jar libfreenect-0.5.7-1.5.6-l
+ inux-armhf.jar jakarta.persistence-api-2.2.3.jar ffmpeg-4.4-1.5.6-andro
+ id-x86.jar openblas-0.3.17-1.5.6-android-arm64.jar jackson-databind-2.1
+ 2.4.jar spring-aspects-5.3.9.jar flandmark-1.07-1.5.6-android-x86_64.ja
+ r openblas-platform-0.3.17-1.5.6.jar validation-api-2.0.1.Final.jar ant
+ lr-2.7.7.jar libdc1394-2.2.6-1.5.6-windows-x86.jar artoolkitplus-2.3.1-
+ 1.5.6.jar jandex-2.0.3.Final.jar hibernate-core-5.2.12.Final.jar opencv
+ -4.5.3-1.5.6-windows-x86_64.jar kotlin-stdlib-1.5.21.jar logback-core-1
+ .2.4.jar opencv-4.5.3-1.5.6-macosx-x86_64.jar opencv-3.4.1-1.4.1-androi
+ d-arm64.jar artoolkitplus-2.3.1-1.5.6-linux-armhf.jar ffmpeg-3.4.2-1.4.
+ 1-linux-ppc64le.jar artoolkitplus-2.3.1-1.5.6-linux-arm64.jar javacpp-1
+ .5.6-macosx-arm64.jar spring-boot-starter-json-2.5.3.jar flandmark-1.07
+ -1.5.6-linux-x86.jar spring-websocket-5.3.9.jar artoolkitplus-2.3.1-1.5
+ .6-linux-x86_64.jar libdc1394-2.2.6-1.5.6-linux-arm64.jar ffmpeg-3.4.2-
+ 1.4.1-android-arm64.jar tomcat-embed-websocket-9.0.50.jar libdc1394-pla
+ tform-2.2.6-1.5.6.jar tesseract-4.1.1-1.5.6-android-x86.jar openblas-0.
+ 2.20-1.4-windows-x86.jar ffmpeg-3.4.2-1.4.1-macosx-x86_64.jar sqlite-jd
+ bc-3.34.0.jar opencv-4.5.3-1.5.6-windows-x86.jar openblas-platform-0.2.
+ 20-1.4.jar artoolkitplus-platform-2.3.1-1.5.6.jar leptonica-1.81.1-1.5.
+ 6-android-arm64.jar ffmpeg-platform-4.4-1.5.6.jar tesseract-4.1.1-1.5.6
+ -linux-x86.jar spring-boot-starter-thymeleaf-2.5.3.jar openblas-0.2.20-
+ 1.4-linux-x86_64.jar leptonica-1.81.1-1.5.6-linux-armhf.jar spring-cont
+ ext-5.3.9.jar librealsense2-2.44.0-1.5.6-linux-armhf.jar flandmark-1.07
+ -1.5.6-windows-x86.jar openblas-0.2.20-1.4-linux-ppc64le.jar ffmpeg-pla
+ tform-3.4.2-1.4.1.jar flandmark-1.07-1.5.6.jar libfreenect-0.5.7-1.5.6-
+ macosx-x86_64.jar libfreenect-0.5.7-1.5.6-linux-ppc64le.jar videoinput-
+ 0.200-1.5.6-windows-x86_64.jar spring-security-crypto-5.5.1.jar artoolk
+ itplus-2.3.1-1.4.1.jar libfreenect-0.5.7-1.5.6-linux-x86.jar flandmark-
+ 1.07-1.5.6-android-arm64.jar openblas-0.3.17-1.5.6-android-arm.jar anno
+ tations-13.0.jar spring-boot-starter-websocket-2.5.3.jar hibernate-comm
+ ons-annotations-5.0.1.Final.jar tesseract-4.1.1-1.5.6-macosx-x86_64.jar
+  jul-to-slf4j-1.7.32.jar librealsense2-2.44.0-1.5.6.jar flandmark-1.07-
+ 1.5.6-windows-x86_64.jar javacpp-1.5.6-macosx-x86_64.jar spring-orm-5.3
+ .9.jar libfreenect2-0.2.0-1.5.6-macosx-x86_64.jar librealsense-1.12.4-1
+ .5.6-macosx-x86_64.jar thymeleaf-3.0.12.RELEASE.jar opencv-3.4.1-1.4.1-
+ android-x86.jar spring-boot-starter-jdbc-2.5.3.jar javassist-3.20.0-GA.
+ jar spring-boot-devtools-2.5.3.jar artoolkitplus-2.3.1-1.5.6-windows-x8
+ 6_64.jar jakarta.annotation-api-1.3.5.jar spring-tx-5.3.9.jar librealse
+ nse2-2.44.0-1.5.6-linux-arm64.jar opencv-4.5.3-1.5.6-linux-x86_64.jar a
+ rtoolkitplus-2.3.1-1.5.6-linux-ppc64le.jar openblas-0.3.17-1.5.6-androi
+ d-x86_64.jar opencv-3.4.1-1.4.1-windows-x86.jar ffmpeg-4.4-1.5.6-androi
+ d-arm64.jar opencv-3.4.1-1.4.1-linux-x86_64.jar flandmark-1.07-1.5.6-li
+ nux-arm64.jar opencv-platform-4.5.3-1.5.6.jar librealsense-1.12.4-1.5.6
+ -linux-armhf.jar flandmark-1.07-1.5.6-macosx-x86_64.jar libdc1394-2.2.5
+ -1.4.1.jar ffmpeg-4.4-1.5.6-android-x86_64.jar spring-aop-5.3.9.jar spr
+ ing-boot-starter-aop-2.5.3.jar xmpcore-6.1.11.jar javacpp-1.5.6-linux-p
+ pc64le.jar opencv-4.5.3-1.5.6-linux-ppc64le.jar tesseract-4.1.1-1.5.6.j
+ ar leptonica-1.81.1-1.5.6-linux-x86_64.jar opencv-4.5.3-1.5.6-android-x
+ 86.jar spring-boot-autoconfigure-2.5.3.jar ffmpeg-4.4-1.5.6-linux-ppc64
+ le.jar spring-boot-starter-2.5.3.jar ffmpeg-3.4.2-1.4.1-linux-armhf.jar
+  spring-expression-5.3.9.jar flandmark-1.07-1.5.6-linux-armhf.jar logba
+ ck-classic-1.2.4.jar opencv-3.4.1-1.4.1.jar opencv-4.5.3-1.5.6-linux-x8
+ 6.jar libfreenect2-0.2.0-1.5.6.jar librealsense2-2.44.0-1.5.6-windows-x
+ 86_64.jar openblas-0.2.20-1.4-macosx-x86_64.jar flandmark-1.07-1.5.6-li
+ nux-ppc64le.jar flycapture-2.11.3.121-1.4.1.jar spring-security-config-
+ 5.5.1.jar openblas-0.2.20-1.4-android-arm.jar flycapture-2.13.3.31-1.5.
+ 6-linux-arm64.jar hibernate-jpa-2.1-api-1.0.0.Final.jar jackson-annotat
+ ions-2.12.4.jar ffmpeg-4.4-1.5.6.jar javacpp-platform-1.5.6.jar flandma
+ rk-1.07-1.4.1.jar spring-webmvc-5.3.9.jar flandmark-1.07-1.5.6-android-
+ arm.jar librealsense-1.12.4-1.5.6-linux-x86_64.jar opencv-4.5.3-1.5.6.j
+ ar flycapture-2.13.3.31-1.5.6-linux-x86.jar librealsense2-2.44.0-1.5.6-
+ linux-x86_64.jar ffmpeg-4.4-1.5.6-linux-x86.jar ffmpeg-3.4.2-1.4.1-wind
+ ows-x86_64.jar libfreenect-0.5.7-1.5.6-linux-x86_64.jar leptonica-1.81.
+ 1-1.5.6-android-arm.jar librealsense-1.12.4-1.5.6-windows-x86_64.jar li
+ brealsense-1.12.4-1.5.6-windows-x86.jar dom4j-1.6.1.jar openblas-0.3.17
+ -1.5.6-linux-arm64.jar flandmark-1.07-1.5.6-android-x86.jar spring-bean
+ s-5.3.9.jar flandmark-platform-1.07-1.5.6.jar opencv-3.4.1-1.4.1-linux-
+ armhf.jar ffmpeg-4.4-1.5.6-linux-arm64.jar opencv-platform-3.4.1-1.4.1.
+ jar opencv-3.4.1-1.4.1-ios-x86_64.jar spring-data-jpa-2.5.3.jar tessera
+ ct-4.1.1-1.5.6-linux-armhf.jar opencv-3.4.1-1.4.1-linux-x86.jar tessera
+ ct-4.1.1-1.5.6-windows-x86_64.jar leptonica-1.81.1-1.5.6-linux-ppc64le.
+ jar javacpp-1.5.6-windows-x86_64.jar librealsense-1.12.4-1.5.6.jar open
+ blas-0.3.17-1.5.6-android-x86.jar openblas-0.2.20-1.4-windows-x86_64.ja
+ r tesseract-4.1.1-1.5.6-android-x86_64.jar spring-boot-starter-data-jpa
+ -2.5.3.jar opencv-3.4.1-1.4.1-windows-x86_64.jar javacpp-1.5.6-linux-ar
+ mhf.jar libfreenect-0.5.7-1.5.6-windows-x86_64.jar jboss-logging-3.4.2.
+ Final.jar libfreenect2-platform-0.2.0-1.5.6.jar ffmpeg-3.4.2-1.4.1-andr
+ oid-x86.jar tesseract-4.1.1-1.5.6-linux-arm64.jar artoolkitplus-2.3.1-1
+ .5.6-android-x86.jar ffmpeg-4.4-1.5.6-windows-x86_64.jar jackson-core-2
+ .12.4.jar artoolkitplus-2.3.1-1.5.6-android-x86_64.jar videoinput-platf
+ orm-0.200-1.5.6.jar spring-web-5.3.9.jar flycapture-2.13.3.31-1.5.6-lin
+ ux-x86_64.jar spring-boot-starter-logging-2.5.3.jar leptonica-1.81.1-1.
+ 5.6.jar artoolkitplus-2.3.1-1.5.6-android-arm.jar tomcat-embed-core-9.0
+ .50.jar sqlite-dialect-1.0.jar tesseract-4.1.1-1.5.6-android-arm64.jar 
+ libdc1394-2.2.6-1.5.6-linux-ppc64le.jar ffmpeg-3.4.2-1.4.1.jar javacpp-
+ 1.5.6-android-arm64.jar javacpp-1.5.6-android-x86.jar jackson-datatype-
+ jsr310-2.12.4.jar jaxb-api-2.4.0-b180830.0359.jar spring-security-web-5
+ .5.1.jar openblas-0.3.17-1.5.6.jar spring-boot-starter-web-2.5.3.jar ja
+ vacpp-1.5.6-ios-arm64.jar javacpp-1.5.6-ios-x86_64.jar
+

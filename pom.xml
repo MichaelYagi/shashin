@@ -178,7 +178,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.0.0-M5</version>
                 <configuration>
-                    <argLine>-Djava.library.path=lib/opencv/build/java/x64</argLine>
+                    <argLine>@{argLine} -Djava.library.path=lib/opencv/build/java/x64 -Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
             <plugin>
