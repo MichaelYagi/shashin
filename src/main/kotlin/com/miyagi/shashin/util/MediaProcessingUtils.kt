@@ -196,7 +196,11 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             latDecimal = latDegree.toString().dropLast(1) + latTotalSeconds.toString().drop(2)
                         }
                         lat = latDecimal
-                        metadataObj.setLat(latDecimal)
+                        if (latDecimal != "0.0") {
+                            metadataObj.setLat(latDecimal)
+                        } else {
+                            lat = null
+                        }
                     }
                     "GPS Longitude", "Longitude" -> {
                         val longitudeValue = tag.description
@@ -213,7 +217,11 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             lngDecimal = lngDegree.toString().dropLast(1) + lngTotalSeconds.toString().drop(2)
                         }
                         lng = lngDecimal
-                        metadataObj.setLng(lngDecimal)
+                        if (lngDecimal != "0.0") {
+                            metadataObj.setLng(lngDecimal)
+                        } else {
+                            lng = null
+                        }
                     }
                     "ISO Speed Ratings" -> {
                         metadataObj.setIso(tag.description.toInt())
