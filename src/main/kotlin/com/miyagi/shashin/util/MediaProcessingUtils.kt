@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
+//import net.coobird.thumbnailator.Thumbnails
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
 import org.springframework.context.annotation.ComponentScan
@@ -374,7 +375,9 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //            _metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
         }
 
+        // Create thumbnails
         if (img != null) {
+            // Raw file to jpg conversion
             var thumbnailFileStr: String
             var tnFile: File?
             if (FileUtils.isRaw(file.extension.lowercase())) {
@@ -386,42 +389,56 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 }
             }
 
-            // Scale to different sizes and save
+            // Gallery thumbnails
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             val scaled209: BufferedImage = scaleImageByHeight(img, 209)
+//            val scaled209: BufferedImage = Thumbnails.of(File(file.absolutePath))
+//                .height(209)
+//                .asBufferedImage()
             if (tnFile != null) {
                 ImageIO.write(scaled209, "jpg", tnFile)
                 _metadataObj?.setThumbnailPathSmall(tnFile.path)
                 _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
 
+            // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            var square: BufferedImage? = null
             if (tnFile != null) {
-                var rescaled: BufferedImage = scaled209
+                square = scaled209
                 if (img.height > img.width) {
-                    rescaled = scaleImageByWidth(img, 209)
+                    square = scaleImageByWidth(img, 209)
                 }
-                val square: BufferedImage = getSquareThumbnail(rescaled)
+//                val cropped: BufferedImage = getSquareThumbnail(img)
+//                square = Thumbnails.of(cropped)
+//                    .height(209)
+//                    .asBufferedImage()
                 ImageIO.write(square, "jpg", tnFile)
                 _metadataObj?.setThumbnailPathCentered(tnFile.path)
                 _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
 
-            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"
-            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-            if (tnFile != null) {
-                var scaled: BufferedImage
-                if (img.height > img.width) {
-                    scaled = scaleImageByWidth(img, 45)
-                } else {
-                    scaled = scaleImageByHeight(img, 45)
+            // Map marker thumbnail
+            if (square != null) {
+                thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"
+                tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+                if (tnFile != null) {
+                    var scaled: BufferedImage
+                    if (img.height > img.width) {
+                        scaled = scaleImageByWidth(img, 45)
+                    } else {
+                        scaled = scaleImageByHeight(img, 45)
+                    }
+                    val square: BufferedImage = getSquareThumbnail(scaled)
+//                    square = Thumbnails.of(square)
+//                        .height(45)
+//                        .asBufferedImage()
+                    ImageIO.write(square, "jpg", tnFile)
+                    _metadataObj?.setMapMarkerPath(tnFile.path)
+                    _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
                 }
-                val square: BufferedImage = getSquareThumbnail(scaled)
-                ImageIO.write(square, "jpg", tnFile)
-                _metadataObj?.setMapMarkerPath(tnFile.path)
-                _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)
