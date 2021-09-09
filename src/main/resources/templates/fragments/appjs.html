@@ -9,7 +9,7 @@
     // Detect scrolling to bottom of page
     function atEndOfPage() {
         var c = [document.scrollingElement.scrollHeight, document.body.scrollHeight, document.body.offsetHeight].sort(function(a,b){return b-a}) // select longest candidate for scrollable length
-        return (window.innerHeight + window.scrollY + 100 >= c[0]) // compare with scroll position + some give
+        return ((window.innerHeight + window.scrollY)*1.5  >= c[0]) // compare with scroll position + some give
     }
 
     function makeShareLinkId(minLength, maxLength) {
