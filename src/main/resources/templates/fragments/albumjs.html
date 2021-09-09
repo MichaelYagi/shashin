@@ -31,7 +31,7 @@
 
                             var html = 
                                 '<div class="photo-thumbnail-container photo-thumbnail">\n' +
-                                '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'">\n';
+                                '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
                             if (metadata.type.includes("video")) {
                                 html +=
                                 '   <div class="thumbnail-tr" id="tntr'+metadata.id+'">\n' +
@@ -105,6 +105,10 @@
     function activateAlbumListeners(rawMetadata,rawAlbumData) {
         var metadata = JSON.parse(decodeHtml(rawMetadata));
         var album = JSON.parse(decodeHtml(rawAlbumData));
+
+        $("#image"+metadata.id).on('load', function() {
+            $(this).css("background-color","transparent");
+        });
 
         $('#removeFromAlbum'+metadata.id).change(function() {
             if (this.checked) {

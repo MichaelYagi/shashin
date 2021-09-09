@@ -6,6 +6,10 @@
         var metadata = JSON.parse(decodeHtml(rawMetadata));
         // console.log(metadata.id);
 
+        $("#image"+metadata.id).on('load', function() {
+            $(this).css("background-color","transparent");
+        });
+
         $("#favorite"+metadata.id).click(function (e) {
             e.preventDefault();
 
@@ -144,7 +148,7 @@
                             }
 
                             html += '<div class="photo-thumbnail-container photo-thumbnail">\n' +
-                                    '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'">\n' +
+                                    '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
                                     '   <input type="hidden" name="filename'+metadata.id+'" id="filename'+metadata.id+'" value="'+metadata.fileName+'">\n';
                             if (metadata.type.includes("video")) {
                                 html +=

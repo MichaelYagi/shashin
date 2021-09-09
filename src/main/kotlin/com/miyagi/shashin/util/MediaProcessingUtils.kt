@@ -398,6 +398,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                .asBufferedImage()
             if (tnFile != null) {
                 ImageIO.write(scaled209, "jpg", tnFile)
+                _metadataObj?.setThumbnailSmallHeight(scaled209.height)
+                _metadataObj?.setThumbnailSmallWidth(scaled209.width)
                 _metadataObj?.setThumbnailPathSmall(tnFile.path)
                 _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }

@@ -24,7 +24,7 @@
                             let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                             html += '<div class="photo-thumbnail-container photo-thumbnail">\n' +
-                                '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'">\n';
+                                '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
 
                             if (metadata.type.includes("video")) {
                                 html +=
@@ -60,6 +60,10 @@
 
                             var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
                             setPhotoOverlays(htmlEncodedMetadata, activePage);
+
+                            $("#image"+metadata.id).on('load', function() {
+                                $(this).css("background-color","transparent");
+                            });
 
                             html = "";
                         }
