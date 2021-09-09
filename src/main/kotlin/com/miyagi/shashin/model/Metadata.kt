@@ -12,6 +12,8 @@ class Metadata {
     private var path: String? = null
     private var thumbnailPathSmall: String? = null
     private var thumbnailUrlSmall: String? = null
+    private var thumbnailSmallWidth: Int? = null
+    private var thumbnailSmallHeight: Int? = null
     private var thumbnailPathCentered: String? = null
     private var thumbnailUrlCentered: String? = null
     private var thumbnailUrlOriginal: String? = null
@@ -51,6 +53,12 @@ class Metadata {
     }
     fun setThumbnailUrlSmall(thumbnailUrlSmall: String?) {
         this.thumbnailUrlSmall = thumbnailUrlSmall
+    }
+    fun setThumbnailSmallWidth(thumbnailSmallWidth: Int?) {
+        this.thumbnailSmallWidth = thumbnailSmallWidth
+    }
+    fun setThumbnailSmallHeight(thumbnailSmallHeight: Int?) {
+        this.thumbnailSmallHeight = thumbnailSmallHeight
     }
     fun setThumbnailPathCentered(thumbnailPathCentered: String?) {
         this.thumbnailPathCentered = thumbnailPathCentered
@@ -155,6 +163,12 @@ class Metadata {
     fun getThumbnailUrlOriginal(): String? {
         return this.thumbnailUrlOriginal
     }
+    fun getThumbnailSmallWidth(): Int? {
+        return this.thumbnailSmallWidth
+    }
+    fun getThumbnailSmallHeight(): Int? {
+        return this.thumbnailSmallHeight
+    }
     fun getMapMarkerPath(): String? {
         return this.mapMarkerPath
     }
@@ -237,6 +251,8 @@ class Metadata {
         map["thumbnailUrlSmall"] = this.thumbnailUrlSmall
         map["thumbnailUrlCentered"] = this.thumbnailUrlCentered
         map["thumbnailUrlOriginal"] = this.thumbnailUrlOriginal
+        map["thumbnailSmallWidth"] = this.thumbnailSmallWidth
+        map["thumbnailSmallHeight"] = this.thumbnailSmallHeight
         map["mapMarkerUrl"] = this.mapMarkerUrl
         map["videoUrl"] = this.videoUrl
         map["takenAt"] = this.takenAt

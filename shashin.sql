@@ -18,6 +18,8 @@ CREATE TABLE `metadata` (
     `thumbnailPathCentered` VARCHAR(255) DEFAULT NULL,
     `thumbnailUrlCentered` VARCHAR (255) DEFAULT NULL,
     `thumbnailUrlOriginal` VARCHAR (255) DEFAULT NULL,
+    `thumbnailSmallWidth` INTEGER DEFAULT NULL,
+    `thumbnailSmallHeight` INTEGER DEFAULT NULL,
     `mapMarkerPath` VARCHAR (255) DEFAULT NULL,
     `mapMarkerUrl` VARCHAR (255) DEFAULT NULL,
     `videoUrl` VARCHAR (255) DEFAULT NULL,
