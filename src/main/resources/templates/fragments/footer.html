@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<footer th:fragment="footer(copyrightYear,operatingSystemInfo)">
-    <p>&copy; <span th:text="'2021-'+${copyrightYear}+'  Shashin ('+${operatingSystemInfo}+')'"></span></p>
+<footer th:fragment="footer(copyrightYear,operatingSystemInfo,buildProperties)">
+    <p>&copy; <span th:text="'2021-'+${copyrightYear}+'  Shashin ('+${operatingSystemInfo}+') '+${buildProperties != '' ? buildProperties.getVersion() : ''}"></span></p>
 </footer>
 </body>
 </html>

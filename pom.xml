@@ -68,9 +68,11 @@
             <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- Thumbnail processing -->
 <!--        <dependency>-->
-<!--            <groupId>org.thymeleaf.extras</groupId>-->
-<!--            <artifactId>thymeleaf-extras-springsecurity5</artifactId>-->
+<!--            <groupId>net.coobird</groupId>-->
+<!--            <artifactId>thumbnailator</artifactId>-->
+<!--            <version>0.4.14</version>-->
 <!--        </dependency>-->
         <!-- EXIF Extractor -->
         <dependency>
@@ -187,6 +189,14 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.5.3</version>
+                <executions>
+                    <execution>
+                        <id>build-info</id>
+                        <goals>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jetbrains.kotlin</groupId>

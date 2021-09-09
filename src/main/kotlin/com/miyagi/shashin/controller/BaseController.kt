@@ -5,6 +5,7 @@ import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.info.BuildProperties
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
@@ -22,6 +23,7 @@ import java.util.logging.Logger
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
+
 @ControllerAdvice
 class BaseController {
 
@@ -32,6 +34,9 @@ class BaseController {
 
     @Autowired
     private var settingsRepository: SettingsRepository? = null
+
+    @Autowired
+    private var buildProperties: BuildProperties? = null
 
     @Value("\${app.sidecar.path}")
     private lateinit var relativeSidecarDir: String
@@ -82,6 +87,10 @@ class BaseController {
         model["apiVersion"] = apiVersion
         model["relativeSidecarDir"] = relativeSidecarDir
         model["geocodeUrl"] = geocodeUrl
+        model["buildProperties"] = ""
+        if (buildProperties != null) {
+            model["buildProperties"] = buildProperties!!
+        }
         model["parameter"] = ""
 
         model["currentUser"] = ""
