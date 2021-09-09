@@ -44,8 +44,6 @@ class FaceRecognizer() {
         val classLoader: ClassLoader = ShashinApplication::class.java.classLoader
         val fileListing: MutableList<File> = mutableListOf()
 
-
-
         var cascadeFileStream = classLoader.getResourceAsStream(this.cascadeDir+"/haarcascade_frontalface_alt.xml")
         var tempFilePath = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_alt.xml"
         var tempFile = File(tempFilePath)
@@ -267,11 +265,13 @@ class FaceRecognizer() {
                             recognitionLabelPhoto.setMetadataId(testImage.getId())
                             recognitionLabelPhoto.setRecognitionLabelId(labelId)
                             recognitionLabelPhoto.setConfidence(confidenceVal)
+                            recognitionLabelPhoto.setAutoTagged(true)
                             this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
                         } else {
                             val recognitionLabelPhoto = this.recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(labelId,testImage.getId())
                             if (recognitionLabelPhoto != null) {
                                 recognitionLabelPhoto.setConfidence(confidenceVal)
+                                recognitionLabelPhoto.setAutoTagged(true)
                                 this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
                             }
                         }

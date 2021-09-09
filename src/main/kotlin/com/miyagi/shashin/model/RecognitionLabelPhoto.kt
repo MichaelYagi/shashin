@@ -17,6 +17,8 @@ class RecognitionLabelPhoto {
     private var metadataId: String? = null
     @NotBlank
     private var confidence: String? = null
+    @NotBlank
+    private var autoTagged: Boolean? = false
 
     fun RecognitionLabelPhoto() {}
 
@@ -52,12 +54,21 @@ class RecognitionLabelPhoto {
         this.confidence = confidence
     }
 
+    fun getAutoTagged(): Boolean? {
+        return this.autoTagged
+    }
+
+    fun setAutoTagged(autoTagged: Boolean?) {
+        this.autoTagged = autoTagged
+    }
+
     override fun toString(): String {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["metadataId"] = this.metadataId
         map["recognitionLabelId"] = this.recognitionLabelId
         map["confidence"] = this.confidence
+        map["autoTagged"] = this.autoTagged
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

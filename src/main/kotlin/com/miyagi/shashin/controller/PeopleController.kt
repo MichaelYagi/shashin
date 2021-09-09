@@ -283,22 +283,29 @@ class PeopleController {
             if (metadataList != null && metadataList.count() > 0) {
                 response["data"] = ""
 
-                val labelPhotoMap = mutableMapOf<String, String>()
+                val labelPhotoMap = mutableMapOf<String, MutableMap<String,Any>>()
                 for (metadata in metadataList) {
                     val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                     var labelString = ""
+                    var isAutoTagged = false
+                    val nameTaggedMap = mutableMapOf<String,Any>()
                     if (recognitionLabelPhotos != null) {
                         for (recognitionLabelPhoto in recognitionLabelPhotos) {
                             val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
                             if (recognitionLabelObj != null && recognitionLabelObj.get().getName() != "object") {
                                 labelString += recognitionLabelObj.get().getName() + ","
                             }
+                            if (!isAutoTagged) {
+                                isAutoTagged = recognitionLabelPhoto.getAutoTagged() == true
+                            }
                         }
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
                     }
-                    labelPhotoMap[metadata.getId()] = labelString
+                    nameTaggedMap["labels"] = labelString
+                    nameTaggedMap["isTagged"] = isAutoTagged
+                    labelPhotoMap[metadata.getId()] = nameTaggedMap
                 }
                 response["labelPhotoMap"] = labelPhotoMap
             }
