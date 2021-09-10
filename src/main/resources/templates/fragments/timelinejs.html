@@ -150,7 +150,12 @@
                                     '<span style="display: none;" class="dayTaken">'+metadata["day"]+'</span>\n';
                             }
 
-                            html += '<div class="photo-thumbnail-container photo-thumbnail">\n' +
+                            if (metadata.type.includes("video")) {
+                                html += '<div class="photo-thumbnail-container photo-thumbnail is-video">\n';
+                            } else {
+                                html += '<div class="photo-thumbnail-container photo-thumbnail is-not-video">\n';
+                            }
+                            html +=
                                     '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
                                     '   <input type="hidden" name="filename'+metadata.id+'" id="filename'+metadata.id+'" value="'+metadata.fileName+'">\n';
                             if (metadata.type.includes("video")) {
@@ -198,6 +203,10 @@
                             } else {
                                 html += '</div><span class="attachMetadataPhotos"></span>';
                                 $(html).insertAfter($(".attachMetadataPhotos").last())
+                            }
+
+                            if ($("#videoToggle").text() !== "Show Only Videos") {
+                                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").hide();
                             }
 
                             if ($(".undatedTimelinePhotos").length > 0 && $(".anchorUndated").length === 0) {
