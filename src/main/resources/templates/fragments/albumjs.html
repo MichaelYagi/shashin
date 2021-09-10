@@ -24,74 +24,78 @@
                         // console.log(currentUser);
                         // console.log(albumMetadataList.length);
 
-                        for (var index in albumMetadataList) {
-                            var metadata = albumMetadataList[index];
+                        if (albumMetadataList.length > 0) {
+                            for (var index in albumMetadataList) {
+                                var metadata = albumMetadataList[index];
 
-                            let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                            var html = 
-                                '<div class="photo-thumbnail-container photo-thumbnail">\n' +
-                                '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
-                            if (metadata.type.includes("video")) {
+                                var html =
+                                    '<div class="photo-thumbnail-container photo-thumbnail">\n' +
+                                    '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n' +
+                                if (metadata.type.includes("video")) {
+                                    html +=
+                                        '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
+                                        '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>\n' +
+                                        '   </div>\n';
+                                }
+
+                                if (currentUser.authority === "ROLE_ADMIN") {
+                                    html +=
+                                        '   <div class="thumbnail-tl" id="tntl' + metadata.id + '">\n' +
+                                        '       <a href="#" id="select' + metadata.id + '">\n' +
+                                        '           <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                        '       </a>\n' +
+                                        '   </div>\n' +
+                                        '   <div class="thumbnail-bl" id="tnbl' + metadata.id + '">\n' +
+                                        '       <a href="#" data-toggle="modal" data-target="#propalbum' + metadata.id + '">\n' +
+                                        '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                        '       </a>\n' +
+                                        '   </div>\n';
+                                }
                                 html +=
-                                '   <div class="thumbnail-tr" id="tntr'+metadata.id+'">\n' +
-                                '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>\n' +
-                                '   </div>\n';
+                                    '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
+                                    '       <a href="#" data-toggle="modal" data-target="#propalbumphotocomment' + metadata.id + '" style="text-decoration: none;color: darkorange">\n' +
+                                    '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square-fill" style="font-size: 1rem;color: darkorange;"></span>\n' +
+                                    '       </a>\n' +
+                                    '   </div>\n' +
+                                    '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+
+                                if (metadata.type.includes("video")) {
+                                    html +=
+                                        '   <a class="mediaLink"\n' +
+                                        '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"' + metadata.type + '"}], "attributes": {"preload": false, "controls": true}}\'\n' +
+                                        '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                        '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                        '   </a>\n';
+                                } else {
+                                    html +=
+                                        '   <a class="mediaLink" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                                        '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                        '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                        '   </a>\n';
+                                }
+
+                                html +=
+                                    '   </div>\n' +
+                                    '</div>\n' +
+                                    '<div id="albummodal' + metadata.id + '"></div>\n';
+
+                                // Append HTML
+                                $(html).insertBefore($(".appendAlbumPhotos").last())
+
+                                // Call JS and modal
+                                var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                                var htmlEncodedAlbumData = encodeHtml(JSON.stringify(albumData));
+                                var htmlEncodedCurrentUser = encodeHtml(JSON.stringify(currentUser));
+                                var htmlEncodedalbumPhotoCommentsMap = encodeHtml(JSON.stringify(albumPhotoCommentsMap));
+
+                                setPhotoOverlays(htmlEncodedMetadata, activePage);
+                                renderAlbumModal(htmlEncodedAlbumData, htmlEncodedMetadata, htmlEncodedCurrentUser, htmlEncodedalbumPhotoCommentsMap);
+                                activateAlbumListeners(htmlEncodedMetadata, htmlEncodedAlbumData);
                             }
-
-                            if (currentUser.authority === "ROLE_ADMIN") {
-                                html +=
-                                '   <div class="thumbnail-tl" id="tntl'+metadata.id+'">\n' +
-                                '       <a href="#" id="select'+metadata.id+'">\n' +
-                                '           <span id="tlicon'+metadata.id+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                '       </a>\n' +
-                                '   </div>\n' +
-                                '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
-                                '       <a href="#" data-toggle="modal" data-target="#propalbum'+metadata.id+'">\n' +
-                                '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                '       </a>\n' +
-                                '   </div>\n';
-                            }
-                            html +=
-                                '   <div class="thumbnail-br" id="tnbr'+metadata.id+'">\n' +
-                                '       <a href="#" data-toggle="modal" data-target="#propalbumphotocomment'+metadata.id+'" style="text-decoration: none;color: darkorange">\n' +
-                                '           '+albumPhotoCommentsMap[metadata.id].length+' <span id="bricon'+metadata.id+'" class="bi-chat-square-fill" style="font-size: 1rem;color: darkorange;"></span>\n' +
-                                '       </a>\n' +
-                                '   </div>\n' +
-                                '   <div class="thumbnail-centered" id="tncentered'+metadata.id+'">\n';
-
-                            if (metadata.type.includes("video")) {
-                                html +=
-                                    '   <a class="mediaLink"\n' +
-                                    '       data-video=\'{"source": [{"src":"'+metadata.videoUrl+'", "type":"'+metadata.type+'"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                    '       data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "<br>")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
-                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                    '   </a>\n';
-                            } else {
-                                html +=
-                                    '   <a class="mediaLink" data-src="'+metadata.thumbnailUrlOriginal+'" href="'+metadata.thumbnailUrlOriginal+'"' +
-                                    '       data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "<br>")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
-                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                    '   </a>\n';
-                            }
-
-                            html +=
-                                '   </div>\n' +
-                                '</div>\n' +
-                                '<div id="albummodal'+metadata.id+'"></div>\n';
-
-                            // Append HTML
-                            $(html).insertBefore($(".appendAlbumPhotos").last())
-
-                            // Call JS and modal
-                            var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                            var htmlEncodedAlbumData = encodeHtml(JSON.stringify(albumData));
-                            var htmlEncodedCurrentUser = encodeHtml(JSON.stringify(currentUser));
-                            var htmlEncodedalbumPhotoCommentsMap = encodeHtml(JSON.stringify(albumPhotoCommentsMap));
-
-                            setPhotoOverlays(htmlEncodedMetadata, activePage);
-                            renderAlbumModal(htmlEncodedAlbumData,htmlEncodedMetadata,htmlEncodedCurrentUser,htmlEncodedalbumPhotoCommentsMap);
-                            activateAlbumListeners(htmlEncodedMetadata,htmlEncodedAlbumData);
+                        } else {
+                            $(".appendAlbumPhotos").last().text("EOL").css("display","none")
                         }
                     }
                 } else {

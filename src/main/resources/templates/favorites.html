@@ -135,7 +135,7 @@
             }, 1000);
         }
         $(window).on('scroll', function() {
-            if (atEndOfPage()) {
+            if (atEndOfPage() && $(".appendMetadataPhotos").last().text() !== "EOL") {
                 loadNextPage()
             }
         })
