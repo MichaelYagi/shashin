@@ -52,6 +52,7 @@
     }
 
     function updateTimeline(nextPage, activePage) {
+
         // console.log("nextPage:"+nextPage);
 
         // Get paged results
@@ -89,6 +90,7 @@
                             var monthTakenCount = $(".monthTaken").length;
                             var dayTakenCount = $(".dayTaken").length;
                             var dateTakenHeadingCount = $(".dateTakenHeading").length;
+                            var headingCount = 0;
                             var lastYearTaken = $(".yearTaken").get(yearTakenCount - 1).innerText
                             var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
                             var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
@@ -118,13 +120,14 @@
                                 metadata["day"] === null)
                             {
                                 // console.log("undated");
-                                if (undatedCount > 0 || $('#undatedTimelinePhotos').length > 0) {
+                                if (undatedCount > 0 || $('.undatedTimelinePhotos').length > 0) {
                                     // Append
                                     appended = true;
                                     // console.log("appended");
                                 } else {
                                     // Create new
-                                    html += '<br><p id="undatedTimelinePhotos"><strong>Undated</strong></p>\n' +
+                                    headingCount++;
+                                    html += '<br><p class="undatedTimelinePhotos" id="undated"><strong>Undated</strong></p>\n' +
                                         '<div class="row">\n';
                                     // console.log("new");
                                 }
@@ -138,8 +141,8 @@
                                 appended = true;
                             } else { // New date div
                                 // console.log("new date");
-
-                                html += '<br><p><strong>'+dateString+'</strong></p>\n' +
+                                headingCount++;
+                                html += '<br><p><strong class="dateHeading" id="'+metadata["year"]+'-'+metadata["month"]+'-'+metadata["day"]+'">'+dateString+'</strong></p>\n' +
                                     '<span style="display: none;" class="dateTakenHeading">'+metadata["year"]+'-'+metadata["month"]+'-'+metadata["day"]+'</span>\n' +
                                     '<div class="row">\n' +
                                     '<span style="display: none;" class="yearTaken">'+metadata["year"]+'</span>\n' +
@@ -197,6 +200,25 @@
                                 $(html).insertAfter($(".attachMetadataPhotos").last())
                             }
 
+                            if ($(".undatedTimelinePhotos").length > 0 && $(".anchorUndated").length === 0) {
+                                var html = '<a class="anchorUndated" style="position: relative;left: 1%;" href="#undated">Undated</a><br>';
+                                $("#timelineToc").append(html);
+                            } else {
+                                for (var i = 0; i < headingCount; i++) {
+                                    var target = -(i+1);
+
+                                    if ($("p strong").eq(target).attr('id') !== $("p strong").eq(target-1).attr('id')) {
+                                        var dateId = $("p strong").eq(target).attr('id');
+                                        var dateHeading = $("p strong").eq(target).text();
+
+                                        if ($(".anchor-"+dateId).length === 0) {
+                                            var timelineTocHtml = '<a class="anchor-' + dateId + '" style="position: relative;left: 1%;" href="#' + dateId + '">' + dateHeading + '</a><br>';
+                                            $("#timelineToc").append(timelineTocHtml);
+                                        }
+                                    }
+                                }
+                            }
+
                             var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
                             var htmlEncodedRecognitionLabels = encodeHtml(JSON.stringify(recognitionLabels));
                             var htmlEncodedLabelPhotoMap = encodeHtml(JSON.stringify(labelPhotoMap[metadata.id]));
@@ -213,6 +235,7 @@
                     $("#msgTimeline").html(message);
                 }
             }
+            $("#spinner").css("display","none");
         });
     }
 </script>

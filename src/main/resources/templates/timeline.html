@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
-<body>
+<body data-spy="scroll" data-target="#timelineToc">
 
 <div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
 
 <div class="container-fluid">
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
-        <main role="main" class="col-md-11 col-lg-11 pt-3 px-4" id="timelineMain">
+        <main role="main" class="col-10 pt-3 px-4" id="timelineMain">
             <div th:replace="fragments/content :: content(${data},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentlat" name="currentlat">
             <input type="hidden" id="currentlng" name="currentlng">
@@ -26,13 +26,13 @@
                         <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
                             <br>
                             <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                <p><strong>Undated</strong></p>
+                                <p><strong class="undatedTimelinePhotos" id="undated">Undated</strong></p>
                                 <div class="row">
                             </th:block>
 
                             <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                 <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                    <p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p>
+                                    <p><strong class="dateHeading" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p>
                                     <span style="display: none;" class="dateTakenHeading" th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></span>
                                 </th:block>
                                 <div class="row">
@@ -133,13 +133,27 @@
             <div th:replace="fragments/addalbummodal :: addalbummodal(${albumList})"></div>
 
             <div id="msgTimeline"></div>
+
+            <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none">
+                <span class="sr-only">Loading...</span>
+            </div>
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
+
+
+        <nav id="timelineToc" class="col-0 px-0 sidebar-sticky"></nav>
+
+
     </div>
 </div>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
+        $("p strong").each(function() {
+            var html = '<a class="anchor-'+$(this).attr('id')+'" style="position: relative;left: 1%;" href="#' + $(this).attr('id') + '">' + $(this).text() + '</a><br>';
+            $("#timelineToc").append(html);
+        });
+
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
@@ -152,6 +166,7 @@
         var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
 
         function loadNextPage() {
+            $("#spinner").css("display","block");
             // console.log("scroll bottom");
             var currentPage = parseInt($("#currentPage").val());
             var nextPage = currentPage+1;
@@ -185,6 +200,8 @@
 
                     lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
                 }, 100);
+            } else {
+                $("#spinner").css("display","none");
             }
         }
         if (!$(window).hasScrollBar()) {
