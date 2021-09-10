@@ -150,16 +150,42 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        function hideToggleVideo() {
+            if ($(".photo-thumbnail-container.photo-thumbnail.is-not-video").is(":visible")) {
+                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").hide();
+                // $("p strong").each(function() {
+                //     if ($(this).parent().next().next().children('.photo-thumbnail-container.photo-thumbnail.is-video').length === 0) {
+                //         $(".anchor-"+$(this).attr("id")).next().hide();
+                //         $(".anchor-"+$(this).attr("id")).hide();
+                //         $(this).hide();
+                //         $(this).parent().prev(".attachMetadataPhotos").hide();
+                //         $(this).parent().prev("br").hide();
+                //         $(this).parent().next().next().hide();
+                //         $(this).parent().hide();
+                //     }
+                // });
+                $("#videoToggle").text("Show All");
+            } else {
+                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").show();
+                // $("p strong").each(function() {
+                //     if ($(this).parent().next().next().children('.photo-thumbnail-container.photo-thumbnail.is-video').length === 0) {
+                //         $(".anchor-"+$(this).attr("id")).next().show();
+                //         $(".anchor-"+$(this).attr("id")).show();
+                //         $(this).show();
+                //         $(this).parent().prev(".attachMetadataPhotos").show();
+                //         $(this).parent().prev("br").show();
+                //         $(this).parent().next().next().show();
+                //         $(this).parent().show();
+                //     }
+                // });
+                $("#videoToggle").text("Show Only Videos");
+            }
+        }
+
         $("#videoToggle").click(function (e) {
             e.preventDefault();
 
-            if ($(".photo-thumbnail-container.photo-thumbnail.is-not-video").is(":visible")) {
-                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").hide();
-                $(this).text("Show All");
-            } else {
-                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").show();
-                $(this).text("Show Only Videos");
-            }
+            hideToggleVideo();
         });
 
         $("p strong").each(function() {
