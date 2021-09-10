@@ -51,13 +51,13 @@
         });
     }
 
-    function updateTimeline(nextPage, activePage) {
+    function updateTimeline(nextPage, mediaTypeFilter, activePage) {
 
         // console.log("nextPage:"+nextPage);
 
         // Get paged results
         const posting = $.get({
-            url: "/timeline/"+nextPage,
+            url: "/timeline/mediatype/"+mediaTypeFilter+"/"+nextPage,
             contentType: 'application/json; charset=utf-8'
         });
 
@@ -73,170 +73,167 @@
                     ) {
                         var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
                         var favoritesList = data["favorites"] === "" ? null : data["favorites"];
-                        var albumList = data["albumList"] === "" ? null : data["albumList"];
                         var recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
                         var labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
 
-                        // console.log(favoritesList);
-                        // console.log(albumList);
-                        var html = "";
-                        var undatedCount = 0;
+                        if (metadataList.length > 0) {
+                            // console.log(favoritesList);
+                            // console.log(albumList);
+                            var html = "";
+                            var undatedCount = 0;
 
-                        for (var index in metadataList) {
-                            var metadata = metadataList[index];
-                            var currentDateTaken = metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"];
+                            for (var index in metadataList) {
+                                var metadata = metadataList[index];
+                                var currentDateTaken = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
 
-                            var yearTakenCount = $(".yearTaken").length;
-                            var monthTakenCount = $(".monthTaken").length;
-                            var dayTakenCount = $(".dayTaken").length;
-                            var dateTakenHeadingCount = $(".dateTakenHeading").length;
-                            var headingCount = 0;
-                            var lastYearTaken = $(".yearTaken").get(yearTakenCount - 1).innerText
-                            var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
-                            var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
-                            var lastDateTakenHeading = $(".dateTakenHeading").get(dateTakenHeadingCount - 1).innerText
-                            lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-                            lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-                            lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+                                var yearTakenCount = $(".yearTaken").length;
+                                var monthTakenCount = $(".monthTaken").length;
+                                var dayTakenCount = $(".dayTaken").length;
+                                var dateTakenHeadingCount = $(".dateTakenHeading").length;
+                                var headingCount = 0;
+                                var lastYearTaken = $(".yearTaken").get(yearTakenCount - 1).innerText
+                                var lastMonthTaken = $(".monthTaken").get(monthTakenCount - 1).innerText
+                                var lastDayTaken = $(".dayTaken").get(dayTakenCount - 1).innerText
+                                var lastDateTakenHeading = $(".dateTakenHeading").get(dateTakenHeadingCount - 1).innerText
+                                lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                                lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                                lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
-                            // console.log(lastDateTakenHeading);
-                            // console.log(currentDateTaken);
-                            //
-                            // console.log(lastYearTaken);
-                            // console.log(lastMonthTaken);
-                            // console.log(lastDayTaken);
-                            //
-                            // console.log(metadata["year"]);
-                            // console.log(metadata["month"]);
-                            // console.log(metadata["day"]);
+                                // console.log(lastDateTakenHeading);
+                                // console.log(currentDateTaken);
+                                //
+                                // console.log(lastYearTaken);
+                                // console.log(lastMonthTaken);
+                                // console.log(lastDayTaken);
+                                //
+                                // console.log(metadata["year"]);
+                                // console.log(metadata["month"]);
+                                // console.log(metadata["day"]);
 
-                            var appended = false;
+                                var appended = false;
 
-                            let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                            // Undated
-                            if (metadata["year"] === null ||
-                                metadata["month"] === null ||
-                                metadata["day"] === null)
-                            {
-                                // console.log("undated");
-                                if (undatedCount > 0 || $('.undatedTimelinePhotos').length > 0) {
-                                    // Append
+                                // Undated
+                                if (metadata["year"] === null ||
+                                    metadata["month"] === null ||
+                                    metadata["day"] === null) {
+                                    // console.log("undated");
+                                    if (undatedCount > 0 || $('.undatedTimelinePhotos').length > 0) {
+                                        // Append
+                                        appended = true;
+                                        // console.log("appended");
+                                    } else {
+                                        // Create new
+                                        headingCount++;
+                                        html += '<br><p class="undatedTimelinePhotos" id="undated"><strong>Undated</strong></p>\n' +
+                                            '<div class="row">\n';
+                                        // console.log("new");
+                                    }
+                                    undatedCount++;
+                                } else if (lastYearTaken === metadata["year"] && // Append (test: 1st photo set has 10 photos within date)
+                                    lastMonthTaken === metadata["month"] &&
+                                    lastDayTaken === metadata["day"] &&
+                                    lastDateTakenHeading === currentDateTaken) {
+                                    // console.log("append date");
                                     appended = true;
-                                    // console.log("appended");
-                                } else {
-                                    // Create new
+                                } else { // New date div
+                                    // console.log("new date");
                                     headingCount++;
-                                    html += '<br><p class="undatedTimelinePhotos" id="undated"><strong>Undated</strong></p>\n' +
-                                        '<div class="row">\n';
-                                    // console.log("new");
+                                    html += '<br><p><strong class="dateHeading" id="' + metadata["year"] + '-' + metadata["month"] + '-' + metadata["day"] + '">' + dateString + '</strong></p>\n' +
+                                        '<span style="display: none;" class="dateTakenHeading">' + metadata["year"] + '-' + metadata["month"] + '-' + metadata["day"] + '</span>\n' +
+                                        '<div class="row">\n' +
+                                        '<span style="display: none;" class="yearTaken">' + metadata["year"] + '</span>\n' +
+                                        '<span style="display: none;" class="monthTaken">' + metadata["month"] + '</span>\n' +
+                                        '<span style="display: none;" class="dayTaken">' + metadata["day"] + '</span>\n';
                                 }
-                                undatedCount++;
-                            } else if (lastYearTaken === metadata["year"] && // Append (test: 1st photo set has 10 photos within date)
-                                lastMonthTaken === metadata["month"] &&
-                                lastDayTaken === metadata["day"] &&
-                                lastDateTakenHeading === currentDateTaken)
-                            {
-                                // console.log("append date");
-                                appended = true;
-                            } else { // New date div
-                                // console.log("new date");
-                                headingCount++;
-                                html += '<br><p><strong class="dateHeading" id="'+metadata["year"]+'-'+metadata["month"]+'-'+metadata["day"]+'">'+dateString+'</strong></p>\n' +
-                                    '<span style="display: none;" class="dateTakenHeading">'+metadata["year"]+'-'+metadata["month"]+'-'+metadata["day"]+'</span>\n' +
-                                    '<div class="row">\n' +
-                                    '<span style="display: none;" class="yearTaken">'+metadata["year"]+'</span>\n' +
-                                    '<span style="display: none;" class="monthTaken">'+metadata["month"]+'</span>\n' +
-                                    '<span style="display: none;" class="dayTaken">'+metadata["day"]+'</span>\n';
-                            }
 
-                            if (metadata.type.includes("video")) {
-                                html += '<div class="photo-thumbnail-container photo-thumbnail is-video">\n';
-                            } else {
-                                html += '<div class="photo-thumbnail-container photo-thumbnail is-not-video">\n';
-                            }
-                            html +=
-                                    '   <img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
-                                    '   <input type="hidden" name="filename'+metadata.id+'" id="filename'+metadata.id+'" value="'+metadata.fileName+'">\n';
-                            if (metadata.type.includes("video")) {
+                                if (metadata.type.includes("video")) {
+                                    html += '<div class="photo-thumbnail-container photo-thumbnail is-video">\n';
+                                } else {
+                                    html += '<div class="photo-thumbnail-container photo-thumbnail is-not-video">\n';
+                                }
                                 html +=
-                                    '   <div class="thumbnail-tr" id="tntr'+metadata.id+'">\n' +
-                                    '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>\n' +
-                                    '   </div>\n';
-                            }
-                            var favoriteIcon = favoritesList[metadata.id] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                            html += '   <div class="thumbnail-tl" id="tntl'+metadata.id+'">\n' +
-                                    '       <a href="#" id="select'+metadata.id+'">\n' +
-                                    '           <span id="tlicon'+metadata.id+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                    '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n' +
+                                    '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
+                                if (metadata.type.includes("video")) {
+                                    html +=
+                                        '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
+                                        '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>\n' +
+                                        '   </div>\n';
+                                }
+                                var favoriteIcon = favoritesList[metadata.id] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                html += '   <div class="thumbnail-tl" id="tntl' + metadata.id + '">\n' +
+                                    '       <a href="#" id="select' + metadata.id + '">\n' +
+                                    '           <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
                                     '       </a>\n' +
                                     '   </div>\n' +
-                                    '   <div class="thumbnail-br" id="tnbr'+metadata.id+'">\n' +
-                                    '       <a href="#" id="favorite'+metadata.id+'">\n' +
-                                    '           <span id="bricon'+metadata.id+'" class="'+favoriteIcon+'" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
+                                    '       <a href="#" id="favorite' + metadata.id + '">\n' +
+                                    '           <span id="bricon' + metadata.id + '" class="' + favoriteIcon + '" style="font-size: 1rem;color: red;"></span>\n' +
                                     '       </a>\n' +
                                     '   </div>\n' +
-                                    '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
-                                    '       <a href="#" data-toggle="modal" data-target="#prop'+metadata.id+'">\n' +
+                                    '   <div class="thumbnail-bl" id="tnbl' + metadata.id + '">\n' +
+                                    '       <a href="#" data-toggle="modal" data-target="#prop' + metadata.id + '">\n' +
                                     '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
                                     '       </a>\n' +
                                     '   </div>\n' +
-                                    '   <div class="thumbnail-centered" id="tncentered'+metadata.id+'">\n';
-                            if (metadata.type.includes("video")) {
-                                html +=
-                                    '       <a class="mediaLink"\n' +
-                                    '           data-video=\'{"source": [{"src":"'+metadata.videoUrl+'", "type":"'+metadata.type+'"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                    '           data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "<br>")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
-                                    '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                    '       </a>\n';
-                            } else {
-                                html +=
-                                    '       <a class="mediaLink" data-src="'+metadata.thumbnailUrlOriginal+'" href="'+metadata.thumbnailUrlOriginal+'"' +
-                                    '           data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "<br>")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
-                                    '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                    '       </a>\n';
-                            }
-                            html += '</div></div>\n<div id="timelinemodal'+metadata.id+'"></div><span class="appendMetadataPhotos"></span>\n';
+                                    '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+                                if (metadata.type.includes("video")) {
+                                    html +=
+                                        '       <a class="mediaLink"\n' +
+                                        '           data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"' + metadata.type + '"}], "attributes": {"preload": false, "controls": true}}\'\n' +
+                                        '           data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                        '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                        '       </a>\n';
+                                } else {
+                                    html +=
+                                        '       <a class="mediaLink" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                                        '           data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                        '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                        '       </a>\n';
+                                }
+                                html += '</div></div>\n<div id="timelinemodal' + metadata.id + '"></div><span class="appendMetadataPhotos"></span>\n';
 
-                            if (appended === true) {
-                                // Append
-                                $(html).insertAfter($(".appendMetadataPhotos").last())
-                            } else {
-                                html += '</div><span class="attachMetadataPhotos"></span>';
-                                $(html).insertAfter($(".attachMetadataPhotos").last())
-                            }
+                                if (appended === true) {
+                                    // Append
+                                    $(html).insertAfter($(".appendMetadataPhotos").last())
+                                } else {
+                                    html += '</div><span class="attachMetadataPhotos"></span>';
+                                    $(html).insertAfter($(".attachMetadataPhotos").last())
+                                }
 
-                            if ($("#videoToggle").text() !== "Show Only Videos") {
-                                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").hide();
-                            }
+                                if ($(".undatedTimelinePhotos").length > 0 && $(".anchorUndated").length === 0) {
+                                    var html = '<a class="anchorUndated" style="position: relative;left: 1%;" href="#undated">Undated</a><br>';
+                                    $("#timelineToc").append(html);
+                                } else {
+                                    for (var i = 0; i < headingCount; i++) {
+                                        var target = -(i + 1);
 
-                            if ($(".undatedTimelinePhotos").length > 0 && $(".anchorUndated").length === 0) {
-                                var html = '<a class="anchorUndated" style="position: relative;left: 1%;" href="#undated">Undated</a><br>';
-                                $("#timelineToc").append(html);
-                            } else {
-                                for (var i = 0; i < headingCount; i++) {
-                                    var target = -(i+1);
+                                        if ($("p strong").eq(target).attr('id') !== $("p strong").eq(target - 1).attr('id')) {
+                                            var dateId = $("p strong").eq(target).attr('id');
+                                            var dateHeading = $("p strong").eq(target).text();
 
-                                    if ($("p strong").eq(target).attr('id') !== $("p strong").eq(target-1).attr('id')) {
-                                        var dateId = $("p strong").eq(target).attr('id');
-                                        var dateHeading = $("p strong").eq(target).text();
-
-                                        if ($(".anchor-"+dateId).length === 0) {
-                                            var timelineTocHtml = '<a class="anchor-' + dateId + '" style="position: relative;left: 1%;" href="#' + dateId + '">' + dateHeading + '</a><br>';
-                                            $("#timelineToc").append(timelineTocHtml);
+                                            if ($(".anchor-" + dateId).length === 0) {
+                                                var timelineTocHtml = '<a class="anchor-' + dateId + '" style="position: relative;left: 1%;" href="#' + dateId + '">' + dateHeading + '</a><br>';
+                                                $("#timelineToc").append(timelineTocHtml);
+                                            }
                                         }
                                     }
                                 }
+
+                                var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                                var htmlEncodedRecognitionLabels = encodeHtml(JSON.stringify(recognitionLabels));
+                                var htmlEncodedLabelPhotoMap = encodeHtml(JSON.stringify(labelPhotoMap[metadata.id]));
+
+                                setPhotoOverlays(htmlEncodedMetadata, activePage);
+                                renderTimelineModal(htmlEncodedMetadata, htmlEncodedRecognitionLabels, htmlEncodedLabelPhotoMap);
+                                activateMetadataListeners(htmlEncodedMetadata);
+
+                                html = "";
                             }
-
-                            var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                            var htmlEncodedRecognitionLabels = encodeHtml(JSON.stringify(recognitionLabels));
-                            var htmlEncodedLabelPhotoMap = encodeHtml(JSON.stringify(labelPhotoMap[metadata.id]));
-
-                            setPhotoOverlays(htmlEncodedMetadata, activePage);
-                            renderTimelineModal(htmlEncodedMetadata,htmlEncodedRecognitionLabels,htmlEncodedLabelPhotoMap);
-                            activateMetadataListeners(htmlEncodedMetadata);
-
-                            html = "";
+                        } else {
+                            $(".attachMetadataPhotos").last().text("EOL").css("display","none")
                         }
                     }
                 } else {

@@ -7,7 +7,7 @@
         <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline" data-toggle="tooltip" data-placement="top" title="Timeline">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline/mediatype/all" data-toggle="tooltip" data-placement="top" title="Timeline">
                         <span class="bi-calendar4" style="font-size: 2rem;"></span>
                     </a>
                 </li>
