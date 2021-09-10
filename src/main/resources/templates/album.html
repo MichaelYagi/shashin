@@ -160,7 +160,7 @@
         }
         $(window).on('scroll', function() {
             // Uset to detect near bottom
-            if (atEndOfPage()) {
+            if (atEndOfPage() && $(".appendAlbumPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
