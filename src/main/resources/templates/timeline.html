@@ -43,7 +43,7 @@
 
                         </th:block>
 
-                        <div class="photo-thumbnail-container photo-thumbnail">
+                        <div th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}">
                             <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
                             <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
 
@@ -141,14 +141,27 @@
         </main>
 
 
-        <nav id="timelineToc" class="col-0 px-0 sidebar-sticky"></nav>
-
+        <nav id="timelineToc" class="col-0 px-0 sidebar-sticky">
+            <a id="videoToggle" style="position: relative;left: 1%;" href="#">Show Only Videos</a><br>
+        </nav>
 
     </div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
+        $("#videoToggle").click(function (e) {
+            e.preventDefault();
+
+            if ($(".photo-thumbnail-container.photo-thumbnail.is-not-video").is(":visible")) {
+                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").hide();
+                $(this).text("Show All");
+            } else {
+                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").show();
+                $(this).text("Show Only Videos");
+            }
+        });
+
         $("p strong").each(function() {
             var html = '<a class="anchor-'+$(this).attr('id')+'" style="position: relative;left: 1%;" href="#' + $(this).attr('id') + '">' + $(this).text() + '</a><br>';
             $("#timelineToc").append(html);
