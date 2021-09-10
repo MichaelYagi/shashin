@@ -183,7 +183,7 @@ class UserController {
         val module = "login"
 
         if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-            return "redirect:/timeline"
+            return "redirect:/timeline/mediatype/all"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
         } else {

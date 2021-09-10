@@ -122,7 +122,7 @@
                         <th:block th:if="${iterStat.count > 0 and {iterStat.last or {!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}}}">
                             <span class="appendMetadataPhotos"></span>
                             <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
-                            <span class="attachMetadataPhotos"></span>
+                            <span class="attachMetadataPhotos" style="display: none"></span>
                         </th:block>
 
                     </th:block>
@@ -140,9 +140,13 @@
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
 
-
         <nav id="timelineToc" class="col-0 px-0 sidebar-sticky">
-            <a id="videoToggle" style="position: relative;left: 1%;" href="#">Show Only Videos</a><br>
+            <th:block th:if="${mediaTypeFilter == 'video'}">
+            <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a><br>
+            </th:block>
+            <th:block th:if="${mediaTypeFilter == 'all'}">
+            <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a><br>
+            </th:block>
         </nav>
 
     </div>
@@ -150,44 +154,6 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        function hideToggleVideo() {
-            if ($(".photo-thumbnail-container.photo-thumbnail.is-not-video").is(":visible")) {
-                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").hide();
-                // $("p strong").each(function() {
-                //     if ($(this).parent().next().next().children('.photo-thumbnail-container.photo-thumbnail.is-video').length === 0) {
-                //         $(".anchor-"+$(this).attr("id")).next().hide();
-                //         $(".anchor-"+$(this).attr("id")).hide();
-                //         $(this).hide();
-                //         $(this).parent().prev(".attachMetadataPhotos").hide();
-                //         $(this).parent().prev("br").hide();
-                //         $(this).parent().next().next().hide();
-                //         $(this).parent().hide();
-                //     }
-                // });
-                $("#videoToggle").text("Show All");
-            } else {
-                $(".photo-thumbnail-container.photo-thumbnail.is-not-video").show();
-                // $("p strong").each(function() {
-                //     if ($(this).parent().next().next().children('.photo-thumbnail-container.photo-thumbnail.is-video').length === 0) {
-                //         $(".anchor-"+$(this).attr("id")).next().show();
-                //         $(".anchor-"+$(this).attr("id")).show();
-                //         $(this).show();
-                //         $(this).parent().prev(".attachMetadataPhotos").show();
-                //         $(this).parent().prev("br").show();
-                //         $(this).parent().next().next().show();
-                //         $(this).parent().show();
-                //     }
-                // });
-                $("#videoToggle").text("Show Only Videos");
-            }
-        }
-
-        $("#videoToggle").click(function (e) {
-            e.preventDefault();
-
-            hideToggleVideo();
-        });
-
         $("p strong").each(function() {
             var html = '<a class="anchor-'+$(this).attr('id')+'" style="position: relative;left: 1%;" href="#' + $(this).attr('id') + '">' + $(this).text() + '</a><br>';
             $("#timelineToc").append(html);
@@ -218,7 +184,7 @@
 
             if (yearTakenCount > 0 && monthTakenCount > 0 && dayTakenCount > 0) {
                 /*<![CDATA[*/
-                updateTimeline(nextPage,"[[${activePage}]]");
+                updateTimeline(nextPage,"[[${mediaTypeFilter}]]","[[${activePage}]]");
                 /*]]>*/
                 $("#currentPage").val(nextPage);
 
@@ -249,7 +215,7 @@
             }, 1000);
         }
         $(window).on('scroll', function() {
-            if (atEndOfPage()) {
+            if (atEndOfPage() && $(".attachMetadataPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })

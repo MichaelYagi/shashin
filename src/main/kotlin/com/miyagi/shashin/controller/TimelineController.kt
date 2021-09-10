@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
-import org.springframework.transaction.annotation.Transactional
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
@@ -51,16 +50,17 @@ class TimelineController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
-    fun getTimeline(model: Model): String {
+    @RequestMapping(value = ["/timeline","/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
+    fun getTimeline(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
-        val response = buildTimelineData(model,0)
+        val response = buildTimelineData(model,mediaType,0)
         model["data"] = response["data"]!!
         model["metadataList"] = response["metadataList"]!!
         model["favorites"] = response["favorites"]!!
         model["albumList"] = response["albumList"]!!
         model["recognitionLabels"] = response["recognitionLabels"]!!
         model["labelPhotoMap"] = response["labelPhotoMap"]!!
+        model["mediaTypeFilter"] = response["mediaTypeFilter"]!!
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -68,10 +68,10 @@ class TimelineController {
         return module
     }
 
-    @RequestMapping(value = ["/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedTimeline(model: Model, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildTimelineData(model,page))
+    fun getPagedTimeline(model: Model, @PathVariable page: Int,@PathVariable mediaType: String): String {
+        return mapper.writeValueAsString(buildTimelineData(model,mediaType,page))
     }
 
     @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -81,10 +81,10 @@ class TimelineController {
         if (page != null) {
             pageValue = page
         }
-        return mapper.writeValueAsString(buildTimelineData(model,pageValue))
+        return mapper.writeValueAsString(buildTimelineData(model,"all",pageValue))
     }
 
-    private fun buildTimelineData(model: Model,page: Int): MutableMap<String, Any?> {
+    private fun buildTimelineData(model: Model,mediaTypeFilter: String,page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["data"] = "There are no photos. Please setup directories in Settings and scan ."
@@ -93,6 +93,7 @@ class TimelineController {
         response["albumList"] = ""
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = ""
+        response["mediaTypeFilter"] = mediaTypeFilter
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -116,11 +117,22 @@ class TimelineController {
 
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
-            val metadataList =
-                metadataRepository.findAllByOffsetAndLimit(pageValue, model.getAttribute("queryLimit").toString().toInt()).toList()
+
+            val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+                metadataRepository.findAllByOffsetAndLimit(
+                    pageValue,
+                    model.getAttribute("queryLimit").toString().toInt()
+                ).toMutableList()
+            } else {
+                metadataRepository.findAllByTypeOffsetAndLimit(
+                    mediaTypeFilter,
+                    pageValue,
+                    model.getAttribute("queryLimit").toString().toInt()
+                ).toMutableList()
+            }
             response["metadataList"] = metadataList
             response["favorites"] = favoritesMap
-            if (metadataList.count() > 0) {
+            if (metadataList.isNotEmpty()) {
                 response["data"] = ""
 
                 val labelPhotoMap = mutableMapOf<String, String>()

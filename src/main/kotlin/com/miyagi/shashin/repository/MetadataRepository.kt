@@ -19,6 +19,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findAllByTypeOffsetAndLimit(@Param("type") type: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    @Query("SELECT rl.*, COUNT(*) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != 'object'  AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold GROUP BY rl.id", nativeQuery = true)
    fun findMetadataByPeople(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String): MutableIterable<MetadataPeople>
 
