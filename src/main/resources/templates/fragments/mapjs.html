@@ -61,6 +61,8 @@
                     day: day,
                     placeName: placeName,
                     metadataId: metadataId,
+                    lat: lat,
+                    lng: lng,
                     type: type
                 });
                 var iconStyle = new ol.style.Style({
@@ -102,15 +104,15 @@
                 if (featureProperties.type.includes("image")) {
                     mediaContent = {
                         src: featureProperties.photoUrl,
-                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName+'<br>' : "") + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                     }
                 } else if (featureProperties.type.includes("video")) {
                     mediaContent = {
                         video: {
-                            "source": [{"src": featureProperties.videoUrl, "type": featureProperties.type}],
+                            "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
                             "attributes": {"preload": false, "controls": true}
                         },
-                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName+'<br>' : "") + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                     }
                 }
 
@@ -122,6 +124,8 @@
                     dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
                     dynamicGallery.openGallery(0);
                 }, 500);
+
+
             }
         });
 
@@ -143,5 +147,72 @@
         }
     });
 </script>
+
+<div class="modal fade" id="propMetadataLocation" tabindex="-1" role="dialog" aria-labelledby="labelMetadata" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editPhotoModalLabel">Edit Location <span id="editPhotoLocationModalLabel"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="saveData">
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <label for="locationDataInput" class="col-form-label">Edit Location</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" aria-label="Tag Location" id="locationDataInput" name="locationDataInput" value="">
+                                <input type="hidden" id="mapMetadataId" name="mapMetadataId" value="">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-sm">
+                    <span id="locationMapResponseMsg"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+            <script type="text/javascript">
+
+                $("#saveMetadata").click(function (e) {
+                    e.preventDefault();
+                    let metadataIdList = [];
+                    metadataIdList.push($("#mapMetadataId").val());
+
+                    var data = {
+                        "batchMetadataIds": JSON.stringify(metadataIdList),
+                        "latlngBatchData": $("#locationDataInput").val()
+                    }
+
+                    const posting = $.post({
+                        url: "/timeline/update/batch",
+                        data: JSON.stringify(data),
+                        contentType: 'application/json; charset=utf-8'
+                    });
+
+                    posting.done(function (data) {
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            let message = "Error";
+                            if (data["status"] === "success") {
+                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                window.top.location = window.top.location
+                            } else {
+                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            }
+                            $("#locationMapResponseMsg").html(message);
+                        }
+                    });
+
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

@@ -572,6 +572,15 @@
             $("#propBatchMetadata").modal('show');
         });
     }
+
+    function editLocation(metadataId,lat,lng) {
+        $("#mapMetadataId").val(metadataId);
+        if (lat && lng) {
+            $("#locationDataInput").val(lat+","+lng);
+        }
+        $("#propMetadataLocation").css('z-index', 9999);
+        $("#propMetadataLocation").modal('show');
+    }
 </script>
 
 </body>
