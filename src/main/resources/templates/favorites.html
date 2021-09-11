@@ -56,7 +56,7 @@
                                         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                                 <a class="mediaLink"
-                                                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
                                                    th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                                 </a>
@@ -64,7 +64,7 @@
                                         </th:block>
                                         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                             <a class="mediaLink"
-                                               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;'+metadata.type+'&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
                                                th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
