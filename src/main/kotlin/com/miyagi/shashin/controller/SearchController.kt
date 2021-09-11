@@ -47,7 +47,7 @@ class SearchController {
         }
 
         val module = "search"
-        model["data"] = ""
+        model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -63,7 +63,7 @@ class SearchController {
         }
 
         val module = "search"
-        model["data"] = ""
+        model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

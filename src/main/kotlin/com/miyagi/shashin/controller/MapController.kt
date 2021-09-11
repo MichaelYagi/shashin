@@ -18,7 +18,7 @@ class MapController {
     @GetMapping("/map")
     fun getMap(model: Model): String {
         val module = "map"
-        model["data"] = ""
+        model["message"] = ""
         model["mapdata"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?

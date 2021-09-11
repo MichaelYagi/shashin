@@ -162,7 +162,7 @@ class SettingsController {
         val mediaDirectories = mediaDirRepository?.findAll()
 
         val module = "settings"
-        model["data"] = ""
+        model["message"] = ""
         model["mediaDirList"] = ""
         model["settings"] = ""
         model["alertClass"] = ""
@@ -266,7 +266,7 @@ class SettingsController {
         }
 
         val module = "settings"
-        model["data"] = ""
+        model["message"] = ""
         model["mediaDirList"] = ""
         model["mediaDirList"] = mediaDirList.trim()
         model["activePage"] = module
@@ -290,7 +290,7 @@ class SettingsController {
             model["users"] = users
         }
 
-        model["data"] = ""
+        model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -450,7 +450,7 @@ class SettingsController {
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
         val module = "scan"
-        model["data"] = "Click scan to scan photo directories"
+        model["message"] = "Click scan to scan photo directories"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -461,7 +461,7 @@ class SettingsController {
     @GetMapping("/settings/match")
     fun getMatchScan(model: Model): String {
         val module = "match"
-        model["data"] = "Click scan to start finding people"
+        model["message"] = "Click scan to start finding people"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

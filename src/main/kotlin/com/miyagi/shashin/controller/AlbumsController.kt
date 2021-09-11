@@ -53,7 +53,7 @@ class AlbumsController {
     @GetMapping("/albums")
     fun getAlbums(model: Model): String {
         val module = "albums"
-        model["data"] = "There are no albums."
+        model["message"] = "There are no albums."
         model["albumsList"] = ""
         model["albumsCount"] = ""
         model["users"] = ""
@@ -120,7 +120,7 @@ class AlbumsController {
                         }
                         model["sharedAlbums"] = sharedAlbumsList
                     }
-                    model["data"] = ""
+                    model["message"] = ""
                 }
             }
         }
@@ -363,7 +363,7 @@ class AlbumsController {
         model["album"] = response["album"]!!
         model["albumMetadataList"] = response["albumMetadataList"]!!
         model["shareLink"] = response["shareLink"]!!
-        model["data"] = response["data"]!!
+        model["message"] = response["message"]!!
         model["msg"] = response["msg"]!!
         model["status"] = response["status"]!!
 
@@ -383,7 +383,7 @@ class AlbumsController {
 
     private fun buildShareData(albumId: Int,shareLink: String, queryLimit: Int, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["data"] = "Nothing to see here."
+        response["message"] = "Nothing to see here."
         val tempAlbum = Album()
         tempAlbum.setId(0)
         response["album"] = tempAlbum
@@ -407,7 +407,7 @@ class AlbumsController {
 
                 if (albumMetadataList.isNotEmpty()) {
                     val album = albumRepository.findById(albumId)
-                    response["data"] = ""
+                    response["message"] = ""
                     response["album"] = album.get()
                     response["albumMetadataList"] = albumMetadataList
                     response["shareLink"] = shareLink
@@ -474,7 +474,7 @@ class AlbumsController {
     @RequestMapping(value = ["/album/{albumId}"], method = [RequestMethod.GET])
     fun getAlbum(model: Model, @PathVariable albumId: Int): String {
         val module = "album"
-        model["data"] = "Oops, something went wrong!"
+        model["message"] = "Oops, something went wrong!"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -521,7 +521,7 @@ class AlbumsController {
                         model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         model["album"] = album.get()
                         model["albumMetadataList"] = albumMetadataList
-                        model["data"] = ""
+                        model["message"] = ""
                     }
                 }
             }
@@ -539,7 +539,7 @@ class AlbumsController {
         response["album"] = ""
         response["albumMetadataList"] = ""
         response["currentUser"] = ""
-        response["data"] = ""
+        response["message"] = ""
 
         if (page > 0) {
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -582,7 +582,7 @@ class AlbumsController {
                             response["currentUser"] = currentUserObj
                             response["msg"] = "Results retrieved"
                             response["status"] = "success"
-                            response["data"] = ""
+                            response["message"] = ""
                         }
                         return mapper.writeValueAsString(response)
                     }

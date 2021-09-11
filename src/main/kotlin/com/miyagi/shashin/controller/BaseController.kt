@@ -137,7 +137,7 @@ class BaseController {
         model["operatingSystemInfo"] = getOperatingSystemInfo()
         model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)
         model["titleDescriptor"] = ""
-        model["data"] = ""
+        model["message"] = ""
         model["activePage"] = ""
         model["activeSidebar"] = ""
         model["titleDescriptor"] = ""

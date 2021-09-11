@@ -36,7 +36,7 @@ class FavoritesController {
     @GetMapping("/favorites")
     fun getFavorites(model: Model): String {
         val module = "favorites"
-        model["data"] = "There are no photos."
+        model["message"] = "There are no favorites."
         model["metadataList"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -44,7 +44,7 @@ class FavoritesController {
             val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),0, model.getAttribute("queryLimit").toString().toInt())
             if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
-                model["data"] = ""
+                model["message"] = ""
                 for (favorite in favoriteList) {
                     if (favorite != null) {
                         val metadataObj = metadataRepository.findById(favorite.getMetadataId().toString())
@@ -75,7 +75,7 @@ class FavoritesController {
                 val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
                 if (favoriteList != null && favoriteList.count() > 0) {
                     val metadataList = ArrayList<Metadata>()
-                    model["data"] = ""
+                    model["message"] = ""
                     for (favorite in favoriteList) {
                         if (favorite != null) {
                             val metadataObj = metadataRepository.findById(favorite.getMetadataId().toString())

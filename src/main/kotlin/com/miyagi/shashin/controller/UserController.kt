@@ -61,7 +61,7 @@ class UserController {
 
     @GetMapping("/users/update")
     fun getUpdateUser(model: Model): String {
-        model["data"] = ""
+        model["message"] = ""
         model["user"] = ""
         model["message"] = ""
         model["alertClass"] = ""
@@ -104,7 +104,7 @@ class UserController {
         }
 
         val module = "update"
-        model["data"] = ""
+        model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -116,9 +116,9 @@ class UserController {
         val userCount = userRepository?.count()
 
         model["user"] = User()
-        model["data"] = ""
+        model["message"] = ""
         if ((userCount != null) && (userCount.toInt() == 0)) {
-            model["data"] = "Register as an admin"
+            model["message"] = "Register as an admin"
         }
 
         val module = "register"
@@ -137,7 +137,7 @@ class UserController {
         logger.log(Level.INFO, "New user: " + newUser.toString())
 
         model["user"] = User()
-        model["data"] = ""
+        model["message"] = ""
 
         val module = "register"
         model["activePage"] = module
@@ -148,7 +148,7 @@ class UserController {
             if (user != null && newUser != null) {
                 if (user.getUsername() == newUser.getUsername()) {
                     logger.log(Level.INFO, "Already registered user: $newUser")
-                    model["data"] = "User already exists"
+                    model["message"] = "User already exists"
                     return module
                 }
             }
@@ -174,7 +174,7 @@ class UserController {
             return "redirect:/users/login?msg=regsuccess"
         }
 
-        model["data"] = "Something went wrong"
+        model["message"] = "Something went wrong"
         return module
     }
 
@@ -188,13 +188,13 @@ class UserController {
             return "redirect:/albums"
         } else {
             model["user"] = User()
-            model["data"] = ""
+            model["message"] = ""
             if (error == "401") {
-                model["data"] = "Login failed"
+                model["message"] = "Login failed"
             } else if (message == "regsuccess") {
-                model["data"] = "Registration successful. Please login."
+                model["message"] = "Registration successful. Please login."
             } else if (message == "loginfail") {
-                model["data"] = "Login failed"
+                model["message"] = "Login failed"
             }
             model["activePage"] = module
             model["activeSidebar"] = module
