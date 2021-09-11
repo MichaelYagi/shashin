@@ -1,16 +1,22 @@
 package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.controller.UserController
 import org.springframework.stereotype.Component
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.logging.Level
+import java.util.logging.Logger
 
 @Component
 class TextUtils {
     companion object {
+
+        private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
+
         fun formatToLongDate(oldDate: String): String {
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             val newSdf = SimpleDateFormat("EEE, MMM dd, yyyy")
@@ -72,45 +78,51 @@ class TextUtils {
         fun getPlaceNameFromCoordinates(geocodeUrl: String,lat: String, lng: String): String {
             val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng
             val response: String? = readUrl(geoLookupUrl)
-            val mapper = ObjectMapper()
-            val addressObj = mapper.readTree(response)
             var buildPlace = ""
+            if (response != null) {
+                val mapper = ObjectMapper()
+                val addressObj = mapper.readTree(response)
 
-            if (!addressObj.isNull) {
-                if (addressObj.get("address").get("road") != null) {
-                    buildPlace += addressObj.get("address").get("road").textValue() + ", "
-                }
-                if (addressObj.get("address").get("city") != null) {
-                    buildPlace += addressObj.get("address").get("city").textValue() + ", "
-                }
-                if (addressObj.get("address").get("state") != null) {
-                    buildPlace += addressObj.get("address").get("state").textValue() + " "
-                }
-                if (addressObj.get("address").get("country") != null) {
-                    buildPlace += addressObj.get("address").get("country").textValue()
-                }
-                if (buildPlace.isNotBlank()) {
-                    buildPlace = buildPlace.trim()
+                if (!addressObj.isNull) {
+                    if (addressObj.get("address").get("road") != null) {
+                        buildPlace += addressObj.get("address").get("road").textValue() + ", "
+                    }
+                    if (addressObj.get("address").get("city") != null) {
+                        buildPlace += addressObj.get("address").get("city").textValue() + ", "
+                    }
+                    if (addressObj.get("address").get("state") != null) {
+                        buildPlace += addressObj.get("address").get("state").textValue() + " "
+                    }
+                    if (addressObj.get("address").get("country") != null) {
+                        buildPlace += addressObj.get("address").get("country").textValue()
+                    }
+                    if (buildPlace.isNotBlank()) {
+                        buildPlace = buildPlace.trim()
+                    }
                 }
             }
 
             return buildPlace
         }
 
-        @Throws(java.lang.Exception::class)
         private fun readUrl(urlString: String): String? {
+            var place: String? = null
             var reader: BufferedReader? = null
-            return try {
+            try {
                 val url = URL(urlString)
                 reader = BufferedReader(InputStreamReader(url.openStream()))
                 val buffer = StringBuffer()
                 var read: Int
                 val chars = CharArray(1024)
                 while (reader.read(chars).also { read = it } != -1) buffer.append(chars, 0, read)
-                buffer.toString()
+                place = buffer.toString()
+            } catch(e: Exception) {
+                logger.log(Level.WARNING, "Could not read URL: " + e.message)
             } finally {
                 reader?.close()
             }
+
+            return place
         }
     }
 }
