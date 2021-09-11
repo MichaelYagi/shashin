@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head></head>
-<body th:fragment="loginregcontent(activePage, data)">
+<body th:fragment="loginregcontent(activePage, message)">
 <div class="container">
     <form class="form-signin" method="post" th:object="${user}" th:action="'/users/'+${activePage}">
-        <th:block th:if="${data != ''}">
+        <th:block th:if="${message != ''}">
             <div class="alert alert-info" role="alert">
-                <th:block th:text="${data}"></th:block>
+                <th:block th:text="${message}"></th:block>
             </div>
         </th:block>
         <h2 class="form-signin-heading"><th:block th:text="'Please ' + ${#strings.capitalize(activePage)}"></th:block></h2>

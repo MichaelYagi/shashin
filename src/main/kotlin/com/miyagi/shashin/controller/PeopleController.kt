@@ -148,7 +148,7 @@ class PeopleController {
     @PreAuthorize("hasRole('ADMIN')")
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
-        model["data"] = ""
+        model["message"] = ""
         model["lowMatchResults"] = ""
         model["recognitionLabels"] = ""
         model["labelPhotoMap"] = ""
@@ -200,7 +200,7 @@ class PeopleController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     fun getPeople(model: Model): String {
         val module = "people"
-        model["data"] = "There are no people tagged."
+        model["message"] = "There are no people tagged."
         model["peopleList"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -213,9 +213,9 @@ class PeopleController {
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!)
             }
-            if (peopleList != null) {
+            if (peopleList != null && peopleList.count() > 0) {
                 model["peopleList"] = peopleList
-                model["data"] = ""
+                model["message"] = ""
             }
         }
 
@@ -231,7 +231,7 @@ class PeopleController {
         val module = "person"
         val page = 0
         val response = buildPersonAlbum(model,personId,page)
-        model["data"] = response["data"]!!
+        model["message"] = response["message"]!!
         model["metadataList"] = response["metadataList"]!!
         model["recognitionLabels"] = response["recognitionLabels"]!!
         model["labelPhotoMap"] = response["labelPhotoMap"]!!
@@ -247,7 +247,7 @@ class PeopleController {
     private fun buildPersonAlbum(model: Model,personId: Int,page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["data"] = "There are no photos.."
+        response["message"] = "There are no photos.."
         response["metadataList"] = ""
         response["labelPhotoMap"] = ""
         response["personInfo"] = ""
@@ -281,7 +281,7 @@ class PeopleController {
 
             response["metadataList"] = metadataList
             if (metadataList != null && metadataList.count() > 0) {
-                response["data"] = ""
+                response["message"] = ""
 
                 val labelPhotoMap = mutableMapOf<String, MutableMap<String,Any>>()
                 for (metadata in metadataList) {

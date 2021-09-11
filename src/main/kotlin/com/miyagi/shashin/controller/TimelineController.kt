@@ -54,7 +54,7 @@ class TimelineController {
     fun getTimeline(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
         val response = buildTimelineData(model,mediaType,0)
-        model["data"] = response["data"]!!
+        model["message"] = response["message"]!!
         model["metadataList"] = response["metadataList"]!!
         model["favorites"] = response["favorites"]!!
         model["albumList"] = response["albumList"]!!
@@ -87,7 +87,7 @@ class TimelineController {
     private fun buildTimelineData(model: Model,mediaTypeFilter: String,page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["data"] = "There are no photos. Please setup directories in Settings and scan ."
+        response["message"] = "There are no photos. Please setup directories in Settings and scan ."
         response["metadataList"] = ""
         response["favorites"] = ""
         response["albumList"] = ""
@@ -133,7 +133,7 @@ class TimelineController {
             response["metadataList"] = metadataList
             response["favorites"] = favoritesMap
             if (metadataList.isNotEmpty()) {
-                response["data"] = ""
+                response["message"] = ""
 
                 val labelPhotoMap = mutableMapOf<String, String>()
                 for (metadata in metadataList) {
