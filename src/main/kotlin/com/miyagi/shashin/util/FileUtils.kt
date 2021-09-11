@@ -25,7 +25,7 @@ class FileUtils {
         }
 
         fun allowableVideoFiles(): Array<String> {
-            return arrayOf("mp4","wav","avi")
+            return arrayOf("mp4","wav","avi","mov")
         }
 
         fun allowableRawImageFiles(): Array<String> {

@@ -44,7 +44,7 @@
                                 if (metadata.type.includes("video")) {
                                     html +=
                                         '   <a class="mediaLink"\n' +
-                                        '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"' + metadata.type + '"}], "attributes": {"preload": false, "controls": true}}\'\n' +
+                                        '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
                                         '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                                         '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                         '   </a>\n';
