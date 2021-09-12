@@ -56,10 +56,13 @@
         taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
         $("#tagpeople").val(taggedPeopleString);
 
+        if ($("#recognitionLabelInput").length > 0) {
+            $("#recognitionLabelInput").remove();
+        }
         if (recognitionLabels !== null && recognitionLabels.length > 0) {
-            var html = '<div class="input-group-append">\n' +
-                '       <button class="btn btn-outline-secondary dropdown-toggle" onclick="return toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                '       <div class="dropdown-menu" id="recognitionLabelsList' + metadata.id + '">\n';
+            var html = '<div class="input-group-append" id="recognitionLabelInput">\n' +
+                '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown'+metadata.id+'" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
             for (var index in recognitionLabels) {
                 var recognitionLabel = recognitionLabels[index];
                 var checkedString = "";
