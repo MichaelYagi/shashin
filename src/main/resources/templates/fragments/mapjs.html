@@ -105,6 +105,7 @@
         }
 
         function selectStyleFunction(feature) {
+            // Return first map marker
             const styles = [
                 new ol.style.Style({
                     image: new ol.style.Circle({
@@ -114,10 +115,10 @@
                 }),
             ];
             const originalFeatures = feature.get('features');
-            let originalFeature = originalFeatures[0];
+            let originalFeature = originalFeatures[originalFeatures.length-1];
             styles.push(createMapStyle(originalFeature));
 
-
+            // Show gallery for each cluster
             var mediaContentList = [];
             for (let i = originalFeatures.length - 1; i >= 0; --i) {
                 var featureProperties = originalFeatures[i].getProperties();
@@ -141,6 +142,7 @@
                 mediaContentList.push(mediaContent);
             }
 
+            // Destroy gallery instance hack
             dynamicGallery.closeGallery(true);
             dynamicGallery.destroyModules(true);
             dynamicGallery.invalidateItems();
