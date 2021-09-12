@@ -36,6 +36,8 @@
             ],
             view: mapView
         });
+        const zoomSlider = new ol.control.ZoomSlider();
+        map.addControl(zoomSlider);
 
         var iconFeatures = [];
 
