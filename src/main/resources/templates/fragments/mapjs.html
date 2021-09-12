@@ -114,13 +114,52 @@
                 }),
             ];
             const originalFeatures = feature.get('features');
-            let originalFeature;
-            for (let i = originalFeatures.length - 1; i >= 0; --i) {
-                originalFeature = originalFeatures[i];
-                //console.log(originalFeatures.getProperties().features[0].getProperties())
+            let originalFeature = originalFeatures[0];
+            styles.push(createMapStyle(originalFeature));
 
-                styles.push(createMapStyle(originalFeature));
+
+            var mediaContentList = [];
+            for (let i = originalFeatures.length - 1; i >= 0; --i) {
+                var featureProperties = originalFeatures[i].getProperties();
+                let dateString = getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
+
+                var mediaContent = {}
+                if (featureProperties.type.includes("image")) {
+                    mediaContent = {
+                        src: featureProperties.photoUrl,
+                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                    }
+                } else if (featureProperties.type.includes("video")) {
+                    mediaContent = {
+                        video: {
+                            "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
+                            "attributes": {"preload": false, "controls": true}
+                        },
+                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                    }
+                }
+                mediaContentList.push(mediaContent);
             }
+
+            dynamicGallery.closeGallery(true);
+            dynamicGallery.destroyModules(true);
+            dynamicGallery.invalidateItems();
+            $(window).off(`.lg.global${dynamicGallery.lgId}`);
+            dynamicGallery.LGel.off('.lg');
+            setTimeout(() => {
+                // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                // Hack because lg.destroy() errors out
+                // when photos appear slower than destroy called, then there's an error
+                try {
+                    dynamicGallery.$container.remove();
+                } catch(e) {
+                    console.log(e);
+                }
+                lightGalleryConfigs["dynamicEl"] = mediaContentList;
+                dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
+                dynamicGallery.openGallery(0);
+            }, 500);
+
             return styles;
         }
 
@@ -152,7 +191,7 @@
             interactions: ol.interaction.defaults().extend([
                 new ol.interaction.Select({
                     condition: function (evt) {
-                        return evt.type == 'singleclick';
+                        return evt.type === 'singleclick';
                     },
                     style: selectStyleFunction,
                 }),
@@ -230,43 +269,43 @@
             map.addLayer(vector);
         }
 
-        map.on("click", function (e) {
-            // Return first feature
-            const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
-                return feature;
-            });
-
-            if (typeof feature !== 'undefined' && feature.getProperties) {
-                var featureProperties = feature.getProperties().features[0].getProperties(); //feature.getProperties();
-
-                let dateString = getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
-
-                var mediaContent = {}
-                if (featureProperties.type.includes("image")) {
-                    mediaContent = {
-                        src: featureProperties.photoUrl,
-                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
-                    }
-                } else if (featureProperties.type.includes("video")) {
-                    mediaContent = {
-                        video: {
-                            "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
-                            "attributes": {"preload": false, "controls": true}
-                        },
-                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
-                    }
-                }
-
-                dynamicGallery.destroy();
-                lightGalleryConfigs["dynamicEl"] = [
-                    mediaContent
-                ];
-                setTimeout(() => {
-                    dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
-                    dynamicGallery.openGallery(0);
-                }, 500);
-            }
-        });
+        // map.on("click", function (e) {
+        //     // Return first feature
+        //     const feature = map.forEachFeatureAtPixel(e.pixel, function (feature) {
+        //         return feature;
+        //     });
+        //
+        //     if (typeof feature !== 'undefined' && feature.getProperties) {
+        //         var featureProperties = feature.getProperties().features[0].getProperties(); //feature.getProperties();
+        //
+        //         let dateString = getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
+        //
+        //         var mediaContent = {}
+        //         if (featureProperties.type.includes("image")) {
+        //             mediaContent = {
+        //                 src: featureProperties.photoUrl,
+        //                 subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+        //             }
+        //         } else if (featureProperties.type.includes("video")) {
+        //             mediaContent = {
+        //                 video: {
+        //                     "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
+        //                     "attributes": {"preload": false, "controls": true}
+        //                 },
+        //                 subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+        //             }
+        //         }
+        //
+        //         dynamicGallery.destroy();
+        //         lightGalleryConfigs["dynamicEl"] = [
+        //             mediaContent
+        //         ];
+        //         setTimeout(() => {
+        //             dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
+        //             dynamicGallery.openGallery(0);
+        //         }, 500);
+        //     }
+        // });
 
         map.on("pointermove", function (evt) {
             var hit = this.forEachFeatureAtPixel(evt.pixel, function () {
