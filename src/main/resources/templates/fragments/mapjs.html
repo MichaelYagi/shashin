@@ -184,8 +184,6 @@
                         var latlngArray = latlng.split(",");
                         var lat = latlngArray[0].trim();
                         var lng = latlngArray[1].trim();
-                        map.getView().setCenter(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913'));
-                        map.getView().setZoom(15);
                         localStorage.setItem("lat", lat);
                         localStorage.setItem("lng", lng);
 
