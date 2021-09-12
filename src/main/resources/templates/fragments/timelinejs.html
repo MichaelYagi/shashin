@@ -2,6 +2,136 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="timelinejs()">
 <script type="text/javascript">
+    function openTimelineModal(metadata,recognitionLabels,taggedPeopleList) {
+        // Populate modal data
+        console.log("openTimelineModal");
+        console.log(metadata);
+        // console.log(recognitionLabels);
+        // console.log(taggedPeopleList);
+
+        // Clear modal data
+        $('#propTimelineModal').find(':input').val('');
+        $("#isobject").prop('checked', false);
+        $("#pathDetails").text("");
+        $("#typeDetails").text("");
+        $("#isoDetails").text("");
+        $("#exposureDetails").text("");
+        $("#fNumberDetails").text("");
+        $("#focalLengthDetails").text("");
+        $("#cameraDetails").text("");
+        $("#lensDetails").text("");
+        $("#qualityDetails").text("");
+        $("#createdAtDetails").text("");
+        $("#modifiedAtDetails").text("");
+        $("#takenAtDetails").text("");
+        $("#manualTakenAtDetails").text("");
+        $("#timeZoneDetails").text("");
+
+        $("#timelineModalTitle").text(metadata.fileName);
+        $("#metadataId").val(metadata.id);
+        if (metadata.day !== null) {
+            $("#dayTaken").val(metadata.day);
+        }
+        if (metadata.month !== null) {
+            $("#monthTaken").val(metadata.month);
+        }
+        if (metadata.year !== null) {
+            $("#yearTaken").val(metadata.year);
+        }
+
+        var latlngValue = (metadata.lat != null || metadata.lng != null) ? (metadata.lat + ', ' + metadata.lng) : '';
+        $("#latlng").val(latlngValue);
+
+        var taggedPeopleArray = taggedPeopleList.split(",");
+        var isObject = false;
+        var taggedPeopleString = "";
+        for (var index in taggedPeopleArray) {
+            var person = taggedPeopleArray[index];
+            if (person === "object") {
+                isObject = true;
+            } else {
+                taggedPeopleString += person + ",";
+            }
+        }
+        taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
+        $("#tagpeople").val(taggedPeopleString);
+
+        if (recognitionLabels !== null && recognitionLabels.length > 0) {
+            var html = '<div class="input-group-append">\n' +
+                '       <button class="btn btn-outline-secondary dropdown-toggle" onclick="return toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                '       <div class="dropdown-menu" id="recognitionLabelsList' + metadata.id + '">\n';
+            for (var index in recognitionLabels) {
+                var recognitionLabel = recognitionLabels[index];
+                var checkedString = "";
+                if (jQuery.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                    checkedString = " checked";
+                }
+                html +=
+                    '           <button class="dropdown-item" type="button">\n' +
+                    '               <input type="checkbox" onclick="return populateLabel(\'' + metadata.id + '\');" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
+                    '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
+                    '           </button>\n';
+            }
+            html += '   </div>\n' +
+                '</div>\n';
+
+            $(html).insertAfter($("#labelIdData"))
+        }
+
+        if (isObject === true) {
+            $("#isobject").prop('checked', true);
+        }
+
+        $("#keywords").val(metadata.keywords);
+
+        // Fill in details tab data
+        if (metadata.path != null) {
+            $("#pathDetails").text(metadata.path);
+        }
+        if (metadata.type != null) {
+            $("#typeDetails").text(metadata.type);
+        }
+        if (metadata.iso != null) {
+            $("#isoDetails").text(metadata.iso);
+        }
+        if (metadata.exposure != null) {
+            $("#exposureDetails").text(metadata.expure);
+        }
+        if (metadata.fNumber != null) {
+            $("#fNumberDetails").text(metadata.fNumber);
+        }
+        if (metadata.focalLength != null) {
+            $("#focalLengthDetails").text(metadata.focalLength);
+        }
+        if (metadata.camera != null) {
+            $("#cameraDetails").text(metadata.camera);
+        }
+        if (metadata.lens != null) {
+            $("#lensDetails").text(metadata.lens);
+        }
+        if (metadata.quality != null) {
+            $("#qualityDetails").text(metadata.quality);
+        }
+        if (metadata.createdAt != null) {
+            $("#createdAtDetails").text(metadata.createdAt);
+        }
+        if (metadata.modifiedAt != null) {
+            $("#modifiedAtDetails").text(metadata.modifiedAt);
+        }
+        if (metadata.takenAt != null) {
+            $("#takenAtDetails").text(metadata.takenAt);
+        }
+        if (metadata.year != null || metadata.month != null || metadata.day != null) {
+            $("#manualTakenAtDetails").text(metadata.year+'-'+metadata.month+'-'+metadata.day);
+        }
+        if (metadata.timeZone != null) {
+            $("#timeZoneDetails").text(metadata.timeZone);
+        }
+
+        // Open modal window
+        $("#propTimelineModal").modal('show');
+    }
+
     function activateMetadataListeners(rawMetadata) {
         var metadata = JSON.parse(decodeHtml(rawMetadata));
         // console.log(metadata.id);
@@ -99,6 +229,8 @@
                                 lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
+                                // console.log(metadata);
+                                // console.log(JSON.stringify(metadata));
                                 // console.log(lastDateTakenHeading);
                                 // console.log(currentDateTaken);
                                 //
@@ -174,7 +306,7 @@
                                     '       </a>\n' +
                                     '   </div>\n' +
                                     '   <div class="thumbnail-bl" id="tnbl' + metadata.id + '">\n' +
-                                    '       <a href="#" data-toggle="modal" data-target="#prop' + metadata.id + '">\n' +
+                                    '       <a href="#" id="timelineModalEdit'+metadata.id+'" data-target="#propTimelinModal">\n' +
                                     '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
                                     '       </a>\n' +
                                     '   </div>\n' +
@@ -222,12 +354,20 @@
                                     }
                                 }
 
+                                $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+
+                                $("#timelineModalEdit"+metadata.id).click(function(e) {
+                                    e.preventDefault();
+
+                                    var metadataObj = JSON.parse($(this).attr("tag"));
+                                    openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
+                                });
+
                                 var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
                                 var htmlEncodedRecognitionLabels = encodeHtml(JSON.stringify(recognitionLabels));
                                 var htmlEncodedLabelPhotoMap = encodeHtml(JSON.stringify(labelPhotoMap[metadata.id]));
 
                                 setPhotoOverlays(htmlEncodedMetadata, activePage);
-                                renderTimelineModal(htmlEncodedMetadata, htmlEncodedRecognitionLabels, htmlEncodedLabelPhotoMap);
                                 activateMetadataListeners(htmlEncodedMetadata);
 
                                 html = "";
