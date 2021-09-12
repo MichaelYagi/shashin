@@ -339,7 +339,7 @@
                     tagpeople:$("#tagpeople").val(),
                     isObject:$("#isobject").prop("checked")
                 }
-                console.log("payload:"+JSON.stringify(json));
+
                 const posting = $.post({
                     url: "/timeline/update/"+metadataId,
                     data: JSON.stringify(json),
