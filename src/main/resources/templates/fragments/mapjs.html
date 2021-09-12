@@ -9,6 +9,102 @@
         var mapdata = JSON.parse(decodeHtml("[[${mapdata}]]"));
         /*]]>*/
 
+        const textFill = new ol.style.Fill({
+            color: '#fff',
+        });
+        const textStroke = new ol.style.Stroke({
+            color: 'rgba(0, 0, 0, 0.6)',
+            width: 3,
+        });
+        const invisibleFill = new ol.style.Fill({
+            color: 'rgba(255, 255, 255, 0.01)',
+        });
+
+        function createMapStyle(feature) {
+            const mapMarkerUrl = feature.get('mapMarkerUrl');
+            
+            return new ol.style.Style({
+                geometry: feature.getGeometry(),
+                image: new ol.style.Icon(({
+                    anchor: [0.5, 46],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    opacity: 1.0,
+                    src: mapMarkerUrl
+                }))
+            });
+        }
+
+        let maxFeatureCount;
+        let vector = null;
+        const calculateClusterInfo = function (resolution) {
+            maxFeatureCount = 0;
+            const features = vector.getSource().getFeatures();
+            let feature, radius;
+            for (let i = features.length - 1; i >= 0; --i) {
+                feature = features[i];
+                const originalFeatures = feature.get('features');
+                const extent = ol.extent.createEmpty();
+                let j, jj;
+                for (j = 0, jj = originalFeatures.length; j < jj; ++j) {
+                    ol.extent.extend(extent, originalFeatures[j].getGeometry().getExtent());
+                }
+                maxFeatureCount = Math.max(maxFeatureCount, jj);
+                radius = (0.25 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution;
+                feature.set('radius', radius);
+            }
+        };
+
+        let currentResolution;
+        function styleFunction(feature, resolution) {
+            if (resolution != currentResolution) {
+                calculateClusterInfo(resolution);
+                currentResolution = resolution;
+            }
+            let style;
+            const size = feature.get('features').length;
+            if (size > 1) {
+                style = new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: feature.get('radius'),
+                        fill: new ol.style.Fill({
+                            color: [255, 153, 0, Math.min(0.8, 0.4 + size / maxFeatureCount)],
+                        }),
+                    }),
+                    text: new ol.style.Text({
+                        text: size.toString(),
+                        fill: textFill,
+                        stroke: textStroke,
+                    }),
+                });
+            } else {
+                const originalFeature = feature.get('features')[0];
+                style = createMapStyle(originalFeature);
+            }
+            return style;
+        }
+
+        function selectStyleFunction(feature) {
+            const styles = [
+                new ol.style.Style({
+                    image: new ol.style.Circle({
+                        radius: feature.get('radius'),
+                        fill: invisibleFill,
+                    }),
+                }),
+            ];
+            const originalFeatures = feature.get('features');
+            let originalFeature;
+            for (let i = originalFeatures.length - 1; i >= 0; --i) {
+                originalFeature = originalFeatures[i];
+                console.log(originalFeature.getProperties())
+                //console.log(originalFeatures.getProperties().features[0].getProperties())
+
+                styles.push(createMapStyle(originalFeature));
+            }
+            return styles;
+        }
+
         var mapView = new ol.View({
             center: ol.proj.fromLonLat([-73.1234, 45.678]),
             zoom: 2
@@ -34,6 +130,14 @@
                     source: new ol.source.OSM()
                 })
             ],
+            interactions: ol.interaction.defaults().extend([
+                new ol.interaction.Select({
+                    condition: function (evt) {
+                        return evt.type == 'singleclick';
+                    },
+                    style: selectStyleFunction,
+                }),
+            ]),
             view: mapView
         });
         const zoomSlider = new ol.control.ZoomSlider();
@@ -66,6 +170,7 @@
                     fileName: fileName,
                     thumbnailUrlSmall: thumbnailUrlSmall,
                     photoUrl: thumbnailUrlOriginal,
+                    mapMarkerUrl: mapMarkerUrl,
                     videoUrl: videoUrl,
                     year: year,
                     month: month,
@@ -74,7 +179,8 @@
                     metadataId: metadataId,
                     lat: lat,
                     lng: lng,
-                    type: type
+                    type: type,
+                    name: fileName
                 });
                 var iconStyle = new ol.style.Style({
                     image: new ol.style.Icon(({
@@ -94,10 +200,15 @@
             var vectorSource = new ol.source.Vector({
                 features: iconFeatures //add an array of features
             });
-            var layer = new ol.layer.Vector({
-                source: vectorSource
+            var clusterSource = new ol.source.Cluster({
+                distance: 40,
+                source: vectorSource,
+            })
+            vector = new ol.layer.Vector({
+                source: clusterSource,
+                style: styleFunction
             });
-            map.addLayer(layer);
+            map.addLayer(vector);
         }
 
         map.on("click", function (e) {
@@ -107,8 +218,7 @@
             });
 
             if (typeof feature !== 'undefined' && feature.getProperties) {
-                var featureProperties = feature.getProperties();
-                // console.log(featureProperties);
+                var featureProperties = feature.getProperties().features[0].getProperties(); //feature.getProperties();
 
                 let dateString = getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
 
