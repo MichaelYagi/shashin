@@ -66,7 +66,7 @@
                             </div>
 
                             <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                <a href="#" data-toggle="modal" th:data-target="'#prop'+${metadata.id}">
+                                <a href="javascript:void(0)" th:onclick="openTimelineModal([[${metadata}]],[[${recognitionLabels}]],[[${labelPhotoMap.get(metadata.id)}]]);" data-target="#propTimelinModal"> <!--data-toggle="modal" th:data-target="'#prop'+${metadata.id}"-->
                                     <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
                                 </a>
                             </div>
@@ -114,7 +114,6 @@
                         <script type="text/javascript">
                             /*<![CDATA[*/
                             setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                            renderTimelineModal("[[${metadata}]]","[[${recognitionLabels}]]","[[${labelPhotoMap.get(metadata.id)}]]");
                             activateMetadataListeners("[[${metadata}]]");
                             /*]]>*/
                         </script>
@@ -151,6 +150,103 @@
 
     </div>
 </div>
+
+
+<!--Modal for each photo-->
+<div class="modal fade" id="propTimelineModal" tabindex="-1" role="dialog" aria-labelledby="labelTimelineModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit <span id="timelineModalTitle"></span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link show active" data-toggle="tab" id="generalTabLink" href="#generalTab">General</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane container show active" id="generalTab">
+                        <form id="saveTimelineModalForm">
+                            <input type="hidden" name="metadataId" id="metadataId" value="">
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="dayTaken" class="col-form-label">Day taken</label>
+                                    <input type="text" class="form-control" id="dayTaken" name="day" value="">
+                                    <a href="#" id="refreshTakenDate" data-toggle="tooltip" data-placement="right" title="Sync original taken date"><span class="bi-arrow-clockwise"></span></a>
+                                </div>
+                                <div class="col-sm">
+                                    <label for="monthTaken" class="col-form-label">Month taken</label>
+                                    <input type="text" class="form-control" id="monthTaken" name="month" value="">
+                                </div>
+                                <div class="col-sm">
+                                    <label for="yearTaken" class="col-form-label">Year taken</label>
+                                    <input type="text" class="form-control" id="yearTaken" name="year" value="">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="latlng" class="col-form-label">Latitude, Longitude</label>
+                                    <input type="text" class="form-control" id="latlng" name="latlng" value="">
+                                </div>
+                            <div class="col-sm">
+                                <label for="tagpeople" class="col-form-label">Tag People (Comma separated)</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" aria-label="Tag People" id="tagpeople" name="tagpeople" value="">
+                                        <!-- if there's label id data -->
+                                        <span id="labelIdData"></span>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm">
+                                            <input type="checkbox" name="isobject" id="isobject">
+                                            <label class="form-check-label" for="isobject">Cannot identify</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="keywords" class="col-form-label">Keywords (comma seperated)</label>
+                                    <input type="text" class="form-control" id="keywords" name="keywords" value="">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="tab-pane container fade" id="detailsTab">
+                        <div class="row"><strong>File name:&nbsp;</strong><span id="pathDetails"></span></div>
+                        <div class="row"><strong>File type:&nbsp;</strong><span id="typeDetails"></span></div>
+                        <div class="row"><strong>ISO:&nbsp;</strong><span id="isoDetails"></span></div>
+                        <div class="row"><strong>Exposure:&nbsp;</strong><span id="exposureDetails"></span></div>
+                        <div class="row"><strong>F-stop:&nbsp;</strong><span id="fNumberDetails"></span></div>
+                        <div class="row"><strong>Focal length:&nbsp;</strong><span id="focalLengthDetails"></span></div>
+                        <div class="row"><strong>Camera:&nbsp;</strong><span id="cameraDetails"></span></div>
+                        <div class="row"><strong>Lens:&nbsp;</strong><span id="lensDetails"></span></div>
+                        <div class="row"><strong>Quality:&nbsp;</strong><span id="qualityDetails"></span></div>
+                        <div class="row"><strong>Created:&nbsp;</strong><span id="createdAtDetails"></span></div>
+                        <div class="row"><strong>Modified:&nbsp;</strong><span id="modifiedAtDetails"></span></div>
+                        <div class="row"><strong>Taken:&nbsp;</strong><span id="takenAtDetails"></span></div>
+                        <div class="row"><strong>Manually Adjusted Taken:&nbsp;</strong><span id="manualTakenAtDetails"></span></div>
+                        <div class="row"><strong>Time zone:&nbsp;</strong><span id="timeZoneDetails"></span></div>
+                    </div>
+                    <div class="col-sm">
+                        <span id="timelineModalMsg"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+                                        
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -219,8 +315,141 @@
                 loadNextPage();
             }
         })
+
+        $("#saveMetadata").click(function (e) {
+            e.preventDefault();
+            var metadataId = $("#metadataId").val();
+
+            closeTagPeopleDropdown(metadataId);
+
+            if (validateMetadataInputs(
+                $("#dayTaken").val(),
+                $("#monthTaken").val(),
+                $("#yearTaken").val(),
+                $("#latlng").val(),
+                "timelineModalMsg"
+            ) === true) {
+                var json = {
+                    id:metadataId,
+                    year:$("#yearTaken").val(),
+                    month:$("#monthTaken").val(),
+                    day:$("#dayTaken").val(),
+                    latlng:$("#latlng").val(),
+                    keywords:$("#keywords").val(),
+                    tagpeople:$("#tagpeople").val(),
+                    isObject:$("#isobject").prop("checked")
+                }
+                console.log("payload:"+JSON.stringify(json));
+                const posting = $.post({
+                    url: "/timeline/update/"+metadataId,
+                    data: JSON.stringify(json),
+                    contentType: 'application/json; charset=utf-8'
+                });
+
+                posting.done(function (data) {
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            // window.top.location = window.top.location
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        }
+                        $("#timelineModalMsg").html(message);
+                    }
+                });
+            }
+        });
+
+        $("#refreshTakenDate").click(function (e) {
+            e.preventDefault();
+
+            var metadataId = $("#metadataId").val();
+
+            var json = {
+                id:metadataId
+            }
+            const posting = $.post({
+                url: "/timeline/sync/"+metadataId,
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8'
+            });
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    let message = "Error";
+                    if (data["status"] === "success") {
+                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        if (data["year"] !== "" && data["month"] !== "" && data["day"] !== "") {
+                            $("#yearTaken").val(data["year"]);
+                            $("#monthTaken").val(data["month"]);
+                            $("#dayTaken").val(data["day"]);
+                        }
+                        // window.top.location = window.top.location
+                    } else {
+                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    }
+                    $("#timelineModalMsg").html(message);
+                }
+            });
+
+            return false;
+        });
+
+        // Clear message on modal close
+        $('#propTimelineModal').on('hidden.bs.modal', function () {
+            $("#timelineModalMsg").html("");
+        });
+
+        // Clear message on input editing
+        $('#propTimelineModal').find(':input').bind('keypress', function() {
+            $("#timelineModalMsg").html("");
+        });
+
+        $('#propTimelineModal').on('hidden.bs.modal', function (e) {
+            $(this).modal('dispose');
+        })
+
+        $("#refreshTakenDate").click(function (e) {
+            e.preventDefault();
+
+            var originalTakenAtDate = $("#takenAtDetails").text();
+            var takenAtParts = originalTakenAtDate.split("-");
+            if (takenAtParts.length > 3) {
+                $("#yearTaken").val(takenAtParts[0]);
+                $("#monthTaken").val(takenAtParts[1]);
+                $("#dayTaken").val(takenAtParts[2]);
+            }
+        });
+
+        $("#detailsTabLink").click(function (e) {
+            e.preventDefault();
+            $("#saveMetadata").prop('disabled', true);
+        });
+
+        $("#generalTabLink").click(function (e) {
+            e.preventDefault();
+            $("#saveMetadata").prop('disabled', false);
+        });
+
+        $("#isobject").click(function (e) {
+            e.preventDefault();
+
+            var metadataId = $("#metadataId").val();
+
+            closeTagPeopleDropdown(metadataId);
+            if($(this).prop("checked") === true) {
+                $("#tagpeople").val("");
+            }
+        });
+
+        $("#tagpeople").focus(function (e) {
+            e.preventDefault();
+
+            var metadataId = $("#metadataId").val();
+            closeTagPeopleDropdown(metadataId);
+        });
     });
 </script>
-
 </body>
 </html>
