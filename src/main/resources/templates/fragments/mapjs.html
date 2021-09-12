@@ -14,7 +14,7 @@
         });
         const textStroke = new ol.style.Stroke({
             color: 'rgba(0, 0, 0, 0.6)',
-            width: 3,
+            width: 5,
         });
         const invisibleFill = new ol.style.Fill({
             color: 'rgba(255, 255, 255, 0.01)',
@@ -50,14 +50,14 @@
                     ol.extent.extend(extent, originalFeatures[j].getGeometry().getExtent());
                 }
                 maxFeatureCount = Math.max(maxFeatureCount, jj);
-                radius = (0.25 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution;
+                radius = (0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution;
                 feature.set('radius', radius);
             }
         };
 
         let currentResolution;
         function styleFunction(feature, resolution) {
-            if (resolution != currentResolution) {
+            if (resolution !== currentResolution) {
                 calculateClusterInfo(resolution);
                 currentResolution = resolution;
             }
@@ -75,6 +75,7 @@
                         text: size.toString(),
                         fill: textFill,
                         stroke: textStroke,
+                        scale: 1.5
                     }),
                 });
             } else {
