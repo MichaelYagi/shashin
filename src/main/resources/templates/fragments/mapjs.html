@@ -41,6 +41,13 @@
             maxFeatureCount = 0;
             const features = vector.getSource().getFeatures();
             let feature, radius;
+
+            // Sort by number of features for radius calculation
+            features.sort((a, b) => a.get('features').length > b.get('features').length ? 1 : -1);
+
+            // console.log("============================================");
+            // console.log("number of features:"+features.length);
+
             for (let i = features.length - 1; i >= 0; --i) {
                 feature = features[i];
                 const originalFeatures = feature.get('features');
@@ -50,7 +57,19 @@
                     ol.extent.extend(extent, originalFeatures[j].getGeometry().getExtent());
                 }
                 maxFeatureCount = Math.max(maxFeatureCount, jj);
-                radius = (0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution;
+
+                //radius = (0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution;
+                radius = (15 * ((maxFeatureCount + jj)/maxFeatureCount));
+
+                // console.log("---------------------------");
+                // console.log("originalRadius:"+(0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution);
+                // console.log("extentWidth:"+ol.extent.getWidth(extent));
+                // console.log("extentHeight:"+ol.extent.getHeight(extent));
+                // console.log("resolution:"+resolution);
+                // console.log("Feature count:"+jj);
+                // console.log("maxFeatureCount:"+maxFeatureCount);
+                // console.log("radius: " + radius);
+
                 feature.set('radius', radius);
             }
         };
