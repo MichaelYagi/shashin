@@ -34,7 +34,7 @@
 
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                        <span class="bi-camera-video-fill" style="font-size: 1rem;color: lightcoral;"></span>
+                                        <span class="bi-camera-video-fill" style="font-size: 1rem;color: darkblue;"></span>
                                     </div>
                                 </th:block>
 
@@ -53,8 +53,8 @@
                                 </th:block>
 
                                 <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
-                                    <a href="#" data-toggle="modal" th:data-target="'#propalbumphotocomment'+${metadata.id}" style="text-decoration: none;color: darkorange">
-                                        <th:block th:text="${#lists.size(albumPhotoCommentsMap.get(metadata.id))}"></th:block> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square-fill" style="font-size: 1rem;color: darkorange;"></span>
+                                    <a href="#" data-toggle="modal" th:data-target="'#propalbumphotocomment'+${metadata.id}" style="text-decoration: none;color: midnightblue">
+                                        <th:block th:text="${#lists.size(albumPhotoCommentsMap.get(metadata.id))}"></th:block> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square-fill" style="font-size: 1rem;color: midnightblue;"></span>
                                     </a>
                                 </div>
 
