@@ -104,11 +104,14 @@ class FaceRecognizer() {
             for (cascadeFile in this.cascadeFileList) {
                 if (this.trainingData != null && this.trainingData!!.count() > 0) {
                     for (trainingImage in this.trainingData!!) {
+                        var path = trainingImage.getPath()
+                        if (trainingImage.getType()?.contains("video") == true) {
+                            path = trainingImage.getThumbnailPathSmall()
+                        }
                         val label = trainingImage.getRecognitionLabelId()!!
-                        writeToThreadFileAndLogMessage("Training Image processed. Label: "+label+" - image: "+trainingImage.getPath()+" using "+cascadeFile,threadFile)
-
+                        writeToThreadFileAndLogMessage("Training Image processed. Label: $label - image: $path using $cascadeFile",threadFile)
                         val image: Mat =
-                            opencv_imgcodecs.imread(trainingImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
+                            opencv_imgcodecs.imread(path, opencv_imgcodecs.IMREAD_GRAYSCALE)
 
                         // Detect faces on training image and loop through each one
                         val faceDetectorTrainingData = CascadeClassifier()
@@ -160,11 +163,15 @@ class FaceRecognizer() {
 
             for (testImage in this.testImages!!) {
                 matchMap[0] = 0.0
-                writeToThreadFileAndLogMessage("matching against "+testImage.getPath()!!,threadFile)
+                var path = testImage.getPath()
+                if (testImage.getType()?.contains("video") == true) {
+                    path = testImage.getThumbnailPathSmall()
+                }
+                writeToThreadFileAndLogMessage("matching against "+path!!,threadFile)
 
                 if (this.cascadeFileList.isNotEmpty()) {
                     for (cascadeFile in this.cascadeFileList) {
-                        val testimage: Mat = opencv_imgcodecs.imread(testImage.getPath(), opencv_imgcodecs.IMREAD_GRAYSCALE)
+                        val testimage: Mat = opencv_imgcodecs.imread(path, opencv_imgcodecs.IMREAD_GRAYSCALE)
 
                         // Load cascade file
                         val faceDetector = CascadeClassifier()
@@ -255,7 +262,7 @@ class FaceRecognizer() {
                     if (labelId != 0) {
                         val confidenceVal: String = "%.1f".format(confidence)
                         val message =
-                            "Final outcome - Label: " + labelId + " - Confidence: " + confidence + " for " + testImage.getPath()
+                            "Final outcome - Label: $labelId - Confidence: $confidence for $path"
                         writeToThreadFileAndLogMessage(message, threadFile)
 
                         // Save record
