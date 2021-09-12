@@ -9,6 +9,18 @@
         var mapdata = JSON.parse(decodeHtml("[[${mapdata}]]"));
         /*]]>*/
 
+        var mapView = new ol.View({
+            center: ol.proj.fromLonLat([-73.1234, 45.678]),
+            zoom: 2
+        });
+        if ("lat" in localStorage && "lng" in localStorage) {
+            mapView = new ol.View({
+                center: ol.proj.fromLonLat([localStorage.getItem("lng"), localStorage.getItem("lat")]),
+                zoom: 20
+            });
+            localStorage.removeItem('lat');
+            localStorage.removeItem('lng');
+        }
         const lightGalleryConfigs = getLightGalleryConfigs();
         lightGalleryConfigs["controls"] = false;
         lightGalleryConfigs["dynamic"] = true;
@@ -22,10 +34,7 @@
                     source: new ol.source.OSM()
                 })
             ],
-            view: new ol.View({
-                center: ol.proj.fromLonLat([-73.1234, 45.678]),
-                zoom: 2
-            })
+            view: mapView
         });
 
         var iconFeatures = [];
@@ -78,6 +87,7 @@
                 iconFeatures.push(iconFeature);
             }
         }
+
         if (iconFeatures.length > 0) {
             var vectorSource = new ol.source.Vector({
                 features: iconFeatures //add an array of features
@@ -124,8 +134,6 @@
                     dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
                     dynamicGallery.openGallery(0);
                 }, 500);
-
-
             }
         });
 
@@ -145,6 +153,51 @@
             txt.innerHTML = html;
             return txt.value;
         }
+
+        $("#propMetadataLocation").on('hide.bs.modal', function (e) {
+            $(this).find(':input').val('');
+            $("#locationMapResponseMsg").html("");
+        })
+
+        $("#saveMetadata").click(function (e) {
+            e.preventDefault();
+            let metadataIdList = [];
+            metadataIdList.push($("#mapMetadataId").val());
+
+            var data = {
+                "batchMetadataIds": JSON.stringify(metadataIdList),
+                "latlngBatchData": $("#locationDataInput").val()
+            }
+
+            const posting = $.post({
+                url: "/timeline/update/batch",
+                data: JSON.stringify(data),
+                contentType: 'application/json; charset=utf-8'
+            });
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    let message = "Error";
+                    if (data["status"] === "success") {
+                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        var latlng = $("#locationDataInput").val();
+                        var latlngArray = latlng.split(",");
+                        var lat = latlngArray[0].trim();
+                        var lng = latlngArray[1].trim();
+                        map.getView().setCenter(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913'));
+                        map.getView().setZoom(15);
+                        localStorage.setItem("lat", lat);
+                        localStorage.setItem("lng", lng);
+
+                        window.top.location = window.top.location
+                    } else {
+                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    }
+                    $("#locationMapResponseMsg").html(message);
+                }
+            });
+
+        });
     });
 </script>
 
@@ -177,39 +230,6 @@
                 <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript">
-
-                $("#saveMetadata").click(function (e) {
-                    e.preventDefault();
-                    let metadataIdList = [];
-                    metadataIdList.push($("#mapMetadataId").val());
-
-                    var data = {
-                        "batchMetadataIds": JSON.stringify(metadataIdList),
-                        "latlngBatchData": $("#locationDataInput").val()
-                    }
-
-                    const posting = $.post({
-                        url: "/timeline/update/batch",
-                        data: JSON.stringify(data),
-                        contentType: 'application/json; charset=utf-8'
-                    });
-
-                    posting.done(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                window.top.location = window.top.location
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            $("#locationMapResponseMsg").html(message);
-                        }
-                    });
-
-                });
-            </script>
         </div>
     </div>
 </div>
