@@ -180,6 +180,7 @@ class TimelineController {
             metadataMap.containsKey("day") &&
             metadataMap.containsKey("keywords") &&
             metadataMap.containsKey("latlng") &&
+            metadataMap.containsKey("title") &&
 //            metadataMap.containsKey("labelIds") &&
             metadataMap.containsKey("tagpeople") &&
             metadataMap.containsKey("isObject")
@@ -244,6 +245,11 @@ class TimelineController {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
             }
 
+            if (metadataMap["title"].toString().trim() == "") {
+                metadataObj.get().setTitle(metadataObj.get().getFileName())
+            } else {
+                metadataObj.get().setTitle(metadataMap["title"].toString().trim())
+            }
             if (metadataMap["year"].toString() == "") {
                 metadataObj.get().setYear(null)
             } else {

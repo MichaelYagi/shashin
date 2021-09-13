@@ -182,6 +182,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                     }
                     "File Name" -> {
                         metadataObj.setFileName(tag.description)
+                        metadataObj.setTitle(tag.description)
                     }
                     "GPS Latitude", "Latitude" -> {
                         val latitudeValue = tag.description

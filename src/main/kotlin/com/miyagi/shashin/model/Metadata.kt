@@ -10,6 +10,7 @@ class Metadata {
     @Id
     private lateinit var id: String
     private var path: String? = null
+    private var title: String? = null
     private var thumbnailPathSmall: String? = null
     private var thumbnailUrlSmall: String? = null
     private var thumbnailSmallWidth: Int? = null
@@ -47,6 +48,9 @@ class Metadata {
 
     fun setPath(path: String?) {
         this.path = path
+    }
+    fun setTitle(title: String?) {
+        this.title = title
     }
     fun setThumbnailPathSmall(thumbnailPathSmall: String?) {
         this.thumbnailPathSmall = thumbnailPathSmall
@@ -147,6 +151,9 @@ class Metadata {
 
     fun getPath(): String? {
         return this.path
+    }
+    fun getTitle(): String? {
+        return this.title
     }
     fun getThumbnailPathSmall(): String? {
         return this.thumbnailPathSmall
@@ -258,6 +265,7 @@ class Metadata {
         map["takenAt"] = this.takenAt
         map["type"] = this.type
         map["fileName"] = this.fileName
+        map["title"] = this.title
         map["timeZone"] = this.timeZone
         map["lat"] = this.lat
         map["lng"] = this.lng

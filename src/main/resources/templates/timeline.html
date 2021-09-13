@@ -66,7 +66,7 @@
                             </div>
 
                             <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                <a href="javascript:void(0)" th:onclick="openTimelineModal([[${metadata}]],[[${recognitionLabels}]],[[${labelPhotoMap.get(metadata.id)}]]);" data-target="#propTimelinModal"> <!--data-toggle="modal" th:data-target="'#prop'+${metadata.id}"-->
+                                <a href="javascript:void(0)" th:id="'timelineModalEdit'+${metadata.id}" th:onclick="openTimelineModal([[${metadata}]],[[${recognitionLabels}]],[[${labelPhotoMap.get(metadata.id)}]]);" data-target="#propTimelinModal"> <!--data-toggle="modal" th:data-target="'#prop'+${metadata.id}"-->
                                     <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
                                 </a>
                             </div>
@@ -76,14 +76,14 @@
                                     <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                             <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.title+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
                                         </th:block>
                                     </th:block>
                                     <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
+                                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.title}">
                                             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                         </a>
                                     </th:block>
@@ -94,7 +94,7 @@
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                             <a class="mediaLink" onclick="return false"
                                                th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.title+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
                                         </th:block>
@@ -102,7 +102,7 @@
                                     <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <a class="mediaLink" onclick="return false"
                                            th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
+                                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.title}">
                                             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                         </a>
                                     </th:block>
@@ -113,6 +113,7 @@
                         <div th:id="'timelinemodal'+${metadata.id}"></div>
                         <script type="text/javascript">
                             /*<![CDATA[*/
+                            $("#timelineModalEdit[[${metadata.id}]]").attr("tag",JSON.stringify(JSON.parse(decodeHtml("[[${metadata}]]"))));
                             setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                             activateMetadataListeners("[[${metadata}]]");
                             /*]]>*/
@@ -175,6 +176,12 @@
                     <div class="tab-pane container show active" id="generalTab">
                         <form id="saveTimelineModalForm">
                             <input type="hidden" name="metadataId" id="metadataId" value="">
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="title" class="col-form-label">Title</label>
+                                    <input type="text" class="form-control" id="title" name="title" value="">
+                                </div>
+                            </div>
                             <div class="form-group row">
                                 <div class="col-sm">
                                     <label for="dayTaken" class="col-form-label">Day taken</label>
@@ -331,6 +338,7 @@
             ) === true) {
                 var json = {
                     id:metadataId,
+                    title:$("#title").val().trim(),
                     year:$("#yearTaken").val(),
                     month:$("#monthTaken").val(),
                     day:$("#dayTaken").val(),
@@ -352,6 +360,18 @@
                         if (data["status"] === "success") {
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             // window.top.location = window.top.location
+
+                            // Update tag
+                            var metadataObj = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
+                            metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
+                            metadataObj.year = $("#yearTaken").val()
+                            metadataObj.month = $("#monthTaken").val()
+                            metadataObj.day = $("#dayTaken").val()
+                            var latlngArray = $("#latlng").val().split(",")
+                            metadataObj.lat = latlngArray[0]
+                            metadataObj.lng = latlngArray[1]
+                            metadataObj.keywords = $("#keywords").val()
+                            $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }

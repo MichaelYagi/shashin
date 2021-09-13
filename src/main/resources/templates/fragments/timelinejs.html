@@ -9,6 +9,10 @@
         // console.log(recognitionLabels);
         // console.log(taggedPeopleList);
 
+        if ($("#timelineModalEdit"+metadata.id).attr("tag") && $("#timelineModalEdit"+metadata.id).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#timelineModalEdit"+metadata.id).attr("tag"));
+        }
+
         // Clear modal data
         $('#propTimelineModal').find(':input').val('');
         $("#isobject").prop('checked', false);
@@ -28,7 +32,15 @@
         $("#timeZoneDetails").text("");
 
         $("#timelineModalTitle").text(metadata.fileName);
+        $("#currentfilename").val(metadata.fileName)
+        $("#currentlat").val(metadata.lat)
+        $("#currentlng").val(metadata.lng)
         $("#metadataId").val(metadata.id);
+
+        if (metadata.title !== null) {
+            $("#title").val(metadata.title);
+        }
+
         if (metadata.day !== null) {
             $("#dayTaken").val(metadata.day);
         }
