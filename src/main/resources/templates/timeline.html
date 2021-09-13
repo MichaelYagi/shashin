@@ -397,7 +397,7 @@
         });
 
         // Clear message on modal close
-        $('#propTimelineModal').on('hidden.bs.modal', function () {
+        $('#propTimelineModal').on('hide.bs.modal', function () {
             $("#timelineModalMsg").html("");
         });
 
@@ -405,10 +405,6 @@
         $('#propTimelineModal').find(':input').bind('keypress', function() {
             $("#timelineModalMsg").html("");
         });
-
-        $('#propTimelineModal').on('hidden.bs.modal', function (e) {
-            $(this).modal('dispose');
-        })
 
         $("#refreshTakenDate").click(function (e) {
             e.preventDefault();
