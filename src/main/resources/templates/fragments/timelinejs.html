@@ -299,31 +299,31 @@
                                 }
                                 var favoriteIcon = favoritesList[metadata.id] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                 html += '   <div class="thumbnail-tl" id="tntl' + metadata.id + '">\n' +
-                                    '       <a href="#" id="select' + metadata.id + '">\n' +
-                                    '           <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                    '       </a>\n' +
-                                    '   </div>\n' +
-                                    '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
-                                    '       <a href="#" id="favorite' + metadata.id + '">\n' +
-                                    '           <span id="bricon' + metadata.id + '" class="' + favoriteIcon + '" style="font-size: 1rem;color: red;"></span>\n' +
-                                    '       </a>\n' +
-                                    '   </div>\n' +
-                                    '   <div class="thumbnail-bl" id="tnbl' + metadata.id + '">\n' +
-                                    '       <a href="#" id="timelineModalEdit'+metadata.id+'" data-target="#propTimelinModal">\n' +
-                                    '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                    '       </a>\n' +
-                                    '   </div>\n' +
-                                    '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+                                    '           <a href="#" id="select' + metadata.id + '">\n' +
+                                    '               <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                    '           </a>\n' +
+                                    '       </div>\n' +
+                                    '       <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
+                                    '           <a href="#" id="favorite' + metadata.id + '">\n' +
+                                    '               <span id="bricon' + metadata.id + '" class="' + favoriteIcon + '" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '           </a>\n' +
+                                    '       </div>\n' +
+                                    '       <div class="thumbnail-bl" id="tnbl' + metadata.id + '">\n' +
+                                    '           <a href="#" id="timelineModalEdit'+metadata.id+'" data-target="#propTimelinModal">\n' +
+                                    '               <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                    '           </a>\n' +
+                                    '       </div>\n' +
+                                    '       <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
                                 if (metadata.type.includes("video")) {
                                     html +=
-                                        '       <a class="mediaLink"\n' +
+                                        '       <a class="mediaLink" onclick="return false" \n' +
                                         '           data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
                                         '           data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                                         '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                         '       </a>\n';
                                 } else {
                                     html +=
-                                        '       <a class="mediaLink" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                                        '       <a class="mediaLink" onclick="return false" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
                                         '           data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                                         '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                         '       </a>\n';
