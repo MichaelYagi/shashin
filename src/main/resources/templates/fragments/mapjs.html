@@ -105,6 +105,7 @@
         }
 
         function selectStyleFunction(feature) {
+            console.log("TESTzzz");
             // Return first map marker
             const styles = [
                 new ol.style.Style({
@@ -212,6 +213,15 @@
         });
         const zoomSlider = new ol.control.ZoomSlider();
         map.addControl(zoomSlider);
+
+        // After closing lightgallery, clear select interaction
+        $dynamicGallery.addEventListener('lgAfterClose', function (event) {
+            map.getInteractions().forEach(function (interaction) {
+                if (interaction instanceof ol.interaction.Select) {
+                    interaction.getFeatures().clear();
+                }
+            });
+        });
 
         var iconFeatures = [];
 
