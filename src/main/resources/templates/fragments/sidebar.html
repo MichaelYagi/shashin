@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="sidebar(activeSidebar,authority)">
 
-<div class="bg-light" style="width: 4.5rem;">
+<div class="bg-light col-1"> <!-- style="width: 4.5rem;" -->
     <div class="sidebar-sticky">
         <ul class="nav nav-pills nav-flush flex-column mb-auto text-center">
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
