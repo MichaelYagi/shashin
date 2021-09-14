@@ -159,6 +159,7 @@
                 // Clear message on modal close
                 $('#propBatchMetadata').on('hide.bs.modal', function () {
                     $("#msgBatchMetadata").html("");
+                    $('#propBatchMetadata').find(':input').val('');
                     clearTimelineSelection();
                 });
 
