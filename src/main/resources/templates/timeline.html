@@ -8,7 +8,7 @@
 <div class="container-fluid">
     <div class="row">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
-        <main role="main" class="col-10 pt-3 px-4" id="timelineMain">
+        <main role="main" class="col-9 pt-3" id="timelineMain">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentlat" name="currentlat">
             <input type="hidden" id="currentlng" name="currentlng">
@@ -140,7 +140,7 @@
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
 
-        <nav id="timelineToc" class="col-0 px-0 sidebar-sticky">
+        <nav id="timelineToc" class="col-2 px-0 sidebar-sticky">
             <th:block th:if="${mediaTypeFilter == 'video'}">
             <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a><br>
             </th:block>
