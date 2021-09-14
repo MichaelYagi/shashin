@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="mapjs(mapdata)">
+<body th:fragment="mapjs(authority,mapdata)">
 <div th:replace="fragments/appjs :: appjs()"></div>
 
 <script type="text/javascript">
     $(document).ready(function() {
         /*<![CDATA[*/
         var mapdata = JSON.parse(decodeHtml("[[${mapdata}]]"));
+        var authority = "[[${authority}]]";
         /*]]>*/
 
         const textFill = new ol.style.Fill({
@@ -124,20 +125,19 @@
                 var featureProperties = originalFeatures[i].getProperties();
                 let dateString = getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
 
-                var mediaContent = {}
+                var mediaContent = {
+                    func: editLocation,
+                    args: [featureProperties["metadataId"],featureProperties["lat"],featureProperties["lng"]],
+                }
                 if (featureProperties.type.includes("image")) {
-                    mediaContent = {
-                        src: featureProperties.photoUrl,
-                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
-                    }
+                    mediaContent.src = featureProperties.photoUrl
+                    mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                 } else if (featureProperties.type.includes("video")) {
-                    mediaContent = {
-                        video: {
-                            "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
-                            "attributes": {"preload": false, "controls": true}
-                        },
-                        subHtml: (featureProperties.placeName !== null ? featureProperties.placeName : "") + '&nbsp;&nbsp;<a class="bi-pencil" href="javascript:editLocation(\''+featureProperties["metadataId"]+'\',\''+featureProperties["lat"]+'\',\''+featureProperties["lng"]+'\')"></a><br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                    mediaContent.video = {
+                        "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
+                        "attributes": {"preload": false, "controls": true}
                     }
+                    mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                 }
                 mediaContentList.push(mediaContent);
             }
@@ -178,9 +178,13 @@
             localStorage.removeItem('lng');
         }
         const lightGalleryConfigs = getLightGalleryConfigs();
+        if (authority === "ROLE_ADMIN") {
+            lightGalleryConfigs["plugins"].push(lgEditLocation);
+        }
         lightGalleryConfigs["controls"] = false;
         lightGalleryConfigs["dynamic"] = true;
         lightGalleryConfigs["counter"] = true;
+        lightGalleryConfigs["editLocation"] = true;
         const $dynamicGallery = document.getElementById('light-gallery-photo');
         var dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
 

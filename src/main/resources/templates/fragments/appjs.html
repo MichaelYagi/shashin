@@ -573,7 +573,17 @@
         });
     }
 
-    function editLocation(metadataId,lat,lng) {
+    function editLocation(...args) {
+        var locationArgs = [].concat(...args);
+        var metadataId = "";
+        var lat = "";
+        var lng = "";
+
+        if (arguments.length > 0) {
+            metadataId = locationArgs[0];
+            lat = locationArgs[1];
+            lng = locationArgs[2];
+        }
         $("#mapMetadataId").val(metadataId);
         if (lat && lng) {
             $("#locationDataInput").val(lat+","+lng);
