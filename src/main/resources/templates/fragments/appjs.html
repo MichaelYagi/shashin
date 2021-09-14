@@ -578,11 +578,16 @@
         var metadataId = "";
         var lat = "";
         var lng = "";
+        var modalLabel = "";
 
         if (arguments.length > 0) {
             metadataId = locationArgs[0];
             lat = locationArgs[1];
             lng = locationArgs[2];
+            modalLabel = locationArgs[3];
+        }
+        if (modalLabel && modalLabel.length > 0) {
+            $("#editPhotoLocationModalLabel").text("for "+modalLabel);
         }
         $("#mapMetadataId").val(metadataId);
         if (lat && lng) {

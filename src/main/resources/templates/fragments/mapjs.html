@@ -127,7 +127,7 @@
 
                 var mediaContent = {
                     func: editLocation,
-                    args: [featureProperties["metadataId"],featureProperties["lat"],featureProperties["lng"]],
+                    args: [featureProperties["metadataId"],featureProperties["lat"],featureProperties["lng"],featureProperties["title"]],
                 }
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = featureProperties.photoUrl
@@ -247,6 +247,7 @@
                 var type = data["type"];
                 var placeName = data["placeName"];
                 var metadataId = data["id"];
+                var title = data["title"];
 
                 var iconFeature = new ol.Feature({
                     geometry: new ol.geom.Point(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913')),
@@ -260,6 +261,7 @@
                     day: day,
                     placeName: placeName,
                     metadataId: metadataId,
+                    title: title,
                     lat: lat,
                     lng: lng,
                     type: type,
