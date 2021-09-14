@@ -12,7 +12,7 @@
             <div id="map" class="map" style="z-index: 0">
                 <div id="light-gallery-photo"></div>
             </div>
-            <div th:replace="fragments/mapjs :: mapjs(${mapdata})"></div>
+            <div th:replace="fragments/mapjs :: mapjs(${authority},${mapdata})"></div>
         </main>
     </div>
 </div>
