@@ -55,7 +55,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
-                $('#propAddAlbum').on('hidden.bs.modal', function (e) {
+                $('#propAddAlbum').on('hide.bs.modal', function (e) {
                     e.preventDefault();
                     $("#albumNameInput").val("");
                     $("#albumResponseMsg").html("");
@@ -109,7 +109,7 @@
                 });
 
                 // Clear message on modal close
-                $('#propAddAlbum').on('hidden.bs.modal', function () {
+                $('#propAddAlbum').on('hide.bs.modal', function () {
                     $("#albumResponseMsg").html("");
                     clearTimelineSelection();
                 });
