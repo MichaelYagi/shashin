@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="albumjs()">
 <script type="text/javascript">
-    function updateAlbum(albumId, nextPage, activePage) {
+    function updateAlbum(lg,$infiniteScrollGallery,lightGalleryConfigs,albumId,nextPage,activePage) {
         const posting = $.get({
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8'
@@ -94,6 +94,24 @@
                                 renderAlbumModal(htmlEncodedAlbumData, htmlEncodedMetadata, htmlEncodedCurrentUser, htmlEncodedalbumPhotoCommentsMap);
                                 activateAlbumListeners(htmlEncodedMetadata, htmlEncodedAlbumData);
                             }
+
+                            lg.closeGallery(true);
+                            lg.destroyModules(true);
+                            lg.invalidateItems();
+                            $(window).off(`.lg.global${lg.lgId}`);
+                            lg.LGel.off('.lg');
+                            setTimeout(() => {
+                                // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                                // Hack because lg.destroy() errors out
+                                // when photos appear slower than destroy called, then there's an error
+                                try {
+                                    lg.$container.remove();
+                                } catch (e) {
+                                    console.log(e);
+                                }
+
+                                lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+                            }, 100);
                         } else {
                             $(".appendAlbumPhotos").last().text("EOL").css("display","none")
                         }

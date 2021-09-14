@@ -287,27 +287,9 @@
 
             if (yearTakenCount > 0 && monthTakenCount > 0 && dayTakenCount > 0) {
                 /*<![CDATA[*/
-                updateTimeline(nextPage,"[[${mediaTypeFilter}]]","[[${activePage}]]");
+                updateTimeline(lg,$infiniteScrollGallery,lightGalleryConfigs,nextPage,"[[${mediaTypeFilter}]]","[[${activePage}]]");
                 /*]]>*/
                 $("#currentPage").val(nextPage);
-
-                lg.closeGallery(true);
-                lg.destroyModules(true);
-                lg.invalidateItems();
-                $(window).off(`.lg.global${lg.lgId}`);
-                lg.LGel.off('.lg');
-                setTimeout(() => {
-                    // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
-                    // Hack because lg.destroy() errors out
-                    // when photos appear slower than destroy called, then there's an error
-                    try {
-                        lg.$container.remove();
-                    } catch (e) {
-                        console.log(e);
-                    }
-
-                    lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-                }, 100);
             } else {
                 $("#spinner").css("display","none");
             }
