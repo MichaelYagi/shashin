@@ -662,8 +662,13 @@ class SettingsController {
                                     mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
                             }
                             if (metadataObj != null) {
-                                threadText = file.path
-                                metadataRepository?.save(metadataObj)
+                                try {
+                                    metadataRepository?.save(metadataObj)
+                                    threadText = file.path + " indexed"
+                                } catch(e: Exception) {
+                                    logger.log(Level.SEVERE, "Could not save file "+metadataObj.getPath()+": " + e.localizedMessage)
+                                    threadText = file.path + " exception: " + e.localizedMessage
+                                }
                             }
                         } else {
                             threadText = file.path + " NOT SUPPORTED"
