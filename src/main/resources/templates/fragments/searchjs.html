@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="searchjs()">
+<script type="text/javascript">
+    const $infiniteScrollGallery = document.getElementById(
+        'scroll-gallery',
+    );
+    const lightGalleryConfigs = getLightGalleryConfigs();
+    lightGalleryConfigs["dynamic"] = true;
+    const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+
+    function openGallery(e,index) {
+        e.preventDefault();
+        if (lg) {
+            lg.openGallery(index);
+        }
+    }
+
+    function activateMetadataListeners(rawMetadata) {
+        var metadata = JSON.parse(decodeHtml(rawMetadata));
+        // console.log(metadata.id);
+
+        $("#image"+metadata.id).on('load', function() {
+            $(this).css("background-color","transparent");
+        });
+    }
+
+    function updateSearch(nextPage,searchTerm,activePage) {
+        var promise = $.ajax({
+            type: 'get',
+            url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
+            contentType: 'application/json; charset=utf-8'
+        }).then(function (data) {
+            var mediaContentList = [];
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
+                var metadataList = data["metadataSearchList"] === "" ? null : data["metadataSearchList"];
+
+                if (metadataList.length > 0) {
+                    var html = "";
+                    var mediaLinkLength = $(".mediaLink").length;
+                    for (var index in metadataList) {
+                        var mediaContent = {}
+                        var metadata = metadataList[index];
+                        let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
+
+                        html += '<div class="photo-thumbnail-container photo-thumbnail">\n';
+                        html +=
+                            '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n' +
+                            '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
+                        if (metadata.type.includes("video")) {
+                            html +=
+                                '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
+                                '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: darkblue;"></span>\n' +
+                                '   </div>\n';
+                        }
+                        html += '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+
+                        const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                        mediaContent.subHtml = (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
+                        if (metadata.type.includes("video")) {
+                            mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
+                            html +=
+                                '       <a class="mediaLink" onclick="return openGallery(event,'+currentMediaLinkIndex+')" \n' +
+                                '           data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
+                                '           data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                '       </a>\n';
+                        } else {
+                            mediaContent.src = metadata.thumbnailUrlOriginal;
+                            html +=
+                                '       <a class="mediaLink" onclick="return openGallery(event,'+currentMediaLinkIndex+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                                '           data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                '       </a>\n';
+                        }
+                        mediaContentList.push(mediaContent);
+                        html += '</div></div>\n<span class="appendSearchPhotos"></span>\n';
+                        $(html).insertAfter($(".appendSearchPhotos").last())
+
+                        var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+
+                        setPhotoOverlays(htmlEncodedMetadata, activePage);
+                        activateMetadataListeners(htmlEncodedMetadata);
+
+                        html = "";
+                    }
+                } else {
+                    $(".appendSearchPhotos").last().text("EOL").css("display","none")
+                }
+            } else {
+                $(".appendSearchPhotos").last().text("EOL").css("display","none")
+            }
+
+            $("#spinner").css("display","none");
+
+            return mediaContentList;
+        });
+
+        return promise.done(function(data) {
+            return data;
+        });
+    }
+</script>
+
+</body>
+</html>
