@@ -285,7 +285,7 @@
                                         // Create new
                                         headingCount++;
                                         html += '<br><p class="undatedTimelinePhotos" id="undated"><strong>Undated</strong></p>\n' +
-                                            '<div class="row">\n';
+                                            '<div class="row p-3">\n';
                                         // console.log("new");
                                     }
                                     undatedCount++;
@@ -300,7 +300,7 @@
                                     headingCount++;
                                     html += '<br><p><strong class="dateHeading" id="' + metadata["year"] + '-' + metadata["month"] + '-' + metadata["day"] + '">' + dateString + '</strong></p>\n' +
                                         '<span style="display: none;" class="dateTakenHeading">' + metadata["year"] + '-' + metadata["month"] + '-' + metadata["day"] + '</span>\n' +
-                                        '<div class="row">\n' +
+                                        '<div class="row p-3">\n' +
                                         '<span style="display: none;" class="yearTaken">' + metadata["year"] + '</span>\n' +
                                         '<span style="display: none;" class="monthTaken">' + metadata["month"] + '</span>\n' +
                                         '<span style="display: none;" class="dayTaken">' + metadata["day"] + '</span>\n';
