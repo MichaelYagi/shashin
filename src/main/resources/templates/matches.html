@@ -17,7 +17,7 @@
                 <div th:replace="fragments/matchesmodal :: matchesmodal()"></div>
 
                 <div id="infinite-scroll-gallery">
-                    <div class="row">
+                    <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${lowMatchResults}">
                             <div class="photo-thumbnail-container photo-thumbnail">
                                 <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">

@@ -27,7 +27,7 @@
                             <br>
                             <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                 <p><strong class="undatedTimelinePhotos" id="undated">Undated</strong></p>
-                                <div class="row">
+                                <div class="row p-3">
                             </th:block>
 
                             <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
@@ -35,7 +35,7 @@
                                     <p><strong class="dateHeading" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p>
                                     <span style="display: none;" class="dateTakenHeading" th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></span>
                                 </th:block>
-                                <div class="row">
+                                <div class="row p-3">
                                     <span style="display: none;" class="yearTaken" th:text="${metadata.year}"></span>
                                     <span style="display: none;" class="monthTaken" th:text="${metadata.month}"></span>
                                     <span style="display: none;" class="dayTaken" th:text="${metadata.day}"></span>

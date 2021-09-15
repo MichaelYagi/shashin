@@ -14,7 +14,7 @@
             <div id="albumsMessage"></div>
 
             <th:block th:if="${albumsList != '' and albumsCount != ''}">
-                <div class="row">
+                <div class="row p-3">
                     <th:block th:each="album, iterStat: ${albumsList}">
                         <div class="card" style="width: 209px;">
                             <a th:href="'/album/'+${album.id}"  style="text-decoration: none !important;color: black;" th:id="'album'+${album.id}">
