@@ -161,7 +161,7 @@ class UserController {
             val now = LocalDateTime.now()
             newUser.setCreatedAt(dtf.format(now))
             newUser.setModifiedAt(dtf.format(now))
-            newUser.setLoggedIn(true)
+            newUser.setLoggedIn(false)
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
                 newUser.setAuthority("ROLE_ADMIN")
@@ -172,11 +172,6 @@ class UserController {
                 userRepository?.save(newUser)
                 return "redirect:/users/login?msg=regpending"
             }
-
-
-
-
-
         }
 
         model["message"] = "Something went wrong"
