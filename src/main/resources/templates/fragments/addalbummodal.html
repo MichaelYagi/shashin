@@ -55,8 +55,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
-                $('#propAddAlbum').on('hide.bs.modal', function (e) {
-                    e.preventDefault();
+                $('#propAddAlbum').on('hide.bs.modal', function () {
                     $("#albumNameInput").val("");
                     $("#albumResponseMsg").html("");
                 })

@@ -17,11 +17,11 @@
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
 
             <th:block th:if="${metadataList != ''}">
-                <div th:replace="fragments/appjs :: appjs()"></div>
-                <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
-                <div th:replace="fragments/timelinejs :: timelinejs()"></div>
-
                 <div id="infinite-scroll-gallery">
+                    <div th:replace="fragments/appjs :: appjs()"></div>
+                    <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
+                    <div th:replace="fragments/timelinejs :: timelinejs()"></div>
+
                     <th:block th:each="metadata, iterStat: ${metadataList}">
                         <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
                             <br>
@@ -75,14 +75,16 @@
                                 <th:block th:unless="${metadata.type.contains('video')}">
                                     <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                            <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                            <a class="mediaLink" th:onclick="return openGallery(event,[[${iterStat.index}]])"
+                                               th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
                                                th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.title+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
                                         </th:block>
                                     </th:block>
                                     <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                        <a class="mediaLink" th:onclick="return openGallery(event,[[${iterStat.index}]])"
+                                           th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
                                            th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.title}">
                                             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                         </a>
@@ -92,7 +94,7 @@
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                            <a class="mediaLink" onclick="return false"
+                                            <a class="mediaLink" th:onclick="return openGallery(event,[[${iterStat.index}]])"
                                                th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
                                                th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.title+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
@@ -100,7 +102,7 @@
                                         </th:block>
                                     </th:block>
                                     <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <a class="mediaLink" onclick="return false"
+                                        <a class="mediaLink" th:onclick="return openGallery(event,[[${iterStat.index}]])"
                                            th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
                                            th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.title}">
                                             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
@@ -253,10 +255,24 @@
         </div>
     </div>
 </div>
-                                        
 
 <script type="text/javascript">
     $(document).ready(function() {
+        var mediaContentList = [];
+        $.each($('.mediaLink'), function(index, element) {
+            var mediaContent = {}
+            mediaContent.subHtml =$(this).attr("data-sub-html")
+            if ($(this).attr("data-src")) {
+                mediaContent.src = $(this).attr("data-src");
+            } else if ($(this).attr("data-video")) {
+                mediaContent.video = $(this).attr("data-video");
+            }
+            mediaContentList.push(mediaContent);
+        });
+        if (lg) {
+            lg.refresh(mediaContentList);
+        }
+
         $("p strong").each(function() {
             var html = '<a class="anchor-'+$(this).attr('id')+'" style="position: relative;left: 1%;" href="#' + $(this).attr('id') + '">' + $(this).text() + '</a><br>';
             $("#timelineToc").append(html);
@@ -265,13 +281,6 @@
         $(function() {
             $('[data-toggle="tooltip"]').tooltip()
         })
-
-        const $infiniteScrollGallery = document.getElementById(
-            'infinite-scroll-gallery',
-        );
-        const lightGalleryConfigs = getLightGalleryConfigs();
-        lightGalleryConfigs["selector"] = '.mediaLink';
-        var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
 
         function loadNextPage() {
             $("#spinner").css("display","block");
@@ -287,25 +296,11 @@
 
             if (yearTakenCount > 0 && monthTakenCount > 0 && dayTakenCount > 0) {
                 /*<![CDATA[*/
-                updateTimeline(nextPage,"[[${mediaTypeFilter}]]","[[${activePage}]]").then(function() {
-                    lg.closeGallery(true);
-                    lg.destroyModules(true);
-                    lg.invalidateItems();
-                    $(window).off(`.lg.global${lg.lgId}`);
-                    lg.LGel.off('.lg');
-                    setTimeout(() => {
-                        // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
-                        // Hack because lg.destroy() errors out
-                        // when photos appear slower than destroy called, then there's an error
-                        try {
-                            lg.$container.remove();
-                        } catch (e) {
-                            console.log(e);
-                        }
-
-                        lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-                        return lg;
-                    }, 100);
+                updateTimeline(nextPage,"[[${mediaTypeFilter}]]","[[${activePage}]]").then(function(additionalMediaContentList) {
+                    if (additionalMediaContentList.length > 0) {
+                        mediaContentList = mediaContentList.concat(additionalMediaContentList);
+                        lg.refresh(mediaContentList);
+                    }
                 });
 
                 /*]]>*/

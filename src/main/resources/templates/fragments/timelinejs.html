@@ -2,6 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="timelinejs()">
 <script type="text/javascript">
+    const $infiniteScrollGallery = document.getElementById(
+        'infinite-scroll-gallery',
+    );
+    const lightGalleryConfigs = getLightGalleryConfigs();
+    lightGalleryConfigs["dynamic"] = true;
+    const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+
+    function openGallery(e,index) {
+        e.preventDefault();
+        if (lg) {
+            lg.openGallery(index);
+        }
+    }
+
     function openTimelineModal(metadata,recognitionLabels,taggedPeopleList) {
         // Populate modal data
         // console.log("openTimelineModal");
@@ -197,11 +211,12 @@
     }
 
     function updateTimeline(nextPage,mediaTypeFilter,activePage) {
-        return $.ajax({
+        var promise = $.ajax({
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/"+nextPage,
             contentType: 'application/json; charset=utf-8'
-        }).done(function (data) {
+        }).then(function (data) {
+            var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -221,8 +236,9 @@
                             // console.log(albumList);
                             var html = "";
                             var undatedCount = 0;
-
+                            var mediaLinkLength = $(".mediaLink").length;
                             for (var index in metadataList) {
+                                var mediaContent = {}
                                 var metadata = metadataList[index];
                                 var currentDateTaken = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
 
@@ -321,20 +337,26 @@
                                     '           </a>\n' +
                                     '       </div>\n' +
                                     '       <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+
+                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                                mediaContent.subHtml = (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
                                 if (metadata.type.includes("video")) {
+                                    mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
                                     html +=
-                                        '       <a class="mediaLink" onclick="return false" \n' +
+                                        '       <a class="mediaLink" onclick="return openGallery(event,'+currentMediaLinkIndex+')" \n' +
                                         '           data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
                                         '           data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                                         '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                         '       </a>\n';
                                 } else {
+                                    mediaContent.src = metadata.thumbnailUrlOriginal;
                                     html +=
-                                        '       <a class="mediaLink" onclick="return false" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                                        '       <a class="mediaLink" onclick="return openGallery(event,'+currentMediaLinkIndex+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
                                         '           data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                                         '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                         '       </a>\n';
                                 }
+                                mediaContentList.push(mediaContent);
                                 html += '</div></div>\n<div id="timelinemodal' + metadata.id + '"></div><span class="appendMetadataPhotos"></span>\n';
 
                                 if (appended === true) {
@@ -393,6 +415,12 @@
             }
 
             $("#spinner").css("display","none");
+
+            return mediaContentList;
+        });
+
+        return promise.done(function(data) {
+            return data;
         });
     }
 </script>
