@@ -424,21 +424,21 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             }
 
             // Map marker thumbnail
-            if (square != null) {
+            if (img != null) {
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"
                 tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
                 if (tnFile != null) {
-                    var scaled: BufferedImage
+                    val scaled: BufferedImage
                     if (img.height > img.width) {
                         scaled = scaleImageByWidth(img, 45)
                     } else {
                         scaled = scaleImageByHeight(img, 45)
                     }
-                    val square: BufferedImage = getSquareThumbnail(scaled)
+                    val mapMarker: BufferedImage = getSquareThumbnail(scaled)
 //                    square = Thumbnails.of(square)
 //                        .height(45)
 //                        .asBufferedImage()
-                    ImageIO.write(square, "jpg", tnFile)
+                    ImageIO.write(mapMarker, "jpg", tnFile)
                     _metadataObj?.setMapMarkerPath(tnFile.path)
                     _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
                 }
