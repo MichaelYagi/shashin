@@ -211,7 +211,7 @@ class SettingsController {
         }
 
         model["alertClass"] = "alert-success"
-        var message = ""
+        var statusMessage = ""
 
         var dirDneString = ""
         if (mediaDirs != null && mediaDirs.isNotEmpty()) {
@@ -235,7 +235,7 @@ class SettingsController {
                 }
             }
             if (dirDneString.isNotBlank()) {
-                message = "Cannot find "+dirDneString.dropLast(1)
+                statusMessage = "Cannot find "+dirDneString.dropLast(1)
                 model["alertClass"] = "alert-warning"
             }
             mediaDirRepository?.saveAll(mediaDirArrayList)
@@ -261,8 +261,8 @@ class SettingsController {
             model["settings"] = settings
         }
 
-        if (message.isBlank() && model.getAttribute("alertClass") == "alert-success") {
-            message = "Settings saved"
+        if (statusMessage.isBlank() && model.getAttribute("alertClass") == "alert-success") {
+            statusMessage = "Settings saved"
         }
 
         val module = "settings"
@@ -272,7 +272,7 @@ class SettingsController {
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
-        model["message"] = message
+        model["statusMessage"] = statusMessage
         return module
     }
 
