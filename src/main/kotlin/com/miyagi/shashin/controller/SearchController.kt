@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.SearchRepository
@@ -11,10 +12,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.util.MultiValueMap
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import javax.servlet.http.HttpServletRequest
 
@@ -26,32 +24,58 @@ class SearchController {
     @Autowired
     private val searchRepository: SearchRepository? = null
 
+    val mapper = ObjectMapper()
+    val resp = mutableMapOf<String, String?>()
+
     @GetMapping("/search")
     fun getSearch(model: Model, request: HttpServletRequest): String {
-        model["searchTerm"] = ""
-        model["metadataSearchList"] = ""
-
-        val searchTerm = request.getParameter("searchTerm")
-        if (!searchTerm.isNullOrBlank()) {
-            model["searchTerm"] = searchTerm
-            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-                val metadataList = searchRepository?.findMetadataBySearchTerm(searchTerm)
-                model["metadataSearchList"] = metadataList as MutableIterable<Metadata>
-            } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
-                val currentUserObj = model.getAttribute("currentUser") as User?
-                if (currentUserObj != null) {
-                    val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(searchTerm, currentUserObj.getId())
-                    model["metadataSearchList"] = metadataList as MutableIterable<Metadata>
-                }
-            }
-        }
-
         val module = "search"
+        val searchTerm = request.getParameter("searchTerm").toString()
+        val response = buildSearchData(model,searchTerm,0)
+
+        model["searchTerm"] = response["searchTerm"]!!
+        model["metadataSearchList"] = response["metadataSearchList"]!!
+        model["status"] = response["status"]!!
+
         model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
+
         return module
+    }
+
+    @RequestMapping(value = ["/search/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedTimeline(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
+        val searchTerm = request.getParameter("searchTerm").toString()
+        return mapper.writeValueAsString(buildSearchData(model,searchTerm,page))
+    }
+
+    private fun buildSearchData(model: Model,searchTerm: String?, page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+        response["searchTerm"] = ""
+        response["metadataSearchList"] = ""
+
+        if (!searchTerm.isNullOrBlank()) {
+            response["searchTerm"] = searchTerm
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page*queryLimit
+            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+                val metadataList = searchRepository?.findMetadataBySearchTerm(searchTerm,pageValue,queryLimit)
+                response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+            } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
+                val currentUserObj = model.getAttribute("currentUser") as User?
+                if (currentUserObj != null) {
+                    val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(searchTerm,currentUserObj.getId(),pageValue,queryLimit)
+                    response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+                }
+            }
+        }
+
+        response["status"] = "success"
+
+        return response
     }
 
     @RequestMapping(value = ["/search"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
