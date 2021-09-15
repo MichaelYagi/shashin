@@ -5,7 +5,7 @@
 
 <div class="container-fluid">
   <div class="row">
-    <main role="main" class="col-11 pt-3">
+    <main role="main" class="col">
       <div th:replace="fragments/appjs :: appjs()"></div>
       <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
       <input type="hidden" id="currentPage" name="currentPage" value="0">
