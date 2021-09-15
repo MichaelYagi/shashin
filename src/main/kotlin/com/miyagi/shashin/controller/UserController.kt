@@ -157,21 +157,26 @@ class UserController {
         if (newUser != null) {
             val encodedPassword: String = bcrypt.encode(newUser.getPassword())
             newUser.setPassword(encodedPassword)
-            if ((userCount != null) && (userCount.toInt() == 0)) {
-                newUser.setAuthority("ROLE_ADMIN")
-            } else {
-                newUser.setAuthority("ROLE_USER")
-            }
-
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
             newUser.setCreatedAt(dtf.format(now))
             newUser.setModifiedAt(dtf.format(now))
             newUser.setLoggedIn(true)
 
-            userRepository?.save(newUser)
+            if ((userCount != null) && (userCount.toInt() == 0)) {
+                newUser.setAuthority("ROLE_ADMIN")
+                userRepository?.save(newUser)
+                return "redirect:/users/login?msg=regsuccess"
+            } else {
+                newUser.setAuthority("ROLE_USER")
+                userRepository?.save(newUser)
+                return "redirect:/users/login?msg=regpending"
+            }
 
-            return "redirect:/users/login?msg=regsuccess"
+
+
+
+
         }
 
         model["message"] = "Something went wrong"
@@ -193,6 +198,8 @@ class UserController {
                 model["message"] = "Login failed"
             } else if (message == "regsuccess") {
                 model["message"] = "Registration successful. Please login."
+            } else if (message == "regpending") {
+                model["message"] = "Registration pending."
             } else if (message == "loginfail") {
                 model["message"] = "Login failed"
             }
