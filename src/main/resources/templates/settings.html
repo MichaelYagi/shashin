@@ -15,9 +15,9 @@
 
                 <br>
                 <form id="saveSettingsForm" method="post" action="/settings">
-                    <th:block th:if="${message != '' and alertClass != ''}">
+                    <th:block th:if="${statusMessage != '' and alertClass != ''}">
                         <div class="col-12">
-                            <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+                            <div th:if="${statusMessage}" th:text="${statusMessage}" th:class="${'alert ' + alertClass}"/>
                         </div>
                     </th:block>
                     <div class="row">
