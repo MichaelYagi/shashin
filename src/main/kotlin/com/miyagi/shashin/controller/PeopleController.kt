@@ -131,7 +131,7 @@ class PeopleController {
 
         // Start matching in a separate thread
         if (testImages != null && trainingData != null && distinctLabelRecords != null && distinctLabelRecords.count() > 1) {
-            val faceRecognizer = FaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository)
+            val faceRecognizer = FaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository, recognitionLabelRepository)
             faceRecognizer.runRecognizer()
         } else {
             resp["msg"] = "Training data not detected. At least 2 people must be tagged."
