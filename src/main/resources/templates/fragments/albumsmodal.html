@@ -68,8 +68,7 @@
                     updateShareLink("[[${baseUrl}]]",[[${album.id}]],"generate");
                 });
 
-                $('#propalbums[[${album.id}]]').on('hide.bs.modal', function (e) {
-                    e.preventDefault();
+                $('#propalbums[[${album.id}]]').on('hide.bs.modal', function () {
                     $("#msg[[${album.id}]]").html("");
                 })
 

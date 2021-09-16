@@ -7,9 +7,12 @@
     }
 
     // Detect scrolling to bottom of page
-    function atEndOfPage() {
-        var c = [document.scrollingElement.scrollHeight, document.body.scrollHeight, document.body.offsetHeight].sort(function(a,b){return b-a}) // select longest candidate for scrollable length
-        return ((window.innerHeight + window.scrollY)+100  >= c[0]) // compare with scroll position + some give (*1.5)
+    function atEndOfPage(element) {
+        console.log(window.innerHeight + element.scrollTop);
+        console.log(element.scrollHeight);
+        //var c = [document.scrollingElement.scrollHeight, document.body.scrollHeight, document.body.offsetHeight].sort(function(a,b){return b-a}) // select longest candidate for scrollable length
+        //return ((window.innerHeight + window.scrollY)+100  >= c[0]) // compare with scroll position + some give (*1.5)
+        return ((window.innerHeight + element.scrollTop)  >= element.scrollHeight) // compare with scroll position + some give (*1.5)
     }
 
     function makeShareLinkId(minLength, maxLength) {

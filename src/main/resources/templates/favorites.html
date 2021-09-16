@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
-<body>
+<body class="thumb d-flex flex-column vh-100">
 
 <div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
 
-<div class="container-fluid">
-    <div class="row">
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
-        <main role="main" class="col">
+        <main role="main" class="col overflow-auto h-100">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <div id="favoritesMessage"></div>
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
@@ -126,14 +126,24 @@
             /*]]>*/
             $("#currentPage").val(nextPage);
         }
-        if (!$(window).hasScrollBar()) {
+        if (!$("#container").hasScrollBar()) {
             setTimeout(() => {
-                loadNextPage()
+                loadNextPage();
             }, 1000);
         }
-        $(window).on('scroll', function() {
-            if (atEndOfPage() && $(".appendMetadataPhotos").last().text() !== "EOL") {
-                loadNextPage()
+        if (!$("main").hasScrollBar()) {
+            setTimeout(() => {
+                loadNextPage();
+            }, 1000);
+        }
+        $("#container").on('scroll', function() {
+            if (atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+                loadNextPage();
+            }
+        })
+        $("main").on('scroll', function() {
+            if (atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+                loadNextPage();
             }
         })
     });
