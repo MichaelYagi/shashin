@@ -442,6 +442,12 @@
         clearTimelineSelection();
     })
 
+    $("#albumAppToolsDeselectAll").click(function(e) {
+        e.preventDefault();
+
+        clearTimelineSelection();
+    })
+
     function clearTimelineSelection() {
         $(".thumbnail-centered").css("display", "none");
         $(".thumbnail-bl").css("display", "none");
