@@ -211,10 +211,13 @@
     }
 
     function updateTimeline(nextPage,mediaTypeFilter,activePage) {
+        // console.log("nextPage:"+nextPage);
+
         var promise = $.ajax({
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/"+nextPage,
-            contentType: 'application/json; charset=utf-8'
+            contentType: 'application/json; charset=utf-8',
+            async:false
         }).then(function (data) {
             var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -232,15 +235,18 @@
                         var labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
 
                         if (metadataList.length > 0) {
-                            // console.log(favoritesList);
+                            // console.log(metadataList);
                             // console.log(albumList);
                             var html = "";
                             var undatedCount = 0;
                             var mediaLinkLength = $(".mediaLink").length;
+                            // console.log("/timeline/mediatype/"+mediaTypeFilter+"/"+nextPage);
                             for (var index in metadataList) {
                                 var mediaContent = {}
                                 var metadata = metadataList[index];
                                 var currentDateTaken = metadata["year"] + "-" + metadata["month"] + "-" + metadata["day"];
+
+                                // console.log(metadata["id"]+"-"+currentDateTaken);
 
                                 var yearTakenCount = $(".yearTaken").length;
                                 var monthTakenCount = $(".monthTaken").length;
@@ -254,19 +260,6 @@
                                 lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
                                 lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
-
-                                // console.log(metadata);
-                                // console.log(JSON.stringify(metadata));
-                                // console.log(lastDateTakenHeading);
-                                // console.log(currentDateTaken);
-                                //
-                                // console.log(lastYearTaken);
-                                // console.log(lastMonthTaken);
-                                // console.log(lastDayTaken);
-                                //
-                                // console.log(metadata["year"]);
-                                // console.log(metadata["month"]);
-                                // console.log(metadata["day"]);
 
                                 var appended = false;
 

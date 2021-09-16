@@ -29,7 +29,8 @@
         var promise = $.ajax({
             type: 'get',
             url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
-            contentType: 'application/json; charset=utf-8'
+            contentType: 'application/json; charset=utf-8',
+            async:false
         }).then(function (data) {
             var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
