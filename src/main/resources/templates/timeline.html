@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
-<body data-spy="scroll" data-target="#timelineToc">
+<body class="thumb d-flex flex-column vh-100">
 
 <div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
 
-<div class="container-fluid">
-    <div class="row">
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
-        <main role="main" class="col-9 pt-3" id="timelineMain">
+        <main role="main" class="col overflow-auto h-100" id="timelineMain">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentlat" name="currentlat">
             <input type="hidden" id="currentlng" name="currentlng">
@@ -142,14 +142,16 @@
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
 
-        <nav id="timelineToc" class="col-2 px-0 sidebar-sticky">
-            <th:block th:if="${mediaTypeFilter == 'video'}">
-            <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a><br>
-            </th:block>
-            <th:block th:if="${mediaTypeFilter == 'all'}">
-            <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a><br>
-            </th:block>
-        </nav>
+        <aside class="col-sm-2 flex-grow-sm-1 flex-shrink-1 flex-grow-0 sticky-top pb-sm-0 pb-3">
+            <div id="timelineToc" class="p-1 h-100 sticky-top">
+                <th:block th:if="${mediaTypeFilter == 'video'}">
+                <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a><br>
+                </th:block>
+                <th:block th:if="${mediaTypeFilter == 'all'}">
+                <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a><br>
+                </th:block>
+            </div>
+        </aside>
 
     </div>
 </div>
@@ -308,13 +310,23 @@
                 $("#spinner").css("display","none");
             }
         }
-        if (!$(window).hasScrollBar()) {
+        if (!$("#container").hasScrollBar()) {
             setTimeout(() => {
                 loadNextPage();
             }, 1000);
         }
-        $(window).on('scroll', function() {
-            if (atEndOfPage() && $(".attachMetadataPhotos").last().text() !== "EOL") {
+        if (!$("main").hasScrollBar()) {
+            setTimeout(() => {
+                loadNextPage();
+            }, 1000);
+        }
+        $("#container").on('scroll', function() {
+            if (atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+                loadNextPage();
+            }
+        })
+        $("main").on('scroll', function() {
+            if (atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
