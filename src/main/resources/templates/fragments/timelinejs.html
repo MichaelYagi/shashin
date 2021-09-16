@@ -361,7 +361,7 @@
                                 }
 
                                 if ($(".undatedTimelinePhotos").length > 0 && $(".anchorUndated").length === 0) {
-                                    var html = '<a class="anchorUndated" style="position: relative;left: 1%;" href="#undated">Undated</a><br>';
+                                    var html = '<li class="nav-item"><a class="anchorUndated" style="position: relative;left: 1%;" href="#undated">Undated</a></li>';
                                     $("#timelineToc").append(html);
                                 } else {
                                     for (var i = 0; i < headingCount; i++) {
@@ -372,7 +372,7 @@
                                             var dateHeading = $("p strong").eq(target).text();
 
                                             if ($(".anchor-" + dateId).length === 0) {
-                                                var timelineTocHtml = '<a class="anchor-' + dateId + '" style="position: relative;left: 1%;" href="#' + dateId + '">' + dateHeading + '</a><br>';
+                                                var timelineTocHtml = '<li class="nav-item"><a class="anchor-' + dateId + '" style="position: relative;left: 1%;" href="#' + dateId + '">' + dateHeading + '</a></li>';
                                                 $("#timelineToc").append(timelineTocHtml);
                                             }
                                         }

@@ -142,14 +142,18 @@
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
 
-        <aside class="col-sm-2 flex-grow-sm-1 flex-shrink-1 flex-grow-0 sticky-top pb-sm-0 pb-3">
-            <div id="timelineToc" class="p-1 h-100 sticky-top">
-                <th:block th:if="${mediaTypeFilter == 'video'}">
-                <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a><br>
-                </th:block>
-                <th:block th:if="${mediaTypeFilter == 'all'}">
-                <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a><br>
-                </th:block>
+        <aside class="col-sm flex-grow-sm-1 flex-shrink-1 flex-grow-0 sticky-top pb-sm-0 pb-3 d-none d-sm-block">
+            <div class="rounded-3 p-1 h-100 sticky-top">
+                <ul id="timelineToc" class="nav flex-sm-column flex-row mb-auto justify-content-between text-truncate">
+                    <li class="nav-item">
+                        <th:block th:if="${mediaTypeFilter == 'video'}">
+                            <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a>
+                        </th:block>
+                        <th:block th:if="${mediaTypeFilter == 'all'}">
+                            <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a>
+                        </th:block>
+                    </li>
+                </ul>
             </div>
         </aside>
 
@@ -276,7 +280,7 @@
         }
 
         $("p strong").each(function() {
-            var html = '<a class="anchor-'+$(this).attr('id')+'" style="position: relative;left: 1%;" href="#' + $(this).attr('id') + '">' + $(this).text() + '</a><br>';
+            var html = '<li class="nav-item"><a class="anchor-'+$(this).attr('id')+'" style="position: relative;left: 1%;" href="#' + $(this).attr('id') + '">' + $(this).text() + '</a></li>';
             $("#timelineToc").append(html);
         });
 
