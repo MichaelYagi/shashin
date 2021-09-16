@@ -2,9 +2,11 @@ package com.miyagi.shashin.component
 
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.model.RecognitionLabelPhoto
 import com.miyagi.shashin.model.TrainingData
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
+import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.util.FileUtils
 import org.bytedeco.javacpp.DoublePointer
 import org.bytedeco.javacpp.IntPointer
@@ -26,16 +28,18 @@ class FaceRecognizer() {
     private var testImages: MutableIterable<Metadata>? = null
     private var trainingData: MutableIterable<TrainingData>? = null
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null
     private var cascadeDir: String = "lib/cascades"
     private lateinit var cascadeFileList: MutableList<String>
     private var logger: Logger = Logger.getLogger(FaceRecognizer::class.simpleName)
     private val threadExtensionName: String = "facescan_shashinscan"
     private val imageSize: Int = 300
 
-    internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?) : this() {
+    internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?) : this() {
         this.trainingData = trainingData
         this.testImages = testImages
         this.recognitionLabelPhotoRepository = recognitionLabelPhotoRepository
+        this.recognitionLabelRepository = recognitionLabelRepository
         this.cascadeFileList = mutableListOf()
         loadCascadeData()
     }
@@ -180,7 +184,7 @@ class FaceRecognizer() {
                         val testimageFaceDetections = RectVector()
                         faceDetector.detectMultiScale(testimage, testimageFaceDetections)
 
-                        //logger.log(Level.INFO, "Detected "+testimageFaceDetections.size()+" faces for "+testImage.getPath()+" using "+cascadeFile)
+                        logger.log(Level.INFO, "Detected "+testimageFaceDetections.size()+" faces for "+testImage.getPath()+" using "+cascadeFile)
                         faceDetector.close()
 
                         if (testimageFaceDetections.size() > 0) {
@@ -248,6 +252,15 @@ class FaceRecognizer() {
                             }
                         } else {
                             matchMap[0] = -1.0
+                            val objectLabel = this.recognitionLabelRepository?.findByNameIgnoreCase("object")
+                            if (objectLabel != null) {
+                                val recognitionLabelPhoto = RecognitionLabelPhoto()
+                                recognitionLabelPhoto.setMetadataId(testImage.getId())
+                                recognitionLabelPhoto.setRecognitionLabelId(objectLabel.getId())
+                                recognitionLabelPhoto.setConfidence("-0.1")
+                                recognitionLabelPhoto.setAutoTagged(true)
+                                this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                            }
                         }
 
                         testimage.release()
