@@ -394,9 +394,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             val scaled209: BufferedImage = scaleImageByHeight(img, 209)
-//            val scaled209: BufferedImage = Thumbnails.of(File(file.absolutePath))
-//                .height(209)
-//                .asBufferedImage()
             if (tnFile != null) {
                 ImageIO.write(scaled209, "jpg", tnFile)
                 _metadataObj?.setThumbnailSmallHeight(scaled209.height)
@@ -408,16 +405,14 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-            var square: BufferedImage? = null
             if (tnFile != null) {
-                square = scaled209
+                val scaled: BufferedImage
                 if (img.height > img.width) {
-                    square = scaleImageByWidth(img, 209)
+                    scaled = scaleImageByWidth(img, 209)
+                } else {
+                    scaled = scaleImageByHeight(img, 209)
                 }
-//                val cropped: BufferedImage = getSquareThumbnail(img)
-//                square = Thumbnails.of(cropped)
-//                    .height(209)
-//                    .asBufferedImage()
+                val square: BufferedImage = getSquareThumbnail(scaled)
                 ImageIO.write(square, "jpg", tnFile)
                 _metadataObj?.setThumbnailPathCentered(tnFile.path)
                 _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
@@ -435,9 +430,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                         scaled = scaleImageByHeight(img, 45)
                     }
                     val mapMarker: BufferedImage = getSquareThumbnail(scaled)
-//                    square = Thumbnails.of(square)
-//                        .height(45)
-//                        .asBufferedImage()
                     ImageIO.write(mapMarker, "jpg", tnFile)
                     _metadataObj?.setMapMarkerPath(tnFile.path)
                     _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
