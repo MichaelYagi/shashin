@@ -5,7 +5,7 @@
 
 <div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
 
-<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
@@ -142,19 +142,18 @@
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
 
-        <aside class="col-sm flex-grow-sm-1 flex-shrink-1 flex-grow-0 sticky-top pb-sm-0 pb-3 d-none d-sm-block">
-            <div class="rounded-3 p-1 h-100 sticky-top">
-                <ul id="timelineToc" class="nav flex-sm-column flex-row mb-auto justify-content-between text-truncate">
-                    <li class="nav-item">
-                        <th:block th:if="${mediaTypeFilter == 'video'}">
-                            <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a>
-                        </th:block>
-                        <th:block th:if="${mediaTypeFilter == 'all'}">
-                            <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a>
-                        </th:block>
-                    </li>
-                </ul>
-            </div>
+        <aside class="col-sm-2 flex-grow-sm-1 flex-shrink-1 flex-grow-0 sticky-top pb-sm-0 pb-3 d-none d-sm-block">
+            <ul id="timelineToc" class="rounded-3 p-1 list-unstyled sticky-top">
+                <li class="nav-item">
+                    <th:block th:if="${mediaTypeFilter == 'video'}">
+                        <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a>
+                    </th:block>
+                    <th:block th:if="${mediaTypeFilter == 'all'}">
+                        <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a>
+                    </th:block>
+                </li>
+            </ul>
+            </ul>
         </aside>
 
     </div>

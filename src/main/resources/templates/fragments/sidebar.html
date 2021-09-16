@@ -3,7 +3,7 @@
 <body th:fragment="sidebar(activeSidebar,authority)">
 
 <aside class="col-sm flex-grow-sm-1 flex-shrink-1 flex-grow-0 sticky-top pb-sm-0 pb-3">
-    <div class="bg-light border rounded-3 p-1 h-100 sticky-top">
+    <div class="bg-light border rounded-3 p-1 sticky-top">
         <ul class="nav nav-pills flex-sm-column flex-row mb-auto justify-content-between text-truncate text-center">
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
