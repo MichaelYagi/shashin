@@ -1,9 +1,6 @@
 package com.miyagi.shashin.repository
 
-import com.miyagi.shashin.model.AlbumPhotoComments
-import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.MetadataPeople
-import com.miyagi.shashin.model.TrainingData
+import com.miyagi.shashin.model.*
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -18,6 +15,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT year,month,day FROM metadata GROUP BY year, month, day ORDER BY year DESC, month DESC, day DESC", nativeQuery = true)
+   fun findTimelineData(): MutableIterable<TimelineData>
 
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% ORDER BY year DESC, month DESC, day DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByTypeOffsetAndLimit(@Param("type") type: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
