@@ -61,6 +61,7 @@ class TimelineController {
         model["recognitionLabels"] = response["recognitionLabels"]!!
         model["labelPhotoMap"] = response["labelPhotoMap"]!!
         model["mediaTypeFilter"] = response["mediaTypeFilter"]!!
+        model["timelineData"] = response["timelineData"]!!
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -93,6 +94,7 @@ class TimelineController {
         response["albumList"] = ""
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = ""
+        response["timelineData"] = ""
         response["mediaTypeFilter"] = mediaTypeFilter
 
         response["msg"] = "Could not get results"
@@ -113,6 +115,11 @@ class TimelineController {
             val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
             if (recognitionLabels != null && recognitionLabels.count() > 0) {
                 response["recognitionLabels"] = recognitionLabels
+            }
+
+            val timelineData = metadataRepository.findTimelineData()
+            if (timelineData != null && timelineData.count() > 0) {
+                response["timelineData"] = timelineData
             }
 
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
