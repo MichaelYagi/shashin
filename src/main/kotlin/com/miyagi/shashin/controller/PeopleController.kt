@@ -209,7 +209,7 @@ class PeopleController {
             val settings = model.getAttribute("settings") as Settings
 
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!)
+                peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!,currentUserObj.getId())
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!)
             }
