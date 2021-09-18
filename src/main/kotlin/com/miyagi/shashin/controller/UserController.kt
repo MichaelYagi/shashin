@@ -44,7 +44,7 @@ class UserController {
 
     private var logger: Logger = Logger.getLogger(UserController::class.simpleName)
     val mapper = ObjectMapper()
-    val resp = mutableMapOf<String, String?>()
+    val resp = mutableMapOf<String, Any?>()
     var bcrypt = BCryptPasswordEncoder()
 
     @Value("\${app.rememberme.key}")
@@ -209,6 +209,7 @@ class UserController {
     @ResponseBody
     fun loginUser(request: HttpServletRequest, response: HttpServletResponse, @RequestBody requestBody: JsonNode): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+
         if (userMap.containsKey("username") && userMap.containsKey("password")) {
             val username = userMap["username"].toString()
             val password = userMap["password"].toString()
@@ -217,12 +218,13 @@ class UserController {
                 rememberMe = userMap["remember-me"].toString()
             }
             val userObj = userRepository?.findByUsername(username)
+//            println(userObj.toString())
 
             if (userObj != null) {
                 val users: List<User?> = userRepository?.findAll() as List<User?>
                 for (other in users) {
                     if (other != null) {
-                        if (other.equals(userObj) && bcrypt.matches(password, other.getPassword())) {
+                        if (other.equals(userObj) && bcrypt.matches(password, other.getPassword()) && userObj.getIsAllowed() == true) {
                             userObj.setLoggedIn(true)
                             userRepository?.save(userObj)
 
@@ -258,6 +260,10 @@ class UserController {
 
                             resp["msg"] = "Logged in!"
                             resp["status"] = "success"
+                            resp["id"] = userObj.getId()
+                            resp["username"] = userObj.getUsername()
+                            resp["authority"] = userObj.getAuthority()
+
                             return mapper.writeValueAsString(resp)
                         }
                     }

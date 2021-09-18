@@ -109,7 +109,7 @@ class BaseController {
                 model["authority"] = authority.authority
             }
             val currentUser = userRepository.findByUsername(securityContext.authentication.name)
-            if (currentUser != null && currentUser.getAuthority() == adminRole && currentUser.getIsAllowed() == false) {
+            if (currentUser != null && currentUser.getAuthority() == adminRole && (currentUser.getIsAllowed() == false || currentUser.getIsAllowed() == null)) {
                 currentUser.setIsAllowed(true)
             }
             if (currentUser == null || currentUser.getIsAllowed() == false) {
