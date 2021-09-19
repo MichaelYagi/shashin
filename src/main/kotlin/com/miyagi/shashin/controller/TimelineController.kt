@@ -120,16 +120,24 @@ class TimelineController {
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
 
+//            val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+//                metadataRepository.findAllByOffsetAndLimit(
+//                    pageValue,
+//                    model.getAttribute("queryLimit").toString().toInt()
+//                ).toMutableList()
+//            } else {
+//                metadataRepository.findAllByTypeOffsetAndLimit(
+//                    mediaTypeFilter,
+//                    pageValue,
+//                    model.getAttribute("queryLimit").toString().toInt()
+//                ).toMutableList()
+//            }
+
             val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
-                metadataRepository.findAllByOffsetAndLimit(
-                    pageValue,
-                    model.getAttribute("queryLimit").toString().toInt()
-                ).toMutableList()
+                metadataRepository.findTimelineAll().toMutableList()
             } else {
-                metadataRepository.findAllByTypeOffsetAndLimit(
-                    mediaTypeFilter,
-                    pageValue,
-                    model.getAttribute("queryLimit").toString().toInt()
+                metadataRepository.findTimelineAllByType(
+                    mediaTypeFilter
                 ).toMutableList()
             }
             response["metadataList"] = metadataList

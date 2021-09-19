@@ -48,7 +48,7 @@
                                 let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                                 var html =
-                                    '<div class="photo-thumbnail-container photo-thumbnail">\n' +
+                                    '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
                                     '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n';
                                 if (metadata.type.includes("video")) {
                                     html +=
@@ -100,7 +100,7 @@
                                 html +=
                                     '   </div>\n' +
                                     '</div>\n' +
-                                    '<div id="albummodal' + metadata.id + '"></div>\n';
+                                    '<span id="albummodal' + metadata.id + '" style="width:0;height:0;padding:0"></span>\n';
 
                                 // Append HTML
                                 $(html).insertBefore($(".appendAlbumPhotos").last())
