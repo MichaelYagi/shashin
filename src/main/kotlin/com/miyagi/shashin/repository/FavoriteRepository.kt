@@ -13,6 +13,7 @@ interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     @Query("SELECT * FROM favorite WHERE user_id = :userId LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByUserIdAndOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Favorite?>?
     fun findAllByUserId(userId: Int?): MutableIterable<Favorite?>?
+    fun findAllByMetadataIdAndUserId(metadataId: String?, userId: Int?): MutableIterable<Favorite?>?
     fun deleteByMetadataIdAndUserId(metadataId: String?, userId: Int?): Long
     fun deleteByUserId(userId: Int?): Long
     fun deleteByMetadataId(metadataId: String?): Long

@@ -6,10 +6,120 @@
         return this.get(0).scrollHeight > this.height();
     }
 
+    function setScrollSpyActive(element) {
+        var id = element.attr('id');
+        //console.log(id);
+        var navElem = $('a[href="#' + id + '"]');
+        navElem.addClass('active').siblings().removeClass('active');
+    }
+
+    function setScrollSpy(element,mediaTypeFilter) {
+        var spyElement = ".scrollspy";
+        var currentTop = $(element).scrollTop();
+        var elems = $(spyElement);
+
+        elems.each(function(index) {
+            var elemTop = $(this).position().top - 70;//$(this).offset().top;
+            var elemBottom = elemTop + $(this).scrollHeight;
+
+            // Top of scroll
+            if (elemTop < currentTop) {
+                setScrollSpyActive($(this));
+            } else if (currentTop >= elemTop && currentTop <= elemBottom) {
+                setScrollSpyActive($(this));
+            }
+        })
+
+        var spyElementsInView = $(spyElement).withinviewport();
+        renderThumbnailsInViewport(spyElementsInView,mediaTypeFilter);
+    }
+
+    function renderThumbnailsInViewport(elements,mediaTypeFilter) {
+        elements.each(function(index) {
+            var id = $(this).attr("id");
+            if (id.indexOf("tail_") >= 0) {
+                var idSplit = id.split("_");
+                id = idSplit[1];
+            }
+            if ($("#"+id).hasClass("metadataprocessed") === false && $("#tail_"+id).hasClass("metadataprocessed") === false) {
+                attachAssociatedData(id,mediaTypeFilter);
+                // console.log(id)
+                var currentValue = ""
+                $('input[name^="thumbnailUrl-'+id+'"]').each(function() {
+                    if (currentValue !== $(this).val()) {
+                        var idArray = $(this).attr("id").split("_");
+                        var currentMetadataId = idArray[1];
+                        var thumbnailUrl = $(this).val();
+                        var targetElement = $("#image"+currentMetadataId);
+                        targetElement.attr("src",thumbnailUrl);
+
+                        currentValue = $(this).val();
+                    }
+                });
+                $(this).addClass('metadataprocessed');
+            }
+        });
+    }
+
+    // Hook up data to edit albums, favorites and people labels
+    function attachAssociatedData(date,mediaTypeFilter) {
+        $.ajax({
+            type: 'get',
+            url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
+            contentType: 'application/json; charset=utf-8'
+        }).then(function(data) {
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                if (data["status"] === "success") {
+                    if (data.hasOwnProperty("metadataList") &&
+                        data.hasOwnProperty("favorites") &&
+                        data.hasOwnProperty("albumList") &&
+                        data.hasOwnProperty("recognitionLabels") &&
+                        data.hasOwnProperty("labelPhotoMap")
+                    ) {
+                        var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                        var favoritesList = data["favorites"] === "" ? null : data["favorites"];
+                        var recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
+                        var labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
+
+                        if (metadataList.length > 0) {
+
+                            for (var index in metadataList) {
+                                var metadata = metadataList[index];
+
+                                // console.log(metadata);
+                                var favoriteIcon = favoritesList[metadata.id] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                $("#tnbr"+metadata.id).addClass("thumbnail-br");
+                                $("#bricon"+metadata.id).addClass(favoriteIcon);
+
+                                var htmlLink = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-target="#propTimelinModal"><span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span></a>';
+                                $("#tnbl"+metadata.id).append(htmlLink);
+
+                                $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+
+                                $("#timelineModalEdit"+metadata.id).click(function(e) {
+                                    e.preventDefault();
+
+                                    var metadataObj = JSON.parse($(this).attr("tag"));
+                                    openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
+                                });
+
+                                htmlLink = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
+                                $("#tntl"+metadata.id).addClass("thumbnail-tl");
+                                $("#tntl"+metadata.id).append(htmlLink);
+
+                                $("#mediaLink"+metadata.id).append('<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>');
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
     // Detect scrolling to bottom of page
     function atEndOfPage(element) {
-        console.log(window.innerHeight + element.scrollTop);
-        console.log(element.scrollHeight);
+        // console.log(window.innerHeight + element.scrollTop);
+        // console.log(element.scrollHeight);
         //var c = [document.scrollingElement.scrollHeight, document.body.scrollHeight, document.body.offsetHeight].sort(function(a,b){return b-a}) // select longest candidate for scrollable length
         //return ((window.innerHeight + window.scrollY)+100  >= c[0]) // compare with scroll position + some give (*1.5)
         return ((window.innerHeight + element.scrollTop)  >= element.scrollHeight) // compare with scroll position + some give (*1.5)
