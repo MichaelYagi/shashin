@@ -15,6 +15,7 @@
     function renderThumbnailsInViewport(elements,mediaTypeFilter) {
         elements.each(function(index) {
             var id = $(this).attr("id");
+            setScrollSpyActive(id);
             if (id.indexOf("tail_") >= 0) {
                 var idSplit = id.split("_");
                 id = idSplit[1];

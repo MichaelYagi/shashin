@@ -44,7 +44,7 @@
                         var metadata = metadataList[index];
                         let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                        html += '<div class="photo-thumbnail-container photo-thumbnail">\n';
+                        html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                         html +=
                             '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n' +
                             '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
@@ -75,7 +75,7 @@
                                 '       </a>\n';
                         }
                         mediaContentList.push(mediaContent);
-                        html += '</div></div>\n<span class="appendSearchPhotos"></span>\n';
+                        html += '</div></div>\n<span class="appendSearchPhotos" style="width:0;height:0;padding:0"></span>\n';
                         $(html).insertAfter($(".appendSearchPhotos").last())
 
                         var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));

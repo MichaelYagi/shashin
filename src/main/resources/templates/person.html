@@ -21,7 +21,7 @@
                 <div id="infinite-scroll-gallery">
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
-                            <div class="photo-thumbnail-container photo-thumbnail">
+                            <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
                                 <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
 
@@ -90,7 +90,7 @@
                                 </div>
                             </div>
 
-                            <div th:id="'personmodal'+${metadata.id}"></div>
+                            <span th:id="'personmodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
@@ -100,7 +100,7 @@
                                 /*]]>*/
                             </script>
 
-                            <span class="appendPersonPhotos"></span>
+                            <span class="appendPersonPhotos" style="width:0;height:0;padding:0"></span>
                         </th:block>
                     </div>
                 </div>

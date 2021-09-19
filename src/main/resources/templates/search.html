@@ -23,7 +23,7 @@
 
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${metadataSearchList}">
-                            <div class="photo-thumbnail-container photo-thumbnail">
+                            <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
 
                                 <th:block th:if="${metadata.type.contains('video')}">
@@ -80,7 +80,7 @@
                                 /*]]>*/
                             </script>
 
-                            <span class="appendSearchPhotos"></span>
+                            <span class="appendSearchPhotos" style="width:0;height:0;padding:0"></span>
 
                         </th:block>
                     </div>
