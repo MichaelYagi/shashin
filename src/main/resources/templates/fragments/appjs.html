@@ -6,32 +6,10 @@
         return this.get(0).scrollHeight > this.height();
     }
 
-    function setScrollSpyActive(element) {
-        var id = element.attr('id');
-        //console.log(id);
+    function setScrollSpyActive(id) {
+        // console.log(id);
         var navElem = $('a[href="#' + id + '"]');
         navElem.addClass('active').siblings().removeClass('active');
-    }
-
-    function setScrollSpy(element,mediaTypeFilter) {
-        var spyElement = ".scrollspy";
-        var currentTop = $(element).scrollTop();
-        var elems = $(spyElement);
-
-        elems.each(function(index) {
-            var elemTop = $(this).position().top - 70;//$(this).offset().top;
-            var elemBottom = elemTop + $(this).scrollHeight;
-
-            // Top of scroll
-            if (elemTop < currentTop) {
-                setScrollSpyActive($(this));
-            } else if (currentTop >= elemTop && currentTop <= elemBottom) {
-                setScrollSpyActive($(this));
-            }
-        })
-
-        var spyElementsInView = $(spyElement).withinviewport();
-        renderThumbnailsInViewport(spyElementsInView,mediaTypeFilter);
     }
 
     function renderThumbnailsInViewport(elements,mediaTypeFilter) {

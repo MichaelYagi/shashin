@@ -6,11 +6,11 @@
 <div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
-    <div class="row flex-grow-sm-1 flex-grow-0">
+    <div id="subcontainer" class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
 
-        <div class="col-sm-2 d-none d-sm-block sticky-top" style="position: relative">
-            <div id="timelineToc" class="list-group vh-100 overflow-auto text-white p-2 sticky-top">
+        <div id="timelineTocWrapper" class="col-sm-2 d-none d-sm-block sticky-top" style="position: relative">
+            <div id="timelineToc" class="list-group vh-100 overflow-auto text-white sticky-top">
                 <th:block th:if="${mediaTypeFilter == 'video'}">
                     <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a>
                 </th:block>
@@ -147,6 +147,9 @@
 
                         <th:block th:if="${iterStat.count > 0 and {iterStat.last or {!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}}}">
                             <span class="appendMetadataPhotos"></span>
+                            <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                <span class="scrollspy" id="tail_undated"></span>
+                            </th:block>
                             <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                 <span class="scrollspy" th:id="${'tail_'+metadata.year+'-'+metadata.month+'-'+metadata.day}"></span>
                             </th:block>
@@ -301,7 +304,12 @@
 
         // Scroll spy at intervals
         window.setInterval(function() {
-            setScrollSpy($("#main"),"[[${mediaTypeFilter}]]");
+            var elementsInViewport = $(".scrollspy").withinviewport();
+            if (elementsInViewport.length > 0) {
+                var firstElementInViewport = elementsInViewport[0];
+                setScrollSpyActive(firstElementInViewport.id);
+            }
+            renderThumbnailsInViewport(elementsInViewport,"[[${mediaTypeFilter}]]");
         }, 400);
 
         $("#saveMetadata").click(function (e) {
