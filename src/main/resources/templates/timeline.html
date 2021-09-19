@@ -22,7 +22,7 @@
                     <th:block th:if="${metadata.year != null or metadata.month != null}">
                         <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <a class="list-group-item list-group-item-action" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></a>
+                                <a th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></a>
                             </th:block>
                         </th:block>
                     </th:block>
