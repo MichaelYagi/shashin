@@ -85,6 +85,8 @@
                                 htmlLink = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
                                 $("#tntl"+metadata.id).addClass("thumbnail-tl");
                                 $("#tntl"+metadata.id).append(htmlLink);
+                                var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                                setPhotoOverlays(htmlEncodedMetadata, "timeline")
 
                                 $("#mediaLink"+metadata.id).append('<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>');
                             }
