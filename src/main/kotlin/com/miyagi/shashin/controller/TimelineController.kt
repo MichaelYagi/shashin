@@ -53,7 +53,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline","/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
     fun getTimeline(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
-        val response = buildTimelineData(model,mediaType,0)
+        val response = buildTimelineData(model,mediaType,0, true)
         model["message"] = response["message"]!!
         model["metadataList"] = response["metadataList"]!!
         model["favorites"] = response["favorites"]!!
@@ -61,7 +61,6 @@ class TimelineController {
         model["recognitionLabels"] = response["recognitionLabels"]!!
         model["labelPhotoMap"] = response["labelPhotoMap"]!!
         model["mediaTypeFilter"] = response["mediaTypeFilter"]!!
-        model["timelineData"] = response["timelineData"]!!
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -72,7 +71,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedTimeline(model: Model, @PathVariable page: Int,@PathVariable mediaType: String): String {
-        return mapper.writeValueAsString(buildTimelineData(model,mediaType,page))
+        return mapper.writeValueAsString(buildTimelineData(model,mediaType,page,false))
     }
 
     @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -82,10 +81,10 @@ class TimelineController {
         if (page != null) {
             pageValue = page
         }
-        return mapper.writeValueAsString(buildTimelineData(model,"all",pageValue))
+        return mapper.writeValueAsString(buildTimelineData(model,"all",pageValue,false))
     }
 
-    private fun buildTimelineData(model: Model,mediaTypeFilter: String,page: Int): MutableMap<String, Any?> {
+    private fun buildTimelineData(model: Model,mediaTypeFilter: String,page: Int,isInitialRequest: Boolean): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos. Please setup directories in Settings and scan ."
@@ -93,21 +92,22 @@ class TimelineController {
         response["favorites"] = ""
         response["albumList"] = ""
         response["recognitionLabels"] = ""
-        response["labelPhotoMap"] = ""
-        response["timelineData"] = ""
+        response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = mediaTypeFilter
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
 
+        val favoritesMap = HashMap<String, Boolean>()
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
-            val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
-            val favoritesMap = HashMap<String, Boolean>()
-            if (favorites != null) {
-                for (favorite in favorites) {
-                    if (favorite != null) {
-                        favoritesMap[favorite.getMetadataId().toString()] = true
+            if (!isInitialRequest) {
+                val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
+                if (favorites != null) {
+                    for (favorite in favorites) {
+                        if (favorite != null) {
+                            favoritesMap[favorite.getMetadataId().toString()] = true
+                        }
                     }
                 }
             }
@@ -115,11 +115,6 @@ class TimelineController {
             val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
             if (recognitionLabels != null && recognitionLabels.count() > 0) {
                 response["recognitionLabels"] = recognitionLabels
-            }
-
-            val timelineData = metadataRepository.findTimelineData()
-            if (timelineData != null && timelineData.count() > 0) {
-                response["timelineData"] = timelineData
             }
 
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
@@ -138,12 +133,113 @@ class TimelineController {
                 ).toMutableList()
             }
             response["metadataList"] = metadataList
-            response["favorites"] = favoritesMap
+
             if (metadataList.isNotEmpty()) {
                 response["message"] = ""
 
+                if (!isInitialRequest) {
+                    response["favorites"] = favoritesMap
+
+                    val labelPhotoMap = mutableMapOf<String, String>()
+                    for (metadata in metadataList) {
+                        val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                        var labelString = ""
+                        if (recognitionLabelPhotos != null) {
+                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                                if (recognitionLabelObj != null) {
+                                    labelString += recognitionLabelObj.get().getName() + ","
+                                }
+                            }
+                        }
+                        if (labelString.isNotBlank()) {
+                            labelString = labelString.dropLast(1)
+                        }
+                        labelPhotoMap[metadata.getId()] = labelString
+                    }
+                    response["labelPhotoMap"] = labelPhotoMap
+                }
+
+                val albumList = albumRepository.findAll()
+                if (albumList.count() > 0) {
+                    response["albumList"] = albumList
+                }
+            }
+
+            response["metadataList"] = metadataList
+            response["favorites"] = favoritesMap
+            response["msg"] = "Results"
+            response["status"] = "success"
+        }
+
+        return response
+    }
+
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
+        return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date))
+    }
+
+    private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
+        response["message"] = "There are no photos. Please setup directories in Settings and scan ."
+        response["metadataList"] = ""
+        response["favorites"] = ""
+        response["albumList"] = ""
+        response["recognitionLabels"] = ""
+        response["labelPhotoMap"] = mutableMapOf<String, String>()
+        response["mediaTypeFilter"] = mediaTypeFilter
+
+        response["msg"] = "Could not get results"
+        response["status"] = "fail"
+        var year: Int? = null
+        var month: Int? = null
+        var day: Int? = null
+        if (date != "undated") {
+            val dateArray = date.split("-")
+            year = dateArray[0].toInt()
+            month = dateArray[1].toInt()
+            day = dateArray[2].toInt()
+        }
+
+        val favoritesMap = HashMap<String, Boolean>()
+        if (model.getAttribute("currentUser") != "") {
+            val currentUserObj = model.getAttribute("currentUser") as User?
+
+            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+            if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                response["recognitionLabels"] = recognitionLabels
+            }
+
+            val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+                metadataRepository.findAllByYearAndMonthAndDayOrderByYearDescMonthDescDayDesc(
+                    year, month, day
+                ).toMutableList()
+            } else {
+                metadataRepository.findAllByTypeAndYearAndMonthAndDay(
+                    mediaTypeFilter,
+                    year, month, day
+                ).toMutableList()
+            }
+            response["metadataList"] = metadataList
+
+            if (metadataList.isNotEmpty()) {
+                response["message"] = ""
+
+                response["favorites"] = favoritesMap
+
                 val labelPhotoMap = mutableMapOf<String, String>()
                 for (metadata in metadataList) {
+                    val favorites = favoriteRepository.findAllByMetadataIdAndUserId(metadata.getId(), currentUserObj?.getId())
+                    if (favorites != null) {
+                        for (favorite in favorites) {
+                            if (favorite != null) {
+                                favoritesMap[favorite.getMetadataId().toString()] = true
+                            }
+                        }
+                    }
                     val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                     var labelString = ""
                     if (recognitionLabelPhotos != null) {
@@ -160,12 +256,13 @@ class TimelineController {
                     labelPhotoMap[metadata.getId()] = labelString
                 }
                 response["labelPhotoMap"] = labelPhotoMap
+
+                val albumList = albumRepository.findAll()
+                if (albumList.count() > 0) {
+                    response["albumList"] = albumList
+                }
             }
 
-            val albumList = albumRepository.findAll()
-            if (albumList.count() > 0) {
-                response["albumList"] = albumList
-            }
             response["metadataList"] = metadataList
             response["favorites"] = favoritesMap
             response["msg"] = "Results"

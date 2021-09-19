@@ -29,6 +29,10 @@
         <link href="/css/lg-relative-caption.min.css" rel="stylesheet">
         <link href="/css/lg-fullscreen.min.css" rel="stylesheet">
     </th:block>
+    <th:block th:if="${titleDescriptor == 'Timeline'}">
+        <script src="/js/withinviewport.js"></script>
+        <script src="/js/jquery.withinviewport.js"></script>
+    </th:block>
     <th:block th:if="${titleDescriptor == 'Scan' or titleDescriptor == 'Match'}">
         <script src="/js/stomp.min.js"></script>
         <script src="/js/sockjs.min.js"></script>
