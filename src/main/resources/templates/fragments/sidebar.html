@@ -7,34 +7,34 @@
         <ul class="nav nav-pills flex-sm-column flex-row mb-auto justify-content-between text-truncate text-center">
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline/mediatype/all" data-toggle="tooltip" data-placement="top" title="Timeline">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline/mediatype/all" data-bs-toggle="tooltip" data-placement="top" title="Timeline">
                         <span class="bi-calendar4" style="font-size: 2rem;"></span>
                     </a>
                 </li>
             </th:block>
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='albums' or activeSidebar=='album'? ' active' : ''}" href="/albums" data-toggle="tooltip" data-placement="top" title="Albums">
+                <a th:attr="class='nav-link' + ${activeSidebar=='albums' or activeSidebar=='album'? ' active' : ''}" href="/albums" data-bs-toggle="tooltip" data-placement="top" title="Albums">
                     <span class="bi-images" style="font-size: 2rem;"></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='people' or activeSidebar=='person' or activeSidebar=='matches' ? ' active' : ''}" href="/people" data-toggle="tooltip" data-placement="top" title="People">
+                <a th:attr="class='nav-link' + ${activeSidebar=='people' or activeSidebar=='person' or activeSidebar=='matches' ? ' active' : ''}" href="/people" data-bs-toggle="tooltip" data-placement="top" title="People">
                     <span class="bi-person-square" style="font-size: 2rem;"></span>
                 </a>
             </li>
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='map' ? ' active' : ''}" href="/map" data-toggle="tooltip" data-placement="top" title="Map">
+                <a th:attr="class='nav-link' + ${activeSidebar=='map' ? ' active' : ''}" href="/map" data-bs-toggle="tooltip" data-placement="top" title="Map">
                     <span class="bi-map" style="font-size: 2rem;"></span>
                 </a>
             </li>
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites" data-toggle="tooltip" data-placement="top" title="Favorites">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites" data-bs-toggle="tooltip" data-placement="top" title="Favorites">
                         <span class="bi-suit-heart" style="font-size: 2rem;"></span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' or activeSidebar=='users' or activeSidebar=='match' ? ' active' : ''}" href="/settings" data-toggle="tooltip" data-placement="top" title="Settings">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' or activeSidebar=='users' or activeSidebar=='match' ? ' active' : ''}" href="/settings" data-bs-toggle="tooltip" data-placement="top" title="Settings">
                         <span class="bi-wrench" style="font-size: 2rem;"></span>
                     </a>
                 </li>

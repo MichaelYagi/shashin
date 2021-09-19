@@ -183,17 +183,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Edit <span id="timelineModalTitle"></span></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link show active" data-toggle="tab" id="generalTabLink" href="#generalTab">General</a>
+                        <a class="nav-link show active" data-bs-toggle="tab" id="generalTabLink" href="#generalTab">General</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
+                        <a class="nav-link" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
                     </li>
                 </ul>
                 <div class="tab-content">
@@ -210,7 +210,7 @@
                                 <div class="col-sm">
                                     <label for="dayTaken" class="col-form-label">Day taken</label>
                                     <input type="text" class="form-control" id="dayTaken" name="day" value="">
-                                    <a href="#" id="refreshTakenDate" data-toggle="tooltip" data-placement="right" title="Sync original taken date"><span class="bi-arrow-clockwise"></span></a>
+                                    <a href="#" id="refreshTakenDate" data-bs-toggle="tooltip" data-placement="right" title="Sync original taken date"><span class="bi-arrow-clockwise"></span></a>
                                 </div>
                                 <div class="col-sm">
                                     <label for="monthTaken" class="col-form-label">Month taken</label>
@@ -296,7 +296,7 @@
         }
 
         $(function() {
-            $('[data-toggle="tooltip"]').tooltip()
+            $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
         // Initial scroll spy
