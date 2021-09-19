@@ -7,9 +7,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Share <th:block th:text="${album.name}"></th:block></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form th:id="'saveData'+${album.id}">
@@ -131,9 +129,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="trashModalLabel">Delete <th:block th:text="${album.name}"></th:block></h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">Are you sure you want to delete this album?</div>
             <div class="modal-footer">
@@ -180,9 +176,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="commentModalLabel">Comments for  <th:block th:text="${album.name}"></th:block></h5>
 <!--                <span th:id="'albumCommentMessage'+${album.id}"></span>-->
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <input type="hidden" th:id="'currentCommentId'+${album.id}" th:name="'currentCommentId'+${album.id}">
