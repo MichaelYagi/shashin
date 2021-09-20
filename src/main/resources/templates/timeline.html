@@ -9,30 +9,6 @@
     <div id="subcontainer" class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
 
-        <div id="timelineTocWrapper" class="col-sm-2 d-none d-sm-block sticky-top" style="position: relative">
-            <div id="timelineToc" class="list-group vh-100 overflow-auto text-white sticky-top">
-                <th:block th:if="${mediaTypeFilter == 'video'}">
-                    <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a>
-                </th:block>
-                <th:block th:if="${mediaTypeFilter == 'all'}">
-                    <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a>
-                </th:block>
-
-                <th:block th:each="metadata, iterStat: ${metadataList}">
-                    <th:block th:if="${metadata.year != null or metadata.month != null}">
-                        <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
-                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <a th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></a>
-                            </th:block>
-                        </th:block>
-                    </th:block>
-                    <th:block th:if="${metadata.year == null and metadata.month == null and {!iterStat.first and metadataList[iterStat.index-1].year!=metadata.year and metadataList[iterStat.index-1].month!=metadata.month and metadataList[iterStat.index-1].day!=metadata.day}}">
-                        <a class="list-group-item list-group-item-action" href="#undated">Undated</a>
-                    </th:block>
-                </th:block>
-            </div>
-        </div>
-
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentlat" name="currentlat">
@@ -172,6 +148,36 @@
             </div>
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
+
+        <div id="timelineTocWrapper" class="col-sm-2 d-none d-sm-block sticky-top" style="position: relative">
+            <div id="timelineToc" class="list-group vh-100 overflow-auto text-white sticky-top">
+                <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasToc" aria-controls="offcanvasToc">Timeline</button>
+            </div>
+        </div>
+
+        <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasToc" aria-labelledby="offcanvasTocLabel">
+            <div class="offcanvas-body">
+                <th:block th:if="${mediaTypeFilter == 'video'}">
+                    <a style="position: relative;left: 1%;" href="/timeline/mediatype/all">Show All</a>
+                </th:block>
+                <th:block th:if="${mediaTypeFilter == 'all'}">
+                    <a style="position: relative;left: 1%;" href="/timeline/mediatype/video">Show Only Videos</a>
+                </th:block>
+
+                <th:block th:each="metadata, iterStat: ${metadataList}">
+                    <th:block th:if="${metadata.year != null or metadata.month != null}">
+                        <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
+                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                <a th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></a>
+                            </th:block>
+                        </th:block>
+                    </th:block>
+                    <th:block th:if="${metadata.year == null and metadata.month == null and {!iterStat.first and metadataList[iterStat.index-1].year!=metadata.year and metadataList[iterStat.index-1].month!=metadata.month and metadataList[iterStat.index-1].day!=metadata.day}}">
+                        <a class="list-group-item list-group-item-action" href="#undated">Undated</a>
+                    </th:block>
+                </th:block>
+            </div>
+        </div>
 
     </div>
 </div>
