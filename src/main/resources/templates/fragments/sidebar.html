@@ -11,6 +11,13 @@
                         <span class="bi-calendar4" style="font-size: 2rem;"></span>
                     </a>
                 </li>
+                <th:block th:if="${activeSidebar == 'timeline'}">
+                    <li class="nav-item">
+                        <a class='nav-link' data-bs-toggle="offcanvas" data-bs-target="#offcanvasToc" aria-controls="offcanvasToc" data-placement="top" title="Show timeline">
+                            <span class="bi-arrow-bar-left" style="font-size: 2rem;"></span>
+                        </a>
+                    </li>
+                </th:block>
             </th:block>
             <li class="nav-item">
                 <a th:attr="class='nav-link' + ${activeSidebar=='albums' or activeSidebar=='album'? ' active' : ''}" href="/albums" data-bs-toggle="tooltip" data-placement="top" title="Albums">
