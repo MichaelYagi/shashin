@@ -9,6 +9,13 @@
     <div id="subcontainer" class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>
 
+        <script type="text/javascript">
+            $("#appStatus").removeClass("spinner-grow");
+            $("#appStatus").removeClass("bi-circle");
+            $("#appStatus").addClass("spinner-grow");
+            $("#appStatus").css("margin","10px 0 4px 0");
+        </script>
+
         <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasToc" aria-labelledby="offcanvasTocLabel">
             <div class="offcanvas-header">
                 <th:block th:if="${mediaTypeFilter == 'video'}">
@@ -307,6 +314,8 @@
         window.setInterval(function() {
             var elementsInViewport = $(".scrollspy").withinviewport();
             renderThumbnailsInViewport(elementsInViewport,"[[${mediaTypeFilter}]]");
+            $("#appStatus").removeClass("spinner-grow");
+            $("#appStatus").addClass("bi-circle");
         }, 400);
 
         $("#saveMetadata").click(function (e) {
