@@ -20,6 +20,8 @@
 
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                                <a th:name="${'lightGalleryIndex'+iterStat.index}" style="visibility: hidden"></a>
+
                                 <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
 
                                 <th:block th:if="${metadata.type.contains('video')}">
@@ -108,6 +110,9 @@
         });
         if (lg) {
             lg.refresh(mediaContentList);
+            $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+                jumpToLightGalleryIndex(e.detail.index);
+            })
         }
 
         $(function() {
@@ -122,6 +127,9 @@
                 if (additionalMediaContentList.length > 0) {
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
                     lg.refresh(mediaContentList);
+                    $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+                        jumpToLightGalleryIndex(e.detail.index);
+                    })
                 }
             });
             /*]]>*/
