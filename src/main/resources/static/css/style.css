@@ -207,6 +207,6 @@ footer {
 .lightGalleryIndexAnchor {
   display: block;
   position: relative;
-  vertical-align: middle;
+  top: -175px;
   visibility: hidden;
 }
