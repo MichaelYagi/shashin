@@ -25,7 +25,7 @@
             if (id.indexOf("tail_") >= 0) {
                 var idSplit = id.split("_");
                 id = idSplit[1];
-            } else {
+            } else if (index === 0 || index === 1) {
                 setScrollSpyActive(id);
             }
 
