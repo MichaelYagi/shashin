@@ -15,26 +15,26 @@
                 <input type="submit" style="position: absolute; left: -9999px"/>
             </form>
             <div id="timelineAppTools">
-                <a href="#" id="appToolsBatchEdit" data-toggle="tooltip" data-placement="bottom" title="Edit Photos"><span class="bi-pencil" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
-                <a href="#" id="appToolsAddAlbum" data-toggle="tooltip" data-placement="bottom" title="Add To Album"><span class="bi-images" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
-                <a href="#" id="appToolsDeselectAll" data-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: dimgrey;"></span></a>
+                <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-placement="bottom" title="Edit Photos"><span class="bi-pencil" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
+                <a href="#" id="appToolsAddAlbum" data-bs-toggle="tooltip" data-placement="bottom" title="Add To Album"><span class="bi-images" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
+                <a href="#" id="appToolsDeselectAll" data-bs-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: dimgrey;"></span></a>
             </div>
             <th:block th:if="${activePage == 'matches' or activePage == 'person'}">
                 <div id="matchesAppTools">
-                    <a href="#" id="matchToolsBatchEdit" data-toggle="tooltip" data-placement="bottom" title="Edit Photos"><span class="bi-pencil" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="matchToolsDeselectAll" data-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: dimgrey;"></span></a>
+                    <a href="#" id="matchToolsBatchEdit" data-bs-toggle="tooltip" data-placement="bottom" title="Edit Photos"><span class="bi-pencil" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="matchToolsDeselectAll" data-bs-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: dimgrey;"></span></a>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'favorites'}">
                 <div id="albumAppTools">
-                    <a href="#" id="albumAppToolsRemoveFavorites" data-toggle="tooltip" data-placement="bottom" title="Remove From Favorites"><span class="bi-heart" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: dimgrey;"></span></a>
+                    <a href="#" id="albumAppToolsRemoveFavorites" data-bs-toggle="tooltip" data-placement="bottom" title="Remove From Favorites"><span class="bi-heart" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: dimgrey;"></span></a>
                 </div>
             </th:block>
             <th:block th:unless="${activePage == 'favorites'}">
                 <div id="albumAppTools">
-                    <a href="#" id="albumAppToolsRemoveAlbum" data-toggle="tooltip" data-placement="bottom" title="Remove From Album"><span class="bi-bookmark-x" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: dimgrey;"></span></a>
+                    <a href="#" id="albumAppToolsRemoveAlbum" data-bs-toggle="tooltip" data-placement="bottom" title="Remove From Album"><span class="bi-bookmark-x" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-placement="bottom" title="Clear Selection"><span class="bi-backspace" style="font-size: 1.5rem;color: dimgrey;"></span></a>
                 </div>
             </th:block>
         </div>

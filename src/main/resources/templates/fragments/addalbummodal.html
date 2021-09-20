@@ -6,7 +6,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editPhotosModalLabel">Add To Album</th:block></h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="tab-content">
@@ -21,7 +21,7 @@
 
                                     <th:block th:if="${albumList != ''}">
                                         <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Albums</button>
+                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Albums</button>
                                             <div class="dropdown-menu" id="albumNameList">
                                                 <th:block th:each="album, iterStat: ${albumList}">
                                                     <a class="dropdown-item" href="#" th:id="${album.id}" th:text="${album.name}"></a>
@@ -50,7 +50,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="saveAlbum">Save</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
                 $('#propAddAlbum').on('hide.bs.modal', function () {

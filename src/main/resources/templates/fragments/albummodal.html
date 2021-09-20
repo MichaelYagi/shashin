@@ -15,7 +15,7 @@
             '        <div class="modal-content">\n' +
             '            <div class="modal-header">\n' +
             '                <h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
-            '                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>\n' +
+            '                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
             '            </div>\n' +
             '            <div class="modal-body">\n' +
             '                <form id="saveData'+metadata.id+'">\n' +
@@ -35,7 +35,7 @@
             '            </div>\n' +
             '            <div class="modal-footer">\n' +
             '                <button type="button" class="btn btn-primary" id="saveAlbum'+metadata.id+'">Save</button>\n' +
-            '                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>\n' +
+            '                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
             '            </div>\n' +
             '        </div>\n'+
             '    </div>\n'+
@@ -47,7 +47,7 @@
             '        <div class="modal-content">\n' +
             '            <div class="modal-header">\n' +
             '                <h5 class="modal-title" id="commentModalLabel">Comments for '+metadata.fileName+'</h5>\n' +
-            '                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>\n' +
+            '                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
             '            </div>\n' +
             '            <div class="modal-body">\n' +
             '                <input type="hidden" id="currentCommentId'+metadata.id+'" name="currentCommentId'+metadata.id+'">\n' +
@@ -83,8 +83,8 @@
             '               <textarea class="form-control" id="commentText'+metadata.id+'" rows="2"></textarea>\n' +
             '               <button type="button" class="btn btn-primary" id="saveCommentMetadata'+metadata.id+'">Save</button>\n' +
             '               <button type="button" class="btn btn-primary" id="updateCommentMetadata'+metadata.id+'">Update</button>\n' +
-            '               <button type="button" class="btn btn-secondary" id="dismissModalCommentMetadata'+metadata.id+'" data-dismiss="modal">Cancel</button>\n' +
-            '               <button type="button" class="btn btn-secondary" id="cancelEditCommentMetadata'+metadata.id+'">Cancel</button>\n' +
+            '               <button type="button" class="btn btn-secondary" id="dismissModalCommentMetadata'+metadata.id+'" data-bs-dismiss="modal">Cancel</button>\n' +
+            '               <button type="button" class="btn btn-secondary" id="cancelEditCommentMetadata'+metadata.id+'" data-bs-dismiss="modal">Cancel</button>\n' +
             '           </div>\n' +
             '       </div>\n' +
             '   </div>\n' +

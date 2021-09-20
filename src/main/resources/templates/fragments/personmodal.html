@@ -7,7 +7,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos <span id="editPhotosNamesModalLabel"></span></h5>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <p class="text-muted">Empty fields will be ignored</p>
@@ -49,7 +49,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
                 function toggleBatchTagPeopleDropdown() {
@@ -166,7 +166,7 @@
 
         var html = '<div class="modal fade" id="propperson'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
             '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
-            '<button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button></div>\n' +
+            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n' +
             '<div class="modal-body">\n' +
             '   <form th:id="saveData'+metadata.id+'">\n' +
             '       <input type="hidden" name="id" value="'+metadata.id+'">\n' +
@@ -213,7 +213,7 @@
             '</div>\n' +
             '<div class="modal-footer">\n' +
             '   <button type="button" class="btn btn-primary" id="saveMetadata'+metadata.id+'">Save</button>\n' +
-            '   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>\n' +
+            '   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
             '</div></div></div></div>';
 
         $("#personmodal"+metadata.id).after(html);

@@ -70,7 +70,7 @@
                                 $("#tnbr"+metadata.id).addClass("thumbnail-br");
                                 $("#bricon"+metadata.id).addClass(favoriteIcon);
 
-                                var htmlLink = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-target="#propTimelinModal"><span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span></a>';
+                                var htmlLink = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span></a>';
                                 $("#tnbl"+metadata.id).append(htmlLink);
 
                                 $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
