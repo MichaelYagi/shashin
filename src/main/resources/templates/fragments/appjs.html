@@ -6,6 +6,12 @@
         return this.get(0).scrollHeight > this.height();
     }
 
+    function jumpToLightGalleryIndex(index) {
+        var url = location.href;
+        location.href = '#lightGalleryIndex'+index;
+        history.replaceState(null,null,url);
+    }
+
     function setScrollSpyActive(id) {
         // console.log(id);
         var navElem = $('a[href="#' + id + '"]');

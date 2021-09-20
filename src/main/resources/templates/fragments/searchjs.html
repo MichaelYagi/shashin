@@ -40,12 +40,14 @@
                     var html = "";
                     var mediaLinkLength = $(".mediaLink").length;
                     for (var index in metadataList) {
+                        const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                         var mediaContent = {}
                         var metadata = metadataList[index];
                         let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                         html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                         html +=
+                            '   <a name="lightGalleryIndex'+currentMediaLinkIndex+'" style="visibility: hidden"></a>\n' +
                             '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n' +
                             '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
                         if (metadata.type.includes("video")) {
@@ -56,7 +58,6 @@
                         }
                         html += '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
 
-                        const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                         mediaContent.subHtml = (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
                         if (metadata.type.includes("video")) {
                             mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
