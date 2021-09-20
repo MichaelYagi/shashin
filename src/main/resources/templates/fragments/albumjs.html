@@ -50,7 +50,7 @@
 
                                 var html =
                                     '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
-                                    '   <a name="lightGalleryIndex'+currentMediaLinkIndex+'" style="visibility: hidden"></a>\n' +
+                                    '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
                                     '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n';
                                 if (metadata.type.includes("video")) {
                                     html +=

@@ -203,3 +203,10 @@ footer {
 .lightbox {
   display: none;
 }
+
+.lightGalleryIndexAnchor {
+  display: block;
+  position: relative;
+  vertical-align: middle;
+  visibility: hidden;
+}
