@@ -87,6 +87,7 @@
                                 $("#tntl"+metadata.id).append(htmlLink);
                                 var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
                                 setPhotoOverlays(htmlEncodedMetadata, "timeline")
+                                activateMetadataListeners(htmlEncodedMetadata);
 
                                 $("#mediaLink"+metadata.id).append('<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>');
                             }
