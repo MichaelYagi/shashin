@@ -228,10 +228,13 @@
                                     <label for="yearTaken" class="col-form-label">Year taken</label>
                                     <input type="text" class="form-control" id="yearTaken" name="year" value="">
                                 </div>
-
                                 <div class="col-sm">
-                                    <label for="timeTaken" class="col-form-label">Time taken Local Time</label>
+                                    <label for="timeTaken" class="col-form-label">Time taken</label>
                                     <input type="text" class="form-control" id="timeTaken" name="time" value="">
+                                </div>
+                                <div class="col-sm">
+                                    <label for="offsetTaken" class="col-form-label">UTC Offset</label>
+                                    <input type="text" class="form-control" id="offsetTaken" name="offset" value="">
                                 </div>
                             </div>
                             <a href="#" id="refreshTakenDate" data-bs-toggle="tooltip" data-placement="right" title="Sync original taken date"><span class="bi-arrow-clockwise"></span></a>
@@ -278,7 +281,7 @@
                         <div class="row"><strong>Modified:&nbsp;</strong><span id="modifiedAtDetails"></span></div>
                         <div class="row"><strong>Taken:&nbsp;</strong><span id="takenAtDetails"></span></div>
                         <div class="row"><strong>Manually Adjusted Taken:&nbsp;</strong><span id="manualTakenAtDetails"></span></div>
-                        <div class="row"><strong>Time zone:&nbsp;</strong><span id="timeZoneDetails"></span></div>
+                        <div class="row"><strong>UTC Offset:&nbsp;</strong><span id="timeZoneDetails"></span></div>
                     </div>
                     <div class="col-sm">
                         <span id="timelineModalMsg"></span>
@@ -349,6 +352,7 @@
                     month:$("#monthTaken").val(),
                     day:$("#dayTaken").val(),
                     time:$("#timeTaken").val(),
+                    offset:$("#offsetTaken").val(),
                     latlng:$("#latlng").val(),
                     keywords:$("#keywords").val(),
                     tagpeople:$("#tagpeople").val(),

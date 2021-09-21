@@ -291,6 +291,7 @@ class TimelineController {
             metadataMap.containsKey("month") &&
             metadataMap.containsKey("day") &&
             metadataMap.containsKey("time") &&
+            metadataMap.containsKey("offset") &&
             metadataMap.containsKey("keywords") &&
             metadataMap.containsKey("latlng") &&
             metadataMap.containsKey("title") &&
@@ -382,6 +383,11 @@ class TimelineController {
                 metadataObj.get().setTime(null)
             } else {
                 metadataObj.get().setTime(metadataMap["time"].toString())
+            }
+            if (metadataMap["offset"].toString() == "") {
+                metadataObj.get().setTimeZone(null)
+            } else {
+                metadataObj.get().setTimeZone(metadataMap["offset"].toString())
             }
             if (metadataMap["keywords"].toString() == "") {
                 metadataObj.get().setKeywords(null)
