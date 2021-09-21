@@ -154,6 +154,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             metadataObj.setYear(takenDateArray[0].toInt())
                             metadataObj.setMonth(takenDateArray[1].toInt())
                             metadataObj.setDay(takenDateArray[2].toInt())
+                            metadataObj.setTime(dateArray[1])
 
                             val takenDatePattern = "yyyy-MM-dd HH:mm:ss XXX"
                             val takenDateDestFormat = SimpleDateFormat(takenDatePattern)
@@ -162,13 +163,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             if (takenDateParsedArray.count() == 3) {
                                 val offset = takenDateParsedArray[2]
                                 metadataObj.setTimeZone(offset)
-
-                                val formatter = SimpleDateFormat(datePattern)
-                                formatter.timeZone = TimeZone.getTimeZone("GMT")
-                                val takenDateArrayGmt = formatter.format(date).split(" ")
-                                if (takenDateArrayGmt.count() == 2) {
-                                    metadataObj.setTime(takenDateArrayGmt[1])
-                                }
                             }
                         }
                     }
