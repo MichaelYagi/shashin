@@ -228,6 +228,11 @@
                                     <label for="yearTaken" class="col-form-label">Year taken</label>
                                     <input type="text" class="form-control" id="yearTaken" name="year" value="">
                                 </div>
+
+                                <div class="col-sm">
+                                    <label for="timeTaken" class="col-form-label">Time taken UTC</label>
+                                    <input type="text" class="form-control" id="timeTaken" name="time" value="">
+                                </div>
                             </div>
                             <a href="#" id="refreshTakenDate" data-bs-toggle="tooltip" data-placement="right" title="Sync original taken date"><span class="bi-arrow-clockwise"></span></a>
 
@@ -343,6 +348,7 @@
                     year:$("#yearTaken").val(),
                     month:$("#monthTaken").val(),
                     day:$("#dayTaken").val(),
+                    time:$("#timeTaken").val(),
                     latlng:$("#latlng").val(),
                     keywords:$("#keywords").val(),
                     tagpeople:$("#tagpeople").val(),
@@ -368,6 +374,7 @@
                             metadataObj.year = $("#yearTaken").val()
                             metadataObj.month = $("#monthTaken").val()
                             metadataObj.day = $("#dayTaken").val()
+                            metadataObj.time = $("#timeTaken").val()
                             var latlngArray = $("#latlng").val().split(",")
                             metadataObj.lat = latlngArray[0]
                             metadataObj.lng = latlngArray[1]

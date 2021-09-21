@@ -31,6 +31,7 @@ class Metadata {
     private var year: Int? = null
     private var month: Int? = null
     private var day: Int? = null
+    private var time: String? = null
     private var iso: Int? = null
     private var exposure: String? = null
     private var fNumber: Double? = null
@@ -114,6 +115,9 @@ class Metadata {
     }
     fun setDay(day: Int?) {
         this.day = day
+    }
+    fun setTime(time: String?) {
+        this.time = time
     }
     fun setIso(iso: Int?) {
         this.iso = iso
@@ -218,6 +222,9 @@ class Metadata {
     fun getDay(): Int? {
         return this.day
     }
+    fun getTime(): String? {
+        return this.time
+    }
     fun getIso(): Int? {
         return this.iso
     }
@@ -273,6 +280,7 @@ class Metadata {
         map["year"] = this.year
         map["month"] = this.month
         map["day"] = this.day
+        map["time"] = this.time
         map["iso"] = this.iso
         map["exposure"] = this.exposure
         map["fNumber"] = this.fNumber
