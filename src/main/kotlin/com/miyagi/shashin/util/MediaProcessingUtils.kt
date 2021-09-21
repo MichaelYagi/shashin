@@ -1,11 +1,12 @@
 package com.miyagi.shashin.util
 
+//import net.coobird.thumbnailator.Thumbnails
+
 import com.drew.imaging.ImageMetadataReader
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
-//import net.coobird.thumbnailator.Thumbnails
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
 import org.springframework.context.annotation.ComponentScan
@@ -19,6 +20,10 @@ import java.lang.Double.parseDouble
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -127,6 +132,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 // Sun Jul 25 14:34:09 PDT 2021
                                 val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
                                 date = sourceDateFormat.parse(tag.description)
+
                             } catch(e: Exception) {
                                 try {
                                     // Sun Jul 25 14:34:09 -07:00 2021
@@ -144,13 +150,29 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
                             val dateArray = destFormat.format(date).toString().split(" ")
                             val takenDateArray = dateArray[0].split("-")
+
                             metadataObj.setYear(takenDateArray[0].toInt())
                             metadataObj.setMonth(takenDateArray[1].toInt())
                             metadataObj.setDay(takenDateArray[2].toInt())
-                            metadataObj.setTime(dateArray[1])
+
+                            val takenDatePattern = "yyyy-MM-dd HH:mm:ss XXX"
+                            val takenDateDestFormat = SimpleDateFormat(takenDatePattern)
+                            val takenDateParsed = takenDateDestFormat.format(date)
+                            val takenDateParsedArray = (takenDateParsed).split(" ")
+                            if (takenDateParsedArray.count() == 3) {
+                                val offset = takenDateParsedArray[2]
+                                metadataObj.setTimeZone(offset)
+
+                                val formatter = SimpleDateFormat(datePattern)
+                                formatter.timeZone = TimeZone.getTimeZone("GMT")
+                                val takenDateArrayGmt = formatter.format(date).split(" ")
+                                if (takenDateArrayGmt.count() == 2) {
+                                    metadataObj.setTime(takenDateArrayGmt[1])
+                                }
+                            }
                         }
                     }
-                    "Modification Time" -> {
+                    "Modification Time", "File Modified Date" -> {
                         val modificationFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
                         date = null
 
@@ -172,11 +194,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             }
                         }
                         metadataObj.setModifiedAt(destFormat.format(date))
-                    }
-                    "File Modified Date" -> {
-                        val dateArray = (tag.description).split(" ")
-                        val timeZone = dateArray[dateArray.count()-2]
-                        metadataObj.setTimeZone(timeZone)
                     }
                     "Detected MIME Type" -> {
                         metadataObj.setType(tag.description)
