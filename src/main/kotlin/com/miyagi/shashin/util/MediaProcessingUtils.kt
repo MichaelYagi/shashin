@@ -19,10 +19,9 @@ import java.io.IOException
 import java.lang.Double.parseDouble
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
@@ -154,7 +153,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             metadataObj.setYear(takenDateArray[0].toInt())
                             metadataObj.setMonth(takenDateArray[1].toInt())
                             metadataObj.setDay(takenDateArray[2].toInt())
-                            metadataObj.setTime(dateArray[1])
 
                             val takenDatePattern = "yyyy-MM-dd HH:mm:ss XXX"
                             val takenDateDestFormat = SimpleDateFormat(takenDatePattern)
@@ -163,6 +161,19 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             if (takenDateParsedArray.count() == 3) {
                                 val offset = takenDateParsedArray[2]
                                 metadataObj.setTimeZone(offset)
+                                
+                                val originalDateArray = tag.description.split(" ")
+                                if (originalDateArray.count() == 2) {
+                                    metadataObj.setTime(originalDateArray[1])
+                                } else {
+                                    takenDateDestFormat.timeZone = TimeZone.getTimeZone(offset)
+                                    val dateString = takenDateDestFormat.format(date)
+
+                                    val takenLocalTimeArray = (dateString).split(" ")
+                                    if (takenLocalTimeArray.count() >= 2) {
+                                        metadataObj.setTime(takenLocalTimeArray[1])
+                                    }
+                                }
                             }
                         }
                     }
