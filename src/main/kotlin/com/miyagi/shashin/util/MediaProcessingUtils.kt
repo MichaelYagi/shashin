@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
+import net.iakovlev.timeshape.TimeZoneEngine
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
 import org.springframework.context.annotation.ComponentScan
@@ -19,10 +20,10 @@ import java.io.IOException
 import java.lang.Double.parseDouble
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
-import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -98,6 +99,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         metadataObj.setLastAccessedAt(destFormat.format(date))
         val exifMap = hashMapOf<String,String>()
 
+//        println("=================")
+
         // Get image data
         val metadata = ImageMetadataReader.readMetadata(file)
         for (directory in metadata.directories) {
@@ -153,28 +156,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             metadataObj.setYear(takenDateArray[0].toInt())
                             metadataObj.setMonth(takenDateArray[1].toInt())
                             metadataObj.setDay(takenDateArray[2].toInt())
-
-                            val takenDatePattern = "yyyy-MM-dd HH:mm:ss XXX"
-                            val takenDateDestFormat = SimpleDateFormat(takenDatePattern)
-                            val takenDateParsed = takenDateDestFormat.format(date)
-                            val takenDateParsedArray = (takenDateParsed).split(" ")
-                            if (takenDateParsedArray.count() == 3) {
-                                val offset = takenDateParsedArray[2]
-                                metadataObj.setTimeZone(offset)
-                                
-                                val originalDateArray = tag.description.split(" ")
-                                if (originalDateArray.count() == 2) {
-                                    metadataObj.setTime(originalDateArray[1])
-                                } else {
-                                    takenDateDestFormat.timeZone = TimeZone.getTimeZone(offset)
-                                    val dateString = takenDateDestFormat.format(date)
-
-                                    val takenLocalTimeArray = (dateString).split(" ")
-                                    if (takenLocalTimeArray.count() >= 2) {
-                                        metadataObj.setTime(takenLocalTimeArray[1])
-                                    }
-                                }
-                            }
+                            metadataObj.setTime(dateArray[1])
                         }
                     }
                     "Modification Time", "File Modified Date" -> {
@@ -294,9 +276,19 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 }
             }
             if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
-                val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,lat, lng)
+                val geoDataJson = TextUtils.getGeoData(geocodeUrl!!,lat, lng)
+
+                val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
                 if (buildPlace.isNotBlank()) {
                     metadataObj.setPlaceName(buildPlace)
+
+                    val engine = TimeZoneEngine.initialize()
+                    val maybeZoneId: Optional<ZoneId> = engine.query(lat.toString().toDouble(), lng.toString().toDouble())
+                    val zone = ZoneId.of(maybeZoneId.get().id)
+                    val dt = LocalDateTime.now()
+                    val zdt: ZonedDateTime = dt.atZone(zone)
+                    val offset = zdt.offset
+                    metadataObj.setTimeZone(offset.toString())
                 }
             }
         }

@@ -69,6 +69,11 @@
             <scope>test</scope>
         </dependency>
         <!-- Thumbnail processing -->
+        <dependency>
+            <groupId>net.iakovlev</groupId>
+            <artifactId>timeshape</artifactId>
+            <version>2020d.12</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>net.coobird</groupId>-->
 <!--            <artifactId>thumbnailator</artifactId>-->

@@ -10,6 +10,7 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
+import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
@@ -18,6 +19,8 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.collections.HashMap
@@ -409,9 +412,18 @@ class TimelineController {
                 if (latlngArr.count() == 2) {
                     metadataObj.get().setLat(latlngArr[0])
                     metadataObj.get().setLng(latlngArr[1])
-                    val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,latlngArr[0], latlngArr[1])
+
+                    val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,latlngArr[0], latlngArr[1]))
                     if (buildPlace.isNotBlank()) {
                         metadataObj.get().setPlaceName(buildPlace)
+
+                        val engine = TimeZoneEngine.initialize()
+                        val maybeZoneId: Optional<ZoneId> = engine.query(latlngArr[0].toString().toDouble(), latlngArr[1].toString().toDouble())
+                        val zone = ZoneId.of(maybeZoneId.get().id)
+                        val dt = LocalDateTime.now()
+                        val zdt: ZonedDateTime = dt.atZone(zone)
+                        val offset = zdt.offset
+                        metadataObj.get().setTimeZone(offset.toString())
                     }
                 }
             }
@@ -569,9 +581,17 @@ class TimelineController {
                     if (latlngArr.count() == 2) {
                         metadata.setLat(latlngArr[0])
                         metadata.setLng(latlngArr[1])
-                        val buildPlace = TextUtils.getPlaceNameFromCoordinates(geocodeUrl!!,latlngArr[0], latlngArr[1])
+                        val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,latlngArr[0], latlngArr[1]))
                         if (buildPlace.isNotBlank()) {
                             metadataObj.get().setPlaceName(buildPlace)
+
+                            val engine = TimeZoneEngine.initialize()
+                            val maybeZoneId: Optional<ZoneId> = engine.query(latlngArr[0].toString().toDouble(), latlngArr[1].toString().toDouble())
+                            val zone = ZoneId.of(maybeZoneId.get().id)
+                            val dt = LocalDateTime.now()
+                            val zdt: ZonedDateTime = dt.atZone(zone)
+                            val offset = zdt.offset
+                            metadataObj.get().setTimeZone(offset.toString())
                         }
                     }
                 }
