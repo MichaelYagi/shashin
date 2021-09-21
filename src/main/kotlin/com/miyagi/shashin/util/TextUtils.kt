@@ -1,7 +1,7 @@
 package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.controller.UserController
+import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.stereotype.Component
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+
 
 @Component
 class TextUtils {
@@ -75,13 +76,16 @@ class TextUtils {
             return UUID.nameUUIDFromBytes(uuidInput.toByteArray())
         }
 
-        fun getPlaceNameFromCoordinates(geocodeUrl: String,lat: String, lng: String): String {
+        fun getGeoData(geocodeUrl: String,lat: String, lng: String): String? {
             val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng
-            val response: String? = readUrl(geoLookupUrl)
+            return readUrl(geoLookupUrl)
+        }
+
+        fun getPlaceNameFromJson(geoDataJsonString: String?): String {
             var buildPlace = ""
-            if (response != null) {
+            if (geoDataJsonString != null) {
                 val mapper = ObjectMapper()
-                val addressObj = mapper.readTree(response)
+                val addressObj = mapper.readTree(geoDataJsonString)
 
                 if (!addressObj.isNull) {
                     if (addressObj.get("address").get("road") != null) {
