@@ -55,6 +55,9 @@
             $("#title").val(metadata.title);
         }
 
+        if (metadata.timeZone !== null) {
+            $("#offsetTaken").val(metadata.timeZone);
+        }
         if (metadata.time !== null) {
             $("#timeTaken").val(metadata.time);
         }
