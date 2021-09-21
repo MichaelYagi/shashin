@@ -55,6 +55,9 @@
             $("#title").val(metadata.title);
         }
 
+        if (metadata.time !== null) {
+            $("#timeTaken").val(metadata.time);
+        }
         if (metadata.day !== null) {
             $("#dayTaken").val(metadata.day);
         }
@@ -151,7 +154,7 @@
             $("#takenAtDetails").text(metadata.takenAt);
         }
         if (metadata.year != null || metadata.month != null || metadata.day != null) {
-            $("#manualTakenAtDetails").text(metadata.year+'-'+metadata.month+'-'+metadata.day);
+            $("#manualTakenAtDetails").text(metadata.year+'-'+metadata.month+'-'+metadata.day+' '+metadata.time);
         }
         if (metadata.timeZone != null) {
             $("#timeZoneDetails").text(metadata.timeZone);

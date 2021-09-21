@@ -147,6 +147,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             metadataObj.setYear(takenDateArray[0].toInt())
                             metadataObj.setMonth(takenDateArray[1].toInt())
                             metadataObj.setDay(takenDateArray[2].toInt())
+                            metadataObj.setTime(dateArray[1])
                         }
                     }
                     "Modification Time" -> {

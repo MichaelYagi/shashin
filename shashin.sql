@@ -12,6 +12,7 @@ CREATE TABLE `metadata` (
     `year` INT(4) DEFAULT NULL,
     `month` INT(2) DEFAULT NULL,
     `day` INT(2) DEFAULT NULL,
+    `time` VARCHAR(8) DEFAULT NULL,
     `path` VARCHAR(255) DEFAULT NULL,
     `fileName` VARCHAR(255) DEFAULT NULL,
     `thumbnailPathSmall` VARCHAR(255) DEFAULT NULL,

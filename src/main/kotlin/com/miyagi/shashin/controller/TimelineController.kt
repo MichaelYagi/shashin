@@ -222,7 +222,7 @@ class TimelineController {
             }
 
             val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
-                metadataRepository.findAllByYearAndMonthAndDayOrderByYearDescMonthDescDayDesc(
+                metadataRepository.findAllByYearAndMonthAndDayOrderByYearDescMonthDescDayDescTimeDesc(
                     year, month, day
                 ).toMutableList()
             } else {
@@ -290,6 +290,7 @@ class TimelineController {
             metadataMap.containsKey("year") &&
             metadataMap.containsKey("month") &&
             metadataMap.containsKey("day") &&
+            metadataMap.containsKey("time") &&
             metadataMap.containsKey("keywords") &&
             metadataMap.containsKey("latlng") &&
             metadataMap.containsKey("title") &&
@@ -376,6 +377,11 @@ class TimelineController {
                 metadataObj.get().setDay(null)
             } else {
                 metadataObj.get().setDay(metadataMap["day"].toString().toInt())
+            }
+            if (metadataMap["time"].toString() == "") {
+                metadataObj.get().setTime(null)
+            } else {
+                metadataObj.get().setTime(metadataMap["time"].toString())
             }
             if (metadataMap["keywords"].toString() == "") {
                 metadataObj.get().setKeywords(null)
