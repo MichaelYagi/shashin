@@ -12,6 +12,13 @@
         history.replaceState(null,null,url);
     }
 
+    function jumpToTimeline(e,anchor) {
+        e.preventDefault();
+        var url = location.href;
+        location.href = '#'+anchor;
+        history.replaceState(null,null,url);
+    }
+
     // Set the active nav
     function setScrollSpyActive(id) {
         // console.log(id);
