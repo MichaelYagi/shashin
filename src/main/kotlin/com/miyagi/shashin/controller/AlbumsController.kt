@@ -602,8 +602,8 @@ class AlbumsController {
         val albumData = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         val albumId: Int?
-        val albumIdString = albumData["albumId"].toString()
-        val albumName = albumData["albumName"].toString()
+        val albumIdString = albumData["albumId"].toString().trim()
+        val albumName = albumData["albumName"].toString().trim()
         val albumMetadataIdList = mapper.convertValue(albumData["albumMetadataIds"], object : TypeReference<Array<String>>() {})
 
         var albumPhotoObj: AlbumPhoto
@@ -618,11 +618,18 @@ class AlbumsController {
                 val metadataObj = metadataRepository.findById(albumMetadataIdList[0])
                 albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
             }
-            albumObj.setName(albumName)
-            albumObj.setCreatedAt(dtf.format(now))
-            albumObj.setModifiedAt(dtf.format(now))
-            albumObj = albumRepository.save(albumObj)
-            albumId = albumObj.getId()
+
+            // Check if albumName exists
+            val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
+            if (albumObject != null) {
+                albumId = albumObject.getId()
+            } else {
+                albumObj.setName(albumName)
+                albumObj.setCreatedAt(dtf.format(now))
+                albumObj.setModifiedAt(dtf.format(now))
+                albumObj = albumRepository.save(albumObj)
+                albumId = albumObj.getId()
+            }
         } else {
             albumId = albumIdString.toInt()
         }
