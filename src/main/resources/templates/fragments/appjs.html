@@ -27,7 +27,8 @@
     }
 
     function renderThumbnailsInViewport(elements,mediaTypeFilter) {
-        // If no scrollspy elements found, find current thumbnail container and closest previou scrollspy element
+        // If no scrollspy elements found, find current thumbnail container
+        // and closest previous scrollspy element
         if (elements.length === 0) {
             var thumnailsInViewport = $(".photo-thumbnail-container").withinviewport();
             elements = $(thumnailsInViewport.parent().prevAll(".scrollspy")[0])
