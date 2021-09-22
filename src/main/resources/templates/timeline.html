@@ -244,8 +244,8 @@
                                     <label for="latlng" class="col-form-label">Latitude, Longitude</label>
                                     <input type="text" class="form-control" id="latlng" name="latlng" value="">
                                 </div>
-                            <div class="col-sm">
-                                <label for="tagpeople" class="col-form-label">Tag People (Comma separated)</label>
+                                <div class="col-sm">
+                                    <label for="tagpeople" class="col-form-label">Tag People (Comma separated)</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" aria-label="Tag People" id="tagpeople" name="tagpeople" value="">
                                         <!-- if there's label id data -->
@@ -265,6 +265,12 @@
                                     <input type="text" class="form-control" id="keywords" name="keywords" value="">
                                 </div>
                             </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm">
+                                    <span id="timelineModalMsg"></span>
+                                </div>
+                            </div>
                         </form>
                     </div>
                     <div class="tab-pane container fade" id="detailsTab">
@@ -282,9 +288,6 @@
                         <div class="row"><strong>Taken:&nbsp;</strong><span id="takenAtDetails"></span></div>
                         <div class="row"><strong>Manually Adjusted Taken:&nbsp;</strong><span id="manualTakenAtDetails"></span></div>
                         <div class="row"><strong>GMT Offset:&nbsp;</strong><span id="timeZoneDetails"></span></div>
-                    </div>
-                    <div class="col-sm">
-                        <span id="timelineModalMsg"></span>
                     </div>
                 </div>
             </div>
