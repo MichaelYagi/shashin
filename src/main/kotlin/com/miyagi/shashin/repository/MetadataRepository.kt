@@ -13,24 +13,24 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT DISTINCT * FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE ua.user_id = :userId", nativeQuery = true)
    fun findByAlbumMetadataByUserId(@Param("userId") userId: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC, time ASC", nativeQuery = true)
+   @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelineAll(): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC, time ASC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    fun findAllByYearAndMonthAndDayOrderByYearDescMonthDescDayDescTimeDesc(year: Int?, month: Int?, day: Int?): MutableIterable<Metadata>
 
-   @Query("SELECT year,month,day FROM metadata GROUP BY year, month, day ORDER BY year DESC, month DESC, day DESC, time ASC", nativeQuery = true)
+   @Query("SELECT year,month,day FROM metadata GROUP BY year, month, day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelineData(): MutableIterable<TimelineData>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time ASC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelineAllByType(@Param("type") type: String): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time ASC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByTypeOffsetAndLimit(@Param("type") type: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
-   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND year = :year AND month = :month AND day = :day ORDER BY year DESC, month DESC, day DESC, time ASC", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND year = :year AND month = :month AND day = :day ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllByTypeAndYearAndMonthAndDay(@Param("type") type: String,@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<Metadata>
 
    @Query("SELECT rl.*, COUNT(*) AS tagCount, m.thumbnail_url_centered AS thumbnailUrlCentered FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id INNER JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id WHERE rl.name != 'object'  AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold GROUP BY rl.id", nativeQuery = true)
