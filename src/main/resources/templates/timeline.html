@@ -333,7 +333,7 @@
 
         // Scroll spy at intervals
         window.setInterval(function() {
-            var elementsInViewport = $(".scrollspy").withinviewport();
+            var elementsInViewport = $(".photo-thumbnail-container").withinviewport();
             renderThumbnailsInViewport(elementsInViewport,"[[${mediaTypeFilter}]]");
             $("#appStatus").removeClass("spinner-grow");
             $("#appStatus").addClass("bi-circle");
