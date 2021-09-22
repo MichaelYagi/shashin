@@ -11,4 +11,6 @@ interface AlbumRepository : CrudRepository<Album?, Int?> {
     fun findByName(name: String?): Album?
     @Query("SELECT a.id as albumId, COUNT(*) as photoCount FROM album a INNER JOIN albumphoto ap ON a.id = ap.album_id GROUP BY a.id", nativeQuery = true)
     fun countNumberOfPhotosInAlbums(): MutableIterable<AlbumPhotoCount?>?
+
+    fun findAlbumByNameIgnoreCase(name: String): Album?
 }
