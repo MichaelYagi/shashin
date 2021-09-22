@@ -282,6 +282,9 @@
     }
 
     function validateMetadataInputs(day, month, year, time, offset, latlng, msgId) {
+        if (offset === null ) {
+            offset = "";
+        }
         var dayValidate = "([1-9]|[12]\d|3[01])";
         var monthValidate = "^(0?[1-9]|1[012])$";
         var timeValidate = "^(\\d{2}:\\d{2}:\\d{2})$";
