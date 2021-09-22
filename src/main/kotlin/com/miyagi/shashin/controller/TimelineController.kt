@@ -10,6 +10,7 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.timeOffsets
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -64,6 +65,7 @@ class TimelineController {
         model["recognitionLabels"] = response["recognitionLabels"]!!
         model["labelPhotoMap"] = response["labelPhotoMap"]!!
         model["mediaTypeFilter"] = response["mediaTypeFilter"]!!
+        model["timeOffsets"] = response["timeOffsets"]!!
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -97,6 +99,7 @@ class TimelineController {
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = mediaTypeFilter
+        response["timeOffsets"] = timeOffsets()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"

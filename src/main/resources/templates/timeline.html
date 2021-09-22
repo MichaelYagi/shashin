@@ -230,11 +230,15 @@
                                 </div>
                                 <div class="col-sm">
                                     <label for="timeTaken" class="col-form-label">Time taken</label>
-                                    <input type="text" class="form-control" id="timeTaken" name="time" value="">
+                                    <input type="text" class="form-control" id="timeTaken" name="time" value="" placeholder="hh:mm:ss">
                                 </div>
                                 <div class="col-sm">
                                     <label for="offsetTaken" class="col-form-label">GMT Offset</label>
-                                    <input type="text" class="form-control" id="offsetTaken" name="offset" value="">
+                                    <select class="form-select" id="offsetTaken" name="offset">
+                                        <th:block th:each="offset, iterStat: ${timeOffsets}">
+                                            <option th:value="${offset}" th:text="${offset}"></option>
+                                        </th:block>
+                                    </select>
                                 </div>
                             </div>
                             <a href="#" id="refreshTakenDate" data-bs-toggle="tooltip" data-placement="right" title="Sync original taken date"><span class="bi-arrow-clockwise"></span></a>
