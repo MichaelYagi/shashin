@@ -116,6 +116,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 if ("unknowntag" !in tagName.lowercase()) {
                     exifMap[tagName] = tag.description
                 }
+//                println(file.path)
 //                println(tag.tagName)
 //                println(tag.description)
 //                println()
@@ -123,7 +124,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                     "Orientation" -> {
 
                     }
-                    "Date/Time", "Creation Time" -> {
+                    "Date/Time", "Creation Time", "Date/Time Original" -> {
                         val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
                         date = null
 
