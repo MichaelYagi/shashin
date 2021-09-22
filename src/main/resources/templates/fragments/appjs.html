@@ -30,14 +30,14 @@
         // If no scrollspy elements found, find current thumbnail container
         // and closest previous scrollspy element
         if (elements.length === 0) {
-            var thumnailsInViewport = $(".photo-thumbnail-container").withinviewport();
-            elements = $(thumnailsInViewport.parent().prevAll(".scrollspy")[0])
+            const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
+            elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
         }
 
         elements.each(function(index) {
-            var id = $(this).attr("id");
+            let id = $(this).attr("id");
             if (id.indexOf("tail_") >= 0) {
-                var idSplit = id.split("_");
+                const idSplit = id.split("_");
                 id = idSplit[1];
             } else if (index === 0 || index === 1) {
                 setScrollSpyActive(id);
@@ -46,7 +46,7 @@
             if ($("#"+id).hasClass("metadataprocessed") === false && $("#tail_"+id).hasClass("metadataprocessed") === false) {
                 attachAssociatedData(id,mediaTypeFilter);
                 // console.log(id)
-                var currentValue = ""
+                let currentValue = "";
                 $('input[name^="thumbnailUrl-'+id+'"]').each(function() {
                     if (currentValue !== $(this).val()) {
                         var idArray = $(this).attr("id").split("_");
