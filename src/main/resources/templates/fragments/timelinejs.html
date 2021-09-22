@@ -71,7 +71,7 @@
             $("#yearTaken").val(metadata.year);
         }
 
-        var latlngValue = (metadata.lat != null || metadata.lng != null) ? (metadata.lat + ', ' + metadata.lng) : '';
+        var latlngValue = (metadata.lat == null || metadata.lng == null) ? '' : (metadata.lat + ', ' + metadata.lng);
         $("#latlng").val(latlngValue);
 
         var taggedPeopleArray = taggedPeopleList.split(",");
