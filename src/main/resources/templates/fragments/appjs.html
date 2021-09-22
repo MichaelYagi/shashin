@@ -27,9 +27,13 @@
     }
 
     function renderThumbnailsInViewport(elements,mediaTypeFilter) {
-        var elementList = [elements.parent().prevAll(".scrollspy")[0],elements.parent().nextAll(".scrollspy")[0]]
+        // If no scrollspy elements found, find current thumbnail container and closest previou scrollspy element
+        if (elements.length === 0) {
+            var thumnailsInViewport = $(".photo-thumbnail-container").withinviewport();
+            elements = $(thumnailsInViewport.parent().prevAll(".scrollspy")[0])
+        }
 
-        $(elementList).each(function(index) {
+        elements.each(function(index) {
             var id = $(this).attr("id");
             if (id.indexOf("tail_") >= 0) {
                 var idSplit = id.split("_");
