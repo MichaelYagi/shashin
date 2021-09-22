@@ -409,9 +409,15 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209.jpg"
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
 //            val scaled209: BufferedImage = scaleImageByHeight(img, 209)
-            val scaled209: BufferedImage = Thumbnails.of(img)
+            var scaled209: BufferedImage = Thumbnails.of(img)
                 .height(209)
                 .asBufferedImage()
+            if (scaled209.width > 300) {
+                scaled209 = Thumbnails.of(scaled209)
+                    .height(209)
+                    .sourceRegion(Positions.CENTER, 209, 209)
+                    .asBufferedImage()
+            }
             if (tnFile != null) {
                 ImageIO.write(scaled209, "jpg", tnFile)
                 _metadataObj?.setThumbnailSmallHeight(scaled209.height)
