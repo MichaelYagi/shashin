@@ -381,6 +381,8 @@
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             // window.top.location = window.top.location
 
+                            var oldmetadata = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
+
                             // Update tag
                             var metadataObj = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
                             metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
@@ -394,6 +396,32 @@
                             metadataObj.lng = latlngArray[1]
                             metadataObj.keywords = $("#keywords").val()
                             $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
+
+                            // console.log(oldmetadata.year);
+                            // console.log(oldmetadata.month);
+                            // console.log(oldmetadata.day);
+                            // console.log(metadataObj.year);
+                            // console.log(metadataObj.month);
+                            // console.log(metadataObj.day);
+                            //
+                            // if (parseInt(oldmetadata.year) !== parseInt(metadataObj.year) || parseInt(oldmetadata.month) !== parseInt(metadataObj.month) || parseInt(oldmetadata.day) !== parseInt(metadataObj.day)) {
+                            //     var anchorElement = $("#offcanvasToc div a.list-group-item.list-group-item-action.active");
+                            //     var currentAnchor = anchorElement.attr('href');
+                            //     console.log(currentAnchor);
+                            //     if (currentAnchor) {
+                            //         var currentAnchorArray = currentAnchor.split("#");
+                            //         if (currentAnchorArray.length === 2) {
+                            //             console.log(currentAnchorArray[1]);
+                            //             //jumpToTimeline(null, currentAnchorArray[1]);
+                            //             console.log(anchorElement.attr('target'));
+                            //             // window.location = currentAnchor;
+                            //             // anchorElement[0].click();
+                            //             location.href = currentAnchor;
+                            //             //window.location.reload(true);
+                            //             history.replaceState(null,null,url);
+                            //         }
+                            //     }
+                            // }
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
@@ -422,16 +450,17 @@
                     let message = "Error";
                     if (data["status"] === "success") {
                         message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        if (data["year"] !== "" && data["month"] !== "" && data["day"] !== "") {
+                        if (data["year"] !== "" && data["month"] !== "" && data["day"] !== "" && data["time"] !== "") {
                             $("#yearTaken").val(data["year"]);
                             $("#monthTaken").val(data["month"]);
                             $("#dayTaken").val(data["day"]);
+                            $("#timeTaken").val(data["time"]);
                         }
                         // window.top.location = window.top.location
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     }
-                    $("#timelineModalMsg").html(message);
+                    // $("#timelineModalMsg").html(message);
                 }
             });
 
@@ -452,11 +481,13 @@
             e.preventDefault();
 
             var originalTakenAtDate = $("#takenAtDetails").text();
-            var takenAtParts = originalTakenAtDate.split("-");
+            var originalTakenAtDateArray = originalTakenAtDate.split(" ")
+            var takenAtParts = originalTakenAtDateArray[0].split("-");
             if (takenAtParts.length > 3) {
                 $("#yearTaken").val(takenAtParts[0]);
                 $("#monthTaken").val(takenAtParts[1]);
                 $("#dayTaken").val(takenAtParts[2]);
+                $("#timeTaken").val(originalTakenAtDateArray[1])
             }
         });
 

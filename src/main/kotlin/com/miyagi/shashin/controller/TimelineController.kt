@@ -650,6 +650,7 @@ class TimelineController {
         resp["year"] = ""
         resp["month"] = ""
         resp["day"] = ""
+        resp["time"] = ""
 
         if (batchMetadataMap.containsKey("id") && batchMetadataMap["id"] == metadataId) {
             val metadataOptional = metadataRepository.findById(metadataId)
@@ -662,14 +663,17 @@ class TimelineController {
                 val year = takenDateArray[0].toInt()
                 val month = takenDateArray[1].toInt()
                 val day = takenDateArray[2].toInt()
+                val time = dateArray[1].toString()
                 metadataObj.setYear(year)
                 metadataObj.setMonth(month)
                 metadataObj.setDay(day)
+                metadataObj.setTimeZone(time)
                 metadataRepository.save(metadataObj)
 
                 resp["year"] = year.toString()
                 resp["month"] = month.toString()
                 resp["day"] = day.toString()
+                resp["time"] = time.toString()
 
                 resp["msg"] = "Saved"
                 resp["status"] = "success"
