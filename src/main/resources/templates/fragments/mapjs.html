@@ -188,8 +188,40 @@
         const $dynamicGallery = document.getElementById('light-gallery-photo');
         var dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
 
+        var duration = 400;
+        var interactions = [
+            new ol.interaction.Select({
+                condition: function (evt) {
+                    return evt.type === 'singleclick';
+                },
+                style: selectStyleFunction,
+            }),
+            new ol.interaction.DoubleClickZoom({
+                duration: duration
+            }),
+            new ol.interaction.KeyboardPan({
+                pixelDelta: 256
+            }),
+            new ol.interaction.KeyboardZoom({
+                duration: duration
+            }),
+            new ol.interaction.MouseWheelZoom({
+                duration: duration
+            }),
+            new ol.interaction.PinchRotate(),
+            new ol.interaction.PinchZoom({
+                duration: duration
+            }),
+            new ol.interaction.DragPan({
+                kinetic: new ol.Kinetic(-0.01, 0.1, 200)
+            }),
+            new ol.interaction.DragZoom(),
+            new ol.interaction.DragRotate()
+        ];
+
         var map = new ol.Map({
             target: 'map',
+            interactions: interactions,
             layers: [
                 new ol.layer.Tile({
                     // Open Street Maps
@@ -212,14 +244,6 @@
                     })
                 })
             ],
-            interactions: ol.interaction.defaults().extend([
-                new ol.interaction.Select({
-                    condition: function (evt) {
-                        return evt.type === 'singleclick';
-                    },
-                    style: selectStyleFunction,
-                }),
-            ]),
             view: mapView
         });
         const zoomSlider = new ol.control.ZoomSlider();
