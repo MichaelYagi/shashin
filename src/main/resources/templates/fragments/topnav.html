@@ -55,10 +55,12 @@
         </div>
         <div class="flex-shrink-0 dropdown dropstart">
             <a id="dLabel" class="d-block link-dark text-decoration-none dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-                <span class="top-bar-app-links make-it-regular" th:text="${username}"></span>
+<!--                <span class="top-bar-app-links make-it-regular" th:text="${username}"></span>-->
+                <span class="bi-person-circle" style="font-size: 1.5rem;"></span>
                 <span class="caret"></span>
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
+                <h6 class="dropdown-header" th:text="${username}"></h6>
                 <a class="dropdown-item" href="/users/update">Change password</a>
                 <a class="dropdown-item" href="/users/logout">Sign out</a>
             </div>
