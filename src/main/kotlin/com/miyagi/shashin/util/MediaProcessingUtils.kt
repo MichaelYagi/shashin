@@ -43,10 +43,10 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         fileRootDir = fileRootDir.replace('\\', '/')
 
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
-        val metadataObj = _metadataObj?.let { extractExifData(file, sidecarDir, rootDir, it) }
 
         val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
         if (mdFile != null) {
+            val metadataObj = _metadataObj?.let { extractExifData(file, sidecarDir, rootDir, it) }
             val yamlFactory: YAMLFactory = YAMLFactory.builder()
                 .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
                 .disable(YAMLGenerator.Feature.SPLIT_LINES)
