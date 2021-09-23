@@ -4,10 +4,20 @@
 
 <header class="py-3 mb-4 border-bottom shadow">
     <div class="container-fluid align-items-center d-flex">
-        <div class="flex-shrink-1">
-            <a class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none" th:href="${authority == 'ROLE_ADMIN' ? '/timeline/mediatype/all' : '/albums'}">
-                <span class="lead" style="font-size: medium">Shashin</span>
+        <div class="flex-shrink-0">
+            <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" href="#offcanvasMenu" aria-controls="offcanvasMenu" title="Show Menu">
+                <span class="bi-list" style="font-size: 1.5rem;"></span>
             </a>
+            <th:block th:if="${activePage == 'timeline'}">
+                <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline">
+                    <span class="bi-calendar3" style="font-size: 1.5rem;"></span>
+                </a>
+            </th:block>
+            <!--            <th:block th:unless="${activePage == 'map'}">-->
+<!--                <a class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none" th:href="${authority == 'ROLE_ADMIN' ? '/timeline/mediatype/all' : '/albums'}">-->
+<!--                    <span class="lead" style="font-size: medium">Shashin</span>-->
+<!--                </a>-->
+<!--            </th:block>-->
         </div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="flex-grow-1 d-flex align-items-center">

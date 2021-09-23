@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="sidebaroffcanvas(activeSidebar,authority)">
+
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
+    <div class="offcanvas-header">
+        <a class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none" th:href="${authority == 'ROLE_ADMIN' ? '/timeline/mediatype/all' : '/albums'}">
+            <span class="lead" style="font-size: medium">Shashin</span>
+        </a>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav nav-pills flex-column mb-auto">
+            <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline/mediatype/all" data-bs-toggle="tooltip" data-placement="top" title="Timeline">
+                        <span class="bi-calendar4" style="font-size: 1rem;"></span> Timeline
+                    </a>
+                </li>
+<!--                <th:block th:if="${activeSidebar == 'timeline'}">-->
+<!--                    <li class="nav-item">-->
+<!--                        <a class='nav-link' data-bs-toggle="offcanvas" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline">-->
+<!--                            <span class="bi-arrow-bar-right" style="font-size: 1rem;"></span> Show Timeline-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                </th:block>-->
+            </th:block>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='albums' or activeSidebar=='album'? ' active' : ''}" href="/albums" data-bs-toggle="tooltip" data-placement="top" title="Albums">
+                    <span class="bi-images" style="font-size: 1rem;"></span> Albums
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='people' or activeSidebar=='person' or activeSidebar=='matches' ? ' active' : ''}" href="/people" data-bs-toggle="tooltip" data-placement="top" title="People">
+                    <span class="bi-person-square" style="font-size: 1rem;"></span> People
+                </a>
+            </li>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='map' ? ' active' : ''}" href="/map" data-bs-toggle="tooltip" data-placement="top" title="Map">
+                    <span class="bi-map" style="font-size: 1rem;"></span> Map
+                </a>
+            </li>
+            <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites" data-bs-toggle="tooltip" data-placement="top" title="Favorites">
+                        <span class="bi-suit-heart" style="font-size: 1rem;"></span> Favorites
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' or activeSidebar=='users' or activeSidebar=='match' ? ' active' : ''}" href="/settings" data-bs-toggle="tooltip" data-placement="top" title="Settings">
+                        <span class="bi-wrench" style="font-size: 1rem;"></span> Settings
+                    </a>
+                </li>
+            </th:block>
+<!--            <th:block th:if="${activeSidebar=='timeline'}">-->
+<!--                <li class="nav-item">-->
+<!--                    <button class="btn btn-light" type="button" disabled>-->
+<!--                        <span id="appStatus" class="bi-circle" style="font-size: 1rem;" role="status" aria-hidden="true"></span>-->
+<!--                    </button>-->
+<!--                </li>-->
+<!--            </th:block>-->
+        </ul>
+    </div>
+</div>
+
+</body>
+</html>
