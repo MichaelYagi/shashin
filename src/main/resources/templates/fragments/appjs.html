@@ -388,6 +388,11 @@
                 $("#albumAppTools").css("display", "none");
                 $("#matchesAppTools").css("display", "none");
             }
+
+            $("#timelineNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
         });
 
         $("#image" + metadata.id).click(function (e) {
@@ -423,6 +428,11 @@
                 $("#albumAppTools").css("display", "none");
                 $("#matchesAppTools").css("display", "none");
             }
+
+            $("#timelineNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
         });
 
         $("#image" + metadata.id).hover(function () {
