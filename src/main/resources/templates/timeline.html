@@ -470,6 +470,7 @@
         // Clear message on modal close
         $('#propTimelineModal').on('hide.bs.modal', function () {
             $("#timelineModalMsg").html("");
+            $("#saveMetadata").prop('disabled', false);
             var tab = new bootstrap.Tab($("#generalTabLink"));
             tab.show();
         });
