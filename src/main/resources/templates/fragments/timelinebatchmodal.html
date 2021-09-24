@@ -156,8 +156,8 @@
                                         if ($("#latlngBatchData").val() !== "") {
                                             var latlngArray = $("#latlngBatchData").val().split(",");
                                             var metadataTaggedObj = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
-                                            metadataTaggedObj["lat"] = latlngArray[0];
-                                            metadataTaggedObj["lng"] = latlngArray[1];
+                                            metadataTaggedObj["lat"] = $.trim(latlngArray[0]);
+                                            metadataTaggedObj["lng"] = $.trim(latlngArray[1]);
                                             $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataTaggedObj));
                                             $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil-square").addClass("bi-pencil");
                                         }
