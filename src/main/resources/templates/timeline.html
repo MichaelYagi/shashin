@@ -518,14 +518,9 @@
                 metadata.lat !== "" && metadata.lng !== ""
             ) {
                 $("#map").css("display","block");
-                $("#mapTabMessage").css("display","none");
-
-                if (metadata.placeName !== "") {
-                    $("#mapTabMessage").css("display","block");
-                    $("#mapTabMessage").addClass("bi-pin-fill");
-                    $("#mapTabMessage").text(metadata.placeName);
-                    $("#mapTabMessage").wrapInner('<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" style="text-decoration: none;"></a>');
-                }
+                $("#mapTabMessage").css("display","block");
+                $("#mapTabMessage").text(metadata.placeName);
+                $("#mapTabMessage").wrapInner('<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" class="bi-pin-fill" style="text-decoration: none;"></a>');
 
                 if (map === null) {
                     var attribution = new ol.control.Attribution({
