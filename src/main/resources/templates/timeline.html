@@ -213,6 +213,9 @@
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" id="mapTabLink" href="#mapTab">Map</a>
+                    </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane container show active" id="generalTab">
@@ -302,6 +305,10 @@
                         <div class="row"><strong>Manually Adjusted Taken:&nbsp;</strong><span id="manualTakenAtDetails"></span></div>
                         <div class="row"><strong>GMT Offset:&nbsp;</strong><span id="timeZoneDetails"></span></div>
                     </div>
+                    <div class="tab-pane container fade" id="mapTab">
+                        <span id="mapTabMessage">No map data</span>
+                        <div id="map" class="map" style="width: 100%;height: 400px"></div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -314,6 +321,10 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        var map = null;
+        var layer = null;
+        var feature = null;
+
         var mediaContentList = [];
         $.each($('.mediaLink'), function(index, element) {
             var mediaContent = {}
@@ -458,6 +469,8 @@
         // Clear message on modal close
         $('#propTimelineModal').on('hide.bs.modal', function () {
             $("#timelineModalMsg").html("");
+            var tab = new bootstrap.Tab($("#generalTabLink"));
+            tab.show();
         });
 
         // Clear message on input editing
@@ -483,6 +496,78 @@
             e.preventDefault();
             $("#saveMetadata").prop('disabled', true);
         });
+
+        $("#mapTabLink").click(function (e) {
+            e.preventDefault();
+            $("#saveMetadata").prop('disabled', true);
+
+            openMap()
+        });
+
+        function openMap() {
+            var metadataId = $("#metadataId").val();
+            var metadata = {};
+            if ($("#timelineModalEdit"+metadataId).attr("tag") && $("#timelineModalEdit"+metadataId).attr("tag").trim() !== "") {
+                metadata = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
+            }
+
+            if (Object.keys(metadata).length > 0 &&
+                metadata.lat !== null && metadata.lng !== null &&
+                metadata.lat !== "" && metadata.lng !== ""
+            ) {
+                $("#map").css("display","block");
+                $("#mapTabMessage").css("display","none");
+
+                if (map === null) {
+                    var attribution = new ol.control.Attribution({
+                        collapsible: false
+                    });
+
+                    map = new ol.Map({
+                        controls: ol.control.defaults({attribution: false}).extend([attribution]),
+                        layers: [
+                            new ol.layer.Tile({
+                                visible: true,
+                                source: new ol.source.XYZ({
+                                    url: 'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
+                                    maxZoom: 19
+                                })
+                            })
+                        ],
+                        target: 'map',
+                        view: new ol.View({
+                            center: ol.proj.fromLonLat([metadata.lng, metadata.lat]),
+                            maxZoom: 18,
+                            zoom: 12
+                        })
+                    });
+                }
+
+                if (layer !== null && feature !== null) {
+                    layer.getSource().clear();
+                }
+
+                map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+                map.getView().setZoom(12);
+
+                feature = new ol.Feature({
+                    geometry: new ol.geom.Point(ol.proj.fromLonLat([metadata.lng, metadata.lat])),
+                    name: metadata.title
+                });
+                layer = new ol.layer.Vector({
+                    source: new ol.source.Vector({
+                        features: [feature]
+                    })
+                });
+                map.addLayer(layer);
+            } else {
+                if (layer !== null && feature !== null) {
+                    layer.getSource().clear();
+                }
+                $("#map").css("display","none");
+                $("#mapTabMessage").css("display","block");
+            }
+        }
 
         $("#generalTabLink").click(function (e) {
             e.preventDefault();

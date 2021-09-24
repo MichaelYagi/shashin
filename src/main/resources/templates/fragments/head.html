@@ -37,7 +37,7 @@
         <script src="/js/stomp.min.js"></script>
         <script src="/js/sockjs.min.js"></script>
     </th:block>
-    <th:block th:if="${titleDescriptor == 'Map'}">
+    <th:block th:if="${titleDescriptor == 'Map' or titleDescriptor == 'Timeline'}">
         <script src="/js/ol.js"></script>
         <script src="/js/lg-editlocation.js"></script>
         <link href="/css/ol.css" rel="stylesheet">
