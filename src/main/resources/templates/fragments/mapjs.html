@@ -10,6 +10,9 @@
         var authority = "[[${authority}]]";
         /*]]>*/
 
+        var qslat = getParameterByName("lat");
+        var qslng = getParameterByName("lng");
+
         if (mapdata.length > 0) {
             $("#progressBarWrapper").css("visibility","visible");
         }
@@ -169,18 +172,22 @@
             return styles;
         }
 
-        var mapView = new ol.View({
-            center: ol.proj.fromLonLat([-73.1234, 45.678]),
-            zoom: 2
-        });
-        if ("lat" in localStorage && "lng" in localStorage) {
-            mapView = new ol.View({
-                center: ol.proj.fromLonLat([localStorage.getItem("lng"), localStorage.getItem("lat")]),
-                zoom: 20
-            });
+        var initialCoord = [-73.1234, 45.678];
+        var initialZoom = 2;
+        if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
+            initialCoord = [qslng,qslat];
+            initialZoom = 20;
+        } else if ("lat" in localStorage && "lng" in localStorage) {
+            initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
+            initialZoom = 20;
             localStorage.removeItem('lat');
             localStorage.removeItem('lng');
         }
+
+        var mapView = new ol.View({
+            center: ol.proj.fromLonLat(initialCoord),
+            zoom: initialZoom
+        });
         const lightGalleryConfigs = getLightGalleryConfigs();
         if (authority === "ROLE_ADMIN") {
             lightGalleryConfigs["plugins"].push(lgEditLocation);
@@ -388,7 +395,7 @@
                         localStorage.setItem("lat", lat);
                         localStorage.setItem("lng", lng);
 
-                        window.top.location = window.top.location
+                        window.top.location = window.location.href.split("?")[0];
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     }
