@@ -523,7 +523,7 @@
                     $("#mapTabMessage").css("display","block");
                     $("#mapTabMessage").addClass("bi-pin-fill");
                     $("#mapTabMessage").text(metadata.placeName);
-                    $("#mapTabMessage").wrapInner('<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank"></a>');
+                    $("#mapTabMessage").wrapInner('<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" style="text-decoration: none;"></a>');
                 }
 
                 if (map === null) {
