@@ -413,8 +413,9 @@
                             metadataObj.time = $("#timeTaken").val()
                             metadataObj.timeZone = $("#offsetTaken").val()
                             var latlngArray = $("#latlng").val().split(",")
-                            metadataObj.lat = latlngArray[0]
-                            metadataObj.lng = latlngArray[1]
+                            metadataObj.lat = $.trim(latlngArray[0])
+                            metadataObj.lng = $.trim(latlngArray[1])
+                            $("#latlng").val(metadataObj.lat+","+metadataObj.lng)
                             metadataObj.keywords = $("#keywords").val()
                             $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
 
@@ -496,11 +497,13 @@
 
         $("#detailsTabLink").click(function (e) {
             e.preventDefault();
+            $("#timelineModalMsg").html("");
             $("#saveMetadata").prop('disabled', true);
         });
 
         $("#mapTabLink").click(function (e) {
             e.preventDefault();
+            $("#timelineModalMsg").html("");
             $("#saveMetadata").prop('disabled', true);
 
             openMap()
@@ -578,6 +581,8 @@
                     layer.getSource().clear();
                 }
                 $("#map").css("display","none");
+                $("#mapTabMessage > .wrapper").contents().unwrap();
+                $("#mapTabMessage").text("No map data");
                 $("#mapTabMessage").css("display","block");
             }
         }
