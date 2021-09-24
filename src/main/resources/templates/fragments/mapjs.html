@@ -10,6 +10,10 @@
         var authority = "[[${authority}]]";
         /*]]>*/
 
+        if (mapdata.length > 0) {
+            $("#progressBarWrapper").css("visibility","visible");
+        }
+
         const textFill = new ol.style.Fill({
             color: '#fff',
         });
@@ -311,6 +315,11 @@
                 iconFeature.setStyle(iconStyle);
                 iconFeatures.push(iconFeature);
             }
+
+            var currentProgress = (index+1)/mapdata.length*100;
+            $("#progressBar").attr("aria-valuenow",String(parseInt(currentProgress)));
+            var width = String(parseInt(currentProgress))+"%";
+            $("#progressBar").css("width",width);
         }
 
         if (iconFeatures.length > 0) {
@@ -326,6 +335,7 @@
                 style: styleFunction
             });
             map.addLayer(vector);
+            $("#progressBarWrapper").css("visibility","hidden");
         }
 
         map.on("pointermove", function (evt) {

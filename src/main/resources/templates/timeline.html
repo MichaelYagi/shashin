@@ -7,6 +7,12 @@
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div id="subcontainer" class="row flex-grow-sm-1 flex-grow-0">
+        <th:block th:if="${metadataList != ''}">
+        <script type="text/javascript">
+            $("#progressBarWrapper").css("visibility","visible");
+        </script>
+        </th:block>
+
 <!--        <div th:replace="fragments/sidebar :: sidebar(${activeSidebar},${authority})"></div>-->
         <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasToc" aria-labelledby="offcanvasTocLabel">
             <div class="offcanvas-header">
@@ -34,13 +40,6 @@
             </div>
         </div>
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${authority})"></div>
-
-        <script type="text/javascript">
-            $("#appStatus").removeClass("spinner-grow");
-            $("#appStatus").removeClass("bi-circle");
-            $("#appStatus").addClass("spinner-grow");
-            $("#appStatus").css("margin","10px 0 4px 0");
-        </script>
 
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
@@ -151,6 +150,16 @@
 
                         <script type="text/javascript">
                             /*<![CDATA[*/
+                            var currentIteration = [[${iterStat.index+1}]];
+                            var totalSize = [[${#lists.size(metadataList)}]];
+                            var currentProgress = currentIteration/totalSize*100;
+                            $("#progressBar").attr("aria-valuenow",String(parseInt(currentProgress)));
+                            var width = String(parseInt(currentProgress))+"%";
+                            $("#progressBar").css("width",width);
+                            if (currentIteration === totalSize) {
+                                $("#progressBarWrapper").css("visibility","hidden");
+                            }
+
                             $("#timelineModalEdit[[${metadata.id}]]").attr("tag",JSON.stringify(JSON.parse(decodeHtml("[[${metadata}]]"))));
                             // setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                             // activateMetadataListeners("[[${metadata}]]");

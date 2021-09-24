@@ -67,41 +67,11 @@
             </div>
         </div>
     </div>
+
+    <div class="progress" id="progressBarWrapper" style="height: 1px;visibility: hidden;">
+        <div class="progress-bar" role="progressbar" id="progressBar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="[[${#lists.size(metadataList)}]]"></div>
+    </div>
 </header>
 
-
-<script type="text/javascript">
-    // $('#appSearch').keypress(function(event){
-    //     var keycode = (event.keyCode ? event.keyCode : event.which);
-    //     if(keycode === 13){
-    //         var searchTerm = $('#appSearch').val().trim();
-    //         if (searchTerm !== "") {
-    //             let json = {searchTerm:searchTerm}
-    //
-    //             const posting = $.post({
-    //                 url: "/search",
-    //                 data: JSON.stringify(json),
-    //                 contentType: 'application/json; charset=utf-8'
-    //             });
-    //
-    //             posting.done(function (data) {
-    //                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-    //                     if (data["status"] === "redirect") {
-    //                         window.location.replace(data["msg"]);
-    //                     } else {
-    //                         let message = "Error";
-    //                         if (data["status"] === "success") {
-    //                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-    //                         } else {
-    //                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-    //                         }
-    //                         $("#albumMessage").html(message);
-    //                     }
-    //                 }
-    //             });
-    //         }
-    //     }
-    // });
-</script>
 </body>
 </html>
