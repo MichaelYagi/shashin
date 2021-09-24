@@ -406,31 +406,10 @@
                             metadataObj.keywords = $("#keywords").val()
                             $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
 
-                            // console.log(oldmetadata.year);
-                            // console.log(oldmetadata.month);
-                            // console.log(oldmetadata.day);
-                            // console.log(metadataObj.year);
-                            // console.log(metadataObj.month);
-                            // console.log(metadataObj.day);
-                            //
-                            // if (parseInt(oldmetadata.year) !== parseInt(metadataObj.year) || parseInt(oldmetadata.month) !== parseInt(metadataObj.month) || parseInt(oldmetadata.day) !== parseInt(metadataObj.day)) {
-                            //     var anchorElement = $("#offcanvasToc div a.list-group-item.list-group-item-action.active");
-                            //     var currentAnchor = anchorElement.attr('href');
-                            //     console.log(currentAnchor);
-                            //     if (currentAnchor) {
-                            //         var currentAnchorArray = currentAnchor.split("#");
-                            //         if (currentAnchorArray.length === 2) {
-                            //             console.log(currentAnchorArray[1]);
-                            //             //jumpToTimeline(null, currentAnchorArray[1]);
-                            //             console.log(anchorElement.attr('target'));
-                            //             // window.location = currentAnchor;
-                            //             // anchorElement[0].click();
-                            //             location.href = currentAnchor;
-                            //             //window.location.reload(true);
-                            //             history.replaceState(null,null,url);
-                            //         }
-                            //     }
-                            // }
+                            $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil").addClass("bi-pencil-square");
+                            if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
+                                $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                            }
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
