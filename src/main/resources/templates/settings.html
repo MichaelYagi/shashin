@@ -39,13 +39,17 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-4">
                             <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit (Default 10)</strong></label>
                             <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
                         </div>
-                        <div class="col-6">
+                        <div class="col-4">
                             <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit (Default 100)</strong></label>
                             <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
+                        </div>
+                        <div class="col-4">
+                            <label for="changePort" class="form-label"><strong>Change Port (Requires Restart)</strong></label>
+                            <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
                         </div>
                     </div>
                     </th:block>

@@ -7,7 +7,6 @@ import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.core.io.FileSystemResource
 import org.springframework.data.domain.Sort
+import org.springframework.http.HttpHeaders
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -26,13 +26,18 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
+import java.net.HttpURLConnection
+import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -40,6 +45,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 
@@ -102,7 +108,7 @@ class SettingsController {
     @Throws(java.lang.Exception::class)
     fun sendScanMessage(message: ScanMessage): Message? {
         //println("message:${message.getMessage()}")
-        var msg = "Start Scan";
+        var msg = "Start Scan"
 
         val mediaDirs = mediaDirRepository?.findAll()
         if (mediaDirs != null && mediaDirs.count() > 0) {
@@ -197,13 +203,18 @@ class SettingsController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
-    fun postSettings(model: Model, redirectAttributes: RedirectAttributes,
+    fun postSettings(
+        model: Model, redirectAttributes: RedirectAttributes,
+        request: HttpServletRequest,
+        @RequestHeader headers: HttpHeaders,
         @RequestParam("mediaDirList") mediaDirList: String,
         @RequestParam("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,
         @RequestParam("queryLimit") queryLimit: Int,
         @RequestParam("matchScanLimit") matchScanLimit: Int,
-        @RequestParam("trainingDataLimit") trainingDataLimit: Int
+        @RequestParam("trainingDataLimit") trainingDataLimit: Int,
+        @RequestParam("changePort") port: String,
     ): String {
+        var resetServer = false
         var mediaDirs: List<String>? = null
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
         if  (mediaDirList.isNotBlank()) {
@@ -244,6 +255,7 @@ class SettingsController {
         }
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
+
         if (recognitionConfidenceThreshold.isNotEmpty()) {
             settings?.setRecognitionConfidenceThreshold(recognitionConfidenceThreshold)
         }
@@ -256,6 +268,10 @@ class SettingsController {
         if (trainingDataLimit > 0) {
             settings?.setTrainingDataLimit(trainingDataLimit)
         }
+        if (settings != null && port.isNotEmpty() && port != settings.getPort()) {
+            settings.setPort(port)
+            resetServer = true
+        }
         if (settings != null) {
             settingsRepository?.save(settings)
             model["settings"] = settings
@@ -263,6 +279,21 @@ class SettingsController {
 
         if (statusMessage.isBlank() && model.getAttribute("alertClass") == "alert-success") {
             statusMessage = "Settings saved"
+        }
+
+        if (resetServer) {
+            val baseUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+            val baseUrlArray = baseUrl.split(":")
+            val oldPort = baseUrlArray[baseUrlArray.count()-1]
+            val newBaseUrl = baseUrl.replace(":$oldPort",":$port")
+
+            val con = URL("$baseUrl/actuator/restart").openConnection() as HttpURLConnection
+            con.requestMethod = "POST"
+            con.setRequestProperty("Content-Length", "0")
+            con.doOutput = true
+            con.inputStream.close()
+
+            return "redirect:$newBaseUrl/settings"
         }
 
         val module = "settings"
@@ -273,6 +304,7 @@ class SettingsController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         model["statusMessage"] = statusMessage
+
         return module
     }
 
