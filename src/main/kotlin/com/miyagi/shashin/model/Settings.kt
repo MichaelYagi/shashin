@@ -19,6 +19,8 @@ class Settings {
     private var matchScanLimit: Int? = null
     @NotBlank
     private var trainingDataLimit: Int? = null
+    @NotBlank
+    private var port: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -60,6 +62,14 @@ class Settings {
         this.queryLimit = queryLimit
     }
 
+    fun getPort(): String? {
+        return this.port
+    }
+
+    fun setPort(port: String?) {
+        this.port = port
+    }
+
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -83,6 +93,7 @@ class Settings {
         map["queryLimit"] = this.queryLimit
         map["matchScanLimit"] = this.matchScanLimit
         map["trainingDataLimit"] = this.trainingDataLimit
+        map["port"] = this.port
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

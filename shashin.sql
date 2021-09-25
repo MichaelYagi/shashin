@@ -70,6 +70,7 @@ CREATE TABLE `settings` (
     `traininDataLimit` INTEGER NOT NULL DEFAULT 100,
     `matchScanLimit` INTEGER NOT NULL DEFAULT 10,
     `queryLimit` INTEGER NOT NULL DEFAULT 20,
+    `port` VARCHAR(10) NOT NULL DEFAULT '6624',
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL
 );
