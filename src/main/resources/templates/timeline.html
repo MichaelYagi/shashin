@@ -569,6 +569,10 @@
                     image: new ol.style.Icon({
                         opacity: 1,
                         src: 'data:image/svg+xml;utf8,'+svg,
+                        anchor: [0.5, 32],
+                        anchorXUnits: 'fraction',
+                        anchorYUnits: 'pixels',
+                        anchorOrigin: 'top-left',
                         offset: [0, 0]
                     })
                 });
