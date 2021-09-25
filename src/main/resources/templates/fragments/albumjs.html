@@ -153,6 +153,8 @@
 
         $('#saveAlbum'+metadata.id).click(function (e) {
             e.preventDefault();
+            $('#msg'+metadata.id).html("");
+
             let requestJson = {
                 removeFromAlbum:$('#removeFromAlbum'+metadata.id).prop("checked"),
                 setCoverAlbum:$('#setCoverAlbum'+metadata.id).prop("checked"),

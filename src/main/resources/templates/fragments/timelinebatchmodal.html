@@ -76,7 +76,7 @@
 
             </div>
             <div class="modal-footer">
-                <div id="appStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                <div id="timelineBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -126,7 +126,8 @@
 
                 $("#saveBatchMetadata").click(function (e) {
                     e.preventDefault();
-                    $("#appStatus").css("visibility","visible");
+                    $("#msgBatchMetadata").html("");
+                    $("#timelineBatchModalStatus").css("visibility","visible");
                     closeBatchTagPeopleDropdown();
 
                     if (validateMetadataInputs(
@@ -172,7 +173,7 @@
                                 }
                                 $("#msgBatchMetadata").html(message);
                                 clearTimelineSelection();
-                                $("#appStatus").css("visibility","hidden");
+                                $("#timelineBatchModalStatus").css("visibility","hidden");
                             }
                         });
                     }
