@@ -568,7 +568,8 @@
                 var styleIcon = new ol.style.Style({
                     image: new ol.style.Icon({
                         opacity: 1,
-                        src: 'data:image/svg+xml;utf8,'+svg
+                        src: 'data:image/svg+xml;utf8,'+svg,
+                        offset: [0, 0]
                     })
                 });
                 feature.setStyle(styleIcon);
