@@ -579,6 +579,8 @@
                     })
                 });
                 map.addLayer(layer);
+
+                fixContentHeight();
             } else {
                 if (layer !== null && feature !== null) {
                     layer.getSource().clear();
@@ -588,6 +590,16 @@
                 $("#mapTabMessage").text("No map data");
                 $("#mapTabMessage").css("display","block");
             }
+        }
+
+        function fixContentHeight(){
+            var viewHeight = $(window).height();
+            var header = $("div[data-role='header']:visible:visible");
+            var navbar = $("div[data-role='navbar']:visible:visible");
+            var content = $("div[data-role='content']:visible:visible");
+            var contentHeight = viewHeight - header.outerHeight() - navbar.outerHeight();
+            content.height(contentHeight);
+            map.updateSize();
         }
 
         $("#generalTabLink").click(function (e) {
