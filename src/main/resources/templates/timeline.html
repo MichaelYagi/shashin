@@ -313,7 +313,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <div id="appStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                <div id="timelineModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -361,7 +361,8 @@
 
         $("#saveMetadata").click(function (e) {
             e.preventDefault();
-            $("#appStatus").css("visibility","visible");
+            $("#timelineModalMsg").html("");
+            $("#timelineModalStatus").css("visibility","visible");
             var metadataId = $("#metadataId").val();
 
             closeTagPeopleDropdown(metadataId);
@@ -428,7 +429,7 @@
                         }
                         $("#timelineModalMsg").html(message);
                     }
-                    $("#appStatus").css("visibility","hidden");
+                    $("#timelineModalStatus").css("visibility","hidden");
                 });
             }
         });
