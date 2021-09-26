@@ -753,7 +753,10 @@ class SettingsController {
                                 metadataObj =
                                     mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
                             }
-                            if (metadataObj != null) {
+
+                            // Check for entry
+                            val metadataCount = metadataRepository?.countMetadataByPath(file.path)
+                            if (metadataObj != null && metadataCount == 0) {
                                 try {
                                     metadataRepository?.save(metadataObj)
                                     threadText = file.path + " indexed"
