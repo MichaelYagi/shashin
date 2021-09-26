@@ -416,7 +416,7 @@
                             var latlngArray = $("#latlng").val().split(",")
                             metadataObj.lat = $.trim(latlngArray[0])
                             metadataObj.lng = $.trim(latlngArray[1])
-                            if (metadataObj.lat !== "" || metadataObj.lng !== "") {
+                            if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
                                 $("#latlng").val(metadataObj.lat+","+metadataObj.lng)
                             }
                             metadataObj.keywords = $("#keywords").val()
