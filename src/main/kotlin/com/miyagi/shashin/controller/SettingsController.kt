@@ -16,8 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.Resource
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -33,10 +37,10 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.BufferedWriter
 import java.io.File
+import java.io.FileInputStream
 import java.io.FileWriter
 import java.net.HttpURLConnection
 import java.net.URL
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -508,6 +512,30 @@ class SettingsController {
         }
 
         return lineList
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/settings/logs/download")
+    fun getDownloadLogsLogs(): ResponseEntity<InputStreamResource>? {
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val logFilePath = "$rootPath/logs/spring-boot-logger.log"
+        val f = File(logFilePath)
+        if (f.exists() && !f.isDirectory) {
+            val headers = HttpHeaders()
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=shashin_"+java.time.Clock.systemUTC().instant()+".log")
+            headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+            headers.add("Pragma", "no-cache")
+            headers.add("Expires", "0")
+
+            val resource = InputStreamResource(FileInputStream(f))
+
+            return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(f.length())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource)
+        }
+        return null
     }
 
     @Secured("ROLE_ADMIN")
