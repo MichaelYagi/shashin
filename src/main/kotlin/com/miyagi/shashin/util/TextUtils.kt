@@ -6,14 +6,9 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import java.util.stream.Collectors
-import kotlin.collections.HashMap
 
 
 @Component
@@ -115,20 +110,20 @@ class TextUtils {
 
         fun timeOffsets(): List<String> {
 
-            val offsets: List<String> = listOf(
-                "−12:00",
-                "−11:00",
-                "−10:00",
-                "−09:30",
-                "−09:00",
-                "−07:00",
-                "−06:00",
-                "−05:00",
-                "−04:30",
-                "−04:00",
-                "−03:00",
-                "−02:00",
-                "−01:00",
+            return listOf(
+                "-12:00",
+                "-11:00",
+                "-10:00",
+                "-09:30",
+                "-09:00",
+                "-07:00",
+                "-06:00",
+                "-05:00",
+                "-04:30",
+                "-04:00",
+                "-03:00",
+                "-02:00",
+                "-01:00",
                 "±00:00",
                 "+01:00",
                 "+02:00",
@@ -152,8 +147,6 @@ class TextUtils {
                 "+13:00",
                 "+14:00"
             )
-
-            return offsets
         }
 
         private fun readUrl(urlString: String): String? {
