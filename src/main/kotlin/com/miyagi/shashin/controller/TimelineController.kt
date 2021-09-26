@@ -92,7 +92,11 @@ class TimelineController {
     private fun buildTimelineData(model: Model,mediaTypeFilter: String,page: Int,isInitialRequest: Boolean): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["message"] = "There are no photos. Please setup directories in Settings and scan ."
+        var mediaType = "photo"
+        if (mediaTypeFilter == "video") {
+            mediaType = mediaTypeFilter
+        }
+        response["message"] = "There are no "+mediaType+"s. Please setup directories in Settings and scan."
         response["metadataList"] = ""
         response["favorites"] = ""
         response["albumList"] = ""
