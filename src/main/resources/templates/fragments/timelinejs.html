@@ -86,7 +86,12 @@
             }
         }
         taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
-        $("#tagpeople").val(taggedPeopleString);
+        taggedPeopleString = taggedPeopleString.trim();
+        if (taggedPeopleString !== "") {
+            $("#tagpeople").val(taggedPeopleString);
+        } else if (metadata.tagpeople !== null) {
+            $("#tagpeople").val(metadata.tagpeople);
+        }
 
         if ($("#recognitionLabelInput").length > 0) {
             $("#recognitionLabelInput").remove();

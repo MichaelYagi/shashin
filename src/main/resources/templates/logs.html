@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${authority})"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+            <th:block th:if="${logList != ''}">
+                <br>
+                <code>
+                <th:block th:each="logLine, iterStat: ${logList}">
+                    <span th:text="${logLine}"></span><br>
+                </th:block>
+                </code>
+            </th:block>
+
+
+            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
+        </main>
+    </div>
+</div>
+
+</body>
+</html>

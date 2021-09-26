@@ -260,7 +260,7 @@
                                     <input type="text" class="form-control" id="latlng" name="latlng" value="">
                                 </div>
                                 <div class="col-sm">
-                                    <label for="tagpeople" class="col-form-label">Tag People (Comma separated)</label>
+                                    <label for="tagpeople" class="col-form-label">Tag People (comma separated)</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" aria-label="Tag People" id="tagpeople" name="tagpeople" value="">
                                         <!-- if there's label id data -->
@@ -276,7 +276,7 @@
                             </div>
                             <div class="form-group row">
                                 <div class="col-sm">
-                                    <label for="keywords" class="col-form-label">Keywords (comma seperated)</label>
+                                    <label for="keywords" class="col-form-label">Keywords (comma separated)</label>
                                     <input type="text" class="form-control" id="keywords" name="keywords" value="">
                                 </div>
                             </div>
@@ -418,6 +418,7 @@
                             metadataObj.lng = $.trim(latlngArray[1])
                             $("#latlng").val(metadataObj.lat+","+metadataObj.lng)
                             metadataObj.keywords = $("#keywords").val()
+                            metadataObj.tagpeople = $("#tagpeople").val()
                             $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
 
                             $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil").addClass("bi-pencil-square");
