@@ -492,14 +492,23 @@ class SettingsController {
         val f = File(logFilePath)
         if (f.exists() && !f.isDirectory) {
             model["message"] = ""
-            val content = Files.readString(Paths.get(logFilePath), StandardCharsets.UTF_8)
+            //val content = Files.readString(Paths.get(logFilePath), StandardCharsets.UTF_8)
+            val content = readFileAsLinesUsingUseLines(logFilePath).reversed()
             model["logList"] = content
         }
         return module
     }
 
-    private fun readFileAsLinesUsingUseLines(fileName: String): List<String>
-            = File(fileName).useLines { it.toList() }
+    private fun readFileAsLinesUsingUseLines(fileName: String): List<String> {
+        val inputStream = File(fileName).inputStream()
+        val lineList = mutableListOf<String>()
+
+        inputStream.bufferedReader().forEachLine {
+            lineList.add(it.trimEnd())
+        }
+
+        return lineList
+    }
 
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/scan")
