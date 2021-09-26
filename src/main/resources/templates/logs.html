@@ -14,11 +14,21 @@
                 <br>
                 <code>
                 <th:block th:each="logLine, iterStat: ${logList}">
-                    <span th:text="${logLine}"></span><br>
+                    <th:block th:if="${#strings.contains(logLine, 'INFO')}">
+                        <span class='bg-info text-white' th:text="${logLine}"></span><br>
+                    </th:block>
+                    <th:block th:if="${#strings.contains(logLine, 'WARN')}">
+                        <span class='bg-warning text-dark' th:text="${logLine}"></span><br>
+                    </th:block>
+                    <th:block th:if="${#strings.contains(logLine, 'ERROR')}">
+                        <span class='bg-danger text-white' th:text="${logLine}"></span><br>
+                    </th:block>
+                    <th:block th:unless="${#strings.contains(logLine, 'ERROR') or #strings.contains(logLine, 'WARN') or #strings.contains(logLine, 'INFO')}">
+                        <span class='bg-light text-dark' th:text="${logLine}"></span><br>
+                    </th:block>
                 </th:block>
                 </code>
             </th:block>
-
 
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
