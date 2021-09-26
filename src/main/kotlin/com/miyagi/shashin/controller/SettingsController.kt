@@ -771,6 +771,7 @@ class SettingsController {
                                     }
                                 }
                             } else {
+                                threadText = file.path + " ENTRY EXISTS"
                                 logger.log(Level.INFO, "Entry exists: " + file.name)
                             }
                         } else {
