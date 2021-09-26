@@ -142,7 +142,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                     val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy",Locale.ENGLISH)
                                     date = sourceDateFormat.parse(tag.description)
                                 } catch(e: Exception) {
-                                    // Do nothing
+                                    try {
+                                        // Sun. Jul. 25 14:34:09 -07:00 2021
+                                        val sourceDateFormat = SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy",Locale.ENGLISH)
+                                        date = sourceDateFormat.parse(tag.description)
+                                    } catch(e: Exception) {
+                                        // Do nothing
+                                    }
                                 }
                             }
                         }
@@ -177,11 +183,20 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                     val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy",Locale.ENGLISH)
                                     date = sourceDateFormat.parse(tag.description)
                                 } catch(e: Exception) {
-                                    // Do nothing
+                                    try {
+                                        // Sun. Jul. 25 14:34:09 -07:00 2021
+                                        val sourceDateFormat = SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy",Locale.ENGLISH)
+                                        date = sourceDateFormat.parse(tag.description)
+                                    } catch(e: Exception) {
+                                        // Do nothing
+                                    }
                                 }
                             }
                         }
-                        metadataObj.setModifiedAt(destFormat.format(date))
+                        
+                        if (date != null) {
+                            metadataObj.setModifiedAt(destFormat.format(date))
+                        }
                     }
                     "Detected MIME Type" -> {
                         metadataObj.setType(tag.description)
