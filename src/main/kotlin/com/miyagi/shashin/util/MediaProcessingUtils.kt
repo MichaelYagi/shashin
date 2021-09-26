@@ -69,9 +69,9 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         )
 
         val datePattern = "yyyy-MM-dd HH:mm:ss"
-        val sourceFormatMS = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-        val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
-        val destFormat = SimpleDateFormat(datePattern)
+        val sourceFormatMS = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",Locale.ENGLISH)
+        val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.ENGLISH)
+        val destFormat = SimpleDateFormat(datePattern,Locale.ENGLISH)
         var date: Date?
 
         val creationTime = attr.creationTime().toString()
@@ -125,7 +125,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
                     }
                     "Date/Time", "Creation Time", "Date/Time Original" -> {
-                        val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
+                        val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss",Locale.ENGLISH)
                         date = null
 
                         try {
@@ -133,13 +133,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                         } catch(e: Exception) {
                             try {
                                 // Sun Jul 25 14:34:09 PDT 2021
-                                val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+                                val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy",Locale.ENGLISH)
                                 date = sourceDateFormat.parse(tag.description)
 
                             } catch(e: Exception) {
                                 try {
                                     // Sun Jul 25 14:34:09 -07:00 2021
-                                    val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy")
+                                    val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy",Locale.ENGLISH)
                                     date = sourceDateFormat.parse(tag.description)
                                 } catch(e: Exception) {
                                     // Do nothing
@@ -161,7 +161,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                         }
                     }
                     "Modification Time", "File Modified Date" -> {
-                        val modificationFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
+                        val modificationFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss",Locale.ENGLISH)
                         date = null
 
                         try {
@@ -169,12 +169,12 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                         } catch(e: Exception) {
                             try {
                                 // Sun Jul 25 14:34:09 PDT 2021
-                                val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy")
+                                val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy",Locale.ENGLISH)
                                 date = sourceDateFormat.parse(tag.description)
                             } catch(e: Exception) {
                                 try {
                                     // Sun Jul 25 14:34:09 -07:00 2021
-                                    val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy")
+                                    val sourceDateFormat = SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy",Locale.ENGLISH)
                                     date = sourceDateFormat.parse(tag.description)
                                 } catch(e: Exception) {
                                     // Do nothing
