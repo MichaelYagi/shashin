@@ -416,7 +416,9 @@
                             var latlngArray = $("#latlng").val().split(",")
                             metadataObj.lat = $.trim(latlngArray[0])
                             metadataObj.lng = $.trim(latlngArray[1])
-                            $("#latlng").val(metadataObj.lat+","+metadataObj.lng)
+                            if (metadataObj.lat !== "" && metadataObj.lng !== "") {
+                                $("#latlng").val(metadataObj.lat+","+metadataObj.lng)
+                            }
                             metadataObj.keywords = $("#keywords").val()
                             metadataObj.tagpeople = $("#tagpeople").val()
                             $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
