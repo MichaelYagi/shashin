@@ -493,7 +493,7 @@ class SettingsController {
         if (f.exists() && !f.isDirectory) {
             model["message"] = ""
             //val content = Files.readString(Paths.get(logFilePath), StandardCharsets.UTF_8)
-            val content = readFileAsLinesUsingUseLines(logFilePath).reversed()
+            val content = readFileAsLinesUsingUseLines(logFilePath)
             model["logList"] = content
         }
         return module
