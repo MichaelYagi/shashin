@@ -26,8 +26,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.socket.messaging.SessionConnectEvent
@@ -477,6 +475,30 @@ class SettingsController {
         resp["status"] = "fail"
         return mapper.writeValueAsString(resp)
     }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/settings/logs")
+    fun getLogs(model: Model): String {
+        val module = "logs"
+        model["message"] = "No log file present"
+        model["logList"] = ""
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val logFilePath = "$rootPath/logs/spring-boot-logger.log"
+        val f = File(logFilePath)
+        if (f.exists() && !f.isDirectory) {
+            model["message"] = ""
+            val logList = readFileAsLinesUsingUseLines(logFilePath)
+            model["logList"] = logList
+        }
+        return module
+    }
+
+    private fun readFileAsLinesUsingUseLines(fileName: String): List<String>
+            = File(fileName).useLines { it.toList() }
 
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/scan")
