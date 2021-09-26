@@ -14,11 +14,12 @@
                     <span class="bi-calendar3" style="font-size: 1.5rem;"></span>
                 </a>
             </th:block>
-            <!--            <th:block th:unless="${activePage == 'map'}">-->
-<!--                <a class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none" th:href="${authority == 'ROLE_ADMIN' ? '/timeline/mediatype/all' : '/albums'}">-->
-<!--                    <span class="lead" style="font-size: medium">Shashin</span>-->
-<!--                </a>-->
-<!--            </th:block>-->
+            <th:block th:if="${activePage == 'logs'}">
+                &nbsp;&nbsp;
+                <a class="align-items-center mb-lg-0 link-dark text-decoration-none" href="/settings/logs/download" data-bs-toggle="tooltip" data-placement="bottom" title="Download logs">
+                    <span class="bi-download" style="font-size: 1.5rem;"></span>
+                </a>
+            </th:block>
         </div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="flex-grow-1 d-flex align-items-center">
