@@ -584,7 +584,7 @@
                 });
                 map.addLayer(layer);
 
-                fixContentHeight();
+                setTimeout(fixContentHeight, 1000);
             } else {
                 if (layer !== null && feature !== null) {
                     layer.getSource().clear();
