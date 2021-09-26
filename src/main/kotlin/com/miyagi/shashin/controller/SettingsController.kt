@@ -492,7 +492,7 @@ class SettingsController {
         if (f.exists() && !f.isDirectory) {
             model["message"] = ""
             val logList = readFileAsLinesUsingUseLines(logFilePath)
-            model["logList"] = logList
+            model["logList"] = logList.asReversed()
         }
         return module
     }
