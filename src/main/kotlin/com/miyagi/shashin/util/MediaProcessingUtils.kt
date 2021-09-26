@@ -193,7 +193,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 }
                             }
                         }
-                        
+
                         if (date != null) {
                             metadataObj.setModifiedAt(destFormat.format(date))
                         }
