@@ -756,7 +756,7 @@ class SettingsController {
 
                             // Check for entry
                             val metadataCount = metadataRepository?.countMetadataByPath(file.path)
-                            if (metadataObj != null && metadataCount == 0) {
+                            if (metadataCount == 0) {
                                 try {
                                     metadataRepository?.save(metadataObj)
                                     threadText = file.path + " indexed"
