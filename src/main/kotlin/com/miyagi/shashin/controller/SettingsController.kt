@@ -747,22 +747,28 @@ class SettingsController {
                         var threadText = file.path + " ALREADY SCANNED"
 
                         if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                            metadataObj =
-                                mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
-                            if (metadataObj != null) {
-                                metadataObj =
-                                    mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
-                            }
-
                             // Check for entry
                             val metadataCount = metadataRepository?.countMetadataByPath(file.path)
+
                             if (metadataCount == 0) {
-                                try {
-                                    metadataRepository?.save(metadataObj)
-                                    threadText = file.path + " indexed"
-                                } catch(e: Exception) {
-                                    logger.log(Level.SEVERE, "Could not save file "+metadataObj.getPath()+": " + e.localizedMessage)
-                                    threadText = file.path + " exception: " + e.localizedMessage
+                                metadataObj =
+                                    mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
+                                if (metadataObj != null) {
+                                    metadataObj =
+                                        mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
+                                }
+
+                                if (metadataObj != null) {
+                                    try {
+                                        metadataRepository?.save(metadataObj)
+                                        threadText = file.path + " indexed"
+                                    } catch (e: Exception) {
+                                        logger.log(
+                                            Level.SEVERE,
+                                            "Could not save file " + metadataObj.getPath() + ": " + e.localizedMessage
+                                        )
+                                        threadText = file.path + " exception: " + e.localizedMessage
+                                    }
                                 }
                             }
                         } else {

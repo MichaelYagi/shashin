@@ -45,18 +45,17 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
 
         val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
+        val metadataObj = _metadataObj?.let { extractExifData(file, sidecarDir, rootDir, it) }
         if (mdFile != null) {
-            val metadataObj = _metadataObj?.let { extractExifData(file, sidecarDir, rootDir, it) }
             val yamlFactory: YAMLFactory = YAMLFactory.builder()
                 .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
                 .disable(YAMLGenerator.Feature.SPLIT_LINES)
                 .build()
             val om = ObjectMapper(yamlFactory)
             om.writeValue(mdFile, metadataObj)
-            return metadataObj
         }
 
-        return null
+        return metadataObj
     }
 
     private fun extractExifData(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata): Metadata {
@@ -417,8 +416,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
                 if (tnFile != null) {
                     ImageIO.write(img, "jpg", tnFile)
-                    _metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
                 }
+                _metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original.jpg")
             }
 
             // Gallery thumbnails
@@ -436,11 +435,11 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             }
             if (tnFile != null) {
                 ImageIO.write(scaled209, "jpg", tnFile)
-                _metadataObj?.setThumbnailSmallHeight(scaled209.height)
-                _metadataObj?.setThumbnailSmallWidth(scaled209.width)
-                _metadataObj?.setThumbnailPathSmall(tnFile.path)
-                _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
+            _metadataObj?.setThumbnailSmallHeight(scaled209.height)
+            _metadataObj?.setThumbnailSmallWidth(scaled209.width)
+            _metadataObj?.setThumbnailPathSmall(thumbnailFileStr)
+            _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_209.jpg")
 
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered.jpg"
@@ -470,9 +469,9 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                val square: BufferedImage = getSquareThumbnail(scaled)
 
                 ImageIO.write(square, "jpg", tnFile)
-                _metadataObj?.setThumbnailPathCentered(tnFile.path)
-                _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
             }
+            _metadataObj?.setThumbnailPathCentered(thumbnailFileStr)
+            _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered.jpg")
 
             // Map marker thumbnail
             if (img != null) {
@@ -507,9 +506,9 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                    val mapMarker: BufferedImage = getSquareThumbnail(scaled)
 
                     ImageIO.write(mapMarker, "jpg", tnFile)
-                    _metadataObj?.setMapMarkerPath(tnFile.path)
-                    _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + tnFile.name)
                 }
+                _metadataObj?.setMapMarkerPath(thumbnailFileStr)
+                _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker.jpg")
             }
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)
