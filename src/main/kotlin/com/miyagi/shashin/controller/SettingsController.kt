@@ -770,6 +770,8 @@ class SettingsController {
                                         threadText = file.path + " exception: " + e.localizedMessage
                                     }
                                 }
+                            } else {
+                                logger.log(Level.INFO, "Entry exists: " + file.name)
                             }
                         } else {
                             threadText = file.path + " NOT SUPPORTED"
