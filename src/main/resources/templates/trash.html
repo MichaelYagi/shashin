@@ -18,6 +18,8 @@
                     <div th:replace="fragments/appjs :: appjs()"></div>
                     <div th:replace="fragments/trashjs :: trashjs()"></div>
                     <th:block th:if="${metadataList != ''}">
+                        <h1>Trashed</h1>
+
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
