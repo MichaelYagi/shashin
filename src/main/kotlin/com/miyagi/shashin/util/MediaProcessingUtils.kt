@@ -60,6 +60,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
     private fun extractExifData(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata): Metadata {
         metadataObj.setPath(file.path)
+        metadataObj.setFileName(file.name)
+        metadataObj.setTitle(file.name)
 
         // Get file data
         val attr: BasicFileAttributes = Files.readAttributes(
@@ -200,10 +202,10 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                     "Detected MIME Type" -> {
                         metadataObj.setType(tag.description)
                     }
-                    "File Name" -> {
-                        metadataObj.setFileName(tag.description)
-                        metadataObj.setTitle(tag.description)
-                    }
+//                    "File Name" -> {
+//                        metadataObj.setFileName(tag.description)
+//                        metadataObj.setTitle(tag.description)
+//                    }
                     "GPS Latitude", "Latitude" -> {
                         val latitudeValue = tag.description
                         var latDecimal = latitudeValue
