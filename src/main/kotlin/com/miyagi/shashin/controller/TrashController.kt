@@ -56,13 +56,16 @@ class TrashController {
         if (page > 0) {
             val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
             if (trashList.count() > 0) {
-                model["metadataList"] = trashList
+                response["metadataList"] = trashList
+                response["msg"] = ""
+                response["status"] = "success"
+                return mapper.writeValueAsString(response)
             }
         }
 
-        resp["msg"] = "Could not get results"
-        resp["status"] = "fail"
-        return mapper.writeValueAsString(resp)
+        response["msg"] = "Could not get results"
+        response["status"] = "fail"
+        return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/trash/unhide"], method = [RequestMethod.POST], produces = ["application/json"])
