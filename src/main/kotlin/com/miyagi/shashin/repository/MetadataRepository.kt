@@ -18,7 +18,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    fun countMetadataById(metadataId: String): Int
 
-   @Query("SELECT * FROM metadata WHERE hidden = true LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = true ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByHiddenAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
