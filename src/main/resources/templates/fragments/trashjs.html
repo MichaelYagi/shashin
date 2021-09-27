@@ -24,6 +24,7 @@
       contentType: 'application/json; charset=utf-8',
       async:false
     }).then(function (data) {
+        console.log(data);
       var mediaContentList = [];
       if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
         let message = "Error";
