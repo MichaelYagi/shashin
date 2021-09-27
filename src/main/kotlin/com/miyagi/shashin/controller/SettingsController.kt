@@ -747,32 +747,29 @@ class SettingsController {
                         var threadText = file.path + " ALREADY SCANNED"
 
                         if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                            // Check for entry
-                            val metadataCount = metadataRepository?.countMetadataByPath(file.path)
+                            metadataObj = mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
+                            if (metadataObj != null && metadataObj.getId().isNotEmpty()) {
+                                // Check for entry
+                                val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())
 
-                            if (metadataCount == 0) {
-                                metadataObj =
-                                    mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
-                                if (metadataObj != null) {
-                                    metadataObj =
-                                        mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
-                                }
+                                if (metadataCount == 0) {
+                                    metadataObj = mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
 
-                                if (metadataObj != null) {
                                     try {
-                                        metadataRepository?.save(metadataObj)
+                                        metadataRepository?.save(metadataObj!!)
                                         threadText = file.path + " indexed"
                                     } catch (e: Exception) {
                                         logger.log(
                                             Level.SEVERE,
-                                            "Could not save file " + metadataObj.getPath() + ": " + e.localizedMessage
+                                            "Could not save file " + metadataObj?.getPath() + ": " + e.localizedMessage
                                         )
+
                                         threadText = file.path + " exception: " + e.localizedMessage
                                     }
+                                } else {
+                                    threadText = file.path + " ENTRY EXISTS"
+                                    logger.log(Level.INFO, "Entry exists: " + file.name)
                                 }
-                            } else {
-                                threadText = file.path + " ENTRY EXISTS"
-                                logger.log(Level.INFO, "Entry exists: " + file.name)
                             }
                         } else {
                             threadText = file.path + " NOT SUPPORTED"

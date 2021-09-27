@@ -16,7 +16,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelineAll(): MutableIterable<Metadata>
 
-   fun countMetadataByPath(path: String): Int
+   fun countMetadataById(metadataId: String): Int
 
    @Query("SELECT * FROM metadata ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
