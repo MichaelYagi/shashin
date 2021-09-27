@@ -181,6 +181,9 @@
                                 $("#msgBatchMetadata").html(message);
                                 clearTimelineSelection();
                                 $("#timelineBatchModalStatus").css("visibility","hidden");
+                                $('#propBatchMetadata').find(':input').val('');
+                                $("#batchisobject").prop('checked', false);
+                                $("#batchhidden").prop('checked', false);
                             }
                         });
                     }
