@@ -314,14 +314,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
         metadataObj.setId(
             TextUtils.generateUUID(
-                metadataObj.getTakenAt(),
+                file.path,
                 metadataObj.getCreatedAt(),
                 metadataObj.getType(),
+                metadataObj.getCamera(),
                 metadataObj.getFNumber(),
                 metadataObj.getIso(),
-                metadataObj.getExposure(),
-                metadataObj.getLat(),
-                metadataObj.getLng()
+                metadataObj.getExposure()
             ).toString()
         )
 

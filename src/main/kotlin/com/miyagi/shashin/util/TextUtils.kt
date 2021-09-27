@@ -63,15 +63,14 @@ class TextUtils {
         }
 
         fun generateUUID(
-            takenAt:String?,
+            filePath:String?,
             createdAt:String?,
             type: String?,
+            camera: String?,
             fNumber: Double?,
             iso: Int?,
-            exposure: String?,
-            lat:String?,
-            lng:String?): UUID {
-            val uuidInput = takenAt+createdAt+type+fNumber+iso+exposure+lat+lng
+            exposure: String?): UUID {
+            val uuidInput = filePath+createdAt+type+camera+fNumber+iso+exposure
             return UUID.nameUUIDFromBytes(uuidInput.toByteArray())
         }
 
