@@ -126,6 +126,10 @@
             $("#isobject").prop('checked', true);
         }
 
+        if (metadata.hidden !== null && metadata.hidden === true) {
+            $("#hidden").prop('checked', true);
+        }
+
         $("#keywords").val(metadata.keywords);
 
         // Fill in details tab data
