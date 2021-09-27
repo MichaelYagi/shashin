@@ -581,6 +581,8 @@
         filenameList = filenameList.replace(/,\s*$/, "");
 
         $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
+        $("#batchisobject")[0].checked = false;
+        $("#batchhidden")[0].checked = false;
         if (filenameList !== "") {
             $("#editPhotosNamesModalLabel").text(filenameList);
         }

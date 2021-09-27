@@ -11,7 +11,7 @@
 
     function openGallery(e,index) {
         e.preventDefault();
-        if (lg) {
+        if (typeof lg !== "undefined") {
             lg.openGallery(index);
         }
     }
@@ -29,8 +29,8 @@
 
         // Clear modal data
         $('#propTimelineModal').find(':input').val('');
-        $("#isobject").prop('checked', false);
-        $("#hidden").prop('checked', false);
+        $("#isobject")[0].checked = false;
+        $("#hidden")[0].checked = false;
         $("#pathDetails").text("");
         $("#typeDetails").text("");
         $("#isoDetails").text("");
@@ -123,11 +123,11 @@
         }
 
         if (isObject === true) {
-            $("#isobject").prop('checked', true);
+            $("#isobject")[0].checked = true;
         }
 
         if (metadata.hidden !== null && metadata.hidden === true) {
-            $("#hidden").prop('checked', true);
+            $("#hidden")[0].checked = true;
         }
 
         $("#keywords").val(metadata.keywords);

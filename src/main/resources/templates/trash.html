@@ -10,14 +10,14 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${authority})"></div>
         <main role="main" class="col overflow-auto h-100">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
-            <div id="trashMessage"></div>
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+
+            <div id="trashMessage"></div>
             <div id="infinite-scroll-gallery">
                 <div class="row p-3">
+                    <div th:replace="fragments/appjs :: appjs()"></div>
+                    <div th:replace="fragments/trashjs :: trashjs()"></div>
                     <th:block th:if="${metadataList != ''}">
-                        <div th:replace="fragments/appjs :: appjs()"></div>
-                        <div th:replace="fragments/trashjs :: trashjs()"></div>
-
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
@@ -108,7 +108,7 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (lg) {
+        if (typeof lg !== "undefined") {
             lg.refresh(mediaContentList);
             $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                 jumpToLightGalleryIndex(e.detail.index);

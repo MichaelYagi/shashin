@@ -146,6 +146,12 @@
                         $("#latlngBatchData").val(),
                         "msgBatchMetadata"
                     ) === true) {
+                        if($("#batchisobject").is(':checked')) {
+                            $("#batchisobject").val("on");
+                        }
+                        if($("#batchhidden").is(':checked')) {
+                            $("#batchhidden").val("on");
+                        }
 
                         const posting = $.post({
                             url: "/timeline/update/batch",
@@ -182,8 +188,6 @@
                                 clearTimelineSelection();
                                 $("#timelineBatchModalStatus").css("visibility","hidden");
                                 $('#propBatchMetadata').find(':input').val('');
-                                $("#batchisobject").prop('checked', false);
-                                $("#batchhidden").prop('checked', false);
                             }
                         });
                     }
