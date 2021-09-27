@@ -428,7 +428,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             var scaled209: BufferedImage = Thumbnails.of(img)
                 .height(209)
                 .asBufferedImage()
-            if (scaled209.width > 300) {
+            if (scaled209.width > scaled209.height*2) {
                 scaled209 = Thumbnails.of(scaled209)
                     .height(209)
                     .sourceRegion(Positions.CENTER, 209, 209)
