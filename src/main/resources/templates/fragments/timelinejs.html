@@ -70,6 +70,9 @@
         if (metadata.year !== null) {
             $("#yearTaken").val(metadata.year);
         }
+        if (metadata.hidden !== null && metadata.hidden === true) {
+            $("#offsetTaken").prop('checked', true);
+        }
 
         var latlngValue = (metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
         $("#latlng").val(latlngValue);

@@ -37,6 +37,7 @@ CREATE TABLE `metadata` (
     `fNumber` REAL(10) DEFAULT NULL,
     `focalLength` REAL(10) DEFAULT NULL,
     `keywords` VARCHAR(500) DEFAULT NULL,
+    `hidden` BOOLEAN NOT NULL DEFAULT FALSE,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL,
     `lastAccessedAt` DATETIME DEFAULT NULL,

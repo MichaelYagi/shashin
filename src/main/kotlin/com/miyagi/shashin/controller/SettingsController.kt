@@ -754,6 +754,7 @@ class SettingsController {
 
                                 if (metadataCount == 0) {
                                     metadataObj = mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
+                                    metadataObj?.setHidden(false)
 
                                     try {
                                         metadataRepository?.save(metadataObj!!)

@@ -280,6 +280,13 @@
                                     <input type="text" class="form-control" id="keywords" name="keywords" value="">
                                 </div>
                             </div>
+                            <hr>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <input type="checkbox" name="hidden" id="hidden">
+                                    <label class="form-check-label" for="hidden">Remove Photo</label>
+                                </div>
+                            </div>
                             <br>
                             <div class="row">
                                 <div class="col-sm">
@@ -387,6 +394,7 @@
                     latlng:$("#latlng").val(),
                     keywords:$("#keywords").val(),
                     tagpeople:$("#tagpeople").val(),
+                    hidden:$("#hidden").prop("checked"),
                     isObject:$("#isobject").prop("checked")
                 }
 
@@ -421,6 +429,7 @@
                             }
                             metadataObj.keywords = $("#keywords").val()
                             metadataObj.tagpeople = $("#tagpeople").val()
+                            metadataObj.hidden = $("#hidden").prop("checked")
                             $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
 
                             $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil").addClass("bi-pencil-square");
