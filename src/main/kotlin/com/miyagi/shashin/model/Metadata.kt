@@ -40,6 +40,7 @@ class Metadata {
     private var lens: String? = null
     private var quality: String? = null
     private var keywords: String? = null
+    private var hidden: Boolean? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
     private var lastAccessedAt: String? = null
@@ -142,6 +143,9 @@ class Metadata {
     }
     fun setKeywords(keywords: String?) {
         this.keywords = keywords
+    }
+    fun setHidden(hidden: Boolean?) {
+        this.hidden = hidden
     }
     fun setCreatedAt(createdAt: String?) {
         this.createdAt = createdAt
@@ -249,6 +253,9 @@ class Metadata {
     fun getKeywords(): String? {
         return this.keywords
     }
+    fun getHidden(): Boolean? {
+        return this.hidden
+    }
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -289,6 +296,7 @@ class Metadata {
         map["lens"] = this.lens
         map["quality"] = this.quality
         map["keywords"] = this.keywords
+        map["hidden"] = this.hidden
         map["createdAt"] = this.createdAt
         map["modifiedAt"] = this.modifiedAt
         map["lastAccessedAt"] = this.lastAccessedAt

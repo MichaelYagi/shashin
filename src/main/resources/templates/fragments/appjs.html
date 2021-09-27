@@ -379,7 +379,7 @@
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $("#appSearch").css("display", "none");
-                if (view === "album" || view === "favorites") {
+                if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").css("display", "block");
                 } else if (view === "timeline") {
                     $("#timelineAppTools").css("display", "block");
@@ -402,6 +402,7 @@
             $("#timelineNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
         });
 
@@ -419,7 +420,7 @@
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $("#appSearch").css("display", "none");
-                if (view === "album" || view === "favorites") {
+                if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").css("display", "block");
                 } else if (view === "timeline") {
                     $("#timelineAppTools").css("display", "block");
@@ -442,6 +443,7 @@
             $("#timelineNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
         });
 
@@ -686,6 +688,40 @@
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     }
                     $("#favoritesMessage").html(message);
+                }
+            });
+        }
+
+        return false;
+    });
+
+    $("#albumAppToolsUntrash").click(function(e) {
+        e.preventDefault();
+
+        let metadataIdList = [];
+        $('.bi-circle-fill').each(function(i, obj) {
+            metadataIdList.push(obj.id.substring(6, obj.id.length));
+        });
+
+        if (metadataIdList.length > 0) {
+            let json = {metadataIdList: metadataIdList}
+
+            const posting = $.post({
+                url: "/trash/unhide",
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8'
+            });
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    let message = "Error";
+                    if (data["status"] === "success") {
+                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        window.top.location = window.top.location
+                    } else {
+                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    }
+                    $("#trashMessage").html(message);
                 }
             });
         }

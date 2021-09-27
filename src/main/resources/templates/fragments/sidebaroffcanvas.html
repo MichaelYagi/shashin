@@ -44,6 +44,11 @@
                         <span class="bi-wrench" style="font-size: 1rem;"></span> Settings
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='trash' ? ' active' : ''}" href="/trash">
+                        <span class="bi-trash" style="font-size: 1rem;"></span> Trash
+                    </a>
+                </li>
             </th:block>
         </ul>
     </div>
