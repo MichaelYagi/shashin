@@ -2,114 +2,116 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="trashjs()">
 <script type="text/javascript">
-  const $infiniteScrollGallery = document.getElementById(
-          'infinite-scroll-gallery',
-  );
-  const lightGalleryConfigs = getLightGalleryConfigs();
-  lightGalleryConfigs["dynamic"] = true;
-  const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+    const $infiniteScrollGallery = document.getElementById(
+        'infinite-scroll-gallery',
+    );
+    const lightGalleryConfigs = getLightGalleryConfigs();
+    lightGalleryConfigs["dynamic"] = true;
+    const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
 
-  function openGallery(e,index) {
-    e.preventDefault();
-    if (typeof lg !== "undefined") {
-      lg.openGallery(index);
-    }
-  }
-
-  function updateTrash(nextPage,activePage) {
-    // Get paged results
-    var promise = $.ajax({
-      type: 'get',
-      url: "/trash/"+nextPage,
-      contentType: 'application/json; charset=utf-8',
-      async:false
-    }).then(function (data) {
-        console.log(data);
-      var mediaContentList = [];
-      if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-        let message = "Error";
-        if (data["status"] === "success") {
-          if (data.hasOwnProperty("metadataList")) {
-            var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
-
-            var html = "";
-
-            if (metadataList.length > 0) {
-              var mediaLinkLength = $(".mediaLink").length;
-              for (var index in metadataList) {
-                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                var mediaContent = {}
-                var metadata = metadataList[index];
-
-                let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
-
-                html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
-                        '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
-                        '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n';
-
-                if (metadata.type.includes("video")) {
-                  html +=
-                          '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                          '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: darkblue;"></span>\n' +
-                          '   </div>\n';
-                }
-
-                html += '<div class="thumbnail-tl" id="tntl' + metadata.id + '">\n' +
-                        '   <a href="#" id="select' + metadata.id + '">\n' +
-                        '       <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                        '   </a>\n' +
-                        '</div>';
-
-                html += '<div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
-
-                mediaContent.subHtml = (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
-                if (metadata.type.includes("video")) {
-                  mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
-                  html +=
-                          '   <a class="mediaLink" onclick="return openGallery(event,'+currentMediaLinkIndex+')" \n' +
-                          '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                          '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
-                          '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                          '   </a>\n';
-                } else {
-                  mediaContent.src = metadata.thumbnailUrlOriginal;
-                  html +=
-                          '   <a class="mediaLink" onclick="return openGallery(event,'+currentMediaLinkIndex+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
-                          '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
-                          '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                          '   </a>\n';
-                }
-                mediaContentList.push(mediaContent);
-                html += '</div></div>\n';
-
-                $(html).insertBefore($(".appendMetadataPhotos").last())
-
-                var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                setPhotoOverlays(htmlEncodedMetadata, activePage);
-
-                $("#image" + metadata.id).on('load', function () {
-                  $(this).css("background-color", "transparent");
-                });
-
-                html = "";
-              }
-            } else {
-              $(".appendMetadataPhotos").last().text("EOL").css("display","none")
-            }
-          }
-        } else {
-          message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-          $("#msgTimeline").html(message);
+    function openGallery(e, index) {
+        e.preventDefault();
+        if (typeof lg !== "undefined") {
+            lg.openGallery(index);
         }
-      }
+    }
 
-      return mediaContentList;
-    });
+    function updateTrash(nextPage, activePage) {
+        // Get paged results
+        var promise = $.ajax({
+            type: 'get',
+            url: "/trash/" + nextPage,
+            contentType: 'application/json; charset=utf-8',
+            async: false
+        }).then(function (data) {
+            var mediaContentList = [];
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === "success") {
+                    if (data.hasOwnProperty("metadataList")) {
+                        var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
 
-    return promise.done(function(data) {
-      return data;
-    });
-  }
+                        var html = "";
+
+                        if (metadataList.length > 0) {
+                            var mediaLinkLength = $(".mediaLink").length;
+                            for (var index in metadataList) {
+                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                                var mediaContent = {}
+                                var metadata = metadataList[index];
+
+                                let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
+
+                                html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
+                                    '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
+                                    '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n';
+
+                                if (metadata.type.includes("video")) {
+                                    html +=
+                                        '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
+                                        '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: darkblue;"></span>\n' +
+                                        '   </div>\n';
+                                }
+
+                                html += '<div class="thumbnail-tl" id="tntl' + metadata.id + '">\n' +
+                                    '   <a href="#" id="select' + metadata.id + '">\n' +
+                                    '       <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                    '   </a>\n' +
+                                    '</div>';
+
+                                html += '<div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+
+                                mediaContent.subHtml = (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
+                                if (metadata.type.includes("video")) {
+                                    mediaContent.video = {
+                                        "source": [{"src": metadata.videoUrl, "type": "video/mp4"}],
+                                        "attributes": {"preload": false, "controls": true}
+                                    };
+                                    html +=
+                                        '   <a class="mediaLink" onclick="return openGallery(event,' + currentMediaLinkIndex + ')" \n' +
+                                        '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
+                                        '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                        '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                        '   </a>\n';
+                                } else {
+                                    mediaContent.src = metadata.thumbnailUrlOriginal;
+                                    html +=
+                                        '   <a class="mediaLink" onclick="return openGallery(event,' + currentMediaLinkIndex + ')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                                        '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                        '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                                        '   </a>\n';
+                                }
+                                mediaContentList.push(mediaContent);
+                                html += '</div></div>\n';
+
+                                $(html).insertBefore($(".appendMetadataPhotos").last())
+
+                                var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                                setPhotoOverlays(htmlEncodedMetadata, activePage);
+
+                                $("#image" + metadata.id).on('load', function () {
+                                    $(this).css("background-color", "transparent");
+                                });
+
+                                html = "";
+                            }
+                        } else {
+                            $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                        }
+                    }
+                } else {
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#msgTimeline").html(message);
+                }
+            }
+
+            return mediaContentList;
+        });
+
+        return promise.done(function (data) {
+            return data;
+        });
+    }
 </script>
 
 </body>
