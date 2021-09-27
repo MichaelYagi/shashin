@@ -11,7 +11,7 @@
 
     function openGallery(e,index) {
         e.preventDefault();
-        if (lg) {
+        if (typeof lg !== "undefined") {
             lg.openGallery(index);
         }
     }
