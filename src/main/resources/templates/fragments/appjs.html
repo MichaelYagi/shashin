@@ -184,15 +184,15 @@
     }
 
     function copyTextToClipboard(text,albumId) {
-        if (!navigator.clipboard) {
+        //if (!navigator.clipboard) {
             $("#msg"+albumId).html(fallbackCopyTextToClipboard(text));
-        } else {
-            navigator.clipboard.writeText(text).then(function () {
-                $("#msg" + albumId).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
-            }, function (err) {
-                $("#msg" + albumId).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
-            });
-        }
+        // } else {
+        //     navigator.clipboard.writeText(text).then(function () {
+        //         $("#msg" + albumId).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+        //     }, function (err) {
+        //         $("#msg" + albumId).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
+        //     });
+        // }
     }
 
     function updateShareLink(baseUrl,albumId,action) {
