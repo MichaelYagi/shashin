@@ -90,7 +90,7 @@
 
                             <th:block th:if="${metadata.type.contains('video')}">
                                 <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;"></span>
+                                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
                                 </div>
                             </th:block>
 
@@ -100,7 +100,7 @@
                             <div th:id="'tnbr'+${metadata.id}">
                                 <a href="#" th:id="'favorite'+${metadata.id}">
                                     <!--th:class="${favorites.get(metadata.id)} ? 'bi-suit-heart-fill' : 'bi-suit-heart'"-->
-                                    <span th:id="'bricon'+${metadata.id}" style="font-size: 1rem;color: red;"></span>
+                                    <span th:id="'bricon'+${metadata.id}" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
                                 </a>
                             </div>
 

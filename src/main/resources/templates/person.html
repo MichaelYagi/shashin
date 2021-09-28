@@ -30,14 +30,14 @@
 
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                        <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;"></span>
+                                        <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
                                     </div>
                                 </th:block>
 
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
                                     <th:block th:if="${labelPhotoMap.get(metadata.id).get('isTagged')}">
                                         <div class="thumbnail-br" th:id="'tntr'+${metadata.id}">
-                                            <span class="bi-bookmark-fill" style="font-size: 1rem;color: lightsalmon;"></span>
+                                            <span class="bi-bookmark-fill" style="font-size: 1rem;color: lightsalmon;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
                                         </div>
                                     </th:block>
 
