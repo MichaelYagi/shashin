@@ -297,9 +297,72 @@ class TimelineController {
         return response
     }
 
-    @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/remove/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
+    fun removeMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
+//        println(requestBody)
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        if (metadataMap.containsKey("id") &&
+            metadataMap.containsKey("year") &&
+            metadataMap.containsKey("month") &&
+            metadataMap.containsKey("day") &&
+            metadataMap.containsKey("time") &&
+            metadataMap.containsKey("offset") &&
+            metadataMap.containsKey("keywords") &&
+            metadataMap.containsKey("latlng") &&
+            metadataMap.containsKey("title") &&
+//            metadataMap.containsKey("labelIds") &&
+            metadataMap.containsKey("tagpeople") &&
+            metadataMap.containsKey("hidden") &&
+            metadataMap.containsKey("isObject") &&
+            metadataMap["id"].toString() == metadataId
+        ) {
+            val metadataObj = metadataRepository.findById(metadataId)
+            val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataObj.get().getId())
+            if (recognitionLabelPhotos != null) {
+                for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                    recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
+                }
+            }
+            val isHidden = metadataMap["hidden"].toString().toBoolean()
+
+            if (isHidden) {
+                metadataObj.get().setHidden(true)
+                removeMetadata(metadataId)
+            }
+
+            // Update DB
+            metadataRepository.save(metadataObj.get())
+            // Update MD file
+            val mediaProcessingUtils = MediaProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+            val originalImagePath = metadataObj.get().getPath()
+            var rootDir: String? = null
+            val rootMediaDirs = mediaDirRepository.findAll()
+            for (rootmediaDir in rootMediaDirs) {
+                if (originalImagePath != null && rootmediaDir != null) {
+                    if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                        rootDir = rootmediaDir.getDirectory()
+                        break
+                    }
+                }
+            }
+
+            if (rootDir != null) {
+                mediaProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString(), rootDir)
+            }
+            resp["msg"] = "Saved!"
+            resp["status"] = "success"
+            return mapper.writeValueAsString(resp)
+        }
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -327,45 +390,17 @@ class TimelineController {
                 }
             }
             val isObject = metadataMap["isObject"].toString().toBoolean()
-            val isHidden = metadataMap["hidden"].toString().toBoolean()
 
-            if (isHidden) {
-                metadataObj.get().setHidden(true)
-                removeMetadata(metadataId)
-            } else {
-                if (metadataMap["tagpeople"].toString().trim() != "") {
-                    val recognitionLabelArray = metadataMap["tagpeople"].toString().split(",")
-                    if (recognitionLabelArray.count() > 0) {
-                        recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                    }
-                    for (recognitionLabel in recognitionLabelArray) {
-                        val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
-                        var recognitionLabelObj = RecognitionLabel()
-                        if (recognitionLabelRecord == null) {
-                            recognitionLabelObj.setName(recognitionLabel.trim())
-                            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                            val now = LocalDateTime.now()
-                            recognitionLabelObj.setCreatedAt(dtf.format(now))
-                            recognitionLabelObj.setModifiedAt(dtf.format(now))
-                            recognitionLabelRepository?.save(recognitionLabelObj)
-                        } else {
-                            recognitionLabelObj = recognitionLabelRecord
-                        }
-                        val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj.getId(),metadataObj.get().getId())
-                        if (recognitionLabelPhotoCount == 0) {
-                            val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                            recognitionLabelPhotoObj.setMetadataId(metadataObj.get().getId())
-                            recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
-                            recognitionLabelPhotoObj.setConfidence("0.0")
-                            recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
-                        }
-                    }
-                } else if (isObject) {
+            if (metadataMap["tagpeople"].toString().trim() != "") {
+                val recognitionLabelArray = metadataMap["tagpeople"].toString().split(",")
+                if (recognitionLabelArray.count() > 0) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                    val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                }
+                for (recognitionLabel in recognitionLabelArray) {
+                    val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
                     var recognitionLabelObj = RecognitionLabel()
                     if (recognitionLabelRecord == null) {
-                        recognitionLabelObj.setName("object")
+                        recognitionLabelObj.setName(recognitionLabel.trim())
                         val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                         val now = LocalDateTime.now()
                         recognitionLabelObj.setCreatedAt(dtf.format(now))
@@ -374,79 +409,101 @@ class TimelineController {
                     } else {
                         recognitionLabelObj = recognitionLabelRecord
                     }
-
-                    val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                    recognitionLabelPhotoObj.setMetadataId(metadataId)
-                    recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
-                    recognitionLabelPhotoObj.setConfidence("-0.1")
-                    recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
-                } else if (metadataMap["tagpeople"].toString().isBlank()) {
-                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                }
-
-                if (metadataMap["title"].toString().trim() == "") {
-                    metadataObj.get().setTitle(metadataObj.get().getFileName())
-                } else {
-                    metadataObj.get().setTitle(metadataMap["title"].toString().trim())
-                }
-                if (metadataMap["year"].toString() == "") {
-                    metadataObj.get().setYear(null)
-                } else {
-                    metadataObj.get().setYear(metadataMap["year"].toString().toInt())
-                }
-                if (metadataMap["month"].toString() == "") {
-                    metadataObj.get().setMonth(null)
-                } else {
-                    metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
-                }
-                if (metadataMap["day"].toString() == "") {
-                    metadataObj.get().setDay(null)
-                } else {
-                    metadataObj.get().setDay(metadataMap["day"].toString().toInt())
-                }
-                if (metadataMap["time"].toString() == "") {
-                    metadataObj.get().setTime(null)
-                } else {
-                    metadataObj.get().setTime(metadataMap["time"].toString())
-                }
-                if (metadataMap["offset"].toString() == "") {
-                    metadataObj.get().setTimeZone(null)
-                } else {
-                    metadataObj.get().setTimeZone(metadataMap["offset"].toString())
-                }
-                if (metadataMap["keywords"].toString() == "") {
-                    metadataObj.get().setKeywords(null)
-                } else {
-                    val keywordArray = metadataMap["keywords"].toString().split(",")
-                    var keywords = keywordArray.joinToString { it.trim() }.trim()
-                    if (keywords.last() == ',') {
-                        keywords = keywords.dropLast(1)
+                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj.getId(),metadataObj.get().getId())
+                    if (recognitionLabelPhotoCount == 0) {
+                        val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                        recognitionLabelPhotoObj.setMetadataId(metadataObj.get().getId())
+                        recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                        recognitionLabelPhotoObj.setConfidence("0.0")
+                        recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                     }
-                    metadataObj.get().setKeywords(keywords)
                 }
-                if (metadataMap["latlng"].toString() == "") {
-                    metadataObj.get().setLat(null)
-                    metadataObj.get().setLng(null)
+            } else if (isObject) {
+                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                var recognitionLabelObj = RecognitionLabel()
+                if (recognitionLabelRecord == null) {
+                    recognitionLabelObj.setName("object")
+                    val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+                    val now = LocalDateTime.now()
+                    recognitionLabelObj.setCreatedAt(dtf.format(now))
+                    recognitionLabelObj.setModifiedAt(dtf.format(now))
+                    recognitionLabelRepository?.save(recognitionLabelObj)
                 } else {
-                    var latlng = metadataMap["latlng"].toString()
-                    latlng = latlng.replace("\\s".toRegex(), "")
-                    val latlngArr = latlng.split(",")
-                    if (latlngArr.count() == 2) {
-                        metadataObj.get().setLat(latlngArr[0])
-                        metadataObj.get().setLng(latlngArr[1])
+                    recognitionLabelObj = recognitionLabelRecord
+                }
 
-                        val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,latlngArr[0], latlngArr[1]))
-                        if (buildPlace.isNotBlank()) {
-                            metadataObj.get().setPlaceName(buildPlace)
+                val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                recognitionLabelPhotoObj.setMetadataId(metadataId)
+                recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                recognitionLabelPhotoObj.setConfidence("-0.1")
+                recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+            } else if (metadataMap["tagpeople"].toString().isBlank()) {
+                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+            }
 
-                            val engine = TimeZoneEngine.initialize()
-                            val maybeZoneId: Optional<ZoneId> = engine.query(latlngArr[0].toString().toDouble(), latlngArr[1].toString().toDouble())
-                            val zone = ZoneId.of(maybeZoneId.get().id)
-                            val dt = LocalDateTime.now()
-                            val zdt: ZonedDateTime = dt.atZone(zone)
-                            val offset = zdt.offset
-                            metadataObj.get().setTimeZone(offset.toString())
-                        }
+            if (metadataMap["title"].toString().trim() == "") {
+                metadataObj.get().setTitle(metadataObj.get().getFileName())
+            } else {
+                metadataObj.get().setTitle(metadataMap["title"].toString().trim())
+            }
+            if (metadataMap["year"].toString() == "") {
+                metadataObj.get().setYear(null)
+            } else {
+                metadataObj.get().setYear(metadataMap["year"].toString().toInt())
+            }
+            if (metadataMap["month"].toString() == "") {
+                metadataObj.get().setMonth(null)
+            } else {
+                metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
+            }
+            if (metadataMap["day"].toString() == "") {
+                metadataObj.get().setDay(null)
+            } else {
+                metadataObj.get().setDay(metadataMap["day"].toString().toInt())
+            }
+            if (metadataMap["time"].toString() == "") {
+                metadataObj.get().setTime(null)
+            } else {
+                metadataObj.get().setTime(metadataMap["time"].toString())
+            }
+            if (metadataMap["offset"].toString() == "") {
+                metadataObj.get().setTimeZone(null)
+            } else {
+                metadataObj.get().setTimeZone(metadataMap["offset"].toString())
+            }
+            if (metadataMap["keywords"].toString() == "") {
+                metadataObj.get().setKeywords(null)
+            } else {
+                val keywordArray = metadataMap["keywords"].toString().split(",")
+                var keywords = keywordArray.joinToString { it.trim() }.trim()
+                if (keywords.last() == ',') {
+                    keywords = keywords.dropLast(1)
+                }
+                metadataObj.get().setKeywords(keywords)
+            }
+            if (metadataMap["latlng"].toString() == "") {
+                metadataObj.get().setLat(null)
+                metadataObj.get().setLng(null)
+            } else {
+                var latlng = metadataMap["latlng"].toString()
+                latlng = latlng.replace("\\s".toRegex(), "")
+                val latlngArr = latlng.split(",")
+                if (latlngArr.count() == 2) {
+                    metadataObj.get().setLat(latlngArr[0])
+                    metadataObj.get().setLng(latlngArr[1])
+
+                    val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,latlngArr[0], latlngArr[1]))
+                    if (buildPlace.isNotBlank()) {
+                        metadataObj.get().setPlaceName(buildPlace)
+
+                        val engine = TimeZoneEngine.initialize()
+                        val maybeZoneId: Optional<ZoneId> = engine.query(latlngArr[0].toString().toDouble(), latlngArr[1].toString().toDouble())
+                        val zone = ZoneId.of(maybeZoneId.get().id)
+                        val dt = LocalDateTime.now()
+                        val zdt: ZonedDateTime = dt.atZone(zone)
+                        val offset = zdt.offset
+                        metadataObj.get().setTimeZone(offset.toString())
                     }
                 }
             }
@@ -479,9 +536,110 @@ class TimelineController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/timeline/update/batch"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/remove/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
+    fun removeBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
+//        println(requestBody)
+        val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        var idArray: Array<String>? = null
+        var dayTaken: Int? = null
+        var monthTaken: Int? = null
+        var yearTaken: Int? = null
+        var latlng: String? = null
+        var keywords: String? = null
+        var recognitionLabelNames: String? = null
+        var isObject = false
+        var isHidden = false
+
+        for ((k, v) in batchMetadataMap) {
+            if (v != "") {
+                when (k) {
+                    "batchisobject" -> {
+                        if (v.toString() == "on") {
+                            isObject = true
+                        }
+                    }
+                    "batchhidden" -> {
+                        if (v.toString() == "on") {
+                            isHidden = true
+                        }
+                    }
+                    "tagBatchDataInput" -> {
+                        recognitionLabelNames = v.toString().trim()
+                    }
+                    "batchMetadataIds" -> {
+                        idArray = mapper.readValue(v.toString(), Array<String>::class.java)
+                    }
+                    "dayTakenBatchData" -> {
+                        dayTaken = v.toString().toInt()
+                    }
+                    "monthTakenBatchData" -> {
+                        monthTaken = v.toString().toInt()
+                    }
+                    "yearTakenBatchData" -> {
+                        yearTaken = v.toString().toInt()
+                    }
+                    "latlngBatchData" -> {
+                        latlng = v.toString()
+                    }
+                    "keywordsBatchData"  -> {
+                        keywords = v.toString()
+                    }
+                }
+            }
+        }
+
+        if (!idArray.isNullOrEmpty()) {
+            val metadataList: ArrayList<Metadata> = ArrayList()
+
+            for (id in idArray) {
+                val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
+                val metadata = metadataObj.get()
+
+                if (isHidden) {
+                    metadata.setHidden(true)
+                    removeMetadata(id)
+                }
+
+                metadataList.add(metadata)
+            }
+
+            if (metadataList.isNotEmpty()) {
+                // Update DB
+                metadataRepository.saveAll(metadataList)
+
+                // Update MD file
+                val mediaProcessingUtils = MediaProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+                for (metadata in metadataList) {
+                    val originalImagePath = metadata.getPath()
+                    var rootDir: String? = null
+                    val rootMediaDirs = mediaDirRepository.findAll()
+                    for (rootmediaDir in rootMediaDirs) {
+                        if (originalImagePath != null && rootmediaDir != null) {
+                            if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                                rootDir = rootmediaDir.getDirectory()
+                                break
+                            }
+                        }
+                    }
+                    if (rootDir != null) {
+                        mediaProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString(), rootDir)
+                    }
+                }
+                resp["msg"] = "Saved!"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
+            }
+        }
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/timeline/update/batch"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
 //        println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})

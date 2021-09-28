@@ -153,11 +153,21 @@
                             $("#batchhidden").val("on");
                         }
 
-                        const posting = $.post({
-                            url: "/timeline/update/batch",
-                            data: JSON.stringify($('#saveBatchData').serializeObject()),
-                            contentType: 'application/json; charset=utf-8'
-                        });
+                        var posting;
+
+                        if($("#batchhidden").is(':checked')) {
+                            posting = $.post({
+                                url: "/timeline/remove/batch",
+                                data: JSON.stringify($('#saveBatchData').serializeObject()),
+                                contentType: 'application/json; charset=utf-8'
+                            });
+                        } else {
+                            posting = $.post({
+                                url: "/timeline/update/batch",
+                                data: JSON.stringify($('#saveBatchData').serializeObject()),
+                                contentType: 'application/json; charset=utf-8'
+                            });
+                        }
 
                         posting.done(function (data) {
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
