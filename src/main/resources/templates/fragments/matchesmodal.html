@@ -260,12 +260,13 @@
     });
 
     // Clear message on modal close
-    $('#prop'+metadata.id).on('hide.bs.modal', function () {
-      $("#msg"+metadata.id).html("");
+    $('#propmatches'+metadata.id).on('hide.bs.modal', function () {
+        $("#msg"+metadata.id).html("");
+        $("#isobject"+metadata.id)[0].checked = false;
     });
 
     // Clear message on input editing
-    $('#prop'+metadata.id+' input').bind('keypress', function() {
+    $('#propmatches'+metadata.id+' input').bind('keypress', function() {
       $("#msg"+metadata.id).html("");
     });
   }
