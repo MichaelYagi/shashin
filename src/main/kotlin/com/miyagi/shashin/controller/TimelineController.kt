@@ -299,7 +299,6 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    @Transactional
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -316,9 +315,9 @@ class TimelineController {
 //            metadataMap.containsKey("labelIds") &&
             metadataMap.containsKey("tagpeople") &&
             metadataMap.containsKey("hidden") &&
-            metadataMap.containsKey("isObject")
+            metadataMap.containsKey("isObject") &&
+            metadataMap["id"].toString() == metadataId
         ) {
-            val metadataId = metadataMap["id"].toString()
             val metadataObj = metadataRepository.findById(metadataId)
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataObj.get().getId())
             if (recognitionLabelPhotos != null) {
@@ -331,10 +330,7 @@ class TimelineController {
 
             if (isHidden) {
                 metadataObj.get().setHidden(true)
-                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                albumPhotoRepository.deleteByMetadataId(metadataId)
-                favoriteRepository.deleteByMetadataId(metadataId)
-                albumPhotoCommentRepository.deleteByMetadataId(metadataId)
+                removeMetadata(metadataId)
             } else {
                 if (metadataMap["tagpeople"].toString().trim() != "") {
                     val recognitionLabelArray = metadataMap["tagpeople"].toString().split(",")
@@ -484,7 +480,6 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    @Transactional
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
 //        println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -546,10 +541,7 @@ class TimelineController {
 
                 if (isHidden) {
                     metadata.setHidden(true)
-                    recognitionLabelPhotoRepository?.deleteByMetadataId(id)
-                    albumPhotoRepository.deleteByMetadataId(id)
-                    favoriteRepository.deleteByMetadataId(id)
-                    albumPhotoCommentRepository.deleteByMetadataId(id)
+                    removeMetadata(id)
                 } else {
                     val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                     if (recognitionLabelPhotos != null) {
@@ -680,6 +672,14 @@ class TimelineController {
         resp["msg"] = "Could not save"
         resp["status"] = "fail"
         return mapper.writeValueAsString(resp)
+    }
+
+    @Transactional
+    fun removeMetadata(id: String) {
+        recognitionLabelPhotoRepository?.deleteByMetadataId(id)
+        albumPhotoRepository.deleteByMetadataId(id)
+        favoriteRepository.deleteByMetadataId(id)
+        albumPhotoCommentRepository.deleteByMetadataId(id)
     }
 
     @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
