@@ -299,6 +299,7 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @Transactional
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -480,6 +481,7 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @Transactional
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
 //        println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
