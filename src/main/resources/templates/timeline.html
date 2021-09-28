@@ -59,13 +59,13 @@
                         <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
                             <br>
                             <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                <section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos">Undated</strong></p></section>
+                                <section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>
                                 <div class="row p-3">
                             </th:block>
 
                             <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                 <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                    <section class="scrollspy" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong class="dateHeading" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p></section>
+                                    <section class="scrollspy" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong class="dateHeading p-1" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p></section>
                                     <span style="display: none;" class="dateTakenHeading" th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></span>
                                 </th:block>
                                 <div class="row p-3">
