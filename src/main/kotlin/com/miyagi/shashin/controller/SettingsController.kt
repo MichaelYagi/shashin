@@ -483,7 +483,11 @@ class SettingsController {
 
     @Secured("ROLE_ADMIN")
     @GetMapping("/settings/logs")
-    fun getLogs(model: Model): String {
+    fun getLogs(model: Model, request: HttpServletRequest): String {
+        var lineLimit = 1000
+        if (request.getParameter("lines") != null && isNumber(request.getParameter("lines"))) {
+            lineLimit = request.getParameter("lines").toString().toInt()
+        }
         val module = "logs"
         model["message"] = "No log file present"
         model["logList"] = ""
@@ -498,9 +502,18 @@ class SettingsController {
             model["message"] = ""
             //val content = Files.readString(Paths.get(logFilePath), StandardCharsets.UTF_8)
             val content = readFileAsLinesUsingUseLines(logFilePath)
-            model["logList"] = content
+            model["logList"] = content.takeLast(lineLimit)
         }
         return module
+    }
+
+    private fun isNumber(s: String): Boolean {
+        return try {
+            s.toInt()
+            true
+        } catch (ex: NumberFormatException) {
+            false
+        }
     }
 
     private fun readFileAsLinesUsingUseLines(fileName: String): List<String> {
