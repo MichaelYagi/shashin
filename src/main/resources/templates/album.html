@@ -49,7 +49,7 @@
                                     </div>
 
                                     <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                        <a href="#" data-bs-toggle="modal" th:data-bs-target="'#propalbum'+${metadata.id}">
+                                        <a href="#" th:id="'albumModalEdit'+${metadata.id}"  th:onclick="return openAlbumModal(event,[[${metadata.id}]])" style="text-decoration: none;color: midnightblue">
                                             <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
                                         </a>
                                     </div>
@@ -106,6 +106,7 @@
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
+                                $("#albumModalEdit[[${metadata.id}]]").attr("tag", decodeHtml("[[${metadata}]]"));
                                 setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                                 renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
                                 activateAlbumListeners("[[${metadata}]]","[[${album}]]")
@@ -123,38 +124,37 @@
     </div>
 </div>
 
-<!--<div class="modal fade" id="propalbum'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true">-->
-<!--    <div class="modal-dialog modal-lg" role="document">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>-->
-<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">-->
-<!--                    <span aria-hidden="true">&times;</span>-->
-<!--                </button>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!--                <form id="saveData'+metadata.id+'">-->
-<!--                    <input type="hidden" name="id" value="'+metadata.id+'">-->
-<!--                    <div class="col-auto form-check">-->
-<!--                        <input type="checkbox" class="form-check-input" id="removeFromAlbum'+metadata.id+'" name="removeFromAlbum">-->
-<!--                        <label class="form-check-label" for="removeFromAlbum'+metadata.id+'">Remove from album</label>-->
-<!--                    </div>-->
-<!--                    <div class="col-auto form-check">-->
-<!--                        <input type="checkbox" class="form-check-input" id="setCoverAlbum'+metadata.id+'" name="setCoverAlbum">-->
-<!--                        <label class="form-check-label" for="setCoverAlbum'+metadata.id+'">Set as album cover</label>-->
-<!--                    </div>-->
-<!--                </form>-->
-<!--                <div class="col-sm">-->
-<!--                    <span id="msg'+metadata.id+'"></span>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            <div class="modal-footer">-->
-<!--                <button type="button" class="btn btn-primary" id="saveAlbum'+metadata.id+'">Save</button>-->
-<!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+<div class="modal fade" id="propAlbumModal" tabindex="-1" role="dialog" aria-labelledby="labelAlbumModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit <span id="albumModalTitle"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <form id="saveAlbumModalForm">
+                    <input type="hidden" name="metadataId" id="metadataId" value="">
+                    <div class="col-auto form-check">
+                        <input type="checkbox" class="form-check-input" id="removeFromAlbum" name="removeFromAlbum">
+                        <label class="form-check-label" for="removeFromAlbum">Remove from album</label>
+                    </div>
+                    <div class="col-auto form-check">
+                        <input type="checkbox" class="form-check-input" id="setCoverAlbum" name="setCoverAlbum">
+                        <label class="form-check-label" for="setCoverAlbum">Set as album cover</label>
+                    </div>
+                </form>
+                <div class="col-sm">
+                    <span id="albumModalMsg"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="saveAlbumModal">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!--<div class="modal fade" id="propalbumphotocomment'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true">-->
 <!--    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">-->
@@ -213,6 +213,47 @@
                 jumpToLightGalleryIndex(e.detail.index);
             })
         }
+
+        $('#saveAlbumModal').click(function (e) {
+            // $('#saveAlbum'+metadata.id).click(function (e) {
+            e.preventDefault();
+
+            const metadataId = $("#metadataId").val();
+            const albumId = $("#albumId").text();
+
+            $('#albumModalMsg').html("");
+
+            let requestJson = {
+                removeFromAlbum:$('#removeFromAlbum').prop("checked"),
+                setCoverAlbum:$('#setCoverAlbum').prop("checked"),
+                metadataId:metadataId,
+                albumId:albumId
+            }
+
+            const posting = $.post({
+                url: "/album/update",
+                data: JSON.stringify(requestJson),
+                contentType: 'application/json; charset=utf-8'
+            });
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data["status"] === "redirect") {
+                        window.location.replace(data["msg"]);
+                    } else {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            // window.top.location = window.top.location;
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        }
+                        $('#albumModalMsg').html(message);
+                    }
+                }
+            });
+            return false;
+        });
 
         function loadNextPage() {
             var currentPage = parseInt($("#currentPage").val());
