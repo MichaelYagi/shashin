@@ -77,7 +77,7 @@
                                 if (metadata.type.includes("video")) {
                                     html +=
                                         '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                        '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;"></span>\n' +
+                                        '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>\n' +
                                         '   </div>\n';
                                 }
 
@@ -96,7 +96,7 @@
                                 }
                                 html +=
                                     '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
-                                    '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" style="text-decoration: none;color: midnightblue">\n' +
+                                    '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" style="text-decoration: none;color: midnightblue;background-color:lightcyan;padding:3px 5px 0 5px;border-radius: 5px;">\n' +
                                     '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square-fill" style="font-size: 1rem;color: midnightblue;"></span>\n' +
                                     '       </a>\n' +
                                     '   </div>\n' +
