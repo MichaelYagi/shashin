@@ -9,37 +9,39 @@
         var currentUser = JSON.parse(decodeHtml(rawCurrentUser));
         var albumPhotoCommentsMap = rawAlbumPhotoCommentsMap !== '' ? JSON.parse(decodeHtml(rawAlbumPhotoCommentsMap)) : {};
 
-        html =
-            '<div class="modal fade" id="propalbum'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true">\n' +
-            '    <div class="modal-dialog modal-lg" role="document">\n' +
-            '        <div class="modal-content">\n' +
-            '            <div class="modal-header">\n' +
-            '                <h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
-            '                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
-            '            </div>\n' +
-            '            <div class="modal-body">\n' +
-            '                <form id="saveData'+metadata.id+'">\n' +
-            '                    <input type="hidden" name="id" value="'+metadata.id+'">\n' +
-            '                    <div class="col-auto form-check">\n' +
-            '                        <input type="checkbox" class="form-check-input" id="removeFromAlbum'+metadata.id+'" name="removeFromAlbum">\n' +
-            '                        <label class="form-check-label" for="removeFromAlbum'+metadata.id+'">Remove from album</label>\n' +
-            '                    </div>\n' +
-            '                    <div class="col-auto form-check">\n' +
-            '                        <input type="checkbox" class="form-check-input" id="setCoverAlbum'+metadata.id+'" name="setCoverAlbum">\n' +
-            '                        <label class="form-check-label" for="setCoverAlbum'+metadata.id+'">Set as album cover</label>\n' +
-            '                    </div>\n' +
-            '                </form>\n' +
-            '                <div class="col-sm">\n' +
-            '                    <span id="msg'+metadata.id+'"></span>\n' +
-            '                </div>\n' +
-            '            </div>\n' +
-            '            <div class="modal-footer">\n' +
-            '                <button type="button" class="btn btn-primary" id="saveAlbum'+metadata.id+'">Save</button>\n' +
-            '                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
-            '            </div>\n' +
-            '        </div>\n'+
-            '    </div>\n'+
-            '</div>';
+        html = "";
+
+        // html =
+        //     '<div class="modal fade" id="propalbum'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true">\n' +
+        //     '    <div class="modal-dialog modal-lg" role="document">\n' +
+        //     '        <div class="modal-content">\n' +
+        //     '            <div class="modal-header">\n' +
+        //     '                <h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'</h5>\n' +
+        //     '                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
+        //     '            </div>\n' +
+        //     '            <div class="modal-body">\n' +
+        //     '                <form id="saveData'+metadata.id+'">\n' +
+        //     '                    <input type="hidden" name="id" value="'+metadata.id+'">\n' +
+        //     '                    <div class="col-auto form-check">\n' +
+        //     '                        <input type="checkbox" class="form-check-input" id="removeFromAlbum'+metadata.id+'" name="removeFromAlbum">\n' +
+        //     '                        <label class="form-check-label" for="removeFromAlbum'+metadata.id+'">Remove from album</label>\n' +
+        //     '                    </div>\n' +
+        //     '                    <div class="col-auto form-check">\n' +
+        //     '                        <input type="checkbox" class="form-check-input" id="setCoverAlbum'+metadata.id+'" name="setCoverAlbum">\n' +
+        //     '                        <label class="form-check-label" for="setCoverAlbum'+metadata.id+'">Set as album cover</label>\n' +
+        //     '                    </div>\n' +
+        //     '                </form>\n' +
+        //     '                <div class="col-sm">\n' +
+        //     '                    <span id="msg'+metadata.id+'"></span>\n' +
+        //     '                </div>\n' +
+        //     '            </div>\n' +
+        //     '            <div class="modal-footer">\n' +
+        //     '                <button type="button" class="btn btn-primary" id="saveAlbum'+metadata.id+'">Save</button>\n' +
+        //     '                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
+        //     '            </div>\n' +
+        //     '        </div>\n'+
+        //     '    </div>\n'+
+        //     '</div>';
 
         html +=
             '<div class="modal fade" id="propalbumphotocomment'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true">\n' +
