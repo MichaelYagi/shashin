@@ -115,6 +115,7 @@
                                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                             }
                             $("#msgBatchMetadata").html(message);
+                            clearTimelineSelection();
                         }
                     });
 
