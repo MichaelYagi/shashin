@@ -41,6 +41,9 @@ class AlbumsController {
     private lateinit var commentRepository: CommentRepository
 
     @Autowired
+    private lateinit var notificationRepository: NotificationRepository
+
+    @Autowired
     private lateinit var albumCommentRepository: AlbumCommentRepository
 
     @Autowired
@@ -60,6 +63,7 @@ class AlbumsController {
         model["userAlbums"] = ""
         model["userCount"] = ""
         model["albumsCommentsMap"] = ""
+        model["notificationMap"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -68,6 +72,7 @@ class AlbumsController {
             if (userAlbums != null && userAlbums.count() > 0) {
                 val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
 
+                val notificationMap = HashMap<Int, Boolean>()
                 val albums = ArrayList<Album>()
                 val albumsCount = ArrayList<Int>()
                 var albumCount: Int
@@ -82,6 +87,9 @@ class AlbumsController {
                         }
                         albumsCount.add(albumCount)
                         albums.add(albumObj.get())
+
+                        val notificationCount = notificationRepository.countAllByAlbumIdAndUserIdAndReadIsFalse(userAlbum.getAlbumId()!!,currentUserObj.getId())
+                        notificationMap[userAlbum.getAlbumId()!!] = notificationCount > 0
 
                         // Get comments for this album
                         val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
@@ -99,9 +107,10 @@ class AlbumsController {
                     }
                 }
 
-                if (albums.count() > 0) {
+                if (albums.isNotEmpty()) {
                     model["albumsList"] = albums
                     model["albumsCommentsMap"] = albumsCommentsMap
+                    model["notificationMap"] = notificationMap
                     model["albumsCount"] = albumsCount
                     val userCount = userRepository.count()
                     if (userCount > 1) {
@@ -482,6 +491,7 @@ class AlbumsController {
         model["album"] = ""
         model["albumMetadataList"] = ""
         model["albumPhotoCommentsMap"] = ""
+        model["notificationMap"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
@@ -492,12 +502,16 @@ class AlbumsController {
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
+                    val notificationMap = HashMap<String, Boolean>()
 
                     for (albumPhoto in albumPhotos) {
                         val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                             albumMetadataList.add(metadata.get())
+
+                            val notificationCount = notificationRepository.countAllByMetadataIdAndUserIdAndReadIsFalse(albumPhoto.getMetadataId()!!,currentUserObj.getId())
+                            notificationMap[albumPhoto.getMetadataId()!!] = notificationCount > 0
 
                             // Get comments for this photo
                             val albumPhotoComments = commentRepository.findCommentsByAlbumIdAndMetadataId(albumId,albumPhoto.getMetadataId()!!)
@@ -517,6 +531,7 @@ class AlbumsController {
                     }
                     if (albumMetadataList.count() > 0) {
                         val album = albumRepository.findById(albumId)
+                        model["notificationMap"] = notificationMap
                         model["albumPhotoCommentsMapString"] = mapper.writeValueAsString(albumPhotosCommentsMap)
                         model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         model["album"] = album.get()
@@ -538,6 +553,7 @@ class AlbumsController {
         response["albumPhotoCommentsMap"] = ""
         response["album"] = ""
         response["albumMetadataList"] = ""
+        response["notificationMap"] = ""
         response["currentUser"] = ""
         response["message"] = ""
 
@@ -551,12 +567,16 @@ class AlbumsController {
                     val albumMetadataList = ArrayList<Metadata>()
                     if (albumPhotos != null) {
                         val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
+                        val notificationMap = HashMap<String, Boolean>()
 
                         for (albumPhoto in albumPhotos) {
                             if (albumPhoto != null) {
                                 val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                                 val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                                 albumMetadataList.add(metadata.get())
+
+                                val notificationCount = notificationRepository.countAllByMetadataIdAndUserIdAndReadIsFalse(albumPhoto.getMetadataId()!!,currentUserObj.getId())
+                                notificationMap[albumPhoto.getMetadataId()!!] = notificationCount > 0
 
                                 // Get comments for this photo
                                 val albumPhotoComments = commentRepository.findCommentsByAlbumIdAndMetadataId(albumId,albumPhoto.getMetadataId()!!)
@@ -576,6 +596,7 @@ class AlbumsController {
                         }
                         if (albumMetadataList.count() > 0) {
                             val album = albumRepository.findById(albumId)
+                            response["notificationMap"] = notificationMap
                             response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                             response["album"] = album.get()
                             response["albumMetadataList"] = albumMetadataList
