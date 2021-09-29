@@ -398,7 +398,7 @@
                     hidden:$("#hidden").prop("checked"),
                     isObject:$("#isobject").prop("checked")
                 }
-                
+
                 var posting;
 
                 if($("#hidden").is(':checked')) {
@@ -422,8 +422,6 @@
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             // window.top.location = window.top.location
 
-                            var oldmetadata = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
-
                             // Update tag
                             var metadataObj = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
                             metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
@@ -441,6 +439,7 @@
                             metadataObj.keywords = $("#keywords").val()
                             metadataObj.tagpeople = $("#tagpeople").val()
                             metadataObj.hidden = $("#hidden").prop("checked")
+                            populateDetailsTab(metadataObj)
                             $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
 
                             $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil").addClass("bi-pencil-square");
