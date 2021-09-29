@@ -45,12 +45,12 @@
 
                 </a>
             </li>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites">
+                    <span class="bi-suit-heart" style="font-size: 1rem;"></span> Favorites
+                </a>
+            </li>
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites">
-                        <span class="bi-suit-heart" style="font-size: 1rem;"></span> Favorites
-                    </a>
-                </li>
                 <li class="nav-item">
                     <a th:attr="class='nav-link' + ${activeSidebar=='settings' or activeSidebar=='scan' or activeSidebar=='users' or activeSidebar=='match' or activeSidebar=='logs' ? ' active' : ''}" href="/settings">
                         <span class="bi-wrench" style="font-size: 1rem;"></span> Settings

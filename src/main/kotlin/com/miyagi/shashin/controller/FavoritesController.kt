@@ -22,7 +22,7 @@ import javax.transaction.Transactional
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-@Secured("ROLE_ADMIN")
+@Secured("ROLE_ADMIN","ROLE_USER")
 class FavoritesController {
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository

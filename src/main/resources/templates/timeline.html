@@ -98,9 +98,11 @@
                             </div>
 
                             <div th:id="'tnbr'+${metadata.id}">
-                                <a href="#" th:id="'favorite'+${metadata.id}">
+                                <a href="#" th:id="'favorite'+${metadata.id}" class="text-decoration-none">
                                     <!--th:class="${favorites.get(metadata.id)} ? 'bi-suit-heart-fill' : 'bi-suit-heart'"-->
-                                    <span th:id="'bricon'+${metadata.id}" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
+                                    <span style="background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;">
+                                        <span th:id="'briconcount'+${metadata.id}"></span><span th:id="'bricon'+${metadata.id}" style="font-size: 1rem;color: red;"></span>
+                                    </span>
                                 </a>
                             </div>
 
