@@ -33,6 +33,11 @@
                     <span class="bi-map" style="font-size: 1rem;"></span> Map
                 </a>
             </li>
+            <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='notifications' ? ' active' : ''}" href="/notifications">
+                    <span class="bi-bell" style="font-size: 1rem;"></span> Notifications
+                </a>
+            </li>
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
                     <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites">

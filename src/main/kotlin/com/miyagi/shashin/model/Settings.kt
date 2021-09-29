@@ -20,6 +20,8 @@ class Settings {
     @NotBlank
     private var trainingDataLimit: Int? = null
     @NotBlank
+    private var notificationLimit: Int? = null
+    @NotBlank
     private var port: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
@@ -52,6 +54,14 @@ class Settings {
 
     fun setTrainingDataLimit(trainingDataLimit: Int?) {
         this.trainingDataLimit = trainingDataLimit
+    }
+
+    fun getNotificationLimit(): Int? {
+        return this.notificationLimit
+    }
+
+    fun setNotificationLimit(notificationLimit: Int?) {
+        this.notificationLimit = notificationLimit
     }
 
     fun getQueryLimit(): Int? {
@@ -93,6 +103,7 @@ class Settings {
         map["queryLimit"] = this.queryLimit
         map["matchScanLimit"] = this.matchScanLimit
         map["trainingDataLimit"] = this.trainingDataLimit
+        map["notificationLimit"] = this.notificationLimit
         map["port"] = this.port
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

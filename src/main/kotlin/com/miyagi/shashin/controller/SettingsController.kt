@@ -215,6 +215,7 @@ class SettingsController {
         @RequestParam("queryLimit") queryLimit: Int,
         @RequestParam("matchScanLimit") matchScanLimit: Int,
         @RequestParam("trainingDataLimit") trainingDataLimit: Int,
+        @RequestParam("notificationLimit") notificationLimit: Int,
         @RequestParam("changePort") port: String,
     ): String {
         var resetServer = false
@@ -267,6 +268,9 @@ class SettingsController {
         }
         if (matchScanLimit > 0) {
             settings?.setMatchScanLimit(matchScanLimit)
+        }
+        if (notificationLimit > 0) {
+            settings?.setNotificationLimit(notificationLimit)
         }
         if (trainingDataLimit > 0) {
             settings?.setTrainingDataLimit(trainingDataLimit)
