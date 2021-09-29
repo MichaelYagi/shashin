@@ -31,20 +31,6 @@
         $('#propTimelineModal').find(':input').val('');
         $("#isobject")[0].checked = false;
         $("#hidden")[0].checked = false;
-        $("#pathDetails").text("");
-        $("#typeDetails").text("");
-        $("#isoDetails").text("");
-        $("#exposureDetails").text("");
-        $("#fNumberDetails").text("");
-        $("#focalLengthDetails").text("");
-        $("#cameraDetails").text("");
-        $("#lensDetails").text("");
-        $("#qualityDetails").text("");
-        $("#createdAtDetails").text("");
-        $("#modifiedAtDetails").text("");
-        $("#takenAtDetails").text("");
-        $("#manualTakenAtDetails").text("");
-        $("#timeZoneDetails").text("");
 
         $("#timelineModalTitle").text(metadata.fileName);
         $("#currentfilename").val(metadata.fileName)
@@ -132,6 +118,29 @@
 
         $("#keywords").val(metadata.keywords);
 
+        populateDetailsTab(metadata);
+
+        // Open modal window
+        $("#propTimelineModal").modal('show');
+    }
+
+    function populateDetailsTab(metadata) {
+        // Clear data
+        $("#pathDetails").text("");
+        $("#typeDetails").text("");
+        $("#isoDetails").text("");
+        $("#exposureDetails").text("");
+        $("#fNumberDetails").text("");
+        $("#focalLengthDetails").text("");
+        $("#cameraDetails").text("");
+        $("#lensDetails").text("");
+        $("#qualityDetails").text("");
+        $("#createdAtDetails").text("");
+        $("#modifiedAtDetails").text("");
+        $("#takenAtDetails").text("");
+        $("#manualTakenAtDetails").text("");
+        $("#timeZoneDetails").text("");
+
         // Fill in details tab data
         if (metadata.path != null) {
             $("#pathDetails").text(metadata.path);
@@ -169,15 +178,16 @@
         if (metadata.takenAt != null) {
             $("#takenAtDetails").text(metadata.takenAt);
         }
-        if (metadata.year != null || metadata.month != null || metadata.day != null) {
-            $("#manualTakenAtDetails").text(metadata.year+'-'+metadata.month+'-'+metadata.day+' '+metadata.time);
+        if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
+            var takenDetails = metadata.year+'-'+metadata.month+'-'+metadata.day;
+            if (metadata.time !== null && metadata.time !== "") {
+                takenDetails += ' ' + metadata.time;
+            }
+            $("#manualTakenAtDetails").text(takenDetails);
         }
         if (metadata.timeZone != null) {
             $("#timeZoneDetails").text(metadata.timeZone);
         }
-
-        // Open modal window
-        $("#propTimelineModal").modal('show');
     }
 
     function activateMetadataListeners(rawMetadata) {
