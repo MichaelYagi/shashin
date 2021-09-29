@@ -77,7 +77,7 @@ CREATE TABLE `settings` (
     `modifiedAt` DATETIME DEFAULT NULL
 );
 -- INSERT INTO settings
---     (recognitionConfidenceThreshold,traininDataLimit,matchScanLimit,queryLimit,notificationLimit,port)
+--     (recognition_confidence_threshold,trainin_data_limit,match_scan_limit,query_limit,notification_limit,port)
 --     VALUES ('0.2',100,10,20,20,'6624');
 
 DROP TABLE IF EXISTS `user`;
