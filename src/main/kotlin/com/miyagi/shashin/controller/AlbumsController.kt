@@ -41,6 +41,9 @@ class AlbumsController {
     private lateinit var commentRepository: CommentRepository
 
     @Autowired
+    private lateinit var favoriteRepository: FavoriteRepository
+
+    @Autowired
     private lateinit var notificationRepository: NotificationRepository
 
     @Autowired
@@ -492,7 +495,9 @@ class AlbumsController {
         model["albumMetadataList"] = ""
         model["albumPhotoCommentsMap"] = ""
         model["notificationMap"] = ""
+        model["favorites"] = ""
 
+        val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
             val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
@@ -513,6 +518,22 @@ class AlbumsController {
                             val notificationCount = notificationRepository.countAllByMetadataIdAndUserIdAndReadIsFalse(albumPhoto.getMetadataId()!!,currentUserObj.getId())
                             notificationMap[albumPhoto.getMetadataId()!!] = notificationCount > 0
 
+                            val favorites = favoriteRepository.findAllByMetadataId(albumPhoto.getMetadataId())
+                            if (favorites != null) {
+                                for (favorite in favorites) {
+                                    if (favorite != null) {
+                                        favoritesMap[albumPhoto.getMetadataId().toString()] = hashMapOf(
+                                            "favorite" to (favorite.getUserId() == currentUserObj.getId()),
+                                            "count" to favoriteRepository.countAllByMetadataId(albumPhoto.getMetadataId().toString())
+                                        )
+
+                                        if (favorite.getUserId() == currentUserObj.getId()) {
+                                            break
+                                        }
+                                    }
+                                }
+                            }
+
                             // Get comments for this photo
                             val albumPhotoComments = commentRepository.findCommentsByAlbumIdAndMetadataId(albumId,albumPhoto.getMetadataId()!!)
                             for (albumPhotoComment in albumPhotoComments) {
@@ -531,6 +552,7 @@ class AlbumsController {
                     }
                     if (albumMetadataList.count() > 0) {
                         val album = albumRepository.findById(albumId)
+                        model["favorites"] = favoritesMap
                         model["notificationMap"] = notificationMap
                         model["albumPhotoCommentsMapString"] = mapper.writeValueAsString(albumPhotosCommentsMap)
                         model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
@@ -556,8 +578,10 @@ class AlbumsController {
         response["notificationMap"] = ""
         response["currentUser"] = ""
         response["message"] = ""
+        response["favorites"] = ""
 
         if (page > 0) {
+            val favoritesMap = HashMap<String, HashMap<String, Any>>()
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null && albumId > 0) {
                 val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
@@ -578,6 +602,22 @@ class AlbumsController {
                                 val notificationCount = notificationRepository.countAllByMetadataIdAndUserIdAndReadIsFalse(albumPhoto.getMetadataId()!!,currentUserObj.getId())
                                 notificationMap[albumPhoto.getMetadataId()!!] = notificationCount > 0
 
+                                val favorites = favoriteRepository.findAllByMetadataId(albumPhoto.getMetadataId())
+                                if (favorites != null) {
+                                    for (favorite in favorites) {
+                                        if (favorite != null) {
+                                            favoritesMap[albumPhoto.getMetadataId().toString()] = hashMapOf(
+                                                "favorite" to (favorite.getUserId() == currentUserObj.getId()),
+                                                "count" to favoriteRepository.countAllByMetadataId(albumPhoto.getMetadataId()!!)
+                                            )
+
+                                            if (favorite.getUserId() == currentUserObj.getId()) {
+                                                break
+                                            }
+                                        }
+                                    }
+                                }
+
                                 // Get comments for this photo
                                 val albumPhotoComments = commentRepository.findCommentsByAlbumIdAndMetadataId(albumId,albumPhoto.getMetadataId()!!)
                                 for (albumPhotoComment in albumPhotoComments) {
@@ -597,6 +637,7 @@ class AlbumsController {
                         if (albumMetadataList.count() > 0) {
                             val album = albumRepository.findById(albumId)
                             response["notificationMap"] = notificationMap
+                            response["favorites"] = favoritesMap
                             response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                             response["album"] = album.get()
                             response["albumMetadataList"] = albumMetadataList

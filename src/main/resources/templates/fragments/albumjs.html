@@ -55,6 +55,7 @@
                         var albumPhotoCommentsMap = data["albumPhotoCommentsMap"] === "" ? null : data["albumPhotoCommentsMap"];
                         var currentUser = data["currentUser"] === "" ? null : data["currentUser"];
                         var notificationMap = data["notificationMap"] === "" ? null : data["notificationMap"];
+                        var favoritesMap = data["favorites"] === "" ? null : data["favorites"];
 
                         // console.log(albumData);
                         // console.log(albumMetadataList);
@@ -70,6 +71,8 @@
                                 var metadata = albumMetadataList[index];
 
                                 let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                var favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                var favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
                                 var html =
                                     '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
@@ -97,6 +100,12 @@
                                 }
                                 html +=
                                     '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
+                                    '       <a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
+                                    '           <span style="background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;">\n' +
+                                    '               <span id="briconcount' + metadata.id + '">'+favoriteCount+' </span><span class="'+favoriteIcon+'" id="brfavoriteicon'+metadata.id+'" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '           </span>\n' +
+                                    '       </a>\n' +
+                                    '       <br>' +
                                     '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" style="text-decoration: none;color: midnightblue;background-color:lightcyan;padding:3px 5px 0 5px;border-radius: 5px;">\n' +
                                     '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square-fill position-relative" style="font-size: 1rem;color: midnightblue;">';
 
@@ -193,6 +202,46 @@
             }).then(function (data) {
 
             });
+        });
+
+        $("#favorite"+metadata.id).click(function (e) {
+            e.preventDefault();
+
+            var metadataId = metadata.id;
+
+            if ($("#brfavoriteicon" + metadataId).attr("class") === "bi-suit-heart") {
+                $("#brfavoriteicon" + metadataId).attr("class", "bi-suit-heart-fill");
+            } else if ($("#brfavoriteicon" + metadataId).attr("class") === "bi-suit-heart-fill") {
+                $("#brfavoriteicon" + metadataId).attr("class", "bi-suit-heart");
+            }
+
+            var isFavorite = ($("#brfavoriteicon" + metadataId).attr("class") === "bi-suit-heart-fill");
+
+            var json = {metadataId: metadataId, isFavorite: isFavorite}
+            var posting;
+
+            if (isFavorite === true) {
+                posting = $.post({
+                    url: "/favorite/save",
+                    data: JSON.stringify(json),
+                    contentType: 'application/json; charset=utf-8'
+                });
+            } else {
+                posting = $.post({
+                    url: "/favorite/delete",
+                    data: JSON.stringify(json),
+                    contentType: 'application/json; charset=utf-8'
+                });
+            }
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    // console.log(data["status"]);
+                    // console.log(data["msg"]);
+                }
+            });
+
+            return false;
         });
 
         // Clear message on modal close

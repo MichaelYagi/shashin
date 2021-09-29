@@ -88,7 +88,7 @@
                         data.hasOwnProperty("labelPhotoMap")
                     ) {
                         var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
-                        var favoritesList = data["favorites"] === "" ? null : data["favorites"];
+                        var favoritesMap = data["favorites"] === "" ? null : data["favorites"];
                         var recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
                         var labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
 
@@ -98,9 +98,11 @@
                                 var metadata = metadataList[index];
 
                                 // console.log(metadata);
-                                var favoriteIcon = favoritesList[metadata.id] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                var favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                var favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
                                 $("#tnbr"+metadata.id).addClass("thumbnail-br");
                                 $("#bricon"+metadata.id).addClass(favoriteIcon);
+                                $("#briconcount"+metadata.id).text(favoriteCount+" ");
 
                                 var editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
                                 var htmlLink = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';

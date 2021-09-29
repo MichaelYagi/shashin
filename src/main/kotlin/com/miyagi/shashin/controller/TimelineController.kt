@@ -229,7 +229,7 @@ class TimelineController {
             day = dateArray[2].toInt()
         }
 
-        val favoritesMap = HashMap<String, Boolean>()
+        val favoritesMap = HashMap<String, HashMap<String, Any>>()
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -252,16 +252,22 @@ class TimelineController {
 
             if (metadataList.isNotEmpty()) {
                 response["message"] = ""
-
                 response["favorites"] = favoritesMap
 
                 val labelPhotoMap = mutableMapOf<String, String>()
                 for (metadata in metadataList) {
-                    val favorites = favoriteRepository.findAllByMetadataIdAndUserId(metadata.getId(), currentUserObj?.getId())
+                    val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
                     if (favorites != null) {
                         for (favorite in favorites) {
                             if (favorite != null) {
-                                favoritesMap[favorite.getMetadataId().toString()] = true
+                                favoritesMap[metadata.getId()] = hashMapOf(
+                                    "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
+                                )
+
+                                if ((favorite.getUserId() == currentUserObj?.getId())) {
+                                    break
+                                }
                             }
                         }
                     }

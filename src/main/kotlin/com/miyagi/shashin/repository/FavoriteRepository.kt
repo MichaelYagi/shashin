@@ -14,6 +14,8 @@ interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     fun findAllByUserIdAndOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Favorite?>?
     fun findAllByUserId(userId: Int?): MutableIterable<Favorite?>?
     fun findAllByMetadataIdAndUserId(metadataId: String?, userId: Int?): MutableIterable<Favorite?>?
+    fun findAllByMetadataId(metadataId: String?): MutableIterable<Favorite?>?
+    fun countAllByMetadataId(metadataId: String): Int
     fun deleteByMetadataIdAndUserId(metadataId: String?, userId: Int?): Long
     fun deleteByUserId(userId: Int?): Long
     fun deleteByMetadataId(metadataId: String?): Long
