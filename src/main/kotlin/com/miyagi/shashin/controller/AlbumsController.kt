@@ -88,7 +88,7 @@ class AlbumsController {
                         albumsCount.add(albumCount)
                         albums.add(albumObj.get())
 
-                        val notificationCount = notificationRepository.countAllByAlbumIdAndUserIdAndReadIsFalse(userAlbum.getAlbumId()!!,currentUserObj.getId())
+                        val notificationCount = notificationRepository.countAllByAlbumIdAndUserIdAndMetadataIdIsNullAndReadIsFalse(userAlbum.getAlbumId()!!,currentUserObj.getId())
                         notificationMap[userAlbum.getAlbumId()!!] = notificationCount > 0
 
                         // Get comments for this album
