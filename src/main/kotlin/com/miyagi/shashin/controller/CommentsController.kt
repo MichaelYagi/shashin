@@ -90,7 +90,7 @@ class CommentsController {
                 for (user in users) {
                     val notificationObj = Notification()
                     var createEntry = false
-                    if (user != null) {
+                    if (user != null && user.getId() != currentUserObj.getId()) {
                         if (user.getAuthority() == adminRole) {
                             createEntry = true
                         } else {
@@ -166,7 +166,7 @@ class CommentsController {
                 for (user in users) {
                     val notificationObj = Notification()
                     var createEntry = false
-                    if (user != null) {
+                    if (user != null && user.getId() != currentUserObj.getId()) {
                         if (user.getAuthority() == adminRole) {
                             createEntry = true
                         } else {
