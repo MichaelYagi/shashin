@@ -9,6 +9,8 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${authority},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+
             <th:block th:if="${notificationList != ''}">
                 <h1>Notifications</h1>
 
