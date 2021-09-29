@@ -149,7 +149,7 @@ class FavoritesController {
                 notificationObj.setCreatedAt(dtf.format(now))
                 notificationObj.setModifiedAt(dtf.format(now))
                 notificationObj.setRead(false)
-                notificationObj.setMessage(currentUserObj.getUsername()+" likes "+metadata.get().getFileName())
+                notificationObj.setMessage(currentUserObj.getUsername()+" likes <a href='/api/v1/image/"+metadata.get().getId()+"'>"+metadata.get().getFileName()+"</a>")
                 for (admin in admins) {
                     notificationObj.setUserId(admin.getId())
                     notificationObjList.add(notificationObj)
