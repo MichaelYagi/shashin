@@ -246,6 +246,7 @@
                                 <div class="col-sm">
                                     <label for="offsetTaken" class="col-form-label">GMT Offset</label>
                                     <select class="form-select" id="offsetTaken" name="offset">
+                                        <option value="">--GMT--</option>
                                         <th:block th:each="offset, iterStat: ${timeOffsets}">
                                             <option th:value="${offset}" th:text="${offset}"></option>
                                         </th:block>
@@ -390,14 +391,14 @@
                     month:$("#monthTaken").val(),
                     day:$("#dayTaken").val(),
                     time:$("#timeTaken").val(),
-                    offset:$("#offsetTaken").val(),
+                    offset:$("#offsetTaken").val() === null ? "" : $("#offsetTaken").val(),
                     latlng:$("#latlng").val(),
                     keywords:$("#keywords").val(),
                     tagpeople:$("#tagpeople").val(),
                     hidden:$("#hidden").prop("checked"),
                     isObject:$("#isobject").prop("checked")
                 }
-
+                
                 var posting;
 
                 if($("#hidden").is(':checked')) {
