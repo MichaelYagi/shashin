@@ -128,4 +128,32 @@ class NotificationsController {
 
         return "{}"
     }
+
+    @GetMapping("/notifications/markread/favorites", produces = ["application/json"])
+    @ResponseBody
+    fun markNotificationsReadByFavorites(model: Model): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            val notificationList = notificationRepository.findAllByUserIdAndAlbumIdIsNullAndCommentIdIsNullAndMetadataIdIsNull(currentUserObj.getId())
+            if (notificationList != null) {
+                println(notificationList.count())
+            }
+            if (notificationList != null && notificationList.count() > 0) {
+                val notifications = mutableListOf<Notification>()
+                for (notification in notificationList) {
+                    if (notification != null) {
+                        if (!notification.getRead()!!) {
+                            notification.setRead(true)
+                            notifications.add(notification)
+                        }
+                    }
+                }
+                if (notifications.isNotEmpty()) {
+                    notificationRepository.saveAll(notifications)
+                }
+            }
+        }
+
+        return "{}"
+    }
 }

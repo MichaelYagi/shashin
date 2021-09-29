@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.NotificationRepository
+import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -24,11 +28,20 @@ import javax.transaction.Transactional
 @Controller
 @Secured("ROLE_ADMIN","ROLE_USER")
 class FavoritesController {
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
+
+    @Autowired
+    private lateinit var notificationRepository: NotificationRepository
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -127,6 +140,21 @@ class FavoritesController {
                     favorite.setCreatedAt(dtf.format(now))
                     favoriteRepository.save(favorite)
                 }
+
+                // Notify admins
+                val admins = userRepository.findAllByAuthorityEquals(adminRole!!)
+                val metadata = metadataRepository.findById(metadataId)
+                val notificationObjList = mutableListOf<Notification>()
+                val notificationObj = Notification()
+                notificationObj.setCreatedAt(dtf.format(now))
+                notificationObj.setModifiedAt(dtf.format(now))
+                notificationObj.setRead(false)
+                notificationObj.setMessage(currentUserObj.getUsername()+" likes "+metadata.get().getFileName())
+                for (admin in admins) {
+                    notificationObj.setUserId(admin.getId())
+                    notificationObjList.add(notificationObj)
+                }
+                notificationRepository.saveAll(notificationObjList)
 
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
