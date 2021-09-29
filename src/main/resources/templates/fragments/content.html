@@ -8,7 +8,7 @@
     <div th:replace="fragments/persongroup :: person(${activePage},${parameter})"></div>
 </th:block>
 <th:block th:if="${message != ''}">
-    <br><p id="msg" th:text="${message}"></p>
+    <br><p id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></p>
 </th:block>
 </body>
 </html>
