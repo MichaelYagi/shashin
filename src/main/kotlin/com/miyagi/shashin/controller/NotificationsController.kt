@@ -84,7 +84,7 @@ class NotificationsController {
     fun markNotificationsReadByAlbum(model: Model,@PathVariable albumId: Int): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
-            val notificationList = notificationRepository.findAllByAlbumIdAndUserIdOrderByCreatedAtDesc(albumId,currentUserObj.getId())
+            val notificationList = notificationRepository.findAllByAlbumIdAndUserIdAndMetadataIdIsNullOrderByCreatedAtDesc(albumId,currentUserObj.getId())
             if (notificationList != null && notificationList.count() > 0) {
                 val notifications = mutableListOf<Notification>()
                 for (notification in notificationList) {
