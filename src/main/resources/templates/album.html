@@ -57,7 +57,13 @@
 
                                 <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
                                     <a href="#" data-bs-toggle="modal" th:data-bs-target="'#propalbumphotocomment'+${metadata.id}" style="text-decoration: none;color: midnightblue;background-color:lightcyan;padding:3px 5px 0 5px;border-radius: 5px;">
-                                        <th:block th:text="${#lists.size(albumPhotoCommentsMap.get(metadata.id))}"></th:block> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square-fill" style="font-size: 1rem;color: midnightblue;"></span>
+                                        <th:block th:text="${#lists.size(albumPhotoCommentsMap.get(metadata.id))}"></th:block> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square-fill position-relative" style="font-size: 1rem;color: midnightblue;">
+                                            <th:block th:if="${notificationMap.get(metadata.id)}">
+                                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                                <span class="visually-hidden">New alerts</span>
+                                            </span>
+                                            </th:block>
+                                        </span>
                                     </a>
                                 </div>
 

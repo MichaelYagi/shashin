@@ -49,11 +49,12 @@
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
-                    if (data.hasOwnProperty("album") && data.hasOwnProperty("albumMetadataList") && data.hasOwnProperty("albumPhotoCommentsMap") && data.hasOwnProperty("currentUser")) {
+                    if (data.hasOwnProperty("album") && data.hasOwnProperty("albumMetadataList") && data.hasOwnProperty("albumPhotoCommentsMap") && data.hasOwnProperty("currentUser") && data.hasOwnProperty("notificationMap")) {
                         var albumData = data["album"] === "" ? null : data["album"];
                         var albumMetadataList = data["albumMetadataList"] === "" ? null : data["albumMetadataList"];
                         var albumPhotoCommentsMap = data["albumPhotoCommentsMap"] === "" ? null : data["albumPhotoCommentsMap"];
                         var currentUser = data["currentUser"] === "" ? null : data["currentUser"];
+                        var notificationMap = data["notificationMap"] === "" ? null : data["notificationMap"];
 
                         // console.log(albumData);
                         // console.log(albumMetadataList);
@@ -97,7 +98,16 @@
                                 html +=
                                     '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
                                     '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" style="text-decoration: none;color: midnightblue;background-color:lightcyan;padding:3px 5px 0 5px;border-radius: 5px;">\n' +
-                                    '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square-fill" style="font-size: 1rem;color: midnightblue;"></span>\n' +
+                                    '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square-fill position-relative" style="font-size: 1rem;color: midnightblue;">';
+
+                                if (notificationMap !== null && notificationMap[metadata.id] === true) {
+                                    html +=
+                                    '           <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">\n' +
+                                    '               <span class="visually-hidden">New alerts</span>\n' +
+                                    '           </span>';
+                                }
+                                html +=
+                                    '           </span>\n' +
                                     '       </a>\n' +
                                     '   </div>\n' +
                                     '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
@@ -172,6 +182,17 @@
             } else {
                 $('#setCoverAlbum'+metadata.id).removeAttr("disabled");
             }
+        });
+
+        $('#propalbumphotocomment'+metadata.id).on('show.bs.modal', function () {
+            var promise = $.ajax({
+                type: 'get',
+                url: "/notifications/markread/metadata/"+metadata.id,
+                contentType: 'application/json; charset=utf-8',
+                async:false
+            }).then(function (data) {
+
+            });
         });
 
         // Clear message on modal close

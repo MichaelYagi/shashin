@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.ResponseBody
 import java.util.ArrayList
 import javax.transaction.Transactional
@@ -59,6 +60,56 @@ class NotificationsController {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val notificationList = notificationRepository.findAllByUserIdOrderByCreatedAtDesc(currentUserObj.getId())
+            if (notificationList != null && notificationList.count() > 0) {
+                val notifications = mutableListOf<Notification>()
+                for (notification in notificationList) {
+                    if (notification != null) {
+                        if (!notification.getRead()!!) {
+                            notification.setRead(true)
+                            notifications.add(notification)
+                        }
+                    }
+                }
+                if (notifications.isNotEmpty()) {
+                    notificationRepository.saveAll(notifications)
+                }
+            }
+        }
+
+        return "{}"
+    }
+
+    @GetMapping("/notifications/markread/album/{albumId}", produces = ["application/json"])
+    @ResponseBody
+    fun markNotificationsReadByAlbum(model: Model,@PathVariable albumId: Int): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && albumId > 0) {
+            val notificationList = notificationRepository.findAllByAlbumIdAndUserIdOrderByCreatedAtDesc(albumId,currentUserObj.getId())
+            if (notificationList != null && notificationList.count() > 0) {
+                val notifications = mutableListOf<Notification>()
+                for (notification in notificationList) {
+                    if (notification != null) {
+                        if (!notification.getRead()!!) {
+                            notification.setRead(true)
+                            notifications.add(notification)
+                        }
+                    }
+                }
+                if (notifications.isNotEmpty()) {
+                    notificationRepository.saveAll(notifications)
+                }
+            }
+        }
+
+        return "{}"
+    }
+
+    @GetMapping("/notifications/markread/metadata/{metadataId}", produces = ["application/json"])
+    @ResponseBody
+    fun markNotificationsReadByMetadata(model: Model,@PathVariable metadataId: String): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && metadataId.length > 0) {
+            val notificationList = notificationRepository.findAllByMetadataIdAndUserIdOrderByCreatedAtDesc(metadataId,currentUserObj.getId())
             if (notificationList != null && notificationList.count() > 0) {
                 val notifications = mutableListOf<Notification>()
                 for (notification in notificationList) {
