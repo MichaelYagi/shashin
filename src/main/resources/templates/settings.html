@@ -29,13 +29,17 @@
                     </div>
                     <th:block th:if="${settings != ''}">
                     <div class="row">
-                        <div class="col-6">
+                        <div class="col-4">
                             <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.2)</strong></label>
                             <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
                         </div>
-                        <div class="col-6">
+                        <div class="col-4">
                             <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit (Default 20)</strong></label>
                             <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
+                        </div>
+                        <div class="col-4">
+                            <label for="notificationLimit" class="form-label"><strong>Notification Limit (Default 20)</strong></label>
+                            <input class="form-control" id="notificationLimit" name="notificationLimit" th:value="${settings.notificationLimit}">
                         </div>
                     </div>
                     <div class="row">

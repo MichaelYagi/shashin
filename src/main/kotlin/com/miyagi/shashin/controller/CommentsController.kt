@@ -4,10 +4,9 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
-import com.miyagi.shashin.repository.AlbumCommentRepository
-import com.miyagi.shashin.repository.AlbumPhotoCommentRepository
-import com.miyagi.shashin.repository.CommentRepository
+import com.miyagi.shashin.repository.*
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestBody
@@ -25,10 +24,31 @@ class CommentsController {
     private lateinit var commentRepository: CommentRepository
 
     @Autowired
+    private lateinit var albumRepository: AlbumRepository
+
+    @Autowired
+    private lateinit var userAlbumRepository: UserAlbumRepository
+
+    @Autowired
     private lateinit var albumCommentRepository: AlbumCommentRepository
 
     @Autowired
     private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
+
+    @Autowired
+    private lateinit var notificationRepository: NotificationRepository
+
+    @Autowired
+    private lateinit var metadataRepository: MetadataRepository
+
+    @Autowired
+    private lateinit var userRepository: UserRepository
+
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
+    @Value("\${app.role.user}")
+    private var userRole: String? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -62,6 +82,37 @@ class CommentsController {
                 albumComment.setCreatedAt(dtf.format(now))
                 albumComment.setModifiedAt(dtf.format(now))
                 albumCommentRepository.save(albumComment)
+
+                // Notify if admin or other users in album
+                val albumObj = albumRepository.findById(albumId)
+                val users = userRepository.findAll()
+                val notificationObjList = mutableListOf<Notification>()
+                for (user in users) {
+                    val notificationObj = Notification()
+                    var createEntry = false
+                    if (user != null) {
+                        if (user.getAuthority() == adminRole) {
+                            createEntry = true
+                        } else {
+                            val album = userAlbumRepository.findByUserIdAndAlbumId(user.getId(),albumId)
+                            if (album != null) {
+                                createEntry = true
+                            }
+                        }
+
+                        if (createEntry) {
+                            notificationObj.setUserId(user.getId())
+                            notificationObj.setCommentId(albumComment.getId())
+                            notificationObj.setAlbumId(albumId)
+                            notificationObj.setCreatedAt(dtf.format(now))
+                            notificationObj.setModifiedAt(dtf.format(now))
+                            notificationObj.setRead(false)
+                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" \""+commentText+"\"")
+                            notificationObjList.add(notificationObj)
+                        }
+                    }
+                }
+                notificationRepository.saveAll(notificationObjList)
 
                 resp["msg"] = "Comment saved!"
                 resp["status"] = "success"
@@ -106,6 +157,39 @@ class CommentsController {
                 albumPhotoComment.setCreatedAt(dtf.format(now))
                 albumPhotoComment.setModifiedAt(dtf.format(now))
                 albumPhotoCommentRepository.save(albumPhotoComment)
+
+                // Notify if admin or other users in album
+                val metadataObj = metadataRepository.findById(metadataId)
+                val albumObj = albumRepository.findById(albumId)
+                val users = userRepository.findAll()
+                val notificationObjList = mutableListOf<Notification>()
+                for (user in users) {
+                    val notificationObj = Notification()
+                    var createEntry = false
+                    if (user != null) {
+                        if (user.getAuthority() == adminRole) {
+                            createEntry = true
+                        } else {
+                            val album = userAlbumRepository.findByUserIdAndAlbumId(user.getId(),albumId)
+                            if (album != null) {
+                                createEntry = true
+                            }
+                        }
+
+                        if (createEntry) {
+                            notificationObj.setUserId(user.getId())
+                            notificationObj.setCommentId(savedCommentObj.getId())
+                            notificationObj.setMetadataId(metadataId)
+                            notificationObj.setAlbumId(albumId)
+                            notificationObj.setRead(false)
+                            notificationObj.setCreatedAt(dtf.format(now))
+                            notificationObj.setModifiedAt(dtf.format(now))
+                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" for photo "+metadataObj.get().getFileName()+" \""+commentText+"\"")
+                            notificationObjList.add(notificationObj)
+                        }
+                    }
+                }
+                notificationRepository.saveAll(notificationObjList)
 
                 resp["msg"] = "Comment saved!"
                 resp["status"] = "success"

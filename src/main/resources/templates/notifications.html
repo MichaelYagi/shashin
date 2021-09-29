@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${authority})"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <th:block th:if="${notificationList != ''}">
+                <h1>Notifications</h1>
+
+                <ul class="list-group">
+                <th:block th:each="notification, iterStat: ${notificationList}">
+                    <li class="list-group-item"><th:block th:text="${notification.message}"></th:block> <th:block th:unless="${notification.read}"><span class="badge rounded-pill bg-danger">New</span></th:block></li>
+                </th:block>
+                </ul>
+            </th:block>
+
+            <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
+        </main>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var promise = $.ajax({
+        type: 'get',
+        url: "/notifications/markread",
+        contentType: 'application/json; charset=utf-8',
+        async:false
+    }).then(function (data) {
+
+    });
+</script>
+</body>
+</html>

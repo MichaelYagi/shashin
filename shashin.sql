@@ -71,10 +71,14 @@ CREATE TABLE `settings` (
     `traininDataLimit` INTEGER NOT NULL DEFAULT 100,
     `matchScanLimit` INTEGER NOT NULL DEFAULT 10,
     `queryLimit` INTEGER NOT NULL DEFAULT 20,
+    `notificationLimit` INTEGER NOT NULL DEFAULT 20,
     `port` VARCHAR(10) NOT NULL DEFAULT '6624',
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL
 );
+-- INSERT INTO settings
+--     (recognitionConfidenceThreshold,traininDataLimit,matchScanLimit,queryLimit,notificationLimit,port)
+--     VALUES ('0.2',100,10,20,20,'6624');
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
@@ -134,7 +138,7 @@ DROP TABLE IF EXISTS `favorite`;
 CREATE TABLE `favorite` (
      `id` INTEGER PRIMARY KEY AUTOINCREMENT,
      `userId` INTEGER,
-     `metadataId` INTEGER,
+     `metadataId` VARCHAR(36),
      `createdAt` DATETIME DEFAULT NULL,
      `modifiedAt` DATETIME DEFAULT NULL,
      UNIQUE(`metadataId`,`userId`) ON CONFLICT IGNORE,
@@ -166,7 +170,7 @@ CREATE TABLE `albumcomment` (
 DROP TABLE IF EXISTS `albumphotocomment`;
 CREATE TABLE `albumphotocomment` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `metadataId` INT,
+    `metadataId` VARCHAR(36),
     `albumId` INT,
     `commentId` INT,
     `createdAt` DATETIME DEFAULT NULL,
@@ -175,6 +179,19 @@ CREATE TABLE `albumphotocomment` (
     FOREIGN KEY (`commentId`) REFERENCES comment(`id`),
     FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`),
     FOREIGN KEY (`albumId`) REFERENCES album(`id`)
+);
+
+DROP TABLE IF EXISTS `notification`;
+CREATE TABLE `notification` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `userId` INT NOT NULL,
+    `albumId` INT DEFAULT NULL,
+    `metadataId` VARCHAR(36) DEFAULT NULL,
+    `commentId` INT DEFAULT NULL,
+    `read` BOOLEAN NOT NULL DEFAULT FALSE,
+    `message` VARCHAR NOT NULL,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL
 );
 
 INSERT INTO `hibernate_sequence` VALUES (362);
