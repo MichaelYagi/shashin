@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface NotificationRepository : CrudRepository<Notification?, Int?> {
     fun findAllByUserIdOrderByCreatedAtDesc(userId: Int): MutableIterable<Notification?>?
+    fun countAllByUserIdAndReadIsFalse(userId: Int): Int
 }

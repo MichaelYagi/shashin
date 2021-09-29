@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -34,6 +35,9 @@ class BaseController {
 
     @Autowired
     private var settingsRepository: SettingsRepository? = null
+
+    @Autowired
+    private var notificationRepository: NotificationRepository? = null
 
     @Autowired
     private var buildProperties: BuildProperties? = null
@@ -74,6 +78,7 @@ class BaseController {
             settingsObj.setQueryLimit(20)
             settingsObj.setMatchScanLimit(10)
             settingsObj.setTrainingDataLimit(100)
+            settingsObj.setNotificationLimit(20)
             settingsObj.setRecognitionConfidenceThreshold("0.2")
             settingsObj.setRecognitionConfidenceThreshold("0.2")
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -93,7 +98,7 @@ class BaseController {
             model["buildProperties"] = buildProperties!!
         }
         model["parameter"] = ""
-
+        model["hasNotifications"] = false
         model["currentUser"] = ""
 
         model["authority"] = ""
@@ -112,6 +117,10 @@ class BaseController {
             val currentUser = userRepository.findByUsername(securityContext.authentication.name)
             if (currentUser != null && currentUser.getAuthority() == adminRole && (currentUser.getIsAllowed() == false || currentUser.getIsAllowed() == null)) {
                 currentUser.setIsAllowed(true)
+            }
+            val notificationCount = currentUser?.let { notificationRepository?.countAllByUserIdAndReadIsFalse(it.getId()) }
+            if (notificationCount != null) {
+                model["hasNotifications"] = notificationCount > 0
             }
             if (currentUser == null || currentUser.getIsAllowed() == false) {
                 SecurityContextHolder.clearContext()

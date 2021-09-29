@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="sidebaroffcanvas(activeSidebar,authority)">
+<body th:fragment="sidebaroffcanvas(activeSidebar,authority,hasNotifications)">
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
     <div class="offcanvas-header">
@@ -34,8 +34,15 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='notifications' ? ' active' : ''}" href="/notifications">
-                    <span class="bi-bell" style="font-size: 1rem;"></span> Notifications
+                <a th:attr="class='nav-link' + ${activeSidebar=='notifications' ? ' active' : ''} + ' position-relative'" href="/notifications">
+                    <span class="bi-bell position-relative" style="font-size: 1rem;">
+                        <th:block th:if="${hasNotifications}">
+                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                            <span class="visually-hidden">New alerts</span>
+                        </span>
+                        </th:block>
+                    </span> Notifications
+
                 </a>
             </li>
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
