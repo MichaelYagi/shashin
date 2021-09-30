@@ -3,7 +3,9 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -53,8 +55,14 @@ class UserController {
     @Value("\${app.rememberme.expiration.seconds}")
     private var expirationSeconds: Int? = null
 
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
     @Autowired
     var userRepository: UserRepository? = null
+
+    @Autowired
+    private lateinit var notificationRepository: NotificationRepository
 
     @Resource(name = "authenticationManager")
     private val authManager: AuthenticationManager? = null
@@ -170,6 +178,22 @@ class UserController {
             } else {
                 newUser.setAuthority("ROLE_USER")
                 userRepository?.save(newUser)
+
+                val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+                if (admins != null) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(dtf.format(now))
+                        notificationObj.setModifiedAt(dtf.format(now))
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered and is pending approval.")
+                        notificationObjList.add(notificationObj)
+                    }
+                    notificationRepository.saveAll(notificationObjList)
+                }
+
                 return "redirect:/users/login?msg=regpending"
             }
         }

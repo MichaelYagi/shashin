@@ -188,6 +188,7 @@ CREATE TABLE `notification` (
     `albumId` INT DEFAULT NULL,
     `metadataId` VARCHAR(36) DEFAULT NULL,
     `commentId` INT DEFAULT NULL,
+    `favoriteId` INT DEFAULT NULL,
     `read` BOOLEAN NOT NULL DEFAULT FALSE,
     `message` VARCHAR NOT NULL,
     `createdAt` DATETIME DEFAULT NULL,

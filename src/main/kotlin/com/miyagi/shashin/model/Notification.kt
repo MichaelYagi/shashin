@@ -21,6 +21,8 @@ class Notification {
 
     private var commentId: Int? = null
 
+    private var favoriteId: Int? = null
+
     @NotBlank
     private var message: String? = null
 
@@ -54,6 +56,14 @@ class Notification {
 
     fun setAlbumId(albumId: Int?) {
         this.albumId = albumId
+    }
+
+    fun getFavoriteId(): Int? {
+        return this.favoriteId
+    }
+
+    fun setFavoriteId(favoriteId: Int?) {
+        this.favoriteId = favoriteId
     }
 
     fun getCommentId(): Int? {
@@ -110,6 +120,7 @@ class Notification {
         map["userId"] = this.userId
         map["albumId"] = this.albumId
         map["commentId"] = this.commentId
+        map["favoriteId"] = this.favoriteId
         map["metadataId"] = this.metadataId
         map["read"] = this.read
         val mapper = ObjectMapper()
