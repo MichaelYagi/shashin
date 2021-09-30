@@ -184,15 +184,16 @@ CREATE TABLE `albumphotocomment` (
 DROP TABLE IF EXISTS `notification`;
 CREATE TABLE `notification` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `userId` INT NOT NULL,
+    `userId` INT,
     `albumId` INT DEFAULT NULL,
     `metadataId` VARCHAR(36) DEFAULT NULL,
     `commentId` INT DEFAULT NULL,
     `favoriteId` INT DEFAULT NULL,
-    `read` BOOLEAN NOT NULL DEFAULT FALSE,
-    `message` VARCHAR NOT NULL,
+    `read` BOOLEAN DEFAULT FALSE,
+    `message` VARCHAR,
     `createdAt` DATETIME DEFAULT NULL,
-    `modifiedAt` DATETIME DEFAULT NULL
+    `modifiedAt` DATETIME DEFAULT NULL,
+    FOREIGN KEY (`userId`) REFERENCES user(`id`)
 );
 
 INSERT INTO `hibernate_sequence` VALUES (362);
