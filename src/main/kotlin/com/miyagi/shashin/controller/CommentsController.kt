@@ -91,14 +91,14 @@ class CommentsController {
                     val notificationObj = Notification()
                     var createEntry = false
                     if (user != null && user.getId() != currentUserObj.getId()) {
-                        if (user.getAuthority() == adminRole) {
-                            createEntry = true
-                        } else {
+//                        if (user.getAuthority() == adminRole) {
+//                            createEntry = true
+//                        } else {
                             val album = userAlbumRepository.findByUserIdAndAlbumId(user.getId(),albumId)
                             if (album != null) {
                                 createEntry = true
                             }
-                        }
+//                        }
 
                         if (createEntry) {
                             notificationObj.setUserId(user.getId())
@@ -167,14 +167,14 @@ class CommentsController {
                     val notificationObj = Notification()
                     var createEntry = false
                     if (user != null && user.getId() != currentUserObj.getId()) {
-                        if (user.getAuthority() == adminRole) {
-                            createEntry = true
-                        } else {
+//                        if (user.getAuthority() == adminRole) {
+//                            createEntry = true
+//                        } else {
                             val album = userAlbumRepository.findByUserIdAndAlbumId(user.getId(),albumId)
                             if (album != null) {
                                 createEntry = true
                             }
-                        }
+//                        }
 
                         if (createEntry) {
                             notificationObj.setUserId(user.getId())
