@@ -107,7 +107,7 @@ class CommentsController {
                             notificationObj.setCreatedAt(dtf.format(now))
                             notificationObj.setModifiedAt(dtf.format(now))
                             notificationObj.setRead(false)
-                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album <a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\"")
+                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album <a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" on "+dtf.format(now))
                             notificationObjList.add(notificationObj)
                         }
                     }
@@ -184,7 +184,7 @@ class CommentsController {
                             notificationObj.setRead(false)
                             notificationObj.setCreatedAt(dtf.format(now))
                             notificationObj.setModifiedAt(dtf.format(now))
-                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" for photo <a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\"")
+                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" for photo <a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+dtf.format(now))
                             notificationObjList.add(notificationObj)
                         }
                     }
