@@ -191,7 +191,9 @@ class UserController {
                         notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered and is pending approval.")
                         notificationObjList.add(notificationObj)
                     }
-                    notificationRepository.saveAll(notificationObjList)
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository.saveAll(notificationObjList)
+                    }
                 }
 
                 return "redirect:/users/login?msg=regpending"
