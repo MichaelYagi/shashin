@@ -3,7 +3,7 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100">
 
-<div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
+<div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
     <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>

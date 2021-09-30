@@ -3,7 +3,7 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 
-<div th:replace="fragments/topnav :: topnav(${authority},${username},${activePage})"></div>
+<div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
 <div class="container-fluid">
     <div class="row">
