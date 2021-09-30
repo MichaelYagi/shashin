@@ -13,10 +13,6 @@
         var qslat = getParameterByName("lat");
         var qslng = getParameterByName("lng");
 
-        if (mapdata.length > 0) {
-            $("#progressBarWrapper").css("visibility","visible");
-        }
-
         const textFill = new ol.style.Fill({
             color: '#fff',
         });
@@ -271,11 +267,13 @@
 
         var iconFeatures = [];
 
+        $("#progressBarWrapper").css("visibility","visible");
         for (index in mapdata) {
             var data = mapdata[index];
 
             if (data["lat"] !== null && data["lng"] !== null &&
                 data["lat"] !== "" && data["lng"] !== "") {
+
                 var lat = data["lat"];
                 var lng = data["lng"];
 
@@ -328,6 +326,7 @@
             var width = String(parseInt(currentProgress))+"%";
             $("#progressBar").css("width",width);
         }
+        $("#progressBarWrapper").css("visibility","hidden");
 
         if (iconFeatures.length > 0) {
             var vectorSource = new ol.source.Vector({
@@ -342,7 +341,6 @@
                 style: styleFunction
             });
             map.addLayer(vector);
-            $("#progressBarWrapper").css("visibility","hidden");
         }
 
         map.on("pointermove", function (evt) {
