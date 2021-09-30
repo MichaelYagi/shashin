@@ -79,6 +79,7 @@ class BaseController {
             settingsObj.setMatchScanLimit(10)
             settingsObj.setTrainingDataLimit(100)
             settingsObj.setNotificationLimit(20)
+            settingsObj.setPort("6624")
             settingsObj.setRecognitionConfidenceThreshold("0.2")
             settingsObj.setRecognitionConfidenceThreshold("0.2")
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
