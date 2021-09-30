@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.InputStreamResource
-import org.springframework.core.io.Resource
 import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -91,6 +90,9 @@ class SettingsController {
 
     @Autowired
     private val albumPhotoRepository: AlbumPhotoRepository? = null
+
+    @Autowired
+    private val notificationRepository: NotificationRepository? = null
 
     @Autowired
     private val recognitionLabelRepository: RecognitionLabelRepository? = null
@@ -346,16 +348,17 @@ class SettingsController {
             val deleteContent = userDeleteMap["deleteContent"].toString().toBoolean()
 
             if (deleteContent) {
-                metadataRepository?.deleteAll()
-                albumRepository?.deleteAll()
-                userAlbumRepository?.deleteAll()
-                albumPhotoRepository?.deleteAll()
-                favoriteRepository?.deleteAll()
-                commentRepository?.deleteAll()
                 albumCommentRepository?.deleteAll()
                 albumPhotoCommentRepository?.deleteAll()
-                recognitionLabelRepository?.deleteAll()
+                albumPhotoRepository?.deleteAll()
+                albumRepository?.deleteAll()
+                commentRepository?.deleteAll()
+                favoriteRepository?.deleteAll()
+                metadataRepository?.deleteAll()
+                notificationRepository?.deleteAll()
                 recognitionLabelPhotoRepository?.deleteAll()
+                recognitionLabelRepository?.deleteAll()
+                userAlbumRepository?.deleteAll()
 
                 // Clean up thread files
                 FileUtils.deleteThreadFiles("shashinscan")
