@@ -14,10 +14,10 @@
 
             <div id="favoritesMessage"></div>
             <div id="infinite-scroll-gallery">
-                <div class="row p-3">
-                    <div th:replace="fragments/appjs :: appjs()"></div>
-                    <div th:replace="fragments/favoritesjs :: favoritesjs()"></div>
-                    <th:block th:if="${metadataList != ''}">
+                <div th:replace="fragments/appjs :: appjs()"></div>
+                <div th:replace="fragments/favoritesjs :: favoritesjs()"></div>
+                <th:block th:if="${metadataList != ''}">
+                    <div class="row p-3">
                         <h1>Favorites</h1>
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
@@ -87,8 +87,8 @@
                             <span class="appendMetadataPhotos" style="width:0;height:0;padding:0"></span>
 
                         </th:block>
-                    </th:block>
-                </div>
+                    </div>
+                </th:block>
             </div>
 
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
