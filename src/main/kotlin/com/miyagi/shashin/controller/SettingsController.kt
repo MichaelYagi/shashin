@@ -9,6 +9,7 @@ import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
@@ -102,6 +103,9 @@ class SettingsController {
 
     @Autowired
     private val settingsRepository: SettingsRepository? = null
+
+    @Autowired
+    private val restartService: RestartService? = null
 
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
@@ -296,11 +300,7 @@ class SettingsController {
             val oldPort = baseUrlArray[baseUrlArray.count()-1]
             val newBaseUrl = baseUrl.replace(":$oldPort",":$port")
 
-            val con = URL("$baseUrl/actuator/restart").openConnection() as HttpURLConnection
-            con.requestMethod = "POST"
-            con.setRequestProperty("Content-Length", "0")
-            con.doOutput = true
-            con.inputStream.close()
+            restartService?.restartApp()
 
             return "redirect:$newBaseUrl/settings"
         }
