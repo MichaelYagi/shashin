@@ -30,6 +30,7 @@ class Notification {
 
     private var modifiedAt: String? = null
 
+    @NotBlank
     private var read: Boolean? = null
 
     fun Notification() {}
@@ -122,6 +123,7 @@ class Notification {
         map["commentId"] = this.commentId
         map["favoriteId"] = this.favoriteId
         map["metadataId"] = this.metadataId
+        map["message"] = this.message
         map["read"] = this.read
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
