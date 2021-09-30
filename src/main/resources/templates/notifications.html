@@ -14,9 +14,9 @@
             <th:block th:if="${notificationList != ''}">
                 <h1>Notifications</h1>
 
-                <ul class="list-group">
+                <ul class="list-group list-group-hover">
                 <th:block th:each="notification, iterStat: ${notificationList}">
-                    <li class="list-group-item"><th:block th:remove="tag" th:utext="${notification.message}"></th:block> <th:block th:unless="${notification.read}"><span class="badge rounded-pill bg-danger">New</span></th:block></li>
+                    <li th:onclick="markNotificationRead([[${notification.id}]]);" th:id="${notification.id}" class="list-group-item"><th:block th:remove="tag" th:utext="${notification.message}"></th:block> <th:block th:unless="${notification.read}"><span th:id="${'newNotification'+notification.id}" class="badge rounded-pill bg-danger">New</span></th:block></li>
                 </th:block>
                 </ul>
             </th:block>
@@ -30,11 +30,24 @@
     var promise = $.ajax({
         type: 'get',
         url: "/notifications/markread/favorites",
-        contentType: 'application/json; charset=utf-8',
-        async:false
+        contentType: 'application/json; charset=utf-8'
     }).then(function (data) {
 
     });
+
+    function markNotificationRead(notificationId) {
+        if ($('#newNotification'+notificationId).length) {
+            $('#newNotification'+notificationId).remove();
+
+            var promise = $.ajax({
+                type: 'get',
+                url: "/notifications/markread/notification/"+notificationId,
+                contentType: 'application/json; charset=utf-8'
+            }).then(function (data) {
+
+            });
+        }
+    }
 </script>
 </body>
 </html>

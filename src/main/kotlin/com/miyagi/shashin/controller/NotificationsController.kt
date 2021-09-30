@@ -1,23 +1,20 @@
 package com.miyagi.shashin.controller
 
-import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.FavoriteRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.ResponseBody
-import java.util.ArrayList
+import org.springframework.web.bind.annotation.*
 import javax.transaction.Transactional
 
 @Controller
+@Secured("ROLE_ADMIN","ROLE_USER")
 class NotificationsController {
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
@@ -134,10 +131,7 @@ class NotificationsController {
     fun markNotificationsReadByFavorites(model: Model): String {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val notificationList = notificationRepository.findAllByUserIdAndAlbumIdIsNullAndCommentIdIsNullAndMetadataIdIsNull(currentUserObj.getId())
-            if (notificationList != null) {
-                println(notificationList.count())
-            }
+            val notificationList = notificationRepository.findAllByUserIdAndFavoriteIdIsNotNull(currentUserObj.getId())
             if (notificationList != null && notificationList.count() > 0) {
                 val notifications = mutableListOf<Notification>()
                 for (notification in notificationList) {
@@ -152,6 +146,45 @@ class NotificationsController {
                     notificationRepository.saveAll(notifications)
                 }
             }
+        }
+
+        return "{}"
+    }
+
+    @GetMapping("/notifications/markread/users", produces = ["application/json"])
+    @ResponseBody
+    fun markNotificationsReadByUsers(model: Model): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            val notificationList = notificationRepository.findAllByUserIdAndAlbumIdIsNullAndCommentIdIsNullAndMetadataIdIsNullAndFavoriteIdIsNull(currentUserObj.getId())
+            if (notificationList != null && notificationList.count() > 0) {
+                val notifications = mutableListOf<Notification>()
+                for (notification in notificationList) {
+                    if (notification != null) {
+                        if (!notification.getRead()!!) {
+                            notification.setRead(true)
+                            notifications.add(notification)
+                        }
+                    }
+                }
+                if (notifications.isNotEmpty()) {
+                    notificationRepository.saveAll(notifications)
+                }
+            }
+        }
+
+        return "{}"
+    }
+
+    @RequestMapping(value = ["/notifications/markread/notification/{notificationId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun markNotificationsReadByUsers(model: Model, @PathVariable notificationId: Int): String {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && notificationId > 0) {
+            val notificationObj = notificationRepository.findById(notificationId)
+            notificationObj.get().setRead(true)
+            notificationRepository.save(notificationObj.get())
         }
 
         return "{}"

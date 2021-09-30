@@ -96,5 +96,16 @@
         </main>
     </div>
 </div>
+
+<script type="text/javascript">
+    var promise = $.ajax({
+        type: 'get',
+        url: "/notifications/markread/users",
+        contentType: 'application/json; charset=utf-8',
+        async:false
+    }).then(function (data) {
+
+    });
+</script>
 </body>
 </html>
