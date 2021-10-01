@@ -29,8 +29,12 @@
             $('#propAlbumModal').find(':input').val('');
             $("#removeFromAlbum")[0].checked = false;
             $("#setCoverAlbum")[0].checked = false;
+            $("#propAlbumModalThumbnail").html("");
 
             $("#metadataId").val(metadata.id);
+            if (metadata.thumbnailUrlCentered !== null) {
+                $("#propAlbumModalThumbnail").html("<img src='"+metadata.thumbnailUrlCentered+"' height='100' width='100'>");
+            }
 
             // Open modal window
             $("#propAlbumModal").modal('show');
