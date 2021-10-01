@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/appjs :: appjs()"></div>
+            <div class="row">
+                <div class="col pb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 th:text="${sidecarSizeMB}+' MB'"></h2>
+                            <p class="text-muted">Sidecar Data Size</p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Gallery Stats</h5>
+                            <p class="card-text">
+                                <canvas id="siteStatChart" height="400"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 th:text="${allowedUserCount+notAllowedUserCount+allowedAdminCount+notAllowedAdminCount}"></h2>
+                            <p class="text-muted">Total Users</p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">User Stats</h5>
+                            <p class="card-text">
+                                <canvas id="userChart" height="400"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 th:text="${photoCount+videoCount}"></h2>
+                            <p class="text-muted">Total Media</p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Media Stats</h5>
+                            <p class="card-text">
+                                <canvas id="mediaChart" height="400"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 th:text="${cameraTotalCount}"></h2>
+                            <p class="text-muted">Camera Types Used In Media</p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Camera Stats</h5>
+                            <p class="card-text">
+                                <canvas id="cameraChart" height="400"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
+        </main>
+    </div>
+</div>
+
+<script type="text/javascript">
+    /*<![CDATA[*/
+    let ctx = $('#siteStatChart');
+    const photosWithPeopleTaggedCount = [[${photosWithPeopleTaggedCount}]];
+    const favoritesCount = [[${favoritesCount}]];
+    const commentsCount = [[${commentsCount}]];
+    const albumCount = [[${albumCount}]];
+    const siteStatChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Photos People Tagged','Total Favorites','Total Comments','Total Albums'],
+            datasets: [{
+                data: [photosWithPeopleTaggedCount,favoritesCount,commentsCount,albumCount],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: false
+            },
+            maintainAspectRatio: false
+        }
+    });
+
+    ctx = $('#userChart');
+    const activeUserCount = [[${allowedUserCount}]];
+    const pendingUserCount = [[${notAllowedUserCount}]];
+    const activeAdminCount = [[${allowedAdminCount}]];
+    const pendingAdminCount = [[${notAllowedAdminCount}]];
+    const loggedInCount = [[${loggedInCount}]];
+    const userChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Active Users','Active Admins','Pending Users','Pending Admins','Logged In'],
+            datasets: [{
+                data: [activeUserCount,activeAdminCount,pendingUserCount,pendingAdminCount,loggedInCount],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(153, 102, 255, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: false
+            },
+            maintainAspectRatio: false
+        }
+    });
+
+    ctx = $('#mediaChart');
+    const photoCount = [[${photoCount}]];
+    const videoCount = [[${videoCount}]];
+    const locatedCount = [[${locatedCount}]];
+    const notLocatedCount = [[${notLocatedCount}]];
+    const mediaChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Photos','Videos','GPS Data','Missing GPS Data'],
+            datasets: [{
+                data: [photoCount,videoCount,locatedCount,notLocatedCount],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: false
+            },
+            maintainAspectRatio: false
+        }
+    });
+
+    ctx = $('#cameraChart');
+    const cameraCounts = JSON.parse(decodeHtml('[[${cameraCountJson}]]'));
+    const cameraChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            datasets: [{
+                data: cameraCounts
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: false
+            },
+            maintainAspectRatio: false
+        }
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>
