@@ -28,7 +28,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -182,13 +184,16 @@ class UserController {
                 val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
                 if (admins != null) {
                     val notificationObjList = mutableListOf<Notification>()
+                    val sdtf = DateTimeFormatter
+                        .ofLocalizedTime(FormatStyle.LONG)
+                        .withZone(ZoneId.systemDefault())
                     for (admin in admins) {
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(dtf.format(now))
                         notificationObj.setModifiedAt(dtf.format(now))
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+dtf.format(now)+" and is pending approval.")
+                        notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+sdtf.format(now)+" and is pending approval.")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {

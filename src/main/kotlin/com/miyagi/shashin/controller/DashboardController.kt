@@ -62,7 +62,7 @@ class DashboardController {
     @Autowired
     private lateinit var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository
 
-    private var logger: Logger = Logger.getLogger(FaceRecognizer::class.simpleName)
+    private var logger: Logger = Logger.getLogger(DashboardController::class.simpleName)
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()

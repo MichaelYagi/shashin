@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import javax.transaction.Transactional
 
 @Controller
@@ -87,6 +89,9 @@ class CommentsController {
                 val albumObj = albumRepository.findById(albumId)
                 val users = userRepository.findAll()
                 val notificationObjList = mutableListOf<Notification>()
+                val sdtf = DateTimeFormatter
+                    .ofLocalizedTime(FormatStyle.LONG)
+                    .withZone(ZoneId.systemDefault())
                 for (user in users) {
                     val notificationObj = Notification()
                     var createEntry = false
@@ -107,7 +112,7 @@ class CommentsController {
                             notificationObj.setCreatedAt(dtf.format(now))
                             notificationObj.setModifiedAt(dtf.format(now))
                             notificationObj.setRead(false)
-                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album <a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" on "+dtf.format(now))
+                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album <a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" on "+sdtf.format(now))
                             notificationObjList.add(notificationObj)
                         }
                     }
@@ -163,6 +168,9 @@ class CommentsController {
                 val albumObj = albumRepository.findById(albumId)
                 val users = userRepository.findAll()
                 val notificationObjList = mutableListOf<Notification>()
+                val sdtf = DateTimeFormatter
+                    .ofLocalizedTime(FormatStyle.LONG)
+                    .withZone(ZoneId.systemDefault())
                 for (user in users) {
                     val notificationObj = Notification()
                     var createEntry = false
@@ -184,7 +192,7 @@ class CommentsController {
                             notificationObj.setRead(false)
                             notificationObj.setCreatedAt(dtf.format(now))
                             notificationObj.setModifiedAt(dtf.format(now))
-                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" for photo <a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+dtf.format(now))
+                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" for photo <a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+sdtf.format(now))
                             notificationObjList.add(notificationObj)
                         }
                     }

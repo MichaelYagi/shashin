@@ -15,7 +15,9 @@ import org.springframework.stereotype.Component
 import org.springframework.ui.Model
 import java.io.IOException
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -85,7 +87,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     private fun notifyLogin(currentUserObj: User?, authority: String) {
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
-        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val dtf = DateTimeFormatter
+            .ofLocalizedTime(FormatStyle.LONG)
+            .withZone(ZoneId.systemDefault())
         val now = LocalDateTime.now()
 
         if (admins != null && currentUserObj != null) {
@@ -95,10 +99,12 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(dtf.format(now))
                 notificationObj.setModifiedAt(dtf.format(now))
-                notificationObj.setRead(false)
                 var identity = currentUserObj.getUsername()
                 if (admin.getId() == currentUserObj.getId()) {
+                    notificationObj.setRead(true)
                     identity = "You "
+                } else {
+                    notificationObj.setRead(false)
                 }
                 notificationObj.setMessage("<a href='/settings/users' target='_blank'>$identity</a> logged in at "+dtf.format(now)+".")
                 notificationObjList.add(notificationObj)
