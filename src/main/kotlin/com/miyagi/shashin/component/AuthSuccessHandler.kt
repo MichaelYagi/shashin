@@ -100,14 +100,14 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 notificationObj.setUserId(admin.getId())
                 notificationObj.setCreatedAt(dtf.format(now))
                 notificationObj.setModifiedAt(dtf.format(now))
-                var identity = currentUserObj.getUsername()
+                var identity = "<a href='/settings/users' target='_blank'>"+currentUserObj.getUsername()+"</a>"
                 if (admin.getId() == currentUserObj.getId()) {
                     notificationObj.setRead(true)
                     identity = "You "
                 } else {
                     notificationObj.setRead(false)
                 }
-                notificationObj.setMessage("<a href='/settings/users' target='_blank'>$identity</a> logged in at "+sdtf.format(now)+".")
+                notificationObj.setMessage("$identity logged in at "+sdtf.format(now)+".")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {
