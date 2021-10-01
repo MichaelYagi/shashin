@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.component.FaceRecognizer
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,6 +19,8 @@ import java.nio.file.attribute.BasicFileAttributes
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.concurrent.atomic.AtomicLong
+import java.util.logging.Level
+import java.util.logging.Logger
 
 
 @Controller
@@ -59,6 +62,8 @@ class DashboardController {
     @Autowired
     private lateinit var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository
 
+    private var logger: Logger = Logger.getLogger(FaceRecognizer::class.simpleName)
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -93,7 +98,12 @@ class DashboardController {
         // Files stats
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
-        val sidecarSize = Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
+        var sidecarSize = 0.toLong()
+        try {
+            sidecarSize = Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
+        } catch(e: Exception) {
+            logger.log(Level.SEVERE, "Error calculating sidecar size:"+ e.message)
+        }
         response["sidecarSizeMB"] = sidecarSize/(1024 * 1024)
 
         // User stats

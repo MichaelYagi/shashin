@@ -11,6 +11,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/appjs :: appjs()"></div>
+            <h1>Dashboard</h1><br>
             <div class="row">
                 <div class="col pb-4">
                     <div class="card">
@@ -75,7 +76,6 @@
                     </div>
                 </div>
             </div>
-
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
