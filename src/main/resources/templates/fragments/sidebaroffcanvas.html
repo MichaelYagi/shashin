@@ -38,7 +38,7 @@
                 <a th:attr="class='nav-link' + ${activeSidebar=='notifications' ? ' active' : ''} + ' position-relative'" href="/notifications">
                     <span class="bi-bell position-relative" style="font-size: 1rem;">
                         <th:block th:if="${hasNotifications}">
-                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                        <span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
                             <span class="visually-hidden">New alerts</span>
                         </span>
                         </th:block>
