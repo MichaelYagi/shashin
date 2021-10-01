@@ -87,7 +87,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     private fun notifyLogin(currentUserObj: User?, authority: String) {
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
-        val dtf = DateTimeFormatter
+        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val sdtf = DateTimeFormatter
             .ofLocalizedTime(FormatStyle.LONG)
             .withZone(ZoneId.systemDefault())
         val now = LocalDateTime.now()
@@ -106,7 +107,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 } else {
                     notificationObj.setRead(false)
                 }
-                notificationObj.setMessage("<a href='/settings/users' target='_blank'>$identity</a> logged in at "+dtf.format(now)+".")
+                notificationObj.setMessage("<a href='/settings/users' target='_blank'>$identity</a> logged in at "+sdtf.format(now)+".")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {

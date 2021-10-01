@@ -8,7 +8,7 @@
             <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" href="#offcanvasMenu" aria-controls="offcanvasMenu" title="Show Menu">
                 <span class="bi-list position-relative" style="font-size: 1.5rem;">
                     <th:block th:if="${hasNotifications}">
-                        <span class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle">
+                        <span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle">
                             <span class="visually-hidden">New alerts</span>
                         </span>
                     </th:block>

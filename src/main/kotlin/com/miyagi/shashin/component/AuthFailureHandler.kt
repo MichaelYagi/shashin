@@ -43,12 +43,13 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         val lastUserName: String = request?.getParameter("username") ?: ""
 
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
-        val dtf = DateTimeFormatter
+        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        val sdtf = DateTimeFormatter
             .ofLocalizedTime(FormatStyle.LONG)
             .withZone(ZoneId.systemDefault())
         val now = LocalDateTime.now()
 
-        val message = "User $lastUserName failed login at "+ dtf.format(now)+"."
+        val message = "User $lastUserName failed login at "+ sdtf.format(now)+"."
         val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
         logger.log(Level.WARNING, message)
 
