@@ -1,5 +1,8 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.util.ArrayList
 import javax.transaction.Transactional
 
 @Controller
@@ -18,6 +22,9 @@ import javax.transaction.Transactional
 class NotificationsController {
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
+
+    val mapper = ObjectMapper()
+    val resp = mutableMapOf<String, String?>()
 
     @GetMapping("/notifications")
     @Transactional
@@ -176,17 +183,27 @@ class NotificationsController {
         return "{}"
     }
 
-    @RequestMapping(value = ["/notifications/markread/notification/{notificationId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/notifications/markread/notification"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun markNotificationsReadByUsers(model: Model, @PathVariable notificationId: Int): String {
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null && notificationId > 0) {
-            val notificationObj = notificationRepository.findById(notificationId)
-            notificationObj.get().setRead(true)
-            notificationRepository.save(notificationObj.get())
-        }
+    fun markNotificationsReadByUsers(model: Model, @RequestBody requestBody: JsonNode): String? {
+        val notificationIdList = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (notificationIdList.containsKey("notificationIds")) {
+            val notificationIds = notificationIdList["notificationIds"] as ArrayList<Int>
 
+            val notificationObjList = mutableListOf<Notification>()
+            for (notificationId in notificationIds) {
+                val currentUserObj = model.getAttribute("currentUser") as User?
+                if (currentUserObj != null && notificationId > 0) {
+                    val notificationObj = notificationRepository.findById(notificationId)
+                    notificationObj.get().setRead(true)
+                    notificationObjList.add(notificationObj.get())
+                }
+            }
+            if (notificationObjList.isNotEmpty()) {
+                notificationRepository.saveAll(notificationObjList)
+            }
+        }
         return "{}"
     }
 }
