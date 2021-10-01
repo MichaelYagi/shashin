@@ -146,14 +146,20 @@ class FavoritesController {
                 val metadata = metadataRepository.findById(metadataId)
                 val notificationObjList = mutableListOf<Notification>()
                 for (admin in admins) {
-                    val notificationObj = Notification()
-                    notificationObj.setCreatedAt(dtf.format(now))
-                    notificationObj.setModifiedAt(dtf.format(now))
-                    notificationObj.setRead(false)
-                    notificationObj.setMessage(currentUserObj.getUsername()+" likes <a href='/api/v1/image/"+metadata.get().getId()+"' target='_blank'>"+metadata.get().getFileName()+"</a> on "+dtf.format(now))
-                    notificationObj.setFavoriteId(favorite.getId())
-                    notificationObj.setUserId(admin.getId())
-                    notificationObjList.add(notificationObj)
+                    if (admin.getId() != currentUserObj.getId()) {
+                        val notificationObj = Notification()
+                        notificationObj.setCreatedAt(dtf.format(now))
+                        notificationObj.setModifiedAt(dtf.format(now))
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage(
+                            currentUserObj.getUsername() + " likes <a href='/api/v1/image/" + metadata.get()
+                                .getId() + "' target='_blank'>" + metadata.get()
+                                .getFileName() + "</a> on " + dtf.format(now)
+                        )
+                        notificationObj.setFavoriteId(favorite.getId())
+                        notificationObj.setUserId(admin.getId())
+                        notificationObjList.add(notificationObj)
+                    }
                 }
                 notificationRepository.saveAll(notificationObjList)
 
