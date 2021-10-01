@@ -12,11 +12,12 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
 
             <th:block th:if="${notificationList != ''}">
-                <h1>Notifications <small class="text-muted">Click row to mark read</small></h1>
+                <h1>Notifications</h1>
+                <small class="text-muted">Click/Shift-Click row to mark read</small>
 
-                <ul class="list-group list-group-hover">
+                <ul class="list-group list-group-hover" id="notificationList">
                 <th:block th:each="notification, iterStat: ${notificationList}">
-                    <li th:onclick="markNotificationRead([[${notification.id}]]);" th:id="${notification.id}" class="list-group-item"><th:block th:remove="tag" th:utext="${notification.message}"></th:block> <th:block th:unless="${notification.read}"><span th:id="${'newNotification'+notification.id}" class="badge rounded-pill bg-danger">New</span></th:block></li>
+                    <li th:id="${notification.id}" class="list-group-item"><th:block th:remove="tag" th:utext="${notification.message}"></th:block> <th:block th:unless="${notification.read}"><span th:id="${'newNotification'+notification.id}" class="badge rounded-pill bg-danger">New</span></th:block></li>
                 </th:block>
                 </ul>
             </th:block>
@@ -35,17 +36,68 @@
         toggleNotificationBadge();
     });
 
-    function markNotificationRead(notificationId) {
-        if ($('#newNotification'+notificationId).length) {
-            $('#newNotification'+notificationId).remove();
+    var listItems = $('.list-group-item');
+    var lastSelected = null;
 
-            var promise = $.ajax({
-                type: 'get',
-                url: "/notifications/markread/notification/"+notificationId,
+    listItems.click(function(e) {
+        if (e.shiftKey) {
+            if (!lastSelected) {
+                lastSelected = this;
+                $(this).addClass('list-group-select');
+                return;
+            }
+
+            const start = listItems.index(this);
+            const end = listItems.index(lastSelected);
+
+            const list = listItems.slice(Math.min(start, end), Math.max(start, end) + 1);
+            list.addClass('list-group-select');
+            const notificationIdList = []
+            for (let index in list) {
+                const notificationId = list[index].id;
+                if (notificationId) {
+                    notificationIdList.push(parseInt(notificationId));
+                }
+            }
+            markNotificationRead(notificationIdList);
+        } else {
+            const notificationId = $(this).attr("id");
+            markNotificationRead([parseInt(notificationId)]);
+            listItems.removeClass('list-group-select');
+            lastSelected = null;
+        }
+    });
+
+    function markNotificationRead(notificationIds) {
+        if (notificationIds.length > 0) {
+            for (let index in notificationIds) {
+                let notificationId = notificationIds[index];
+                if ($('#newNotification' + notificationId).length) {
+                    $('#newNotification' + notificationId).remove();
+                }
+            }
+
+            let data = {
+                "notificationIds":notificationIds
+            }
+
+            let posting = $.post({
+                url: "/notifications/markread/notification",
+                data: JSON.stringify(data),
                 contentType: 'application/json; charset=utf-8'
-            }).then(function (data) {
-                toggleNotificationBadge()
             });
+
+            posting.done(function(data) {
+                toggleNotificationBadge();
+            });
+
+            // var promise = $.ajax({
+            //     type: 'post',
+            //     url: "/notifications/markread/notification/" + notificationIds,
+            //     contentType: 'application/json; charset=utf-8'
+            // }).then(function (data) {
+            //     toggleNotificationBadge()
+            // });
         }
     }
 
