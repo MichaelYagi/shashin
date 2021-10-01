@@ -272,7 +272,7 @@
     }
 
     function getMapSource(source) {
-        const validSources = ["osm","bingmaps","maptiler"];
+        const validSources = ["osm","bingmaps","maptiler","mapbox"];
 
         var mapSource = new ol.source.OSM();
 
@@ -294,6 +294,11 @@
                     mapSource =  new ol.source.XYZ({
                         url: 'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
                         maxZoom: 19
+                    });
+                    break;
+                case "mapbox":
+                    mapSource = new ol.source.XYZ({
+                        url: 'https://{a-c}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6/{z}/{x}/{y}.vector.pbf?access_token=pk.eyJ1IjoibWljaGFlbHR5YWdpIiwiYSI6ImNrdGszZXNrdTFocTcyd29sMG1hYXprdmsifQ.RVimlhqPIKKTYmaGyr-ThQ'
                     });
                     break;
                 default:
