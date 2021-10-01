@@ -29,6 +29,7 @@
 
         // Clear modal data
         $('#propTimelineModal').find(':input').val('');
+        $("#propTimelineModalThumbnail").html("");
         $("#isobject")[0].checked = false;
         $("#hidden")[0].checked = false;
 
@@ -37,6 +38,10 @@
         $("#currentlat").val(metadata.lat)
         $("#currentlng").val(metadata.lng)
         $("#metadataId").val(metadata.id);
+
+        if (metadata.thumbnailUrlCentered !== null) {
+            $("#propTimelineModalThumbnail").html("<img src='"+metadata.thumbnailUrlCentered+"' height='100' width='100'>");
+        }
 
         if (metadata.title !== null) {
             $("#title").val(metadata.title);
