@@ -20,7 +20,9 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.ArrayList
 import javax.transaction.Transactional
 
@@ -145,6 +147,9 @@ class FavoritesController {
                 val admins = userRepository.findAllByAuthorityEquals(adminRole!!)
                 val metadata = metadataRepository.findById(metadataId)
                 val notificationObjList = mutableListOf<Notification>()
+                val sdtf = DateTimeFormatter
+                    .ofLocalizedTime(FormatStyle.LONG)
+                    .withZone(ZoneId.systemDefault())
                 for (admin in admins) {
                     if (admin.getId() != currentUserObj.getId()) {
                         val notificationObj = Notification()
@@ -154,7 +159,7 @@ class FavoritesController {
                         notificationObj.setMessage(
                             currentUserObj.getUsername() + " likes <a href='/api/v1/image/" + metadata.get()
                                 .getId() + "' target='_blank'>" + metadata.get()
-                                .getFileName() + "</a> on " + dtf.format(now)
+                                .getFileName() + "</a> on " + sdtf.format(now)
                         )
                         notificationObj.setFavoriteId(favorite.getId())
                         notificationObj.setUserId(admin.getId())

@@ -271,6 +271,39 @@
         }
     }
 
+    function getMapSource(source) {
+        const validSources = ["osm","bingmaps","maptiler"];
+
+        var mapSource = new ol.source.OSM();
+
+        if (validSources.includes(source)) {
+            switch(source) {
+                case "osm":
+                    mapSource = new ol.source.OSM();
+                    break
+                case "bingmaps":
+                    mapSource = new ol.source.BingMaps({
+                        key: 'AgLAysLWWJdjeVeOTVUYlNfUddxeF6QFeXCciHblaYSG7xYx3OUuAnpX98MNQUFR', // Dev/Test
+                        imagerySet: 'RoadOnDemand', // 'Aerial', 'RoadOnDemand', 'AerialWithLabels', etc.
+                        // use maxZoom 19 to see stretched tiles instead of the Bing Maps
+                        // "no photos at this zoom level" tiles
+                        maxZoom: 19
+                    });
+                    break
+                case "maptiler":
+                    mapSource =  new ol.source.XYZ({
+                        url: 'https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=YlQvLcNKq0a4aFDX2z3O',
+                        maxZoom: 19
+                    });
+                    break;
+                default:
+                    mapSource = new ol.source.OSM();
+            }
+        }
+
+        return mapSource
+    }
+
     function getDateString(year,month,day) {
         if (year !== null && year !== "" &&
             month !== null && month !== "" &&

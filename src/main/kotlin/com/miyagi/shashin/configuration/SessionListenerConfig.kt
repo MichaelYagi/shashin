@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSessionListener
 @Configuration
 internal class SessionListenerConfig : HttpSessionListener {
 
-    private var logger: Logger = Logger.getLogger(BaseController::class.simpleName)
+    private var logger: Logger = Logger.getLogger(SessionListenerConfig::class.simpleName)
 
     @Autowired
     var userRepository: UserRepository? = null

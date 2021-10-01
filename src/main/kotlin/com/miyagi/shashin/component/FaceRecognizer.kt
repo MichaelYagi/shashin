@@ -2,7 +2,6 @@ package com.miyagi.shashin.component
 
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.RecognitionLabel
 import com.miyagi.shashin.model.RecognitionLabelPhoto
 import com.miyagi.shashin.model.TrainingData
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
