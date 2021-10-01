@@ -188,7 +188,7 @@ class UserController {
                         notificationObj.setCreatedAt(dtf.format(now))
                         notificationObj.setModifiedAt(dtf.format(now))
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered and is pending approval.")
+                        notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+dtf.format(now)+" and is pending approval.")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {
