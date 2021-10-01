@@ -557,7 +557,7 @@
                     });
 
                     map = new ol.Map({
-                        controls: ol.control.defaults({attribution: false}).extend([attribution]),
+                        controls: new ol.control.defaults({ attributionOptions: { collapsible: true } }),
                         layers: [
                             new ol.layer.Tile({
                                 visible: true,

@@ -235,7 +235,8 @@
                     visible: true
                 })
             ],
-            view: mapView
+            view: mapView,
+            controls: new ol.control.defaults({ attributionOptions: { collapsible: true } })
         });
         const zoomSlider = new ol.control.ZoomSlider();
         map.addControl(zoomSlider);
