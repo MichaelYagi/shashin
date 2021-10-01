@@ -18,6 +18,15 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    fun countMetadataById(metadataId: String): Int
 
+   fun countAllByTypeContains(type: String): Int
+
+   fun countAllByLatIsNotNullAndLngIsNotNull(): Int
+
+   fun countAllByLatIsNullAndLngIsNull(): Int
+
+   @Query("SELECT camera, COUNT(*) AS count FROM metadata GROUP BY camera", nativeQuery = true)
+   fun countByCameraType(): MutableIterable<CameraTypeCount>
+
    @Query("SELECT * FROM metadata WHERE hidden = true ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByHiddenAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 

@@ -58,6 +58,11 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='dashboard' ? ' active' : ''}" href="/dashboard">
+                        <span class="bi-speedometer" style="font-size: 1rem;"></span> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a th:attr="class='nav-link' + ${activeSidebar=='trash' ? ' active' : ''}" href="/trash">
                         <span class="bi-trash" style="font-size: 1rem;"></span> Trash
                     </a>

@@ -15,6 +15,9 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
     @Query("SELECT recognition_label_id as recognitionLabelId FROM recognitionlabelphoto GROUP BY recognition_label_id", nativeQuery = true)
     fun findGroupByRecognitionLabelId(): MutableIterable<RecognitionLabelId>
 
+    @Query("SELECT COUNT(DISTINCT metadata_id) FROM recognitionlabelphoto", nativeQuery = true)
+    fun countDistinctMetadataId(): Int
+
     fun deleteByMetadataId(metadataId: String): Int
 
     fun findByMetadataId(metadataId: String): MutableIterable<RecognitionLabelPhoto>
