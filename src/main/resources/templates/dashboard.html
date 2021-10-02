@@ -12,6 +12,32 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/appjs :: appjs()"></div>
             <h1>Dashboard</h1><br>
+
+            <div class="row pb-4">
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">CPU</h5>
+                            <p class="card-text">
+                                <canvas id="cpuChart" height="400"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Memory</h5>
+                            <p class="card-text">
+                                <canvas id="memoryChart" height="400"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row pb-4">
                 <div class="col">
                     <div class="card">
@@ -71,31 +97,6 @@
                             <h5 class="card-title">Camera Stats</h5>
                             <p class="card-text">
                                 <canvas id="cameraChart" height="400"></canvas>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row pb-4">
-
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">CPU</h5>
-                            <p class="card-text">
-                                <canvas id="cpuChart" height="400"></canvas>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">Memory</h5>
-                            <p class="card-text">
-                                <canvas id="memoryChart" height="400"></canvas>
                             </p>
                         </div>
                     </div>
