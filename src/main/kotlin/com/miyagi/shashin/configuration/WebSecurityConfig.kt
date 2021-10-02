@@ -4,6 +4,7 @@ import com.miyagi.shashin.component.AuthFailureHandler
 import com.miyagi.shashin.component.AuthSuccessHandler
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -12,8 +13,11 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
+import org.springframework.security.core.session.SessionRegistry
+import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.session.HttpSessionEventPublisher
 import javax.sql.DataSource
 
 
@@ -53,6 +57,16 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
         return super.authenticationManagerBean()
     }
 
+    @Bean
+    fun sessionRegistry(): SessionRegistry? {
+        return SessionRegistryImpl()
+    }
+
+    @Bean
+    fun httpSessionEventPublisher(): ServletListenerRegistrationBean<HttpSessionEventPublisher>? {
+        return ServletListenerRegistrationBean(HttpSessionEventPublisher())
+    }
+
     @Throws(java.lang.Exception::class)
     override fun configure(auth: AuthenticationManagerBuilder) {
         auth
@@ -87,5 +101,11 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
             .rememberMe().key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!)
                 .and()
             .csrf().disable()
+
+        http.sessionManagement()
+            .maximumSessions(100)
+            .maxSessionsPreventsLogin(false)
+            .expiredUrl("/users/login")
+            .sessionRegistry(sessionRegistry());
     }
 }

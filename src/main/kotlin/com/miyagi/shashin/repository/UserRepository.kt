@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository : CrudRepository<User?, Int?> {
     fun findAll(sort: Sort?): MutableIterable<User?>?
+    fun findAllByIsAllowedTrue(): MutableIterable<User>
     fun findByUsername(username: String?): User?
     @Query("SELECT u.id as userId, u.username, a.id as albumId, CASE WHEN ua.user_id IS NULL THEN FALSE ELSE TRUE END AS isShared FROM user u, album a LEFT JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id != :userId", nativeQuery = true)
     fun findUserBySharedAlbum(@Param("userId") userId: Int): MutableIterable<UserSharedAlbums>

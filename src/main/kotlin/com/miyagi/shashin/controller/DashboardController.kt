@@ -184,12 +184,12 @@ class DashboardController {
         // Media stats
         val photoCount = metadataRepository.countAllByTypeContains("image")
         val videoCount = metadataRepository.countAllByTypeContains("video")
-        val locatedCount = metadataRepository.countAllByLatIsNotNullAndLngIsNotNull()
         val notLocatedCount = metadataRepository.countAllByLatIsNullAndLngIsNull()
+        val hiddenCount = metadataRepository.countAllByHiddenIsTrue()
         response["photoCount"] = photoCount
         response["videoCount"] = videoCount
-        response["locatedCount"] = locatedCount
         response["notLocatedCount"] = notLocatedCount
+        response["hiddenCount"] = hiddenCount
         val cameraCounts = metadataRepository.countByCameraType()
         val cameraCountList = ArrayList<HashMap<String, Any>>()
         for (cameraCount in cameraCounts) {
