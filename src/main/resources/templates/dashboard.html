@@ -161,7 +161,7 @@
     const userChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Active Users','Active Admins','Pending Users','Pending Admins','Logged In'],
+            labels: ['Registered Users','Registered Admins','Pending Users','Pending Admins','Logged In'],
             datasets: [{
                 data: [activeUserCount,activeAdminCount,pendingUserCount,pendingAdminCount,loggedInCount],
                 backgroundColor: [
@@ -200,14 +200,14 @@
     ctx = $('#mediaChart');
     const photoCount = [[${photoCount}]];
     const videoCount = [[${videoCount}]];
-    const locatedCount = [[${locatedCount}]];
     const notLocatedCount = [[${notLocatedCount}]];
+    const hiddenCount = [[${hiddenCount}]];
     const mediaChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Photos','Videos','GPS Data','Missing GPS Data'],
+            labels: ['Photos','Videos','Missing GPS Data','Removed'],
             datasets: [{
-                data: [photoCount,videoCount,locatedCount,notLocatedCount],
+                data: [photoCount,videoCount,notLocatedCount,hiddenCount],
                 backgroundColor: [
                     'rgba(54, 162, 235, 0.2)',
                     'rgba(255, 206, 86, 0.2)',

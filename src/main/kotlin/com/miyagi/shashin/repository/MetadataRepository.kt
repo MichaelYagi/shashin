@@ -20,7 +20,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    fun countAllByTypeContains(type: String): Int
 
-   fun countAllByLatIsNotNullAndLngIsNotNull(): Int
+   fun countAllByHiddenIsTrue(): Int
 
    fun countAllByLatIsNullAndLngIsNull(): Int
 
