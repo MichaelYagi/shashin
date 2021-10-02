@@ -12,8 +12,8 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/appjs :: appjs()"></div>
             <h1>Dashboard</h1><br>
-            <div class="row">
-                <div class="col pb-4">
+            <div class="row pb-4">
+                <div class="col">
                     <div class="card">
                         <div class="card-header">
                             <h2 th:text="${sidecarSizeMB}+' MB'"></h2>
@@ -29,7 +29,7 @@
                 </div>
             </div>
 
-            <div class="row">
+            <div class="row pb-4">
 
                 <div class="col">
                     <div class="card">
@@ -76,6 +76,32 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row pb-4">
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">CPU</h5>
+                            <p class="card-text">
+                                <canvas id="cpuChart" height="400"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Memory</h5>
+                            <p class="card-text">
+                                <canvas id="memoryChart" height="400"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -237,6 +263,179 @@
         }
     });
     /*]]>*/
+
+    ctx = $('#cpuChart');
+    const cpuChart = new Chart(ctx, {
+        type: 'line',
+        labels: [],
+        data: {
+            datasets: [
+                {
+                    label: 'JVM CPU %',
+                    data: [],
+                    fill: false,
+                    borderColor: 'rgb(54, 162, 235)',
+                    tension: 0.1
+                },
+                {
+                    label: 'System CPU %',
+                    data: [],
+                    fill: false,
+                    borderColor: 'rgb(255, 206, 86)',
+                    tension: 0.1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 20
+                    },
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: true
+            },
+            maintainAspectRatio: false
+        }
+    });
+
+    ctx = $('#memoryChart');
+    const memoryChart = new Chart(ctx, {
+        type: 'line',
+        labels: [],
+        data: {
+            datasets: [
+                {
+                    label: 'Memory Used %',
+                    data: [],
+                    fill: false,
+                    borderColor: 'rgb(54, 162, 235)',
+                    tension: 0.1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 20
+                    },
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: true
+            },
+            maintainAspectRatio: false
+        }
+    });
+
+    function addData(chart, label, data, index) {
+        if (label !== null) {
+            chart.data.labels.push(label);
+        }
+        chart.data.datasets[index].data.push(data);
+        chart.update();
+    }
+
+    function removeData(chart) {
+        chart.data.labels.shift();
+        chart.data.datasets.forEach((dataset) => {
+            dataset.data.shift();
+        });
+        chart.update();
+    }
+
+    let stompClient = null;
+    const showDebug = false;
+    // Socket polling refresh rate
+    const refreshRateMS = 1000*5;
+    // Update chart every 10 seconds
+    const intervalMS = 1000*10;
+    // Pop values after 3 minutes
+    const maxElapsedMS = 1000*60*3;
+    let elapsedMS = 0;
+
+    connect();
+
+    function scanRefresh() {
+        sendMessage();
+        elapsedMS += refreshRateMS
+        setTimeout(scanRefresh, refreshRateMS);
+    }
+
+    function connect() {
+        const socket = new SockJS('/websocket-endpoint');
+        stompClient = Stomp.over(socket);
+        if (showDebug === false) {
+            stompClient.debug = null
+        }
+
+        printMessageToConsole("Socket Connecting");
+
+        stompClient.connect({}, function() {
+            scanRefresh();
+            printMessageToConsole( "Connected STOMP client");
+
+            this.subscribe("/topic/statmessages", function (message) {
+                let respMessageJsonString = JSON.parse(message.body).content;
+                const systemStats = JSON.parse(respMessageJsonString);
+
+                const processCpuLoadPercent = Math.ceil(systemStats["processCpuLoadPercentDouble"]*100)|0;
+                const processCpuLoadData = ~~processCpuLoadPercent;
+                printMessageToConsole("processCpuLoadData: "+processCpuLoadData);
+
+                const systemCpuLoadPercent = Math.ceil(systemStats["systemCpuLoadPercentDouble"]*100)|0;
+                const systemCpuLoadData = ~~systemCpuLoadPercent
+                printMessageToConsole("systemCpuLoadData: "+systemCpuLoadData);
+
+                const memoryUsedPercent = Math.ceil(systemStats["usedHeapMemoryGB"]/systemStats["maxHeapMemoryGB"]*100)|0;
+                const memoryUsedData = ~~memoryUsedPercent
+                printMessageToConsole("usedHeapMemoryGB: "+systemStats["usedHeapMemoryGB"]);
+                printMessageToConsole("maxHeapMemoryGB: "+systemStats["maxHeapMemoryGB"]);
+                printMessageToConsole("memoryUsedData: "+memoryUsedData);
+
+                if (elapsedMS >= maxElapsedMS && elapsedMS % intervalMS === 0) {
+                    removeData(cpuChart);
+                    removeData(memoryChart);
+                }
+                if (elapsedMS === refreshRateMS || elapsedMS % intervalMS === 0) {
+                    addData(cpuChart, systemStats["timestamp"], processCpuLoadData, 0)
+                    addData(cpuChart, null, systemCpuLoadData, 1)
+                    addData(memoryChart, systemStats["timestamp"], memoryUsedData, 0)
+                }
+                printMessageToConsole("Message:"+respMessageJsonString);
+            });
+        }, function(e) {
+            printMessageToConsole("Socket connection error: " + e.toString())
+        });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        printMessageToConsole("Disconnected");
+    }
+
+    function sendMessage() {
+        if (stompClient !== null) {
+            stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
+        } else {
+            printMessageToConsole("Trying to send message but STOMP client is null")
+        }
+    }
+
+    function printMessageToConsole(msg) {
+        if (showDebug === true) {
+            console.log(msg);
+        }
+    }
 </script>
 
 </body>
