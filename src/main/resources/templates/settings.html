@@ -88,6 +88,7 @@
                 <div class="col-sm"><span id="msgDeleteContent"></span></div>
             </div>
             <div class="modal-footer">
+                <div id="deleteContentModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" id="deleteAllContent">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -95,6 +96,8 @@
                 /*<![CDATA[*/
                 $("#deleteAllContent").click(function(e) {
                     e.preventDefault();
+
+                    $("#deleteContentModalStatus").css("visibility","visible");
 
                     let json = {deleteContent: true}
                     const posting = $.post({
@@ -113,6 +116,7 @@
                             }
                             $("#msgDeleteContent").html(message);
                         }
+                        $("#deleteContentModalStatus").css("visibility","hidden");
                     });
 
                 });
