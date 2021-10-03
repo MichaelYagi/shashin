@@ -120,13 +120,13 @@
                                 const galleryIndex = $("#tncentered"+metadata.id).attr("data-galleryindex");
 
                                 var mediaContent = {}
-                                mediaContent.subHtml = (metadata.placeName !== null ? '<a href=&quot;/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '&quot; target=&quot;_blank&quot;>' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
+                                mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                 if (metadata.type.indexOf("video") >= 0) {
                                     mediaContent.video = '{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
                                     html = '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
                                         'itemref="' + galleryIndex + '" ' +
                                         'data-video=\''+mediaContent.video+'\' ' +
-                                        'data-sub-html="'+mediaContent.subHtml+'">' +
+                                        'data-sub-html='+encodeHtml(mediaContent.subHtml)+'>' +
                                         '</a>';
 
                                 } else {
@@ -135,12 +135,11 @@
                                         'itemref="'+galleryIndex+'" ' +
                                         'data-src="'+metadata.thumbnailUrlOriginal+'" ' +
                                         'href="'+metadata.thumbnailUrlOriginal+'" ' +
-                                        'data-sub-html="'+mediaContent.subHtml+'">' +
+                                        'data-sub-html='+encodeHtml(mediaContent.subHtml)+'>' +
                                         '</a>';
                                 }
                                 $("#tncentered"+metadata.id).append(html);
 
-                                console.log(mediaContent);
                                 mediaContentList[galleryIndex] = mediaContent;
 
                                 if (typeof lg !== "undefined" && mediaContentList.length > 0) {
