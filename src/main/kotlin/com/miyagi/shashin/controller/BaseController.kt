@@ -145,7 +145,10 @@ class BaseController {
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
 
-        model["operatingSystemInfo"] = getOperatingSystemInfo()
+        model["operatingSystemInfo"] = ""
+        if (model.getAttribute("authority") ==  adminRole) {
+            model["operatingSystemInfo"] = getOperatingSystemInfo()
+        }
         model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)
         model["titleDescriptor"] = ""
         model["message"] = ""
