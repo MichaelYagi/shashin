@@ -73,6 +73,7 @@
     }
 
     // Hook up data to edit albums, favorites and people labels
+    var mediaContentList = [];
     function attachAssociatedData(date,mediaTypeFilter) {
         $.ajax({
             type: 'get',
@@ -97,16 +98,61 @@
                             for (var index in metadataList) {
                                 var metadata = metadataList[index];
 
+                                var dateFormat = metadata.year+"-"+metadata.month+"-"+metadata.day;
+                                var dateObj = new Date(dateFormat);
+                                var dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
+
                                 // console.log(metadata);
                                 var favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                 var favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
                                 $("#tnbr"+metadata.id).addClass("thumbnail-br");
+                                var html = '<a href="#" id="favorite'+metadata.id+'" class="text-decoration-none">\n' +
+                                    '       <span style="background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;">\n' +
+                                    '           <span id="briconcount'+metadata.id+'"></span><span id="bricon'+metadata.id+'" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '       </span>\n' +
+                                    '   </a>';
+                                $("#tnbr"+metadata.id).append(html);
                                 $("#bricon"+metadata.id).addClass(favoriteIcon);
                                 $("#briconcount"+metadata.id).text(favoriteCount+" ");
 
+                                $("#tnbl"+metadata.id).addClass("thumbnail-bl");
+                                $("#tncentered"+metadata.id).addClass("thumbnail-centered");
+                                const galleryIndex = $("#tncentered"+metadata.id).attr("data-galleryindex");
+
+                                var mediaContent = {}
+                                mediaContent.subHtml = (metadata.placeName !== null ? '<a href=&quot;/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '&quot; target=&quot;_blank&quot;>' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
+                                if (metadata.type.indexOf("video") >= 0) {
+                                    mediaContent.video = '{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
+                                    html = '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
+                                        'itemref="' + galleryIndex + '" ' +
+                                        'data-video=\''+mediaContent.video+'\' ' +
+                                        'data-sub-html="'+mediaContent.subHtml+'">' +
+                                        '</a>';
+
+                                } else {
+                                    mediaContent.src = metadata.thumbnailUrlOriginal;
+                                    html = '<a class="mediaLink" id="mediaLink'+metadata.id+'" ' +
+                                        'itemref="'+galleryIndex+'" ' +
+                                        'data-src="'+metadata.thumbnailUrlOriginal+'" ' +
+                                        'href="'+metadata.thumbnailUrlOriginal+'" ' +
+                                        'data-sub-html="'+mediaContent.subHtml+'">' +
+                                        '</a>';
+                                }
+                                $("#tncentered"+metadata.id).append(html);
+
+                                console.log(mediaContent);
+                                mediaContentList[galleryIndex] = mediaContent;
+
+                                if (typeof lg !== "undefined" && mediaContentList.length > 0) {
+                                    lg.refresh(mediaContentList);
+                                }
+                                $("#mediaLink"+metadata.id).click(function(e) {
+                                    openGallery(e,galleryIndex);
+                                });
+
                                 var editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
-                                var htmlLink = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';
-                                $("#tnbl"+metadata.id).append(htmlLink);
+                                html = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';
+                                $("#tnbl"+metadata.id).append(html);
 
                                 $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
 
@@ -117,12 +163,22 @@
                                     openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
                                 });
 
-                                htmlLink = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
+                                html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
                                 $("#tntl"+metadata.id).addClass("thumbnail-tl");
-                                $("#tntl"+metadata.id).append(htmlLink);
+                                $("#tntl"+metadata.id).append(html);
+
+                                if (metadata.type.indexOf("video") >= 0) {
+                                    html = '<div class="thumbnail-tr" th:id="tntr'+metadata.id+'">\n' +
+                                        '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>\n' +
+                                        '   </div>';
+                                    $(html).insertBefore("#tntl"+metadata.id);
+                                }
+
                                 var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
                                 setPhotoOverlays(htmlEncodedMetadata, "timeline")
                                 activateMetadataListeners(htmlEncodedMetadata);
+
+                                $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
 
                                 $("#mediaLink"+metadata.id).append('<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>');
                             }
@@ -131,6 +187,10 @@
                 }
             }
         });
+    }
+
+    function insertAt(array, index, ...elementsArray) {
+        array.splice(index, 0, ...elements);
     }
 
     // Detect scrolling to bottom of page
