@@ -11,7 +11,8 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <button class="btn btn-primary" id="scanPhotos">Scan</button>
-            <button class="btn btn-danger" id="deleteThread">Delete Thread</button>
+<!--            <button class="btn btn-danger" id="deleteThread">Delete Thread</button>-->
+            <button class="btn btn-danger" id="cancelScan">Cancel</button>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -35,7 +36,21 @@
             e.preventDefault();
             let posting = $.post(
                 "/settings/scan",
-                {"submit": "", "deleteThread": true}
+                {"submit": "", "deleteThread": true, "cancelScan": false}
+            );
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("msg")) {
+                    showMessage(data["msg"]);
+                }
+            });
+        });
+
+        $("#cancelScan").click(function (e) {
+            e.preventDefault();
+            let posting = $.post(
+                "/settings/scan",
+                {"submit": "", "deleteThread": false, "cancelScan": true}
             );
 
             posting.done(function (data) {
@@ -48,7 +63,7 @@
         function postToScan(deleteThread) {
             let posting = $.post(
                 "/settings/scan",
-                {"submit": "Scan", "deleteThread": deleteThread}
+                {"submit": "Scan", "deleteThread": deleteThread, "cancelScan": false}
             );
 
             posting.done(function (data) {
