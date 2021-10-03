@@ -56,18 +56,20 @@
 
                     <th:block th:each="metadata, iterStat: ${metadataList}">
                         <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
-                            <br>
+
                             <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                <br id="brundated">
                                 <section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>
-                                <div class="row p-3">
+                                <div class="row p-3" id="rowundated">
                             </th:block>
 
                             <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                <br th:id="${'br'+metadata.year+'-'+metadata.month+'-'+metadata.day}">
                                 <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                     <section class="scrollspy" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong class="dateHeading p-1" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p></section>
                                     <span style="display: none;" class="dateTakenHeading" th:text="${metadata.year+'-'+metadata.month+'-'+metadata.day}"></span>
                                 </th:block>
-                                <div class="row p-3">
+                                <div class="row p-3" th:id="${'row'+metadata.year+'-'+metadata.month+'-'+metadata.day}">
                                     <span style="display: none;" class="yearTaken" th:text="${metadata.year}"></span>
                                     <span style="display: none;" class="monthTaken" th:text="${metadata.month}"></span>
                                     <span style="display: none;" class="dayTaken" th:text="${metadata.day}"></span>
@@ -75,7 +77,7 @@
 
                         </th:block>
 
-                        <div th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                        <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                             <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
                             <img class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
@@ -149,7 +151,7 @@
                             <span th:id="'timelinemodal'+${metadata.id}"></span>
                         </div>
 
-                        <script type="text/javascript">
+                        <script type="text/javascript" th:id="${'script'+metadata.id}">
                             /*<![CDATA[*/
                             var currentIteration = [[${iterStat.index+1}]];
                             var totalSize = [[${#lists.size(metadataList)}]];
@@ -427,6 +429,10 @@
                             // Update tag
                             var metadataObj = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
                             metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
+                            // var takenDateChanged = false;
+                            // if (metadataObj.year !== $("#yearTaken").val() || metadataObj.month !== $("#monthTaken").val() || metadataObj.day !== $("#dayTaken").val()) {
+                            //     takenDateChanged = true;
+                            // }
                             metadataObj.year = $("#yearTaken").val()
                             metadataObj.month = $("#monthTaken").val()
                             metadataObj.day = $("#dayTaken").val()
@@ -441,12 +447,56 @@
                             metadataObj.keywords = $("#keywords").val()
                             metadataObj.tagpeople = $("#tagpeople").val()
                             metadataObj.hidden = $("#hidden").prop("checked")
-                            populateDetailsTab(metadataObj)
-                            $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataObj))
 
-                            $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil").addClass("bi-pencil-square");
-                            if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
-                                $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                            const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
+                            const headingId = rowId.replace("row", "");
+                            const targetElement = $("#photoThumbnailContainer" + metadataId);
+
+                            if (metadataObj.hidden === false) {
+                                populateDetailsTab(metadataObj)
+                                $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
+
+                                $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
+                                if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
+                                    $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                                }
+
+                                // if (takenDateChanged === true) {
+                                //     console.log("date changed");
+                                //     const targetScript = $("#script"+metadataId);
+                                //     targetElement.detach();
+                                //     targetScript.detach();
+                                //     let targetHeadingId = metadataObj.year+"-"+metadataObj.month+"-"+metadataObj.day;
+                                //     if (metadataObj.year === "" || metadataObj.year === null ||
+                                //         metadataObj.month === "" || metadataObj.month === null ||
+                                //         metadataObj.day === "" || metadataObj.day === null
+                                //     ) {
+                                //         targetHeadingId = "undated";
+                                //     }
+                                //
+                                //     const targetParent = $("#row"+targetHeadingId);
+                                //     // If it doesn't exist, create it
+                                //     if (targetParent.length === 0) {
+                                //         $('.scrollspy').each(function(index, element) {
+                                //             console.log($(this).attr("id"));
+                                //         });
+                                //     }
+                                //     targetParent.append(targetElement);
+                                //     targetParent.append(targetScript);
+                                // }
+                            } else {
+                                // Count children
+                                const currentNumChildren = targetElement.siblings("div").length;
+
+                                // Remove metadata
+                                targetElement.remove();
+
+                                if (currentNumChildren === 0) {
+                                    // Remove header
+                                    $("#br"+headingId).remove();
+                                    $("#"+headingId).remove();
+                                    $("#row"+headingId).remove();
+                                }
                             }
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
