@@ -7,6 +7,14 @@
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
     <div id="subcontainer" class="row flex-grow-sm-1 flex-grow-0">
+
+        <th:block th:if="${metadataList != ''}">
+            <script type="text/javascript">
+                $("#progressBarWrapper").css("visibility","visible");
+                const totalSize = [[${#lists.size(metadataList)}]];
+            </script>
+        </th:block>
+
         <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasToc" aria-labelledby="offcanvasTocLabel">
             <div class="offcanvas-header">
                 <th:block th:if="${mediaTypeFilter == 'video'}">
@@ -96,22 +104,19 @@
                             <span th:id="'timelinemodal'+${metadata.id}"></span>
                         </div>
 
-<!--                        <script type="text/javascript" th:id="${'script'+metadata.id}">-->
-<!--                            /*<![CDATA[*/-->
-<!--                            var currentIteration = [[${iterStat.index+1}]];-->
-<!--                            var totalSize = [[${#lists.size(metadataList)}]];-->
-<!--                            var currentProgress = currentIteration/totalSize*100;-->
-<!--                            $("#progressBar").attr("aria-valuemax",String(parseInt(totalSize)));-->
-<!--                            $("#progressBar").attr("aria-valuenow",String(parseInt(currentProgress)));-->
-<!--                            var width = String(parseInt(currentProgress))+"%";-->
-<!--                            $("#progressBar").css("width",width);-->
-<!--                            if (currentIteration === totalSize) {-->
-<!--                                $("#progressBarWrapper").css("visibility","hidden");-->
-<!--                            }-->
-
-<!--                            $("#timelineModalEdit[[${metadata.id}]]").attr("tag",JSON.stringify(JSON.parse(decodeHtml("[[${metadata}]]"))));-->
-<!--                            /*]]>*/-->
-<!--                        </script>-->
+                        <script type="text/javascript" th:id="${'script'+metadata.id}">
+                            /*<![CDATA[*/
+                            var currentIteration = [[${iterStat.index+1}]];
+                            var currentProgress = currentIteration/totalSize*100;
+                            $("#progressBar").attr("aria-valuemax",String(parseInt(totalSize)));
+                            $("#progressBar").attr("aria-valuenow",String(parseInt(currentProgress)));
+                            var width = String(parseInt(currentProgress))+"%";
+                            $("#progressBar").css("width",width);
+                            if (currentIteration === totalSize) {
+                                $("#progressBarWrapper").css("visibility","hidden");
+                            }
+                            /*]]>*/
+                        </script>
 
                         <th:block th:if="${iterStat.count > 0 and {iterStat.last or {!iterStat.last and {metadataList[iterStat.index+1].year!=metadata.year or metadataList[iterStat.index+1].month!=metadata.month or metadataList[iterStat.index+1].day!=metadata.day}}}}">
                             <span class="appendMetadataPhotos"></span>
