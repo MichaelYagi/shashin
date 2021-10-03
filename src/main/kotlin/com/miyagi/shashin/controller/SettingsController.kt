@@ -39,13 +39,12 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileWriter
-import java.net.HttpURLConnection
-import java.net.URL
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
@@ -107,6 +106,8 @@ class SettingsController {
     @Autowired
     private val restartService: RestartService? = null
 
+    private var shouldStop = AtomicBoolean(false)
+
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     val mapper = ObjectMapper()
@@ -123,6 +124,9 @@ class SettingsController {
         if (mediaDirs != null && mediaDirs.count() > 0) {
             if (!FileUtils.checkThreadFileAlive("shashinscan")) {
                 msg = "Scan Complete"
+                if (shouldStop.get()) {
+                    msg = "Scan Cancelled"
+                }
             }
 
             val threadFileContent = FileUtils.readThreadFile("shashinscan")
@@ -584,7 +588,7 @@ class SettingsController {
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postScan(model: Model, @RequestParam submit: String, @RequestParam deleteThread: Boolean): String {
+    fun postScan(model: Model, @RequestParam submit: String, @RequestParam deleteThread: Boolean, @RequestParam cancelScan: Boolean): String {
         resp["msg"] = "Nothing to see here"
 
         // Check for deleted original files
@@ -691,10 +695,18 @@ class SettingsController {
         }
 
         if (deleteThread) {
-            FileUtils.deleteThreadFiles("shashinscan")
-            logger.log(Level.INFO, "Thread file manually deleted")
+            deleteThreadScan()
             resp["msg"] = "Thread file manually deleted"
-        } else if (submit == "Scan") {
+        }
+
+        if (cancelScan) {
+            shouldStop.set(true)
+            deleteThreadScan()
+            resp["msg"] = "Scan Cancelled"
+        }
+
+        if (submit == "Scan") {
+            shouldStop.set(false)
             val mediaDirs = mediaDirRepository?.findAll()
 
             if (mediaDirs != null && mediaDirs.count() > 0) {
@@ -718,7 +730,11 @@ class SettingsController {
                                 }
                             }
 
-                            logger.log(Level.INFO, "Scan Complete")
+                            if (shouldStop.get()) {
+                                logger.log(Level.INFO, "Scan Cancelled")
+                            } else {
+                                logger.log(Level.INFO, "Scan Complete")
+                            }
 
                             // Delete thread file
                             if (threadFile.delete()) {
@@ -748,6 +764,11 @@ class SettingsController {
         }
 
         return mapper.writeValueAsString(resp)
+    }
+
+    private fun deleteThreadScan() {
+        FileUtils.deleteThreadFiles("shashinscan")
+        logger.log(Level.INFO, "Thread file manually deleted")
     }
 
     private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String) {
@@ -805,6 +826,17 @@ class SettingsController {
                             logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
                         }
                     }
+                }
+
+                if (shouldStop.get()) {
+                    try {
+                        val writer = BufferedWriter(FileWriter(threadFile))
+                        writer.write("Scan Cancelled")
+                        writer.close()
+                    } catch(e: Exception) {
+                        logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
+                    }
+                    break
                 }
 
                 if (file.isDirectory) {
