@@ -529,7 +529,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
     private fun grabScreenshot(file: File): BufferedImage? {
         try {
             val frameGrabber = FFmpegFrameGrabber(file.path)
-            frameGrabber.format = file.extension.lowercase()
+//            frameGrabber.format = file.extension.lowercase()
             frameGrabber.start()
 
             val aa = Java2DFrameConverter()
