@@ -98,9 +98,12 @@
                             for (var index in metadataList) {
                                 var metadata = metadataList[index];
 
-                                var dateFormat = metadata.year+"-"+metadata.month+"-"+metadata.day;
-                                var dateObj = new Date(dateFormat);
-                                var dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
+                                var dateReformatted = "";
+                                if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
+                                    var dateFormat = metadata.month+"-"+metadata.day+"-"+metadata.year;
+                                    var dateObj = new Date(dateFormat);
+                                    dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
+                                }
 
                                 // console.log(metadata);
                                 var favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
