@@ -102,221 +102,232 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //        println("=================")
 
         // Get image data
-        val metadata = ImageMetadataReader.readMetadata(file)
-        for (directory in metadata.directories) {
-            var cameraMake: String? = null
-            var cameraModel: String? = null
-            var lensMake: String? = null
-            var lensModel: String? = null
-            var lat: String? = null
-            var lng: String? = null
+        try {
+            val metadata = ImageMetadataReader.readMetadata(file)
+            for (directory in metadata.directories) {
+                var cameraMake: String? = null
+                var cameraModel: String? = null
+                var lensMake: String? = null
+                var lensModel: String? = null
+                var lat: String? = null
+                var lng: String? = null
 
-            for (tag in directory.tags) {
-                if (tag.description != null) {
-                    val tagName = tag.tagName.replace(" ", "").replace("/", "")
-                    if ("unknowntag" !in tagName.lowercase()) {
-                        exifMap[tagName] = tag.description
-                    }
+                for (tag in directory.tags) {
+                    if (tag.description != null) {
+                        val tagName = tag.tagName.replace(" ", "").replace("/", "")
+                        if ("unknowntag" !in tagName.lowercase()) {
+                            exifMap[tagName] = tag.description
+                        }
 //                println(file.path)
 //                println(tag.tagName)
 //                println(tag.description)
 //                println()
-                    when (tag.tagName) {
-                        "Orientation" -> {
+                        when (tag.tagName) {
+                            "Orientation" -> {
 
-                        }
-                        "Date/Time", "Creation Time", "Date/Time Original" -> {
-                            val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH)
-                            date = null
+                            }
+                            "Date/Time", "Creation Time", "Date/Time Original" -> {
+                                val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH)
+                                date = null
 
-                            try {
-                                date = takenFormat.parse(tag.description)
-                            } catch (e: Exception) {
                                 try {
-                                    // Sun Jul 25 14:34:09 PDT 2021
-                                    val sourceDateFormat =
-                                        SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
-                                    date = sourceDateFormat.parse(tag.description)
-
+                                    date = takenFormat.parse(tag.description)
                                 } catch (e: Exception) {
                                     try {
-                                        // Sun Jul 25 14:34:09 -07:00 2021
+                                        // Sun Jul 25 14:34:09 PDT 2021
                                         val sourceDateFormat =
-                                            SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
+                                            SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
                                         date = sourceDateFormat.parse(tag.description)
+
                                     } catch (e: Exception) {
                                         try {
-                                            // Sun. Jul. 25 14:34:09 -07:00 2021
+                                            // Sun Jul 25 14:34:09 -07:00 2021
                                             val sourceDateFormat =
-                                                SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
+                                                SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
                                             date = sourceDateFormat.parse(tag.description)
                                         } catch (e: Exception) {
-                                            // Do nothing
+                                            try {
+                                                // Sun. Jul. 25 14:34:09 -07:00 2021
+                                                val sourceDateFormat =
+                                                    SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
+                                                date = sourceDateFormat.parse(tag.description)
+                                            } catch (e: Exception) {
+                                                // Do nothing
+                                            }
                                         }
                                     }
                                 }
+
+                                if (date != null) {
+                                    metadataObj.setTakenAt(destFormat.format(date))
+                                    metadataObj.setCreatedAt(destFormat.format(date))
+
+                                    val dateArray = destFormat.format(date).toString().split(" ")
+                                    val takenDateArray = dateArray[0].split("-")
+
+                                    metadataObj.setYear(takenDateArray[0].toInt())
+                                    metadataObj.setMonth(takenDateArray[1].toInt())
+                                    metadataObj.setDay(takenDateArray[2].toInt())
+                                    metadataObj.setTime(dateArray[1])
+                                }
                             }
+                            "Modification Time", "File Modified Date" -> {
+                                val modificationFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH)
+                                date = null
 
-                            if (date != null) {
-                                metadataObj.setTakenAt(destFormat.format(date))
-                                metadataObj.setCreatedAt(destFormat.format(date))
-
-                                val dateArray = destFormat.format(date).toString().split(" ")
-                                val takenDateArray = dateArray[0].split("-")
-
-                                metadataObj.setYear(takenDateArray[0].toInt())
-                                metadataObj.setMonth(takenDateArray[1].toInt())
-                                metadataObj.setDay(takenDateArray[2].toInt())
-                                metadataObj.setTime(dateArray[1])
-                            }
-                        }
-                        "Modification Time", "File Modified Date" -> {
-                            val modificationFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH)
-                            date = null
-
-                            try {
-                                date = modificationFormat.parse(tag.description)
-                            } catch (e: Exception) {
                                 try {
-                                    // Sun Jul 25 14:34:09 PDT 2021
-                                    val sourceDateFormat =
-                                        SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
-                                    date = sourceDateFormat.parse(tag.description)
+                                    date = modificationFormat.parse(tag.description)
                                 } catch (e: Exception) {
                                     try {
-                                        // Sun Jul 25 14:34:09 -07:00 2021
+                                        // Sun Jul 25 14:34:09 PDT 2021
                                         val sourceDateFormat =
-                                            SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
+                                            SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH)
                                         date = sourceDateFormat.parse(tag.description)
                                     } catch (e: Exception) {
                                         try {
-                                            // Sun. Jul. 25 14:34:09 -07:00 2021
+                                            // Sun Jul 25 14:34:09 -07:00 2021
                                             val sourceDateFormat =
-                                                SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
+                                                SimpleDateFormat("EEE MMM dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
                                             date = sourceDateFormat.parse(tag.description)
                                         } catch (e: Exception) {
-                                            // Do nothing
+                                            try {
+                                                // Sun. Jul. 25 14:34:09 -07:00 2021
+                                                val sourceDateFormat =
+                                                    SimpleDateFormat("EEE. MMM. dd HH:mm:ss XXX yyyy", Locale.ENGLISH)
+                                                date = sourceDateFormat.parse(tag.description)
+                                            } catch (e: Exception) {
+                                                // Do nothing
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            if (date != null) {
-                                metadataObj.setModifiedAt(destFormat.format(date))
+                                if (date != null) {
+                                    metadataObj.setModifiedAt(destFormat.format(date))
+                                }
                             }
-                        }
-                        "Detected MIME Type" -> {
-                            metadataObj.setType(tag.description)
-                        }
+                            "Detected MIME Type" -> {
+                                metadataObj.setType(tag.description)
+                            }
 //                    "File Name" -> {
 //                        metadataObj.setFileName(tag.description)
 //                        metadataObj.setTitle(tag.description)
 //                    }
-                        "GPS Latitude", "Latitude" -> {
-                            val latitudeValue = tag.description
-                            var latDecimal = latitudeValue
+                            "GPS Latitude", "Latitude" -> {
+                                val latitudeValue = tag.description
+                                var latDecimal = latitudeValue
 
-                            val numeric = latitudeValue.matches("-?\\d+(\\.\\d+)?".toRegex())
-                            if (!numeric) {
-                                val latArray = tag.description.split(" ")
-                                val latDegree = latArray[0].dropLast(1).toDouble()
-                                val latMinute = latArray[1].dropLast(1).toDouble()
-                                val latSeconds = latArray[2].dropLast(1).toDouble()
-                                val latTotalSeconds = (((latMinute * 60) + latSeconds) / 3600)
-                                latDecimal = latDegree.toString().dropLast(1) + latTotalSeconds.toString().drop(2)
+                                val numeric = latitudeValue.matches("-?\\d+(\\.\\d+)?".toRegex())
+                                if (!numeric) {
+                                    val latArray = tag.description.split(" ")
+                                    val latDegree = latArray[0].dropLast(1).toDouble()
+                                    val latMinute = latArray[1].dropLast(1).toDouble()
+                                    val latSeconds = latArray[2].dropLast(1).toDouble()
+                                    val latTotalSeconds = (((latMinute * 60) + latSeconds) / 3600)
+                                    latDecimal = latDegree.toString().dropLast(1) + latTotalSeconds.toString().drop(2)
+                                }
+                                lat = latDecimal
+                                if (latDecimal != "0.0") {
+                                    metadataObj.setLat(latDecimal)
+                                } else {
+                                    lat = null
+                                }
                             }
-                            lat = latDecimal
-                            if (latDecimal != "0.0") {
-                                metadataObj.setLat(latDecimal)
-                            } else {
-                                lat = null
-                            }
-                        }
-                        "GPS Longitude", "Longitude" -> {
-                            val longitudeValue = tag.description
-                            var lngDecimal = longitudeValue
+                            "GPS Longitude", "Longitude" -> {
+                                val longitudeValue = tag.description
+                                var lngDecimal = longitudeValue
 
-                            // Check if decimal
-                            val numeric = longitudeValue.matches("-?\\d+(\\.\\d+)?".toRegex())
-                            if (!numeric) {
-                                val lngArray = tag.description.split(" ")
-                                val lngDegree = lngArray[0].dropLast(1).toDouble()
-                                val lngMinute = lngArray[1].dropLast(1).toDouble()
-                                val lngSeconds = lngArray[2].dropLast(1).toDouble()
-                                val lngTotalSeconds = (((lngMinute * 60) + lngSeconds) / 3600)
-                                lngDecimal = lngDegree.toString().dropLast(1) + lngTotalSeconds.toString().drop(2)
+                                // Check if decimal
+                                val numeric = longitudeValue.matches("-?\\d+(\\.\\d+)?".toRegex())
+                                if (!numeric) {
+                                    val lngArray = tag.description.split(" ")
+                                    val lngDegree = lngArray[0].dropLast(1).toDouble()
+                                    val lngMinute = lngArray[1].dropLast(1).toDouble()
+                                    val lngSeconds = lngArray[2].dropLast(1).toDouble()
+                                    val lngTotalSeconds = (((lngMinute * 60) + lngSeconds) / 3600)
+                                    lngDecimal = lngDegree.toString().dropLast(1) + lngTotalSeconds.toString().drop(2)
+                                }
+                                lng = lngDecimal
+                                if (lngDecimal != "0.0") {
+                                    metadataObj.setLng(lngDecimal)
+                                } else {
+                                    lng = null
+                                }
                             }
-                            lng = lngDecimal
-                            if (lngDecimal != "0.0") {
-                                metadataObj.setLng(lngDecimal)
-                            } else {
-                                lng = null
+                            "ISO Speed Ratings" -> {
+                                metadataObj.setIso(tag.description.toInt())
+                            }
+                            "Exposure Time" -> {
+                                val exposureArray = tag.description.split(" ")
+                                var fraction = exposureArray[0]
+                                if (fraction.contains(".")) {
+                                    val exposureTime = exposureArray[0].toDouble()
+                                    fraction = TextUtils.convertDecimalToFraction(exposureTime)
+                                }
+                                metadataObj.setExposure(fraction)
+                            }
+                            "F-Number" -> {
+                                metadataObj.setFNumber(tag.description.drop(2).toDouble())
+                            }
+                            "Focal Length" -> {
+                                val flArray = tag.description.split(" ")
+                                metadataObj.setFocalLength(flArray[0].toDouble())
+                            }
+                            "Make" -> {
+                                cameraMake = tag.description
+                            }
+                            "Model" -> {
+                                cameraModel = tag.description
+                            }
+                            "Lens Make" -> {
+                                lensMake = tag.description
+                            }
+                            "Lens Model" -> {
+                                lensModel = tag.description
+                            }
+                            "Quality" -> {
+                                metadataObj.setQuality(tag.description.trim())
                             }
                         }
-                        "ISO Speed Ratings" -> {
-                            metadataObj.setIso(tag.description.toInt())
-                        }
-                        "Exposure Time" -> {
-                            val exposureArray = tag.description.split(" ")
-                            var fraction = exposureArray[0]
-                            if (fraction.contains(".")) {
-                                val exposureTime = exposureArray[0].toDouble()
-                                fraction = TextUtils.convertDecimalToFraction(exposureTime)
-                            }
-                            metadataObj.setExposure(fraction)
-                        }
-                        "F-Number" -> {
-                            metadataObj.setFNumber(tag.description.drop(2).toDouble())
-                        }
-                        "Focal Length" -> {
-                            val flArray = tag.description.split(" ")
-                            metadataObj.setFocalLength(flArray[0].toDouble())
-                        }
-                        "Make" -> {
-                            cameraMake = tag.description
-                        }
-                        "Model" -> {
-                            cameraModel = tag.description
-                        }
-                        "Lens Make" -> {
-                            lensMake = tag.description
-                        }
-                        "Lens Model" -> {
-                            lensModel = tag.description
-                        }
-                        "Quality" -> {
-                            metadataObj.setQuality(tag.description.trim())
-                        }
+                    } else {
+                        logger.log(
+                            Level.WARNING,
+                            "Tag description not available for " + file.name + " for tag " + tag.tagName
+                        )
                     }
-                } else {
-                    logger.log(Level.WARNING, "Tag description not available for " + file.name + " for tag " + tag.tagName)
-                }
 
-                if (!cameraMake.isNullOrBlank() && !cameraModel.isNullOrBlank()) {
-                    val camera = "$cameraMake $cameraModel"
-                    metadataObj.setCamera(camera.trim())
+                    if (!cameraMake.isNullOrBlank() && !cameraModel.isNullOrBlank()) {
+                        val camera = "$cameraMake $cameraModel"
+                        metadataObj.setCamera(camera.trim())
+                    }
+                    if (!lensMake.isNullOrBlank() && !lensModel.isNullOrBlank()) {
+                        val lens = "$lensMake $lensModel"
+                        metadataObj.setLens(lens.trim())
+                    }
                 }
-                if (!lensMake.isNullOrBlank() && !lensModel.isNullOrBlank()) {
-                    val lens = "$lensMake $lensModel"
-                    metadataObj.setLens(lens.trim())
+                if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
+                    val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
+
+                    val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
+                    if (buildPlace.isNotBlank()) {
+                        metadataObj.setPlaceName(buildPlace)
+
+                        val engine = TimeZoneEngine.initialize()
+                        val maybeZoneId: Optional<ZoneId> =
+                            engine.query(lat.toString().toDouble(), lng.toString().toDouble())
+                        val zone = ZoneId.of(maybeZoneId.get().id)
+                        val dt = LocalDateTime.now()
+                        val zdt: ZonedDateTime = dt.atZone(zone)
+                        val offset = zdt.offset
+                        metadataObj.setTimeZone(offset.toString())
+                    }
                 }
             }
-            if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
-                val geoDataJson = TextUtils.getGeoData(geocodeUrl!!,lat, lng)
-
-                val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
-                if (buildPlace.isNotBlank()) {
-                    metadataObj.setPlaceName(buildPlace)
-
-                    val engine = TimeZoneEngine.initialize()
-                    val maybeZoneId: Optional<ZoneId> = engine.query(lat.toString().toDouble(), lng.toString().toDouble())
-                    val zone = ZoneId.of(maybeZoneId.get().id)
-                    val dt = LocalDateTime.now()
-                    val zdt: ZonedDateTime = dt.atZone(zone)
-                    val offset = zdt.offset
-                    metadataObj.setTimeZone(offset.toString())
-                }
-            }
+        } catch (e: Exception) {
+            logger.log(
+                Level.WARNING,
+                "Could not read metadata for " + file.name + ": " + e.message
+            )
         }
 
         saveExifdata(exifMap, sidecarDir, rootDir, file.path)
@@ -354,36 +365,43 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
         // Check rotation
         var rotation = 0
-        val fileMetadata = ImageMetadataReader.readMetadata(file)
-        var breakOuter = false
-        for (directory in fileMetadata.directories) {
-            for (tag in directory.tags) {
-                when (tag.tagName) {
-                    "Orientation" -> {
-                        if (tag.description.contains("(Rotate")) {
-                            val processedTag = tag.description.substringAfterLast("(Rotate ")
-                            val tagArr = processedTag.split(" ");
-                            var numeric = true
+        try {
+            val fileMetadata = ImageMetadataReader.readMetadata(file)
+            var breakOuter = false
+            for (directory in fileMetadata.directories) {
+                for (tag in directory.tags) {
+                    when (tag.tagName) {
+                        "Orientation" -> {
+                            if (tag.description.contains("(Rotate")) {
+                                val processedTag = tag.description.substringAfterLast("(Rotate ")
+                                val tagArr = processedTag.split(" ");
+                                var numeric = true
 
-                            try {
-                                parseDouble(tagArr[0])
-                            } catch (e: NumberFormatException) {
-                                numeric = false
+                                try {
+                                    parseDouble(tagArr[0])
+                                } catch (e: NumberFormatException) {
+                                    numeric = false
+                                }
+                                if (numeric) {
+                                    rotation = tagArr[0].toInt()
+                                }
                             }
-                            if (numeric) {
-                                rotation = tagArr[0].toInt()
-                            }
+                            breakOuter = true
+                            break;
                         }
-                        breakOuter = true
-                        break;
                     }
                 }
+                if (breakOuter) {
+                    break;
+                }
             }
-            if (breakOuter) {
-                break;
-            }
-        }
 //        println("rotation:$rotation")
+        } catch (e: Exception) {
+            logger.log(
+                Level.WARNING,
+                "Could not get rotation when reading metadata for " + file.name + ": " + e.message
+            )
+        }
 
         val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
 
