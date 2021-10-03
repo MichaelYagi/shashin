@@ -179,7 +179,26 @@
                                         var metadataId = metadataIds[index];
                                         
                                         $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil").addClass("bi-pencil-square");
-                                        if ($("#latlngBatchData").val() !== "") {
+
+                                        if($("#batchhidden").is(':checked')) {
+                                            // Get parent Id
+                                            const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
+                                            const headingId = rowId.replace("row", "");
+                                            const elToRemove = $("#photoThumbnailContainer" + metadataId);
+
+                                            // Count children
+                                            const currentNumChildren = elToRemove.siblings("div").length;
+
+                                            // Remove metadata
+                                            elToRemove.remove();
+
+                                            if (currentNumChildren === 0) {
+                                                // Remove header
+                                                $("#br"+headingId).remove();
+                                                $("#"+headingId).remove();
+                                                $("#row"+headingId).remove();
+                                            }
+                                        } else if ($("#latlngBatchData").val() !== "") {
                                             var latlngArray = $("#latlngBatchData").val().split(",");
                                             var metadataTaggedObj = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
                                             metadataTaggedObj["lat"] = $.trim(latlngArray[0]);
