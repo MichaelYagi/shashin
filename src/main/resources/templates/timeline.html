@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
-<body class="thumb d-flex flex-column vh-100">
+<body class="thumb d-flex flex-column vh-100 overflow-hidden">
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
@@ -96,6 +96,8 @@
                             <div th:id="'tnbr'+${metadata.id}"></div>
 
                             <div th:id="'tnbl'+${metadata.id}"></div>
+
+                            <div th:id="'tntr'+${metadata.id}"></div>
 
                             <div th:id="'tncentered'+${metadata.id}" th:data-galleryindex="${iterStat.index}">
                                 <a class="mediaLink" th:id="${'mediaLink'+metadata.id}"></a>

@@ -113,6 +113,7 @@ body {
 }
 
 .thumbnail-br {
+  display: none;
   background-color: transparent;
   bottom:11px;
   right:11px;
@@ -128,6 +129,7 @@ body {
 }
 
 .thumbnail-tr {
+  display: none;
   background-color: transparent;
   top:5px;
   right:16px;

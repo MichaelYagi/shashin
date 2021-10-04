@@ -111,12 +111,12 @@
                                 $("#tnbr"+metadata.id).addClass("thumbnail-br");
                                 var html = '<a href="#" id="favorite'+metadata.id+'" class="text-decoration-none">\n' +
                                     '       <span style="background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;">\n' +
-                                    '           <span id="briconcount'+metadata.id+'"></span><span id="bricon'+metadata.id+'" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '           <span id="briconcount'+metadata.id+'"></span> <span id="bricon'+metadata.id+'" style="font-size: 1rem;color: red;"></span>\n' +
                                     '       </span>\n' +
                                     '   </a>';
                                 $("#tnbr"+metadata.id).append(html);
                                 $("#bricon"+metadata.id).addClass(favoriteIcon);
-                                $("#briconcount"+metadata.id).text(favoriteCount+" ");
+                                $("#briconcount"+metadata.id).text(favoriteCount);
 
                                 $("#tnbl"+metadata.id).addClass("thumbnail-bl");
                                 $("#tncentered"+metadata.id).addClass("thumbnail-centered");
@@ -170,10 +170,9 @@
                                 $("#tntl"+metadata.id).append(html);
 
                                 if (metadata.type.indexOf("video") >= 0) {
-                                    html = '<div class="thumbnail-tr" th:id="tntr'+metadata.id+'">\n' +
-                                        '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>\n' +
-                                        '   </div>';
-                                    $(html).insertBefore("#tntl"+metadata.id);
+                                    html = '<span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>';
+                                    $("#tntr"+metadata.id).addClass("thumbnail-tr");
+                                    $("#tntr"+metadata.id).append(html);
                                 }
 
                                 var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
@@ -492,9 +491,10 @@
                 // Hide all center and bottom left icons
                 $('.thumbnail-br').hide();
                 $('.thumbnail-bl').hide();
+                $('.thumbnail-tr').hide();
                 $('.thumbnail-centered').hide();
             } else {
-                $('.thumbnail-br').show();
+                //$('.thumbnail-br').show();
                 $("#appSearch").css("display", "block");
                 $("#timelineAppTools").css("display", "none");
                 $("#albumAppTools").css("display", "none");
@@ -533,10 +533,11 @@
                 // Hide all center and bottom left icons
                 $('.thumbnail-br').hide();
                 $('.thumbnail-bl').hide();
+                $('.thumbnail-tr').hide();
                 $('.thumbnail-centered').hide();
             } else {
                 $("#appSearch").css("display", "block");
-                $('.thumbnail-br').show();
+                //$('.thumbnail-br').show();
                 $("#timelineAppTools").css("display", "none");
                 $("#albumAppTools").css("display", "none");
                 $("#matchesAppTools").css("display", "none");
@@ -556,10 +557,12 @@
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbl" + metadata.id).css("display", "none");
                 $("#tnbr" + metadata.id).css("display", "none");
+                $("#tntr" + metadata.id).css("display", "none");
             }
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
+                $('.thumbnail-tr').hide();
                 $('.thumbnail-br').hide();
             }
         }, function () {
@@ -568,13 +571,19 @@
                 $(this).siblings(".thumbnail-tl").css("display", "none");
                 $(this).siblings(".thumbnail-bl").css("display", "none");
                 $(this).siblings(".thumbnail-centered").css("display", "none");
+                $(this).siblings(".thumbnail-tr").css("display", "none");
+                $(this).siblings(".thumbnail-br").css("display", "none");
             } else {
                 if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                     $('.thumbnail-bl').hide();
                     $('.thumbnail-centered').hide();
+                    $('.thumbnail-tr').hide();
+                    $('.thumbnail-br').hide();
                 }
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbl" + metadata.id).css("display", "none");
+                $("#tntr" + metadata.id).css("display", "none");
+                $("#tnbr" + metadata.id).css("display", "none");
             }
         });
 
@@ -585,20 +594,27 @@
             $('#currentmonth').val(metadata.month === null ? "" : metadata.month);
             $('#currentday').val(metadata.day === null ? "" : metadata.day);
             $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
+
             $('.bi-play-circle').css("color", "midnightblue");
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
+            $(this).siblings(".thumbnail-br").css("display", "block");
+            $(this).siblings(".thumbnail-tr").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
+                $('.thumbnail-tr').hide();
+                $('.thumbnail-br').hide();
             }
         }, function () {
             $('.bi-play-circle').css("color", "lightgray");
             $(this).css("display", "none");
             $(this).siblings(".thumbnail-tl").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".thumbnail-br").css("display", "none");
+            $(this).siblings(".thumbnail-tr").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
 
@@ -606,16 +622,22 @@
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill") {
                 $(this).css("display", "block");
                 $(this).siblings(".thumbnail-centered").css("display", "block");
+                $(this).siblings(".thumbnail-tr").css("display", "block");
+                $(this).siblings(".thumbnail-br").css("display", "block");
                 $(this).siblings(".thumbnail-bl").css("display", "block");
                 $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
                 if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                     $('.thumbnail-bl').hide();
                     $('.thumbnail-centered').hide();
+                    $('.thumbnail-tr').hide();
+                    $('.thumbnail-br').hide();
                 }
             }
         }, function () {
             $(this).css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".thumbnail-tr").css("display", "none");
+            $(this).siblings(".thumbnail-br").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
@@ -624,49 +646,66 @@
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
+            $(this).siblings(".thumbnail-tr").css("display", "block");
+            $(this).siblings(".thumbnail-br").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
+                $('.thumbnail-tr').hide();
+                $('.thumbnail-br').hide();
             }
         }, function () {
             $(this).css("display", "none");
             $(this).siblings(".thumbnail-tl").css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".thumbnail-tr").css("display", "none");
+            $(this).siblings(".thumbnail-br").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
 
         $("#tnbr" + metadata.id).hover(function () {
+            $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
+            $(this).siblings(".thumbnail-tr").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
+                $('.thumbnail-tr').hide();
+                $('.thumbnail-br').hide();
             }
         }, function () {
+            $(this).css("display", "none");
             $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".thumbnail-tr").css("display", "none");
+            $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
 
         $("#tntr" + metadata.id).hover(function () {
-            $("#image" + metadata.id).css("opacity", 0.3);
-            if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
-                $("#tntl" + metadata.id).css("display", "block");
-                $("#tnbl" + metadata.id).css("display", "none");
-                $("#tncentered" + metadata.id).css("display", "none");
-            } else {
-                $("#tncentered" + metadata.id).css("display", "block");
-                $("#tntl" + metadata.id).css("display", "block");
-                $("#tnbl" + metadata.id).css("display", "block");
-            }
+            $(this).css("display", "block");
+            $(this).siblings(".thumbnail-tl").css("display", "block");
+            $(this).siblings(".thumbnail-centered").css("display", "block");
+            $(this).siblings(".thumbnail-bl").css("display", "block");
+            $(this).siblings(".thumbnail-br").css("display", "block");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
+                $('.thumbnail-tr').hide();
+                $('.thumbnail-br').hide();
             }
+        }, function () {
+            $(this).css("display", "none");
+            $(this).siblings(".thumbnail-tl").css("display", "none");
+            $(this).siblings(".thumbnail-centered").css("display", "none");
+            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".thumbnail-br").css("display", "none");
+            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
     }
 
@@ -705,6 +744,8 @@
 
     function clearTimelineSelection() {
         $(".thumbnail-centered").css("display", "none");
+        $(".thumbnail-tr").css("display", "none");
+        $(".thumbnail-br").css("display", "none");
         $(".thumbnail-bl").css("display", "none");
         $(".thumbnail-tl").css("display", "none");
         $(".photo-thumbnail-image").css("opacity", 1.0);
@@ -838,6 +879,8 @@
             e.preventDefault();
 
             $(".thumbnail-centered").css("display", "none");
+            $(".thumbnail-tr").css("display", "none");
+            $(".thumbnail-br").css("display", "none");
             $(".thumbnail-bl").css("display", "none");
             $(".thumbnail-tl").css("display", "none");
             $(".photo-thumbnail-image").css("opacity", 1.0);

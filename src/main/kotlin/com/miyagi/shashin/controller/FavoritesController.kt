@@ -112,7 +112,7 @@ class FavoritesController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -181,7 +181,7 @@ class FavoritesController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/favorite/delete"], method = [RequestMethod.POST])
+    @RequestMapping(value = ["/favorite/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postDeleteFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
