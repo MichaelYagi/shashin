@@ -719,6 +719,8 @@ class SettingsController {
             shouldStop.set(true)
             deleteThreadScan()
             resp["msg"] = "Scan Cancelled"
+            // Kill it with fire since it's a recursive process
+            throw Exception("Cancelling media scan and killing it with fire!")
         }
 
         if (submit == "Scan") {
@@ -742,7 +744,12 @@ class SettingsController {
                             // Scan for new files
                             for (mediaDir in mediaDirs) {
                                 if (mediaDir != null) {
-                                    getFile(mediaDir.getDirectory().toString(), threadFile, sidecarDir, mediaDir.getDirectory().toString())
+                                    getFile(
+                                        mediaDir.getDirectory().toString(),
+                                        threadFile,
+                                        sidecarDir,
+                                        mediaDir.getDirectory().toString()
+                                    )
                                 }
                             }
 
@@ -802,6 +809,7 @@ class SettingsController {
     }
 
     private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String) {
+
         val f = File(dirPath)
         val files = f.listFiles()
         if (files != null) {
