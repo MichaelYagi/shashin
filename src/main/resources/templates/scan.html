@@ -13,6 +13,10 @@
             <button class="btn btn-primary" id="scanPhotos">Scan</button>
 <!--            <button class="btn btn-danger" id="deleteThread">Delete Thread</button>-->
             <button class="btn btn-danger" id="cancelScan">Cancel</button>
+            <div class="col-auto form-check">
+                <input type="checkbox" class="form-check-input" id="reindexFiles" name="reindexFiles">
+                <label class="form-check-label" for="reindexFiles">Recheck All Files</label>
+            </div>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -36,7 +40,7 @@
             e.preventDefault();
             let posting = $.post(
                 "/settings/scan",
-                {"submit": "", "deleteThread": true, "cancelScan": false}
+                {"submit": "", "deleteThread": true, "cancelScan": false, "reindexFiles": false}
             );
 
             posting.done(function (data) {
@@ -50,12 +54,13 @@
             e.preventDefault();
             let posting = $.post(
                 "/settings/scan",
-                {"submit": "", "deleteThread": false, "cancelScan": true}
+                {"submit": "", "deleteThread": false, "cancelScan": true, "reindexFiles": false}
             );
 
             posting.done(function (data) {
                 if (data.hasOwnProperty("msg")) {
                     showMessage(data["msg"]);
+                    window.top.location = window.top.location
                 }
             });
         });
@@ -63,7 +68,7 @@
         function postToScan(deleteThread) {
             let posting = $.post(
                 "/settings/scan",
-                {"submit": "Scan", "deleteThread": deleteThread, "cancelScan": false}
+                {"submit": "Scan", "deleteThread": deleteThread, "cancelScan": false, "reindexFiles": $('#reindexFiles').prop("checked")}
             );
 
             posting.done(function (data) {
