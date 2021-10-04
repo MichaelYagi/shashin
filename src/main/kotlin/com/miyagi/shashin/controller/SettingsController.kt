@@ -133,7 +133,11 @@ class SettingsController {
 
             val threadFileContent = FileUtils.readThreadFile("shashinscan")
             if (threadFileContent != null) {
-                msg = "Scan in progress: " + threadFileContent.replace("\\", "/")
+                msg = "Scan in progress: "
+                if (shouldStop.get()) {
+                    msg = "Scan cancellation in progress: "
+                }
+                msg += threadFileContent.replace("\\", "/")
             }
         } else {
             msg = "No directories configured"
@@ -762,11 +766,15 @@ class SettingsController {
                 }
 
                 val threadFileContent = FileUtils.readThreadFile("shashinscan")
+                var msg = "Scan in progress"
+                if (shouldStop.get()) {
+                    msg = "Scan cancellation in progress"
+                }
                 if (threadFileContent != null) {
-                    resp["msg"] = "Scan in progress: " + threadFileContent.replace("\\", "/")
+                    resp["msg"] = msg + ": " + threadFileContent.replace("\\", "/")
                     return mapper.writeValueAsString(resp)
                 } else {
-                    resp["msg"] = "Scan in progress"
+                    resp["msg"] = msg
                     return mapper.writeValueAsString(resp)
                 }
             } else {
@@ -802,13 +810,19 @@ class SettingsController {
                 val file: File = files[i]
                 var threadText = file.path + " ALREADY SCANNED"
 
+                if (shouldStop.get()) {
+                    threadText = "Scan Cancelled"
+                    writeToThreadFile(threadText, threadFile)
+                    break
+                }
+
                 if (file.isFile && !alreadyScannedFilepaths.contains(file.path)) {
                     if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
 
                         val mediaProcessingUtils = MediaProcessingUtils(apiVersion,geocodeUrl)
                         var metadataObj: Metadata? = Metadata()
 
-                        if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                        if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
                             metadataObj = mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
                             if (metadataObj != null && metadataObj.getId().isNotEmpty()) {
                                 // Check for entry
@@ -826,8 +840,7 @@ class SettingsController {
                                             Level.SEVERE,
                                             "Could not save file " + metadataObj?.getPath() + ": " + e.localizedMessage
                                         )
-
-                                        threadText = file.path + " exception: " + e.localizedMessage
+                                        threadText = "Could not save file " + metadataObj?.getPath() + "."
                                     }
                                 } else {
                                     threadText = file.path + " ENTRY EXISTS"
@@ -844,12 +857,6 @@ class SettingsController {
                 } else {
                     writeToThreadFile(threadText, threadFile)
                     logger.log(Level.INFO, "Entry exists: " + file.name)
-                }
-
-                if (shouldStop.get()) {
-                    threadText = "Scan Cancelled"
-                    writeToThreadFile(threadText, threadFile)
-                    break
                 }
 
                 if (file.isDirectory) {
