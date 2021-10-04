@@ -719,6 +719,7 @@ class SettingsController {
             shouldStop.set(true)
             deleteThreadScan()
             resp["msg"] = "Scan Cancelled"
+            logger.log(Level.INFO, "Scan Cancelled, throwing exception")
             // Kill it with fire since it's a recursive process
             throw Exception("Cancelling media scan and killing it with fire!")
         }
