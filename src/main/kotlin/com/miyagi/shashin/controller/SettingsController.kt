@@ -110,6 +110,8 @@ class SettingsController {
 
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
+    private var alreadyScannedFilepaths = mutableListOf<String>()
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -588,8 +590,16 @@ class SettingsController {
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postScan(model: Model, @RequestParam submit: String, @RequestParam deleteThread: Boolean, @RequestParam cancelScan: Boolean): String {
+    fun postScan(
+        model: Model,
+        @RequestParam submit: String,
+        @RequestParam deleteThread: Boolean,
+        @RequestParam cancelScan: Boolean,
+        @RequestParam reindexFiles: Boolean
+    ): String {
         resp["msg"] = "Nothing to see here"
+
+        alreadyScannedFilepaths.clear()
 
         // Check for deleted original files
         val metadataList = metadataRepository?.findAll()
@@ -688,6 +698,8 @@ class SettingsController {
 //                            }
                             metadataRepository?.deleteById(metadata.getId())
                             logger.log(Level.INFO, "Removed metadata records for: " + metadata.getId())
+                        } else if (!reindexFiles) {
+                            alreadyScannedFilepaths.add(checkFile.path)
                         }
                     }
                 }
@@ -771,6 +783,16 @@ class SettingsController {
         logger.log(Level.INFO, "Thread file manually deleted")
     }
 
+    private fun writeToThreadFile(threadText: String, threadFile: File) {
+        try {
+            val writer = BufferedWriter(FileWriter(threadFile))
+            writer.write(threadText)
+            writer.close()
+        } catch(e: Exception) {
+            logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
+        }
+    }
+
     private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String) {
         val f = File(dirPath)
         val files = f.listFiles()
@@ -778,14 +800,13 @@ class SettingsController {
             for (i in files.indices) {
 
                 val file: File = files[i]
+                var threadText = file.path + " ALREADY SCANNED"
 
-                if (file.isFile) {
+                if (file.isFile && !alreadyScannedFilepaths.contains(file.path)) {
                     if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
 
                         val mediaProcessingUtils = MediaProcessingUtils(apiVersion,geocodeUrl)
                         var metadataObj: Metadata? = Metadata()
-
-                        var threadText = file.path + " ALREADY SCANNED"
 
                         if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
                             metadataObj = mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
@@ -818,24 +839,16 @@ class SettingsController {
                             logger.log(Level.WARNING, "File not supported: " + threadFile.name)
                         }
 
-                        try {
-                            val writer = BufferedWriter(FileWriter(threadFile))
-                            writer.write(threadText)
-                            writer.close()
-                        } catch(e: Exception) {
-                            logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
-                        }
+                        writeToThreadFile(threadText, threadFile)
                     }
+                } else {
+                    writeToThreadFile(threadText, threadFile)
+                    logger.log(Level.INFO, "Entry exists: " + file.name)
                 }
 
                 if (shouldStop.get()) {
-                    try {
-                        val writer = BufferedWriter(FileWriter(threadFile))
-                        writer.write("Scan Cancelled")
-                        writer.close()
-                    } catch(e: Exception) {
-                        logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
-                    }
+                    threadText = "Scan Cancelled"
+                    writeToThreadFile(threadText, threadFile)
                     break
                 }
 
