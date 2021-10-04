@@ -30,6 +30,15 @@
         <link href="/css/lg-fullscreen.min.css" rel="stylesheet">
     </th:block>
     <th:block th:if="${titleDescriptor == 'Timeline'}">
+        <style>
+            #container {
+                -ms-overflow-style: none;  /* Internet Explorer 10+ */
+                scrollbar-width: none;  /* Firefox */
+            }
+            #container::-webkit-scrollbar {
+                display: none;  /* Safari and Chrome */
+            }
+        </style>
         <script src="/js/withinviewport.js"></script>
         <script src="/js/jquery.withinviewport.js"></script>
         <script src="/js/date.format.js"></script>

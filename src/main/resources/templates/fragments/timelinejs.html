@@ -235,12 +235,19 @@
 
             posting.done(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    // console.log(data["status"]);
-                    // console.log(data["msg"]);
+                    // console.log(data);
+                    var currentCount = parseInt($("#briconcount"+metadata.id).text());
+                    if (isFavorite === true) {
+                        currentCount++;
+                    } else {
+                        currentCount--;
+                        if (currentCount < 0) {
+                            currentCount = 0;
+                        }
+                    }
+                    $("#briconcount"+metadata.id).text(currentCount)
                 }
             });
-
-            return false;
         });
     }
 
