@@ -4,7 +4,7 @@
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
     <div class="offcanvas-header">
-        <a class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none" th:href="${currentUser != '' and currentUser.authority == 'ROLE_ADMIN' ? '/timeline/mediatype/all' : '/albums'}">
+        <a class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none" th:href="${currentUser != '' and currentUser.authority == 'ROLE_ADMIN' ? '/timeline' : '/albums'}">
             <span class="lead" style="font-size: medium">Shashin</span>
         </a>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -14,7 +14,7 @@
             <li class="nav-link text-dark"><h5><small class="text-muted"><span id="sidebarGreeting"></span> <th:block th:text="${currentUser != '' ? currentUser.username : ''}"></th:block></small></h5></li>
             <th:block th:if="${currentUser != '' and currentUser.authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
-                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline/mediatype/all">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline">
                         <span class="bi-calendar4" style="font-size: 1rem;"></span> Timeline
                     </a>
                 </li>

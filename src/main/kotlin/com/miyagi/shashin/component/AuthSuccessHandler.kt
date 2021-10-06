@@ -76,7 +76,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 if (isAllowed) {
                     notifyLogin(user,currentAuthority)
                     if (currentAuthority == adminRole) {
-                        redirectStrategy.sendRedirect(request, response, "/timeline/mediatype/all")
+                        redirectStrategy.sendRedirect(request, response, "/timeline")
                     } else {
                         redirectStrategy.sendRedirect(request, response, "/albums")
                     }
