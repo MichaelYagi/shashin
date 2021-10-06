@@ -87,7 +87,7 @@ class TimelineControllerTest {
     @WithMockUser(username = "invaliduser", roles = ["ADMIN"])
     @Throws(Exception::class)
     fun shouldReturn302WhenSendingRequestToControllerWithInvalidRoleUser() {
-        mockMvc!!.perform(get("/timeline/mediatype/all"))
+        mockMvc!!.perform(get("/timeline"))
             .andExpect(status().is3xxRedirection)
     }
 
@@ -95,7 +95,7 @@ class TimelineControllerTest {
     @WithMockUser(username = "test", roles = ["ADMIN"])
     @Throws(Exception::class)
     fun shouldReturn200WhenSendingRequestToControllerWithRoleUser() {
-        val response = mockMvc!!.perform(get("/timeline/mediatype/all"))
+        val response = mockMvc!!.perform(get("/timeline"))
         response
             .andExpect(status().isOk)
             .andExpect(content().string(containsString("Timeline")))

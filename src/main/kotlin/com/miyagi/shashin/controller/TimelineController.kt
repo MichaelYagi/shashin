@@ -61,18 +61,44 @@ class TimelineController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
-    @RequestMapping(value = ["/timeline","/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
-    fun getTimeline(model: Model,@PathVariable mediaType: String): String {
+    @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
+    fun getTimeline(model: Model): String {
+        val module = "timeline"
+        val response = buildTimelineData(model,"all",0, true)
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/timeline/{mediaType}"], method = [RequestMethod.GET])
+    fun getTimelineMediaType(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
         val response = buildTimelineData(model,mediaType,0, true)
-        model["message"] = response["message"]!!
-        model["metadataList"] = response["metadataList"]!!
-        model["favorites"] = response["favorites"]!!
-        model["albumList"] = response["albumList"]!!
-        model["recognitionLabels"] = response["recognitionLabels"]!!
-        model["labelPhotoMap"] = response["labelPhotoMap"]!!
-        model["mediaTypeFilter"] = response["mediaTypeFilter"]!!
-        model["timeOffsets"] = response["timeOffsets"]!!
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
+    fun getTimelineByMediaType(model: Model,@PathVariable mediaType: String): String {
+        val module = "timeline"
+        val response = buildTimelineData(model,mediaType,0, true)
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
 
         model["activePage"] = module
         model["activeSidebar"] = module
