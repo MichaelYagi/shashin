@@ -53,13 +53,11 @@
         /*]]>*/
 
         // console.log("renderThumbnails id:"+id);
-        // console.log("scrollDirection:"+scrollDirection);
 
         let offCanvasId = $("#offcanvas_"+id);
 
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
-        // if (scrollDirection === "up") {
         for (let i = 0; i <= depthBidirectional - 1; i++) {
             tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
             if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
@@ -68,7 +66,6 @@
                 attachAboveArray.unshift(offcanvasId);
             }
         }
-        // }
 
         const attachBelowArray = [];
         let tempOffCanvasIdBelow = offCanvasId;
@@ -107,7 +104,6 @@
 
         // Render bottom
         action = "below"
-        // attachPoint = id;
         for (let index in attachBelowArray) {
             const currentId = attachBelowArray[index];
             // console.log("attempting to attaching id below:" + currentId);
@@ -154,7 +150,7 @@
     }
 
     // Hook up data to edit albums, favorites and people labels
-    var mediaContentList = [];
+    let mediaContentList = [];
     function attachAssociatedMetadata(date,mediaTypeFilter) {
         $.ajax({
             type: 'get',
@@ -286,20 +282,36 @@
         renderThumbnails(anchor,mediaTypeFilter);
 
         function anchorIsVisible() {
-            if ($("#" + anchor).length > 0) {
+            if ($("#" + anchor).length > 0 && $("#offcanvas_" + anchor).length > 0) {
                 // console.log("Exists!");
                 const url = location.href;
                 location.href = '#' + anchor;
                 history.replaceState(null, null, url);
-                enableScrollSpy = true;
+
+                const existCondition = setInterval(function () {
+                    enableScrollSpy = true;
+                    clearInterval(existCondition);
+                }, 400);
+
             }
         }
 
         if (MutationObserver) {
+            let anchorVisible = false;
+            let offcanvasAnchorVisible = false;
             // console.log("Using mutation observer")
             const observer = new MutationObserver(function (mutations, me) {
                 const anchorEl = document.getElementById(anchor);
+                const offcanvasAnchorEl = document.getElementById("offcanvas_"+anchor);
+
                 if (anchorEl) {
+                    anchorVisible = true;
+                }
+                if (offcanvasAnchorEl) {
+                    offcanvasAnchorVisible = true;
+                }
+
+                if (anchorVisible === true && offcanvasAnchorVisible === true) {
                     anchorIsVisible();
                     me.disconnect(); // stop observing
                     return true;
@@ -313,7 +325,7 @@
         } else {
             // console.log("Using setInterval")
             const existCondition = setInterval(function () {
-                if ($("#" + anchor).length > 0) {
+                if ($("#" + anchor).length > 0 && $("#offcanvas_" + anchor).length > 0) {
                     // console.log("Exists!");
                     clearInterval(existCondition);
                     anchorIsVisible();
