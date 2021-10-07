@@ -309,37 +309,33 @@
         // Scroll spy at intervals
         window.setInterval(function() {
             if (enableScrollSpy === true) {
-                var elementsInViewport = $(".scrollspy").withinviewport();
+                const elementsInViewport = $(".scrollspy").withinviewport();
                 renderThumbnailsInViewport(elementsInViewport, "[[${mediaTypeFilter}]]");
-
             }
         }, 400);
 
-        // let lastScrollTop = 0;
-        // $("#container").on('scroll', function() {
-        //     var st = $(this).scrollTop();
-        //     if (st > lastScrollTop){
-        //         scrollDirection = "down"
-        //     } else {
-        //         scrollDirection = "up"
-        //     }
-        //     lastScrollTop = st;
-        //
-        //     // var elementsInViewport = $(".scrollspy").withinviewport();
-        //     // renderThumbnailsInViewport(elementsInViewport,"[[${mediaTypeFilter}]]");
-        // })
-        // $("main").on('scroll', function() {
-        //     var st = $(this).scrollTop();
-        //     if (st > lastScrollTop){
-        //         scrollDirection = "down"
-        //     } else {
-        //         scrollDirection = "up"
-        //     }
-        //     lastScrollTop = st;
-        //
-        //     // var elementsInViewport = $(".scrollspy").withinviewport();
-        //     // renderThumbnailsInViewport(elementsInViewport,"[[${mediaTypeFilter}]]");
-        // })
+        $("#container").on('scroll', function() {
+            const elementsInViewport = $(".scrollspy").withinviewport();
+            elementsInViewport.each(function(index) {
+                let id = $(this).attr("id");
+                if (id.indexOf("tail_") < 0 && (index === 0 || index === 1)) {
+                    document.getElementById("offcanvas_"+id).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        })
+        $("main").on('scroll', function() {
+            const elementsInViewport = $(".scrollspy").withinviewport();
+            elementsInViewport.each(function(index) {
+                let id = $(this).attr("id");
+                if (id.indexOf("tail_") < 0 && (index === 0 || index === 1)) {
+                    document.getElementById("offcanvas_"+id).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        })
 
         $("#saveMetadata").click(function (e) {
             e.preventDefault();
