@@ -171,9 +171,6 @@
                 id = idSplit[1];
             } else if (index === 0 || index === 1) {
                 renderThumbnails(id,mediaTypeFilter);
-                document.getElementById("offcanvas_"+id).scrollIntoView({
-                    behavior: 'smooth'
-                });
                 setScrollSpyActive(id);
             }
         });
