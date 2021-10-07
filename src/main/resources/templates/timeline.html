@@ -182,10 +182,14 @@
         }, 200);
 
         $("#container").on('scroll', function() {
-            scrollToTimeline()
+            if (enableScrollSpy === true) {
+                scrollToTimeline()
+            }
         })
         $("main").on('scroll', function() {
-            scrollToTimeline()
+            if (enableScrollSpy === true) {
+                scrollToTimeline()
+            }
         })
         function scrollToTimeline() {
             const elementsInViewport = $(".scrollspy").withinviewport();
