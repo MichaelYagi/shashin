@@ -4,6 +4,10 @@
 <div th:replace="fragments/appjs :: appjs()"></div>
 
 <script type="text/javascript">
+    $("#progressBarWrapper").css("visibility","visible");
+    $("#progressBar").attr("aria-valuenow","50");
+    $("#progressBar").css("width","50");
+
     $(document).ready(function() {
         /*<![CDATA[*/
         var mapdata = JSON.parse(decodeHtml("[[${mapdata}]]"));
@@ -192,8 +196,8 @@
             return styles;
         }
 
-        var initialCoord = [-73.1234, 45.678];
-        var initialZoom = 2;
+        let initialCoord = [-73.1234, 45.678];
+        let initialZoom = 2;
         if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
             initialCoord = [qslng,qslat];
             initialZoom = 20;
@@ -204,10 +208,11 @@
             localStorage.removeItem('lng');
         }
 
-        var mapView = new ol.View({
+        const mapView = new ol.View({
             center: ol.proj.fromLonLat(initialCoord),
             zoom: initialZoom
         });
+
         const lightGalleryConfigs = getLightGalleryConfigs();
         if (authority === "ROLE_ADMIN") {
             lightGalleryConfigs["plugins"].push(lgEditLocation);
@@ -217,10 +222,10 @@
         lightGalleryConfigs["counter"] = true;
         lightGalleryConfigs["editLocation"] = true;
         const $dynamicGallery = document.getElementById('light-gallery-photo');
-        var dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
+        let dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
 
-        var duration = 400;
-        var interactions = [
+        const duration = 400;
+        const interactions = [
             new ol.interaction.Select({
                 condition: function (evt) {
                     return evt.type === 'singleclick';
@@ -250,7 +255,7 @@
             new ol.interaction.DragRotate()
         ];
 
-        var map = new ol.Map({
+        const map = new ol.Map({
             target: 'map',
             interactions: interactions,
             layers: [
@@ -260,7 +265,7 @@
                 })
             ],
             view: mapView,
-            controls: new ol.control.defaults({ attributionOptions: { collapsible: true } })
+            controls: new ol.control.defaults({attributionOptions: {collapsible: true}})
         });
         const zoomSlider = new ol.control.ZoomSlider();
         map.addControl(zoomSlider);
@@ -274,32 +279,31 @@
             });
         });
 
-        var iconFeatures = [];
+        const iconFeatures = [];
 
-        $("#progressBarWrapper").css("visibility","visible");
-        for (index in mapdata) {
-            var data = mapdata[index];
+        for (let index in mapdata) {
+            const data = mapdata[index];
 
             if (data["lat"] !== null && data["lng"] !== null &&
                 data["lat"] !== "" && data["lng"] !== "") {
 
-                var lat = data["lat"];
-                var lng = data["lng"];
+                const lat = data["lat"];
+                const lng = data["lng"];
 
-                var year = data["year"];
-                var month = data["month"];
-                var day = data["day"];
-                var fileName = data["fileName"];
-                var mapMarkerUrl = data["mapMarkerUrl"];
-                var thumbnailUrlOriginal = data["thumbnailUrlOriginal"];
-                var thumbnailUrlSmall = data["thumbnailUrlSmall"];
-                var videoUrl = data["videoUrl"];
-                var type = data["type"];
-                var placeName = data["placeName"];
-                var metadataId = data["id"];
-                var title = data["title"];
+                const year = data["year"];
+                const month = data["month"];
+                const day = data["day"];
+                const fileName = data["fileName"];
+                const mapMarkerUrl = data["mapMarkerUrl"];
+                const thumbnailUrlOriginal = data["thumbnailUrlOriginal"];
+                const thumbnailUrlSmall = data["thumbnailUrlSmall"];
+                const videoUrl = data["videoUrl"];
+                const type = data["type"];
+                const placeName = data["placeName"];
+                const metadataId = data["id"];
+                const title = data["title"];
 
-                var iconFeature = new ol.Feature({
+                const iconFeature = new ol.Feature({
                     geometry: new ol.geom.Point(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913')),
                     fileName: fileName,
                     thumbnailUrlSmall: thumbnailUrlSmall,
@@ -317,7 +321,7 @@
                     type: type,
                     name: fileName
                 });
-                var iconStyle = new ol.style.Style({
+                const iconStyle = new ol.style.Style({
                     image: new ol.style.Icon(({
                         anchor: [0.5, 46],
                         anchorXUnits: 'fraction',
@@ -376,6 +380,8 @@
 
         $("#saveMetadata").click(function (e) {
             e.preventDefault();
+
+            $("#metadataLocationModalStatus").css("visibility","visible");
             let metadataIdList = [];
             metadataIdList.push($("#mapMetadataId").val());
 
@@ -408,6 +414,7 @@
                     }
                     $("#locationMapResponseMsg").html(message);
                 }
+                $("#metadataLocationModalStatus").css("visibility","hidden");
             });
 
         });
@@ -433,11 +440,13 @@
                         </div>
                     </div>
                 </form>
+                <br>
                 <div class="col-sm">
                     <span id="locationMapResponseMsg"></span>
                 </div>
             </div>
             <div class="modal-footer">
+                <div id="metadataLocationModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
