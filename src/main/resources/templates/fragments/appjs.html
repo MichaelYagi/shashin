@@ -12,11 +12,26 @@
         history.replaceState(null,null,url);
     }
 
-    function jumpToTimeline(e,anchor) {
+    function jumpToTimeline(e,anchor,mediaTypeFilter) {
         e.preventDefault();
-        var url = location.href;
-        location.href = '#'+anchor;
-        history.replaceState(null,null,url);
+
+        enableScrollSpy = false;
+
+        // console.log("jumpToTimeline")
+        // console.log(anchor)
+        // console.log(mediaTypeFilter)
+        renderThumbnails(anchor,mediaTypeFilter);
+
+        const existCondition = setInterval(function () {
+            if ($("#" + anchor).length > 0) {
+                // console.log("Exists!");
+                clearInterval(existCondition);
+                const url = location.href;
+                location.href = '#' + anchor;
+                history.replaceState(null, null, url);
+                enableScrollSpy = true;
+            }
+        }, 100);
     }
 
     function getParameterByName(name, url = window.location.href) {
@@ -35,6 +50,112 @@
         navElem.addClass('active').siblings().removeClass('active');
     }
 
+    let enableScrollSpy = true;
+    // let scrollDirection = "down";
+    function renderThumbnails(id,mediaTypeFilter) {
+        const numberOfSurroundingElements = 9
+
+        // console.log("renderThumbnails id:"+id);
+        // console.log("scrollDirection:"+scrollDirection);
+
+        let offCanvasId = $("#offcanvas_"+id);
+
+        const attachAboveArray = [];
+        let tempOffCanvasIdAbove = offCanvasId;
+        // if (scrollDirection === "up") {
+            for (let i = 0; i <= numberOfSurroundingElements - 1; i++) {
+                tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
+                if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
+                    const offcanvasIdParts = tempOffCanvasIdAbove.attr("id").split("_");
+                    const offcanvasId = offcanvasIdParts[1];
+                    attachAboveArray.unshift(offcanvasId);
+                }
+            }
+        // }
+
+        const attachBelowArray = [];
+        let tempOffCanvasIdBelow = offCanvasId;
+        for (let i = 0;i <= numberOfSurroundingElements-1;i++) {
+            tempOffCanvasIdBelow = tempOffCanvasIdBelow.next();
+            if (typeof tempOffCanvasIdBelow.attr("id") !== 'undefined') {
+                const offcanvasIdParts = tempOffCanvasIdBelow.attr("id").split("_");
+                const offcanvasId = offcanvasIdParts[1];
+                attachBelowArray.push(offcanvasId);
+            }
+        }
+
+        // console.log("attachAboveArray");
+        // console.log(attachAboveArray);
+        // console.log("attachBelowArray");
+        // console.log(attachBelowArray);
+
+        // Render top
+        let action = "new";
+        let attachPoint = id;
+        for (let index in attachAboveArray) {
+            const currentId = attachAboveArray[index];
+            // console.log("attempting to attaching id above:" + currentId);
+            if ($("#" + currentId).length === 0) {
+                if (action === "new") {
+                    attachPoint = null;
+                }
+                // console.log("attaching above attachPoint:" + attachPoint);
+                // console.log("actionAbove:" + action)
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                attachAssociatedMetadata(currentId, mediaTypeFilter);
+                action = "below";
+            }
+            attachPoint = currentId;
+        }
+
+        // Render bottom
+        action = "below"
+        // attachPoint = id;
+        for (let index in attachBelowArray) {
+            const currentId = attachBelowArray[index];
+            // console.log("attempting to attaching id below:" + currentId);
+            if ($("#"+currentId).length === 0) {
+                // console.log("attaching below attachPoint:" + attachPoint);
+                // console.log("actionBelow:"+action)
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                attachAssociatedMetadata(currentId, mediaTypeFilter);
+            }
+            attachPoint = currentId;
+        }
+
+        // Render mid
+        action = "new";
+        if (attachAboveArray.length > 0) {
+            attachPoint = attachAboveArray[attachAboveArray.length-1];
+            action = "below";
+        } else if (attachBelowArray.length > 0) {
+            attachPoint = attachBelowArray[0];
+            action = "above";
+        }
+        // console.log("attempting to attaching id mid:"+id)
+        if ($("#"+id).length === 0) {
+            // console.log("attaching mid attachPoint:"+attachPoint)
+            // console.log("attaching mid action:"+action)
+            updateTimeline(id, mediaTypeFilter, action, attachPoint);
+            attachAssociatedMetadata(id, mediaTypeFilter);
+        }
+
+        // Remove elements that are not visible
+        $('section').each(function(index, element) {
+            if ($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) {
+                // console.log(element.id + " removed");
+                $("#br"+element.id).remove();
+                $("#row"+element.id).remove();
+                $("#amp_"+element.id).remove();
+                $("#tail_"+element.id).remove();
+                $("#"+element.id).remove();
+            }
+        });
+
+        // console.log("==============================================");
+
+    }
+
     function renderThumbnailsInViewport(elements,mediaTypeFilter) {
         // If no scrollspy elements found, find current thumbnail container
         // and closest previous scrollspy element
@@ -49,36 +170,23 @@
                 const idSplit = id.split("_");
                 id = idSplit[1];
             } else if (index === 0 || index === 1) {
-                setScrollSpyActive(id);
-            }
-
-            if ($("#"+id).hasClass("metadataprocessed") === false && $("#tail_"+id).hasClass("metadataprocessed") === false) {
-                attachAssociatedData(id,mediaTypeFilter);
-                // console.log(id)
-                let currentValue = "";
-                $('input[name^="thumbnailUrl-'+id+'"]').each(function() {
-                    if (currentValue !== $(this).val()) {
-                        var idArray = $(this).attr("id").split("_");
-                        var currentMetadataId = idArray[1];
-                        var thumbnailUrl = $(this).val();
-                        var targetElement = $("#image"+currentMetadataId);
-                        targetElement.attr("src",thumbnailUrl);
-
-                        currentValue = $(this).val();
-                    }
+                renderThumbnails(id,mediaTypeFilter);
+                document.getElementById("offcanvas_"+id).scrollIntoView({
+                    behavior: 'smooth'
                 });
-                $(this).addClass('metadataprocessed');
+                setScrollSpyActive(id);
             }
         });
     }
 
     // Hook up data to edit albums, favorites and people labels
     var mediaContentList = [];
-    function attachAssociatedData(date,mediaTypeFilter) {
+    function attachAssociatedMetadata(date,mediaTypeFilter) {
         $.ajax({
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
-            contentType: 'application/json; charset=utf-8'
+            contentType: 'application/json; charset=utf-8',
+            async:false
         }).then(function(data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
@@ -115,8 +223,11 @@
                                     '       </span>\n' +
                                     '   </a>';
                                 $("#tnbr"+metadata.id).append(html);
+
                                 $("#bricon"+metadata.id).addClass(favoriteIcon);
                                 $("#briconcount"+metadata.id).text(favoriteCount);
+
+                                $("#image"+metadata.id).attr("src",metadata.thumbnailUrlSmall);
 
                                 $("#tnbl"+metadata.id).addClass("thumbnail-bl");
                                 $("#tncentered"+metadata.id).addClass("thumbnail-centered");

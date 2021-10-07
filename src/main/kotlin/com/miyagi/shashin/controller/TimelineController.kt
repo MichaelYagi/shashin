@@ -62,9 +62,22 @@ class TimelineController {
     val resp = mutableMapOf<String, String?>()
 
     @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
-    fun getTimeline(model: Model): String {
+    fun getTimelineByDate(model: Model): String {
         val module = "timeline"
-        val response = buildTimelineData(model,"all",0, true)
+
+        val initialMetadataObj = metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+        var date = ""
+        if (initialMetadataObj != null) {
+            date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
+        }
+
+        model["metadataDates"] = ""
+        val metadataDates = metadataRepository.findAllYearMonthDay()
+        if (metadataDates != null) {
+            model["metadataDates"] = metadataDates
+        }
+
+        val response = buildTimelineDataByDate(model,"all",date)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -77,9 +90,22 @@ class TimelineController {
     }
 
     @RequestMapping(value = ["/timeline/{mediaType}"], method = [RequestMethod.GET])
-    fun getTimelineMediaType(model: Model,@PathVariable mediaType: String): String {
+    fun getTimelineMediaTypeByDate(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
-        val response = buildTimelineData(model,mediaType,0, true)
+
+        val initialMetadataObj = metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+        var date = ""
+        if (initialMetadataObj != null) {
+            date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
+        }
+
+        model["metadataDates"] = ""
+        val metadataDates = metadataRepository.findAllYearMonthDayByMediaType(mediaType)
+        if (metadataDates != null) {
+            model["metadataDates"] = metadataDates
+        }
+
+        val response = buildTimelineDataByDate(model,mediaType,date)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -92,10 +118,9 @@ class TimelineController {
     }
 
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
-    fun getTimelineByMediaType(model: Model,@PathVariable mediaType: String): String {
+    fun getTimelineMediaType(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
         val response = buildTimelineData(model,mediaType,0, true)
-
         for ((k, v) in response) {
             model[k] = v!!
         }
