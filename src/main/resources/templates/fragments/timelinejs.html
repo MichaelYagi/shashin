@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="timelinejs()">
+<body th:fragment="timelinejs(queryLimit)">
 <script type="text/javascript">
     const $infiniteScrollGallery = document.getElementById(
         'infinite-scroll-gallery',
@@ -46,7 +46,11 @@
     let enableScrollSpy = true;
     // let scrollDirection = "down";
     function renderThumbnails(id,mediaTypeFilter) {
-        const numberOfSurroundingElements = 9
+        /*<![CDATA[*/
+        // Depth of results in section of page above and below anchor
+        // queryLimit + queryLimit + 1 = Total # of results
+        const depthBidirectional = [[${queryLimit}]];
+        /*]]>*/
 
         // console.log("renderThumbnails id:"+id);
         // console.log("scrollDirection:"+scrollDirection);
@@ -56,7 +60,7 @@
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
         // if (scrollDirection === "up") {
-        for (let i = 0; i <= numberOfSurroundingElements - 1; i++) {
+        for (let i = 0; i <= depthBidirectional - 1; i++) {
             tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
             if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
                 const offcanvasIdParts = tempOffCanvasIdAbove.attr("id").split("_");
@@ -68,7 +72,7 @@
 
         const attachBelowArray = [];
         let tempOffCanvasIdBelow = offCanvasId;
-        for (let i = 0;i <= numberOfSurroundingElements-1;i++) {
+        for (let i = 0;i <= depthBidirectional-1;i++) {
             tempOffCanvasIdBelow = tempOffCanvasIdBelow.next();
             if (typeof tempOffCanvasIdBelow.attr("id") !== 'undefined') {
                 const offcanvasIdParts = tempOffCanvasIdBelow.attr("id").split("_");
@@ -281,16 +285,41 @@
         // console.log(mediaTypeFilter)
         renderThumbnails(anchor,mediaTypeFilter);
 
-        const existCondition = setInterval(function () {
+        function anchorIsVisible() {
             if ($("#" + anchor).length > 0) {
                 // console.log("Exists!");
-                clearInterval(existCondition);
                 const url = location.href;
                 location.href = '#' + anchor;
                 history.replaceState(null, null, url);
                 enableScrollSpy = true;
             }
-        }, 100);
+        }
+
+        if (MutationObserver) {
+            // console.log("Using mutation observer")
+            const observer = new MutationObserver(function (mutations, me) {
+                const anchorEl = document.getElementById(anchor);
+                if (anchorEl) {
+                    anchorIsVisible();
+                    me.disconnect(); // stop observing
+                    return true;
+                }
+            });
+
+            observer.observe(document, {
+                childList: true,
+                subtree: true
+            });
+        } else {
+            // console.log("Using setInterval")
+            const existCondition = setInterval(function () {
+                if ($("#" + anchor).length > 0) {
+                    // console.log("Exists!");
+                    clearInterval(existCondition);
+                    anchorIsVisible();
+                }
+            }, 100);
+        }
     }
 
     function openTimelineModal(metadata,recognitionLabels,taggedPeopleList) {
