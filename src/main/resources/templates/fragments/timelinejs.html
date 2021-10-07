@@ -104,6 +104,7 @@
 
         // Render bottom
         action = "below"
+        // attachPoint = id;
         for (let index in attachBelowArray) {
             const currentId = attachBelowArray[index];
             // console.log("attempting to attaching id below:" + currentId);
@@ -134,8 +135,10 @@
         }
 
         // Remove elements that are not visible
+        let prevElementId = "";
         $('section').each(function(index, element) {
-            if ($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) {
+            // console.log(element.id + " checking to remove");
+            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || prevElementId === element.id) {
                 // console.log(element.id + " removed");
                 $("#br"+element.id).remove();
                 $("#row"+element.id).remove();
@@ -143,14 +146,73 @@
                 $("#tail_"+element.id).remove();
                 $("#"+element.id).remove();
             }
+            prevElementId = element.id;
         });
 
         // console.log("==============================================");
+    }
 
+    function jumpToTimeline(e,anchor,mediaTypeFilter) {
+        e.preventDefault();
+
+        enableScrollSpy = false;
+
+        // console.log("jumpToTimeline")
+        // console.log(anchor)
+        // console.log(mediaTypeFilter)
+        renderThumbnails(anchor,mediaTypeFilter);
+
+        function anchorIsVisible() {
+            const url = location.href;
+            location.href = '#' + anchor;
+            history.replaceState(null, null, url);
+
+            const existCondition = setInterval(function () {
+                enableScrollSpy = true;
+                clearInterval(existCondition);
+            }, 400);
+        }
+
+        if (MutationObserver) {
+            let anchorVisible = false;
+            let offcanvasAnchorVisible = false;
+            // console.log("Using mutation observer")
+            const observer = new MutationObserver(function (mutations, me) {
+                const anchorEl = document.getElementById(anchor);
+                const offcanvasAnchorEl = document.getElementById("offcanvas_"+anchor);
+
+                if (anchorEl) {
+                    anchorVisible = true;
+                }
+                if (offcanvasAnchorEl) {
+                    offcanvasAnchorVisible = true;
+                }
+
+                if (anchorVisible === true && offcanvasAnchorVisible === true) {
+                    anchorIsVisible();
+                    me.disconnect(); // stop observing
+                    return true;
+                }
+            });
+
+            observer.observe(document, {
+                childList: true,
+                subtree: true
+            });
+        } else {
+            // console.log("Using setInterval")
+            const existCondition = setInterval(function () {
+                if ($("#" + anchor).length > 0 && $("#offcanvas_" + anchor).length > 0) {
+                    // console.log("Exists!");
+                    clearInterval(existCondition);
+                    anchorIsVisible();
+                }
+            }, 100);
+        }
     }
 
     // Hook up data to edit albums, favorites and people labels
-    let mediaContentList = [];
+    var mediaContentList = [];
     function attachAssociatedMetadata(date,mediaTypeFilter) {
         $.ajax({
             type: 'get',
@@ -269,69 +331,6 @@
                 }
             }
         });
-    }
-
-    function jumpToTimeline(e,anchor,mediaTypeFilter) {
-        e.preventDefault();
-
-        enableScrollSpy = false;
-
-        // console.log("jumpToTimeline")
-        // console.log(anchor)
-        // console.log(mediaTypeFilter)
-        renderThumbnails(anchor,mediaTypeFilter);
-
-        function anchorIsVisible() {
-            if ($("#" + anchor).length > 0 && $("#offcanvas_" + anchor).length > 0) {
-                // console.log("Exists!");
-                const url = location.href;
-                location.href = '#' + anchor;
-                history.replaceState(null, null, url);
-
-                const existCondition = setInterval(function () {
-                    enableScrollSpy = true;
-                    clearInterval(existCondition);
-                }, 400);
-
-            }
-        }
-
-        if (MutationObserver) {
-            let anchorVisible = false;
-            let offcanvasAnchorVisible = false;
-            // console.log("Using mutation observer")
-            const observer = new MutationObserver(function (mutations, me) {
-                const anchorEl = document.getElementById(anchor);
-                const offcanvasAnchorEl = document.getElementById("offcanvas_"+anchor);
-
-                if (anchorEl) {
-                    anchorVisible = true;
-                }
-                if (offcanvasAnchorEl) {
-                    offcanvasAnchorVisible = true;
-                }
-
-                if (anchorVisible === true && offcanvasAnchorVisible === true) {
-                    anchorIsVisible();
-                    me.disconnect(); // stop observing
-                    return true;
-                }
-            });
-
-            observer.observe(document, {
-                childList: true,
-                subtree: true
-            });
-        } else {
-            // console.log("Using setInterval")
-            const existCondition = setInterval(function () {
-                if ($("#" + anchor).length > 0 && $("#offcanvas_" + anchor).length > 0) {
-                    // console.log("Exists!");
-                    clearInterval(existCondition);
-                    anchorIsVisible();
-                }
-            }, 100);
-        }
     }
 
     function openTimelineModal(metadata,recognitionLabels,taggedPeopleList) {
