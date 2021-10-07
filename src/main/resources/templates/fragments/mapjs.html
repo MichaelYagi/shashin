@@ -24,6 +24,30 @@
             color: 'rgba(255, 255, 255, 0.01)',
         });
 
+        function editLocation(...args) {
+            var locationArgs = [].concat(...args);
+            var metadataId = "";
+            var lat = "";
+            var lng = "";
+            var modalLabel = "";
+
+            if (arguments.length > 0) {
+                metadataId = locationArgs[0];
+                lat = locationArgs[1];
+                lng = locationArgs[2];
+                modalLabel = locationArgs[3];
+            }
+            if (modalLabel && modalLabel.length > 0) {
+                $("#editPhotoLocationModalLabel").text("for "+modalLabel);
+            }
+            $("#mapMetadataId").val(metadataId);
+            if (lat && lng) {
+                $("#locationDataInput").val(lat+","+lng);
+            }
+            $("#propMetadataLocation").css('z-index', 9999);
+            $("#propMetadataLocation").modal('show');
+        }
+
         function createMapStyle(feature) {
             const mapMarkerUrl = feature.get('mapMarkerUrl');
             
