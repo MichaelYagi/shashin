@@ -661,6 +661,54 @@
             return data;
         });
     }
+
+    function validateMetadataInputs(day, month, year, time, offset, latlng, msgId) {
+        if (offset === null ) {
+            offset = "";
+        }
+        var dayValidate = "([1-9]|[12]\d|3[01])";
+        var monthValidate = "^(0?[1-9]|1[012])$";
+        var timeValidate = "^(\\d{2}:\\d{2}:\\d{2})$";
+        var offsetValidate = "^([+-±](?:2[0-3]|[01][0-9]):[0-5][0-9])$";
+
+        var msg = "";
+        if (day !== "" && !day.match(dayValidate)) {
+            msg = "Enter Valid Day";
+        }
+
+        if (month !== "" && !month.match(monthValidate)) {
+            msg = "Enter Valid Month";
+        }
+
+        if (year !== "" && !(+year >= 1888 && +year <= new Date().getFullYear())) {
+            msg = "Enter Valid Year";
+        }
+
+        if (time !== "" && !time.match(timeValidate)) {
+            msg = "Enter Valid Time";
+        }
+
+        if (offset !== "" && !offset.match(offsetValidate)) {
+            msg = "Enter Valid Offset";
+        }
+
+        if (latlng !== "") {
+            latlng = $.trim(latlng);
+            var latlngArr = latlng.split(",");
+
+            if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !isNumeric(latlngArr[0]) || !isNumeric(latlngArr[1])) {
+                msg = "Enter Valid Latitude/Longitude";
+            }
+        }
+
+        if (msg !== "") {
+            $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 </script>
 
 </body>
