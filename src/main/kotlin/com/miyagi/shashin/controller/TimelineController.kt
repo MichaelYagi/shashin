@@ -267,6 +267,7 @@ class TimelineController {
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = mediaTypeFilter
+        response["timeOffsets"] = timeOffsets()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
