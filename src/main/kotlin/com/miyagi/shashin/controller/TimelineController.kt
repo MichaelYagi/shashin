@@ -94,7 +94,7 @@ class TimelineController {
         val module = "timeline"
 
         val initialMetadataObj = metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
-        var date = ""
+        var date: String? = null
         if (initialMetadataObj != null) {
             date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
         }
@@ -257,7 +257,7 @@ class TimelineController {
         return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date))
     }
 
-    private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String): MutableMap<String, Any?> {
+    private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos. Please setup directories in Settings and scan ."
@@ -271,85 +271,88 @@ class TimelineController {
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
-        var year: Int? = null
-        var month: Int? = null
-        var day: Int? = null
-        if (date != "undated") {
-            val dateArray = date.split("-")
-            year = dateArray[0].toInt()
-            month = dateArray[1].toInt()
-            day = dateArray[2].toInt()
-        }
 
-        val favoritesMap = HashMap<String, HashMap<String, Any>>()
-        if (model.getAttribute("currentUser") != "") {
-            val currentUserObj = model.getAttribute("currentUser") as User?
-
-            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-            if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                response["recognitionLabels"] = recognitionLabels
+        if (date != null && date.isNotBlank()) {
+            var year: Int? = null
+            var month: Int? = null
+            var day: Int? = null
+            if (date != "undated") {
+                val dateArray = date.split("-")
+                year = dateArray[0].toInt()
+                month = dateArray[1].toInt()
+                day = dateArray[2].toInt()
             }
 
-            val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
-                metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
-                    year, month, day, false
-                ).toMutableList()
-            } else {
-                metadataRepository.findAllByTypeAndYearAndMonthAndDay(
-                    mediaTypeFilter,
-                    year, month, day
-                ).toMutableList()
-            }
-            response["metadataList"] = metadataList
+            val favoritesMap = HashMap<String, HashMap<String, Any>>()
+            if (model.getAttribute("currentUser") != "") {
+                val currentUserObj = model.getAttribute("currentUser") as User?
 
-            if (metadataList.isNotEmpty()) {
-                response["message"] = ""
-                response["favorites"] = favoritesMap
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+                if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                    response["recognitionLabels"] = recognitionLabels
+                }
 
-                val labelPhotoMap = mutableMapOf<String, String>()
-                for (metadata in metadataList) {
-                    val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
-                    if (favorites != null) {
-                        for (favorite in favorites) {
-                            if (favorite != null) {
-                                favoritesMap[metadata.getId()] = hashMapOf(
-                                    "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
-                                )
+                val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+                    metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
+                        year, month, day, false
+                    ).toMutableList()
+                } else {
+                    metadataRepository.findAllByTypeAndYearAndMonthAndDay(
+                        mediaTypeFilter,
+                        year, month, day
+                    ).toMutableList()
+                }
+                response["metadataList"] = metadataList
 
-                                if ((favorite.getUserId() == currentUserObj?.getId())) {
-                                    break
+                if (metadataList.isNotEmpty()) {
+                    response["message"] = ""
+                    response["favorites"] = favoritesMap
+
+                    val labelPhotoMap = mutableMapOf<String, String>()
+                    for (metadata in metadataList) {
+                        val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
+                        if (favorites != null) {
+                            for (favorite in favorites) {
+                                if (favorite != null) {
+                                    favoritesMap[metadata.getId()] = hashMapOf(
+                                        "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
+                                        "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
+                                    )
+
+                                    if ((favorite.getUserId() == currentUserObj?.getId())) {
+                                        break
+                                    }
                                 }
                             }
                         }
-                    }
-                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
-                    var labelString = ""
-                    if (recognitionLabelPhotos != null) {
-                        for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                            val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                            if (recognitionLabelObj != null) {
-                                labelString += recognitionLabelObj.get().getName() + ","
+                        val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                        var labelString = ""
+                        if (recognitionLabelPhotos != null) {
+                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                                if (recognitionLabelObj != null) {
+                                    labelString += recognitionLabelObj.get().getName() + ","
+                                }
                             }
                         }
+                        if (labelString.isNotBlank()) {
+                            labelString = labelString.dropLast(1)
+                        }
+                        labelPhotoMap[metadata.getId()] = labelString
                     }
-                    if (labelString.isNotBlank()) {
-                        labelString = labelString.dropLast(1)
-                    }
-                    labelPhotoMap[metadata.getId()] = labelString
-                }
-                response["labelPhotoMap"] = labelPhotoMap
+                    response["labelPhotoMap"] = labelPhotoMap
 
-                val albumList = albumRepository.findAll()
-                if (albumList.count() > 0) {
-                    response["albumList"] = albumList
+                    val albumList = albumRepository.findAll()
+                    if (albumList.count() > 0) {
+                        response["albumList"] = albumList
+                    }
                 }
+
+                response["metadataList"] = metadataList
+                response["favorites"] = favoritesMap
+                response["msg"] = "Results"
+                response["status"] = "success"
             }
-
-            response["metadataList"] = metadataList
-            response["favorites"] = favoritesMap
-            response["msg"] = "Results"
-            response["status"] = "success"
         }
 
         return response

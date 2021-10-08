@@ -21,10 +21,6 @@
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
-    function insertAt(array, index, ...elementsArray) {
-        array.splice(index, 0, ...elements);
-    }
-
     // Detect scrolling to bottom of page
     function atEndOfPage(element) {
         // console.log(window.innerHeight + element.scrollTop);

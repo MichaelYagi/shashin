@@ -8,6 +8,7 @@
     const lightGalleryConfigs = getLightGalleryConfigs();
     lightGalleryConfigs["dynamic"] = true;
     const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+    let mediaContentList = [];
 
     function openGallery(e,index) {
         e.preventDefault();
@@ -227,7 +228,6 @@
     }
 
     // Hook up data to edit albums, favorites and people labels
-    var mediaContentList = [];
     function attachAssociatedMetadata(date,mediaTypeFilter) {
         $.ajax({
             type: 'get',
@@ -281,23 +281,27 @@
                                 const galleryIndex = $("#tncentered"+metadata.id).attr("data-galleryindex");
 
                                 var mediaContent = {}
+                                mediaContent.thumb = metadata.thumbnailUrlSmall;
                                 mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                 if (metadata.type.indexOf("video") >= 0) {
                                     mediaContent.video = '{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
-                                    html = '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
-                                        'itemref="' + galleryIndex + '" ' +
-                                        'data-video=\''+mediaContent.video+'\' ' +
-                                        'data-sub-html='+encodeHtml(mediaContent.subHtml)+'>' +
+                                    html =
+                                        '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
+                                        'data-video="'+mediaContent.video+'" ' +
+                                        'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
                                         '</a>';
 
                                 } else {
                                     mediaContent.src = metadata.thumbnailUrlOriginal;
-                                    html = '<a class="mediaLink" id="mediaLink'+metadata.id+'" ' +
-                                        'itemref="'+galleryIndex+'" ' +
+                                    html =
+                                        '<a class="mediaLink" id="mediaLink'+metadata.id+'" ' +
                                         'data-src="'+metadata.thumbnailUrlOriginal+'" ' +
                                         'href="'+metadata.thumbnailUrlOriginal+'" ' +
-                                        'data-sub-html='+encodeHtml(mediaContent.subHtml)+'>' +
+                                        'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
                                         '</a>';
+                                }
+                                if (metadata.originalImageWidth !== null) {
+                                    mediaContent.width = metadata.originalImageWidth;
                                 }
                                 $("#tncentered"+metadata.id).append(html);
 
@@ -430,7 +434,7 @@
             for (var index in recognitionLabels) {
                 var recognitionLabel = recognitionLabels[index];
                 var checkedString = "";
-                if (jQuery.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                     checkedString = " checked";
                 }
                 html +=
@@ -603,15 +607,11 @@
                         data.hasOwnProperty("labelPhotoMap")
                     ) {
                         var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
-                        var favoritesList = data["favorites"] === "" ? null : data["favorites"];
-                        var recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
-                        var labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
 
                         if (metadataList.length > 0) {
                             // console.log(metadataList);
                             // console.log(albumList);
                             var html = "";
-                            var undatedCount = 0;
                             var mediaLinkLength = $(".mediaLink").length;
 
                             let dateString = getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
@@ -649,7 +649,6 @@
 
                                 html += '<div id="photoThumbnailContainer'+metadata.id+'" class="photo-thumbnail-container photo-thumbnail '+(metadata.type.includes('video') ? 'is-video' : 'is-not-video')+'" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                                 html += '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n'
-
                                 html +=
                                     '       <img class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
                                     '       <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
@@ -667,7 +666,8 @@
                                     '   <div id="tnbl'+metadata.id+'"></div>\n' +
                                     '   <div id="tntr'+metadata.id+'"></div>\n';
 
-                                html += '   <div id="tncentered'+metadata.id+'" data-galleryindex="'+currentMediaLinkIndex+'">\n' +
+                                html +=
+                                    '       <div id="tncentered'+metadata.id+'" data-galleryindex="'+currentMediaLinkIndex+'">\n' +
                                     '           <a class="mediaLink" id="mediaLink'+metadata.id+'"></a>\n' +
                                     '       </div>\n' +
                                     '       <span id="timelinemodal'+metadata.id+'"></span>';

@@ -142,19 +142,19 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $.each($('.mediaLink'), function(index, element) {
-            var mediaContent = {}
-            mediaContent.subHtml = "";
-            mediaContent.src = "#";
-            mediaContent.video = "{}";
-            mediaContentList.push(mediaContent);
-        });
+        // $.each($('.mediaLink'), function(index, element) {
+        //     var mediaContent = {}
+        //     mediaContent.subHtml = "";
+        //     mediaContent.src = "#";
+        //     mediaContent.video = "{}";
+        //     mediaContentList.push(mediaContent);
+        // });
 
-        if (typeof lg !== "undefined" && mediaContentList.length > 0) {
-            $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-                jumpToLightGalleryIndex(e.detail.index);
-            })
-        }
+        // if (typeof lg !== "undefined" && mediaContentList.length > 0) {
+        //     $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+        //         jumpToLightGalleryIndex(e.detail.index);
+        //     })
+        // }
 
         $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip()
