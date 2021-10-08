@@ -2,14 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="timelinejs(queryLimit)">
 <script type="text/javascript">
-    // const $infiniteScrollGallery = document.getElementById(
-    //     'infinite-scroll-gallery',
-    // );
-    // const lightGalleryConfigs = getLightGalleryConfigs();
-    // lightGalleryConfigs["dynamic"] = true;
-    // const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-    // let mediaContentList = [];
-
     const lightGalleryConfigs = getLightGalleryConfigs();
     lightGalleryConfigs["selector"] = '.mediaLink';
     let lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
@@ -294,7 +286,6 @@
 
                                 $("#tnbl"+metadata.id).addClass("thumbnail-bl");
                                 $("#tncentered"+metadata.id).addClass("thumbnail-centered");
-                                // const galleryIndex = $("#tncentered"+metadata.id).attr("data-galleryindex");
 
                                 var mediaContent = {}
                                 mediaContent.thumb = metadata.thumbnailUrlSmall;
@@ -332,15 +323,6 @@
                                     mediaContent.width = metadata.originalImageWidth;
                                 }
                                 $("#tncentered"+metadata.id).append(html);
-
-                                // mediaContentList[galleryIndex] = mediaContent;
-                                //
-                                // if (typeof lg !== "undefined" && mediaContentList.length > 0) {
-                                //     lg.refresh(mediaContentList);
-                                // }
-                                // $("#mediaLink"+metadata.id).click(function(e) {
-                                //     openGallery(e,galleryIndex);
-                                // });
 
                                 var editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
                                 html = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';
@@ -638,7 +620,6 @@
                             // console.log(metadataList);
                             // console.log(albumList);
                             var html = "";
-                            var mediaLinkLength = $(".mediaLink").length;
 
                             let dateString = getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
 
@@ -659,7 +640,6 @@
                             for (var index in metadataList) {
                                 index = parseInt(index);
                                 var metadata = metadataList[index];
-                                // const currentMediaLinkIndex = (mediaLinkLength + index);
 
                                 // console.log(metadata["id"]+"-"+currentDateTaken);
 
@@ -674,7 +654,6 @@
                                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
                                 html += '<div id="photoThumbnailContainer'+metadata.id+'" class="photo-thumbnail-container photo-thumbnail '+(metadata.type.includes('video') ? 'is-video' : 'is-not-video')+'" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
-                                // html += '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n'
                                 html +=
                                     '       <img class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
                                     '       <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
@@ -693,10 +672,7 @@
                                     '   <div id="tntr'+metadata.id+'"></div>\n' +
                                     '   <div id="tncentered'+metadata.id+'"></div>\n';
 
-                                html +=
-                                    '       <span id="timelinemodal'+metadata.id+'"></span>';
-
-                                html += '   <div id="timelinemodal' + metadata.id + '"></div>' +
+                                html += '   <span id="timelinemodal'+metadata.id+'"></span>' +
                                     '   </div>\n';
 
                                 $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
