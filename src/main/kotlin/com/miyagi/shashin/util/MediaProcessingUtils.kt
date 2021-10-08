@@ -213,6 +213,19 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                        metadataObj.setFileName(tag.description)
 //                        metadataObj.setTitle(tag.description)
 //                    }
+                            // XXX pixels
+                            "Image Width", "Width" -> {
+                                val widthValue = tag.description
+                                val widthParts = widthValue.split(" ")
+                                val originalPixelWidth = if (widthParts.count() == 2) widthParts[0].toInt() else null
+                                metadataObj.setOriginalImageWidth(originalPixelWidth)
+                            }
+                            "Image Height", "Height" -> {
+                                val heightValue = tag.description
+                                val heightParts = heightValue.split(" ")
+                                val originalPixelHeight = if (heightParts.count() == 2) heightParts[0].toInt() else null
+                                metadataObj.setOriginalImageHeight(originalPixelHeight)
+                            }
                             "GPS Latitude", "Latitude" -> {
                                 val latitudeValue = tag.description
                                 var latDecimal = latitudeValue

@@ -22,6 +22,8 @@ CREATE TABLE `metadata` (
     `thumbnailUrlOriginal` VARCHAR (255) DEFAULT NULL,
     `thumbnailSmallWidth` INTEGER DEFAULT NULL,
     `thumbnailSmallHeight` INTEGER DEFAULT NULL,
+    `originalImageWidth` INTEGER DEFAULT NULL,
+    `originalImageHeight` INTEGER DEFAULT NULL,
     `mapMarkerPath` VARCHAR (255) DEFAULT NULL,
     `mapMarkerUrl` VARCHAR (255) DEFAULT NULL,
     `videoUrl` VARCHAR (255) DEFAULT NULL,
