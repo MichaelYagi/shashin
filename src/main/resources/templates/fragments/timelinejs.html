@@ -56,6 +56,21 @@
 
         let offCanvasId = $("#offcanvas_"+id);
 
+        // Remove elements that are not visible
+        let prevElementId = "";
+        $('section').each(function(index, element) {
+            // console.log(element.id + " checking to remove");
+            if ($("#"+element.id).length > 1 || prevElementId === element.id) {
+                // console.log(element.id + " removed");
+                $("#br"+element.id).remove();
+                $("#row"+element.id).remove();
+                $("#amp_"+element.id).remove();
+                $("#tail_"+element.id).remove();
+                $("#"+element.id).remove();
+            }
+            prevElementId = element.id;
+        });
+
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
         for (let i = 0; i <= depthBidirectional - 1; i++) {
@@ -135,10 +150,10 @@
         }
 
         // Remove elements that are not visible
-        let prevElementId = "";
+        prevElementId = "";
         $('section').each(function(index, element) {
             // console.log(element.id + " checking to remove");
-            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || prevElementId === element.id) {
+            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#"+element.id).length > 1 || prevElementId === element.id)) {
                 // console.log(element.id + " removed");
                 $("#br"+element.id).remove();
                 $("#row"+element.id).remove();
