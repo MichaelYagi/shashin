@@ -2,13 +2,17 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="timelinejs(queryLimit)">
 <script type="text/javascript">
-    const $infiniteScrollGallery = document.getElementById(
-        'infinite-scroll-gallery',
-    );
+    // const $infiniteScrollGallery = document.getElementById(
+    //     'infinite-scroll-gallery',
+    // );
+    // const lightGalleryConfigs = getLightGalleryConfigs();
+    // lightGalleryConfigs["dynamic"] = true;
+    // const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+    // let mediaContentList = [];
+
     const lightGalleryConfigs = getLightGalleryConfigs();
-    lightGalleryConfigs["dynamic"] = true;
-    const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-    let mediaContentList = [];
+    lightGalleryConfigs["selector"] = '.mediaLink';
+    let lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
 
     function openGallery(e,index) {
         e.preventDefault();
@@ -192,6 +196,10 @@
             history.replaceState(null, null, url);
 
             const existCondition = setInterval(function () {
+                lg.destroy();
+                setTimeout(() => {
+                    lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
+                }, 500);
                 enableScrollSpy = true;
                 clearInterval(existCondition);
             }, 100);
@@ -286,7 +294,7 @@
 
                                 $("#tnbl"+metadata.id).addClass("thumbnail-bl");
                                 $("#tncentered"+metadata.id).addClass("thumbnail-centered");
-                                const galleryIndex = $("#tncentered"+metadata.id).attr("data-galleryindex");
+                                // const galleryIndex = $("#tncentered"+metadata.id).attr("data-galleryindex");
 
                                 var mediaContent = {}
                                 mediaContent.thumb = metadata.thumbnailUrlSmall;
@@ -295,7 +303,12 @@
                                     mediaContent.video = '{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
                                     html =
                                         '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
-                                        'data-video="'+mediaContent.video+'" ' +
+                                        'data-video="'+mediaContent.video+'" ';
+                                    if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null) {
+                                        html +=
+                                        'data-lg-size="'+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ';
+                                    }
+                                    html +=
                                         'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
@@ -304,7 +317,12 @@
                                     mediaContent.src = metadata.thumbnailUrlOriginal;
                                     html =
                                         '<a class="mediaLink" id="mediaLink'+metadata.id+'" ' +
-                                        'data-src="'+metadata.thumbnailUrlOriginal+'" ' +
+                                        'data-src="'+metadata.thumbnailUrlOriginal+'" ';
+                                    if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null) {
+                                        html +=
+                                        'data-lg-size="'+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ';
+                                    }
+                                    html +=
                                         'href="'+metadata.thumbnailUrlOriginal+'" ' +
                                         'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
@@ -315,14 +333,14 @@
                                 }
                                 $("#tncentered"+metadata.id).append(html);
 
-                                mediaContentList[galleryIndex] = mediaContent;
-
-                                if (typeof lg !== "undefined" && mediaContentList.length > 0) {
-                                    lg.refresh(mediaContentList);
-                                }
-                                $("#mediaLink"+metadata.id).click(function(e) {
-                                    openGallery(e,galleryIndex);
-                                });
+                                // mediaContentList[galleryIndex] = mediaContent;
+                                //
+                                // if (typeof lg !== "undefined" && mediaContentList.length > 0) {
+                                //     lg.refresh(mediaContentList);
+                                // }
+                                // $("#mediaLink"+metadata.id).click(function(e) {
+                                //     openGallery(e,galleryIndex);
+                                // });
 
                                 var editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
                                 html = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';
@@ -333,7 +351,7 @@
                                 $("#timelineModalEdit"+metadata.id).click(function(e) {
                                     e.preventDefault();
 
-                                    var metadataObj = JSON.parse($(this).attr("tag"));
+                                    const metadataObj = JSON.parse($(this).attr("tag"));
                                     openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
                                 });
 
@@ -641,7 +659,7 @@
                             for (var index in metadataList) {
                                 index = parseInt(index);
                                 var metadata = metadataList[index];
-                                const currentMediaLinkIndex = (mediaLinkLength + index);
+                                // const currentMediaLinkIndex = (mediaLinkLength + index);
 
                                 // console.log(metadata["id"]+"-"+currentDateTaken);
 
@@ -656,7 +674,7 @@
                                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
                                 html += '<div id="photoThumbnailContainer'+metadata.id+'" class="photo-thumbnail-container photo-thumbnail '+(metadata.type.includes('video') ? 'is-video' : 'is-not-video')+'" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
-                                html += '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n'
+                                // html += '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n'
                                 html +=
                                     '       <img class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
                                     '       <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
@@ -672,10 +690,10 @@
                                 html += '   <div id="tntl'+metadata.id+'"></div>\n' +
                                     '   <div id="tnbr'+metadata.id+'"></div>\n' +
                                     '   <div id="tnbl'+metadata.id+'"></div>\n' +
-                                    '   <div id="tntr'+metadata.id+'"></div>\n';
+                                    '   <div id="tntr'+metadata.id+'"></div>\n' +
+                                    '   <div id="tncentered'+metadata.id+'"></div>\n';
 
                                 html +=
-                                    '       <div id="tncentered'+metadata.id+'" data-galleryindex="'+currentMediaLinkIndex+'"></div>\n' +
                                     '       <span id="timelinemodal'+metadata.id+'"></span>';
 
                                 html += '   <div id="timelinemodal' + metadata.id + '"></div>' +

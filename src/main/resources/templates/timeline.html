@@ -79,8 +79,6 @@
                     <th:block th:each="metadata, iterStat: ${metadataList}">
 
                         <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
-                            <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
-
                             <img class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
 
                             <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
@@ -100,7 +98,7 @@
 
                             <div th:id="'tntr'+${metadata.id}"></div>
 
-                            <div th:id="'tncentered'+${metadata.id}" th:data-galleryindex="${iterStat.index}"></div>
+                            <div th:id="'tncentered'+${metadata.id}"></div>
 
                             <span th:id="'timelinemodal'+${metadata.id}"></span>
                         </div>
@@ -154,10 +152,6 @@
         //     })
         // }
 
-        $(function() {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
         // Initialize
         var firstElem = $('.scrollspy')[0];
 
@@ -167,11 +161,44 @@
 
         setScrollSpyActive($(firstElem));
 
+        lg.destroy();
+        setTimeout(() => {
+            lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
+        }, 500);
+
+        $(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+
         // Scroll spy at intervals
         window.setInterval(function() {
             if (enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 renderThumbnailsInViewport(elementsInViewport, "[[${mediaTypeFilter}]]");
+
+                // Reload gallery
+                // lg.closeGallery(true);
+                // lg.destroyModules(true);
+                // lg.invalidateItems();
+                // $(window).off(`.lg.global${lg.lgId}`);
+                // lg.LGel.off('.lg');
+                // setTimeout(() => {
+                //     // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                //     // Hack because lg.destroy() errors out
+                //     // when photos appear slower than destroy called, then there's an error
+                //     try {
+                //         lg.$container.remove();
+                //     } catch (e) {
+                //         console.log(e);
+                //     }
+                //
+                //     lg = lightGallery(infiniteScrollGalleryEl, lightGalleryConfigs);
+                // }, 100);
+
+                // lg.destroy();
+                // setTimeout(() => {
+                //     lg = lightGallery(infiniteScrollGalleryEl, lightGalleryConfigs);
+                // }, 500);
             }
         }, 200);
 
@@ -179,6 +206,11 @@
             if (enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 scrollToTimeline(elementsInViewport);
+
+                lg.destroy();
+                setTimeout(() => {
+                    lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
+                }, 500);
             }
         }, 100);
         $("#container").on('scroll', scrollHandler);
