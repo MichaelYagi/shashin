@@ -66,7 +66,7 @@ class TimelineController {
         val module = "timeline"
 
         val initialMetadataObj = metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
-        var date = ""
+        var date: String? = null
         if (initialMetadataObj != null) {
             date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
         }
@@ -302,9 +302,9 @@ class TimelineController {
                         year, month, day
                     ).toMutableList()
                 }
-                response["metadataList"] = metadataList
 
                 if (metadataList.isNotEmpty()) {
+                    response["metadataList"] = metadataList
                     response["message"] = ""
                     response["favorites"] = favoritesMap
 
@@ -348,7 +348,6 @@ class TimelineController {
                     }
                 }
 
-                response["metadataList"] = metadataList
                 response["favorites"] = favoritesMap
                 response["msg"] = "Results"
                 response["status"] = "success"
