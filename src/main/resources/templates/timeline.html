@@ -100,9 +100,7 @@
 
                             <div th:id="'tntr'+${metadata.id}"></div>
 
-                            <div th:id="'tncentered'+${metadata.id}" th:data-galleryindex="${iterStat.index}">
-                                <a class="mediaLink" th:id="${'mediaLink'+metadata.id}"></a>
-                            </div>
+                            <div th:id="'tncentered'+${metadata.id}" th:data-galleryindex="${iterStat.index}"></div>
 
                             <span th:id="'timelinemodal'+${metadata.id}"></span>
                         </div>
@@ -177,27 +175,14 @@
             }
         }, 200);
 
-        $("#container").on('scroll', function() {
+        const scrollHandler = debounce(function () {
             if (enableScrollSpy === true) {
-                scrollToTimeline()
+                const elementsInViewport = $(".scrollspy").withinviewport();
+                scrollToTimeline(elementsInViewport);
             }
-        })
-        $("main").on('scroll', function() {
-            if (enableScrollSpy === true) {
-                scrollToTimeline()
-            }
-        })
-        function scrollToTimeline() {
-            const elementsInViewport = $(".scrollspy").withinviewport();
-            elementsInViewport.each(function(index) {
-                let id = $(this).attr("id");
-                if (id.indexOf("tail_") < 0 && (index === 0 || index === 1)) {
-                    document.getElementById("offcanvas_"+id).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        }
+        }, 100);
+        $("#container").on('scroll', scrollHandler);
+        $("main").on('scroll', scrollHandler);
     });
 </script>
 </body>
