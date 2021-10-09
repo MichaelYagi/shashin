@@ -21,21 +21,6 @@
         return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
-    function debounce(func, wait, immediate) {
-        var timeout;
-        return function() {
-            var context = this, args = arguments;
-            var later = function() {
-                timeout = null;
-                if (!immediate) func.apply(context, args);
-            };
-            var callNow = immediate && !timeout;
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-            if (callNow) func.apply(context, args);
-        };
-    };
-
     // Detect scrolling to bottom of page
     function atEndOfPage(element) {
         // console.log(window.innerHeight + element.scrollTop);
@@ -104,7 +89,7 @@
 
     function getLightGalleryConfigs() {
         return {
-            plugins: [lgVideo, lgRelativeCaption, lgFullscreen],
+            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen],
             counter: false,
             fullScreen: true,
             download: true,

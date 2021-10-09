@@ -81,8 +81,6 @@
                         <div th:id="${'photoThumbnailContainer'+metadata.id}" th:class="${'photo-thumbnail-container photo-thumbnail '+(metadata.type.contains('video') ? 'is-video' : 'is-not-video')}" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                             <a class="lightGalleryIndexAnchor" th:id="${'lightGalleryIndex'+metadata.id}"></a>
 
-<!--                            <img class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">-->
-
                             <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                 <input type="hidden" name="thumbnailUrl-undated[]" th:id="'thumbnailUrl_'+${metadata.id}" th:value="${metadata.thumbnailUrlSmall}">
                             </th:block>
@@ -163,14 +161,11 @@
             }
         }, 150);
 
-
         const scrollHandler = function (e) {
-            debounce(function () {
-                if (enableScrollSpy === true) {
-                    const elementsInViewport = $(".scrollspy").withinviewport();
-                    scrollToTimeline(elementsInViewport);
-                }
-            }, 100);
+            if (enableScrollSpy === true) {
+                const elementsInViewport = $(".scrollspy").withinviewport();
+                scrollToTimeline(elementsInViewport);
+            }
 
             const delayInMs = e.timeStamp - lastDate;
             const offset = e.target.scrollTop - lastOffset;
