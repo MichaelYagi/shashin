@@ -186,11 +186,11 @@
         let depthDown = queryLimit;
         let depthUp = queryLimit;
         // If velocity of scroll is really fast, add padding to # of results
-        if (scrollSpeedInpxPerMs > 2) {
+        if (scrollSpeedInpxPerMs > 3) {
             if (scrollDirection === "down") {
-                depthDown = depthDown + 5;
+                depthDown = depthDown + 4;
             } else {
-                depthUp = depthUp + 5;
+                depthUp = depthUp + 3;
             }
             // console.log("scrollSpeedInpxPerMs:"+scrollSpeedInpxPerMs);
             // console.log("scrollDirection:"+scrollDirection);
