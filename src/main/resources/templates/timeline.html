@@ -161,7 +161,7 @@
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 renderThumbnailsInViewport(elementsInViewport, "[[${mediaTypeFilter}]]");
             }
-        }, 200);
+        }, 150);
 
         const scrollHandler = debounce(function () {
             if (enableScrollSpy === true) {
