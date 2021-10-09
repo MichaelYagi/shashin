@@ -163,12 +163,29 @@
             }
         }, 150);
 
-        const scrollHandler = debounce(function () {
-            if (enableScrollSpy === true) {
-                const elementsInViewport = $(".scrollspy").withinviewport();
-                scrollToTimeline(elementsInViewport);
+
+        const scrollHandler = function (e) {
+            debounce(function () {
+                if (enableScrollSpy === true) {
+                    const elementsInViewport = $(".scrollspy").withinviewport();
+                    scrollToTimeline(elementsInViewport);
+                }
+            }, 100);
+
+            const delayInMs = e.timeStamp - lastDate;
+            const offset = e.target.scrollTop - lastOffset;
+            scrollSpeedInpxPerMs = offset / delayInMs;
+            lastDate = e.timeStamp;
+            lastOffset = e.target.scrollTop;
+
+            const st = $(this).scrollTop();
+            if (st > lastScrollTop){
+                scrollDirection = "down";
+            } else {
+                scrollDirection = "up";
             }
-        }, 100);
+            lastScrollTop = st;
+        };
         $("#container").on('scroll', scrollHandler);
         $("main").on('scroll', scrollHandler);
     });
