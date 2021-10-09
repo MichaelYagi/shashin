@@ -2,9 +2,18 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="timelinejs(queryLimit)">
 <script type="text/javascript">
+    // Globals
+    const lightGalleryEl = document.getElementById('infinite-scroll-gallery');
     const lightGalleryConfigs = getLightGalleryConfigs();
     lightGalleryConfigs["selector"] = '.mediaLink';
-    let lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
+    let lg = lightGallery(lightGalleryEl, lightGalleryConfigs);
+    let enableScrollSpy = true;
+    let prevAnchor = "";
+    let lastOffset = $("#container").scrollTop() ? $("#container").scrollTop() : $("#main").scrollTop();
+    let lastDate = new Date().getTime();
+    let lastScrollTop = 0;
+    let scrollSpeedInpxPerMs = 0;
+    let scrollDirection = "down";
 
     function destroy(obj) {
         for(var prop in obj){
@@ -37,13 +46,13 @@
             lg = null;
 
             setTimeout(() => {
-                lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
+                lg = lightGallery(lightGalleryEl, lightGalleryConfigs);
             }, 500);
         }, closeTimeout);
 
         // lg.destroy();
         // setTimeout(() => {
-        //     lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
+        //     lg = lightGallery(lightGalleryEl, lightGalleryConfigs);
         // }, 500);
     }
 
@@ -93,7 +102,6 @@
         }
     }
 
-    let prevAnchor = "";
     function renderThumbnailsInViewport(elements,mediaTypeFilter) {
         // If no scrollspy elements found, find current thumbnail container
         // and closest previous scrollspy element
@@ -146,7 +154,7 @@
     // Set the active nav
     function setScrollSpyActive(id) {
         // console.log(id);
-        var navElem = $('a[href="#' + id + '"]');
+        const navElem = $('a[href="#' + id + '"]');
         navElem.addClass('active').siblings().removeClass('active');
     }
 
@@ -167,13 +175,24 @@
         history.replaceState(null,null,url);
     }
 
-    let enableScrollSpy = true;
-    // let scrollDirection = "down";
     function renderThumbnails(id,mediaTypeFilter) {
         /*<![CDATA[*/
+        let queryLimit = [[${queryLimit}]];
         // Depth of results in section of page above and below anchor
-        // queryLimit + queryLimit + 1 = Total # of results
-        const depthBidirectional = [[${queryLimit}]];
+        let depthDown = queryLimit;
+        let depthUp = queryLimit;
+        if (scrollSpeedInpxPerMs > 3) {
+            if (scrollDirection === "down") {
+                depthDown = depthDown + 3;
+            } else {
+                depthUp = depthUp + 3;
+            }
+            // console.log("scrollSpeedInpxPerMs:"+scrollSpeedInpxPerMs);
+            // console.log("scrollDirection:"+scrollDirection);
+            // console.log("depthDown:"+depthDown);
+            // console.log("depthUp:"+depthUp);
+        }
+
         /*]]>*/
 
         // console.log("renderThumbnails id:"+id);
@@ -197,7 +216,7 @@
 
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
-        for (let i = 0; i <= depthBidirectional - 1; i++) {
+        for (let i = 0; i <= depthUp - 1; i++) {
             tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
             if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
                 const offcanvasIdParts = tempOffCanvasIdAbove.attr("id").split("_");
@@ -208,7 +227,7 @@
 
         const attachBelowArray = [];
         let tempOffCanvasIdBelow = offCanvasId;
-        for (let i = 0;i <= depthBidirectional-1;i++) {
+        for (let i = 0;i <= depthDown-1;i++) {
             tempOffCanvasIdBelow = tempOffCanvasIdBelow.next();
             if (typeof tempOffCanvasIdBelow.attr("id") !== 'undefined') {
                 const offcanvasIdParts = tempOffCanvasIdBelow.attr("id").split("_");
