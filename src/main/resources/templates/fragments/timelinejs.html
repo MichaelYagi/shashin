@@ -356,8 +356,7 @@
 
                                 var dateReformatted = "";
                                 if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-                                    var dateFormat = metadata.month+"-"+metadata.day+"-"+metadata.year;
-                                    var dateObj = new Date(dateFormat);
+                                    const dateObj = new Date(metadata.year, metadata.month, metadata.day);
                                     dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
                                 }
 
