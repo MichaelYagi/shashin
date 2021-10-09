@@ -5,6 +5,12 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
+<script type="text/javascript">
+    $("#progressBarWrapper").css("visibility","visible");
+    $("#progressBar").attr("aria-valuenow","95");
+    $("#progressBar").css("width","95%");
+</script>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
     <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
     <main role="main" class="col overflow-auto h-100">
