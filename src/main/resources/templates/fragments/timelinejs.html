@@ -14,6 +14,9 @@
     let lastScrollTop = 0;
     let scrollSpeedInpxPerMs = 0;
     let scrollDirection = "down";
+    const successBelowMsg = "success_below";
+    const successAboveMsg = "success_above";
+    const successMidMsg = "success_mid";
 
     function destroy(obj) {
         for(var prop in obj){
@@ -28,27 +31,31 @@
     }
 
     function reinitLightGalleryInstance() {
-        const closeTimeout = lg.closeGallery(true);
-        setTimeout(() => {
-            lg.destroyModules(true);
-            lg.invalidateItems();
-            $(window).off(`.lg.global${lg.lgId}`);
-            lg.LGel.off('.lg');
-            // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
-            // Hack because lg.destroy() errors out
-            // when photos appear slower than destroy called, then there's an error
-            try {
-                lg.$container.remove();
-            } catch (e) {
-                console.log(e);
-            }
-
-            lg = null;
-
+        if (lg !== null) {
+            const closeTimeout = lg.closeGallery(true);
             setTimeout(() => {
-                lg = lightGallery(lightGalleryEl, lightGalleryConfigs);
-            }, 500);
-        }, closeTimeout);
+                if (lg !== null) {
+                    lg.destroyModules(true);
+                    lg.invalidateItems();
+                    $(window).off(`.lg.global${lg.lgId}`);
+                    lg.LGel.off('.lg');
+                    // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                    // Hack because lg.destroy() errors out
+                    // when photos appear slower than destroy called, then there's an error
+                    try {
+                        lg.$container.remove();
+                    } catch (e) {
+                        console.log(e);
+                    }
+
+                    lg = null;
+
+                    setTimeout(() => {
+                        lg = lightGallery(lightGalleryEl, lightGalleryConfigs);
+                    }, 500);
+                }
+            }, closeTimeout);
+        }
 
         // lg.destroy();
         // setTimeout(() => {
@@ -113,13 +120,13 @@
         elements.each(function(index) {
             let id = $(this).attr("id");
             if (id.indexOf("tail_") === -1 && prevAnchor !== id && (index === 0 || index === 1)) {
-                renderThumbnails(id,mediaTypeFilter);
-                setScrollSpyActive(id);
+                renderThumbnails(id,mediaTypeFilter).then(function (msg) {
+                    if (msg === successBelowMsg || msg === successAboveMsg || msg === successMidMsg) {
+                        setScrollSpyActive(id);
+                        reinitLightGalleryInstance();
+                    }
+                });
 
-                function anchorIsVisible() {
-                    reinitLightGalleryInstance();
-                }
-                observeAnchorChange(id, anchorIsVisible);
                 prevAnchor = id;
             }
         });
@@ -133,22 +140,17 @@
         // console.log("jumpToTimeline")
         // console.log(anchor)
         // console.log(mediaTypeFilter)
-        renderThumbnails(anchor,mediaTypeFilter);
+        renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
+            if (msg === successBelowMsg || msg === successAboveMsg || msg === successMidMsg) {
+                reinitLightGalleryInstance();
 
-        function anchorIsVisible() {
-            reinitLightGalleryInstance();
-
-            const url = location.href;
-            location.href = '#' + anchor;
-            history.replaceState(null, null, url);
-
-            const existCondition = setInterval(function () {
+                const url = location.href;
+                location.href = '#' + anchor;
+                history.replaceState(null, null, url);
+                setScrollSpyActive(anchor);
                 enableScrollSpy = true;
-                clearInterval(existCondition);
-            }, 100);
-        }
-
-        observeAnchorChange(anchor, anchorIsVisible);
+            }
+        });
     }
 
     // Set the active nav
@@ -176,11 +178,14 @@
     }
 
     function renderThumbnails(id,mediaTypeFilter) {
+        let deferred = new $.Deferred();
+
         /*<![CDATA[*/
         let queryLimit = [[${queryLimit}]];
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
         let depthUp = queryLimit;
+        // If velocity of scroll is really fast, add padding to # of results
         if (scrollSpeedInpxPerMs > 3) {
             if (scrollDirection === "down") {
                 depthDown = depthDown + 3;
@@ -192,7 +197,6 @@
             // console.log("depthDown:"+depthDown);
             // console.log("depthUp:"+depthUp);
         }
-
         /*]]>*/
 
         // console.log("renderThumbnails id:"+id);
@@ -253,8 +257,12 @@
                 }
                 // console.log("attaching above attachPoint:" + attachPoint);
                 // console.log("actionAbove:" + action)
-                updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
-                attachAssociatedMetadata(currentId, mediaTypeFilter);
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function (msg) {
+                    if (msg === "success") {
+                        attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    }
+                    deferred.resolve(successAboveMsg);
+                });
                 action = "below";
             }
             attachPoint = currentId;
@@ -269,8 +277,12 @@
             if ($("#"+currentId).length === 0) {
                 // console.log("attaching below attachPoint:" + attachPoint);
                 // console.log("actionBelow:"+action)
-                updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
-                attachAssociatedMetadata(currentId, mediaTypeFilter);
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function (msg) {
+                    if (msg === "success") {
+                        attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    }
+                    deferred.resolve(successBelowMsg);
+                });
             }
             attachPoint = currentId;
         }
@@ -288,8 +300,12 @@
         if ($("#"+id).length === 0) {
             // console.log("attaching mid attachPoint:"+attachPoint)
             // console.log("attaching mid action:"+action)
-            updateTimeline(id, mediaTypeFilter, action, attachPoint);
-            attachAssociatedMetadata(id, mediaTypeFilter);
+            updateTimeline(id, mediaTypeFilter, action, attachPoint).then(function (msg) {
+                if (msg === "success") {
+                    attachAssociatedMetadata(id, mediaTypeFilter);
+                }
+                deferred.resolve(successMidMsg);
+            });
         }
 
         // Remove elements that are not visible
@@ -308,6 +324,8 @@
         });
 
         // console.log("==============================================");
+
+        return deferred.promise();
     }
 
     // Hook up data to edit albums, favorites and people labels
@@ -316,7 +334,7 @@
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
             contentType: 'application/json; charset=utf-8',
-            async:false
+            async:true
         }).then(function(data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
@@ -458,12 +476,13 @@
         // console.log("date:"+date);
         // console.log("mediaTypeFilter:"+mediaTypeFilter)
 
-        var promise = $.ajax({
+        const promise = $.ajax({
             type: 'get',
-            url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date,
             contentType: 'application/json; charset=utf-8',
-            async:false
+            async: false
         }).then(function (data) {
+            let deferred = new $.Deferred();
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -484,13 +503,12 @@
 
                             if (metadataList[0]["year"] === null ||
                                 metadataList[0]["month"] === null ||
-                                metadataList[0]["day"] === null)
-                            {
+                                metadataList[0]["day"] === null) {
                                 html += '<br id="brundated"><section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>\n' +
                                     '<div class="row p-3" id="rowundated">\n';
                             } else {
                                 html += '<br id="br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><section class="scrollspy" id="' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><p><strong class="dateHeading p-1">' + dateString + '</strong></p></section>\n' +
-                                    '<div class="row p-3" id="row'+metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day+'">\n' +
+                                    '<div class="row p-3" id="row' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '">\n' +
                                     '<span style="display: none;" class="yearTaken">' + metadataList[0]["year"] + '</span>\n' +
                                     '<span style="display: none;" class="monthTaken">' + metadataList[0]["month"] + '</span>\n' +
                                     '<span style="display: none;" class="dayTaken">' + metadataList[0]["day"] + '</span>\n';
@@ -505,71 +523,84 @@
                                 var yearTakenCount = $(".yearTaken").length;
                                 var monthTakenCount = $(".monthTaken").length;
                                 var dayTakenCount = $(".dayTaken").length;
-                                var lastYearTaken = $(".yearTaken").length === 0  ? (metadataList[0]["year"] === null ? "" : metadataList[0]["year"]) : $(".yearTaken").get(yearTakenCount - 1).innerText
-                                var lastMonthTaken = $(".monthTaken").length === 0  ? (metadataList[0]["month"] === null ? "" : metadataList[0]["month"]) : $(".monthTaken").get(monthTakenCount - 1).innerText
-                                var lastDayTaken = $(".dayTaken").length === 0  ? (metadataList[0]["day"] === null ? "" : metadataList[0]["day"]) : $(".dayTaken").get(dayTakenCount - 1).innerText
+                                var lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0]["year"] === null ? "" : metadataList[0]["year"]) : $(".yearTaken").get(yearTakenCount - 1).innerText
+                                var lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0]["month"] === null ? "" : metadataList[0]["month"]) : $(".monthTaken").get(monthTakenCount - 1).innerText
+                                var lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0]["day"] === null ? "" : metadataList[0]["day"]) : $(".dayTaken").get(dayTakenCount - 1).innerText
                                 lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
                                 lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
-                                html += '<div id="photoThumbnailContainer'+metadata.id+'" class="photo-thumbnail-container photo-thumbnail '+(metadata.type.includes('video') ? 'is-video' : 'is-not-video')+'" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
-                                html += '   <a class="lightGalleryIndexAnchor" id="lightGalleryIndex'+metadata.id+'"></a>\n'
+                                html += '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail ' + (metadata.type.includes('video') ? 'is-video' : 'is-not-video') + '" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n';
+                                html += '   <a class="lightGalleryIndexAnchor" id="lightGalleryIndex' + metadata.id + '"></a>\n'
                                 html +=
-                                    // '       <img class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
                                     '       <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
 
-                                if (metadata.year==null || metadata.month==null || metadata.day==null) {
+                                if (metadata.year == null || metadata.month == null || metadata.day == null) {
                                     html +=
-                                        '   <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_'+metadata.id+'" value="'+metadata.thumbnailUrlSmall+'">';
+                                        '   <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_' + metadata.id + '" value="' + metadata.thumbnailUrlSmall + '">';
                                 } else {
                                     html +=
-                                        '   <input type="hidden" name="thumbnailUrl-'+metadata.year+'-'+metadata.month+'-'+metadata.day+'[]" id="thumbnailUrl_'+metadata.id+'" value="'+metadata.thumbnailUrlSmall+'">';
+                                        '   <input type="hidden" name="thumbnailUrl-' + metadata.year + '-' + metadata.month + '-' + metadata.day + '[]" id="thumbnailUrl_' + metadata.id + '" value="' + metadata.thumbnailUrlSmall + '">';
                                 }
 
-                                html += '   <div id="tntl'+metadata.id+'"></div>\n' +
-                                    '       <div id="tnbr'+metadata.id+'"></div>\n' +
-                                    '       <div id="tnbl'+metadata.id+'"></div>\n' +
-                                    '       <div id="tntr'+metadata.id+'"></div>\n' +
-                                    '       <div id="tncentered'+metadata.id+'"></div>\n';
+                                html += '   <div id="tntl' + metadata.id + '"></div>\n' +
+                                    '       <div id="tnbr' + metadata.id + '"></div>\n' +
+                                    '       <div id="tnbl' + metadata.id + '"></div>\n' +
+                                    '       <div id="tntr' + metadata.id + '"></div>\n' +
+                                    '       <div id="tncentered' + metadata.id + '"></div>\n';
 
-                                html += '   <span id="timelinemodal'+metadata.id+'"></span>' +
+                                html += '   <span id="timelinemodal' + metadata.id + '"></span>' +
                                     '   </div>\n';
 
-                                $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                                $("#timelineModalEdit" + metadata.id).attr("tag", JSON.stringify(metadata));
                             }
 
-                            if (metadata.year==null || metadata.month==null || metadata.day==null) {
+                            if (metadata.year == null || metadata.month == null || metadata.day == null) {
                                 html += '<span class="scrollspy metadataprocessed" id="tail_undated"></span>';
-                                html += '</div><span class="attachMetadataPhotos" id="amp_'+metadata.year+'-'+metadata.month+'-'+metadata.day+'"></span>';
+                                html += '</div><span class="attachMetadataPhotos" id="amp_' + metadata.year + '-' + metadata.month + '-' + metadata.day + '"></span>';
                             } else {
-                                html += '<span class="scrollspy metadataprocessed" id="tail_'+metadata.year+'-'+metadata.month+'-'+metadata.day+'"></span>';
-                                html += '</div><span class="attachMetadataPhotos" id="amp_'+metadata.year+'-'+metadata.month+'-'+metadata.day+'"></span>';
+                                html += '<span class="scrollspy metadataprocessed" id="tail_' + metadata.year + '-' + metadata.month + '-' + metadata.day + '"></span>';
+                                html += '</div><span class="attachMetadataPhotos" id="amp_' + metadata.year + '-' + metadata.month + '-' + metadata.day + '"></span>';
                             }
 
                             if (action === "above") {
-                                $(html).insertBefore($("#br"+attachToId));
+                                $(html).insertBefore($("#br" + attachToId)).ready(function () {
+                                    // console.log("inserted above to anchor")
+                                    deferred.resolve("success");
+                                });
                             } else if (action === "new") {
-                                $("#infinite-scroll-gallery").prepend(html);
+                                $("#infinite-scroll-gallery").prepend(html).ready(function () {
+                                    // console.log("inserted above new")
+                                    deferred.resolve("success");
+                                });
                             } else {
                                 if (attachToId == null) {
-                                    $(html).insertAfter($(".attachMetadataPhotos").last())
+                                    $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
+                                        // console.log("inserted below new")
+                                        deferred.resolve("success");
+                                    });
                                 } else {
-                                    $(html).insertAfter($("#amp_"+attachToId))
+                                    $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
+                                        // console.log("inserted below to anchor")
+                                        deferred.resolve("success");
+                                    });
                                 }
                             }
                         } else {
-                            $(".attachMetadataPhotos").last().text("EOL").css("display","none")
+                            $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
+                            deferred.resolve("success");
                         }
                     }
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
+                    deferred.resolve("fail");
                 }
             }
 
-            $("#spinner").css("display","none");
+            $("#spinner").css("display", "none");
+            return deferred.promise();
 
-            return "success";
         });
 
         return promise.done(function(data) {
