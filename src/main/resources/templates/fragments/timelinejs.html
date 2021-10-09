@@ -143,11 +143,11 @@
         renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
             if (msg === successBelowMsg || msg === successAboveMsg || msg === successMidMsg) {
                 reinitLightGalleryInstance();
+                setScrollSpyActive(anchor);
 
                 const url = location.href;
                 location.href = '#' + anchor;
                 history.replaceState(null, null, url);
-                setScrollSpyActive(anchor);
                 enableScrollSpy = true;
             }
         });
@@ -479,7 +479,7 @@
             type: 'get',
             url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date,
             contentType: 'application/json; charset=utf-8',
-            async: true
+            async: false
         }).then(function (data) {
             let deferred = new $.Deferred();
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
