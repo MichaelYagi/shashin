@@ -334,7 +334,7 @@
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
             contentType: 'application/json; charset=utf-8',
-            async:false
+            async:true
         }).then(function(data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
@@ -479,7 +479,7 @@
             type: 'get',
             url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date,
             contentType: 'application/json; charset=utf-8',
-            async: false
+            async: true
         }).then(function (data) {
             let deferred = new $.Deferred();
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
