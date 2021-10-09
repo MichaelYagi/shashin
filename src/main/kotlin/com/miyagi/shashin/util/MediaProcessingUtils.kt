@@ -111,6 +111,9 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 var lensModel: String? = null
                 var lat: String? = null
                 var lng: String? = null
+                var rotation = 0
+                var originalPixelWidth: Int? = null
+                var originalPixelHeight: Int? = null
 
                 for (tag in directory.tags) {
                     if (tag.description != null) {
@@ -124,7 +127,20 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                println()
                         when (tag.tagName) {
                             "Orientation" -> {
+                                if (tag.description.contains("(Rotate")) {
+                                    val processedTag = tag.description.substringAfterLast("(Rotate ")
+                                    val tagArr = processedTag.split(" ");
+                                    var numeric = true
 
+                                    try {
+                                        parseDouble(tagArr[0])
+                                    } catch (e: NumberFormatException) {
+                                        numeric = false
+                                    }
+                                    if (numeric) {
+                                        rotation = tagArr[0].toInt()
+                                    }
+                                }
                             }
                             "Date/Time", "Creation Time", "Date/Time Original" -> {
                                 val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH)
@@ -214,17 +230,15 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                        metadataObj.setTitle(tag.description)
 //                    }
                             // XXX pixels
-                            "Image Width", "Width" -> {
+                            "Image Width", "Width", "Exif Image Width" -> {
                                 val widthValue = tag.description
                                 val widthParts = widthValue.split(" ")
-                                val originalPixelWidth = if (widthParts.count() == 2) widthParts[0].toInt() else null
-                                metadataObj.setOriginalImageWidth(originalPixelWidth)
+                                originalPixelWidth = if (widthParts.count() == 2) widthParts[0].toInt() else null
                             }
-                            "Image Height", "Height" -> {
+                            "Image Height", "Height", "Exif Image Height" -> {
                                 val heightValue = tag.description
                                 val heightParts = heightValue.split(" ")
-                                val originalPixelHeight = if (heightParts.count() == 2) heightParts[0].toInt() else null
-                                metadataObj.setOriginalImageHeight(originalPixelHeight)
+                                originalPixelHeight = if (heightParts.count() == 2) heightParts[0].toInt() else null
                             }
                             "GPS Latitude", "Latitude" -> {
                                 val latitudeValue = tag.description
@@ -335,6 +349,15 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                         metadataObj.setTimeZone(offset.toString())
                     }
                 }
+                if (originalPixelHeight != null && originalPixelWidth != null) {
+                    if (rotation == 90 || rotation == 270) {
+                        metadataObj.setOriginalImageWidth(originalPixelHeight)
+                        metadataObj.setOriginalImageHeight(originalPixelWidth)
+                    } else {
+                        metadataObj.setOriginalImageWidth(originalPixelWidth)
+                        metadataObj.setOriginalImageHeight(originalPixelHeight)
+                    }
+                }
             }
         } catch (e: Exception) {
             logger.log(
@@ -430,14 +453,22 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
         var img: BufferedImage? = null
         if (FileUtils.isRaw(file.extension.lowercase())) {
-            img = ImageIO.read(file)
-            if (rotation > 0) {
-                img = rotateImage(img, rotation.toDouble())
+            try {
+                img = ImageIO.read(file)
+                if (rotation > 0) {
+                    img = rotateImage(img, rotation.toDouble())
+                }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Could not read file: " + file.path)
             }
         } else if (supportedImageFormats.contains(file.extension.lowercase())) {
-            img = ImageIO.read(file)
-            if (rotation > 0) {
-                img = rotateImage(img, rotation.toDouble())
+            try {
+                img = ImageIO.read(file)
+                if (rotation > 0) {
+                    img = rotateImage(img, rotation.toDouble())
+                }
+            } catch (e: Exception) {
+                logger.log(Level.WARNING, "Could not read file: " + file.path)
             }
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
             // Grab screen shot

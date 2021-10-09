@@ -89,6 +89,11 @@
             <artifactId>thumbnailator</artifactId>
             <version>0.4.14</version>
         </dependency>
+        <dependency>
+            <groupId>com.twelvemonkeys.imageio</groupId>
+            <artifactId>imageio-jpeg</artifactId>
+            <version>3.7.0</version>
+        </dependency>
         <!-- EXIF Extractor -->
         <dependency>
             <groupId>com.drewnoakes</groupId>
