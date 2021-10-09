@@ -839,17 +839,25 @@ class SettingsController {
 
                                 if (metadataCount == 0) {
                                     metadataObj = mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
-                                    metadataObj?.setHidden(false)
+                                    if (metadataObj != null) {
+                                        metadataObj.setHidden(false)
 
-                                    try {
-                                        metadataRepository?.save(metadataObj!!)
-                                        threadText = file.path + " indexed"
-                                    } catch (e: Exception) {
+                                        try {
+                                            metadataRepository?.save(metadataObj)
+                                            threadText = file.path + " indexed"
+                                        } catch (e: Exception) {
+                                            logger.log(
+                                                Level.SEVERE,
+                                                "Could not save file " + metadataObj.getPath() + ": " + e.localizedMessage
+                                            )
+                                            threadText = "Could not save file " + metadataObj.getPath() + "."
+                                        }
+                                    } else {
                                         logger.log(
-                                            Level.SEVERE,
-                                            "Could not save file " + metadataObj?.getPath() + ": " + e.localizedMessage
+                                            Level.WARNING,
+                                            "Could not process thumbnails for "+file.path+"."
                                         )
-                                        threadText = "Could not save file " + metadataObj?.getPath() + "."
+                                        threadText = "Could not process thumbnails for "+file.path+"."
                                     }
                                 } else {
                                     threadText = file.path + " ENTRY EXISTS"
