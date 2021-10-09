@@ -362,7 +362,7 @@
                                     mediaContent.video = '{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
                                     html =
                                         '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
-                                        'data-video="'+mediaContent.video+'" ';
+                                        'data-video="'+encodeHtml(mediaContent.video)+'" ';
                                     if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null) {
                                         html +=
                                         'data-lg-size="'+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ';
