@@ -161,6 +161,13 @@
             }
         }, 200);
 
+        $("#offcanvasToc").on('show.bs.offcanvas', function () {
+            if (enableScrollSpy === true) {
+                const elementsInViewport = $(".scrollspy").withinviewport();
+                scrollToTimeline(elementsInViewport);
+            }
+        });
+
         const scrollHandler = function (e) {
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
