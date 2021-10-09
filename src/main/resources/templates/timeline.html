@@ -159,10 +159,10 @@
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 renderThumbnailsInViewport(elementsInViewport, "[[${mediaTypeFilter}]]");
             }
-        }, 150);
+        }, 200);
 
         const scrollHandler = function (e) {
-            if (enableScrollSpy === true) {
+            if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 scrollToTimeline(elementsInViewport);
             }
