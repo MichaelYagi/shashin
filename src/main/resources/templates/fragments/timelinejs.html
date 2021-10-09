@@ -6,6 +6,83 @@
     lightGalleryConfigs["selector"] = '.mediaLink';
     let lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
 
+    function destroy(obj) {
+        for(var prop in obj){
+            var property = obj[prop];
+            if(property != null && typeof(property) == 'object') {
+                destroy(property);
+            }
+            else {
+                obj[prop] = null;
+            }
+        }
+    }
+
+    function reinitLightGalleryInstance() {
+        const closeTimeout = lg.closeGallery(true);
+        setTimeout(() => {
+            lg.destroyModules(true);
+            lg.invalidateItems();
+            $(window).off(`.lg.global${lg.lgId}`);
+            lg.LGel.off('.lg');
+            // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+            // Hack because lg.destroy() errors out
+            // when photos appear slower than destroy called, then there's an error
+            try {
+                lg.$container.remove();
+            } catch (e) {
+                console.log(e);
+            }
+
+            lg = null;
+
+            setTimeout(() => {
+                lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
+            }, 500);
+        }, closeTimeout);
+
+        // lg.destroy();
+    }
+
+    function observeAnchorChange(id, functionCall) {
+        if (MutationObserver) {
+            let anchorVisible = false;
+            let offcanvasAnchorVisible = false;
+            // console.log("Using mutation observer")
+            const observer = new MutationObserver(function (mutations, me) {
+                const anchorEl = document.getElementById(id);
+                const offcanvasAnchorEl = document.getElementById("offcanvas_"+id);
+
+                if (anchorEl) {
+                    anchorVisible = true;
+                }
+                if (offcanvasAnchorEl) {
+                    offcanvasAnchorVisible = true;
+                }
+
+                if (anchorVisible === true && offcanvasAnchorVisible === true) {
+                    functionCall();
+                    me.disconnect(); // stop observing
+                    return true;
+                }
+            });
+
+            observer.observe(document, {
+                childList: true,
+                subtree: true
+            });
+        } else {
+            // console.log("Using setInterval")
+            const existCondition = setInterval(function () {
+                if ($("#" + id).length > 0 && $("#offcanvas_" + id).length > 0) {
+                    // console.log("Exists!");
+                    clearInterval(existCondition);
+                    functionCall();
+                }
+            }, 100);
+        }
+    }
+
     function openGallery(e,index) {
         e.preventDefault();
         if (typeof lg !== "undefined") {
@@ -13,6 +90,7 @@
         }
     }
 
+    let prevAnchor = "";
     function renderThumbnailsInViewport(elements,mediaTypeFilter) {
         // If no scrollspy elements found, find current thumbnail container
         // and closest previous scrollspy element
@@ -24,10 +102,44 @@
         elements.each(function(index) {
             let id = $(this).attr("id");
             if (id.indexOf("tail_") === -1 && (index === 0 || index === 1)) {
-                renderThumbnails(id,mediaTypeFilter);
-                setScrollSpyActive(id);
+                if (prevAnchor !== id) {
+                    renderThumbnails(id,mediaTypeFilter);
+                    setScrollSpyActive(id);
+
+                    function anchorIsVisible() {
+                        reinitLightGalleryInstance();
+                    }
+                    observeAnchorChange(id, anchorIsVisible);
+                    prevAnchor = id;
+                }
             }
         });
+    }
+
+    function jumpToTimeline(e,anchor,mediaTypeFilter) {
+        e.preventDefault();
+
+        enableScrollSpy = false;
+
+        // console.log("jumpToTimeline")
+        // console.log(anchor)
+        // console.log(mediaTypeFilter)
+        renderThumbnails(anchor,mediaTypeFilter);
+
+        function anchorIsVisible() {
+            reinitLightGalleryInstance();
+
+            const url = location.href;
+            location.href = '#' + anchor;
+            history.replaceState(null, null, url);
+
+            const existCondition = setInterval(function () {
+                enableScrollSpy = true;
+                clearInterval(existCondition);
+            }, 100);
+        }
+
+        observeAnchorChange(anchor, anchorIsVisible);
     }
 
     // Set the active nav
@@ -46,6 +158,12 @@
                 });
             }
         });
+    }
+
+    function jumpToLightGalleryMetadata(metadataId) {
+        const url = location.href;
+        location.href = '#lightGalleryIndex'+metadataId;
+        history.replaceState(null,null,url);
     }
 
     let enableScrollSpy = true;
@@ -172,69 +290,6 @@
         // console.log("==============================================");
     }
 
-    function jumpToTimeline(e,anchor,mediaTypeFilter) {
-        e.preventDefault();
-
-        enableScrollSpy = false;
-
-        // console.log("jumpToTimeline")
-        // console.log(anchor)
-        // console.log(mediaTypeFilter)
-        renderThumbnails(anchor,mediaTypeFilter);
-
-        function anchorIsVisible() {
-            const url = location.href;
-            location.href = '#' + anchor;
-            history.replaceState(null, null, url);
-
-            const existCondition = setInterval(function () {
-                lg.destroy();
-                setTimeout(() => {
-                    lg = lightGallery(document.getElementById('infinite-scroll-gallery'), lightGalleryConfigs);
-                }, 500);
-                enableScrollSpy = true;
-                clearInterval(existCondition);
-            }, 100);
-        }
-
-        if (MutationObserver) {
-            let anchorVisible = false;
-            let offcanvasAnchorVisible = false;
-            // console.log("Using mutation observer")
-            const observer = new MutationObserver(function (mutations, me) {
-                const anchorEl = document.getElementById(anchor);
-                const offcanvasAnchorEl = document.getElementById("offcanvas_"+anchor);
-
-                if (anchorEl) {
-                    anchorVisible = true;
-                }
-                if (offcanvasAnchorEl) {
-                    offcanvasAnchorVisible = true;
-                }
-
-                if (anchorVisible === true && offcanvasAnchorVisible === true) {
-                    anchorIsVisible();
-                    me.disconnect(); // stop observing
-                    return true;
-                }
-            });
-
-            observer.observe(document, {
-                childList: true,
-                subtree: true
-            });
-        } else {
-            // console.log("Using setInterval")
-            const existCondition = setInterval(function () {
-                if ($("#" + anchor).length > 0 && $("#offcanvas_" + anchor).length > 0) {
-                    // console.log("Exists!");
-                    clearInterval(existCondition);
-                    anchorIsVisible();
-                }
-            }, 100);
-        }
-    }
-
     // Hook up data to edit albums, favorites and people labels
     function attachAssociatedMetadata(date,mediaTypeFilter) {
         $.ajax({
@@ -323,6 +378,10 @@
                                     mediaContent.width = metadata.originalImageWidth;
                                 }
                                 $("#tncentered"+metadata.id).append(html);
+
+                                // $("#tncentered"+metadata.id).click(function() {
+                                //     jumpToLightGalleryMetadata(metadata.id);
+                                // });
 
                                 var editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
                                 html = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';
@@ -654,6 +713,7 @@
                                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
                                 html += '<div id="photoThumbnailContainer'+metadata.id+'" class="photo-thumbnail-container photo-thumbnail '+(metadata.type.includes('video') ? 'is-video' : 'is-not-video')+'" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
+                                html += '   <a class="lightGalleryIndexAnchor" id="lightGalleryIndex'+metadata.id+'"></a>\n'
                                 html +=
                                     '       <img class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">\n' +
                                     '       <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
@@ -667,10 +727,10 @@
                                 }
 
                                 html += '   <div id="tntl'+metadata.id+'"></div>\n' +
-                                    '   <div id="tnbr'+metadata.id+'"></div>\n' +
-                                    '   <div id="tnbl'+metadata.id+'"></div>\n' +
-                                    '   <div id="tntr'+metadata.id+'"></div>\n' +
-                                    '   <div id="tncentered'+metadata.id+'"></div>\n';
+                                    '       <div id="tnbr'+metadata.id+'"></div>\n' +
+                                    '       <div id="tnbl'+metadata.id+'"></div>\n' +
+                                    '       <div id="tntr'+metadata.id+'"></div>\n' +
+                                    '       <div id="tncentered'+metadata.id+'"></div>\n';
 
                                 html += '   <span id="timelinemodal'+metadata.id+'"></span>' +
                                     '   </div>\n';
