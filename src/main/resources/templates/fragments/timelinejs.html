@@ -181,14 +181,14 @@
         let deferred = new $.Deferred();
 
         /*<![CDATA[*/
-        let queryLimit = [[${queryLimit}]];
+        let queryLimit = 3; //[[${queryLimit}]];
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
         let depthUp = queryLimit;
         // If velocity of scroll is really fast, add padding to # of results
         if (scrollSpeedInpxPerMs > 3) {
             if (scrollDirection === "down") {
-                depthDown = depthDown + 4;
+                depthDown = depthDown + 3;
             } else {
                 depthUp = depthUp + 3;
             }
@@ -257,12 +257,14 @@
                 }
                 // console.log("attaching above attachPoint:" + attachPoint);
                 // console.log("actionAbove:" + action)
-                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function (msg) {
-                    if (msg === "success") {
-                        attachAssociatedMetadata(currentId, mediaTypeFilter);
-                    }
-                    deferred.resolve(successAboveMsg);
-                });
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                    // .then(function (msg) {
+                    //     if (msg === "success") {
+                    //         attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    //     }
+                    //     deferred.resolve(successAboveMsg);
+                    // });
+                attachAssociatedMetadata(currentId, mediaTypeFilter);
                 action = "below";
             }
             attachPoint = currentId;
@@ -277,12 +279,14 @@
             if ($("#"+currentId).length === 0) {
                 // console.log("attaching below attachPoint:" + attachPoint);
                 // console.log("actionBelow:"+action)
-                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function (msg) {
-                    if (msg === "success") {
-                        attachAssociatedMetadata(currentId, mediaTypeFilter);
-                    }
-                    deferred.resolve(successBelowMsg);
-                });
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                    // .then(function (msg) {
+                    //     if (msg === "success") {
+                    //         attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    //     }
+                    //     //deferred.resolve(successBelowMsg);
+                    // });
+                attachAssociatedMetadata(currentId, mediaTypeFilter);
             }
             attachPoint = currentId;
         }
@@ -300,12 +304,14 @@
         if ($("#"+id).length === 0) {
             // console.log("attaching mid attachPoint:"+attachPoint)
             // console.log("attaching mid action:"+action)
-            updateTimeline(id, mediaTypeFilter, action, attachPoint).then(function (msg) {
-                if (msg === "success") {
-                    attachAssociatedMetadata(id, mediaTypeFilter);
-                }
-                deferred.resolve(successMidMsg);
-            });
+            updateTimeline(id, mediaTypeFilter, action, attachPoint);
+                // .then(function (msg) {
+                //     if (msg === "success") {
+                //         attachAssociatedMetadata(id, mediaTypeFilter);
+                //     }
+                //     //deferred.resolve(successMidMsg);
+                // });
+            attachAssociatedMetadata(id, mediaTypeFilter);
         }
 
         // Remove elements that are not visible
@@ -325,6 +331,7 @@
 
         // console.log("==============================================");
 
+        deferred.resolve(successMidMsg);
         return deferred.promise();
     }
 
@@ -565,38 +572,39 @@
                             if (action === "above") {
                                 $(html).insertBefore($("#br" + attachToId)).ready(function () {
                                     // console.log("inserted above to anchor")
-                                    deferred.resolve("success");
+                                    //deferred.resolve("success");
                                 });
                             } else if (action === "new") {
                                 $("#infinite-scroll-gallery").prepend(html).ready(function () {
                                     // console.log("inserted above new")
-                                    deferred.resolve("success");
+                                    //deferred.resolve("success");
                                 });
                             } else {
                                 if (attachToId == null) {
                                     $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
                                         // console.log("inserted below new")
-                                        deferred.resolve("success");
+                                        //deferred.resolve("success");
                                     });
                                 } else {
                                     $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
                                         // console.log("inserted below to anchor")
-                                        deferred.resolve("success");
+                                        //deferred.resolve("success");
                                     });
                                 }
                             }
                         } else {
                             $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
-                            deferred.resolve("success");
+                            //deferred.resolve("success");
                         }
                     }
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
-                    deferred.resolve("fail");
+                    //deferred.resolve("fail");
                 }
             }
 
+            deferred.resolve("success");
             $("#spinner").css("display", "none");
             return deferred.promise();
 
