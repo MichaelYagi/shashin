@@ -257,14 +257,15 @@
                 }
                 // console.log("attaching above attachPoint:" + attachPoint);
                 // console.log("actionAbove:" + action)
-                updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function () {
+                    attachAssociatedMetadata(currentId, mediaTypeFilter);
+                });
                     // .then(function (msg) {
                     //     if (msg === "success") {
                     //         attachAssociatedMetadata(currentId, mediaTypeFilter);
                     //     }
                     //     deferred.resolve(successAboveMsg);
                     // });
-                attachAssociatedMetadata(currentId, mediaTypeFilter);
                 action = "below";
             }
             attachPoint = currentId;
@@ -279,14 +280,15 @@
             if ($("#"+currentId).length === 0) {
                 // console.log("attaching below attachPoint:" + attachPoint);
                 // console.log("actionBelow:"+action)
-                updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function () {
+                    attachAssociatedMetadata(currentId, mediaTypeFilter);
+                });
                     // .then(function (msg) {
                     //     if (msg === "success") {
                     //         attachAssociatedMetadata(currentId, mediaTypeFilter);
                     //     }
                     //     //deferred.resolve(successBelowMsg);
                     // });
-                attachAssociatedMetadata(currentId, mediaTypeFilter);
             }
             attachPoint = currentId;
         }
@@ -304,14 +306,15 @@
         if ($("#"+id).length === 0) {
             // console.log("attaching mid attachPoint:"+attachPoint)
             // console.log("attaching mid action:"+action)
-            updateTimeline(id, mediaTypeFilter, action, attachPoint);
+            updateTimeline(id, mediaTypeFilter, action, attachPoint).then(function () {
+                attachAssociatedMetadata(id, mediaTypeFilter);
+            });
                 // .then(function (msg) {
                 //     if (msg === "success") {
                 //         attachAssociatedMetadata(id, mediaTypeFilter);
                 //     }
                 //     //deferred.resolve(successMidMsg);
                 // });
-            attachAssociatedMetadata(id, mediaTypeFilter);
         }
 
         // Remove elements that are not visible
