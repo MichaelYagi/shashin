@@ -384,6 +384,7 @@
 
                                 html = '<img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">';
                                 $("#photoThumbnailContainer"+metadata.id).prepend(html);
+
                                 // const img = new Image();
                                 // img.onload = function () {
                                 //     const imageId = img.id;
@@ -439,7 +440,7 @@
 
                                 $("#tncentered"+metadata.id).on('click', function(e) {
                                     e.preventDefault();
-                                    $("#infinite-scroll-gallery a:first-child > img").trigger("click");
+                                    $("#infinite-scroll-gallery a:nth-child(2) > img").trigger("click");
                                 });
 
                                 var editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
