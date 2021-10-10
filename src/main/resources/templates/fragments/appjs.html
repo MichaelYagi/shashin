@@ -266,6 +266,7 @@
             e.preventDefault();
 
             if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                $("#tntl" + metadata.id).css("display", "block");
                 $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image" + metadata.id).css("opacity", 0.3);
                 $("#tncentered" + metadata.id).css("display", "none");
@@ -274,8 +275,9 @@
                 addToMetadataIdList(metadata.id);
                 addToMetadataFilenamesList($('#filename' + metadata.id).val());
             } else {
-                $(this).css("display", "block");
+                $("#tntl" + metadata.id).css("display", "block");
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
+                $("#image" + metadata.id).css("opacity", 0.3);
                 $("#tncentered" + metadata.id).css("display", "block");
                 $("#tnbr" + metadata.id).css("display", "block");
                 $("#tnbl" + metadata.id).css("display", "block");
@@ -335,8 +337,9 @@
                     addToMetadataIdList(metadata.id);
                     addToMetadataFilenamesList($('#filename' + metadata.id).val());
                 } else {
-                    $("#tntl" + metadata.id).css("display", "none");
+                    $("#tntl" + metadata.id).css("display", "block");
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
+                    $("#image" + metadata.id).css("opacity", 0.3);
                     $("#tncentered" + metadata.id).css("display", "block");
                     $("#tnbr" + metadata.id).css("display", "block");
                     $("#tnbl" + metadata.id).css("display", "block");
@@ -586,6 +589,8 @@
     })
 
     function clearTimelineSelection() {
+        removeAllMetadataFilenamesList();
+        removeAllMetadataIdList();
         $(".thumbnail-centered").css("display", "none");
         $(".thumbnail-tr").css("display", "none");
         $(".thumbnail-br").css("display", "none");

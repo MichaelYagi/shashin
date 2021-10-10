@@ -177,34 +177,36 @@
                                     var metadataIds = JSON.parse($("#batchMetadataIds").val());
                                     for (var index in metadataIds) {
                                         var metadataId = metadataIds[index];
-                                        
-                                        $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
-                                        if($("#batchhidden").is(':checked')) {
-                                            // Get parent Id
-                                            const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
-                                            const headingId = rowId.replace("row", "");
-                                            const elToRemove = $("#photoThumbnailContainer" + metadataId);
+                                        if ($("#photoThumbnailContainer" + metadataId).length > 0) {
+                                            $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
-                                            // Count children
-                                            const currentNumChildren = elToRemove.siblings("div").length;
+                                            if ($("#batchhidden").is(':checked')) {
+                                                // Get parent Id
+                                                const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
+                                                const headingId = rowId.replace("row", "");
+                                                const elToRemove = $("#photoThumbnailContainer" + metadataId);
 
-                                            // Remove metadata
-                                            elToRemove.remove();
+                                                // Count children
+                                                const currentNumChildren = elToRemove.siblings("div").length;
 
-                                            if (currentNumChildren === 0) {
-                                                // Remove header
-                                                $("#br"+headingId).remove();
-                                                $("#"+headingId).remove();
-                                                $("#row"+headingId).remove();
+                                                // Remove metadata
+                                                elToRemove.remove();
+
+                                                if (currentNumChildren === 0) {
+                                                    // Remove header
+                                                    $("#br" + headingId).remove();
+                                                    $("#" + headingId).remove();
+                                                    $("#row" + headingId).remove();
+                                                }
+                                            } else if ($("#latlngBatchData").val() !== "") {
+                                                var latlngArray = $("#latlngBatchData").val().split(",");
+                                                var metadataTaggedObj = JSON.parse($("#timelineModalEdit" + metadataId).attr("tag"));
+                                                metadataTaggedObj["lat"] = $.trim(latlngArray[0]);
+                                                metadataTaggedObj["lng"] = $.trim(latlngArray[1]);
+                                                $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataTaggedObj));
+                                                $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                                             }
-                                        } else if ($("#latlngBatchData").val() !== "") {
-                                            var latlngArray = $("#latlngBatchData").val().split(",");
-                                            var metadataTaggedObj = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
-                                            metadataTaggedObj["lat"] = $.trim(latlngArray[0]);
-                                            metadataTaggedObj["lng"] = $.trim(latlngArray[1]);
-                                            $("#timelineModalEdit"+metadataId).attr("tag",JSON.stringify(metadataTaggedObj));
-                                            $("#timelineModalEdit"+metadataId+" span").removeClass("bi-pencil-square").addClass("bi-pencil");
                                         }
                                     }
 
