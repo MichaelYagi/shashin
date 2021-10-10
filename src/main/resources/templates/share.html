@@ -121,14 +121,22 @@
       }
       /*]]>*/
     }
-    if (!$(window).hasScrollBar()) {
-      setTimeout(() => {
-        loadNextPage();
-      }, 1000);
-    }
+    const refreshIntervalId = window.setInterval(function () {
+      if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
+        setTimeout(() => {
+          loadNextPage();
+        }, 1000);
+      } else {
+        clearInterval(refreshIntervalId);
+      }
+
+      if ($(".appendAlbumPhotos").last().text() === "EOL" || '[[${albumMetadataList}]]' === '' || '[[${albumMetadataList}]]' === '[]') {
+        clearInterval(refreshIntervalId);
+      }
+    }, 200);
     $(window).on('scroll', function() {
       // Uset to detect near bottom
-      if (atEndOfPage() && $(".appendMetadataPhotos").last().text() !== "EOL") {
+      if (atEndOfPage() && $(".appendAlbumPhotos").last().text() !== "EOL") {
         loadNextPage();
       }
     })

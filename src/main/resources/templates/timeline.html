@@ -44,6 +44,8 @@
                 </script>
             </th:block>
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+            <input type="hidden" id="multiSelectMetadataIds" name="multiSelectMetadataIds" value="[]">
+            <input type="hidden" id="multiSelectFilenames" name="multiSelectFilenames" value="[]">
             <input type="hidden" id="currentlat" name="currentlat">
             <input type="hidden" id="currentlng" name="currentlng">
             <input type="hidden" id="currentfilename" name="currentfilename">

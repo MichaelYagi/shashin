@@ -3,7 +3,7 @@
 <body th:fragment="appjs()">
 <script type="text/javascript">
     $.fn.hasScrollBar = function() {
-        return this.get(0).scrollHeight > this.height();
+        return this.get(0).scrollHeight > this.get(0).clientHeight;
     }
 
     function jumpToLightGalleryIndex(index) {
@@ -177,8 +177,90 @@
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    function getMetdataIdList() {
+        if ($("#multiSelectMetadataIds").length > 0) {
+            return JSON.parse($("#multiSelectMetadataIds").val());
+        }
+
+        return [];
+    }
+
+    function addToMetadataIdList(metadataId) {
+        if ($("#multiSelectMetadataIds").length > 0) {
+            const metadataIdArray = getMetdataIdList();
+            if (metadataIdArray.indexOf(metadataId) === -1) {
+                metadataIdArray.push(metadataId);
+                $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
+            }
+        }
+    }
+
+    function removeFromMetadataIdList(metadataId) {
+        if ($("#multiSelectMetadataIds").length > 0) {
+            const metadataIdArray = getMetdataIdList();
+            const index = metadataIdArray.indexOf(metadataId);
+            if (index > -1) {
+                metadataIdArray.splice(index, 1);
+            }
+            $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
+        }
+    }
+
+    function removeAllMetadataIdList() {
+        if ($("#multiSelectMetadataIds").length > 0) {
+            $("#multiSelectMetadataIds").val(JSON.stringify([]));
+        }
+    }
+
+    function getMetadataFilenamesList() {
+        if ($("#multiSelectFilenames").length > 0) {
+            return JSON.parse($("#multiSelectFilenames").val());
+        }
+
+        return [];
+    }
+
+    function addToMetadataFilenamesList(filename) {
+        if ($("#multiSelectFilenames").length > 0) {
+            const metadataFilenamesArray = getMetadataFilenamesList();
+            if (metadataFilenamesArray.indexOf(filename) === -1) {
+                metadataFilenamesArray.push(filename);
+                $("#multiSelectFilenames").val(JSON.stringify(metadataFilenamesArray));
+            }
+        }
+    }
+
+    function removeFromMetadataFilenamesList(filename) {
+        if ($("#multiSelectFilenames").length > 0) {
+            const metadataFilenamesArray = getMetadataFilenamesList();
+            const index = metadataFilenamesArray.indexOf(filename);
+            if (index > -1) {
+                metadataFilenamesArray.splice(index, 1);
+            }
+            $("#multiSelectFilenames").val(JSON.stringify(metadataFilenamesArray));
+        }
+    }
+
+    function removeAllMetadataFilenamesList() {
+        if ($("#multiSelectFilenames").length > 0) {
+            $("#multiSelectFilenames").val(JSON.stringify([]));
+        }
+    }
+
     function setPhotoOverlays(rawMetadata, view) {
-        var metadata = JSON.parse(decodeHtml(rawMetadata));
+        const metadata = JSON.parse(decodeHtml(rawMetadata));
+
+        let metadataIdArray = getMetdataIdList();
+        // console.log(metadataIdArray);
+        const index = metadataIdArray.indexOf(metadata.id);
+        if (index > -1) {
+            $("#tntl" + metadata.id).css("display", "block");
+            $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
+            $("#image" + metadata.id).css("opacity", 0.3);
+            $("#tncentered" + metadata.id).css("display", "none");
+            $("#tnbr" + metadata.id).css("display", "none");
+            $("#tnbl" + metadata.id).css("display", "none");
+        }
 
         $("#select" + metadata.id).click(function (e) {
             e.preventDefault();
@@ -189,16 +271,21 @@
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbr" + metadata.id).css("display", "none");
                 $("#tnbl" + metadata.id).css("display", "none");
+                addToMetadataIdList(metadata.id);
+                addToMetadataFilenamesList($('#filename' + metadata.id).val());
             } else {
                 $(this).css("display", "block");
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
-                $("#image" + metadata.id).css("opacity", 1.0);
                 $("#tncentered" + metadata.id).css("display", "block");
                 $("#tnbr" + metadata.id).css("display", "block");
                 $("#tnbl" + metadata.id).css("display", "block");
+                removeFromMetadataIdList(metadata.id);
+                removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
             }
 
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            metadataIdArray = getMetdataIdList();
+
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $("#appSearch").css("display", "none");
                 if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").css("display", "block");
@@ -221,7 +308,12 @@
                 $("#matchesAppTools").css("display", "none");
             }
 
-            $("#timelineNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            const metadataList = getMetdataIdList();
+            let timelineSelectCount = $('.bi-circle-fill').length;
+            if (metadataList.length > 0) {
+                timelineSelectCount = metadataList.length;
+            }
+            $("#timelineNumberSelected").text(timelineSelectCount+" Selected");
             $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
@@ -232,15 +324,30 @@
             e.preventDefault();
 
             // Fill top left icon when clicking anywhere on thumbnail
-            if ($('.bi-circle-fill')[0]) {
-                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
-                    $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
-                } else {
+            if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
+                if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
+                    $("#tntl" + metadata.id).css("display", "block");
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
+                    $("#image" + metadata.id).css("opacity", 0.3);
+                    $("#tncentered" + metadata.id).css("display", "none");
+                    $("#tnbr" + metadata.id).css("display", "none");
+                    $("#tnbl" + metadata.id).css("display", "none");
+                    addToMetadataIdList(metadata.id);
+                    addToMetadataFilenamesList($('#filename' + metadata.id).val());
+                } else {
+                    $("#tntl" + metadata.id).css("display", "none");
+                    $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
+                    $("#tncentered" + metadata.id).css("display", "block");
+                    $("#tnbr" + metadata.id).css("display", "block");
+                    $("#tnbl" + metadata.id).css("display", "block");
+                    removeFromMetadataIdList(metadata.id);
+                    removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                 }
             }
 
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            metadataIdArray = getMetdataIdList();
+
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $("#appSearch").css("display", "none");
                 if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").css("display", "block");
@@ -263,7 +370,11 @@
                 $("#matchesAppTools").css("display", "none");
             }
 
-            $("#timelineNumberSelected").text($('.bi-circle-fill').length+" Selected");
+            let timelineSelectCount = $('.bi-circle-fill').length;
+            if (metadataIdArray.length > 0) {
+                timelineSelectCount = metadataIdArray.length;
+            }
+            $("#timelineNumberSelected").text(timelineSelectCount+" Selected");
             $("#matchesNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#favoritesNumberSelected").text($('.bi-circle-fill').length+" Selected");
             $("#trashNumberSelected").text($('.bi-circle-fill').length+" Selected");
@@ -271,22 +382,28 @@
         });
 
         $("#image" + metadata.id).hover(function () {
+            metadataIdArray = getMetdataIdList();
+            const index = metadataIdArray.indexOf(metadata.id);
+
             $(this).css("opacity", 0.3);
             $(this).siblings().css("display", "block");
-            if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill") {
+            if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill" || index > -1) {
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbl" + metadata.id).css("display", "none");
                 $("#tnbr" + metadata.id).css("display", "none");
                 $("#tntr" + metadata.id).css("display", "none");
             }
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 $('.thumbnail-tr').hide();
                 $('.thumbnail-br').hide();
             }
         }, function () {
-            if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill") {
+            metadataIdArray = getMetdataIdList();
+            const index = metadataIdArray.indexOf(metadata.id);
+
+            if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
                 $(this).css("opacity", 1.0);
                 $(this).siblings(".thumbnail-tl").css("display", "none");
                 $(this).siblings(".thumbnail-bl").css("display", "none");
@@ -294,7 +411,7 @@
                 $(this).siblings(".thumbnail-tr").css("display", "none");
                 $(this).siblings(".thumbnail-br").css("display", "none");
             } else {
-                if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                     $('.thumbnail-bl').hide();
                     $('.thumbnail-centered').hide();
                     $('.thumbnail-tr').hide();
@@ -314,6 +431,7 @@
             $('#currentmonth').val(metadata.month === null ? "" : metadata.month);
             $('#currentday').val(metadata.day === null ? "" : metadata.day);
             $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
+            metadataIdArray = getMetdataIdList();
 
             $('.bi-play-circle').css("color", "midnightblue");
             $(this).css("display", "block");
@@ -322,7 +440,7 @@
             $(this).siblings(".thumbnail-br").css("display", "block");
             $(this).siblings(".thumbnail-tr").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 $('.thumbnail-tr').hide();
@@ -339,14 +457,16 @@
         });
 
         $("#tntl" + metadata.id).hover(function () {
-            if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill") {
+            metadataIdArray = getMetdataIdList();
+            const index = metadataIdArray.indexOf(metadata.id);
+            if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
                 $(this).css("display", "block");
                 $(this).siblings(".thumbnail-centered").css("display", "block");
                 $(this).siblings(".thumbnail-tr").css("display", "block");
                 $(this).siblings(".thumbnail-br").css("display", "block");
                 $(this).siblings(".thumbnail-bl").css("display", "block");
                 $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-                if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                     $('.thumbnail-bl').hide();
                     $('.thumbnail-centered').hide();
                     $('.thumbnail-tr').hide();
@@ -363,13 +483,14 @@
         });
 
         $("#tnbl" + metadata.id).hover(function () {
+            metadataIdArray = getMetdataIdList();
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
             $(this).siblings(".thumbnail-tr").css("display", "block");
             $(this).siblings(".thumbnail-br").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 $('.thumbnail-tr').hide();
@@ -385,13 +506,14 @@
         });
 
         $("#tnbr" + metadata.id).hover(function () {
+            metadataIdArray = getMetdataIdList();
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
             $(this).siblings(".thumbnail-tr").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 $('.thumbnail-tr').hide();
@@ -407,13 +529,14 @@
         });
 
         $("#tntr" + metadata.id).hover(function () {
+            metadataIdArray = getMetdataIdList();
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
             $(this).siblings(".thumbnail-br").css("display", "block");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
                 $('.thumbnail-tr').hide();
@@ -432,16 +555,16 @@
     $("#appToolsBatchEdit").click(function(e) {
         e.preventDefault();
 
-        let metadataIdList = [];
         let filenameList = "";
-        $('.bi-circle-fill').each(function(i, obj) {
-            var metadataId = obj.id.substring(6, obj.id.length);
-            metadataIdList.push(metadataId);
-            filenameList += $("#filename"+metadataId).val().trim()+", ";
-        });
+        let metadataIdArray = getMetdataIdList();
+        let metadataFilenamesArray = getMetadataFilenamesList();
+        for (let index in metadataFilenamesArray) {
+            const metadataFilename = metadataFilenamesArray[index];
+            filenameList += metadataFilename.trim()+", ";
+        }
         filenameList = filenameList.replace(/,\s*$/, "");
 
-        $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
+        $("#batchMetadataIds").val(JSON.stringify(metadataIdArray));
         $("#batchisobject")[0].checked = false;
         $("#batchhidden")[0].checked = false;
         if (filenameList !== "") {
@@ -480,11 +603,12 @@
     $("#appToolsAddAlbum").click(function(e) {
         e.preventDefault();
 
-        let metadataIdList = [];
-        $('.bi-circle-fill').each(function(i, obj) {
-            metadataIdList.push(obj.id.substring(6, obj.id.length));
-        });
-
+        let metadataIdList = getMetdataIdList();
+        if (metadataIdList.length === 0) {
+            $('.bi-circle-fill').each(function(i, obj) {
+                metadataIdList.push(obj.id.substring(6, obj.id.length));
+            });
+        }
         $("#albumMetadataIds").val(JSON.stringify(metadataIdList));
         $("#propAddAlbum").modal('show');
     });

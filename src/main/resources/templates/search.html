@@ -136,23 +136,27 @@
             /*]]>*/
             $("#currentPage").val(nextPage);
         }
-        if (!$("#container").hasScrollBar()) {
-            setTimeout(() => {
-                loadNextPage();
-            }, 1000);
-        }
-        if (!$("main").hasScrollBar()) {
-            setTimeout(() => {
-                loadNextPage();
-            }, 1000);
-        }
+
+        const refreshIntervalId = window.setInterval(function () {
+            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
+                setTimeout(() => {
+                    loadNextPage();
+                }, 1000);
+            } else {
+                clearInterval(refreshIntervalId);
+            }
+
+            if ($(".appendSearchPhotos").last().text() === "EOL" || '[[${metadataSearchList}]]' === '' || '[[${metadataSearchList}]]' === '[]') {
+                clearInterval(refreshIntervalId);
+            }
+        }, 200);
         $("#container").on('scroll', function() {
-            if (atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+            if (atEndOfPage(this) && $(".appendSearchPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
         $("main").on('scroll', function() {
-            if (atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+            if (atEndOfPage(this) && $(".appendSearchPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
