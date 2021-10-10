@@ -62,9 +62,12 @@
                         $(".appendAlbumPhotos").last().text("EOL").css("display","none")
                     }
                 } else {
+                    $(".appendAlbumPhotos").last().text("EOL").css("display","none")
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
+            } else {
+                $(".appendAlbumPhotos").last().text("EOL").css("display","none")
             }
         });
     }

@@ -97,9 +97,12 @@
                         }
                     }
                 } else {
+                    $(".appendMetadataPhotos").last().text("EOL").css("display","none")
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
+            } else {
+                $(".appendMetadataPhotos").last().text("EOL").css("display","none")
             }
 
             return mediaContentList;

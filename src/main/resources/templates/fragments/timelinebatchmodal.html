@@ -215,6 +215,8 @@
                                 }
                                 $("#msgBatchMetadata").html(message);
                                 clearTimelineSelection();
+                                removeAllMetadataIdList();
+                                removeAllMetadataFilenamesList();
                                 $("#timelineBatchModalStatus").css("visibility","hidden");
                                 $('#propBatchMetadata').find(':input').val('');
                             }
