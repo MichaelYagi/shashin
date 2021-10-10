@@ -18,16 +18,19 @@
     const successAboveMsg = "success_above";
     const successMidMsg = "success_mid";
 
-    function destroy(obj) {
-        for(var prop in obj){
-            var property = obj[prop];
-            if(property != null && typeof(property) == 'object') {
-                destroy(property);
-            }
-            else {
-                obj[prop] = null;
-            }
-        }
+    // lightGalleryEl.addEventListener('lgBeforeSlide', function (e) {
+    //     const metadataId = $(".mediaLink").eq(e.detail.index).data().metadataid;
+    //     jumpToLightGalleryMetadata(metadataId);
+    // });
+
+    function jumpToLightGalleryMetadata(metadataId) {
+        // const aTag = $("#lightGalleryIndex" + metadataId);
+        // $("#container").animate({scrollTop: aTag.offset().top},'slow');
+        // $("main").animate({scrollTop: aTag.offset().top},'slow');
+
+        const url = location.href;
+        location.href = '#lightGalleryIndex'+metadataId;
+        history.replaceState(null,null,url);
     }
 
     function reinitLightGalleryInstance() {
@@ -169,12 +172,6 @@
                 });
             }
         });
-    }
-
-    function jumpToLightGalleryMetadata(metadataId) {
-        const url = location.href;
-        location.href = '#lightGalleryIndex'+metadataId;
-        history.replaceState(null,null,url);
     }
 
     function renderThumbnails(id,mediaTypeFilter) {
@@ -384,7 +381,6 @@
                                 $("#bricon"+metadata.id).addClass(favoriteIcon);
                                 $("#briconcount"+metadata.id).text(favoriteCount);
 
-
                                 html = '<img src="'+encodeURI(metadata.thumbnailUrlSmall)+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">';
                                 $("#photoThumbnailContainer"+metadata.id).prepend(html);
 
@@ -411,12 +407,13 @@
                                     mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
                                     html =
                                         '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
+                                        'data-metadataid="'+metadata.id+'" ' +
                                         'data-video="'+encodeHtml(mediaContent.video)+'" ';
                                     if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                         metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                         html +=
                                         'data-lg-size="'+metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight+'-'+metadata.thumbnailSmallWidth+','+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ' +
-                                        'data-responsive="'+metadata.thumbnailUrlSmall+' '+metadata.thumbnailSmallWidth+'" ' +
+                                        'data-responsive="'+encodeURI(metadata.thumbnailUrlSmall)+' '+metadata.thumbnailSmallWidth+'" ' +
                                         'data-thumb="'+encodeURI(metadata.thumbnailUrlSmall)+'" ' +
                                         'data-width="'+metadata.originalImageWidth+'" ';
                                     }
@@ -429,17 +426,17 @@
                                     mediaContent.src = metadata.thumbnailUrlOriginal;
                                     html =
                                         '<a class="mediaLink" id="mediaLink'+metadata.id+'" ' +
+                                        'data-metadataid="'+metadata.id+'" ' +
                                         'data-src="'+encodeURI(metadata.thumbnailUrlOriginal)+'" ';
                                     if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                         metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                         html +=
                                         'data-lg-size="'+metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight+'-'+metadata.thumbnailSmallWidth+','+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ' +
-                                        'data-responsive="'+metadata.thumbnailUrlSmall+' '+metadata.thumbnailSmallWidth+'" ' +
+                                        'data-responsive="'+encodeURI(metadata.thumbnailUrlSmall)+' '+metadata.thumbnailSmallWidth+'" ' +
                                         'data-thumb="'+encodeURI(metadata.thumbnailUrlSmall)+'" ' +
                                         'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
-                                        'href="'+encodeURI(metadata.thumbnailUrlOriginal)+'" ' +
                                         'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
@@ -449,10 +446,13 @@
                                 }
                                 $("#tncentered"+metadata.id).append(html);
 
-                                $("#tncentered"+metadata.id).on('click', function(e) {
-                                    e.preventDefault();
-                                    $("#infinite-scroll-gallery a:nth-child(2) > img").trigger("click");
-                                });
+                                // $("#mediaLink"+metadata.id).on('click', function(e) {
+                                //     // e.preventDefault();
+                                //     const metadataId = this.getAttribute("data-metadataid");
+                                //
+                                //     jumpToLightGalleryMetadata(metadataId);
+                                //     //$("#mediaLink"+metadataId).trigger("click");
+                                // });
 
                                 var editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
                                 html = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';
