@@ -385,7 +385,7 @@
                                 $("#briconcount"+metadata.id).text(favoriteCount);
 
 
-                                html = '<img src="'+metadata.thumbnailUrlSmall+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">';
+                                html = '<img src="'+encodeURI(metadata.thumbnailUrlSmall)+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">';
                                 $("#photoThumbnailContainer"+metadata.id).prepend(html);
 
                                 // const img = new Image();
@@ -405,10 +405,10 @@
                                 $("#tncentered"+metadata.id).addClass("thumbnail-centered");
 
                                 var mediaContent = {}
-                                mediaContent.thumb = metadata.thumbnailUrlSmall;
+                                mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
                                 mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                 if (metadata.type.indexOf("video") >= 0) {
-                                    mediaContent.video = '{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
+                                    mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
                                     html =
                                         '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
                                         'data-video="'+encodeHtml(mediaContent.video)+'" ';
@@ -417,7 +417,7 @@
                                         html +=
                                         'data-lg-size="'+metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight+'-'+metadata.thumbnailSmallWidth+','+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ' +
                                         'data-responsive="'+metadata.thumbnailUrlSmall+' '+metadata.thumbnailSmallWidth+'" ' +
-                                        'data-thumb="'+metadata.thumbnailUrlSmall+'" ' +
+                                        'data-thumb="'+encodeURI(metadata.thumbnailUrlSmall)+'" ' +
                                         'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
@@ -429,17 +429,17 @@
                                     mediaContent.src = metadata.thumbnailUrlOriginal;
                                     html =
                                         '<a class="mediaLink" id="mediaLink'+metadata.id+'" ' +
-                                        'data-src="'+metadata.thumbnailUrlOriginal+'" ';
+                                        'data-src="'+encodeURI(metadata.thumbnailUrlOriginal)+'" ';
                                     if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                         metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                         html +=
                                         'data-lg-size="'+metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight+'-'+metadata.thumbnailSmallWidth+','+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ' +
                                         'data-responsive="'+metadata.thumbnailUrlSmall+' '+metadata.thumbnailSmallWidth+'" ' +
-                                        'data-thumb="'+metadata.thumbnailUrlSmall+'" ' +
+                                        'data-thumb="'+encodeURI(metadata.thumbnailUrlSmall)+'" ' +
                                         'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
-                                        'href="'+metadata.thumbnailUrlOriginal+'" ' +
+                                        'href="'+encodeURI(metadata.thumbnailUrlOriginal)+'" ' +
                                         'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
@@ -552,14 +552,14 @@
                                 html += '   <a class="lightGalleryIndexAnchor" id="lightGalleryIndex' + metadata.id + '"></a>\n'
                                 html +=
                                     '       <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n' +
-                                    '       <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" value="' + metadata.thumbnailUrlCentered + '">\n';
+                                    '       <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlCentered) + '">\n';
 
                                 if (metadata.year == null || metadata.month == null || metadata.day == null) {
                                     html +=
-                                        '   <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_' + metadata.id + '" value="' + metadata.thumbnailUrlSmall + '">';
+                                        '   <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlSmall) + '">';
                                 } else {
                                     html +=
-                                        '   <input type="hidden" name="thumbnailUrl-' + metadata.year + '-' + metadata.month + '-' + metadata.day + '[]" id="thumbnailUrl_' + metadata.id + '" value="' + metadata.thumbnailUrlSmall + '">';
+                                        '   <input type="hidden" name="thumbnailUrl-' + metadata.year + '-' + metadata.month + '-' + metadata.day + '[]" id="thumbnailUrl_' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlSmall) + '">';
                                 }
 
                                 html += '   <div id="tntl' + metadata.id + '"></div>\n' +

@@ -309,7 +309,7 @@
                 $("#tnbl" + metadata.id).css("display", "none");
                 addToMetadataIdList(metadata.id);
                 addToMetadataFilenamesList($('#filename' + metadata.id).val());
-                addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                addToMetadataThumbnailsList(encodeURI($('#thumbnailCentered' + metadata.id).val()));
             } else {
                 $("#tntl" + metadata.id).css("display", "block");
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
@@ -320,7 +320,7 @@
                 $("#tnbl" + metadata.id).css("display", "block");
                 removeFromMetadataIdList(metadata.id);
                 removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
-                removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                removeFromMetadataThumbnailsList(encodeURI($('#thumbnailCentered' + metadata.id).val()));
             }
 
             metadataIdArray = getMetdataIdList();
@@ -374,7 +374,7 @@
                     $("#tnbl" + metadata.id).css("display", "none");
                     addToMetadataIdList(metadata.id);
                     addToMetadataFilenamesList($('#filename' + metadata.id).val());
-                    addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                    addToMetadataThumbnailsList(encodeURI($('#thumbnailCentered' + metadata.id).val()));
                 } else {
                     $("#tntl" + metadata.id).css("display", "block");
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
@@ -384,7 +384,7 @@
                     $("#tnbl" + metadata.id).css("display", "block");
                     removeFromMetadataIdList(metadata.id);
                     removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
-                    removeFromMetadataFilenamesList($('#thumbnailCentered' + metadata.id).val());
+                    removeFromMetadataFilenamesList(encodeURI($('#thumbnailCentered' + metadata.id).val()));
                 }
             }
 
