@@ -409,9 +409,13 @@
                                     html =
                                         '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
                                         'data-video="'+encodeHtml(mediaContent.video)+'" ';
-                                    if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null) {
+                                    if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
+                                        metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                         html +=
-                                        'data-lg-size="'+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ';
+                                        'data-lg-size="'+metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight+'-'+metadata.thumbnailSmallWidth+','+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ' +
+                                        'data-responsive="'+metadata.thumbnailUrlSmall+' '+metadata.thumbnailSmallWidth+'" ' +
+                                        'data-thumb="'+metadata.thumbnailUrlSmall+'" ' +
+                                        'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
                                         'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
@@ -423,9 +427,13 @@
                                     html =
                                         '<a class="mediaLink" id="mediaLink'+metadata.id+'" ' +
                                         'data-src="'+metadata.thumbnailUrlOriginal+'" ';
-                                    if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null) {
+                                    if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
+                                        metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                         html +=
-                                        'data-lg-size="'+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ';
+                                        'data-lg-size="'+metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight+'-'+metadata.thumbnailSmallWidth+','+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ' +
+                                        'data-responsive="'+metadata.thumbnailUrlSmall+' '+metadata.thumbnailSmallWidth+'" ' +
+                                        'data-thumb="'+metadata.thumbnailUrlSmall+'" ' +
+                                        'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
                                         'href="'+metadata.thumbnailUrlOriginal+'" ' +
