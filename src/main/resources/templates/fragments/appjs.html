@@ -2,6 +2,8 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="appjs()">
 <script type="text/javascript">
+    let showDebug = false;
+
     $.fn.hasScrollBar = function() {
         return this.get(0).scrollHeight > this.get(0).clientHeight;
     }
@@ -807,6 +809,20 @@
             }
             $("#propBatchMetadata").modal('show');
         });
+    }
+
+    function enableDebug() {
+        showDebug = true;
+    }
+
+    function disableDebug() {
+        showDebug = false;
+    }
+
+    function printMessageToConsole(msg) {
+        if (showDebug === true) {
+            console.log(msg);
+        }
     }
 </script>
 
