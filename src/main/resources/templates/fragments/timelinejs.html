@@ -270,8 +270,10 @@
                 printMessageToConsole("attaching above attachPoint:" + attachPoint);
                 printMessageToConsole("attaching id:" + currentId);
                 printMessageToConsole("actionAbove:" + action)
-                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function () {
-                    attachAssociatedMetadata(currentId, mediaTypeFilter);
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function (msg) {
+                    if (msg === "success" && $("#"+currentId).length > 0 && $("#tail_"+currentId).length > 0) {
+                        attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    }
                 });
                     // .then(function (msg) {
                     //     if (msg === "success") {
@@ -294,8 +296,10 @@
                 printMessageToConsole("attaching below attachPoint:" + attachPoint);
                 printMessageToConsole("attaching id:" + currentId);
                 printMessageToConsole("actionBelow:"+action)
-                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function () {
-                    attachAssociatedMetadata(currentId, mediaTypeFilter);
+                updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function (msg) {
+                    if (msg === "success" && $("#"+currentId).length > 0 && $("#tail_"+currentId).length > 0) {
+                        attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    }
                 });
                     // .then(function (msg) {
                     //     if (msg === "success") {
@@ -321,8 +325,10 @@
             printMessageToConsole("attaching mid attachPoint:"+attachPoint)
             printMessageToConsole("attaching id:" + id);
             printMessageToConsole("attaching mid action:"+action)
-            updateTimeline(id, mediaTypeFilter, action, attachPoint).then(function () {
-                attachAssociatedMetadata(id, mediaTypeFilter);
+            updateTimeline(id, mediaTypeFilter, action, attachPoint).then(function (msg) {
+                if (msg === "success" && $("#"+id).length > 0 && $("#tail_"+id).length > 0) {
+                    attachAssociatedMetadata(id, mediaTypeFilter);
+                }
             });
                 // .then(function (msg) {
                 //     if (msg === "success") {
@@ -603,39 +609,39 @@
                             if (action === "above") {
                                 $(html).insertBefore($("#br" + attachToId)).ready(function () {
                                     // console.log("inserted above to anchor")
-                                    //deferred.resolve("success");
+                                    deferred.resolve("success");
                                 });
                             } else if (action === "new") {
                                 $("#infinite-scroll-gallery").prepend(html).ready(function () {
                                     // console.log("inserted above new")
-                                    //deferred.resolve("success");
+                                    deferred.resolve("success");
                                 });
                             } else {
                                 if (attachToId == null) {
                                     $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
                                         // console.log("inserted below new")
-                                        //deferred.resolve("success");
+                                        deferred.resolve("success");
                                     });
                                 } else {
                                     $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
                                         // console.log("inserted below to anchor")
-                                        //deferred.resolve("success");
+                                        deferred.resolve("success");
                                     });
                                 }
                             }
                         } else {
                             $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
-                            //deferred.resolve("success");
+                            deferred.resolve("success");
                         }
                     }
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
-                    //deferred.resolve("fail");
+                    deferred.resolve("fail");
                 }
             }
 
-            deferred.resolve("success");
+            //deferred.resolve("success");
             $("#spinner").css("display", "none");
             return deferred.promise();
 
