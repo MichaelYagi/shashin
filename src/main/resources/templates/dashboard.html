@@ -353,7 +353,6 @@
     }
 
     let stompClient = null;
-    const showDebug = false;
     // Socket polling refresh rate
     const refreshRateMS = 1000*5;
     // Update chart every 10 seconds
@@ -429,12 +428,6 @@
             stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
         } else {
             printMessageToConsole("Trying to send message but STOMP client is null")
-        }
-    }
-
-    function printMessageToConsole(msg) {
-        if (showDebug === true) {
-            console.log(msg);
         }
     }
 </script>

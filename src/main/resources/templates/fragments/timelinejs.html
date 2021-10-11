@@ -48,7 +48,7 @@
                     try {
                         lg.$container.remove();
                     } catch (e) {
-                        console.log(e);
+                        printMessageToConsole(e)
                     }
 
                     lg = null;
@@ -142,9 +142,9 @@
 
         enableScrollSpy = false;
 
-        // console.log("jumpToTimeline")
-        // console.log(anchor)
-        // console.log(mediaTypeFilter)
+        printMessageToConsole("jumpToTimeline anchor:"+anchor);
+        printMessageToConsole("jumpToTimeline mediaTypeFilter:"+mediaTypeFilter);
+
         renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
             if (msg === successBelowMsg || msg === successAboveMsg || msg === successMidMsg) {
                 reinitLightGalleryInstance();
@@ -192,31 +192,32 @@
             } else {
                 depthUp = depthUp + 3;
             }
-            // console.log("scrollSpeedInpxPerMs:"+scrollSpeedInpxPerMs);
-            // console.log("scrollDirection:"+scrollDirection);
-            // console.log("depthDown:"+depthDown);
-            // console.log("depthUp:"+depthUp);
+
+            printMessageToConsole("scrollSpeedInpxPerMs:"+scrollSpeedInpxPerMs);
+            printMessageToConsole("scrollDirection:"+scrollDirection);
+            printMessageToConsole("depthDown:"+depthDown);
+            printMessageToConsole("depthUp:"+depthUp);
         }
         /*]]>*/
 
-        // console.log("renderThumbnails id:"+id);
+        printMessageToConsole("renderThumbnails id:"+id);
 
         let offCanvasId = $("#offcanvas_"+id);
 
         // Remove elements that are not visible
-        // let prevElementId = "";
-        // $('section').each(function(index, element) {
-        //     console.log(element.id + " checking to remove");
-        //     if ($("#"+element.id).length > 1 || prevElementId === element.id) {
-        //         console.log(element.id + " removed");
-        //         $("#br"+element.id).remove();
-        //         $("#row"+element.id).remove();
-        //         $("#amp_"+element.id).remove();
-        //         $("#tail_"+element.id).remove();
-        //         $("#"+element.id).remove();
-        //     }
-        //     prevElementId = element.id;
-        // });
+        let prevElementId = "";
+        $('section').each(function(index, element) {
+            printMessageToConsole(element.id + " checking to remove beginning");
+            if ($("#"+element.id).length > 1 || prevElementId === element.id) {
+                printMessageToConsole(element.id + " removed beginning");
+                $("#br"+element.id).remove();
+                $("#row"+element.id).remove();
+                $("#amp_"+element.id).remove();
+                $("#tail_"+element.id).remove();
+                $("#"+element.id).remove();
+            }
+            prevElementId = element.id;
+        });
 
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
@@ -240,24 +241,24 @@
             }
         }
 
-        // console.log("attachAboveArray");
-        // console.log(attachAboveArray);
-        // console.log("attachBelowArray");
-        // console.log(attachBelowArray);
+        printMessageToConsole("attachAboveArray");
+        printMessageToConsole(attachAboveArray);
+        printMessageToConsole("attachBelowArray");
+        printMessageToConsole(attachBelowArray);
 
         // Render top
         let action = "new";
         let attachPoint = id;
         for (let index in attachAboveArray) {
             const currentId = attachAboveArray[index];
-            // console.log("attempting to attaching id above:" + currentId);
+            printMessageToConsole("attempting to attaching id above:" + currentId);
             if ($("#" + currentId).length === 0) {
                 if (action === "new") {
                     attachPoint = null;
                 }
-                // console.log("attaching above attachPoint:" + attachPoint);
-                // console.log("attaching id:" + currentId);
-                // console.log("actionAbove:" + action)
+                printMessageToConsole("attaching above attachPoint:" + attachPoint);
+                printMessageToConsole("attaching id:" + currentId);
+                printMessageToConsole("actionAbove:" + action)
                 updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function () {
                     attachAssociatedMetadata(currentId, mediaTypeFilter);
                 });
@@ -277,11 +278,11 @@
         // attachPoint = id;
         for (let index in attachBelowArray) {
             const currentId = attachBelowArray[index];
-            // console.log("attempting to attaching id below:" + currentId);
+            printMessageToConsole("attempting to attaching id below:" + currentId);
             if ($("#"+currentId).length === 0) {
-                // console.log("attaching below attachPoint:" + attachPoint);
-                // console.log("attaching id:" + currentId);
-                // console.log("actionBelow:"+action)
+                printMessageToConsole("attaching below attachPoint:" + attachPoint);
+                printMessageToConsole("attaching id:" + currentId);
+                printMessageToConsole("actionBelow:"+action)
                 updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function () {
                     attachAssociatedMetadata(currentId, mediaTypeFilter);
                 });
@@ -304,11 +305,11 @@
             attachPoint = attachBelowArray[0];
             action = "above";
         }
-        // console.log("attempting to attaching id mid:"+id)
+        printMessageToConsole("attempting to attaching id mid:"+id)
         if ($("#"+id).length === 0) {
-            // console.log("attaching mid attachPoint:"+attachPoint)
-            // console.log("attaching id:" + id);
-            // console.log("attaching mid action:"+action)
+            printMessageToConsole("attaching mid attachPoint:"+attachPoint)
+            printMessageToConsole("attaching id:" + id);
+            printMessageToConsole("attaching mid action:"+action)
             updateTimeline(id, mediaTypeFilter, action, attachPoint).then(function () {
                 attachAssociatedMetadata(id, mediaTypeFilter);
             });
@@ -321,11 +322,11 @@
         }
 
         // Remove elements that are not visible
-        let prevElementId = "";
+        prevElementId = "";
         $('section').each(function(index, element) {
-            // console.log(element.id + " checking to remove");
+            printMessageToConsole(element.id + " checking to remove end");
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#"+element.id).length > 1 || prevElementId === element.id)) {
-                // console.log(element.id + " removed");
+                printMessageToConsole(element.id + " removed end");
                 $("#br"+element.id).remove();
                 $("#row"+element.id).remove();
                 $("#amp_"+element.id).remove();
@@ -335,7 +336,7 @@
             prevElementId = element.id;
         });
 
-        // console.log("==============================================");
+        printMessageToConsole("==============================================");
 
         deferred.resolve(successMidMsg);
         return deferred.promise();
@@ -357,29 +358,29 @@
                         data.hasOwnProperty("recognitionLabels") &&
                         data.hasOwnProperty("labelPhotoMap")
                     ) {
-                        var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
-                        var favoritesMap = data["favorites"] === "" ? null : data["favorites"];
-                        var recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
-                        var labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
+                        const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                        const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
+                        const recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
+                        const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
 
                         if (metadataList.length > 0) {
 
-                            for (var index in metadataList) {
-                                var metadata = metadataList[index];
+                            for (const index in metadataList) {
+                                const metadata = metadataList[index];
 
-                                var dateReformatted = "";
+                                let dateReformatted = "";
                                 if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
                                     const dateObj = new Date(metadata.year, metadata.month, metadata.day);
                                     dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
                                 }
 
                                 // console.log(metadata);
-                                var favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                var favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
                                 $("#tnbr"+metadata.id).addClass("thumbnail-br");
-                                var html = '<a href="#" id="favorite'+metadata.id+'" class="text-decoration-none">\n' +
+                                let html = '<a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
                                     '       <span style="background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;">\n' +
-                                    '           <span id="briconcount'+metadata.id+'"></span> <span id="bricon'+metadata.id+'" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '           <span id="briconcount' + metadata.id + '"></span> <span id="bricon' + metadata.id + '" style="font-size: 1rem;color: red;"></span>\n' +
                                     '       </span>\n' +
                                     '   </a>';
                                 $("#tnbr"+metadata.id).append(html);
@@ -460,7 +461,7 @@
                                 //     //$("#mediaLink"+metadataId).trigger("click");
                                 // });
 
-                                var editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
+                                const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
                                 html = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';
                                 $("#tnbl"+metadata.id).append(html);
 
@@ -483,7 +484,7 @@
                                     $("#tntr"+metadata.id).append(html);
                                 }
 
-                                var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                                const htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
                                 setPhotoOverlays(htmlEncodedMetadata, "timeline")
                                 activateMetadataListeners(htmlEncodedMetadata);
 
@@ -516,12 +517,12 @@
                         data.hasOwnProperty("recognitionLabels") &&
                         data.hasOwnProperty("labelPhotoMap")
                     ) {
-                        var metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                        const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
 
                         if (metadataList.length > 0) {
                             // console.log(metadataList);
                             // console.log(albumList);
-                            var html = "";
+                            let html = "";
 
                             let dateString = getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
 
@@ -538,18 +539,18 @@
                                     '<span style="display: none;" class="dayTaken">' + metadataList[0]["day"] + '</span>\n';
                             }
 
-                            for (var index in metadataList) {
+                            for (let index in metadataList) {
                                 index = parseInt(index);
-                                var metadata = metadataList[index];
+                                const metadata = metadataList[index];
 
                                 // console.log(metadata["id"]+"-"+currentDateTaken);
 
-                                var yearTakenCount = $(".yearTaken").length;
-                                var monthTakenCount = $(".monthTaken").length;
-                                var dayTakenCount = $(".dayTaken").length;
-                                var lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0]["year"] === null ? "" : metadataList[0]["year"]) : $(".yearTaken").get(yearTakenCount - 1).innerText
-                                var lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0]["month"] === null ? "" : metadataList[0]["month"]) : $(".monthTaken").get(monthTakenCount - 1).innerText
-                                var lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0]["day"] === null ? "" : metadataList[0]["day"]) : $(".dayTaken").get(dayTakenCount - 1).innerText
+                                const yearTakenCount = $(".yearTaken").length;
+                                const monthTakenCount = $(".monthTaken").length;
+                                const dayTakenCount = $(".dayTaken").length;
+                                let lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0]["year"] === null ? "" : metadataList[0]["year"]) : $(".yearTaken").get(yearTakenCount - 1).innerText;
+                                let lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0]["month"] === null ? "" : metadataList[0]["month"]) : $(".monthTaken").get(monthTakenCount - 1).innerText;
+                                let lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0]["day"] === null ? "" : metadataList[0]["day"]) : $(".dayTaken").get(dayTakenCount - 1).innerText;
                                 lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
                                 lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                                 lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
@@ -580,12 +581,12 @@
                                 $("#timelineModalEdit" + metadata.id).attr("tag", JSON.stringify(metadata));
                             }
 
-                            if (metadata.year == null || metadata.month == null || metadata.day == null) {
+                            if (metadataList[0].year == null || metadataList[0].month == null || metadataList[0].day == null) {
                                 html += '<span class="scrollspy metadataprocessed" id="tail_undated"></span>';
-                                html += '</div><span class="attachMetadataPhotos" id="amp_' + metadata.year + '-' + metadata.month + '-' + metadata.day + '"></span>';
+                                html += '</div><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
                             } else {
-                                html += '<span class="scrollspy metadataprocessed" id="tail_' + metadata.year + '-' + metadata.month + '-' + metadata.day + '"></span>';
-                                html += '</div><span class="attachMetadataPhotos" id="amp_' + metadata.year + '-' + metadata.month + '-' + metadata.day + '"></span>';
+                                html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
+                                html += '</div><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
                             }
 
                             if (action === "above") {
