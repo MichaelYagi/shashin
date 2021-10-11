@@ -174,6 +174,7 @@
         });
     }
 
+    // Render only what's needed
     function renderThumbnails(id,mediaTypeFilter) {
         let deferred = new $.Deferred();
 
@@ -201,19 +202,19 @@
         let offCanvasId = $("#offcanvas_"+id);
 
         // Remove elements that are not visible
-        let prevElementId = "";
-        $('section').each(function(index, element) {
-            // console.log(element.id + " checking to remove");
-            if ($("#"+element.id).length > 1 || prevElementId === element.id) {
-                // console.log(element.id + " removed");
-                $("#br"+element.id).remove();
-                $("#row"+element.id).remove();
-                $("#amp_"+element.id).remove();
-                $("#tail_"+element.id).remove();
-                $("#"+element.id).remove();
-            }
-            prevElementId = element.id;
-        });
+        // let prevElementId = "";
+        // $('section').each(function(index, element) {
+        //     console.log(element.id + " checking to remove");
+        //     if ($("#"+element.id).length > 1 || prevElementId === element.id) {
+        //         console.log(element.id + " removed");
+        //         $("#br"+element.id).remove();
+        //         $("#row"+element.id).remove();
+        //         $("#amp_"+element.id).remove();
+        //         $("#tail_"+element.id).remove();
+        //         $("#"+element.id).remove();
+        //     }
+        //     prevElementId = element.id;
+        // });
 
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
@@ -253,6 +254,7 @@
                     attachPoint = null;
                 }
                 // console.log("attaching above attachPoint:" + attachPoint);
+                // console.log("attaching id:" + currentId);
                 // console.log("actionAbove:" + action)
                 updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function () {
                     attachAssociatedMetadata(currentId, mediaTypeFilter);
@@ -276,6 +278,7 @@
             // console.log("attempting to attaching id below:" + currentId);
             if ($("#"+currentId).length === 0) {
                 // console.log("attaching below attachPoint:" + attachPoint);
+                // console.log("attaching id:" + currentId);
                 // console.log("actionBelow:"+action)
                 updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function () {
                     attachAssociatedMetadata(currentId, mediaTypeFilter);
@@ -302,6 +305,7 @@
         // console.log("attempting to attaching id mid:"+id)
         if ($("#"+id).length === 0) {
             // console.log("attaching mid attachPoint:"+attachPoint)
+            // console.log("attaching id:" + id);
             // console.log("attaching mid action:"+action)
             updateTimeline(id, mediaTypeFilter, action, attachPoint).then(function () {
                 attachAssociatedMetadata(id, mediaTypeFilter);
@@ -315,7 +319,7 @@
         }
 
         // Remove elements that are not visible
-        prevElementId = "";
+        let prevElementId = "";
         $('section').each(function(index, element) {
             // console.log(element.id + " checking to remove");
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#"+element.id).length > 1 || prevElementId === element.id)) {
