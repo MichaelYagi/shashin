@@ -492,6 +492,7 @@ class AlbumsController {
         model["titleDescriptor"] = TextUtils.capitalized(module)
 
         model["album"] = ""
+        model["albumId"] = 0
         model["albumMetadataList"] = ""
         model["albumPhotoCommentsMap"] = ""
         model["notificationMap"] = ""
@@ -557,6 +558,7 @@ class AlbumsController {
                         model["albumPhotoCommentsMapString"] = mapper.writeValueAsString(albumPhotosCommentsMap)
                         model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         model["album"] = album.get()
+                        model["albumId"] = album.get().getId()
                         model["albumMetadataList"] = albumMetadataList
                         model["message"] = ""
                     }

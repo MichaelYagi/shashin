@@ -207,6 +207,9 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+        /*<![CDATA[*/
+        const albumId = [[${albumId}]];
+        /*]]>*/
         var mediaContentList = [];
         $.each($('.mediaLink'), function(index, element) {
             var mediaContent = {}
@@ -269,22 +272,24 @@
         function loadNextPage() {
             var currentPage = parseInt($("#currentPage").val());
             var nextPage = currentPage+1;
-            /*<![CDATA[*/
-            updateAlbum([[${album.id}]], nextPage, "[[${activePage}]]").then(function(additionalMediaContentList) {
-                if (additionalMediaContentList.length > 0) {
-                    mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    lg.refresh(mediaContentList);
-                    $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-                        jumpToLightGalleryIndex(e.detail.index);
-                    })
-                }
-            });
-            /*]]>*/
+
+            if (albumId > 0) {
+                updateAlbum(albumId, nextPage, "[[${activePage}]]").then(function (additionalMediaContentList) {
+                    if (additionalMediaContentList.length > 0) {
+                        mediaContentList = mediaContentList.concat(additionalMediaContentList);
+                        lg.refresh(mediaContentList);
+                        $infiniteScrollGallery.addEventListener('lgAfterSlide', function (e) {
+                            jumpToLightGalleryIndex(e.detail.index);
+                        })
+                    }
+                });
+            }
+
             $("#currentPage").val(nextPage);
         }
 
         const refreshIntervalId = window.setInterval(function () {
-            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
+            if (albumId > 0 && !$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
                 setTimeout(() => {
                     loadNextPage();
                 }, 1000);
@@ -297,12 +302,12 @@
             }
         }, 200);
         $("#container").on('scroll', function() {
-            if (atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
+            if (albumId > 0 && atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
         $("main").on('scroll', function() {
-            if (atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
+            if (albumId > 0 && atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
