@@ -32,6 +32,10 @@
         return ((window.innerHeight + element.scrollTop)  >= element.scrollHeight) // compare with scroll position + some give (*1.5)
     }
 
+    function atStartOfPage(element) {
+        return element.scrollTop === 0 || window.scrollY===0;
+    }
+
     function fallbackCopyTextToClipboard(text) {
         var msg = "";
         var textArea = document.createElement("textarea");

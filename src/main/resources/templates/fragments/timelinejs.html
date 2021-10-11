@@ -140,6 +140,7 @@
     function jumpToTimeline(e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
+        scrollDirection = "down";
         enableScrollSpy = false;
 
         printMessageToConsole("jumpToTimeline anchor:"+anchor);
@@ -182,23 +183,25 @@
 
         /*<![CDATA[*/
         let queryLimit = 3; //[[${queryLimit}]];
+        /*]]>*/
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
         let depthUp = queryLimit;
+
+        printMessageToConsole("scrollSpeedInpxPerMs:"+scrollSpeedInpxPerMs);
+        printMessageToConsole("scrollDirection:"+scrollDirection);
+
         // If velocity of scroll is really fast, add padding to # of results
-        if (scrollSpeedInpxPerMs > 3) {
+        if (scrollSpeedInpxPerMs > 4 || scrollSpeedInpxPerMs < -4) {
             if (scrollDirection === "down") {
                 depthDown = depthDown + 3;
             } else {
                 depthUp = depthUp + 3;
             }
-
-            printMessageToConsole("scrollSpeedInpxPerMs:"+scrollSpeedInpxPerMs);
-            printMessageToConsole("scrollDirection:"+scrollDirection);
-            printMessageToConsole("depthDown:"+depthDown);
-            printMessageToConsole("depthUp:"+depthUp);
         }
-        /*]]>*/
+
+        printMessageToConsole("depthDown:"+depthDown);
+        printMessageToConsole("depthUp:"+depthUp);
 
         printMessageToConsole("renderThumbnails id:"+id);
 
@@ -218,6 +221,14 @@
             }
             prevElementId = element.id;
         });
+
+        // Hack to prevent infinite scroll upwards
+        if (scrollDirection === "up" && $('section')[0].id === id && enableScrollSpy === true) {
+            document.getElementById("container").scrollBy({top: 1});
+            if (document.getElementsByTagName("MAIN").length > 0) {
+                document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
+            }
+        }
 
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
