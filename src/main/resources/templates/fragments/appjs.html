@@ -794,17 +794,16 @@
             e.preventDefault();
 
             let metadataIdList = [];
-            let filenameList = "";
+            let thumbnailList = "";
             $('.bi-circle-fill').each(function(i, obj) {
                 var metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                filenameList += $("#filename"+metadataId).val().trim()+", ";
+                thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'">';
             });
-            filenameList = filenameList.replace(/,\s*$/, "");
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
-            if (filenameList !== "") {
-                $("#editPhotosNamesModalLabel").text(filenameList);
+            if (thumbnailList !== "") {
+                $("#editPhotosNamesModalLabel").html(thumbnailList);
             }
             $("#propBatchMetadata").modal('show');
         });
