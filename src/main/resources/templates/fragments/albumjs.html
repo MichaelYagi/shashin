@@ -47,7 +47,7 @@
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:false
+            async:true
         }).then(function (data) {
             var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -205,7 +205,7 @@
                 type: 'get',
                 url: "/notifications/markread/metadata/"+metadata.id,
                 contentType: 'application/json; charset=utf-8',
-                async:false
+                async:true
             }).then(function (data) {
 
             });

@@ -22,7 +22,7 @@
             type: 'get',
             url: "/trash/" + nextPage,
             contentType: 'application/json; charset=utf-8',
-            async: false
+            async: true
         }).then(function (data) {
             var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
