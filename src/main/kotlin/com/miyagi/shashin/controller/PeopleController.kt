@@ -148,7 +148,7 @@ class PeopleController {
     @PreAuthorize("hasRole('ADMIN')")
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
-        model["message"] = ""
+        model["message"] = "There are no photos."
         model["lowMatchResults"] = ""
         model["recognitionLabels"] = ""
         model["labelPhotoMap"] = ""
@@ -160,7 +160,7 @@ class PeopleController {
         }
 
         val recognitionLabel = recognitionLabelRepository?.findById(personId)
-        if (recognitionLabel != null) {
+        if (recognitionLabel != null && recognitionLabel.isPresent) {
             model["personInfo"] = recognitionLabel.get()
         }
 
@@ -169,6 +169,7 @@ class PeopleController {
         val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
         if (lowMatchResults != null && lowMatchResults.count() > 0) {
             model["lowMatchResults"] = lowMatchResults
+            model["message"] = ""
 
             val labelPhotoMap = mutableMapOf<String, String>()
             for (metadata in lowMatchResults) {
@@ -231,12 +232,9 @@ class PeopleController {
         val module = "person"
         val page = 0
         val response = buildPersonAlbum(model,personId,page)
-        model["message"] = response["message"]!!
-        model["metadataList"] = response["metadataList"]!!
-        model["recognitionLabels"] = response["recognitionLabels"]!!
-        model["labelPhotoMap"] = response["labelPhotoMap"]!!
-        model["personInfo"] = response["personInfo"]!!
-        model["parameter"] = response["parameter"]!!
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -247,7 +245,7 @@ class PeopleController {
     private fun buildPersonAlbum(model: Model,personId: Int,page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["message"] = "There are no photos.."
+        response["message"] = "There are no photos."
         response["metadataList"] = ""
         response["labelPhotoMap"] = ""
         response["personInfo"] = ""
@@ -263,7 +261,7 @@ class PeopleController {
 //            val pageValue = page*queryLimit
 
             val recognitionLabel = recognitionLabelRepository?.findById(personId)
-            if (recognitionLabel != null) {
+            if (recognitionLabel != null && recognitionLabel.isPresent) {
                 response["personInfo"] = recognitionLabel.get()
             }
 
@@ -279,7 +277,6 @@ class PeopleController {
                 metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,page,2000)
             }
 
-            response["metadataList"] = metadataList
             if (metadataList != null && metadataList.count() > 0) {
                 response["message"] = ""
 
@@ -308,9 +305,9 @@ class PeopleController {
                     labelPhotoMap[metadata.getId()] = nameTaggedMap
                 }
                 response["labelPhotoMap"] = labelPhotoMap
+                response["metadataList"] = metadataList
             }
 
-            response["metadataList"] = metadataList
             response["msg"] = "Results"
             response["status"] = "success"
         }

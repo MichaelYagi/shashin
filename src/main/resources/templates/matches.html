@@ -9,14 +9,14 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
-            <h1 th:text="${personInfo.name}"></h1>
+
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/appjs :: appjs()"></div>
             <div th:replace="fragments/matchesmodal :: matchesmodal()"></div>
 
             <div id="infinite-scroll-gallery">
             <th:block th:if="${lowMatchResults != ''}">
-
+                <h1 th:text="${personInfo.name}"></h1>
                 <div class="row p-3">
                     <th:block th:each="metadata, iterStat: ${lowMatchResults}">
                         <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">

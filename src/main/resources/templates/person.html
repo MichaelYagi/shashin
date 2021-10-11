@@ -9,106 +9,108 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
-            <h1 th:text="${personInfo.name}"></h1>
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
-            <input type="hidden" id="currentPage" name="currentPage" value="0">
-
-            <div id="personMessage"></div>
             <div th:replace="fragments/appjs :: appjs()"></div>
-            <div th:replace="fragments/personmodal :: personmodal()"></div>
 
             <div id="infinite-scroll-gallery">
 
-            <th:block th:if="${metadataList != ''}">
+                <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
 
-                <div class="row p-3">
-                    <th:block th:each="metadata, iterStat: ${metadataList}">
-                        <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
-                            <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
+                <th:block th:if="${metadataList != ''}">
+                    <div th:replace="fragments/personmodal :: personmodal()"></div>
 
-                            <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
-                            <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
-                            <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="${metadata.thumbnailUrlCentered}">
+                    <h1 th:text="${personInfo.name}"></h1>
+                    <input type="hidden" id="currentPage" name="currentPage" value="0">
 
-                            <th:block th:if="${metadata.type.contains('video')}">
-                                <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
-                                </div>
-                            </th:block>
+                    <div id="personMessage"></div>
 
-                            <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                <th:block th:if="${labelPhotoMap.get(metadata.id).get('isTagged')}">
-                                    <div class="thumbnail-br" th:id="'tntr'+${metadata.id}">
-                                        <span class="bi-bookmark-fill" style="font-size: 1rem;color: lightsalmon;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
+                    <div class="row p-3">
+                        <th:block th:each="metadata, iterStat: ${metadataList}">
+                            <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                                <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
+
+                                <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+                                <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
+                                <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="${metadata.thumbnailUrlCentered}">
+
+                                <th:block th:if="${metadata.type.contains('video')}">
+                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                        <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
                                     </div>
                                 </th:block>
 
-                                <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
-                                    <a href="#" th:id="'select'+${metadata.id}">
-                                        <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
-                                    </a>
-                                </div>
+                                <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                    <th:block th:if="${labelPhotoMap.get(metadata.id).get('isTagged')}">
+                                        <div class="thumbnail-br" th:id="'tntr'+${metadata.id}">
+                                            <span class="bi-bookmark-fill" style="font-size: 1rem;color: lightsalmon;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
+                                        </div>
+                                    </th:block>
 
-                                <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                    <a href="#" data-bs-toggle="modal" th:data-bs-target="'#propperson'+${metadata.id}">
-                                        <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
-                                    </a>
-                                </div>
-                            </th:block>
+                                    <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
+                                        <a href="#" th:id="'select'+${metadata.id}">
+                                            <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                    </div>
 
-                            <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
-                                <th:block th:unless="${metadata.type.contains('video')}">
-                                    <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                    <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
+                                        <a href="#" data-bs-toggle="modal" th:data-bs-target="'#propperson'+${metadata.id}">
+                                            <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                    </div>
+                                </th:block>
+
+                                <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
+                                    <th:block th:unless="${metadata.type.contains('video')}">
+                                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                                <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
+                                                   th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.title+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                             <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                               th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.title+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                               th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.title}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
                                         </th:block>
                                     </th:block>
-                                    <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                           th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.title}">
-                                            <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                        </a>
-                                    </th:block>
-                                </th:block>
 
-                                <th:block th:if="${metadata.type.contains('video')}">
-                                    <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                    <th:block th:if="${metadata.type.contains('video')}">
+                                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                                <a class="mediaLink" onclick="return false"
+                                                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                                   th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.title+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                             <a class="mediaLink" onclick="return false"
                                                th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                                               th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.title+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                               th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.title}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                                             </a>
                                         </th:block>
                                     </th:block>
-                                    <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <a class="mediaLink" onclick="return false"
-                                           th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                                           th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.title}">
-                                            <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                        </a>
-                                    </th:block>
-                                </th:block>
+                                </div>
                             </div>
-                        </div>
 
-                        <span th:id="'personmodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
+                            <span th:id="'personmodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
 
-                        <script type="text/javascript">
-                            /*<![CDATA[*/
-                            setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                            renderPersonModal("[[${metadata}]]","[[${recognitionLabels}]]","[[${labelPhotoMap.get(metadata.id).get('labels')}]]");
-                            // activateAlbumListeners("[[${metadata}]]","[[${album}]]")
-                            /*]]>*/
-                        </script>
+                            <script type="text/javascript">
+                                /*<![CDATA[*/
+                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                renderPersonModal("[[${metadata}]]","[[${recognitionLabels}]]","[[${labelPhotoMap.get(metadata.id).get('labels')}]]");
+                                // activateAlbumListeners("[[${metadata}]]","[[${album}]]")
+                                /*]]>*/
+                            </script>
 
-                        <span class="appendPersonPhotos" style="width:0;height:0;padding:0"></span>
-                    </th:block>
-                </div>
-            </th:block>
+                            <span class="appendPersonPhotos" style="width:0;height:0;padding:0"></span>
+                        </th:block>
+                    </div>
+                </th:block>
             </div>
 
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
