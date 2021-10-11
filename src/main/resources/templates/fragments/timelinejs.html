@@ -222,7 +222,7 @@
             prevElementId = element.id;
         });
 
-        // Hack to prevent infinite scroll upwards
+        // Hack to prevent infinite scroll upwards and throttle scrolling
         if (scrollDirection === "up" && $('section')[0].id === id && enableScrollSpy === true) {
             document.getElementById("container").scrollBy({top: 1});
             if (document.getElementsByTagName("MAIN").length > 0) {
