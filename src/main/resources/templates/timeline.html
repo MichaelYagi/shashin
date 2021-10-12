@@ -50,14 +50,15 @@
             <input type="hidden" id="currentlat" name="currentlat">
             <input type="hidden" id="currentlng" name="currentlng">
             <input type="hidden" id="currentfilename" name="currentfilename">
+            <input type="hidden" id="mediaTypeFilter" name="mediaTypeFilter" th:value="${mediaTypeFilter}">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
 
             <th:block th:if="${metadataList != ''}">
                 <div id="infinite-scroll-gallery">
                     <div th:replace="fragments/appjs :: appjs()"></div>
-                    <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
                     <div th:replace="fragments/timelinejs :: timelinejs(${queryLimit})"></div>
+                    <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
 
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <br id="brundated">

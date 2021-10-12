@@ -215,6 +215,10 @@
                                 } else {
                                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                                 }
+                                const offCanvasId = ($("#dayTakenBatchData").val() == null || $("#dayTakenBatchData").val() === "" || $("#monthTakenBatchData").val() == null || $("#monthTakenBatchData").val() === "" || $("#yearTakenBatchData").val() == null || $("#yearTakenBatchData").val() == "") ?
+                                    "offcanvas_undated" : "offcanvas_"+$("#yearTakenBatchData").val()+'-'+$("#monthTakenBatchData").val()+'-'+$("#dayTakenBatchData").val();
+                                refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
+
                                 $("#msgBatchMetadata").html(message);
                                 clearTimelineSelection();
                                 removeAllMetadataIdList();

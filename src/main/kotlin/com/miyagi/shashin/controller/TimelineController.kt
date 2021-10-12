@@ -3,10 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.RecognitionLabel
-import com.miyagi.shashin.model.RecognitionLabelPhoto
-import com.miyagi.shashin.model.User
+import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
@@ -71,11 +68,8 @@ class TimelineController {
             date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
         }
 
-        model["metadataDates"] = ""
-        val metadataDates = metadataRepository.findAllYearMonthDay()
-        if (metadataDates != null) {
-            model["metadataDates"] = metadataDates
-        }
+        val dates = getMetadataDates("all")
+        model["metadataDates"] = dates["metadataDates"]!!
 
         val response = buildTimelineDataByDate(model,"all",date)
 
@@ -99,11 +93,8 @@ class TimelineController {
             date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
         }
 
-        model["metadataDates"] = ""
-        val metadataDates = metadataRepository.findAllYearMonthDayByMediaType(mediaType)
-        if (metadataDates != null) {
-            model["metadataDates"] = metadataDates
-        }
+        val dates = getMetadataDates(mediaType)
+        model["metadataDates"] = dates["metadataDates"]!!
 
         val response = buildTimelineDataByDate(model,mediaType,date)
 
@@ -255,6 +246,28 @@ class TimelineController {
     @ResponseBody
     fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
         return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date))
+    }
+
+    @RequestMapping(value = ["/timeline/dates/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getTimelineDates(model: Model, @PathVariable mediaType: String): String {
+        return mapper.writeValueAsString(getMetadataDates(mediaType))
+    }
+
+    private fun getMetadataDates(mediaType: String): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
+        response["metadataDates"] = ""
+        val metadataDates = if (mediaType == "all") {
+            metadataRepository.findAllYearMonthDay()
+        } else {
+            metadataRepository.findAllYearMonthDayByMediaType(mediaType)
+        }
+        if (metadataDates != null) {
+            response["metadataDates"] = metadataDates
+        }
+
+        return response
     }
 
     private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String?): MutableMap<String, Any?> {
