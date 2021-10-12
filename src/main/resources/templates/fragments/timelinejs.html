@@ -65,7 +65,11 @@
                         if (currentOffCanvasId === offcanvasDate) {
                             active = " active";
                         }
-                        const dateObj = new Date(year, month, day);
+                        console.log(year)
+                        console.log(month)
+                        console.log(day)
+
+                        const dateObj = new Date(year, month-1, day);
                         text = dateObj.format("mmm d, yyyy");
                         html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return jumpToTimeline(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\')" href="#'+year+'-'+month+'-'+day+'">'+text+'</a>\n';
                     }
@@ -428,7 +432,7 @@
 
                                 let dateReformatted = "";
                                 if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-                                    const dateObj = new Date(metadata.year, metadata.month, metadata.day);
+                                    const dateObj = new Date(metadata.year, metadata.month-1, metadata.day);
                                     dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
                                 }
 
