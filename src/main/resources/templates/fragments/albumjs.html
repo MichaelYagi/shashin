@@ -2,23 +2,26 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="albumjs()">
 <script type="text/javascript">
-    const $infiniteScrollGallery = document.getElementById(
+    const albumSettings = {};
+    albumSettings.infiniteScrollGallery = document.getElementById(
         'infinite-scroll-gallery',
     );
-    const lightGalleryConfigs = getLightGalleryConfigs();
-    lightGalleryConfigs["dynamic"] = true;
-    const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+    albumSettings.lightGalleryConfigs = getLightGalleryConfigs();
+    albumSettings.lightGalleryConfigs["dynamic"] = true;
+    albumSettings.lg = lightGallery(albumSettings.infiniteScrollGallery, albumSettings.lightGalleryConfigs);
+    albumSettings.retryLimit = 3;
+    albumSettings.tryCount = 0;
 
     function openGallery(e,index) {
         e.preventDefault();
-        if (typeof lg !== "undefined") {
-            lg.openGallery(index);
+        if (typeof albumSettings.lg !== "undefined") {
+            albumSettings.lg.openGallery(index);
         }
     }
 
     function openAlbumModal(e,metadataId) {
         e.preventDefault();
-        var metadata;
+        let metadata;
         if ($("#albumModalEdit"+metadataId).attr("tag") && $("#albumModalEdit"+metadataId).attr("tag").trim() !== "") {
             metadata = JSON.parse($("#albumModalEdit"+metadataId).attr("tag"));
         }
@@ -43,13 +46,24 @@
 
 
     function updateAlbum(albumId,nextPage,activePage) {
-        var promise =  $.ajax({
+        const promise =  $.ajax({
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
             async:true
+        }).fail(function (xhr, textStatus) {
+            printMessageToConsole("AJAX error updating album. Attempt: "+albumSettings.tryCount+"/"+albumSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                albumSettings.tryCount++;
+                if (albumSettings.tryCount <= albumSettings.retryLimit) {
+                    //try again
+                    updateAlbum(albumId,nextPage,activePage);
+                }
+            }
         }).then(function (data) {
-            var mediaContentList = [];
+            albumSettings.tryCount = 0;
+            const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -201,7 +215,7 @@
         });
 
         $('#propalbumphotocomment'+metadata.id).on('show.bs.modal', function () {
-            var promise = $.ajax({
+            const promise = $.ajax({
                 type: 'get',
                 url: "/notifications/markread/metadata/"+metadata.id,
                 contentType: 'application/json; charset=utf-8',

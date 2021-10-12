@@ -2,28 +2,42 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="trashjs()">
 <script type="text/javascript">
-    const $infiniteScrollGallery = document.getElementById(
+    const trashSettings = {};
+    trashSettings.infiniteScrollGallery = document.getElementById(
         'infinite-scroll-gallery',
     );
-    const lightGalleryConfigs = getLightGalleryConfigs();
-    lightGalleryConfigs["dynamic"] = true;
-    const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+    trashSettings.lightGalleryConfigs = getLightGalleryConfigs();
+    trashSettings.lightGalleryConfigs["dynamic"] = true;
+    trashSettings.lg = lightGallery(trashSettings.infiniteScrollGallery, trashSettings.lightGalleryConfigs);
+    trashSettings.retryLimit = 3;
+    trashSettings.tryCount = 0;
 
     function openGallery(e, index) {
         e.preventDefault();
-        if (typeof lg !== "undefined") {
-            lg.openGallery(index);
+        if (typeof trashSettings.lg !== "undefined") {
+            trashSettings.lg.openGallery(index);
         }
     }
 
     function updateTrash(nextPage, activePage) {
         // Get paged results
-        var promise = $.ajax({
+        const promise = $.ajax({
             type: 'get',
             url: "/trash/" + nextPage,
             contentType: 'application/json; charset=utf-8',
             async: true
+        }).fail(function (xhr, textStatus) {
+            printMessageToConsole("AJAX error updating trash. Attempt: "+trashSettings.tryCount+"/"+trashSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                trashSettings.tryCount++;
+                if (trashSettings.tryCount <= trashSettings.retryLimit) {
+                    //try again
+                    updateTrash(nextPage, activePage);
+                }
+            }
         }).then(function (data) {
+            trashSettings.tryCount = 0;
             var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";

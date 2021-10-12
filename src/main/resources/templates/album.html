@@ -221,9 +221,9 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (typeof lg !== "undefined") {
-            lg.refresh(mediaContentList);
-            $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+        if (typeof albumSettings.lg !== "undefined") {
+            albumSettings.lg.refresh(mediaContentList);
+            albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                 jumpToLightGalleryIndex(e.detail.index);
             })
         }
@@ -277,8 +277,8 @@
                 updateAlbum(albumId, nextPage, "[[${activePage}]]").then(function (additionalMediaContentList) {
                     if (additionalMediaContentList.length > 0) {
                         mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                        lg.refresh(mediaContentList);
-                        $infiniteScrollGallery.addEventListener('lgAfterSlide', function (e) {
+                        albumSettings.lg.refresh(mediaContentList);
+                        albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function (e) {
                             jumpToLightGalleryIndex(e.detail.index);
                         })
                     }

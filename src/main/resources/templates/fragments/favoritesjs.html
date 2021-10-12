@@ -2,17 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="favoritesjs()">
 <script type="text/javascript">
-    const $infiniteScrollGallery = document.getElementById(
+    const favoritesSettings = {};
+    favoritesSettings.infiniteScrollGallery = document.getElementById(
         'infinite-scroll-gallery',
     );
-    const lightGalleryConfigs = getLightGalleryConfigs();
-    lightGalleryConfigs["dynamic"] = true;
-    const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+    favoritesSettings.lightGalleryConfigs = getLightGalleryConfigs();
+    favoritesSettings.lightGalleryConfigs["dynamic"] = true;
+    favoritesSettings.lg = lightGallery(favoritesSettings.infiniteScrollGallery, favoritesSettings.lightGalleryConfigs);
+    favoritesSettings.retryLimit = 3;
+    favoritesSettings.tryCount = 0;
 
     function openGallery(e,index) {
         e.preventDefault();
-        if (typeof lg !== "undefined") {
-            lg.openGallery(index);
+        if (typeof favoritesSettings.lg !== "undefined") {
+            favoritesSettings.lg.openGallery(index);
         }
     }
 
@@ -23,7 +26,18 @@
             url: "/favorites/"+nextPage,
             contentType: 'application/json; charset=utf-8',
             async:true
+        }).fail(function (xhr, textStatus) {
+            printMessageToConsole("AJAX error updating favorites. Attempt: "+favoritesSettings.tryCount+"/"+favoritesSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                favoritesSettings.tryCount++;
+                if (favoritesSettings.tryCount <= favoritesSettings.retryLimit) {
+                    //try again
+                    updateFavorites(nextPage,activePage);
+                }
+            }
         }).then(function (data) {
+            favoritesSettings.tryCount = 0;
             var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
