@@ -238,6 +238,10 @@
                         const headingId = rowId.replace("row", "");
                         const targetElement = $("#photoThumbnailContainer" + metadataId);
 
+                        const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
+                            "offcanvas_undated" : "offcanvas_"+metadataObj.year+'-'+metadataObj.month+'-'+metadataObj.day;
+                        refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
+
                         if (metadataObj.hidden === false) {
                             populateDetailsTab(metadataObj)
                             $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
