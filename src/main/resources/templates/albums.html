@@ -21,12 +21,24 @@
                                 <img class="card-img-top" th:src="${album.coverUrl}" th:alt="${album.name}" style="width: 209px;height: 209px;">
                             </a>
                             <div class="card-body">
-                                <p class="card-text"><strong th:text="${album.name}"></strong><span style="float: right"><a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;"><th:block th:text="${#lists.size(albumsCommentsMap.get(album.id))}"></th:block> <span class="bi-chat-square position-relative">
-                                    <th:block th:if="${notificationMap.get(album.id)}">
-                                        <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                            <span class="visually-hidden">New alerts</span>
+                                <p class="card-text">
+                                    <strong th:text="${album.name}"></strong><br>
+
+                                    <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;">
+                                        <th:block th:text="${#lists.size(albumsCommentsMap.get(album.id))}"></th:block>
+                                        <span class="bi-chat-square position-relative">
+                                            <th:block th:if="${notificationMap.get(album.id)}">
+                                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                                    <span class="visually-hidden">New alerts</span>
+                                                </span>
+                                            </th:block>
                                         </span>
-                                    </th:block></span></a><th:block th:if="${authority == 'ROLE_ADMIN'}">&nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span class="bi-share"></span></a></th:block></span></p>
+                                    </a>
+                                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                        &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>
+                                        &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span class="bi-share"></span></a>
+                                    </th:block>
+                                </p>
                                 <p class="card-text"><small class="text-muted" th:text="${albumsCount[iterStat.index] + ' items'}"></small></p>
                             </div>
                         </div>
