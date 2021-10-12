@@ -4,147 +4,165 @@
 <body class="thumb d-flex flex-column vh-100">
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
-  <div class="row flex-grow-sm-1 flex-grow-0">
-    <main role="main" class="col overflow-auto h-100">
-      <div th:replace="fragments/appjs :: appjs()"></div>
-      <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
-      <input type="hidden" id="currentPage" name="currentPage" value="0">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="fragments/appjs :: appjs()"></div>
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})"
+                 class="col-sm p-3 min-vh-100"></div>
+            <input type="hidden" id="currentPage" name="currentPage" value="0">
+            <div id="infinite-scroll-gallery">
+                <div th:replace="fragments/sharealbumjs :: sharealbumjs(${shareLink})"></div>
+                <th:block th:if="${albumMetadataList != ''}">
+                    <h1 th:text="${album.name}"></h1>
+                    <span id="albumId" style="display: none" th:text="${album.id}"></span>
 
-      <th:block th:if="${albumMetadataList != ''}">
-        <div th:replace="fragments/sharealbumjs :: sharealbumjs(${shareLink})"></div>
+                    <div class="row p-3">
+                        <th:block th:each="metadata, iterStat: ${albumMetadataList}">
+                            <div class="photo-thumbnail-container photo-thumbnail"
+                                 th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                                <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image"
+                                     th:id="'image'+${metadata.id}">
 
-        <h1 th:text="${album.name}"></h1>
-        <span id="albumId" style="display: none" th:text="${album.id}"></span>
-        <div id="infinite-scroll-gallery">
-          <div class="row p-3">
-            <th:block th:each="metadata, iterStat: ${albumMetadataList}">
-              <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
-                <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}">
+                                <th:block th:if="${metadata.type.contains('video')}">
+                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                        <span class="bi-camera-video-fill"
+                                              style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
+                                    </div>
+                                </th:block>
 
-                <th:block th:if="${metadata.type.contains('video')}">
-                  <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                    <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>
-                  </div>
+                                <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
+                                    <th:block th:unless="${metadata.type.contains('video')}">
+                                        <th:block
+                                                th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                                <a class="mediaLink" onclick="return false"
+                                                   th:data-src="${metadata.thumbnailUrlOriginal}"
+                                                   th:href="${metadata.thumbnailUrlOriginal}"
+                                                   th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                    <span class="bi-play-circle"
+                                                          style="font-size: 4rem;color: lightgray;"></span>
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block
+                                                th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <a class="mediaLink" onclick="return false"
+                                               th:data-src="${metadata.thumbnailUrlOriginal}"
+                                               th:href="${metadata.thumbnailUrlOriginal}"
+                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
+                                                <span class="bi-play-circle"
+                                                      style="font-size: 4rem;color: lightgray;"></span>
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+
+                                    <th:block th:if="${metadata.type.contains('video')}">
+                                        <th:block
+                                                th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                                <a class="mediaLink" onclick="return false"
+                                                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                                   th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
+                                                    <span class="bi-play-circle"
+                                                          style="font-size: 4rem;color: lightgray;"></span>
+                                                </a>
+                                            </th:block>
+                                        </th:block>
+                                        <th:block
+                                                th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                            <a class="mediaLink" onclick="return false"
+                                               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
+                                               th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
+                                                <span class="bi-play-circle"
+                                                      style="font-size: 4rem;color: lightgray;"></span>
+                                            </a>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                            </div>
+
+                            <script type="text/javascript">
+                                /*<![CDATA[*/
+                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                /*]]>*/
+                            </script>
+
+                            <span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>
+                        </th:block>
+                    </div>
+
                 </th:block>
 
-                <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
-                  <th:block th:unless="${metadata.type.contains('video')}">
-                    <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                      <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                        <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
-                          <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                        </a>
-                      </th:block>
-                    </th:block>
-                    <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                      <a class="mediaLink" onclick="return false" th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                         th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
-                        <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                      </a>
-                    </th:block>
-                  </th:block>
+            </div>
 
-                  <th:block th:if="${metadata.type.contains('video')}">
-                    <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                      <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                        <a class="mediaLink" onclick="return false"
-                           th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                           th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
-                          <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                        </a>
-                      </th:block>
-                    </th:block>
-                    <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                      <a class="mediaLink" onclick="return false"
-                         th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                         th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
-                        <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                      </a>
-                    </th:block>
-                  </th:block>
-                </div>
-              </div>
-
-              <script type="text/javascript">
-                /*<![CDATA[*/
-                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                /*]]>*/
-              </script>
-
-              <span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>
-            </th:block>
-          </div>
-        </div>
-      </th:block>
-
-      <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
-    </main>
-  </div>
+            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
+        </main>
+    </div>
 </div>
 
 <script type="text/javascript">
-  $(document).ready(function() {
-    const $infiniteScrollGallery = document.getElementById(
+    $(document).ready(function () {
+        const $infiniteScrollGallery = document.getElementById(
             'infinite-scroll-gallery',
-    );
-    const lightGalleryConfigs = getLightGalleryConfigs();
-    lightGalleryConfigs["selector"] = '.mediaLink';
-    var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+        );
+        const lightGalleryConfigs = getLightGalleryConfigs();
+        lightGalleryConfigs["selector"] = '.mediaLink';
+        let lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
 
-    function loadNextPage() {
-      var currentPage = parseInt($("#currentPage").val());
-      var nextPage = currentPage + 1;
-      /*<![CDATA[*/
-      if ([[${album.id}]] > 0) {
-        updateAlbum([[${album.id}]],nextPage,"[[${activePage}]]").then(function() {
-          lg.closeGallery(true);
-          lg.destroyModules(true);
-          lg.invalidateItems();
-          $(window).off(`.lg.global${lg.lgId}`);
-          lg.LGel.off('.lg');
-          setTimeout(() => {
-            // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
-            // Hack because lg.destroy() errors out
-            // when photos appear slower than destroy called, then there's an error
-            try {
-              lg.$container.remove();
-            } catch (e) {
-              console.log(e);
+        function loadNextPage() {
+            var currentPage = parseInt($("#currentPage").val());
+            var nextPage = currentPage + 1;
+            /*<![CDATA[*/
+            if ([[${album.id}]] > 0) {
+                updateAlbum([[${album.id}]], nextPage, "[[${activePage}]]").then(function () {
+                    lg.closeGallery(true);
+                    lg.destroyModules(true);
+                    lg.invalidateItems();
+                    $(window).off(`.lg.global${lg.lgId}`);
+                    lg.LGel.off('.lg');
+                    setTimeout(() => {
+                        // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                        // Hack because lg.destroy() errors out
+                        // when photos appear slower than destroy called, then there's an error
+                        try {
+                            lg.$container.remove();
+                        } catch (e) {
+                            console.log(e);
+                        }
+
+                        lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+                        return lg;
+                    }, 100);
+                });
+                $("#currentPage").val(nextPage);
+            }
+            /*]]>*/
+        }
+
+        const refreshIntervalId = window.setInterval(function () {
+            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
+                setTimeout(() => {
+                    loadNextPage();
+                }, 1000);
+            } else {
+                clearInterval(refreshIntervalId);
             }
 
-            lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-            return lg;
-          }, 100);
-        });
-        $("#currentPage").val(nextPage);
-      }
-      /*]]>*/
-    }
-    const refreshIntervalId = window.setInterval(function () {
-      if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
-        setTimeout(() => {
-          loadNextPage();
-        }, 1000);
-      } else {
-        clearInterval(refreshIntervalId);
-      }
+            if ($(".appendAlbumPhotos").last().text() === "EOL" || '[[${albumMetadataList}]]' === '' || '[[${albumMetadataList}]]' === '[]') {
+                clearInterval(refreshIntervalId);
+            }
+        }, 200);
+        $(window).on('scroll', function () {
+            // Uset to detect near bottom
+            if (atEndOfPage() && $(".appendAlbumPhotos").last().text() !== "EOL") {
+                loadNextPage();
+            }
+        })
 
-      if ($(".appendAlbumPhotos").last().text() === "EOL" || '[[${albumMetadataList}]]' === '' || '[[${albumMetadataList}]]' === '[]') {
-        clearInterval(refreshIntervalId);
-      }
-    }, 200);
-    $(window).on('scroll', function() {
-      // Uset to detect near bottom
-      if (atEndOfPage() && $(".appendAlbumPhotos").last().text() !== "EOL") {
-        loadNextPage();
-      }
-    })
-
-    $(function() {
-      $('[data-bs-toggle="tooltip"]').tooltip()
-    })
-  });
+        $(function () {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+    });
 </script>
 </body>
 </html>

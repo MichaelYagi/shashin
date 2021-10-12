@@ -2,17 +2,20 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="searchjs()">
 <script type="text/javascript">
-    const $infiniteScrollGallery = document.getElementById(
+    const searchSettings = {};
+    searchSettings.infiniteScrollGallery = document.getElementById(
         'scroll-gallery',
     );
-    const lightGalleryConfigs = getLightGalleryConfigs();
-    lightGalleryConfigs["dynamic"] = true;
-    const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+    searchSettings.lightGalleryConfigs = getLightGalleryConfigs();
+    searchSettings.lightGalleryConfigs["dynamic"] = true;
+    searchSettings.lg = lightGallery(searchSettings.infiniteScrollGallery, searchSettings.lightGalleryConfigs);
+    searchSettings.retryLimit = 3;
+    searchSettings.tryCount = 0;
 
     function openGallery(e,index) {
         e.preventDefault();
-        if (typeof lg !== "undefined") {
-            lg.openGallery(index);
+        if (typeof searchSettings.lg !== "undefined") {
+            searchSettings.lg.openGallery(index);
         }
     }
 
@@ -26,17 +29,28 @@
     }
 
     function updateSearch(nextPage,searchTerm,activePage) {
-        var promise = $.ajax({
+        const promise = $.ajax({
             type: 'get',
             url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
             contentType: 'application/json; charset=utf-8',
             async:true
+        }).fail(function (xhr, textStatus) {
+            printMessageToConsole("AJAX error updating search. Attempt: "+searchSettings.tryCount+"/"+searchSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                searchSettings.tryCount++;
+                if (searchSettings.tryCount <= searchSettings.retryLimit) {
+                    //try again
+                    updateSearch(nextPage,searchTerm,activePage);
+                }
+            }
         }).then(function (data) {
+            searchSettings.tryCount = 0;
             var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
-                var metadataList = data["metadataSearchList"] === "" ? null : data["metadataSearchList"];
+                const metadataList = data["metadataSearchList"] === "" ? null : data["metadataSearchList"];
 
-                if (metadataList.length > 0) {
+                if (metadataList !== null && metadataList.length > 0) {
                     var html = "";
                     var mediaLinkLength = $(".mediaLink").length;
                     for (var index in metadataList) {
