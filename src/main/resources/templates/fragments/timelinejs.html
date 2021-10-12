@@ -735,7 +735,7 @@
         $("#metadataId").val(metadata.id);
 
         if (metadata.thumbnailUrlCentered !== null) {
-            $("#propTimelineModalThumbnail").html("<img src='"+metadata.thumbnailUrlCentered+"' height='100' width='100'>");
+            $("#propTimelineModalThumbnail").html("<img src='"+encodeURI(metadata.thumbnailUrlCentered)+"' height='100' width='100'>");
         }
 
         if (metadata.title !== null) {

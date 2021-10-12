@@ -33,7 +33,7 @@
 
             $("#metadataId").val(metadata.id);
             if (metadata.thumbnailUrlCentered !== null) {
-                $("#propAlbumModalThumbnail").html("<img src='"+metadata.thumbnailUrlCentered+"' height='100' width='100'>");
+                $("#propAlbumModalThumbnail").html("<img src='"+encodeURI(metadata.thumbnailUrlCentered)+"' height='100' width='100'>");
             }
 
             // Open modal window
