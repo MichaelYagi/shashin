@@ -18,6 +18,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    fun findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc(): Metadata?
 
+   @Query("SELECT * FROM metadata WHERE hidden = false AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
+   fun findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(@Param("type") type: String): Metadata?
+
    @Query("SELECT DISTINCT year,month,day FROM metadata WHERE hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllYearMonthDay(): MutableIterable<MetadataDate>?
 

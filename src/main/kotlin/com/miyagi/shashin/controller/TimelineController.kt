@@ -87,7 +87,12 @@ class TimelineController {
     fun getTimelineMediaTypeByDate(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
 
-        val initialMetadataObj = metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+        val initialMetadataObj: Metadata?
+        if (mediaType != "all") {
+            initialMetadataObj = metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType)
+        } else {
+            initialMetadataObj = metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+        }
         var date: String? = null
         if (initialMetadataObj != null) {
             date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
