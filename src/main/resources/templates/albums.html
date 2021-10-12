@@ -18,7 +18,7 @@
                     <th:block th:each="album, iterStat: ${albumsList}">
                         <div class="card" style="width:auto;padding-top:10px;">
                             <a th:href="'/album/'+${album.id}"  style="text-decoration: none !important;color: black;" th:id="'album'+${album.id}">
-                                <img class="card-img-top" th:src="${album.coverUrl}" th:alt="${album.name}">
+                                <img class="card-img-top" th:src="${album.coverUrl}" th:alt="${album.name}" style="width: 209px;height: 209px;">
                             </a>
                             <div class="card-body">
                                 <p class="card-text"><strong th:text="${album.name}"></strong><span style="float: right"><a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;"><th:block th:text="${#lists.size(albumsCommentsMap.get(album.id))}"></th:block> <span class="bi-chat-square position-relative">
