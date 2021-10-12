@@ -150,7 +150,7 @@
         ) {
             let date = new Date(month+"/"+day+"/"+year);
             let shortMonth = getShortMonths(date.getMonth());
-            let adjustedDay = ('0' + date.getDate()).slice(-2);
+            let adjustedDay = date.getDate();
             let dayOfWeek = getShortDay(date.getDay());
             return dayOfWeek + ", " + shortMonth + " " + adjustedDay + ", " + year;
         }
