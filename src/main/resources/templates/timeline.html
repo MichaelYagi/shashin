@@ -150,7 +150,7 @@
             setScrollSpyActive($(firstElem));
             reinitLightGalleryInstance();
         } else {
-            enableScrollSpy = false;
+            timelineSettings.enableScrollSpy = false;
         }
 
         $(function() {
@@ -159,38 +159,38 @@
 
         // Scroll spy at intervals
         window.setInterval(function() {
-            if (enableScrollSpy === true) {
+            if (timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 renderThumbnailsInViewport(elementsInViewport, "[[${mediaTypeFilter}]]");
             }
         }, 200);
 
         $("#offcanvasToc").on('show.bs.offcanvas', function () {
-            if (enableScrollSpy === true) {
+            if (timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 scrollToTimeline(elementsInViewport);
             }
         });
 
         const scrollHandler = function (e) {
-            if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && enableScrollSpy === true) {
+            if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 scrollToTimeline(elementsInViewport);
             }
 
-            const delayInMs = e.timeStamp - lastDate;
-            const offset = e.target.scrollTop - lastOffset;
-            scrollSpeedInpxPerMs = offset / delayInMs;
-            lastDate = e.timeStamp;
-            lastOffset = e.target.scrollTop;
+            const delayInMs = e.timeStamp - timelineSettings.lastDate;
+            const offset = e.target.scrollTop - timelineSettings.lastOffset;
+            timelineSettings.scrollSpeedInpxPerMs = offset / delayInMs;
+            timelineSettings.lastDate = e.timeStamp;
+            timelineSettings.lastOffset = e.target.scrollTop;
 
             const st = $(this).scrollTop();
-            if (st > lastScrollTop){
-                scrollDirection = "down";
+            if (st > timelineSettings.lastScrollTop){
+                timelineSettings.scrollDirection = "down";
             } else {
-                scrollDirection = "up";
+                timelineSettings.scrollDirection = "up";
             }
-            lastScrollTop = st;
+            timelineSettings.lastScrollTop = st;
         };
         $("#container").on('scroll', scrollHandler);
         $("main").on('scroll', scrollHandler);
