@@ -71,7 +71,7 @@
                         <br th:id="${'br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                         <section class="scrollspy metadataprocessed" th:id="${metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <p><strong class="dateHeading p-1" th:text="${#dates.format(sdf.parse(metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day), 'EEE, MMM dd, yyyy')}"></strong></p>
+                                <p><strong class="dateHeading p-1" th:text="${#dates.format(sdf.parse(metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day), 'EEE, MMM d, yyyy')}"></strong></p>
                             </th:block>
                         </section>
                         <div class="row p-3" th:id="${'row'+metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
