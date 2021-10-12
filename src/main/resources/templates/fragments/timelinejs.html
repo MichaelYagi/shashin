@@ -499,10 +499,6 @@
                                         const metadataObj = JSON.parse($(this).attr("tag"));
                                         openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
                                     });
-                                    const htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                                    setPhotoOverlays(htmlEncodedMetadata, "timeline")
-                                    activateMetadataListeners(htmlEncodedMetadata);
-
                                     $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
                                 }
 
@@ -523,6 +519,10 @@
                                         $("#tntr" + metadata.id).addClass("thumbnail-tr");
                                     }
                                 }
+
+                                const htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                                setPhotoOverlays(htmlEncodedMetadata, "timeline")
+                                activateMetadataListeners(htmlEncodedMetadata);
                             }
                         }
                     }
