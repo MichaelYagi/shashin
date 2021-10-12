@@ -144,13 +144,13 @@
 <script type="text/javascript">
     $(document).ready(function() {
         // Initialize
-        var firstElem = $('.scrollspy')[0];
-
-        if (firstElem.id) {
+        if ($('.scrollspy').length > 0) {
+            const firstElem = $('.scrollspy')[0];
             attachAssociatedMetadata(firstElem.id, "[[${mediaTypeFilter}]]");
+            setScrollSpyActive($(firstElem));
+        } else {
+            enableScrollSpy = false;
         }
-
-        setScrollSpyActive($(firstElem));
 
         reinitLightGalleryInstance();
 
