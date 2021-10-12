@@ -3,20 +3,23 @@
 <body th:fragment="timelinejs(queryLimit)">
 <script type="text/javascript">
     // Globals
-    const lightGalleryEl = document.getElementById('infinite-scroll-gallery');
-    const lightGalleryConfigs = getLightGalleryConfigs();
-    lightGalleryConfigs["selector"] = '.mediaLink';
-    let lg = lightGallery(lightGalleryEl, lightGalleryConfigs);
-    let enableScrollSpy = true;
-    let prevAnchor = "";
-    let lastOffset = $("#container").scrollTop() ? $("#container").scrollTop() : $("#main").scrollTop();
-    let lastDate = new Date().getTime();
-    let lastScrollTop = 0;
-    let scrollSpeedInpxPerMs = 0;
-    let scrollDirection = "down";
-    const successBelowMsg = "success_below";
-    const successAboveMsg = "success_above";
-    const successMidMsg = "success_mid";
+    const timelineSettings = {};
+    timelineSettings.lightGalleryEl = document.getElementById('infinite-scroll-gallery');
+    timelineSettings.lightGalleryConfigs = getLightGalleryConfigs();
+    timelineSettings.lightGalleryConfigs["selector"] = '.mediaLink';
+    timelineSettings.lg = lightGallery(timelineSettings.lightGalleryEl, timelineSettings.lightGalleryConfigs);
+    timelineSettings.enableScrollSpy = true;
+    timelineSettings.prevAnchor = "";
+    timelineSettings.lastOffset = $("#container").scrollTop() ? $("#container").scrollTop() : $("#main").scrollTop();
+    timelineSettings.lastDate = new Date().getTime();
+    timelineSettings.lastScrollTop = 0;
+    timelineSettings.scrollSpeedInpxPerMs = 0;
+    timelineSettings.scrollDirection = "down";
+    timelineSettings.successBelowMsg = "success_below";
+    timelineSettings.successAboveMsg = "success_above";
+    timelineSettings.successMidMsg = "success_mid";
+    timelineSettings.retryLimit = 3;
+    timelineSettings.tryCount = 0;
 
     // lightGalleryEl.addEventListener('lgBeforeSlide', function (e) {
     //     const metadataId = $(".mediaLink").eq(e.detail.index).data().metadataid;
@@ -39,7 +42,18 @@
             url: "/timeline/dates/"+mediaTypeFilter,
             contentType: 'application/json; charset=utf-8',
             async:true
+        }).fail(function (xhr, textStatus) {
+            printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                timelineSettings.tryCount++;
+                if (timelineSettings.tryCount <= timelineSettings.retryLimit) {
+                    //try again
+                    refreshTimeline(mediaTypeFilter);
+                }
+            }
         }).then(function(data) {
+            timelineSettings.tryCount = 0;
             if (data.hasOwnProperty("metadataDates")) {
                 $("#offcanvasTocBody").empty();
 
@@ -76,27 +90,27 @@
     }
 
     function reinitLightGalleryInstance() {
-        if (lg !== null) {
-            const closeTimeout = lg.closeGallery(true);
+        if (timelineSettings.lg !== null) {
+            const closeTimeout = timelineSettings.lg.closeGallery(true);
             setTimeout(() => {
-                if (lg !== null) {
-                    lg.destroyModules(true);
-                    lg.invalidateItems();
-                    $(window).off(`.lg.global${lg.lgId}`);
-                    lg.LGel.off('.lg');
+                if (timelineSettings.lg !== null) {
+                    timelineSettings.lg.destroyModules(true);
+                    timelineSettings.lg.invalidateItems();
+                    $(window).off(`.lg.global${timelineSettings.lg.lgId}`);
+                    timelineSettings.lg.LGel.off('.lg');
                     // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
                     // Hack because lg.destroy() errors out
                     // when photos appear slower than destroy called, then there's an error
                     try {
-                        lg.$container.remove();
+                        timelineSettings.lg.$container.remove();
                     } catch (e) {
                         printMessageToConsole(e)
                     }
 
-                    lg = null;
+                    timelineSettings.lg = null;
 
                     setTimeout(() => {
-                        lg = lightGallery(lightGalleryEl, lightGalleryConfigs);
+                        timelineSettings.lg = lightGallery(timelineSettings.lightGalleryEl, timelineSettings.lightGalleryConfigs);
                     }, 500);
                 }
             }, closeTimeout);
@@ -114,7 +128,6 @@
         if (MutationObserver) {
             let anchorVisible = false;
             let offcanvasAnchorVisible = false;
-            // console.log("Using mutation observer")
             const observer = new MutationObserver(function (mutations, me) {
                 const anchorEl = document.getElementById(id);
                 const offcanvasAnchorEl = document.getElementById("offcanvas_"+id);
@@ -138,10 +151,8 @@
                 subtree: true
             });
         } else {
-            // console.log("Using setInterval")
             const existCondition = setInterval(function () {
                 if ($("#" + id).length > 0 && $("#offcanvas_" + id).length > 0) {
-                    // console.log("Exists!");
                     clearInterval(existCondition);
                     functionCall();
                 }
@@ -151,8 +162,8 @@
 
     function openGallery(e,index) {
         e.preventDefault();
-        if (typeof lg !== "undefined") {
-            lg.openGallery(index);
+        if (typeof timelineSettings.lg !== "undefined") {
+            timelineSettings.lg.openGallery(index);
         }
     }
 
@@ -166,14 +177,14 @@
 
         elements.each(function(index) {
             let id = $(this).attr("id");
-            if (id.indexOf("tail_") === -1 && prevAnchor !== id && (index === 0 || index === 1)) {
+            if (id.indexOf("tail_") === -1 && timelineSettings.prevAnchor !== id && (index === 0 || index === 1)) {
                 renderThumbnails(id,mediaTypeFilter).then(function (msg) {
-                    if (msg === successBelowMsg || msg === successAboveMsg || msg === successMidMsg) {
+                    if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                         setScrollSpyActive(id);
                         reinitLightGalleryInstance();
                     }
                 });
-                prevAnchor = id;
+                timelineSettings.prevAnchor = id;
             }
         });
     }
@@ -181,28 +192,27 @@
     function jumpToTimeline(e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
-        scrollDirection = "down";
-        enableScrollSpy = false;
+        timelineSettings.scrollDirection = "down";
+        timelineSettings.enableScrollSpy = false;
 
         printMessageToConsole("jumpToTimeline anchor:"+anchor);
         printMessageToConsole("jumpToTimeline mediaTypeFilter:"+mediaTypeFilter);
 
         renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
-            if (msg === successBelowMsg || msg === successAboveMsg || msg === successMidMsg) {
+            if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                 reinitLightGalleryInstance();
                 setScrollSpyActive(anchor);
 
                 const url = location.href;
                 location.href = '#' + anchor;
                 history.replaceState(null, null, url);
-                enableScrollSpy = true;
+                timelineSettings.enableScrollSpy = true;
             }
         });
     }
 
     // Set the active nav
     function setScrollSpyActive(id) {
-        // console.log(id);
         const navElem = $('a[href="#' + id + '"]');
         navElem.addClass('active').siblings().removeClass('active');
     }
@@ -229,12 +239,12 @@
         let depthDown = queryLimit;
         let depthUp = queryLimit;
 
-        printMessageToConsole("scrollSpeedInpxPerMs:"+scrollSpeedInpxPerMs);
-        printMessageToConsole("scrollDirection:"+scrollDirection);
+        printMessageToConsole("scrollSpeedInpxPerMs:"+timelineSettings.scrollSpeedInpxPerMs);
+        printMessageToConsole("scrollDirection:"+timelineSettings.scrollDirection);
 
         // If velocity of scroll is really fast, add padding to # of results
-        if (scrollSpeedInpxPerMs > 5 || scrollSpeedInpxPerMs < -5) {
-            if (scrollDirection === "down") {
+        if (timelineSettings.scrollSpeedInpxPerMs > 5 || timelineSettings.scrollSpeedInpxPerMs < -5) {
+            if (timelineSettings.scrollDirection === "down") {
                 depthDown = depthDown + 3;
             } else {
                 depthUp = depthUp + 3;
@@ -264,7 +274,7 @@
         });
 
         // Hack to prevent infinite scroll upwards and throttle scrolling
-        if (scrollDirection === "up" && $('section')[0].id === id && enableScrollSpy === true) {
+        if (timelineSettings.scrollDirection === "up" && $('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
             document.getElementById("container").scrollBy({top: 1});
             if (document.getElementsByTagName("MAIN").length > 0) {
                 document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
@@ -396,7 +406,7 @@
 
         printMessageToConsole("==============================================");
 
-        deferred.resolve(successMidMsg);
+        deferred.resolve(timelineSettings.successMidMsg);
         return deferred.promise();
     }
 
@@ -407,7 +417,18 @@
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
             contentType: 'application/json; charset=utf-8',
             async:true
+        }).fail(function (xhr, textStatus) {
+            printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                timelineSettings.tryCount++;
+                if (timelineSettings.tryCount <= timelineSettings.retryLimit) {
+                    console.log("trying again for "+date)
+                    //try again
+                    attachAssociatedMetadata(date,mediaTypeFilter);
+                }
+            }
         }).then(function(data) {
+            timelineSettings.tryCount = 0;
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("metadataList") &&
@@ -432,7 +453,6 @@
                                     dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
                                 }
 
-                                // console.log(metadata);
                                 if ($("#tnbr"+metadata.id+".thumbnail-br").length === 0) {
                                     $("#tnbr" + metadata.id).addClass("thumbnail-br");
                                 }
@@ -574,15 +594,22 @@
     }
 
     function updateTimeline(date,mediaTypeFilter,action,attachToId) {
-        // console.log("date:"+date);
-        // console.log("mediaTypeFilter:"+mediaTypeFilter)
-
         const promise = $.ajax({
             type: 'get',
             url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date,
             contentType: 'application/json; charset=utf-8',
             async: false
+        }).fail(function (xhr, textStatus) {
+            printMessageToConsole("AJAX error updating timeline. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                timelineSettings.tryCount++;
+                if (timelineSettings.tryCount <= timelineSettings.retryLimit) {
+                    //try again
+                    updateTimeline(date,mediaTypeFilter,action,attachToId);
+                }
+            }
         }).then(function (data) {
+            timelineSettings.tryCount = 0;
             let deferred = new $.Deferred();
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
@@ -596,8 +623,6 @@
                         const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
 
                         if (metadataList.length > 0) {
-                            // console.log(metadataList);
-                            // console.log(albumList);
                             let html = "";
 
                             let dateString = getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
@@ -618,8 +643,6 @@
                             for (let index in metadataList) {
                                 index = parseInt(index);
                                 const metadata = metadataList[index];
-
-                                // console.log(metadata["id"]+"-"+currentDateTaken);
 
                                 const yearTakenCount = $(".yearTaken").length;
                                 const monthTakenCount = $(".monthTaken").length;
@@ -667,23 +690,19 @@
 
                             if (action === "above") {
                                 $(html).insertBefore($("#br" + attachToId)).ready(function () {
-                                    // console.log("inserted above to anchor")
                                     deferred.resolve("success");
                                 });
                             } else if (action === "new") {
                                 $("#infinite-scroll-gallery").prepend(html).ready(function () {
-                                    // console.log("inserted above new")
                                     deferred.resolve("success");
                                 });
                             } else {
                                 if (attachToId == null) {
                                     $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                        // console.log("inserted below new")
                                         deferred.resolve("success");
                                     });
                                 } else {
                                     $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
-                                        // console.log("inserted below to anchor")
                                         deferred.resolve("success");
                                     });
                                 }
@@ -713,10 +732,6 @@
 
     function openTimelineModal(metadata,recognitionLabels,taggedPeopleList) {
         // Populate modal data
-        // console.log("openTimelineModal");
-        // console.log(metadata);
-        // console.log(recognitionLabels);
-        // console.log(taggedPeopleList);
 
         if ($("#timelineModalEdit"+metadata.id).attr("tag") && $("#timelineModalEdit"+metadata.id).attr("tag").trim() !== "") {
             metadata = JSON.parse($("#timelineModalEdit"+metadata.id).attr("tag"));
@@ -891,8 +906,7 @@
     }
 
     function activateMetadataListeners(rawMetadata) {
-        var metadata = JSON.parse(decodeHtml(rawMetadata));
-        // console.log(metadata.id);
+        const metadata = JSON.parse(decodeHtml(rawMetadata));
 
         $("#image"+metadata.id).on('load', function() {
             $(this).css("background-color","transparent");
@@ -930,8 +944,7 @@
 
             posting.done(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    // console.log(data);
-                    var currentCount = parseInt($("#briconcount"+metadata.id).text());
+                    let currentCount = parseInt($("#briconcount"+metadata.id).text());
                     if (isFavorite === true) {
                         currentCount++;
                     } else {
