@@ -131,7 +131,6 @@
                         reinitLightGalleryInstance();
                     }
                 });
-
                 prevAnchor = id;
             }
         });
@@ -392,21 +391,26 @@
                                 }
 
                                 // console.log(metadata);
-                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
-                                $("#tnbr"+metadata.id).addClass("thumbnail-br");
+                                if ($("#tnbr"+metadata.id+".thumbnail-br").length === 0) {
+                                    $("#tnbr" + metadata.id).addClass("thumbnail-br");
+                                }
                                 let html = '<a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
                                     '       <span style="background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;">\n' +
                                     '           <span id="briconcount' + metadata.id + '"></span> <span id="bricon' + metadata.id + '" style="font-size: 1rem;color: red;"></span>\n' +
                                     '       </span>\n' +
                                     '   </a>';
-                                $("#tnbr"+metadata.id).append(html);
-
-                                $("#bricon"+metadata.id).addClass(favoriteIcon);
-                                $("#briconcount"+metadata.id).text(favoriteCount);
+                                if ($("#favorite" + metadata.id).length === 0) {
+                                    $("#tnbr" + metadata.id).append(html);
+                                    const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                    const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                                    $("#bricon"+metadata.id).addClass(favoriteIcon);
+                                    $("#briconcount"+metadata.id).text(favoriteCount);
+                                }
 
                                 html = '<img src="'+encodeURI(metadata.thumbnailUrlSmall)+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">';
-                                $("#photoThumbnailContainer"+metadata.id).prepend(html);
+                                if ($("#image" + metadata.id).length === 0) {
+                                    $("#photoThumbnailContainer" + metadata.id).prepend(html);
+                                }
 
                                 // const img = new Image();
                                 // img.onload = function () {
@@ -421,10 +425,14 @@
                                 // img.height = metadata.thumbnailSmallHeight;
                                 // img.style.backgroundColor  = "lightgray";
 
-                                $("#tnbl"+metadata.id).addClass("thumbnail-bl");
-                                $("#tncentered"+metadata.id).addClass("thumbnail-centered");
+                                if ($("#tnbl"+metadata.id+".thumbnail-bl").length === 0) {
+                                    $("#tnbl" + metadata.id).addClass("thumbnail-bl");
+                                }
+                                if ($("#tncentered"+metadata.id+".thumbnail-centered").length === 0) {
+                                    $("#tncentered" + metadata.id).addClass("thumbnail-centered");
+                                }
 
-                                var mediaContent = {}
+                                const mediaContent = {};
                                 mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
                                 mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                 if (metadata.type.indexOf("video") >= 0) {
@@ -468,7 +476,9 @@
                                 if (metadata.originalImageWidth !== null) {
                                     mediaContent.width = metadata.originalImageWidth;
                                 }
-                                $("#tncentered"+metadata.id).append(html);
+                                if ($("#mediaLink"+metadata.id).length === 0) {
+                                    $("#tncentered"+metadata.id).append(html);
+                                }
 
                                 // $("#mediaLink"+metadata.id).on('click', function(e) {
                                 //     // e.preventDefault();
@@ -480,32 +490,37 @@
 
                                 const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
                                 html = '<a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal"><span class="'+editIcon+'" style="font-size: 1rem;color: lightgray;"></span></a>';
-                                $("#tnbl"+metadata.id).append(html);
+                                if ($("#timelineModalEdit"+metadata.id).length === 0) {
+                                    $("#tnbl" + metadata.id).append(html);
+                                    $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                                    $("#timelineModalEdit"+metadata.id).click(function(e) {
+                                        e.preventDefault();
 
-                                $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                                        const metadataObj = JSON.parse($(this).attr("tag"));
+                                        openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
+                                    });
+                                    const htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                                    setPhotoOverlays(htmlEncodedMetadata, "timeline")
+                                    activateMetadataListeners(htmlEncodedMetadata);
 
-                                $("#timelineModalEdit"+metadata.id).click(function(e) {
-                                    e.preventDefault();
-
-                                    const metadataObj = JSON.parse($(this).attr("tag"));
-                                    openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
-                                });
+                                    $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                                }
 
                                 html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
-                                $("#tntl"+metadata.id).addClass("thumbnail-tl");
-                                $("#tntl"+metadata.id).append(html);
+                                if ($("#select"+metadata.id).length === 0) {
+                                    $("#tntl" + metadata.id).append(html);
+                                }
+                                if ($("#tntl"+metadata.id+".thumbnail-tl").length === 0) {
+                                    $("#tntl" + metadata.id).addClass("thumbnail-tl");
+                                }
 
                                 if (metadata.type.indexOf("video") >= 0) {
                                     html = '<span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>';
-                                    $("#tntr"+metadata.id).addClass("thumbnail-tr");
+                                    if ($("#tntr"+metadata.id+".thumbnail-tr").length === 0) {
+                                        $("#tntr" + metadata.id).addClass("thumbnail-tr");
+                                    }
                                     $("#tntr"+metadata.id).append(html);
                                 }
-
-                                const htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                                setPhotoOverlays(htmlEncodedMetadata, "timeline")
-                                activateMetadataListeners(htmlEncodedMetadata);
-
-                                $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
                             }
                         }
                     }
