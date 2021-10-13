@@ -21,11 +21,11 @@
                 <th:block th:if="${metadataDates != ''}">
                     <th:block th:each="metadata, iterStat: ${metadataDates}">
                         <th:block th:if="${metadata.year == null or metadata.month == null or metadata.day == null}">
-                            <a id="offcanvas_undated" class="list-group-item list-group-item-action" th:onclick="return jumpToTimeline(event,'undated',[[${mediaTypeFilter}]]);" href="#undated">Undated</a>
+                            <a id="offcanvas_undated" class="list-group-item list-group-item-action" th:onclick="return jumpToTimelineToc(event,'undated',[[${mediaTypeFilter}]]);" href="#undated">Undated</a>
                         </th:block>
                         <th:block th:unless="${metadata.year == null or metadata.month == null or metadata.day == null}">
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <a th:id="${'offcanvas_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return jumpToTimeline(event,'[[${metadata.year}]]-[[${metadata.month}]]-[[${metadata.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'MMM d, yyyy')}"></a>
+                                <a th:id="${'offcanvas_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return jumpToTimelineToc(event,'[[${metadata.year}]]-[[${metadata.month}]]-[[${metadata.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'MMM d, yyyy')}"></a>
                             </th:block>
                         </th:block>
                     </th:block>
@@ -193,6 +193,8 @@
                 timelineSettings.scrollDirection = "up";
             }
             timelineSettings.lastScrollTop = st;
+
+            timelineSettings.enableScrollSpy = true;
         };
         $("#container").on('scroll', scrollHandler);
         $("main").on('scroll', scrollHandler);
