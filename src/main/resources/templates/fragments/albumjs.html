@@ -99,7 +99,7 @@
                                 if (metadata.type.includes("video")) {
                                     html +=
                                         '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                        '       <span class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>\n' +
+                                        '       <span class="bi-camera-video-fill overlayIconBackground overlayIcon"></span>\n' +
                                         '   </div>\n';
                                 }
 
@@ -111,7 +111,7 @@
                                         '       </a>\n' +
                                         '   </div>\n' +
                                         '   <div class="thumbnail-bl" id="tnbl' + metadata.id + '">\n' +
-                                        '       <a href="#" id="albumModalEdit'+metadata.id+'" onclick="return openAlbumModal(event,\''+metadata.id+'\')" style="text-decoration: none;color: midnightblue">\n' +
+                                        '       <a href="#" id="albumModalEdit'+metadata.id+'" onclick="return openAlbumModal(event,\''+metadata.id+'\')" class="overlayCommentText">\n' +
                                         '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
                                         '       </a>\n' +
                                         '   </div>\n';
@@ -119,13 +119,13 @@
                                 html +=
                                     '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
                                     '       <a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
-                                    '           <span style="background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;">\n' +
-                                    '               <span id="briconcount' + metadata.id + '">'+favoriteCount+' </span><span class="'+favoriteIcon+'" id="brfavoriteicon'+metadata.id+'" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '           <span class="overlayIconBackground">\n' +
+                                    '               <span id="briconcount' + metadata.id + '">'+favoriteCount+' </span><span class="'+favoriteIcon+' overlayIcon" id="brfavoriteicon'+metadata.id+'"></span>\n' +
                                     '           </span>\n' +
                                     '       </a>\n' +
                                     '       <br>' +
-                                    '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" style="text-decoration: none;color: midnightblue;background-color:lightcyan;padding:3px 5px 0 5px;border-radius: 5px;">\n' +
-                                    '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square-fill position-relative" style="font-size: 1rem;color: midnightblue;">';
+                                    '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" class="overlayCommentIconBackground overlayCommentText">\n' +
+                                    '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square-fill position-relative overlayCommentIcon">';
 
                                 if (notificationMap !== null && notificationMap[metadata.id] === true) {
                                     html +=
