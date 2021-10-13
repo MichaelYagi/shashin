@@ -127,18 +127,17 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                println()
                         when (tag.tagName) {
                             "Orientation" -> {
-                                if (tag.description.contains("(Rotate")) {
-                                    val processedTag = tag.description.substringAfterLast("(Rotate ")
-                                    val tagArr = processedTag.split(" ");
+                                if (tag.description.contains("Rotate")) {
+                                    val digit = tag.description.filter { it.isDigit() }
                                     var numeric = true
 
                                     try {
-                                        parseDouble(tagArr[0])
+                                        parseDouble(digit)
                                     } catch (e: NumberFormatException) {
                                         numeric = false
                                     }
                                     if (numeric) {
-                                        rotation = tagArr[0].toInt()
+                                        rotation = digit.toInt()
                                     }
                                 }
                             }
@@ -408,18 +407,17 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 for (tag in directory.tags) {
                     when (tag.tagName) {
                         "Orientation" -> {
-                            if (tag.description.contains("(Rotate")) {
-                                val processedTag = tag.description.substringAfterLast("(Rotate ")
-                                val tagArr = processedTag.split(" ");
+                            if (tag.description.contains("Rotate")) {
+                                val digit = tag.description.filter { it.isDigit() }
                                 var numeric = true
 
                                 try {
-                                    parseDouble(tagArr[0])
+                                    parseDouble(digit)
                                 } catch (e: NumberFormatException) {
                                     numeric = false
                                 }
                                 if (numeric) {
-                                    rotation = tagArr[0].toInt()
+                                    rotation = digit.toInt()
                                 }
                             }
                             breakOuter = true
