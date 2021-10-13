@@ -1,9 +1,11 @@
 package com.miyagi.shashin.component
 
+import com.miyagi.shashin.controller.SettingsController
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.FileUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
@@ -12,7 +14,6 @@ import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.stereotype.Component
-import org.springframework.ui.Model
 import java.io.IOException
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -20,7 +21,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-
+import java.util.logging.Level
+import java.util.logging.Logger
 
 @Component
 class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
@@ -40,6 +42,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     @Throws(IOException::class)
     override fun handle(request: HttpServletRequest?, response: HttpServletResponse?, authentication: Authentication?) {
+        val logger: Logger = Logger.getLogger(AuthSuccessHandler::class.simpleName)
+
         if (authentication != null) {
             var currentAuthority = ""
             for (authority in authentication.authorities) {
@@ -69,7 +73,11 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                     } else {
                         user.setModifiedAt(dtf.format(now))
                         user.setLoggedIn(true)
-                        userRepository?.save(user)
+                        try {
+                            userRepository?.save(user)
+                        } catch(e: Exception) {
+                            logger.log(Level.SEVERE, "Could not save status for user: " + e.message)
+                        }
                     }
                 }
 
