@@ -53,13 +53,13 @@
             <input type="hidden" id="mediaTypeFilter" name="mediaTypeFilter" th:value="${mediaTypeFilter}">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
+            
+            <div id="infinite-scroll-gallery">
+                <div th:replace="fragments/appjs :: appjs()"></div>
+                <div th:replace="fragments/timelinejs :: timelinejs(${queryLimit})"></div>
+                <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
 
-            <th:block th:if="${metadataList != ''}">
-                <div id="infinite-scroll-gallery">
-                    <div th:replace="fragments/appjs :: appjs()"></div>
-                    <div th:replace="fragments/timelinejs :: timelinejs(${queryLimit})"></div>
-                    <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
-
+                <th:block th:if="${metadataList != ''}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <br id="brundated">
                         <section class="scrollspy metadataprocessed" id="undated">
@@ -120,12 +120,14 @@
                         <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
                         <span class="attachMetadataPhotos" th:id="${'amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day}"></span>
                     </th:block>
-                </div>
-                <script type="text/javascript">
-                    $("#progressBarWrapper").css("visibility","hidden");
-                    $("#timelineMain").css("visibility","visible");
-                </script>
-            </th:block>
+
+                </th:block>
+            </div>
+            <script type="text/javascript">
+                $("#progressBarWrapper").css("visibility","hidden");
+                $("#timelineMain").css("visibility","visible");
+            </script>
+
 
             <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels})"></div>
             <div th:replace="fragments/addalbummodal :: addalbummodal(${albumList})"></div>
