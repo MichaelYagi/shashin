@@ -200,13 +200,14 @@
 
         renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
             if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
-                reinitLightGalleryInstance();
-                setScrollSpyActive(anchor);
-
                 const url = location.href;
                 location.href = '#' + anchor;
                 history.replaceState(null, null, url);
+
+                reinitLightGalleryInstance();
+                setScrollSpyActive(anchor);
                 timelineSettings.enableScrollSpy = true;
+
             }
         });
     }
@@ -339,6 +340,9 @@
 
         // Render bottom
         action = "below"
+        if (attachAboveArray.length === 0 && $("#"+id).length === 0) {
+            attachPoint = null
+        }
         // attachPoint = id;
         for (let index in attachBelowArray) {
             const currentId = attachBelowArray[index];
@@ -702,9 +706,15 @@
                                     });
                                 } else {
                                     if (attachToId == null) {
-                                        $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                            deferred.resolve("success");
-                                        });
+                                        if ($(".attachMetadataPhotos").length > 0) {
+                                            $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
+                                                deferred.resolve("success");
+                                            });
+                                        } else {
+                                            $("#infinite-scroll-gallery").prepend(html).ready(function () {
+                                                deferred.resolve("success");
+                                            });
+                                        }
                                     } else {
                                         $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
                                             deferred.resolve("success");
