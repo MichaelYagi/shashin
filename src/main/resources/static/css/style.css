@@ -231,3 +231,30 @@ footer {
   top: -175px;
   visibility: hidden;
 }
+
+.overlayIcon {
+  font-size: 1rem;
+  color: red;
+}
+
+.overlayIconBackground {
+  background-color:lightcyan;
+  padding:0 5px 0 5px;
+  border-radius: 5px;
+}
+
+.overlayCommentIcon {
+  font-size: 1rem;
+  color: midnightblue;
+}
+
+.overlayCommentText {
+  text-decoration: none;
+  color: midnightblue;
+}
+
+.overlayCommentIconBackground {
+  background-color:lightcyan;
+  padding:3px 5px 0 5px;
+  border-radius: 5px;
+}

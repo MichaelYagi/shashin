@@ -470,8 +470,8 @@
                                     $("#tnbr" + metadata.id).addClass("thumbnail-br");
                                 }
                                 let html = '<a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
-                                    '       <span style="background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;">\n' +
-                                    '           <span id="briconcount' + metadata.id + '"></span> <span id="bricon' + metadata.id + '" style="font-size: 1rem;color: red;"></span>\n' +
+                                    '       <span class="overlayIconBackground">\n' +
+                                    '           <span id="briconcount' + metadata.id + '"></span> <span id="bricon' + metadata.id + '" class="overlayIcon"></span>\n' +
                                     '       </span>\n' +
                                     '   </a>';
                                 if ($("#favorite" + metadata.id).length === 0) {
@@ -586,7 +586,7 @@
                                 }
 
                                 if (metadata.type.indexOf("video") >= 0) {
-                                    html = '<span id="video' + metadata.id + '" class="bi-camera-video-fill" style="font-size: 1rem;color: red;background-color:lightcyan;padding:0 5px 0 5px;border-radius: 5px;"></span>';
+                                    html = '<span id="video' + metadata.id + '" class="bi-camera-video-fill overlayIconBackground overlayIcon"></span>';
                                     if ($("#video"+metadata.id).length === 0) {
                                         $("#tntr"+metadata.id).append(html);
                                     }
