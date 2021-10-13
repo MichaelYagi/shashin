@@ -206,8 +206,10 @@
 
                 reinitLightGalleryInstance();
                 setScrollSpyActive(anchor);
-                timelineSettings.enableScrollSpy = true;
-
+                
+                window.setInterval(function() {
+                    timelineSettings.enableScrollSpy = true;
+                }, 500);
             }
         });
     }
