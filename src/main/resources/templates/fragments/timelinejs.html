@@ -206,12 +206,14 @@
 
                 reinitLightGalleryInstance();
                 setScrollSpyActive(anchor);
-                
-                window.setInterval(function() {
-                    timelineSettings.enableScrollSpy = true;
-                }, 500);
+
+                observeAnchorChange(anchor, enableScrollSpy);
             }
         });
+    }
+
+    function enableScrollSpy() {
+        timelineSettings.enableScrollSpy = true;
     }
 
     // Set the active nav
