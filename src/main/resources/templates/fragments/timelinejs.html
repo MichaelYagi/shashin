@@ -140,7 +140,7 @@
                 }
 
                 if (anchorVisible === true && offcanvasAnchorVisible === true) {
-                    functionCall();
+                    functionCall(id);
                     me.disconnect(); // stop observing
                     return true;
                 }
@@ -154,7 +154,7 @@
             const existCondition = setInterval(function () {
                 if ($("#" + id).length > 0 && $("#offcanvas_" + id).length > 0) {
                     clearInterval(existCondition);
-                    functionCall();
+                    functionCall(id);
                 }
             }, 100);
         }
@@ -204,15 +204,14 @@
                 location.href = '#' + anchor;
                 history.replaceState(null, null, url);
 
-                reinitLightGalleryInstance();
-                setScrollSpyActive(anchor);
-
                 observeAnchorChange(anchor, enableScrollSpy);
             }
         });
     }
 
-    function enableScrollSpy() {
+    function enableScrollSpy(anchor) {
+        reinitLightGalleryInstance();
+        setScrollSpyActive(anchor);
         timelineSettings.enableScrollSpy = true;
     }
 
