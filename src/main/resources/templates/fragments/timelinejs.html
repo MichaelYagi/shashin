@@ -211,6 +211,14 @@
         const url = location.href;
         location.href = '#' + anchor;
         history.replaceState(null, null, url);
+
+        const navElem = $("#offcanvas_" + anchor);
+        const timer = setInterval(function () {
+            if (navElem.attr("class") === 'list-group-item list-group-item-action active') {
+                timelineSettings.enableScrollSpy = true;
+                clearInterval(timer);
+            }
+        }, 200);
     }
 
     // Set the active nav
