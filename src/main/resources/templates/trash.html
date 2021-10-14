@@ -33,6 +33,12 @@
                                 </div>
                             </th:block>
 
+                            <th:block th:if="${!metadata.type.contains('video') and metadata.originalImageWidth > metadata.originalImageHeight*2}">
+                                <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                    <span class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
+                                </div>
+                            </th:block>
+
                             <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
                                 <a href="#" th:id="'select'+${metadata.id}">
                                     <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
