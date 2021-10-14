@@ -523,7 +523,9 @@
                 }
             }
         }, function () {
-            $(this).css("display", "none");
+            if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill") {
+                $(this).css("display", "none");
+            }
             $(this).siblings(".thumbnail-centered").css("display", "none");
             //$(this).siblings(".thumbnail-tr").css("display", "none");
             $(this).siblings(".thumbnail-br").css("display", "none");
