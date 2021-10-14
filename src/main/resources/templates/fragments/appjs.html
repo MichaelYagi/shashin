@@ -309,7 +309,7 @@
                 $("#tntl" + metadata.id).css("display", "block");
                 $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image" + metadata.id).css("opacity", 0.3);
-                $("#tntr" + metadata.id).css("display", "none");
+                //$("#tntr" + metadata.id).css("display", "none");
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbr" + metadata.id).css("display", "none");
                 $("#tnbl" + metadata.id).css("display", "none");
@@ -344,10 +344,10 @@
                 // Hide all center and bottom left icons
                 $('.thumbnail-br').hide();
                 $('.thumbnail-bl').hide();
-                $('.thumbnail-tr').hide();
+                //$('.thumbnail-tr').hide();
                 $('.thumbnail-centered').hide();
             } else {
-                //$('.thumbnail-br').show();
+                $('.thumbnail-br').show();
                 $("#appSearch").css("display", "block");
                 $("#timelineAppTools").css("display", "none");
                 $("#albumAppTools").css("display", "none");
@@ -409,7 +409,7 @@
                 // Hide all center and bottom left icons
                 $('.thumbnail-br').hide();
                 $('.thumbnail-bl').hide();
-                $('.thumbnail-tr').hide();
+                //$('.thumbnail-tr').hide();
                 $('.thumbnail-centered').hide();
             } else {
                 $("#appSearch").css("display", "block");
@@ -440,12 +440,12 @@
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbl" + metadata.id).css("display", "none");
                 $("#tnbr" + metadata.id).css("display", "none");
-                $("#tntr" + metadata.id).css("display", "none");
+                //$("#tntr" + metadata.id).css("display", "none");
             }
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
-                $('.thumbnail-tr').hide();
+                //$('.thumbnail-tr').hide();
                 $('.thumbnail-br').hide();
             }
         }, function () {
@@ -457,18 +457,18 @@
                 $(this).siblings(".thumbnail-tl").css("display", "none");
                 $(this).siblings(".thumbnail-bl").css("display", "none");
                 $(this).siblings(".thumbnail-centered").css("display", "none");
-                $(this).siblings(".thumbnail-tr").css("display", "none");
+                //$(this).siblings(".thumbnail-tr").css("display", "none");
                 $(this).siblings(".thumbnail-br").css("display", "none");
             } else {
                 if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                     $('.thumbnail-bl').hide();
                     $('.thumbnail-centered').hide();
-                    $('.thumbnail-tr').hide();
+                    //$('.thumbnail-tr').hide();
                     $('.thumbnail-br').hide();
                 }
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbl" + metadata.id).css("display", "none");
-                $("#tntr" + metadata.id).css("display", "none");
+                //$("#tntr" + metadata.id).css("display", "none");
                 $("#tnbr" + metadata.id).css("display", "none");
             }
         });
@@ -492,7 +492,7 @@
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
-                $('.thumbnail-tr').hide();
+                //$('.thumbnail-tr').hide();
                 $('.thumbnail-br').hide();
             }
         }, function () {
@@ -501,7 +501,7 @@
             $(this).siblings(".thumbnail-tl").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".thumbnail-br").css("display", "none");
-            $(this).siblings(".thumbnail-tr").css("display", "none");
+            //$(this).siblings(".thumbnail-tr").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
 
@@ -518,14 +518,14 @@
                 if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                     $('.thumbnail-bl').hide();
                     $('.thumbnail-centered').hide();
-                    $('.thumbnail-tr').hide();
+                    //$('.thumbnail-tr').hide();
                     $('.thumbnail-br').hide();
                 }
             }
         }, function () {
             $(this).css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
-            $(this).siblings(".thumbnail-tr").css("display", "none");
+            //$(this).siblings(".thumbnail-tr").css("display", "none");
             $(this).siblings(".thumbnail-br").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
@@ -542,14 +542,14 @@
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
-                $('.thumbnail-tr').hide();
+                //$('.thumbnail-tr').hide();
                 $('.thumbnail-br').hide();
             }
         }, function () {
             $(this).css("display", "none");
             $(this).siblings(".thumbnail-tl").css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
-            $(this).siblings(".thumbnail-tr").css("display", "none");
+            //$(this).siblings(".thumbnail-tr").css("display", "none");
             $(this).siblings(".thumbnail-br").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
@@ -565,14 +565,14 @@
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
-                $('.thumbnail-tr').hide();
+                //$('.thumbnail-tr').hide();
                 $('.thumbnail-br').hide();
             }
         }, function () {
             $(this).css("display", "none");
             $(this).siblings(".thumbnail-tl").css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
-            $(this).siblings(".thumbnail-tr").css("display", "none");
+            //$(this).siblings(".thumbnail-tr").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
         });
@@ -588,11 +588,11 @@
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
-                $('.thumbnail-tr').hide();
+                //$('.thumbnail-tr').hide();
                 $('.thumbnail-br').hide();
             }
         }, function () {
-            $(this).css("display", "none");
+            //$(this).css("display", "none");
             $(this).siblings(".thumbnail-tl").css("display", "none");
             $(this).siblings(".thumbnail-centered").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
@@ -639,7 +639,7 @@
         removeAllMetadataThumbnailsList();
         removeAllMetadataIdList();
         $(".thumbnail-centered").css("display", "none");
-        $(".thumbnail-tr").css("display", "none");
+        //$(".thumbnail-tr").css("display", "none");
         $(".thumbnail-br").css("display", "none");
         $(".thumbnail-bl").css("display", "none");
         $(".thumbnail-tl").css("display", "none");
@@ -781,7 +781,7 @@
             e.preventDefault();
 
             $(".thumbnail-centered").css("display", "none");
-            $(".thumbnail-tr").css("display", "none");
+            //$(".thumbnail-tr").css("display", "none");
             $(".thumbnail-br").css("display", "none");
             $(".thumbnail-bl").css("display", "none");
             $(".thumbnail-tl").css("display", "none");
