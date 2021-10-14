@@ -314,6 +314,18 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             "Quality" -> {
                                 metadataObj.setQuality(tag.description.trim())
                             }
+                            "Duration in Seconds" -> {
+                                val durationParts = tag.description.split(":")
+                                val hours = durationParts[0].toInt()
+                                val minutes = durationParts[1].toInt()
+                                val seconds = durationParts[2]
+
+                                val hoursToMinutes = hours * 60
+                                val totalMinutes = minutes+hoursToMinutes
+                                val duration = "$totalMinutes:$seconds"
+
+                                metadataObj.setDuration(duration)
+                            }
                         }
                     } else {
                         logger.log(

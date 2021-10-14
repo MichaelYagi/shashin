@@ -29,7 +29,7 @@
 
                             <th:block th:if="${metadata.type.contains('video')}">
                                 <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                    <span class="bi-camera-video-fill overlayIconBackground overlayIcon"></span>
+                                    <span class="overlayIconBackground"><th:block th:text="${metadata.duration != null ? metadata.duration : '0:00'}"></th:block>&nbsp;<span class="bi-camera-video-fill overlayIcon"></span></span>
                                 </div>
                             </th:block>
 

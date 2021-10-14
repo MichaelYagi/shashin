@@ -61,9 +61,10 @@
                                     '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n';
 
                                 if (metadata.type.includes("video")) {
+                                    const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                                     html +=
                                         '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                        '       <span class="bi-camera-video-fill overlayIconBackground overlayIcon"></span>\n' +
+                                        '       <span class="overlayIconBackground">'+duration+'&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video-fill overlayIcon"></span></span>\n' +
                                         '   </div>\n';
                                 }
 

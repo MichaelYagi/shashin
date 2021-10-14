@@ -27,6 +27,7 @@ CREATE TABLE `metadata` (
     `mapMarkerPath` VARCHAR (255) DEFAULT NULL,
     `mapMarkerUrl` VARCHAR (255) DEFAULT NULL,
     `videoUrl` VARCHAR (255) DEFAULT NULL,
+    `duration` VARCHAR (8) DEFAULT NULL,
     `type` VARCHAR(20) DEFAULT NULL,
     `lat` VARCHAR(20) DEFAULT NULL,
     `lng` VARCHAR(20) DEFAULT NULL,
