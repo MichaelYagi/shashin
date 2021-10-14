@@ -100,7 +100,7 @@
                                     const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                                     html +=
                                         '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                        '       <span class="overlayIconBackground">'+duration+'&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video-fill overlayIcon"></span></span>\n' +
+                                        '       <span class="overlayIconBackground">'+duration+'&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>\n' +
                                         '   </div>\n';
                                 } else if (metadata.originalImageWidth > metadata.originalImageHeight*2) {
                                     html +=
@@ -131,7 +131,7 @@
                                     '       </a>\n' +
                                     '       <br>' +
                                     '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" class="overlayCommentIconBackground overlayCommentText">\n' +
-                                    '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square-fill position-relative overlayCommentIcon">';
+                                    '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square position-relative overlayCommentIcon">';
 
                                 if (notificationMap !== null && notificationMap[metadata.id] === true) {
                                     html +=
