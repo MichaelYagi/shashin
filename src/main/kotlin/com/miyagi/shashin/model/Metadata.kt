@@ -23,6 +23,7 @@ class Metadata {
     private var mapMarkerPath: String? = null
     private var mapMarkerUrl: String? = null
     private var videoUrl: String? = null
+    private var duration: String? = null
     private var takenAt: String? = null
     private var type: String? = null
     private var fileName: String? = null
@@ -91,6 +92,9 @@ class Metadata {
     }
     fun setVideoUrl(videoUrl: String?) {
         this.videoUrl = videoUrl
+    }
+    fun setDuration(duration: String?) {
+        this.duration = duration
     }
     fun setTakenAt(takenAt: String?) {
         this.takenAt = takenAt
@@ -207,6 +211,9 @@ class Metadata {
     fun getVideoUrl(): String? {
         return this.videoUrl
     }
+    fun getDuration(): String? {
+        return this.duration
+    }
     fun getTakenAt(): String? {
         return this.takenAt
     }
@@ -292,6 +299,7 @@ class Metadata {
         map["originalImageHeight"] = this.originalImageHeight
         map["mapMarkerUrl"] = this.mapMarkerUrl
         map["videoUrl"] = this.videoUrl
+        map["duration"] = this.duration
         map["takenAt"] = this.takenAt
         map["type"] = this.type
         map["fileName"] = this.fileName

@@ -97,9 +97,10 @@
                                     '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
                                     '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n';
                                 if (metadata.type.includes("video")) {
+                                    const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                                     html +=
                                         '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                        '       <span class="bi-camera-video-fill overlayIconBackground overlayIcon"></span>\n' +
+                                        '       <span class="overlayIconBackground">'+duration+'&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video-fill overlayIcon"></span></span>\n' +
                                         '   </div>\n';
                                 }
 
@@ -228,18 +229,18 @@
         $("#favorite"+metadata.id).click(function (e) {
             e.preventDefault();
 
-            var metadataId = metadata.id;
+            const metadataId = metadata.id;
 
-            if ($("#brfavoriteicon" + metadataId).attr("class") === "bi-suit-heart") {
-                $("#brfavoriteicon" + metadataId).attr("class", "bi-suit-heart-fill");
-            } else if ($("#brfavoriteicon" + metadataId).attr("class") === "bi-suit-heart-fill") {
-                $("#brfavoriteicon" + metadataId).attr("class", "bi-suit-heart");
+            if ($("#brfavoriteicon" + metadataId).hasClass("bi-suit-heart")) {
+                $("#brfavoriteicon" + metadataId).removeClass("bi-suit-heart").addClass("bi-suit-heart-fill");
+            } else if ($("#brfavoriteicon" + metadataId).hasClass("bi-suit-heart-fill")) {
+                $("#brfavoriteicon" + metadataId).removeClass("bi-suit-heart-fill").addClass("bi-suit-heart");
             }
 
-            var isFavorite = ($("#brfavoriteicon" + metadataId).attr("class") === "bi-suit-heart-fill");
+            const isFavorite = ($("#brfavoriteicon" + metadataId).hasClass("bi-suit-heart-fill"));
 
-            var json = {metadataId: metadataId, isFavorite: isFavorite}
-            var posting;
+            const json = {metadataId: metadataId, isFavorite: isFavorite};
+            let posting;
 
             if (isFavorite === true) {
                 posting = $.post({

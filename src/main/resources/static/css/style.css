@@ -131,8 +131,8 @@ body {
 .thumbnail-tr {
   display: none;
   background-color: transparent;
-  top:5px;
-  right:16px;
+  top:7px;
+  right:11px;
   position: absolute;
 }
 
