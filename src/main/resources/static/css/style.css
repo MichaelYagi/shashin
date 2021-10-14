@@ -129,7 +129,7 @@ body {
 }
 
 .thumbnail-tr {
-  display: none;
+  /*display: none;*/
   background-color: transparent;
   top:7px;
   right:11px;
