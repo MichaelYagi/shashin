@@ -26,6 +26,17 @@
     //     jumpToLightGalleryMetadata(metadataId);
     // });
 
+    // Hack to close TOC canvas
+    $(document).click(function(event) {
+        const $target = $(event.target);
+        if (!$target.closest('#offcanvasToc').length &&
+            !$target.closest('#timelineTocToggle').length &&
+            $("#offcanvasToc").css("visibility") === "visible")
+        {
+            $("#offcanvasTocCloseButton").click();
+        }
+    });
+
     function jumpToLightGalleryMetadata(metadataId) {
         // const aTag = $("#lightGalleryIndex" + metadataId);
         // $("#container").animate({scrollTop: aTag.offset().top},'slow');
