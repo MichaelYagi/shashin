@@ -40,6 +40,12 @@
                                     </div>
                                 </th:block>
 
+                                <th:block th:if="${!metadata.type.contains('video') && metadata.width > {metadata.height*2}}">
+                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
+                                        <span class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
+                                    </div>
+                                </th:block>
+
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
                                     <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
                                         <a href="#" th:id="'select'+${metadata.id}">
