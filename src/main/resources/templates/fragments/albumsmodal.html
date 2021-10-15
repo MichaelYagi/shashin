@@ -180,49 +180,54 @@
             <div class="modal-body">
                 <input type="hidden" th:id="'currentCommentId'+${album.id}" th:name="'currentCommentId'+${album.id}">
                 <script type="text/javascript">
-                    function deleteComment(commentId,albumId) {
+                    (function( albumsCommentsSettings, $, undefined ) {
+                        albumsCommentsSettings.deleteComment = function(commentId, albumId) {
 
-                        let json = {commentId: commentId}
+                            let json = {commentId: commentId}
 
-                        const posting = $.post({
-                            url: "/comment/album/delete/",
-                            data: JSON.stringify(json),
-                            contentType: 'application/json; charset=utf-8'
-                        });
+                            const posting = $.post({
+                                url: "/comment/album/delete/",
+                                data: JSON.stringify(json),
+                                contentType: 'application/json; charset=utf-8'
+                            });
 
-                        posting.done(function (data) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                                let commentId = data["commentId"];
-                                let message = "Error";
-                                if (data["status"] === "success") {
-                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            posting.done(function (data) {
+                                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                                    let commentId = data["commentId"];
+                                    let message = "Error";
+                                    if (data["status"] === "success") {
+                                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
 
-                                    // Delete comment
-                                    $("#comment"+commentId).remove();
-                                } else {
-                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                        // Delete comment
+                                        $("#comment"+commentId).remove();
+                                    } else {
+                                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                    }
                                 }
-                            }
-                        });
+                            });
 
-                        $("#currentCommentId"+albumId).val("");
-                    }
-
-                    function editComment(albumId,commentId) {
-                        if ($("#currentCommentId"+albumId).val() === "") {
-                            $("#currentCommentId"+albumId).val(commentId);
-
-                            $("#saveCommentAlbum"+albumId).hide();
-                            $("#dismissModalCommentAlbum"+albumId).hide();
-                            $("#updateCommentAlbum"+albumId).show();
-                            $("#cancelEditCommentAlbum"+albumId).show();
-
-                            $("#commentcontainer"+commentId).hide();
-                            $("#textareacontainer"+commentId).show();
-                            var commentText = $("#commentcontent"+commentId).text();
-                            $("#textareacontainer"+commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
+                            $("#currentCommentId"+albumId).val("");
                         }
-                    }
+
+                        albumsCommentsSettings.editComment = function(albumId,commentId) {
+                            if ($("#currentCommentId"+albumId).val() === "") {
+                                $("#currentCommentId"+albumId).val(commentId);
+
+                                $("#saveCommentAlbum"+albumId).hide();
+                                $("#dismissModalCommentAlbum"+albumId).hide();
+                                $("#updateCommentAlbum"+albumId).show();
+                                $("#cancelEditCommentAlbum"+albumId).show();
+
+                                $("#commentcontainer"+commentId).hide();
+                                $("#textareacontainer"+commentId).show();
+                                var commentText = $("#commentcontent"+commentId).text();
+                                $("#textareacontainer"+commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
+                            }
+                        }
+                    }( window.albumsCommentsSettings = window.albumsCommentsSettings || {}, jQuery ));
+
+
+
                 </script>
                 <ul class="list-group" th:id="'commentList'+${album.id}">
                     <th:block th:if="${albumCommentsMap != ''}" th:each="comments: ${albumsCommentsMap.get(album.id)}">
@@ -245,12 +250,12 @@
                                 /*<![CDATA[*/
                                 $("#deletecomment[[${comments.get('commentId')}]]").click(function(e) {
                                     e.preventDefault();
-                                    deleteComment([[${comments.get('commentId')}]],[[${album.id}]]);
+                                    albumsCommentsSettings.deleteComment([[${comments.get('commentId')}]],[[${album.id}]]);
                                 });
 
                                 $("#editcomment[[${comments.get('commentId')}]]").click(function(e) {
                                     e.preventDefault();
-                                    editComment([[${album.id}]],[[${comments.get('commentId')}]]);
+                                    albumsCommentsSettings.editComment([[${album.id}]],[[${comments.get('commentId')}]]);
                                 });
                                 /*]]>*/
                             </script>
@@ -392,12 +397,12 @@
 
                                 $("#deletecomment"+commentId).click(function(e) {
                                     e.preventDefault();
-                                    deleteComment(commentId,[[${album.id}]]);
+                                    albumsCommentsSettings.deleteComment(commentId,[[${album.id}]]);
                                 });
 
                                 $("#editcomment"+commentId).click(function(e) {
                                     e.preventDefault();
-                                    editComment([[${album.id}]],commentId);
+                                    albumsCommentsSettings.editComment([[${album.id}]],commentId);
                                 });
                             }
                         });
