@@ -136,30 +136,35 @@
 </div>
 
 <script type="text/javascript">
-    let map = null;
-    let layer = null;
-    let feature = null;
+    (function( timelineModal, $, undefined ) {
+        timelineModal.map = null;
+        timelineModal.layer = null;
+        timelineModal.feature = null;
 
-    function toggleTagPeopleDropdown(metadataId) {
-        $("#tagpeopledropdown"+metadataId).dropdown('toggle')
-    }
-
-    function closeTagPeopleDropdown(metadataId) {
-        $("#tagpeopledropdown"+metadataId).dropdown('hide')
-    }
-
-    function populateLabel(metadataId) {
-        var checkedBoxes = $('input[name="recognitionLabel'+metadataId+'[]"]:checked')
-        var labelString = ""
-        checkedBoxes.each(function() {
-            labelString += $(this).val() + ",";
-        });
-        if (labelString.length > 0) {
-            labelString = labelString.slice(0,-1)
+        timelineModal.toggleTagPeopleDropdown = function (metadataId) {
+            $("#tagpeopledropdown"+metadataId).dropdown('toggle')
         }
-        //
-        $("#tagpeople").val(decodeHtml(labelString));
-    }
+
+        timelineModal.closeTagPeopleDropdown = function (metadataId) {
+            $("#tagpeopledropdown"+metadataId).dropdown('hide')
+        }
+
+        timelineModal.populateLabel = function (metadataId) {
+            const checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked');
+            let labelString = "";
+
+            checkedBoxes.each(function() {
+                labelString += $(this).val() + ",";
+            });
+
+            if (labelString.length > 0) {
+                labelString = labelString.slice(0,-1)
+            }
+
+            $("#tagpeople").val(decodeHtml(labelString));
+        }
+
+    }( window.timelineModal = window.timelineModal || {}, jQuery ));
 
     $("#saveMetadata").click(function (e) {
         e.preventDefault();
@@ -167,9 +172,9 @@
         $("#timelineModalStatus").css("visibility","visible");
         var metadataId = $("#metadataId").val();
 
-        closeTagPeopleDropdown(metadataId);
+        timelineModal.closeTagPeopleDropdown(metadataId);
 
-        if (validateMetadataInputs(
+        if (timelineSettings.validateMetadataInputs(
             $("#dayTaken").val(),
             $("#monthTaken").val(),
             $("#yearTaken").val(),
@@ -217,14 +222,14 @@
                         // window.top.location = window.top.location
 
                         // Update tag
-                        var metadataObj = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
+                        const metadataObj = JSON.parse($("#timelineModalEdit" + metadataId).attr("tag"));
                         metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
                         metadataObj.year = $("#yearTaken").val()
                         metadataObj.month = $("#monthTaken").val()
                         metadataObj.day = $("#dayTaken").val()
                         metadataObj.time = $("#timeTaken").val()
                         metadataObj.timeZone = $("#offsetTaken").val()
-                        var latlngArray = $("#latlng").val().split(",")
+                        const latlngArray = $("#latlng").val().split(",");
                         metadataObj.lat = $.trim(latlngArray[0])
                         metadataObj.lng = $.trim(latlngArray[1])
                         if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
@@ -240,10 +245,10 @@
 
                         const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
                             "offcanvas_undated" : "offcanvas_"+metadataObj.year+'-'+metadataObj.month+'-'+metadataObj.day;
-                        refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
+                        timelineSettings.refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
 
                         if (metadataObj.hidden === false) {
-                            populateDetailsTab(metadataObj)
+                            timelineSettings.populateDetailsTab(metadataObj)
                             $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
 
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
@@ -367,12 +372,12 @@
             $("#mapTabMessage").text(metadata.placeName);
             $("#mapTabMessage").wrapInner('<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" class="bi-pin-fill" style="text-decoration: none;"></a>');
 
-            if (map === null) {
+            if (timelineModal.map === null) {
                 var attribution = new ol.control.Attribution({
                     collapsible: false
                 });
 
-                map = new ol.Map({
+                timelineModal.map = new ol.Map({
                     controls: new ol.control.defaults({ attributionOptions: { collapsible: true } }),
                     layers: [
                         new ol.layer.Tile({
@@ -389,14 +394,14 @@
                 });
             }
 
-            if (layer !== null && feature !== null) {
-                layer.getSource().clear();
+            if (timelineModal.layer !== null && timelineModal.feature !== null) {
+                timelineModal.layer.getSource().clear();
             }
 
-            map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
-            map.getView().setZoom(15);
+            timelineModal.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+            timelineModal.map.getView().setZoom(15);
 
-            feature = new ol.Feature({
+            timelineModal.feature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.fromLonLat([metadata.lng, metadata.lat])),
                 name: metadata.title
             });
@@ -414,18 +419,18 @@
                     offset: [0, 0]
                 })
             });
-            feature.setStyle(styleIcon);
-            layer = new ol.layer.Vector({
+            timelineModal.feature.setStyle(styleIcon);
+            timelineModal.layer = new ol.layer.Vector({
                 source: new ol.source.Vector({
-                    features: [feature]
+                    features: [timelineModal.feature]
                 })
             });
-            map.addLayer(layer);
+            timelineModal.map.addLayer(timelineModal.layer);
 
             setTimeout(fixContentHeight, 1000);
         } else {
-            if (layer !== null && feature !== null) {
-                layer.getSource().clear();
+            if (timelineModal.layer !== null && timelineModal.feature !== null) {
+                timelineModal.layer.getSource().clear();
             }
             $("#map").css("display","none");
             $("#mapTabMessage > .wrapper").contents().unwrap();
@@ -441,7 +446,7 @@
         var content = $("div[data-role='content']:visible:visible");
         var contentHeight = viewHeight - header.outerHeight() - navbar.outerHeight();
         content.height(contentHeight);
-        map.updateSize();
+        timelineModal.map.updateSize();
     }
 
     $("#generalTabLink").click(function (e) {
@@ -452,7 +457,7 @@
     $("#isobject").click(function (e) {
         var metadataId = $("#metadataId").val();
 
-        closeTagPeopleDropdown(metadataId);
+        timelineModal.closeTagPeopleDropdown(metadataId);
         if($(this).prop("checked") === true) {
             $("#tagpeople").val("");
         }
@@ -462,7 +467,7 @@
         e.preventDefault();
 
         var metadataId = $("#metadataId").val();
-        closeTagPeopleDropdown(metadataId);
+        timelineModal.closeTagPeopleDropdown(metadataId);
     });
 </script>
 

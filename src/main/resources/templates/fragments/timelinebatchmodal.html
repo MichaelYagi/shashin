@@ -36,15 +36,15 @@
                         <div class="col-sm">
                             <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" onfocus="return closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+                                <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
 
                                 <th:block th:if="${recognitionLabels != ''}">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" onclick="return toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+                                        <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu" id="albumNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
-                                                    <input type="checkbox" onclick="return populateBatchLabel();" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
+                                                    <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
                                                     <label th:for="${recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
                                                 </button>
                                             </th:block>
@@ -88,44 +88,32 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
-                function toggleBatchTagPeopleDropdown() {
-                    $("#tagpeopledropdown").dropdown('toggle');
-                }
+                (function( timelineBatchModal, $, undefined ) {
 
-                function closeBatchTagPeopleDropdown() {
-                    $("#tagpeopledropdown").dropdown('hide');
-                }
-
-                function populateBatchLabel() {
-                    var checkedBoxes = $('input[name="recognitionLabel[]"]:checked')
-                    var labelString = ""
-                    checkedBoxes.each(function() {
-                        labelString += $(this).val() + ",";
-                    });
-                    if (labelString.length > 0) {
-                        labelString = labelString.slice(0,-1)
+                    timelineBatchModal.toggleBatchTagPeopleDropdown = function() {
+                        $("#tagpeopledropdown").dropdown('toggle');
                     }
-                    $("#tagBatchDataInput").val(decodeHtml(labelString));
-                }
 
-                $.fn.serializeObject = function() {
-                    var o = {};
-                    var a = this.serializeArray();
-                    $.each(a, function() {
-                        if (o[this.name]) {
-                            if (!o[this.name].push) {
-                                o[this.name] = [o[this.name]];
-                            }
-                            o[this.name].push(this.value || '');
-                        } else {
-                            o[this.name] = this.value || '';
+                    timelineBatchModal.closeBatchTagPeopleDropdown = function() {
+                        $("#tagpeopledropdown").dropdown('hide');
+                    }
+
+                    timelineBatchModal.populateBatchLabel = function() {
+                        var checkedBoxes = $('input[name="recognitionLabel[]"]:checked')
+                        var labelString = ""
+                        checkedBoxes.each(function() {
+                            labelString += $(this).val() + ",";
+                        });
+                        if (labelString.length > 0) {
+                            labelString = labelString.slice(0,-1)
                         }
-                    });
-                    return o;
-                };
+                        $("#tagBatchDataInput").val(decodeHtml(labelString));
+                    }
+
+                }( window.timelineBatchModal = window.timelineBatchModal || {}, jQuery ));
 
                 $("#batchisobject").click(function (e) {
-                    closeBatchTagPeopleDropdown();
+                    timelineBatchModal.closeBatchTagPeopleDropdown();
                     if($(this).prop("checked") === true) {
                         $("#tagBatchDataInput").val("");
                     }
@@ -135,9 +123,9 @@
                     e.preventDefault();
                     $("#msgBatchMetadata").html("");
                     $("#timelineBatchModalStatus").css("visibility","visible");
-                    closeBatchTagPeopleDropdown();
+                    timelineBatchModal.closeBatchTagPeopleDropdown();
 
-                    if (validateMetadataInputs(
+                    if (timelineSettings.validateMetadataInputs(
                         $("#dayTakenBatchData").val(),
                         $("#monthTakenBatchData").val(),
                         $("#yearTakenBatchData").val(),
@@ -217,7 +205,7 @@
                                 }
                                 const offCanvasId = ($("#dayTakenBatchData").val() == null || $("#dayTakenBatchData").val() === "" || $("#monthTakenBatchData").val() == null || $("#monthTakenBatchData").val() === "" || $("#yearTakenBatchData").val() == null || $("#yearTakenBatchData").val() == "") ?
                                     "offcanvas_undated" : "offcanvas_"+$("#yearTakenBatchData").val()+'-'+$("#monthTakenBatchData").val()+'-'+$("#dayTakenBatchData").val();
-                                refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
+                                timelineSettings.refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
 
                                 $("#msgBatchMetadata").html(message);
                                 clearTimelineSelection();
