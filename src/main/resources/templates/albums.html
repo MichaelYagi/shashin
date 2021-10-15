@@ -10,7 +10,6 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
-            <div th:replace="fragments/appjs :: appjs()"></div>
             <div id="albumsMessage"></div>
 
             <th:block th:if="${albumsList != '' and albumsCount != ''}">

@@ -55,7 +55,6 @@
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
             
             <div id="infinite-scroll-gallery">
-                <div th:replace="fragments/appjs :: appjs()"></div>
                 <div th:replace="fragments/timelinejs :: timelinejs(${queryLimit})"></div>
                 <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
 
