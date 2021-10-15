@@ -10,6 +10,7 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/appjs :: appjs()"></div>
             <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
             <button class="btn btn-danger" id="deleteThread">Delete Thread</button>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
@@ -42,9 +43,8 @@
         });
 
         // Web socket
-        var stompClient = null;
-        var scanInProgress = false;
-        var showDebug = false;
+        let stompClient = null;
+        let scanInProgress = false;
 
         connect();
 
@@ -63,25 +63,25 @@
         function connect() {
             var socket = new SockJS('/websocket-endpoint');
             stompClient = Stomp.over(socket);
-            if (showDebug === false) {
+            if (shashin.showDebug === false) {
                 stompClient.debug = null
             }
 
-            // console.log("Socket Connecting");
+            shashin.printMessageToConsole("Socket Connecting");
 
             stompClient.connect({}, function() {
                 if (scanInProgress === false) {
                     matchRefresh();
                 }
-                // console.log( "Connected STOMP client");
+                shashin.printMessageToConsole( "Connected STOMP client");
                 this.subscribe("/topic/matchmessages", function (message) {
                     let respMessage = JSON.parse(message.body).content;
-                    // console.log("respMessage: "+message);
+                    shashin.printMessageToConsole("respMessage: "+message);
                     showMessage(respMessage);
                 });
             }, function(e) {
-                // console.log( "connect() error" );
-                // console.log( e );
+                shashin.printMessageToConsole( "connect() error" );
+                shashin.printMessageToConsole( e );
                 // showMessage("Socket connection error: " + e.toString())
                 showMessage("Oops, something went wrong!")
                 scanInProgress = false;
@@ -92,7 +92,7 @@
             if (stompClient !== null) {
                 stompClient.disconnect();
             }
-            // console.log("Disconnected");
+            shashin.printMessageToConsole("Disconnected");
         }
 
         function sendMessage() {

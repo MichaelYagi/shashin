@@ -123,8 +123,8 @@
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
-                                $("#albumModalEdit[[${metadata.id}]]").attr("tag", decodeHtml("[[${metadata}]]"));
-                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                $("#albumModalEdit[[${metadata.id}]]").attr("tag", shashin.decodeHtml("[[${metadata}]]"));
+                                shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                                 albumModal.renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
                                 albumSettings.activateAlbumListeners("[[${metadata}]]","[[${album}]]")
                                 /*]]>*/
@@ -230,7 +230,7 @@
         if (typeof albumSettings.lg !== "undefined") {
             albumSettings.lg.refresh(mediaContentList);
             albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-                jumpToLightGalleryIndex(e.detail.index);
+                shashin.jumpToLightGalleryIndex(e.detail.index);
             })
         }
 
@@ -285,7 +285,7 @@
                         mediaContentList = mediaContentList.concat(additionalMediaContentList);
                         albumSettings.lg.refresh(mediaContentList);
                         albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function (e) {
-                            jumpToLightGalleryIndex(e.detail.index);
+                            shashin.jumpToLightGalleryIndex(e.detail.index);
                         })
                     }
                 });
@@ -308,12 +308,12 @@
             }
         }, 200);
         $("#container").on('scroll', function() {
-            if (albumId > 0 && atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
+            if (albumId > 0 && shashin.atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
         $("main").on('scroll', function() {
-            if (albumId > 0 && atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
+            if (albumId > 0 && shashin.atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })

@@ -12,7 +12,7 @@
                 url: "/share/[[${shareLink}]]/album/"+albumId+"/"+nextPage,
                 contentType: 'application/json; charset=utf-8'
             }).fail(function (xhr, textStatus) {
-                printMessageToConsole("AJAX error updating share album. Attempt: "+shareAlbumSettings.tryCount+"/"+shareAlbumSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                shashin.printMessageToConsole("AJAX error updating share album. Attempt: "+shareAlbumSettings.tryCount+"/"+shareAlbumSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
                 if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                     shareAlbumSettings.tryCount++;
@@ -32,7 +32,7 @@
                             for (var index in albumMetadataList) {
                                 var metadata = albumMetadataList[index];
 
-                                let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                                 var html =
                                     '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
@@ -76,8 +76,8 @@
                                 $(html).insertBefore($(".appendAlbumPhotos").last())
 
                                 // Call JS and modal
-                                var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                                setPhotoOverlays(htmlEncodedMetadata, activePage);
+                                var htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
+                                shashin.setPhotoOverlays(htmlEncodedMetadata, activePage);
                             }
                         } else {
                             $(".appendAlbumPhotos").last().text("EOL").css("display","none")

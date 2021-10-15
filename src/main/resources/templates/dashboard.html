@@ -240,7 +240,7 @@
     });
 
     ctx = $('#cameraChart');
-    const cameraCounts = JSON.parse(decodeHtml('[[${cameraCountJson}]]'));
+    const cameraCounts = JSON.parse(shashin.decodeHtml('[[${cameraCountJson}]]'));
     const cameraChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -372,15 +372,15 @@
     function connect() {
         const socket = new SockJS('/websocket-endpoint');
         stompClient = Stomp.over(socket);
-        if (showDebug === false) {
+        if (shashin.showDebug === false) {
             stompClient.debug = null
         }
 
-        printMessageToConsole("Socket Connecting");
+        shashin.printMessageToConsole("Socket Connecting");
 
         stompClient.connect({}, function() {
             scanRefresh();
-            printMessageToConsole( "Connected STOMP client");
+            shashin.printMessageToConsole( "Connected STOMP client");
 
             this.subscribe("/topic/statmessages", function (message) {
                 let respMessageJsonString = JSON.parse(message.body).content;
@@ -388,17 +388,17 @@
 
                 const processCpuLoadPercent = Math.ceil(systemStats["processCpuLoadPercentDouble"]*100)|0;
                 const processCpuLoadData = ~~processCpuLoadPercent;
-                printMessageToConsole("processCpuLoadData: "+processCpuLoadData);
+                shashin.printMessageToConsole("processCpuLoadData: "+processCpuLoadData);
 
                 const systemCpuLoadPercent = Math.ceil(systemStats["systemCpuLoadPercentDouble"]*100)|0;
                 const systemCpuLoadData = ~~systemCpuLoadPercent
-                printMessageToConsole("systemCpuLoadData: "+systemCpuLoadData);
+                shashin.printMessageToConsole("systemCpuLoadData: "+systemCpuLoadData);
 
                 const memoryUsedPercent = Math.ceil(systemStats["usedHeapMemoryGB"]/systemStats["maxHeapMemoryGB"]*100)|0;
                 const memoryUsedData = ~~memoryUsedPercent
-                printMessageToConsole("usedHeapMemoryGB: "+systemStats["usedHeapMemoryGB"]);
-                printMessageToConsole("maxHeapMemoryGB: "+systemStats["maxHeapMemoryGB"]);
-                printMessageToConsole("memoryUsedData: "+memoryUsedData);
+                shashin.printMessageToConsole("usedHeapMemoryGB: "+systemStats["usedHeapMemoryGB"]);
+                shashin.printMessageToConsole("maxHeapMemoryGB: "+systemStats["maxHeapMemoryGB"]);
+                shashin.printMessageToConsole("memoryUsedData: "+memoryUsedData);
 
                 if (elapsedMS >= maxElapsedMS && elapsedMS % intervalMS === 0) {
                     removeData(cpuChart);
@@ -409,10 +409,10 @@
                     addData(cpuChart, null, systemCpuLoadData, 1)
                     addData(memoryChart, systemStats["timestamp"], memoryUsedData, 0)
                 }
-                printMessageToConsole("Message:"+respMessageJsonString);
+                shashin.printMessageToConsole("Message:"+respMessageJsonString);
             });
         }, function(e) {
-            printMessageToConsole("Socket connection error: " + e.toString())
+            shashin.printMessageToConsole("Socket connection error: " + e.toString())
         });
     }
 
@@ -420,14 +420,14 @@
         if (stompClient !== null) {
             stompClient.disconnect();
         }
-        printMessageToConsole("Disconnected");
+        shashin.printMessageToConsole("Disconnected");
     }
 
     function sendMessage() {
         if (stompClient !== null) {
             stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
         } else {
-            printMessageToConsole("Trying to send message but STOMP client is null")
+            shashin.printMessageToConsole("Trying to send message but STOMP client is null")
         }
     }
 </script>

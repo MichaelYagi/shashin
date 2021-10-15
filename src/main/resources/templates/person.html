@@ -107,7 +107,7 @@
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
-                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                                 personModalSettings.renderPersonModal("[[${metadata}]]","[[${recognitionLabels}]]","[[${labelPhotoMap.get(metadata.id).get('labels')}]]");
                                 /*]]>*/
                             </script>
@@ -128,14 +128,14 @@
         const $infiniteScrollGallery = document.getElementById(
             'infinite-scroll-gallery'
         );
-        const lightGalleryConfigs = getLightGalleryConfigs();
+        const lightGalleryConfigs = shashin.getLightGalleryConfigs();
         lightGalleryConfigs["selector"] = '.mediaLink';
         var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
         $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-            jumpToLightGalleryIndex(e.detail.index);
+            shashin.jumpToLightGalleryIndex(e.detail.index);
         })
 
-        matchingListeners()
+        shashin.matchingListeners()
 
         $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip()

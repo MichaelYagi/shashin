@@ -5,10 +5,10 @@
 <script type="text/javascript">
     (function( albumModal, $, undefined ) {
         albumModal.renderAlbumModal = function (rawAlbumData,rawMetadata,rawCurrentUser,rawAlbumPhotoCommentsMap) {
-            const albumData = JSON.parse(decodeHtml(rawAlbumData));
-            const metadata = JSON.parse(decodeHtml(rawMetadata));
-            const currentUser = JSON.parse(decodeHtml(rawCurrentUser));
-            const albumPhotoCommentsMap = rawAlbumPhotoCommentsMap !== '' ? JSON.parse(decodeHtml(rawAlbumPhotoCommentsMap)) : {};
+            const albumData = JSON.parse(shashin.decodeHtml(rawAlbumData));
+            const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
+            const currentUser = JSON.parse(shashin.decodeHtml(rawCurrentUser));
+            const albumPhotoCommentsMap = rawAlbumPhotoCommentsMap !== '' ? JSON.parse(shashin.decodeHtml(rawAlbumPhotoCommentsMap)) : {};
 
             let html =
                 '<div class="modal fade" id="propalbumphotocomment' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true">\n' +

@@ -86,7 +86,7 @@
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
-                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                                 /*]]>*/
                             </script>
 
@@ -118,7 +118,7 @@
         if (typeof favoritesSettings.lg !== "undefined") {
             favoritesSettings.lg.refresh(mediaContentList);
             favoritesSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-                jumpToLightGalleryIndex(e.detail.index);
+                shashin.jumpToLightGalleryIndex(e.detail.index);
             })
         }
 
@@ -135,7 +135,7 @@
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
                     favoritesSettings.lg.refresh(mediaContentList);
                     favoritesSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-                        jumpToLightGalleryIndex(e.detail.index);
+                        shashin.jumpToLightGalleryIndex(e.detail.index);
                     })
                 }
             });
@@ -156,12 +156,12 @@
             }
         }, 200);
         $("#container").on('scroll', function() {
-            if (atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+            if (shashin.atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
         $("main").on('scroll', function() {
-            if (atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+            if (shashin.atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })

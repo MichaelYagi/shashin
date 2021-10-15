@@ -4,7 +4,7 @@
 <script type="text/javascript">
     (function( timelineSettings, $, undefined ) {
         timelineSettings.lightGalleryEl = document.getElementById('infinite-scroll-gallery');
-        timelineSettings.lightGalleryConfigs = getLightGalleryConfigs();
+        timelineSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
         timelineSettings.lightGalleryConfigs["selector"] = '.mediaLink';
         timelineSettings.lg = lightGallery(timelineSettings.lightGalleryEl, timelineSettings.lightGalleryConfigs);
         timelineSettings.enableScrollSpy = true;
@@ -37,7 +37,7 @@
                 contentType: 'application/json; charset=utf-8',
                 async:true
             }).fail(function (xhr, textStatus) {
-                printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
                 if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                     timelineSettings.tryCount++;
@@ -98,7 +98,7 @@
                         try {
                             timelineSettings.lg.$container.remove();
                         } catch (e) {
-                            printMessageToConsole(e)
+                            shashin.printMessageToConsole(e)
                         }
 
                         timelineSettings.lg = null;
@@ -146,8 +146,8 @@
             timelineSettings.scrollDirection = "down";
             timelineSettings.enableScrollSpy = false;
 
-            printMessageToConsole("jumpToTimelineToc anchor:"+anchor);
-            printMessageToConsole("jumpToTimelineToc mediaTypeFilter:"+mediaTypeFilter);
+            shashin.printMessageToConsole("jumpToTimelineToc anchor:"+anchor);
+            shashin.printMessageToConsole("jumpToTimelineToc mediaTypeFilter:"+mediaTypeFilter);
 
             timelineSettings.renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
@@ -345,8 +345,8 @@
             let depthDown = queryLimit;
             let depthUp = queryLimit;
 
-            printMessageToConsole("scrollSpeedInpxPerMs:"+timelineSettings.scrollSpeedInpxPerMs);
-            printMessageToConsole("scrollDirection:"+timelineSettings.scrollDirection);
+            shashin.printMessageToConsole("scrollSpeedInpxPerMs:"+timelineSettings.scrollSpeedInpxPerMs);
+            shashin.printMessageToConsole("scrollDirection:"+timelineSettings.scrollDirection);
 
             // If velocity of scroll is really fast, add padding to # of results
             if (timelineSettings.scrollSpeedInpxPerMs > 5 || timelineSettings.scrollSpeedInpxPerMs < -5) {
@@ -357,19 +357,18 @@
                 }
             }
 
-            printMessageToConsole("depthDown:"+depthDown);
-            printMessageToConsole("depthUp:"+depthUp);
-
-            printMessageToConsole("renderThumbnails id:"+id);
+            shashin.printMessageToConsole("depthDown:"+depthDown);
+            shashin.printMessageToConsole("depthUp:"+depthUp);
+            shashin.printMessageToConsole("renderThumbnails id:"+id);
 
             let offCanvasId = $("#offcanvas_"+id);
 
             // Remove elements that are not visible
             let prevElementId = "";
             $('section').each(function(index, element) {
-                printMessageToConsole(element.id + " checking to remove beginning");
+                shashin.printMessageToConsole(element.id + " checking to remove beginning");
                 if ($("#"+element.id).length > 1 || prevElementId === element.id) {
-                    printMessageToConsole(element.id + " removed beginning");
+                    shashin.printMessageToConsole(element.id + " removed beginning");
                     $("#br"+element.id).remove();
                     $("#row"+element.id).remove();
                     $("#amp_"+element.id).remove();
@@ -409,24 +408,25 @@
                 }
             }
 
-            printMessageToConsole("attachAboveArray");
-            printMessageToConsole(attachAboveArray);
-            printMessageToConsole("attachBelowArray");
-            printMessageToConsole(attachBelowArray);
+            shashin.printMessageToConsole("attachAboveArray");
+            shashin.printMessageToConsole(attachAboveArray);
+            shashin.printMessageToConsole("attachBelowArray");
+            shashin.printMessageToConsole(attachBelowArray);
 
             // Render top
             let action = "new";
             let attachPoint = id;
             for (let index in attachAboveArray) {
                 const currentId = attachAboveArray[index];
-                printMessageToConsole("attempting to attaching id above:" + currentId);
+                shashin.printMessageToConsole("attempting to attaching id above:" + currentId);
                 if ($("#" + currentId).length === 0) {
                     if (action === "new") {
                         attachPoint = null;
                     }
-                    printMessageToConsole("attaching above attachPoint:" + attachPoint);
-                    printMessageToConsole("attaching id:" + currentId);
-                    printMessageToConsole("actionAbove:" + action)
+                    shashin.printMessageToConsole("attaching above attachPoint:" + attachPoint);
+                    shashin.printMessageToConsole("attaching id:" + currentId);
+                    shashin.printMessageToConsole("actionAbove:" + action)
+
                     timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function (msg) {
                         if (msg === "success" && $("#"+currentId).length > 0 && $("#tail_"+currentId).length > 0) {
                             timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
@@ -445,11 +445,12 @@
             // attachPoint = id;
             for (let index in attachBelowArray) {
                 const currentId = attachBelowArray[index];
-                printMessageToConsole("attempting to attaching id below:" + currentId);
+                shashin.printMessageToConsole("attempting to attaching id below:" + currentId);
                 if ($("#"+currentId).length === 0) {
-                    printMessageToConsole("attaching below attachPoint:" + attachPoint);
-                    printMessageToConsole("attaching id:" + currentId);
-                    printMessageToConsole("actionBelow:"+action)
+                    shashin.printMessageToConsole("attaching below attachPoint:" + attachPoint);
+                    shashin.printMessageToConsole("attaching id:" + currentId);
+                    shashin.printMessageToConsole("actionBelow:"+action)
+
                     timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint).then(function (msg) {
                         if (msg === "success" && $("#"+currentId).length > 0 && $("#tail_"+currentId).length > 0) {
                             timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
@@ -468,11 +469,14 @@
                 attachPoint = attachBelowArray[0];
                 action = "above";
             }
-            printMessageToConsole("attempting to attaching id mid:"+id)
+
+            shashin.printMessageToConsole("attempting to attaching id mid:"+id)
+
             if ($("#"+id).length === 0) {
-                printMessageToConsole("attaching mid attachPoint:"+attachPoint)
-                printMessageToConsole("attaching id:" + id);
-                printMessageToConsole("attaching mid action:"+action)
+                shashin.printMessageToConsole("attaching mid attachPoint:"+attachPoint)
+                shashin.printMessageToConsole("attaching id:" + id);
+                shashin.printMessageToConsole("attaching mid action:"+action)
+
                 timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint).then(function (msg) {
                     if (msg === "success" && $("#"+id).length > 0 && $("#tail_"+id).length > 0) {
                         timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
@@ -483,9 +487,10 @@
             // Remove elements that are not visible
             prevElementId = "";
             $('section').each(function(index, element) {
-                printMessageToConsole(element.id + " checking to remove end");
+                shashin.printMessageToConsole(element.id + " checking to remove end");
                 if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#"+element.id).length > 1 || prevElementId === element.id)) {
-                    printMessageToConsole(element.id + " removed end");
+                    shashin.printMessageToConsole(element.id + " removed end");
+
                     $("#br"+element.id).remove();
                     $("#row"+element.id).remove();
                     $("#amp_"+element.id).remove();
@@ -495,7 +500,7 @@
                 prevElementId = element.id;
             });
 
-            printMessageToConsole("==============================================");
+            shashin.printMessageToConsole("==============================================");
 
             deferred.resolve(timelineSettings.successMidMsg);
             return deferred.promise();
@@ -509,11 +514,10 @@
                 contentType: 'application/json; charset=utf-8',
                 async:true
             }).fail(function (xhr, textStatus) {
-                printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
                 if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                     timelineSettings.tryCount++;
                     if (timelineSettings.tryCount <= timelineSettings.retryLimit) {
-                        console.log("trying again for "+date)
                         //try again
                         timelineSettings.attachAssociatedMetadata(date,mediaTypeFilter);
                     }
@@ -593,7 +597,7 @@
                                         html =
                                             '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
                                             'data-metadataid="'+metadata.id+'" ' +
-                                            'data-video="'+encodeHtml(mediaContent.video)+'" ';
+                                            'data-video="'+shashin.encodeHtml(mediaContent.video)+'" ';
                                         if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                             html +=
@@ -603,7 +607,7 @@
                                                 'data-width="'+metadata.originalImageWidth+'" ';
                                         }
                                         html +=
-                                            'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
+                                            'data-sub-html="'+shashin.encodeHtml(mediaContent.subHtml)+'">' +
                                             '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                             '</a>';
 
@@ -622,7 +626,7 @@
                                                 'data-width="'+metadata.originalImageWidth+'" ';
                                         }
                                         html +=
-                                            'data-sub-html="'+encodeHtml(mediaContent.subHtml)+'">' +
+                                            'data-sub-html="'+shashin.encodeHtml(mediaContent.subHtml)+'">' +
                                             '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                             '</a>';
                                     }
@@ -674,8 +678,8 @@
                                         }
                                     }
 
-                                    const htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                                    setPhotoOverlays(htmlEncodedMetadata, "timeline")
+                                    const htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
+                                    shashin.setPhotoOverlays(htmlEncodedMetadata, "timeline")
                                     timelineSettings.activateMetadataListeners(htmlEncodedMetadata);
                                 }
                             }
@@ -692,7 +696,7 @@
                 contentType: 'application/json; charset=utf-8',
                 async: false
             }).fail(function (xhr, textStatus) {
-                printMessageToConsole("AJAX error updating timeline. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                shashin.printMessageToConsole("AJAX error updating timeline. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
                 if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                     timelineSettings.tryCount++;
                     if (timelineSettings.tryCount <= timelineSettings.retryLimit) {
@@ -717,7 +721,7 @@
                             if (metadataList.length > 0) {
                                 let html = "";
 
-                                let dateString = getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
+                                let dateString = shashin.getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
 
                                 let idCheck = "undated";
                                 if (metadataList[0]["year"] === null ||
@@ -903,7 +907,7 @@
         }
 
         timelineSettings.activateMetadataListeners = function(rawMetadata) {
-            const metadata = JSON.parse(decodeHtml(rawMetadata));
+            const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
 
             $("#image"+metadata.id).on('load', function() {
                 $(this).css("background-color","transparent");
@@ -991,7 +995,7 @@
                 latlng = $.trim(latlng);
                 var latlngArr = latlng.split(",");
 
-                if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !isNumeric(latlngArr[0]) || !isNumeric(latlngArr[1])) {
+                if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !shashin.isNumeric(latlngArr[0]) || !shashin.isNumeric(latlngArr[1])) {
                     msg = "Enter Valid Latitude/Longitude";
                 }
             }
@@ -1014,7 +1018,6 @@
             !$target.closest('#timelineTocToggle').length &&
             $("#offcanvasToc").css("visibility") === "visible")
         {
-            console.log("testzz")
             $("#offcanvasTocCloseButton").click();
         }
     });

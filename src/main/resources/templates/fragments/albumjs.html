@@ -6,7 +6,7 @@
         albumSettings.infiniteScrollGallery = document.getElementById(
             'infinite-scroll-gallery',
         );
-        albumSettings.lightGalleryConfigs = getLightGalleryConfigs();
+        albumSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
         albumSettings.lightGalleryConfigs["dynamic"] = true;
         albumSettings.lg = lightGallery(albumSettings.infiniteScrollGallery, albumSettings.lightGalleryConfigs);
         albumSettings.retryLimit = 3;
@@ -51,7 +51,7 @@
                 contentType: 'application/json; charset=utf-8',
                 async:true
             }).fail(function (xhr, textStatus) {
-                printMessageToConsole("AJAX error updating album. Attempt: "+albumSettings.tryCount+"/"+albumSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                shashin.printMessageToConsole("AJAX error updating album. Attempt: "+albumSettings.tryCount+"/"+albumSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
                 if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                     albumSettings.tryCount++;
@@ -67,33 +67,33 @@
                     let message = "Error";
                     if (data["status"] === "success") {
                         if (data.hasOwnProperty("album") && data.hasOwnProperty("albumMetadataList") && data.hasOwnProperty("albumPhotoCommentsMap") && data.hasOwnProperty("currentUser") && data.hasOwnProperty("notificationMap")) {
-                            var albumData = data["album"] === "" ? null : data["album"];
-                            var albumMetadataList = data["albumMetadataList"] === "" ? null : data["albumMetadataList"];
-                            var albumPhotoCommentsMap = data["albumPhotoCommentsMap"] === "" ? null : data["albumPhotoCommentsMap"];
-                            var currentUser = data["currentUser"] === "" ? null : data["currentUser"];
-                            var notificationMap = data["notificationMap"] === "" ? null : data["notificationMap"];
-                            var favoritesMap = data["favorites"] === "" ? null : data["favorites"];
+                            const albumData = data["album"] === "" ? null : data["album"];
+                            const albumMetadataList = data["albumMetadataList"] === "" ? null : data["albumMetadataList"];
+                            const albumPhotoCommentsMap = data["albumPhotoCommentsMap"] === "" ? null : data["albumPhotoCommentsMap"];
+                            const currentUser = data["currentUser"] === "" ? null : data["currentUser"];
+                            const notificationMap = data["notificationMap"] === "" ? null : data["notificationMap"];
+                            const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
 
-                            // console.log(albumData);
-                            // console.log(albumMetadataList);
-                            // console.log(albumPhotoCommentsMap);
-                            // console.log(currentUser);
-                            // console.log(albumMetadataList.length);
+                            shashin.printMessageToConsole(albumData);
+                            shashin.printMessageToConsole(albumMetadataList);
+                            shashin.printMessageToConsole(albumPhotoCommentsMap);
+                            shashin.printMessageToConsole(currentUser);
+                            shashin.printMessageToConsole(albumMetadataList.length);
 
                             if (albumMetadataList.length > 0) {
-                                var mediaLinkLength = $(".mediaLink").length;
-                                for (var index in albumMetadataList) {
+                                const mediaLinkLength = $(".mediaLink").length;
+                                for (const index in albumMetadataList) {
                                     const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                                    var mediaContent = {}
-                                    var metadata = albumMetadataList[index];
+                                    const mediaContent = {};
+                                    const metadata = albumMetadataList[index];
 
-                                    let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
-                                    var favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                    var favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                                    let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                    const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                    const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                                    var html =
-                                        '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
-                                        '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
+                                    let html =
+                                        '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
+                                        '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
                                         '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n';
                                     if (metadata.type.includes("video")) {
                                         const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
@@ -171,13 +171,13 @@
                                     $(html).insertBefore($(".appendAlbumPhotos").last())
 
                                     // Call JS and modal
-                                    var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                                    var htmlEncodedAlbumData = encodeHtml(JSON.stringify(albumData));
-                                    var htmlEncodedCurrentUser = encodeHtml(JSON.stringify(currentUser));
-                                    var htmlEncodedalbumPhotoCommentsMap = encodeHtml(JSON.stringify(albumPhotoCommentsMap));
+                                    var htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
+                                    var htmlEncodedAlbumData = shashin.encodeHtml(JSON.stringify(albumData));
+                                    var htmlEncodedCurrentUser = shashin.encodeHtml(JSON.stringify(currentUser));
+                                    var htmlEncodedalbumPhotoCommentsMap = shashin.encodeHtml(JSON.stringify(albumPhotoCommentsMap));
 
                                     $("#albumModalEdit"+metadata.id).attr("tag", JSON.stringify(metadata));
-                                    setPhotoOverlays(htmlEncodedMetadata, activePage);
+                                    shashin.setPhotoOverlays(htmlEncodedMetadata, activePage);
                                     albumModal.renderAlbumModal(htmlEncodedAlbumData, htmlEncodedMetadata, htmlEncodedCurrentUser, htmlEncodedalbumPhotoCommentsMap);
                                     albumSettings.activateAlbumListeners(htmlEncodedMetadata, htmlEncodedAlbumData);
                                 }
@@ -203,8 +203,8 @@
         }
 
         albumSettings.activateAlbumListeners = function(rawMetadata,rawAlbumData) {
-            var metadata = JSON.parse(decodeHtml(rawMetadata));
-            var album = JSON.parse(decodeHtml(rawAlbumData));
+            var metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
+            var album = JSON.parse(shashin.decodeHtml(rawAlbumData));
 
             $("#image"+metadata.id).on('load', function() {
                 $(this).css("background-color","transparent");
@@ -262,8 +262,8 @@
 
                 posting.done(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                        // console.log(data["status"]);
-                        // console.log(data["msg"]);
+                        shashin.printMessageToConsole(data["status"]);
+                        shashin.printMessageToConsole(data["msg"]);
                     }
                 });
 

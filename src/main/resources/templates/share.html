@@ -88,7 +88,7 @@
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
-                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                                 /*]]>*/
                             </script>
 
@@ -110,7 +110,7 @@
         const $infiniteScrollGallery = document.getElementById(
             'infinite-scroll-gallery',
         );
-        const lightGalleryConfigs = getLightGalleryConfigs();
+        const lightGalleryConfigs = shashin.getLightGalleryConfigs();
         lightGalleryConfigs["selector"] = '.mediaLink';
         let lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
 
@@ -132,7 +132,7 @@
                         try {
                             lg.$container.remove();
                         } catch (e) {
-                            console.log(e);
+                            shashin.printMessageToConsole(e);
                         }
 
                         lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
@@ -159,7 +159,7 @@
         }, 200);
         $(window).on('scroll', function () {
             // Uset to detect near bottom
-            if (atEndOfPage() && $(".appendAlbumPhotos").last().text() !== "EOL") {
+            if (shashin.atEndOfPage() && $(".appendAlbumPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })

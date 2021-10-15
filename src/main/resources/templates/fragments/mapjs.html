@@ -6,12 +6,12 @@
 <script type="text/javascript">
     $(document).ready(function() {
         /*<![CDATA[*/
-        var mapdata = JSON.parse(decodeHtml("[[${mapdata}]]"));
+        var mapdata = JSON.parse(shashin.decodeHtml("[[${mapdata}]]"));
         var authority = "[[${authority}]]";
         /*]]>*/
 
-        const qslat = getParameterByName("lat");
-        const qslng = getParameterByName("lng");
+        const qslat = shashin.getParameterByName("lat");
+        const qslng = shashin.getParameterByName("lng");
 
         const textFill = new ol.style.Fill({
             color: '#fff',
@@ -73,8 +73,8 @@
             // Sort by number of features for radius calculation
             features.sort((a, b) => a.get('features').length > b.get('features').length ? 1 : -1);
 
-            // console.log("============================================");
-            // console.log("number of features:"+features.length);
+            shashin.printMessageToConsole("============================================");
+            shashin.printMessageToConsole("number of features:"+features.length);
 
             for (let i = features.length - 1; i >= 0; --i) {
                 feature = features[i];
@@ -89,14 +89,14 @@
                 //radius = (0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution;
                 radius = (15 * ((maxFeatureCount + jj)/maxFeatureCount));
 
-                // console.log("---------------------------");
-                // console.log("originalRadius:"+(0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution);
-                // console.log("extentWidth:"+ol.extent.getWidth(extent));
-                // console.log("extentHeight:"+ol.extent.getHeight(extent));
-                // console.log("resolution:"+resolution);
-                // console.log("Feature count:"+jj);
-                // console.log("maxFeatureCount:"+maxFeatureCount);
-                // console.log("radius: " + radius);
+                shashin.printMessageToConsole("---------------------------");
+                shashin.printMessageToConsole("originalRadius:"+(0.45 * (ol.extent.getWidth(extent) + ol.extent.getHeight(extent))) / resolution);
+                shashin.printMessageToConsole("extentWidth:"+ol.extent.getWidth(extent));
+                shashin.printMessageToConsole("extentHeight:"+ol.extent.getHeight(extent));
+                shashin.printMessageToConsole("resolution:"+resolution);
+                shashin.printMessageToConsole("Feature count:"+jj);
+                shashin.printMessageToConsole("maxFeatureCount:"+maxFeatureCount);
+                shashin.printMessageToConsole("radius: " + radius);
 
                 feature.set('radius', radius);
             }
@@ -150,7 +150,7 @@
             var mediaContentList = [];
             for (let i = originalFeatures.length - 1; i >= 0; --i) {
                 var featureProperties = originalFeatures[i].getProperties();
-                let dateString = getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
+                let dateString = shashin.getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
 
                 var mediaContent = {
                     func: editLocation,
@@ -182,7 +182,7 @@
                 try {
                     dynamicGallery.$container.remove();
                 } catch(e) {
-                    console.log(e);
+                    shashin.printMessageToConsole(e);
                 }
                 lightGalleryConfigs["dynamicEl"] = mediaContentList;
                 dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
@@ -209,7 +209,7 @@
             zoom: initialZoom
         });
 
-        const lightGalleryConfigs = getLightGalleryConfigs();
+        const lightGalleryConfigs = shashin.getLightGalleryConfigs();
         if (authority === "ROLE_ADMIN") {
             lightGalleryConfigs["plugins"].push(lgEditLocation);
         }
@@ -256,7 +256,7 @@
             interactions: interactions,
             layers: [
                 new ol.layer.Tile({
-                    source: getMapSource("osm"),
+                    source: shashin.getMapSource("osm"),
                     visible: true
                 })
             ],
@@ -333,7 +333,7 @@
             $("#progressBar").attr("aria-valuenow",String(parseInt(currentProgress)));
             const width = String(parseInt(currentProgress)) + "%";
             $("#progressBar").css("width",width);
-            //console.log(currentProgress);
+            shashin.printMessageToConsole(currentProgress);
         }
         $("#progressBarWrapper").css("visibility","hidden");
 
@@ -362,12 +362,6 @@
                 this.getTargetElement().style.cursor = '';
             }
         });
-
-        function decodeHtml(html) {
-            var txt = document.createElement("textarea");
-            txt.innerHTML = html;
-            return txt.value;
-        }
 
         $("#propMetadataLocation").on('hide.bs.modal', function () {
             $(this).find(':input').val('');

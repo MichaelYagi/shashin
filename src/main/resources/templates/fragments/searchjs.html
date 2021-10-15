@@ -6,7 +6,7 @@
         searchSettings.infiniteScrollGallery = document.getElementById(
             'scroll-gallery',
         );
-        searchSettings.lightGalleryConfigs = getLightGalleryConfigs();
+        searchSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
         searchSettings.lightGalleryConfigs["dynamic"] = true;
         searchSettings.lg = lightGallery(searchSettings.infiniteScrollGallery, searchSettings.lightGalleryConfigs);
         searchSettings.retryLimit = 3;
@@ -20,8 +20,8 @@
         }
 
         searchSettings.activateMetadataListeners = function (rawMetadata) {
-            const metadata = JSON.parse(decodeHtml(rawMetadata));
-            // console.log(metadata.id);
+            const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
+            shashin.printMessageToConsole(metadata.id);
 
             $("#image"+metadata.id).on('load', function() {
                 $(this).css("background-color","transparent");
@@ -35,7 +35,7 @@
                 contentType: 'application/json; charset=utf-8',
                 async:true
             }).fail(function (xhr, textStatus) {
-                printMessageToConsole("AJAX error updating search. Attempt: "+searchSettings.tryCount+"/"+searchSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                shashin.printMessageToConsole("AJAX error updating search. Attempt: "+searchSettings.tryCount+"/"+searchSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
                 if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                     searchSettings.tryCount++;
@@ -57,7 +57,7 @@
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             var mediaContent = {}
                             var metadata = metadataList[index];
-                            let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                            let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                             html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                             html +=
@@ -99,9 +99,9 @@
                             html += '</div></div>\n<span class="appendSearchPhotos" style="width:0;height:0;padding:0"></span>\n';
                             $(html).insertAfter($(".appendSearchPhotos").last())
 
-                            var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
+                            var htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
 
-                            setPhotoOverlays(htmlEncodedMetadata, activePage);
+                            shashin.setPhotoOverlays(htmlEncodedMetadata, activePage);
                             searchSettings.activateMetadataListeners(htmlEncodedMetadata);
 
                             html = "";

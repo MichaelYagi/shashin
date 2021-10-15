@@ -161,7 +161,7 @@
                 labelString = labelString.slice(0,-1)
             }
 
-            $("#tagpeople").val(decodeHtml(labelString));
+            $("#tagpeople").val(shashin.decodeHtml(labelString));
         }
 
     }( window.timelineModal = window.timelineModal || {}, jQuery ));
@@ -382,7 +382,7 @@
                     layers: [
                         new ol.layer.Tile({
                             visible: true,
-                            source: getMapSource("osm")
+                            source: shashin.getMapSource("osm")
                         })
                     ],
                     target: 'map',
