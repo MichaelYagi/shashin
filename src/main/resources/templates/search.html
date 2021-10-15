@@ -16,7 +16,6 @@
             <input type="hidden" id="currentPage" name="currentPage" value="0">
 
             <div id="scroll-gallery">
-                <div th:replace="fragments/appjs :: appjs()"></div>
                 <div th:replace="fragments/searchjs :: searchjs()"></div>
 
                 <th:block th:if="${searchTerm != '' and metadataSearchList != ''}">

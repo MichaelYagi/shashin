@@ -23,8 +23,6 @@
                 <h1 th:text="${album.name}"></h1>
                 <span id="albumId" style="display: none" th:text="${album.id}"></span>
                 <div id="infinite-scroll-gallery">
-                    <div th:replace="fragments/appjs :: appjs()"></div>
-                    <div th:replace="fragments/albumjs :: albumjs()"></div>
                     <div th:replace="fragments/albummodal :: albummodal()"></div>
 
                     <div class="row p-3">
@@ -173,52 +171,18 @@
     </div>
 </div>
 
-<!--<div class="modal fade" id="propalbumphotocomment'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true">-->
-<!--    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">-->
-<!--        <div class="modal-content">-->
-<!--            <div class="modal-header">-->
-<!--                <h5 class="modal-title" id="commentModalLabel">Comments for '+metadata.fileName+'</h5>-->
-<!--                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">-->
-<!--                    <span aria-hidden="true">&times;</span>-->
-<!--                </button>-->
-<!--            </div>-->
-<!--            <div class="modal-body">-->
-<!--                <input type="hidden" id="currentCommentId'+metadata.id+'" name="currentCommentId'+metadata.id+'">-->
-<!--                <ul class="list-group" id="commentList'+metadata.id+'">-->
-<!--                    &lt;!&ndash; Loop through comments &ndash;&gt;-->
-<!--                    <li id="comment'+comments["commentId"]+'" class="list-group-item'+(comments['userId'] === currentUser.id ? ' list-group-item-secondary' : '')+'">-->
-<!--                        <span id="commentcontainer'+comments["commentId"]+'">-->
-<!--                            <p id="commentcontent'+comments["commentId"]+'">'+comments["comment"]+'</p>-->
-<!--                            <small><strong>'+comments["username"]+'</strong><span> on '+comments["createdAt"]+'</span></small>-->
-<!--                            &lt;!&ndash; If this user commented, ability to edit &ndash;&gt;-->
-<!--                            <small><span style="float: right">-->
-<!--                                <a href="#" id="deletecomment'+comments["commentId"]+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;-->
-<!--                                <a href="#" id="editcomment'+comments["commentId"]+'"><span class="bi-pencil"></span></a>-->
-<!--                            </span></small>-->
-<!--                        </span>-->
-<!--                        <span id="textareacontainer'+comments["commentId"]+'"></span>-->
-<!--                    </li>-->
-<!--                </ul>-->
-<!--            </div>-->
-<!--            <div class="modal-footer">-->
-<!--                <textarea class="form-control" id="commentText'+metadata.id+'" rows="2"></textarea>-->
-<!--                <button type="button" class="btn btn-primary" id="saveCommentMetadata'+metadata.id+'">Save</button>-->
-<!--                <button type="button" class="btn btn-primary" id="updateCommentMetadata'+metadata.id+'">Update</button>-->
-<!--                <button type="button" class="btn btn-secondary" id="dismissModalCommentMetadata'+metadata.id+'" data-bs-dismiss="modal">Cancel</button>-->
-<!--                <button type="button" class="btn btn-secondary" id="cancelEditCommentMetadata'+metadata.id+'">Cancel</button>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
         /*<![CDATA[*/
-        const albumId = [[${albumId}]];
+        const albumId = /*[[${albumId}]]*/ 0;
         /*]]>*/
-        var mediaContentList = [];
+
+        albumSettings.setLightGalleryElement('infinite-scroll-gallery');
+        albumSettings.setLightGallery();
+
+        let mediaContentList = [];
         $.each($('.mediaLink'), function(index, element) {
-            var mediaContent = {}
+            const mediaContent = {};
             mediaContent.subHtml =$(this).attr("data-sub-html")
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
@@ -227,8 +191,8 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (typeof albumSettings.lg !== "undefined") {
-            albumSettings.lg.refresh(mediaContentList);
+        if (albumSettings.getLightGallery() !== null) {
+            albumSettings.getLightGallery().refresh(mediaContentList);
             albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
@@ -276,17 +240,22 @@
         });
 
         function loadNextPage() {
-            var currentPage = parseInt($("#currentPage").val());
-            var nextPage = currentPage+1;
+            const currentPage = parseInt($("#currentPage").val());
+            const nextPage = currentPage + 1;
+            /*<![CDATA[*/
+            const activePage = /*[[${activePage}]]*/ 'album';
+            /*]]>*/
 
             if (albumId > 0) {
-                albumSettings.updateAlbum(albumId, nextPage, "[[${activePage}]]").then(function (additionalMediaContentList) {
+                albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
                     if (additionalMediaContentList.length > 0) {
                         mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                        albumSettings.lg.refresh(mediaContentList);
-                        albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function (e) {
-                            shashin.jumpToLightGalleryIndex(e.detail.index);
-                        })
+                        if (albumSettings.getLightGallery() !== null) {
+                            albumSettings.getLightGallery().refresh(mediaContentList);
+                            albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function (e) {
+                                shashin.jumpToLightGalleryIndex(e.detail.index);
+                            })
+                        }
                     }
                 });
             }
