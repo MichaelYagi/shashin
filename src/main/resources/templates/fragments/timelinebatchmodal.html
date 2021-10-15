@@ -107,7 +107,7 @@
                         if (labelString.length > 0) {
                             labelString = labelString.slice(0,-1)
                         }
-                        $("#tagBatchDataInput").val(decodeHtml(labelString));
+                        $("#tagBatchDataInput").val(shashin.decodeHtml(labelString));
                     }
 
                 }( window.timelineBatchModal = window.timelineBatchModal || {}, jQuery ));
@@ -208,10 +208,10 @@
                                 timelineSettings.refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
 
                                 $("#msgBatchMetadata").html(message);
-                                clearTimelineSelection();
-                                removeAllMetadataIdList();
-                                removeAllMetadataFilenamesList();
-                                removeAllMetadataThumbnailsList();
+                                shashin.clearTimelineSelection();
+                                shashin.removeAllMetadataIdList();
+                                shashin.removeAllMetadataFilenamesList();
+                                shashin.removeAllMetadataThumbnailsList();
                                 $("#timelineBatchModalStatus").css("visibility","hidden");
                                 $('#propBatchMetadata').find(':input').val('');
                             }
@@ -225,7 +225,6 @@
                 $('#propBatchMetadata').on('hide.bs.modal', function () {
                     $("#msgBatchMetadata").html("");
                     $('#propBatchMetadata').find(':input').val('');
-                    //clearTimelineSelection();
                 });
 
                 // Clear message on input editing

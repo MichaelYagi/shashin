@@ -6,7 +6,7 @@
     trashSettings.infiniteScrollGallery = document.getElementById(
         'infinite-scroll-gallery',
     );
-    trashSettings.lightGalleryConfigs = getLightGalleryConfigs();
+    trashSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
     trashSettings.lightGalleryConfigs["dynamic"] = true;
     trashSettings.lg = lightGallery(trashSettings.infiniteScrollGallery, trashSettings.lightGalleryConfigs);
     trashSettings.retryLimit = 3;
@@ -27,7 +27,7 @@
             contentType: 'application/json; charset=utf-8',
             async: true
         }).fail(function (xhr, textStatus) {
-            printMessageToConsole("AJAX error updating trash. Attempt: "+trashSettings.tryCount+"/"+trashSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating trash. Attempt: "+trashSettings.tryCount+"/"+trashSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 trashSettings.tryCount++;
@@ -54,7 +54,7 @@
                                 var mediaContent = {}
                                 var metadata = metadataList[index];
 
-                                let dateString = getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                                let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                                 html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
                                     '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
@@ -106,8 +106,8 @@
 
                                 $(html).insertBefore($(".appendMetadataPhotos").last())
 
-                                var htmlEncodedMetadata = encodeHtml(JSON.stringify(metadata));
-                                setPhotoOverlays(htmlEncodedMetadata, activePage);
+                                var htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
+                                shashin.setPhotoOverlays(htmlEncodedMetadata, activePage);
 
                                 $("#image" + metadata.id).on('load', function () {
                                     $(this).css("background-color", "transparent");

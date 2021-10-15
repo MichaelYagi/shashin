@@ -10,6 +10,7 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/appjs :: appjs()"></div>
             <th:block th:if="${logList != ''}">
                 <br>
                 <script type="text/javascript">
@@ -51,15 +52,7 @@
 </div>
 
 <script type="text/javascript">
-    function getParameterByName(name, url = window.location.href) {
-        name = name.replace(/[\[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
-    const lines = getParameterByName("lines");
+    const lines = shashin.getParameterByName("lines");
     if (lines === null) {
         $("#lineLimit").val(1000);
     } else {

@@ -76,7 +76,7 @@
 
                     if (shareLink !== "") {
                         var fullShareLink = "[[${baseUrl}]]share/"+shareLink+"/album/[[${album.id}]]";
-                        copyTextToClipboard(fullShareLink,[[${album.id}]]);
+                        shashin.copyTextToClipboard(fullShareLink,[[${album.id}]]);
                     } else {
                         $("#msg[[${album.id}]]").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
                     }

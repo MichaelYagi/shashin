@@ -83,7 +83,7 @@
 
                             <script type="text/javascript">
                                 /*<![CDATA[*/
-                                setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                                shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
                                 searchSettings.activateMetadataListeners("[[${metadata}]]");
                                 /*]]>*/
                             </script>
@@ -121,13 +121,12 @@
         if (typeof searchSettings.lg !== "undefined") {
             searchSettings.lg.refresh(mediaContentList);
             searchSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-                jumpToLightGalleryIndex(e.detail.index);
+                shashin.jumpToLightGalleryIndex(e.detail.index);
             })
         }
 
         function loadNextPage() {
             $("#spinner").css("display","block");
-            // console.log("scroll bottom");
             var currentPage = parseInt($("#currentPage").val());
             var nextPage = currentPage+1;
             /*<![CDATA[*/
@@ -136,7 +135,7 @@
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
                     searchSettings.lg.refresh(mediaContentList);
                     searchSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-                        jumpToLightGalleryIndex(e.detail.index);
+                        shashin.jumpToLightGalleryIndex(e.detail.index);
                     })
                 }
             });
@@ -158,12 +157,12 @@
             }
         }, 200);
         $("#container").on('scroll', function() {
-            if (atEndOfPage(this) && $(".appendSearchPhotos").last().text() !== "EOL") {
+            if (shashin.atEndOfPage(this) && $(".appendSearchPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
         $("main").on('scroll', function() {
-            if (atEndOfPage(this) && $(".appendSearchPhotos").last().text() !== "EOL") {
+            if (shashin.atEndOfPage(this) && $(".appendSearchPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })

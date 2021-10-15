@@ -29,7 +29,7 @@
                                                         /*<![CDATA[*/
                                                         $("#[[${album.id}]]").click(function (e) {
                                                             e.preventDefault();
-                                                            $("#albumNameInput").val(decodeHtml("[[${album.name}]]"));
+                                                            $("#albumNameInput").val(shashin.decodeHtml("[[${album.name}]]"));
                                                             $("#albumIdInput").val("[[${album.id}]]");
                                                         });
                                                         /*]]>*/
@@ -96,10 +96,10 @@
                                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                                 }
                                 $("#albumResponseMsg").html(message);
-                                clearTimelineSelection();
-                                removeAllMetadataIdList();
-                                removeAllMetadataFilenamesList();
-                                removeAllMetadataThumbnailsList();
+                                shashin.clearTimelineSelection();
+                                shashin.removeAllMetadataIdList();
+                                shashin.removeAllMetadataFilenamesList();
+                                shashin.removeAllMetadataThumbnailsList();
                             }
                         });
                     } else {
@@ -112,7 +112,6 @@
                 // Clear message on modal close
                 $('#propAddAlbum').on('hide.bs.modal', function () {
                     $("#albumResponseMsg").html("");
-                    //clearTimelineSelection();
                 });
 
                 // Clear message on input editing
