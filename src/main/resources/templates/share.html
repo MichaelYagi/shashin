@@ -119,7 +119,7 @@
             var nextPage = currentPage + 1;
             /*<![CDATA[*/
             if ([[${album.id}]] > 0) {
-                albumSettings.updateAlbum([[${album.id}]], nextPage, "[[${activePage}]]").then(function () {
+                shareAlbumSettings.updateAlbum([[${album.id}]], nextPage, "[[${activePage}]]").then(function () {
                     lg.closeGallery(true);
                     lg.destroyModules(true);
                     lg.invalidateItems();
