@@ -2,11 +2,13 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="matchesmodal()">
 
-<div class="modal fade" id="propBatchMetadata" tabindex="-1" role="dialog" aria-labelledby="labelBatchMetadata" aria-hidden="true">
+<div class="modal fade" id="propBatchMetadata" tabindex="-1" role="dialog" aria-labelledby="labelBatchMetadata"
+     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos<br><span id="editPhotosNamesModalLabel"></span></h5>
+                <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos<br><span
+                        id="editPhotosNamesModalLabel"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -18,16 +20,27 @@
                         <div class="col-sm">
                             <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" onfocus="return closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+                                <input type="text" class="form-control"
+                                       onfocus="return matchModalBatchSettings.closeBatchTagPeopleDropdown();"
+                                       aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
 
                                 <th:block th:if="${recognitionLabels != ''}">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" onclick="return toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+                                        <button class="btn btn-outline-secondary dropdown-toggle"
+                                                onclick="return matchModalBatchSettings.toggleBatchTagPeopleDropdown();"
+                                                id="tagpeopledropdown" type="button" aria-haspopup="true"
+                                                aria-expanded="false">People
+                                        </button>
                                         <div class="dropdown-menu" id="albumNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
-                                                    <input type="checkbox" onclick="return populateBatchLabel();" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
-                                                    <label th:for="${recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
+                                                    <input type="checkbox"
+                                                           onclick="return matchModalBatchSettings.populateBatchLabel();"
+                                                           th:id="${recognitionLabel.id}"
+                                                           th:value="${recognitionLabel.name}"
+                                                           name="recognitionLabel[]">
+                                                    <label th:for="${recognitionLabel.id}"
+                                                           th:text="${recognitionLabel.name}"></label>
                                                 </button>
                                             </th:block>
                                         </div>
@@ -52,52 +65,40 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
-                function toggleBatchTagPeopleDropdown() {
-                    $("#tagpeopledropdown").dropdown('toggle');
-                }
+                (function (matchModalBatchSettings, $, undefined) {
 
-                function closeBatchTagPeopleDropdown() {
-                    $("#tagpeopledropdown").dropdown('hide');
-                }
-
-                function populateBatchLabel() {
-                    var checkedBoxes = $('input[name="recognitionLabel[]"]:checked')
-                    var labelString = ""
-                    checkedBoxes.each(function() {
-                        labelString += $(this).val() + ",";
-                    });
-                    if (labelString.length > 0) {
-                        labelString = labelString.slice(0,-1)
+                    matchModalBatchSettings.toggleBatchTagPeopleDropdown = function () {
+                        $("#tagpeopledropdown").dropdown('toggle');
                     }
-                    $("#tagBatchDataInput").val(decodeHtml(labelString));
-                }
 
-                $.fn.serializeObject = function() {
-                    var o = {};
-                    var a = this.serializeArray();
-                    $.each(a, function() {
-                        if (o[this.name]) {
-                            if (!o[this.name].push) {
-                                o[this.name] = [o[this.name]];
-                            }
-                            o[this.name].push(this.value || '');
-                        } else {
-                            o[this.name] = this.value || '';
+                    matchModalBatchSettings.closeBatchTagPeopleDropdown = function () {
+                        $("#tagpeopledropdown").dropdown('hide');
+                    }
+
+                    matchModalBatchSettings.populateBatchLabel = function () {
+                        var checkedBoxes = $('input[name="recognitionLabel[]"]:checked')
+                        var labelString = ""
+                        checkedBoxes.each(function () {
+                            labelString += $(this).val() + ",";
+                        });
+                        if (labelString.length > 0) {
+                            labelString = labelString.slice(0, -1)
                         }
-                    });
-                    return o;
-                };
+                        $("#tagBatchDataInput").val(decodeHtml(labelString));
+                    }
+                }(window.matchModalBatchSettings = window.matchModalBatchSettings || {}, jQuery));
+
 
                 $("#batchisobject").click(function (e) {
-                    closeBatchTagPeopleDropdown();
-                    if($(this).prop("checked") === true) {
+                    matchModalBatchSettings.closeBatchTagPeopleDropdown();
+                    if ($(this).prop("checked") === true) {
                         $("#tagBatchDataInput").val("");
                     }
                 });
 
                 $("#saveBatchMetadata").click(function (e) {
                     e.preventDefault();
-                    closeBatchTagPeopleDropdown();
+                    matchModalBatchSettings.closeBatchTagPeopleDropdown();
 
                     const posting = $.post({
                         url: "/timeline/update/batch",
@@ -124,12 +125,14 @@
                 // Clear message on modal close
                 $('#propBatchMetadata').on('hide.bs.modal', function () {
                     $("#msgBatchMetadata").html("");
-                    $('#propBatchMetadata').find(':input').val('');
+                    $('#tagBatchDataInput').val('');
+                    $('input:checkbox').prop('checked', false);
+                    matchModalBatchSettings.closeBatchTagPeopleDropdown();
                     //clearTimelineSelection();
                 });
 
                 // Clear message on input editing
-                $('#propBatchMetadata').bind('keypress', function() {
+                $('#propBatchMetadata').bind('keypress', function () {
                     $("#msgBatchMetadata").html("");
                 });
             </script>
@@ -138,138 +141,140 @@
 </div>
 
 <script type="text/javascript">
-  function toggleTagPeopleDropdown(metadataId) {
-    $("#tagpeopledropdown"+metadataId).dropdown('toggle')
-  }
-
-  function closeTagPeopleDropdown(metadataId) {
-    $("#tagpeopledropdown"+metadataId).dropdown('hide')
-  }
-
-  function populateLabel(metadataId) {
-    var checkedBoxes = $('input[name="recognitionLabel'+metadataId+'[]"]:checked')
-    var labelString = ""
-    checkedBoxes.each(function() {
-      labelString += $(this).val() + ",";
-    });
-    if (labelString.length > 0) {
-      labelString = labelString.slice(0,-1)
-    }
-    $("#tagpeople"+metadataId).val(decodeHtml(labelString));
-  }
-
-  function renderMatchesModal(rawMetadata,rawRecognitionLabels,taggedPeopleList) {
-    taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
-    //console.log('taggedPeopleList:'+taggedPeopleList)
-
-    var metadata = JSON.parse(decodeHtml(rawMetadata));
-    var recognitionLabels = rawRecognitionLabels != "null" && rawRecognitionLabels.length  > 0 ? JSON.parse(decodeHtml(rawRecognitionLabels)) : "";
-
-    var html = '<div class="modal fade" id="propmatches'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
-            '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit '+metadata.fileName+'<div id="propmatchesThumbnail'+metadata.id+'"><img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" width="100" height="100"></div></h5>\n' +
-            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n' +
-            '<div class="modal-body">\n' +
-            '   <form th:id="saveData'+metadata.id+'">\n' +
-            '       <input type="hidden" name="id" value="'+metadata.id+'">\n' +
-            '       <div class="form-group row">\n' +
-            '           <div class="col-sm">\n' +
-            '               <label for="tagpeople'+metadata.id+'" class="col-form-label">Tag People (comma separated)</label>\n' +
-            '               <div class="input-group">\n' +
-            '                   <input type="text" onfocus="return closeTagPeopleDropdown(\''+metadata.id+'\');" class="form-control" aria-label="Tag People" id="tagpeople'+metadata.id+'" name="tagpeople" value="'+taggedPeopleList+'">\n';
-    if (recognitionLabels.length > 0) {
-      html += '           <div class="input-group-append">\n' +
-              '                   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return toggleTagPeopleDropdown(\''+metadata.id+'\');" id="tagpeopledropdown'+metadata.id+'" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-              '                   <div class="dropdown-menu" id="recognitionLabelsList'+metadata.id+'">\n';
-      for (var index in recognitionLabels) {
-        var recognitionLabel = recognitionLabels[index];
-        var taggedPeopleArray = taggedPeopleList.split(",");
-        var checkedString = "";
-        if (jQuery.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
-          checkedString = " checked";
+    (function (matchModalSettings, $, undefined) {
+        matchModalSettings.toggleTagPeopleDropdown = function(metadataId) {
+            $("#tagpeopledropdown" + metadataId).dropdown('toggle')
         }
-        html += '               <button class="dropdown-item" type="button">\n' +
-                '                       <input type="checkbox" onclick="return populateLabel(\''+metadata.id+'\','+recognitionLabel.id+');" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
-                '                       <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                '                   </button>\n';
-      }
-      html += '               </div>\n' +
-              '               </div>\n';
 
-    }
-    html +=
-            '               </div>\n' +
-            '           </div>\n' +
-            '       </div>\n' +
-            '       <div class="form-group row">\n' +
-            '           <div class="col-sm">\n' +
-            '               <input type="checkbox" name="isobject'+metadata.id+'" id="isobject'+metadata.id+'">\n' +
-            '               <label class="form-check-label" for="isobject'+metadata.id+'">This is not a person</label>\n' +
-            '           </div>\n' +
-            '       </div>\n' +
-            '   </form>\n';
-    html +=
-            '   <div class="col-sm">\n' +
-            '       <span id="msg'+metadata.id+'"></span>\n' +
-            '   </div>\n' +
-            '</div>\n' +
-            '<div class="modal-footer">\n' +
-            '   <button type="button" class="btn btn-primary" id="saveMetadata'+metadata.id+'">Save</button>\n' +
-            '   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
-            '</div></div></div></div>';
-
-    $("#matchesmodal"+metadata.id).after(html);
-
-    $("#isobject"+metadata.id).click(function (e) {
-      closeTagPeopleDropdown(metadata.id);
-
-      if($(this).prop("checked") === true) {
-        $("#tagpeople"+metadata.id).val("");
-      }
-    });
-
-    $("#saveMetadata"+metadata.id).click(function (e) {
-      e.preventDefault();
-      closeTagPeopleDropdown(metadata.id);
-
-      var json = {
-        metadataId:metadata.id,
-        tagpeople:$("#tagpeople"+metadata.id).val(),
-        isObject:$("#isobject"+metadata.id).prop("checked")
-      }
-
-      const posting = $.post({
-        url: "/person/update",
-        data: JSON.stringify(json),
-        contentType: 'application/json; charset=utf-8'
-      });
-
-      posting.done(function (data) {
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-          let message = "Error";
-          if (data["status"] === "success") {
-            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-            // window.top.location = window.top.location
-          } else {
-            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-          }
-          $("#msg"+metadata.id).html(message);
+        matchModalSettings.closeTagPeopleDropdown = function(metadataId) {
+            $("#tagpeopledropdown" + metadataId).dropdown('hide')
         }
-      });
 
-      return false;
-    });
+        matchModalSettings.populateLabel = function(metadataId) {
+            var checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked')
+            var labelString = ""
+            checkedBoxes.each(function () {
+                labelString += $(this).val() + ",";
+            });
+            if (labelString.length > 0) {
+                labelString = labelString.slice(0, -1)
+            }
+            $("#tagpeople" + metadataId).val(decodeHtml(labelString));
+        }
 
-    // Clear message on modal close
-    $('#propmatches'+metadata.id).on('hide.bs.modal', function () {
-        $("#msg"+metadata.id).html("");
-        $("#isobject"+metadata.id)[0].checked = false;
-    });
+        matchModalSettings.renderMatchesModal = function(rawMetadata, rawRecognitionLabels, taggedPeopleList) {
+            taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
+            //console.log('taggedPeopleList:'+taggedPeopleList)
 
-    // Clear message on input editing
-    $('#propmatches'+metadata.id+' input').bind('keypress', function() {
-      $("#msg"+metadata.id).html("");
-    });
-  }
+            var metadata = JSON.parse(decodeHtml(rawMetadata));
+            var recognitionLabels = rawRecognitionLabels != "null" && rawRecognitionLabels.length > 0 ? JSON.parse(decodeHtml(rawRecognitionLabels)) : "";
+
+            var html = '<div class="modal fade" id="propmatches' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
+                '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit ' + metadata.fileName + '<div id="propmatchesThumbnail' + metadata.id + '"><img src="' + encodeURI(metadata.thumbnailUrlCentered) + '" width="100" height="100"></div></h5>\n' +
+                '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n' +
+                '<div class="modal-body">\n' +
+                '   <form th:id="saveData' + metadata.id + '">\n' +
+                '       <input type="hidden" name="id" value="' + metadata.id + '">\n' +
+                '       <div class="form-group row">\n' +
+                '           <div class="col-sm">\n' +
+                '               <label for="tagpeople' + metadata.id + '" class="col-form-label">Tag People (comma separated)</label>\n' +
+                '               <div class="input-group">\n' +
+                '                   <input type="text" onfocus="return matchModalSettings.closeTagPeopleDropdown(\'' + metadata.id + '\');" class="form-control" aria-label="Tag People" id="tagpeople' + metadata.id + '" name="tagpeople" value="' + taggedPeopleList + '">\n';
+            if (recognitionLabels.length > 0) {
+                html += '           <div class="input-group-append">\n' +
+                    '                   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return matchModalSettings.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                    '                   <div class="dropdown-menu" id="recognitionLabelsList' + metadata.id + '">\n';
+                for (var index in recognitionLabels) {
+                    var recognitionLabel = recognitionLabels[index];
+                    var taggedPeopleArray = taggedPeopleList.split(",");
+                    var checkedString = "";
+                    if (jQuery.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                        checkedString = " checked";
+                    }
+                    html += '               <button class="dropdown-item" type="button">\n' +
+                        '                       <input type="checkbox" onclick="return matchModalSettings.populateLabel(\'' + metadata.id + '\',' + recognitionLabel.id + ');" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
+                        '                       <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
+                        '                   </button>\n';
+                }
+                html += '               </div>\n' +
+                    '               </div>\n';
+
+            }
+            html +=
+                '               </div>\n' +
+                '           </div>\n' +
+                '       </div>\n' +
+                '       <div class="form-group row">\n' +
+                '           <div class="col-sm">\n' +
+                '               <input type="checkbox" name="isobject' + metadata.id + '" id="isobject' + metadata.id + '">\n' +
+                '               <label class="form-check-label" for="isobject' + metadata.id + '">This is not a person</label>\n' +
+                '           </div>\n' +
+                '       </div>\n' +
+                '   </form>\n';
+            html +=
+                '   <div class="col-sm">\n' +
+                '       <span id="msg' + metadata.id + '"></span>\n' +
+                '   </div>\n' +
+                '</div>\n' +
+                '<div class="modal-footer">\n' +
+                '   <button type="button" class="btn btn-primary" id="saveMetadata' + metadata.id + '">Save</button>\n' +
+                '   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
+                '</div></div></div></div>';
+
+            $("#matchesmodal" + metadata.id).after(html);
+
+            $("#isobject" + metadata.id).click(function (e) {
+                matchModalSettings.closeTagPeopleDropdown(metadata.id);
+
+                if ($(this).prop("checked") === true) {
+                    $("#tagpeople" + metadata.id).val("");
+                }
+            });
+
+            $("#saveMetadata" + metadata.id).click(function (e) {
+                e.preventDefault();
+                matchModalSettings.closeTagPeopleDropdown(metadata.id);
+
+                var json = {
+                    metadataId: metadata.id,
+                    tagpeople: $("#tagpeople" + metadata.id).val(),
+                    isObject: $("#isobject" + metadata.id).prop("checked")
+                }
+
+                const posting = $.post({
+                    url: "/person/update",
+                    data: JSON.stringify(json),
+                    contentType: 'application/json; charset=utf-8'
+                });
+
+                posting.done(function (data) {
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            // window.top.location = window.top.location
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        }
+                        $("#msg" + metadata.id).html(message);
+                    }
+                });
+
+                return false;
+            });
+
+            // Clear message on modal close
+            $('#propmatches' + metadata.id).on('hide.bs.modal', function () {
+                $("#msg" + metadata.id).html("");
+                $("#isobject" + metadata.id)[0].checked = false;
+            });
+
+            // Clear message on input editing
+            $('#propmatches' + metadata.id + ' input').bind('keypress', function () {
+                $("#msg" + metadata.id).html("");
+            });
+        }
+    }(window.matchModalSettings = window.matchModalSettings || {}, jQuery));
 </script>
 
 </body>
