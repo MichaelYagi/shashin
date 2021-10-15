@@ -10,55 +10,53 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
         <meta name="theme-color" content="#7952b3">
-
         <style>
-            .bd-placeholder-img {
-                font-size: 1.125rem;
-                text-anchor: middle;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                user-select: none;
-            }
-
-            @media (min-width: 768px) {
-                .bd-placeholder-img-lg {
-                    font-size: 3.5rem;
-                }
+            .feature-icon {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 4rem;
+                height: 4rem;
+                margin-bottom: 1rem;
+                font-size: 2rem;
+                color: #fff;
+                border-radius: .75rem;
             }
         </style>
     </head>
     <body>
         <main>
-            <div class="container py-4">
+            <div class="container px-4 py-3">
                 <header class="pb-3 mb-4 border-bottom">
                     <a href="/" class="d-flex align-items-center text-dark text-decoration-none">
                         <span class="fs-4">Shasin</span>
                     </a>
                 </header>
-
-                <div class="p-5 mb-4 bg-light rounded-3">
-                    <div class="container-fluid py-5">
-                        <h1 class="display-5 fw-bold">Gallery</h1>
-                        <p class="col-md-8 fs-4">View your media on a timeline and albums.</p>
+                <div class="row g-4 pt-3 row-cols-1 row-cols-lg-3">
+                    <div class="feature col">
+                        <div class="feature-icon bg-primary bg-gradient">
+                            <span class="bi-card-image" style="font-size: 2rem;"></span>
+                        </div>
+                        <h2>Gallery</h2>
+                        <p>View your media on a timeline and albums.</p>
+                    </div>
+                    <div class="feature col">
+                        <div class="feature-icon bg-primary bg-gradient">
+                            <span class="bi-pin-map" style="font-size: 2rem;"></span>
+                        </div>
+                        <h2>Location</h2>
+                        <p>View where you took your photos.</p>
+                    </div>
+                    <div class="feature col">
+                        <div class="feature-icon bg-primary bg-gradient">
+                            <span class="bi-share" style="font-size: 2rem;"></span>
+                        </div>
+                        <h2>Share</h2>
+                        <p>Share your albums with friends and family. Comment and tag any of your favourites.</p>
                     </div>
                 </div>
 
-                <div class="row align-items-md-stretch">
-                    <div class="col-md-6">
-                        <div class="h-100 p-5 text-white bg-dark rounded-3">
-                            <h2>Location</h2>
-                            <p>View where you took your photos.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="h-100 p-5 bg-light border rounded-3">
-                            <h2>Share</h2>
-                            <p>Share your albums with friends and family. Comment and tag any of your favourites.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-5 mt-4 mb-4 bg-light rounded-3">
+                <div class="p-5 mb-4 bg-light">
                     <div class="container-fluid py-5">
                         <h1 class="display-5 fw-bold">Get Started</h1>
                         <p class="col-md-8 fs-4"><span class="bi-upc-scan align-middle" style="font-size: 2rem;"></span>&nbsp;<span class="align-middle">Point to your media directories and scan</span></p>
@@ -72,6 +70,7 @@
                     <p>&copy; <span id="copyrightYear"></span> Shashin</p>
                 </footer>
             </div>
+
         </main>
 
         <script type="text/javascript">
