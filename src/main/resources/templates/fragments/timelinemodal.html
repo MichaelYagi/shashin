@@ -373,12 +373,12 @@
             $("#mapTabMessage").wrapInner('<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" class="bi-pin-fill" style="text-decoration: none;"></a>');
 
             if (timelineModal.map === null) {
-                var attribution = new ol.control.Attribution({
-                    collapsible: false
-                });
-
                 timelineModal.map = new ol.Map({
-                    controls: new ol.control.defaults({ attributionOptions: { collapsible: true } }),
+                    controls: new ol.control.defaults({
+                        attributionOptions: {
+                            collapsible: true
+                        }
+                    }),
                     layers: [
                         new ol.layer.Tile({
                             visible: true,
