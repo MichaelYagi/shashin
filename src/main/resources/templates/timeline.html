@@ -21,11 +21,11 @@
                 <th:block th:if="${metadataDates != ''}">
                     <th:block th:each="metadata, iterStat: ${metadataDates}">
                         <th:block th:if="${metadata.year == null or metadata.month == null or metadata.day == null}">
-                            <a id="offcanvas_undated" class="list-group-item list-group-item-action" th:onclick="return jumpToTimelineToc(event,'undated',[[${mediaTypeFilter}]]);" href="#undated">Undated</a>
+                            <a id="offcanvas_undated" class="list-group-item list-group-item-action" th:onclick="return timelineSettings.jumpToTimelineToc(event,'undated',[[${mediaTypeFilter}]]);" href="#undated">Undated</a>
                         </th:block>
                         <th:block th:unless="${metadata.year == null or metadata.month == null or metadata.day == null}">
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <a th:id="${'offcanvas_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return jumpToTimelineToc(event,'[[${metadata.year}]]-[[${metadata.month}]]-[[${metadata.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'MMM d, yyyy')}"></a>
+                                <a th:id="${'offcanvas_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return timelineSettings.jumpToTimelineToc(event,'[[${metadata.year}]]-[[${metadata.month}]]-[[${metadata.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'MMM d, yyyy')}"></a>
                             </th:block>
                         </th:block>
                     </th:block>
@@ -148,9 +148,9 @@
         // Initialize
         if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
-            attachAssociatedMetadata(firstElem.id, "[[${mediaTypeFilter}]]");
-            setScrollSpyActive($(firstElem));
-            reinitLightGalleryInstance();
+            timelineSettings.attachAssociatedMetadata(firstElem.id, "[[${mediaTypeFilter}]]");
+            timelineSettings.setScrollSpyActive($(firstElem));
+            timelineSettings.reinitLightGalleryInstance();
         } else {
             timelineSettings.enableScrollSpy = false;
         }
@@ -163,21 +163,21 @@
         window.setInterval(function() {
             if (timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
-                renderThumbnailsInViewport(elementsInViewport, "[[${mediaTypeFilter}]]");
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, "[[${mediaTypeFilter}]]");
             }
         }, 200);
 
         $("#offcanvasToc").on('show.bs.offcanvas', function () {
             if (timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
-                scrollToTimeline(elementsInViewport);
+                timelineSettings.scrollToTimeline(elementsInViewport);
             }
         });
 
         const scrollHandler = function (e) {
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
-                scrollToTimeline(elementsInViewport);
+                timelineSettings.scrollToTimeline(elementsInViewport);
             }
 
             const delayInMs = e.timeStamp - timelineSettings.lastDate;
