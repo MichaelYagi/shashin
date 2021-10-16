@@ -16,8 +16,6 @@
             <input type="hidden" id="currentPage" name="currentPage" value="0">
 
             <div id="scroll-gallery">
-                <div th:replace="fragments/searchjs :: searchjs()"></div>
-
                 <th:block th:if="${searchTerm != '' and metadataSearchList != ''}">
                     <h1 th:text="'Results for \''+${searchTerm}+'\''"></h1>
                     <div class="row p-3">
@@ -100,8 +98,12 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script src="/js/applisteners.js"></script>
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function(){
+        searchSettings.setLightGalleryElement('scroll-gallery');
+        searchSettings.setLightGallery();
+
         $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
@@ -117,8 +119,8 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (typeof searchSettings.lg !== "undefined") {
-            searchSettings.lg.refresh(mediaContentList);
+        if (searchSettings.getLightGallery() !== null) {
+            searchSettings.getLightGallery().refresh(mediaContentList);
             searchSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
@@ -126,19 +128,21 @@
 
         function loadNextPage() {
             $("#spinner").css("display","block");
-            var currentPage = parseInt($("#currentPage").val());
-            var nextPage = currentPage+1;
+            const currentPage = parseInt($("#currentPage").val());
+            const nextPage = currentPage + 1;
             /*<![CDATA[*/
-            searchSettings.updateSearch(nextPage,"[[${searchTerm}]]","[[${activePage}]]").then(function(additionalMediaContentList) {
+            const activePage = /*[[${activePage}]]*/ 'search';
+            const searchTerm = /*[[${searchTerm}]]*/ '';
+            /*]]>*/
+            searchSettings.updateSearch(nextPage,searchTerm,activePage).then(function(additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    searchSettings.lg.refresh(mediaContentList);
+                    searchSettings.getLightGallery().refresh(mediaContentList);
                     searchSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                         shashin.jumpToLightGalleryIndex(e.detail.index);
                     })
                 }
             });
-            /*]]>*/
             $("#currentPage").val(nextPage);
         }
 
@@ -150,8 +154,10 @@
             } else {
                 clearInterval(refreshIntervalId);
             }
-
-            if ($(".appendSearchPhotos").last().text() === "EOL" || '[[${metadataSearchList}]]' === '' || '[[${metadataSearchList}]]' === '[]') {
+            /*<![CDATA[*/
+            const metadataSearchList = /*[[${metadataSearchList}]]*/ '[]';
+            /*]]>*/
+            if ($(".appendSearchPhotos").last().text() === "EOL" || metadataSearchList === '' || metadataSearchList === '[]') {
                 clearInterval(refreshIntervalId);
             }
         }, 200);

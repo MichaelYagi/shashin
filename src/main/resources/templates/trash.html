@@ -14,8 +14,6 @@
 
             <div id="trashMessage"></div>
             <div id="infinite-scroll-gallery">
-                <div th:replace="fragments/trashjs :: trashjs()"></div>
-
                 <th:block th:if="${metadataList != ''}">
                     <div class="row p-3">
                     <h1>Trash</h1>
@@ -48,7 +46,7 @@
                                 <th:block th:unless="${metadata.type.contains('video')}">
                                     <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                            <a class="mediaLink" th:onclick="return openGallery(event,[[${iterStat.index}]])"
+                                            <a class="mediaLink" th:onclick="return trashSettings.openGallery(event,[[${iterStat.index}]])"
                                                th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
                                                th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
@@ -56,7 +54,7 @@
                                         </th:block>
                                     </th:block>
                                     <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <a class="mediaLink" th:onclick="return openGallery(event,[[${iterStat.index}]])"
+                                        <a class="mediaLink" th:onclick="return trashSettings.openGallery(event,[[${iterStat.index}]])"
                                            th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
                                            th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
                                             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
@@ -67,7 +65,7 @@
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                         <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                            <a class="mediaLink" th:onclick="return openGallery(event,[[${iterStat.index}]])"
+                                            <a class="mediaLink" th:onclick="return trashSettings.openGallery(event,[[${iterStat.index}]])"
                                                th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
                                                th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
                                                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
@@ -75,7 +73,7 @@
                                         </th:block>
                                     </th:block>
                                     <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                        <a class="mediaLink" th:onclick="return openGallery(event,[[${iterStat.index}]])"
+                                        <a class="mediaLink" th:onclick="return trashSettings.openGallery(event,[[${iterStat.index}]])"
                                            th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
                                            th:data-sub-html="${(metadata.placeName != null ? metadata.placeName+'<br>' : '<br>')+metadata.fileName}">
                                             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
@@ -104,8 +102,12 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script src="/js/applisteners.js"></script>
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
+        trashSettings.setLightGalleryElement('infinite-scroll-gallery');
+        trashSettings.setLightGallery();
+
         let mediaContentList = [];
         $.each($('.mediaLink'), function(index, element) {
             const mediaContent = {};
@@ -117,8 +119,8 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (typeof trashSettings.lg !== "undefined") {
-            trashSettings.lg.refresh(mediaContentList);
+        if (trashSettings.getLightGallery() !== null) {
+            trashSettings.getLightGallery().refresh(mediaContentList);
             trashSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
@@ -132,16 +134,17 @@
             var currentPage = parseInt($("#currentPage").val());
             var nextPage = currentPage+1;
             /*<![CDATA[*/
-            updateTrash(nextPage,"[[${activePage}]]").then(function(additionalMediaContentList) {
+            const activePage = /*[[${activePage}]]*/ 'trash';
+            /*]]>*/
+            trashSettings.updateTrash(nextPage,activePage).then(function(additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    trashSettings.lg.refresh(mediaContentList);
+                    trashSettings.getLightGallery().refresh(mediaContentList);
                     trashSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                         shashin.jumpToLightGalleryIndex(e.detail.index);
                     })
                 }
             });
-            /*]]>*/
             $("#currentPage").val(nextPage);
         }
         const refreshIntervalId = window.setInterval(function () {
@@ -153,7 +156,10 @@
                 clearInterval(refreshIntervalId);
             }
 
-            if ($(".appendAlbumPhotos").last().text() === "EOL" || '[[${metadataList}]]' === '' || '[[${metadataList}]]' === '[]') {
+            /*<![CDATA[*/
+            const metadataList = /*[[${metadataList}]]*/ '[]';
+            /*]]>*/
+            if ($(".appendAlbumPhotos").last().text() === "EOL" || metadataList === '' || metadataList === '[]') {
                 clearInterval(refreshIntervalId);
             }
         }, 200);

@@ -14,7 +14,6 @@
 
             <div id="favoritesMessage"></div>
             <div id="infinite-scroll-gallery">
-                <div th:replace="fragments/favoritesjs :: favoritesjs()"></div>
                 <th:block th:if="${metadataList != ''}">
                     <div class="row p-3">
                         <h1>Favorites</h1>
@@ -101,11 +100,15 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script src="/js/applisteners.js"></script>
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        var mediaContentList = [];
+        favoritesSettings.setLightGalleryElement('infinite-scroll-gallery');
+        favoritesSettings.setLightGallery();
+
+        let mediaContentList = [];
         $.each($('.mediaLink'), function(index, element) {
-            var mediaContent = {}
+            const mediaContent = {};
             mediaContent.subHtml =$(this).attr("data-sub-html")
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
@@ -114,8 +117,8 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (typeof favoritesSettings.lg !== "undefined") {
-            favoritesSettings.lg.refresh(mediaContentList);
+        if (favoritesSettings.getLightGallery() !== null) {
+            favoritesSettings.getLightGallery().refresh(mediaContentList);
             favoritesSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
@@ -126,19 +129,20 @@
         })
 
         function loadNextPage() {
-            var currentPage = parseInt($("#currentPage").val());
-            var nextPage = currentPage+1;
+            const currentPage = parseInt($("#currentPage").val());
+            const nextPage = currentPage + 1;
             /*<![CDATA[*/
-            favoritesSettings.updateFavorites(nextPage,"[[${activePage}]]").then(function(additionalMediaContentList) {
+            const activePage = /*[[${activePage}]]*/ 'favorites';
+            /*]]>*/
+            favoritesSettings.updateFavorites(nextPage,activePage).then(function(additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    favoritesSettings.lg.refresh(mediaContentList);
+                    favoritesSettings.getLightGallery().refresh(mediaContentList);
                     favoritesSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                         shashin.jumpToLightGalleryIndex(e.detail.index);
                     })
                 }
             });
-            /*]]>*/
             $("#currentPage").val(nextPage);
         }
         const refreshIntervalId = window.setInterval(function () {
@@ -150,7 +154,10 @@
                 clearInterval(refreshIntervalId);
             }
 
-            if ($(".appendMetadataPhotos").last().text() === "EOL" || '[[${metadataList}]]' === '' || '[[${metadataList}]]' === '[]') {
+            /*<![CDATA[*/
+            const metadataList = /*[[${metadataList}]]*/ '[]';
+            /*]]>*/
+            if ($(".appendMetadataPhotos").last().text() === "EOL" || metadataList === '' || metadataList === '[]') {
                 clearInterval(refreshIntervalId);
             }
         }, 200);
