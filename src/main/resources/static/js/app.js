@@ -669,3 +669,7 @@ $.fn.serializeObject = function() {
         }
     }
 }( window.shashin = window.shashin || {}, jQuery ));
+
+if (typeof module !== 'undefined') {
+    module.exports = window.shashin;
+}

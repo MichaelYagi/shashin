@@ -33,5 +33,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Other ###
 /sidecar/
 /logs/
+/node_modules/
