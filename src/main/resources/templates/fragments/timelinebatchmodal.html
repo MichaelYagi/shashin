@@ -224,7 +224,17 @@
                 // Clear message on modal close
                 $('#propBatchMetadata').on('hide.bs.modal', function () {
                     $("#msgBatchMetadata").html("");
-                    $('#propBatchMetadata').find(':input').val('');
+                    $("#msgBatchMetadata").html("");
+                    $('input:checkbox').prop('checked', false);
+                    $('#batchMetadataIds').val('');
+                    $('#batchFilenames').val('');
+                    $('#dayTakenBatchData').val('');
+                    $('#monthTakenBatchData').val('');
+                    $('#yearTakenBatchData').val('');
+                    $('#latlngBatchData').val('');
+                    $('#tagBatchDataInput').val('');
+                    $('#keywordsBatchData').val('');
+                    timelineBatchModal.closeBatchTagPeopleDropdown();
                 });
 
                 // Clear message on input editing
