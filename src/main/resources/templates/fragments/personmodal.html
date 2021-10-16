@@ -172,7 +172,7 @@
                     var recognitionLabel = recognitionLabels[index];
                     var taggedPeopleArray = taggedPeopleList.split(",");
                     var checkedString = "";
-                    if (jQuery.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                    if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                         checkedString = " checked";
                     }
                     html += '               <button class="dropdown-item" type="button">\n' +

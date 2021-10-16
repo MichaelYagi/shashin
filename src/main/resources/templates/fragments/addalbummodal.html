@@ -68,7 +68,7 @@
 
                     if (albumMetadataIds !== "" && albumNameInput !== "") {
                         let albumIdInput = $.trim($("#albumIdInput").val())
-                        let albumMetadataIdArray = jQuery.parseJSON(albumMetadataIds);
+                        let albumMetadataIdArray = $.parseJSON(albumMetadataIds);
 
                         if (albumIdInput === "" && $('#albumNameList').length > 0) {
                             // Iterate through list and find id by name
