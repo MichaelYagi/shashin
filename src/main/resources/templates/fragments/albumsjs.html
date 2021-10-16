@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="albumsjs(album)">
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
     /*<![CDATA[*/
-    $("#share[[${album.id}]]").click(function(e) {
-        e.preventDefault();
-
-        $("#propalbums[[${album.id}]]").modal('show');
-    });
-
-    $("#trash[[${album.id}]]").click(function(e) {
-        e.preventDefault();
-
-        $("#proptrashalbums[[${album.id}]]").modal('show');
-    });
-
-    $("#comment[[${album.id}]]").click(function(e) {
-        e.preventDefault();
-
-        $("#propcommentalbums[[${album.id}]]").modal('show');
-    });
+    const albumId = /*[[${album.id}]]*/ 0;
     /*]]>*/
+
+    $("#share"+albumId).click(function(e) {
+        e.preventDefault();
+
+        $("#propalbums"+albumId).modal('show');
+    });
+
+    $("#trash"+albumId).click(function(e) {
+        e.preventDefault();
+
+        $("#proptrashalbums"+albumId).modal('show');
+    });
+
+    $("#comment"+albumId).click(function(e) {
+        e.preventDefault();
+
+        $("#propcommentalbums"+albumId).modal('show');
+    });
+
 </script>
 
 </body>

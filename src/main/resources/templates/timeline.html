@@ -55,7 +55,6 @@
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
             
             <div id="infinite-scroll-gallery">
-                <div th:replace="fragments/timelinejs :: timelinejs(${queryLimit})"></div>
                 <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
 
                 <th:block th:if="${metadataList != ''}">
@@ -144,6 +143,10 @@
 
 <script type="text/javascript">
     $(document).ready(function() {
+
+        timelineSettings.setLightGalleryElement('infinite-scroll-gallery');
+        timelineSettings.setLightGallery();
+
         // Initialize
         if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
