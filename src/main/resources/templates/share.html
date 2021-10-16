@@ -10,7 +10,6 @@
                  class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <div id="infinite-scroll-gallery">
-                <div th:replace="fragments/sharealbumjs :: sharealbumjs(${shareLink})"></div>
                 <th:block th:if="${albumMetadataList != ''}">
                     <h1 th:text="${album.name}"></h1>
                     <span id="albumId" style="display: none" th:text="${album.id}"></span>
@@ -104,21 +103,31 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script src="/js/applisteners.js"></script>
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function () {
-        const $infiniteScrollGallery = document.getElementById(
+        /*<![CDATA[*/
+        const shareLink = /*[[${shareLink}]]*/ '';
+        /*]]>*/
+
+        shareAlbumSettings.setShareLink(shareLink);
+
+        const infiniteScrollGallery = document.getElementById(
             'infinite-scroll-gallery',
         );
         const lightGalleryConfigs = shashin.getLightGalleryConfigs();
         lightGalleryConfigs["selector"] = '.mediaLink';
-        let lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+        let lg = lightGallery(infiniteScrollGallery, lightGalleryConfigs);
 
         function loadNextPage() {
-            var currentPage = parseInt($("#currentPage").val());
-            var nextPage = currentPage + 1;
+            const currentPage = parseInt($("#currentPage").val());
+            const nextPage = currentPage + 1;
             /*<![CDATA[*/
-            if ([[${album.id}]] > 0) {
-                shareAlbumSettings.updateAlbum([[${album.id}]], nextPage, "[[${activePage}]]").then(function () {
+            const activePage = /*[[${activePage}]]*/ 'share';
+            const albumId = /*[[${album.id}]]*/ 0;
+            /*]]>*/
+            if (albumId > 0) {
+                shareAlbumSettings.updateAlbum(albumId, nextPage, activePage).then(function () {
                     lg.closeGallery(true);
                     lg.destroyModules(true);
                     lg.invalidateItems();
@@ -134,13 +143,12 @@
                             shashin.printMessageToConsole(e);
                         }
 
-                        lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+                        lg = lightGallery(infiniteScrollGallery, lightGalleryConfigs);
                         return lg;
                     }, 100);
                 });
                 $("#currentPage").val(nextPage);
             }
-            /*]]>*/
         }
 
         const refreshIntervalId = window.setInterval(function () {

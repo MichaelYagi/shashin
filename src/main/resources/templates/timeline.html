@@ -141,16 +141,21 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script src="/js/applisteners.js"></script>
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
 
         timelineSettings.setLightGalleryElement('infinite-scroll-gallery');
         timelineSettings.setLightGallery();
 
+        /*<![CDATA[*/
+        const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
+        /*]]>*/
+
         // Initialize
         if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
-            timelineSettings.attachAssociatedMetadata(firstElem.id, "[[${mediaTypeFilter}]]");
+            timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
             timelineSettings.reinitLightGalleryInstance();
         } else {
@@ -165,7 +170,7 @@
         window.setInterval(function() {
             if (timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, "[[${mediaTypeFilter}]]");
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             }
         }, 200);
 

@@ -1,43 +1,55 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="trashjs()">
-<script type="text/javascript">
-    const trashSettings = {};
-    trashSettings.infiniteScrollGallery = document.getElementById(
-        'infinite-scroll-gallery',
-    );
-    trashSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    trashSettings.lightGalleryConfigs["dynamic"] = true;
-    trashSettings.lg = lightGallery(trashSettings.infiniteScrollGallery, trashSettings.lightGalleryConfigs);
-    trashSettings.retryLimit = 3;
-    trashSettings.tryCount = 0;
+(function( favoritesSettings, $, undefined ) {
+    favoritesSettings.infiniteScrollGallery = null;
+    favoritesSettings.lg = null;
+    favoritesSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
+    favoritesSettings.lightGalleryConfigs["dynamic"] = true;
+    favoritesSettings.retryLimit = 3;
+    favoritesSettings.tryCount = 0;
 
-    function openGallery(e, index) {
+    favoritesSettings.setLightGalleryElement = function (name) {
+        if (document.getElementById(name)) {
+            favoritesSettings.infiniteScrollGallery = document.getElementById(name);
+        }
+    };
+
+    favoritesSettings.setLightGallery = function () {
+        favoritesSettings.lg = lightGallery(favoritesSettings.getLightGalleryElement(), favoritesSettings.lightGalleryConfigs);
+    }
+
+    favoritesSettings.getLightGalleryElement = function () {
+        return favoritesSettings.infiniteScrollGallery;
+    };
+
+    favoritesSettings.getLightGallery = function () {
+        return favoritesSettings.lg;
+    }
+
+    favoritesSettings.openGallery = function (e,index) {
         e.preventDefault();
-        if (typeof trashSettings.lg !== "undefined") {
-            trashSettings.lg.openGallery(index);
+        if (favoritesSettings.getLightGallery() !== null) {
+            favoritesSettings.getLightGallery().openGallery(index);
         }
     }
 
-    function updateTrash(nextPage, activePage) {
+    favoritesSettings.updateFavorites = function (nextPage,activePage) {
         // Get paged results
-        const promise = $.ajax({
+        var promise = $.ajax({
             type: 'get',
-            url: "/trash/" + nextPage,
+            url: "/favorites/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async: true
+            async:true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating trash. Attempt: "+trashSettings.tryCount+"/"+trashSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating favorites. Attempt: "+favoritesSettings.tryCount+"/"+favoritesSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                trashSettings.tryCount++;
-                if (trashSettings.tryCount <= trashSettings.retryLimit) {
+                favoritesSettings.tryCount++;
+                if (favoritesSettings.tryCount <= favoritesSettings.retryLimit) {
                     //try again
-                    updateTrash(nextPage, activePage);
+                    favoritesSettings.updateFavorites(nextPage,activePage);
                 }
             }
         }).then(function (data) {
-            trashSettings.tryCount = 0;
+            favoritesSettings.tryCount = 0;
             var mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
@@ -56,8 +68,8 @@
 
                                 let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                                html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
-                                    '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
+                                html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
+                                    '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
                                     '   <img src="' + metadata.thumbnailUrlSmall + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;">\n';
 
                                 if (metadata.type.includes("video")) {
@@ -81,23 +93,20 @@
 
                                 html += '<div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
 
-                                mediaContent.subHtml = (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
+                                mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
                                 if (metadata.type.includes("video")) {
-                                    mediaContent.video = {
-                                        "source": [{"src": metadata.videoUrl, "type": "video/mp4"}],
-                                        "attributes": {"preload": false, "controls": true}
-                                    };
+                                    mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
                                     html +=
-                                        '   <a class="mediaLink" onclick="return openGallery(event,' + currentMediaLinkIndex + ')" \n' +
+                                        '   <a class="mediaLink" onclick="return favoritesSettings.openGallery(event,'+currentMediaLinkIndex+')" \n' +
                                         '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                        '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                        '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                                         '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                         '   </a>\n';
                                 } else {
                                     mediaContent.src = metadata.thumbnailUrlOriginal;
                                     html +=
-                                        '   <a class="mediaLink" onclick="return openGallery(event,' + currentMediaLinkIndex + ')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
-                                        '       data-sub-html="' + (metadata.placeName !== null ? metadata.placeName + '<br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                                        '   <a class="mediaLink" onclick="return favoritesSettings.openGallery(event,'+currentMediaLinkIndex+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                                        '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                                         '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                                         '   </a>\n';
                                 }
@@ -116,26 +125,23 @@
                                 html = "";
                             }
                         } else {
-                            $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                            $(".appendMetadataPhotos").last().text("EOL").css("display","none")
                         }
                     }
                 } else {
-                    $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                    $(".appendMetadataPhotos").last().text("EOL").css("display","none")
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
-                $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                $(".appendMetadataPhotos").last().text("EOL").css("display","none")
             }
 
             return mediaContentList;
         });
 
-        return promise.done(function (data) {
+        return promise.done(function(data) {
             return data;
         });
     }
-</script>
-
-</body>
-</html>
+}( window.favoritesSettings = window.favoritesSettings || {}, jQuery ));

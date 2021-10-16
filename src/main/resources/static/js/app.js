@@ -19,252 +19,8 @@ $.fn.serializeObject = function() {
     return o;
 };
 
-$("#appToolsBatchEdit").click(function(e) {
-    e.preventDefault();
-
-    let thumbnailList = "";
-    let metadataIdArray = getMetdataIdList();
-    let metadataFilenamesArray = getMetadataFilenamesList();
-    let metadataThumbnailsArray = getMetadataThumbnailsList();
-    for (let index in metadataThumbnailsArray) {
-        const metadataThumnailUrl = metadataThumbnailsArray[index];
-        thumbnailList += '<img src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'">';
-    }
-
-    $("#batchMetadataIds").val(JSON.stringify(metadataIdArray));
-    $("#batchisobject")[0].checked = false;
-    $("#batchhidden")[0].checked = false;
-    if (thumbnailList !== "") {
-        $("#editPhotosNamesModalLabel").html(thumbnailList);
-    }
-    $("#propBatchMetadata").modal('show');
-});
-
-$("#appToolsDeselectAll").click(function(e) {
-    e.preventDefault();
-
-    shashin.clearTimelineSelection();
-});
-
-$("#albumAppToolsDeselectAll").click(function(e) {
-    e.preventDefault();
-
-    shashin.clearTimelineSelection();
-});
-
-$("#appToolsAddAlbum").click(function(e) {
-    e.preventDefault();
-
-    let thumbnailList = "";
-    let metadataFilenamesArray = getMetadataFilenamesList();
-    let metadataThumbnailsArray = getMetadataThumbnailsList();
-    for (let index in metadataThumbnailsArray) {
-        const metadataThumnailUrl = metadataThumbnailsArray[index];
-        thumbnailList += '<img src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'">';
-    }
-
-    if (thumbnailList !== "") {
-        $("#editAlbumPhotosNamesModalLabel").html(thumbnailList);
-    }
-    let metadataIdList = getMetdataIdList();
-    $("#albumMetadataIds").val(JSON.stringify(metadataIdList));
-    $("#propAddAlbum").modal('show');
-});
-
-$("#albumAppToolsRemoveAlbum").click(function(e) {
-    e.preventDefault();
-
-    let metadataIdList = [];
-    $('.bi-circle-fill').each(function(i, obj) {
-        metadataIdList.push(obj.id.substring(6, obj.id.length));
-    });
-
-    let albumId = $('#albumId').text();
-    if (metadataIdList.length > 0 && albumId.length > 0) {
-        let json = {metadataIdList: metadataIdList, albumId: parseInt(albumId)}
-
-        const posting = $.post({
-            url: "/album/delete/batch",
-            data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8'
-        });
-
-        posting.done(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "redirect") {
-                    window.location.replace(data["msg"]);
-                } else {
-                    let message = "Error";
-                    if (data["status"] === "success") {
-                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        window.top.location = window.top.location
-                    } else {
-                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    }
-                    $("#albumMessage").html(message);
-                }
-            }
-        });
-    }
-});
-
-$("#albumAppToolsRemoveFavorites").click(function(e) {
-    e.preventDefault();
-
-    let metadataIdList = [];
-    $('.bi-circle-fill').each(function(i, obj) {
-        metadataIdList.push(obj.id.substring(6, obj.id.length));
-    });
-
-    if (metadataIdList.length > 0) {
-        let json = {metadataIdList: metadataIdList}
-
-        const posting = $.post({
-            url: "/favorites/delete",
-            data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8'
-        });
-
-        posting.done(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === "success") {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    window.top.location = window.top.location
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                }
-                $("#favoritesMessage").html(message);
-            }
-        });
-    }
-
-    return false;
-});
-
-$("#albumAppToolsUntrash").click(function(e) {
-    e.preventDefault();
-
-    let metadataIdList = [];
-    $('.bi-circle-fill').each(function(i, obj) {
-        metadataIdList.push(obj.id.substring(6, obj.id.length));
-    });
-
-    if (metadataIdList.length > 0) {
-        let json = {metadataIdList: metadataIdList}
-
-        const posting = $.post({
-            url: "/trash/unhide",
-            data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8'
-        });
-
-        posting.done(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === "success") {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    window.top.location = window.top.location
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                }
-                $("#trashMessage").html(message);
-            }
-        });
-    }
-
-    return false;
-});
-
 (function( shashin, $, undefined ) {
     // private function
-    function addToMetadataThumbnailsList(thumbnail) {
-        if ($("#multiSelectThumbnails").length > 0) {
-            const metadataThumbnailsArray = getMetadataThumbnailsList();
-            if (metadataThumbnailsArray.indexOf(thumbnail) === -1) {
-                metadataThumbnailsArray.push(thumbnail);
-                $("#multiSelectThumbnails").val(JSON.stringify(metadataThumbnailsArray));
-            }
-        }
-    }
-
-    function removeFromMetadataThumbnailsList(thumbnail) {
-        if ($("#multiSelectThumbnails").length > 0) {
-            const metadataThumbnailsArray = getMetadataThumbnailsList();
-            const index = metadataThumbnailsArray.indexOf(thumbnail);
-            if (index > -1) {
-                metadataThumbnailsArray.splice(index, 1);
-            }
-            $("#multiSelectThumbnails").val(JSON.stringify(metadataThumbnailsArray));
-        }
-    }
-
-    function getMetadataThumbnailsList() {
-        if ($("#multiSelectThumbnails").length > 0) {
-            return JSON.parse($("#multiSelectThumbnails").val());
-        }
-
-        return [];
-    }
-
-    function removeFromMetadataFilenamesList(filename) {
-        if ($("#multiSelectFilenames").length > 0) {
-            const metadataFilenamesArray = getMetadataFilenamesList();
-            const index = metadataFilenamesArray.indexOf(filename);
-            if (index > -1) {
-                metadataFilenamesArray.splice(index, 1);
-            }
-            $("#multiSelectFilenames").val(JSON.stringify(metadataFilenamesArray));
-        }
-    }
-
-    function getMetadataFilenamesList() {
-        if ($("#multiSelectFilenames").length > 0) {
-            return JSON.parse($("#multiSelectFilenames").val());
-        }
-
-        return [];
-    }
-
-    function addToMetadataFilenamesList(filename) {
-        if ($("#multiSelectFilenames").length > 0) {
-            const metadataFilenamesArray = getMetadataFilenamesList();
-            if (metadataFilenamesArray.indexOf(filename) === -1) {
-                metadataFilenamesArray.push(filename);
-                $("#multiSelectFilenames").val(JSON.stringify(metadataFilenamesArray));
-            }
-        }
-    }
-
-    function addToMetadataIdList(metadataId) {
-        if ($("#multiSelectMetadataIds").length > 0) {
-            const metadataIdArray = getMetdataIdList();
-            if (metadataIdArray.indexOf(metadataId) === -1) {
-                metadataIdArray.push(metadataId);
-                $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
-            }
-        }
-    }
-
-    function removeFromMetadataIdList(metadataId) {
-        if ($("#multiSelectMetadataIds").length > 0) {
-            const metadataIdArray = getMetdataIdList();
-            const index = metadataIdArray.indexOf(metadataId);
-            if (index > -1) {
-                metadataIdArray.splice(index, 1);
-            }
-            $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
-        }
-    }
-
-    function getMetdataIdList() {
-        if ($("#multiSelectMetadataIds").length > 0) {
-            return JSON.parse($("#multiSelectMetadataIds").val());
-        }
-
-        return [];
-    }
-
     function fallbackCopyTextToClipboard(text) {
         var msg = "";
         var textArea = document.createElement("textarea");
@@ -304,6 +60,93 @@ $("#albumAppToolsUntrash").click(function(e) {
     }
 
     shashin.showDebug = false;
+
+    shashin.addToMetadataThumbnailsList = function(thumbnail) {
+        if ($("#multiSelectThumbnails").length > 0) {
+            const metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
+            if (metadataThumbnailsArray.indexOf(thumbnail) === -1) {
+                metadataThumbnailsArray.push(thumbnail);
+                $("#multiSelectThumbnails").val(JSON.stringify(metadataThumbnailsArray));
+            }
+        }
+    }
+
+    shashin.removeFromMetadataThumbnailsList = function(thumbnail) {
+        if ($("#multiSelectThumbnails").length > 0) {
+            const metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
+            const index = metadataThumbnailsArray.indexOf(thumbnail);
+            if (index > -1) {
+                metadataThumbnailsArray.splice(index, 1);
+            }
+            $("#multiSelectThumbnails").val(JSON.stringify(metadataThumbnailsArray));
+        }
+    }
+
+    shashin.getMetadataThumbnailsList = function() {
+        if ($("#multiSelectThumbnails").length > 0) {
+            return JSON.parse($("#multiSelectThumbnails").val());
+        }
+
+        return [];
+    }
+
+    shashin.removeFromMetadataFilenamesList = function(filename) {
+        if ($("#multiSelectFilenames").length > 0) {
+            const metadataFilenamesArray = shashin.getMetadataFilenamesList();
+            const index = metadataFilenamesArray.indexOf(filename);
+            if (index > -1) {
+                metadataFilenamesArray.splice(index, 1);
+            }
+            $("#multiSelectFilenames").val(JSON.stringify(metadataFilenamesArray));
+        }
+    }
+
+    shashin.getMetadataFilenamesList = function() {
+        if ($("#multiSelectFilenames").length > 0) {
+            return JSON.parse($("#multiSelectFilenames").val());
+        }
+
+        return [];
+    }
+
+    shashin.addToMetadataFilenamesList = function (filename) {
+        if ($("#multiSelectFilenames").length > 0) {
+            const metadataFilenamesArray = shashin.getMetadataFilenamesList();
+            if (metadataFilenamesArray.indexOf(filename) === -1) {
+                metadataFilenamesArray.push(filename);
+                $("#multiSelectFilenames").val(JSON.stringify(metadataFilenamesArray));
+            }
+        }
+    }
+
+    shashin.addToMetadataIdList = function (metadataId) {
+        if ($("#multiSelectMetadataIds").length > 0) {
+            const metadataIdArray = shashin.getMetdataIdList();
+            if (metadataIdArray.indexOf(metadataId) === -1) {
+                metadataIdArray.push(metadataId);
+                $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
+            }
+        }
+    }
+
+    shashin.removeFromMetadataIdList = function (metadataId) {
+        if ($("#multiSelectMetadataIds").length > 0) {
+            const metadataIdArray = shashin.getMetdataIdList();
+            const index = metadataIdArray.indexOf(metadataId);
+            if (index > -1) {
+                metadataIdArray.splice(index, 1);
+            }
+            $("#multiSelectMetadataIds").val(JSON.stringify(metadataIdArray));
+        }
+    }
+
+    shashin.getMetdataIdList = function() {
+        if ($("#multiSelectMetadataIds").length > 0) {
+            return JSON.parse($("#multiSelectMetadataIds").val());
+        }
+
+        return [];
+    }
 
     shashin.jumpToLightGalleryIndex = function (index) {
         var url = location.href;
@@ -438,7 +281,7 @@ $("#albumAppToolsUntrash").click(function(e) {
     shashin.setPhotoOverlays = function (rawMetadata, view) {
         const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
 
-        let metadataIdArray = getMetdataIdList();
+        let metadataIdArray = shashin.getMetdataIdList();
         shashin.printMessageToConsole(metadataIdArray);
         const index = metadataIdArray.indexOf(metadata.id);
         if (index > -1) {
@@ -461,9 +304,9 @@ $("#albumAppToolsUntrash").click(function(e) {
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbr" + metadata.id).css("display", "none");
                 $("#tnbl" + metadata.id).css("display", "none");
-                addToMetadataIdList(metadata.id);
-                addToMetadataFilenamesList($('#filename' + metadata.id).val());
-                addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                shashin.addToMetadataIdList(metadata.id);
+                shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
+                shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
             } else {
                 $("#tntl" + metadata.id).css("display", "block");
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
@@ -472,12 +315,12 @@ $("#albumAppToolsUntrash").click(function(e) {
                 $("#tncentered" + metadata.id).css("display", "block");
                 $("#tnbr" + metadata.id).css("display", "block");
                 $("#tnbl" + metadata.id).css("display", "block");
-                removeFromMetadataIdList(metadata.id);
-                removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
-                removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                shashin.removeFromMetadataIdList(metadata.id);
+                shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
+                shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
             }
 
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $("#appSearch").css("display", "none");
@@ -502,7 +345,7 @@ $("#albumAppToolsUntrash").click(function(e) {
                 $("#matchesAppTools").css("display", "none");
             }
 
-            const metadataList = getMetdataIdList();
+            const metadataList = shashin.getMetdataIdList();
             let timelineSelectCount = $('.bi-circle-fill').length;
             if (metadataList.length > 0) {
                 timelineSelectCount = metadataList.length;
@@ -526,9 +369,9 @@ $("#albumAppToolsUntrash").click(function(e) {
                     $("#tncentered" + metadata.id).css("display", "none");
                     $("#tnbr" + metadata.id).css("display", "none");
                     $("#tnbl" + metadata.id).css("display", "none");
-                    addToMetadataIdList(metadata.id);
-                    addToMetadataFilenamesList($('#filename' + metadata.id).val());
-                    addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                    shashin.addToMetadataIdList(metadata.id);
+                    shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
+                    shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
                 } else {
                     $("#tntl" + metadata.id).css("display", "block");
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
@@ -536,13 +379,13 @@ $("#albumAppToolsUntrash").click(function(e) {
                     $("#tncentered" + metadata.id).css("display", "block");
                     $("#tnbr" + metadata.id).css("display", "block");
                     $("#tnbl" + metadata.id).css("display", "block");
-                    removeFromMetadataIdList(metadata.id);
-                    removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
-                    removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
+                    shashin.removeFromMetadataIdList(metadata.id);
+                    shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
+                    shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
                 }
             }
 
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $("#appSearch").css("display", "none");
@@ -579,7 +422,7 @@ $("#albumAppToolsUntrash").click(function(e) {
         });
 
         $("#image" + metadata.id).hover(function () {
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
 
             $(this).css("opacity", 0.3);
@@ -597,7 +440,7 @@ $("#albumAppToolsUntrash").click(function(e) {
                 $('.thumbnail-br').hide();
             }
         }, function () {
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
 
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
@@ -628,7 +471,7 @@ $("#albumAppToolsUntrash").click(function(e) {
             $('#currentmonth').val(metadata.month === null ? "" : metadata.month);
             $('#currentday').val(metadata.day === null ? "" : metadata.day);
             $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
 
             $('.bi-play-circle').css("color", "midnightblue");
             $(this).css("display", "block");
@@ -654,7 +497,7 @@ $("#albumAppToolsUntrash").click(function(e) {
         });
 
         $("#tntl" + metadata.id).hover(function () {
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
                 $(this).css("display", "block");
@@ -684,7 +527,7 @@ $("#albumAppToolsUntrash").click(function(e) {
         });
 
         $("#tnbl" + metadata.id).hover(function () {
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
@@ -707,7 +550,7 @@ $("#albumAppToolsUntrash").click(function(e) {
         });
 
         $("#tnbr" + metadata.id).hover(function () {
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");
@@ -730,7 +573,7 @@ $("#albumAppToolsUntrash").click(function(e) {
         });
 
         $("#tntr" + metadata.id).hover(function () {
-            metadataIdArray = getMetdataIdList();
+            metadataIdArray = shashin.getMetdataIdList();
             $(this).css("display", "block");
             $(this).siblings(".thumbnail-tl").css("display", "block");
             $(this).siblings(".thumbnail-centered").css("display", "block");

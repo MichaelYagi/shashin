@@ -63,6 +63,18 @@
     <th:block th:if="${titleDescriptor == 'Timeline'}">
         <script src="/js/timeline.js"></script>
     </th:block>
+    <th:block th:if="${titleDescriptor == 'Favorites'}">
+        <script src="/js/favorites.js"></script>
+    </th:block>
+    <th:block th:if="${titleDescriptor == 'Search'}">
+        <script src="/js/search.js"></script>
+    </th:block>
+    <th:block th:if="${titleDescriptor == 'Trash'}">
+        <script src="/js/trash.js"></script>
+    </th:block>
+    <th:block th:if="${titleDescriptor == 'Share'}">
+        <script src="/js/share.js"></script>
+    </th:block>
 </head>
 <body></body>
 </html>

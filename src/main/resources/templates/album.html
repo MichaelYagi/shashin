@@ -171,6 +171,7 @@
     </div>
 </div>
 
+<script src="/js/applisteners.js"></script>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
         /*<![CDATA[*/
@@ -272,7 +273,10 @@
                 clearInterval(refreshIntervalId);
             }
 
-            if ($(".appendAlbumPhotos").last().text() === "EOL"  || '[[${albumMetadataList}]]' === '' || '[[${albumMetadataList}]]' === '[]') {
+            /*<![CDATA[*/
+            const albumMetadataList = /*[[${albumMetadataList}]]*/ '[]';
+            /*]]>*/
+            if ($(".appendAlbumPhotos").last().text() === "EOL"  || albumMetadataList === '' || albumMetadataList === '[]') {
                 clearInterval(refreshIntervalId);
             }
         }, 200);
