@@ -11,12 +11,15 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.firewall.HttpFirewall
+import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.session.HttpSessionEventPublisher
 import javax.sql.DataSource
 
@@ -107,5 +110,19 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
             .maxSessionsPreventsLogin(false)
             .expiredUrl("/users/login")
             .sessionRegistry(sessionRegistry());
+    }
+
+    @Bean
+    fun allowUrlEncodedSlashHttpFirewall(): HttpFirewall {
+        val firewall = StrictHttpFirewall()
+        firewall.setAllowUrlEncodedPercent(true)
+        firewall.setAllowSemicolon(true)
+        return firewall
+    }
+
+    @Throws(Exception::class)
+    override fun configure(web: WebSecurity) {
+        super.configure(web)
+        web.httpFirewall(allowUrlEncodedSlashHttpFirewall())
     }
 }
