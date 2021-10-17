@@ -17,7 +17,7 @@
                     <th:block th:each="album, iterStat: ${albumsList}">
                         <div class="card" style="width:auto;padding-top:10px;">
                             <a th:href="'/album/'+${album.id}"  style="text-decoration: none !important;color: black;" th:id="'album'+${album.id}">
-                                <img class="card-img-top" th:src="${#uris.escapePath(album.coverUrl)}" th:alt="${album.name}" style="width: 209px;height: 209px;">
+                                <img class="card-img-top" th:src="${#uris.escapePath(album.coverUrl)}" width="209" height="209" style="width: 209px;height: 209px;" th:onError="shashin.errorImg(this,[[${album.name}]])">
                             </a>
                             <div class="card-body">
                                 <p class="card-text">

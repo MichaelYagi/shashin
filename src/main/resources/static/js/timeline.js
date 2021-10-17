@@ -259,7 +259,7 @@
         $("#metadataId").val(metadata.id);
 
         if (metadata.thumbnailUrlCentered !== null) {
-            $("#propTimelineModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100">');
+            $("#propTimelineModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="shashin.errorImg(this,\''+metadata.title+'\')">');
         }
 
         if (metadata.title !== null) {
@@ -577,7 +577,7 @@
                                     $("#briconcount"+metadata.id).text(favoriteCount);
                                 }
 
-                                html = '<img src="'+encodeURI(metadata.thumbnailUrlSmall)+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;">';
+                                html = '<img src="'+encodeURI(metadata.thumbnailUrlSmall)+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;" onError="shashin.errorImg(this,\''+metadata.title+'\')">';
                                 if ($("#image" + metadata.id).length === 0) {
                                     $("#photoThumbnailContainer" + metadata.id).prepend(html);
                                 }
