@@ -78,10 +78,10 @@
                                 </div>
                             </div>
 
-                            <script type="text/javascript">
+                            <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
-                                shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                                searchSettings.activateMetadataListeners("[[${metadata}]]");
+                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'search');
+                                searchSettings.activateMetadataListeners(/*[[${metadata}]]*/{});
                                 /*]]>*/
                             </script>
 

@@ -115,8 +115,7 @@
 
                                 $(html).insertBefore($(".appendMetadataPhotos").last())
 
-                                var htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
-                                shashin.setPhotoOverlays(htmlEncodedMetadata, activePage);
+                                shashin.setPhotoOverlays(metadata, activePage);
 
                                 $("#image" + metadata.id).on('load', function () {
                                     $(this).css("background-color", "transparent");

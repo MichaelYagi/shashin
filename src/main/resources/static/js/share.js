@@ -77,8 +77,7 @@
                             $(html).insertBefore($(".appendAlbumPhotos").last())
 
                             // Call JS and modal
-                            var htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
-                            shashin.setPhotoOverlays(htmlEncodedMetadata, activePage);
+                            shashin.setPhotoOverlays(metadata, activePage);
                         }
                     } else {
                         $(".appendAlbumPhotos").last().text("EOL").css("display","none")

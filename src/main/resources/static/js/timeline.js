@@ -691,9 +691,8 @@
                                     }
                                 }
 
-                                const htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
-                                shashin.setPhotoOverlays(htmlEncodedMetadata, "timeline")
-                                timelineSettings.activateMetadataListeners(htmlEncodedMetadata);
+                                shashin.setPhotoOverlays(metadata, "timeline")
+                                timelineSettings.activateMetadataListeners(metadata);
                             }
                         }
                     }
@@ -919,8 +918,8 @@
         }
     }
 
-    timelineSettings.activateMetadataListeners = function(rawMetadata) {
-        const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
+    timelineSettings.activateMetadataListeners = function(metadata) {
+        //const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
 
         $("#image"+metadata.id).on('load', function() {
             $(this).css("background-color","transparent");

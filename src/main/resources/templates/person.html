@@ -104,10 +104,10 @@
 
                             <span th:id="'personmodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
 
-                            <script type="text/javascript">
+                            <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
-                                shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                                personModalSettings.renderPersonModal("[[${metadata}]]","[[${recognitionLabels}]]","[[${labelPhotoMap.get(metadata.id).get('labels')}]]");
+                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'person');
+                                personModalSettings.renderPersonModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id).get('labels')}]]*/"");
                                 /*]]>*/
                             </script>
 

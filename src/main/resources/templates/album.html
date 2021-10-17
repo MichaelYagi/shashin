@@ -119,12 +119,12 @@
 
                             <span th:id="'albummodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
 
-                            <script type="text/javascript">
+                            <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
-                                $("#albumModalEdit[[${metadata.id}]]").attr("tag", shashin.decodeHtml("[[${metadata}]]"));
-                                shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                                albumModal.renderAlbumModal("[[${album}]]","[[${metadata}]]","[[${currentUser}]]","[[${albumPhotoCommentsMapString}]]")
-                                albumSettings.activateAlbumListeners("[[${metadata}]]","[[${album}]]")
+                                $("#albumModalEdit"+[[${metadata.id}]]).attr("tag", shashin.decodeHtml(JSON.stringify(/*[[${metadata}]]*/{})));
+                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
+                                albumModal.renderAlbumModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${currentUser}]]*/{},/*[[${albumPhotoCommentsMapString}]]*/{})
+                                albumSettings.activateAlbumListeners(/*[[${metadata}]]*/{},/*[[${album}]]*/{})
                                 /*]]>*/
                             </script>
 
