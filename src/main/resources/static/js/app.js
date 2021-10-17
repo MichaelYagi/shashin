@@ -4,8 +4,8 @@ $.fn.hasScrollBar = function() {
 }
 
 $.fn.serializeObject = function() {
-    var o = {};
-    var a = this.serializeArray();
+    const o = {};
+    const a = this.serializeArray();
     $.each(a, function() {
         if (o[this.name]) {
             if (!o[this.name].push) {
@@ -22,8 +22,8 @@ $.fn.serializeObject = function() {
 (function( shashin, $, undefined ) {
     // private function
     function fallbackCopyTextToClipboard(text) {
-        var msg = "";
-        var textArea = document.createElement("textarea");
+        let msg = "";
+        const textArea = document.createElement("textarea");
         textArea.value = text;
 
         // Avoid scrolling to bottom
@@ -36,7 +36,7 @@ $.fn.serializeObject = function() {
         textArea.select();
 
         try {
-            var successful = document.execCommand('copy');
+            const successful = document.execCommand('copy');
             msg = "<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>";
             if (successful === true) {
                 msg = "<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>";
@@ -51,11 +51,11 @@ $.fn.serializeObject = function() {
     }
 
     function getShortDay(index) {
-        var days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         return days[index];
     }
     function getShortMonths(index) {
-        var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         return months[index];
     }
 
@@ -149,14 +149,14 @@ $.fn.serializeObject = function() {
     }
 
     shashin.jumpToLightGalleryIndex = function (index) {
-        var url = location.href;
+        const url = location.href;
         location.href = '#lightGalleryIndex'+index;
         history.replaceState(null,null,url);
     }
 
     shashin.getParameterByName = function (name, url = window.location.href) {
         name = name.replace(/[\[\]]/g, '\\$&');
-        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
             results = regex.exec(url);
         if (!results) return null;
         if (!results[2]) return '';
@@ -195,7 +195,7 @@ $.fn.serializeObject = function() {
     shashin.getMapSource = function (source) {
         const validSources = ["osm","bingmaps","maptiler","mapbox"];
 
-        var mapSource = new ol.source.OSM();
+        let mapSource = new ol.source.OSM();
 
         if (validSources.includes(source)) {
             switch(source) {
@@ -236,10 +236,12 @@ $.fn.serializeObject = function() {
             day !== null && day !== ""
         ) {
             let date = new Date(month+"/"+day+"/"+year);
-            let shortMonth = getShortMonths(date.getMonth());
-            let adjustedDay = date.getDate();
-            let dayOfWeek = getShortDay(date.getDay());
-            return dayOfWeek + ", " + shortMonth + " " + adjustedDay + ", " + year;
+            if (date.toString() !== "Invalid Date") {
+                let shortMonth = getShortMonths(date.getMonth());
+                let adjustedDay = date.getDate();
+                let dayOfWeek = getShortDay(date.getDay());
+                return dayOfWeek + ", " + shortMonth + " " + adjustedDay + ", " + year;
+            }
         }
         return "";
     }
