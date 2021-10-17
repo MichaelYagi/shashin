@@ -236,7 +236,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 }
                             }
                             "Image Height", "Height", "Exif Image Height" -> {
-                                val heightValue = tag.description
+                                val heightValue = tag.description.filter { it.isDigit() }
                                 if (originalPixelWidth == null && heightValue != "") {
                                     originalPixelHeight = heightValue.toInt()
                                 }
