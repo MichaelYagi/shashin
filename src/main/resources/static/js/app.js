@@ -148,6 +148,24 @@ $.fn.serializeObject = function() {
         return [];
     }
 
+    shashin.removeAllMetadataIdList = function () {
+        if ($("#multiSelectMetadataIds").length > 0) {
+            $("#multiSelectMetadataIds").val(JSON.stringify([]));
+        }
+    }
+
+    shashin.removeAllMetadataFilenamesList = function () {
+        if ($("#multiSelectFilenames").length > 0) {
+            $("#multiSelectFilenames").val(JSON.stringify([]));
+        }
+    }
+
+    shashin.removeAllMetadataThumbnailsList = function () {
+        if ($("#multiSelectThumbnails").length > 0) {
+            $("#multiSelectThumbnails").val(JSON.stringify([]));
+        }
+    }
+
     shashin.jumpToLightGalleryIndex = function (index) {
         const url = location.href;
         location.href = '#lightGalleryIndex'+index;
@@ -260,24 +278,6 @@ $.fn.serializeObject = function() {
 
     shashin.encodeHtml = function (str) {
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    }
-
-    shashin.removeAllMetadataIdList = function () {
-        if ($("#multiSelectMetadataIds").length > 0) {
-            $("#multiSelectMetadataIds").val(JSON.stringify([]));
-        }
-    }
-
-    shashin.removeAllMetadataFilenamesList = function () {
-        if ($("#multiSelectFilenames").length > 0) {
-            $("#multiSelectFilenames").val(JSON.stringify([]));
-        }
-    }
-
-    shashin.removeAllMetadataThumbnailsList = function () {
-        if ($("#multiSelectThumbnails").length > 0) {
-            $("#multiSelectThumbnails").val(JSON.stringify([]));
-        }
     }
 
     shashin.setPhotoOverlays = function (metadata, view) {
@@ -642,7 +642,7 @@ $.fn.serializeObject = function() {
             $('.bi-circle-fill').each(function(i, obj) {
                 var metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="shashin.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\')">';
+                thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="shashin.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\',75)">';
             });
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
@@ -669,8 +669,15 @@ $.fn.serializeObject = function() {
         }
     }
 
-    shashin.errorImg = function (_this,text) {
-        _this.src = "https://via.placeholder.com/"+_this.width+"x"+_this.height+"?text="+encodeURI(text);
+    shashin.errorImg = function (_this,text,defaulWidthtHeight) {
+        let dimensions = "/209";
+        if (defaulWidthtHeight != null) {
+            dimensions = "/"+defaulWidthtHeight;
+        }
+        if (_this.width != null && _this.width > 0 && _this.height != null && _this.height > 0) {
+            dimensions = "/"+_this.width+"x"+_this.height;
+        }
+        _this.src = "https://via.placeholder.com"+dimensions+"?text="+encodeURI(text);
     }
 }( window.shashin = window.shashin || {}, jQuery ));
 
