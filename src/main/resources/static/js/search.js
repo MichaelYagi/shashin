@@ -81,7 +81,7 @@
                                 '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
                                 '       <span class="overlayIconBackground">'+duration+'&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>\n' +
                                 '   </div>\n';
-                        } else if (metadata.originalImageWidth > metadata.originalImageHeight*2) {
+                        } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight*2) {
                             html +=
                                 '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
                                 '       <span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>\n' +
