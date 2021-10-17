@@ -18,7 +18,7 @@
                         <th:block th:each="metadata, iterStat: ${albumMetadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail"
                                  th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
-                                <img th:src="${metadata.thumbnailUrlSmall}" class="photo-thumbnail-image"
+                                <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image"
                                      th:id="'image'+${metadata.id}">
 
                                 <th:block th:if="${metadata.type.contains('video')}">
