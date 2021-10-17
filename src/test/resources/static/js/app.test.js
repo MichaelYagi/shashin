@@ -7,6 +7,7 @@ const { Blob } = require('blob-polyfill');
 
 global.window   = dom.window;
 global.document = dom.window.document;
+global.Image = dom.window.Image;
 global.Blob   = Blob;
 global.$ = global.jQuery = require('../../../../main/resources/static/js/jquery-3.5.1.min');
 Object.keys( global.window ).forEach(( property ) => {
@@ -119,6 +120,10 @@ describe('#shashin app tests', function() {
         metadataList = shashin.getMetdataIdList();
         assert.lengthOf(metadataList, 2);
         expect(metadataList).to.eql(["first_metadata", "third_metadata"]);
+        shashin.removeAllMetadataIdList();
+        metadataList = shashin.getMetdataIdList();
+        assert.lengthOf(metadataList, 0);
+        expect(metadataList).to.eql([]);
     })
 
     it('URL query parameters', function() {
@@ -146,5 +151,48 @@ describe('#shashin app tests', function() {
         assert.equal(shashin.getDateString(2021,14,32),"");
         assert.equal(shashin.getDateString(2021,14,9),"");
         assert.equal(shashin.getDateString("asdf","asdf","asdf"),"");
+    })
+
+    it('Numeric check', function() {
+        assert.equal(shashin.isNumeric(),false)
+        assert.equal(shashin.isNumeric("a"),false)
+        assert.equal(shashin.isNumeric("5"),true)
+        assert.equal(shashin.isNumeric("5.5"),true)
+        assert.equal(shashin.isNumeric("0.5"),true)
+        assert.equal(shashin.isNumeric("1e5"),true)
+        assert.equal(shashin.isNumeric(5),false)
+        assert.equal(shashin.isNumeric(5.5),false)
+        assert.equal(shashin.isNumeric(0.5),false)
+    })
+
+    it('Encode/Decode HTML string', function() {
+        const encodedString = shashin.encodeHtml('{"a":"b"}');
+        assert.equal(encodedString,"{&quot;a&quot;:&quot;b&quot;}")
+        const decodedString = shashin.decodeHtml(encodedString);
+        assert.equal(decodedString,'{"a":"b"}')
+    })
+
+    it('Img error', function() {
+        $("body").append($("<img/>", {
+            id: 'someid',
+            src: 'http://asdfasdfasdf.com/'
+        }))
+
+        let imgEl = document.getElementById("someid");
+
+        assert.equal(imgEl.src,'http://asdfasdfasdf.com/')
+
+        shashin.errorImg(imgEl,'Some Title',199)
+        assert.equal(imgEl.src,'https://via.placeholder.com/199?text=Some%20Title')
+
+        shashin.errorImg(imgEl,'Some Title')
+        assert.equal(imgEl.src,'https://via.placeholder.com/209?text=Some%20Title')
+
+        $("#someid").attr("height","100");
+        $("#someid").attr("width","200");
+
+        imgEl = document.getElementById("someid");
+        shashin.errorImg(imgEl,'Some Title')
+        assert.equal(imgEl.src,'https://via.placeholder.com/200x100?text=Some%20Title')
     })
 })
