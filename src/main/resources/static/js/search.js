@@ -31,8 +31,7 @@
         }
     }
 
-    searchSettings.activateMetadataListeners = function (rawMetadata) {
-        const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
+    searchSettings.activateMetadataListeners = function (metadata) {
         shashin.printMessageToConsole(metadata.id);
 
         $("#image"+metadata.id).on('load', function() {
@@ -111,10 +110,8 @@
                         html += '</div></div>\n<span class="appendSearchPhotos" style="width:0;height:0;padding:0"></span>\n';
                         $(html).insertAfter($(".appendSearchPhotos").last())
 
-                        var htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
-
-                        shashin.setPhotoOverlays(htmlEncodedMetadata, activePage);
-                        searchSettings.activateMetadataListeners(htmlEncodedMetadata);
+                        shashin.setPhotoOverlays(metadata, activePage);
+                        searchSettings.activateMetadataListeners(metadata);
 
                         html = "";
                     }

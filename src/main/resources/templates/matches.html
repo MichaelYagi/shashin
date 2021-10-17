@@ -92,10 +92,10 @@
 
                         <span th:id="'matchesmodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
 
-                        <script type="text/javascript">
+                        <script th:inline="javascript" type="text/javascript">
                             /*<![CDATA[*/
-                            shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
-                            matchModalSettings.renderMatchesModal("[[${metadata}]]","[[${recognitionLabels}]]","[[${labelPhotoMap.get(metadata.id)}]]");
+                            shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'matches');
+                            matchModalSettings.renderMatchesModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id)}]]*/"");
                             /*]]>*/
                         </script>
 

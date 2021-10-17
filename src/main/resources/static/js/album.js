@@ -183,15 +183,10 @@
                                 $(html).insertBefore($(".appendAlbumPhotos").last())
 
                                 // Call JS and modal
-                                var htmlEncodedMetadata = shashin.encodeHtml(JSON.stringify(metadata));
-                                var htmlEncodedAlbumData = shashin.encodeHtml(JSON.stringify(albumData));
-                                var htmlEncodedCurrentUser = shashin.encodeHtml(JSON.stringify(currentUser));
-                                var htmlEncodedalbumPhotoCommentsMap = shashin.encodeHtml(JSON.stringify(albumPhotoCommentsMap));
-
                                 $("#albumModalEdit"+metadata.id).attr("tag", JSON.stringify(metadata));
-                                shashin.setPhotoOverlays(htmlEncodedMetadata, activePage);
-                                albumModal.renderAlbumModal(htmlEncodedAlbumData, htmlEncodedMetadata, htmlEncodedCurrentUser, htmlEncodedalbumPhotoCommentsMap);
-                                albumSettings.activateAlbumListeners(htmlEncodedMetadata, htmlEncodedAlbumData);
+                                shashin.setPhotoOverlays(metadata, activePage);
+                                albumModal.renderAlbumModal(albumData, metadata, currentUser, albumPhotoCommentsMap);
+                                albumSettings.activateAlbumListeners(metadata, albumData);
                             }
                         } else {
                             $(".appendAlbumPhotos").last().text("EOL").css("display","none")
@@ -214,10 +209,7 @@
         });
     }
 
-    albumSettings.activateAlbumListeners = function(rawMetadata,rawAlbumData) {
-        var metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
-        var album = JSON.parse(shashin.decodeHtml(rawAlbumData));
-
+    albumSettings.activateAlbumListeners = function(metadata,album) {
         $("#image"+metadata.id).on('load', function() {
             $(this).css("background-color","transparent");
         });

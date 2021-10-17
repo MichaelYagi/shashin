@@ -278,9 +278,7 @@ $.fn.serializeObject = function() {
         }
     }
 
-    shashin.setPhotoOverlays = function (rawMetadata, view) {
-        const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
-
+    shashin.setPhotoOverlays = function (metadata, view) {
         let metadataIdArray = shashin.getMetdataIdList();
         shashin.printMessageToConsole(metadataIdArray);
         const index = metadataIdArray.indexOf(metadata.id);

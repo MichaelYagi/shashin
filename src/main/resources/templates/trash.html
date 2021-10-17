@@ -83,9 +83,9 @@
                             </div>
                         </div>
 
-                        <script type="text/javascript">
+                        <script th:inline="javascript" type="text/javascript">
                             /*<![CDATA[*/
-                            shashin.setPhotoOverlays("[[${metadata}]]", "[[${activePage}]]");
+                            shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'trash');
                             /*]]>*/
                         </script>
 
