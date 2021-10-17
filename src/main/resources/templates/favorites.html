@@ -21,7 +21,7 @@
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                                <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
+                                <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;" th:onError="shashin.errorImg(this,[[${metadata.title}]])">
 
                                 <th:block th:if="${metadata.type.contains('video')}">
                                     <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">

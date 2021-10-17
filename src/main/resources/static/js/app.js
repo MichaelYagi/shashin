@@ -640,7 +640,7 @@ $.fn.serializeObject = function() {
             $('.bi-circle-fill').each(function(i, obj) {
                 var metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'">';
+                thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="shashin.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\')">';
             });
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
@@ -665,6 +665,10 @@ $.fn.serializeObject = function() {
         if (shashin.showDebug === true) {
             console.log(msg);
         }
+    }
+
+    shashin.errorImg = function (_this,text) {
+        _this.src = "https://via.placeholder.com/"+_this.width+"x"+_this.height+"?text="+encodeURI(text);
     }
 }( window.shashin = window.shashin || {}, jQuery ));
 
