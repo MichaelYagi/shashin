@@ -683,7 +683,7 @@
                                     }
                                 } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight*2) {
                                     html = '<span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>';
-                                    if ($("#video"+metadata.id).length === 0) {
+                                    if ($("#panorama"+metadata.id).length === 0) {
                                         $("#tntr"+metadata.id).append(html);
                                     }
                                     if ($("#tntr"+metadata.id+".thumbnail-tr").length === 0) {
