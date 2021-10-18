@@ -4,6 +4,7 @@ import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
@@ -82,10 +83,8 @@ class BaseController {
             settingsObj.setPort("6624")
             settingsObj.setRecognitionConfidenceThreshold("0.2")
             settingsObj.setRecognitionConfidenceThreshold("0.2")
-            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            val now = LocalDateTime.now()
-            settingsObj.setCreatedAt(dtf.format(now))
-            settingsObj.setModifiedAt(dtf.format(now))
+            settingsObj.setCreatedAt(getModifiedCreateTimestamp())
+            settingsObj.setModifiedAt(getModifiedCreateTimestamp())
             settingsRepository?.save(settingsObj)
 
             model["settings"] = settingsObj

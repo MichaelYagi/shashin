@@ -12,6 +12,7 @@ import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
@@ -125,9 +126,8 @@ class FavoritesController {
             if (currentUserObj != null) {
                 favorite.setUserId(currentUserObj.getId())
                 favorite.setMetadataId(metadataId)
-                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
                 val now = LocalDateTime.now()
-                favorite.setModifiedAt(dtf.format(now))
+                favorite.setModifiedAt(getModifiedCreateTimestamp())
                 val favoriteObj = favoriteRepository.findByMetadataIdAndUserId(metadataId,currentUserObj.getId())
                 if (favoriteObj != null) {
                     val favoriteId = favoriteObj.getId()
@@ -139,7 +139,7 @@ class FavoritesController {
                         favoriteRepository.deleteByMetadataIdAndUserId(metadataId,currentUserObj.getId())
                     }
                 } else if (isFavorite) {
-                    favorite.setCreatedAt(dtf.format(now))
+                    favorite.setCreatedAt(getModifiedCreateTimestamp())
                     favoriteRepository.save(favorite)
                 }
 
@@ -153,8 +153,8 @@ class FavoritesController {
                 for (admin in admins) {
                     if (admin.getId() != currentUserObj.getId()) {
                         val notificationObj = Notification()
-                        notificationObj.setCreatedAt(dtf.format(now))
-                        notificationObj.setModifiedAt(dtf.format(now))
+                        notificationObj.setCreatedAt(getModifiedCreateTimestamp())
+                        notificationObj.setModifiedAt(getModifiedCreateTimestamp())
                         notificationObj.setRead(false)
                         notificationObj.setMessage(
                             currentUserObj.getUsername() + " likes <a href='/api/v1/image/" + metadata.get()
@@ -172,8 +172,6 @@ class FavoritesController {
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
             }
-
-
         }
 
         resp["msg"] = "Could not save to favorites"
@@ -195,9 +193,7 @@ class FavoritesController {
             if (currentUserObj != null) {
                 favorite.setUserId(currentUserObj.getId())
                 favorite.setMetadataId(metadataId)
-                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                val now = LocalDateTime.now()
-                favorite.setModifiedAt(dtf.format(now))
+                favorite.setModifiedAt(getModifiedCreateTimestamp())
                 val favoriteObj = favoriteRepository.findByMetadataIdAndUserId(metadataId,currentUserObj.getId())
                 if (favoriteObj != null) {
                     val favoriteId = favoriteObj.getId()
@@ -209,7 +205,7 @@ class FavoritesController {
                         favoriteRepository.deleteByMetadataIdAndUserId(metadataId,currentUserObj.getId())
                     }
                 } else if (isFavorite) {
-                    favorite.setCreatedAt(dtf.format(now))
+                    favorite.setCreatedAt(getModifiedCreateTimestamp())
                     favoriteRepository.save(favorite)
                 }
 

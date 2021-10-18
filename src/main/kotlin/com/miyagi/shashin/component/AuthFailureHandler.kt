@@ -3,6 +3,7 @@ package com.miyagi.shashin.component
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.AuthenticationException
@@ -43,7 +44,6 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         val lastUserName: String = request?.getParameter("username") ?: ""
 
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
-        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val sdtf = DateTimeFormatter
             .ofLocalizedTime(FormatStyle.LONG)
             .withZone(ZoneId.systemDefault())
@@ -58,8 +58,8 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
             for (admin in admins) {
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
-                notificationObj.setCreatedAt(dtf.format(now))
-                notificationObj.setModifiedAt(dtf.format(now))
+                notificationObj.setCreatedAt(getModifiedCreateTimestamp())
+                notificationObj.setModifiedAt(getModifiedCreateTimestamp())
                 notificationObj.setRead(false)
                 notificationObj.setMessage(message)
                 notificationObjList.add(notificationObj)

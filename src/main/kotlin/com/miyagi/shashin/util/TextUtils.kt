@@ -6,6 +6,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -60,6 +62,12 @@ class TextUtils {
                 b = 1 / (b - a)
             } while (Math.abs(x - h1 / k1) > x * tolerance)
             return "${h1.toInt()}/${k1.toInt()}"
+        }
+
+        fun getModifiedCreateTimestamp(): String {
+            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val now = LocalDateTime.now()
+            return dtf.format(now)
         }
 
         fun generateUUID(

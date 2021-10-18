@@ -5,7 +5,7 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
-import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
@@ -60,10 +60,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 var isAllowed = true
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null) {
-                    val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                    val now = LocalDateTime.now()
                     if (currentAuthority == userRole && user.getIsAllowed() == false) {
-                        user.setModifiedAt(dtf.format(now))
+                        user.setModifiedAt(getModifiedCreateTimestamp())
                         user.setLoggedIn(false)
                         userRepository?.save(user)
                         SecurityContextLogoutHandler().logout(request, response, authentication)
@@ -71,7 +69,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         redirectStrategy.sendRedirect(request, response, "/users/login?msg=loginfail")
                         isAllowed = false
                     } else {
-                        user.setModifiedAt(dtf.format(now))
+                        user.setModifiedAt(getModifiedCreateTimestamp())
                         user.setLoggedIn(true)
                         try {
                             userRepository?.save(user)
@@ -95,7 +93,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     private fun notifyLogin(currentUserObj: User?, authority: String) {
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
-        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
         val sdtf = DateTimeFormatter
             .ofLocalizedTime(FormatStyle.LONG)
             .withZone(ZoneId.systemDefault())
@@ -106,8 +103,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             for (admin in admins) {
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
-                notificationObj.setCreatedAt(dtf.format(now))
-                notificationObj.setModifiedAt(dtf.format(now))
+                notificationObj.setCreatedAt(getModifiedCreateTimestamp())
+                notificationObj.setModifiedAt(getModifiedCreateTimestamp())
                 var identity = "<a href='/settings/users' target='_blank'>"+currentUserObj.getUsername()+"</a>"
                 if (admin.getId() == currentUserObj.getId()) {
                     notificationObj.setRead(true)
