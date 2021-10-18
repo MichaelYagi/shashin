@@ -9,7 +9,7 @@ global.window   = dom.window;
 global.document = dom.window.document;
 global.Image = dom.window.Image;
 global.Blob   = Blob;
-global.$ = global.jQuery = require('../../../../main/resources/static/js/jquery-3.5.1.min');
+global.$ = global.jQuery = require('../../../../../main/resources/static/js/jquery-3.5.1.min');
 Object.keys( global.window ).forEach(( property ) => {
     if ( typeof global[ property ] === "undefined" ) {
         global[ property ] = global.window[ property ];
@@ -57,7 +57,7 @@ function mockCanvas (window) {
 }
 mockCanvas(dom.window);
 
-const shashin = require('../../../../main/resources/static/js/site/app');
+const shashin = require('../../../../../main/resources/static/js/site/app');
 
 describe('#shashin app tests', function() {
     it('enable debug console output', function() {
@@ -133,7 +133,7 @@ describe('#shashin app tests', function() {
     })
 
     it('Map sources', function() {
-        global.ol = require('../../../../main/resources/static/js/ol');
+        global.ol = require('../../../../../main/resources/static/js/ol');
         let source = shashin.getMapSource();
         expect(source.urls.join('|')).to.include('openstreetmap')
 
