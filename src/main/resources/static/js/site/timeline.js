@@ -704,7 +704,7 @@
     timelineSettings.updateTimeline = function(date,mediaTypeFilter,action,attachToId) {
         const promise = $.ajax({
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date,
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
             contentType: 'application/json; charset=utf-8',
             async: false
         }).fail(function (xhr, textStatus) {
@@ -722,12 +722,7 @@
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
-                    if (data.hasOwnProperty("metadataList") &&
-                        data.hasOwnProperty("favorites") &&
-                        data.hasOwnProperty("albumList") &&
-                        data.hasOwnProperty("recognitionLabels") &&
-                        data.hasOwnProperty("labelPhotoMap")
-                    ) {
+                    if (data.hasOwnProperty("metadataList")) {
                         const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
 
                         if (metadataList.length > 0) {
