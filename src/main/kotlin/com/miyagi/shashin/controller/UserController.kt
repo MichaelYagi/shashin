@@ -8,6 +8,7 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -101,9 +102,7 @@ class UserController {
             if (currentUserObj != null) {
                 if (newPassword == newPasswordConfirm) {
                     if (bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
-                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        val now = LocalDateTime.now()
-                        currentUserObj.setModifiedAt(dtf.format(now))
+                        currentUserObj.setModifiedAt(getModifiedCreateTimestamp())
                         currentUserObj.setPassword(bcrypt.encode(newPassword))
                         userRepository?.save(currentUserObj)
                         model["message"] = "Success"
@@ -167,10 +166,9 @@ class UserController {
         if (newUser != null) {
             val encodedPassword: String = bcrypt.encode(newUser.getPassword())
             newUser.setPassword(encodedPassword)
-            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
-            newUser.setCreatedAt(dtf.format(now))
-            newUser.setModifiedAt(dtf.format(now))
+            newUser.setCreatedAt(getModifiedCreateTimestamp())
+            newUser.setModifiedAt(getModifiedCreateTimestamp())
             newUser.setLoggedIn(false)
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
@@ -190,8 +188,8 @@ class UserController {
                     for (admin in admins) {
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(dtf.format(now))
-                        notificationObj.setModifiedAt(dtf.format(now))
+                        notificationObj.setCreatedAt(getModifiedCreateTimestamp())
+                        notificationObj.setModifiedAt(getModifiedCreateTimestamp())
                         notificationObj.setRead(false)
                         notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+sdtf.format(now)+" and is pending approval.")
                         notificationObjList.add(notificationObj)
@@ -336,10 +334,8 @@ class UserController {
             val user = userRepository?.findByUsername(authentication.name)
 
             if (user != null) {
-                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                val now = LocalDateTime.now()
                 user.setLoggedIn(false)
-                user.setModifiedAt(dtf.format(now))
+                user.setModifiedAt(getModifiedCreateTimestamp())
                 userRepository?.save(user)
             }
         }

@@ -13,6 +13,7 @@ import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
@@ -246,8 +247,6 @@ class SettingsController {
 
         var dirDneString = ""
         if (mediaDirs != null && mediaDirs.isNotEmpty()) {
-            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-            val now = LocalDateTime.now()
 
             mediaDirRepository?.deleteAll()
             for (mediaDir in mediaDirs) {
@@ -256,8 +255,8 @@ class SettingsController {
                     mediaDirObj = MediaDirectory()
                     mediaDirObj.setDirectory(mediaDir)
                 }
-                mediaDirObj.setCreatedAt(dtf.format(now))
-                mediaDirObj.setModifiedAt(dtf.format(now))
+                mediaDirObj.setCreatedAt(getModifiedCreateTimestamp())
+                mediaDirObj.setModifiedAt(getModifiedCreateTimestamp())
                 mediaDirArrayList.add(mediaDirObj)
 
                 val path: Path = Paths.get(mediaDir)
@@ -448,10 +447,8 @@ class SettingsController {
             }
             if (userId == userIdRequest) {
                 val userObj = userRepository?.findById(userId)?.get()
-                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                val now = LocalDateTime.now()
                 if (userObj != null) {
-                    userObj.setModifiedAt(dtf.format(now))
+                    userObj.setModifiedAt(getModifiedCreateTimestamp())
                     userObj.setAuthority(changeRoleTo)
                     userRepository?.save(userObj)
                 }
@@ -479,10 +476,8 @@ class SettingsController {
 
             if (userId == userIdRequest) {
                 val userObj = userRepository?.findById(userId)?.get()
-                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                val now = LocalDateTime.now()
                 if (userObj != null) {
-                    userObj.setModifiedAt(dtf.format(now))
+                    userObj.setModifiedAt(getModifiedCreateTimestamp())
                     userObj.setIsAllowed(changePermissionTo)
                     userRepository?.save(userObj)
                 }

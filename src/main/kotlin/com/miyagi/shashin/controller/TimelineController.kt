@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.timeOffsets
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Autowired
@@ -478,10 +479,8 @@ class TimelineController {
                     var recognitionLabelObj = RecognitionLabel()
                     if (recognitionLabelRecord == null) {
                         recognitionLabelObj.setName(recognitionLabel.trim())
-                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        val now = LocalDateTime.now()
-                        recognitionLabelObj.setCreatedAt(dtf.format(now))
-                        recognitionLabelObj.setModifiedAt(dtf.format(now))
+                        recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
+                        recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
                         recognitionLabelRepository?.save(recognitionLabelObj)
                     } else {
                         recognitionLabelObj = recognitionLabelRecord
@@ -501,10 +500,8 @@ class TimelineController {
                 var recognitionLabelObj = RecognitionLabel()
                 if (recognitionLabelRecord == null) {
                     recognitionLabelObj.setName("object")
-                    val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                    val now = LocalDateTime.now()
-                    recognitionLabelObj.setCreatedAt(dtf.format(now))
-                    recognitionLabelObj.setModifiedAt(dtf.format(now))
+                    recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
+                    recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
                     recognitionLabelRepository?.save(recognitionLabelObj)
                 } else {
                     recognitionLabelObj = recognitionLabelRecord
@@ -793,10 +790,8 @@ class TimelineController {
                         var recognitionLabelObj = RecognitionLabel()
                         if (recognitionLabelRecord == null) {
                             recognitionLabelObj.setName("object")
-                            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                            val now = LocalDateTime.now()
-                            recognitionLabelObj.setCreatedAt(dtf.format(now))
-                            recognitionLabelObj.setModifiedAt(dtf.format(now))
+                            recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
+                            recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
                             recognitionLabelRepository?.save(recognitionLabelObj)
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
@@ -817,10 +812,8 @@ class TimelineController {
                             var recognitionLabelObj = RecognitionLabel()
                             if (recognitionLabelRecord == null) {
                                 recognitionLabelObj.setName(recognitionLabel.trim())
-                                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                                val now = LocalDateTime.now()
-                                recognitionLabelObj.setCreatedAt(dtf.format(now))
-                                recognitionLabelObj.setModifiedAt(dtf.format(now))
+                                recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
+                                recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
                                 recognitionLabelRepository?.save(recognitionLabelObj)
                             } else {
                                 recognitionLabelObj = recognitionLabelRecord

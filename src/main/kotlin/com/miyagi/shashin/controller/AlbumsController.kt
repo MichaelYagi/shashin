@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
@@ -316,9 +317,7 @@ class AlbumsController {
                 val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
                 val album = albumRepository.findById(albumId)
                 album.get().setCoverUrl(coverAlbumUrl)
-                val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                val now = LocalDateTime.now()
-                album.get().setModifiedAt(dtf.format(now))
+                album.get().setModifiedAt(getModifiedCreateTimestamp())
                 albumRepository.save(album.get())
             }
 
@@ -451,10 +450,8 @@ class AlbumsController {
                         val userAlbumObj = UserAlbum()
                         userAlbumObj.setUserId(userId.toInt())
                         userAlbumObj.setAlbumId(shareAlbumId)
-                        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                        val now = LocalDateTime.now()
-                        userAlbumObj.setCreatedAt(dtf.format(now))
-                        userAlbumObj.setModifiedAt(dtf.format(now))
+                        userAlbumObj.setCreatedAt(getModifiedCreateTimestamp())
+                        userAlbumObj.setModifiedAt(getModifiedCreateTimestamp())
                         userAlbumList.add(userAlbumObj)
                     }
                 } else {
@@ -673,9 +670,6 @@ class AlbumsController {
         var albumPhotoObj: AlbumPhoto
         var albumObj = Album()
 
-        val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-        val now = LocalDateTime.now()
-
         if (albumIdString.isBlank()) {
             if (albumMetadataIdList.count() > 0) {
                 // Get the first one and set as album cover
@@ -689,8 +683,8 @@ class AlbumsController {
                 albumId = albumObject.getId()
             } else {
                 albumObj.setName(albumName)
-                albumObj.setCreatedAt(dtf.format(now))
-                albumObj.setModifiedAt(dtf.format(now))
+                albumObj.setCreatedAt(getModifiedCreateTimestamp())
+                albumObj.setModifiedAt(getModifiedCreateTimestamp())
                 albumObj = albumRepository.save(albumObj)
                 albumId = albumObj.getId()
             }
@@ -705,8 +699,8 @@ class AlbumsController {
                 val userAlbumObj = UserAlbum()
                 userAlbumObj.setAlbumId(albumId)
                 userAlbumObj.setUserId(currentUserObj.getId())
-                userAlbumObj.setCreatedAt(dtf.format(now))
-                userAlbumObj.setModifiedAt(dtf.format(now))
+                userAlbumObj.setCreatedAt(getModifiedCreateTimestamp())
+                userAlbumObj.setModifiedAt(getModifiedCreateTimestamp())
                 userAlbumRepository.save(userAlbumObj)
             }
         }
@@ -719,8 +713,8 @@ class AlbumsController {
                 albumPhotoObj = AlbumPhoto()
                 albumPhotoObj.setMetadataId(metadataId)
                 albumPhotoObj.setAlbumId(albumId)
-                albumPhotoObj.setCreatedAt(dtf.format(now))
-                albumPhotoObj.setModifiedAt(dtf.format(now))
+                albumPhotoObj.setCreatedAt(getModifiedCreateTimestamp())
+                albumPhotoObj.setModifiedAt(getModifiedCreateTimestamp())
                 albumPhotoRepository.save(albumPhotoObj)
             }
         }
