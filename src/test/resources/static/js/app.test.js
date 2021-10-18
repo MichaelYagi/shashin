@@ -57,7 +57,7 @@ function mockCanvas (window) {
 }
 mockCanvas(dom.window);
 
-const shashin = require('../../../../main/resources/static/js/app');
+const shashin = require('../../../../main/resources/static/js/site/app');
 
 describe('#shashin app tests', function() {
     it('enable debug console output', function() {
