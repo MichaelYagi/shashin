@@ -44,7 +44,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
 
         val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
-        val metadataObj = _metadataObj?.let { extractExifData(file, sidecarDir, rootDir, it) }
+        val metadataObj = _metadataObj?.let { getAndSetMetadataExifData(file, sidecarDir, rootDir, it) }
         if (mdFile != null) {
             val yamlFactory: YAMLFactory = YAMLFactory.builder()
                 .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
@@ -57,7 +57,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         return metadataObj
     }
 
-    private fun extractExifData(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata): Metadata {
+    private fun getAndSetMetadataExifData(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata): Metadata {
         metadataObj.setPath(file.path)
         metadataObj.setFileName(file.name)
         metadataObj.setTitle(file.name)
