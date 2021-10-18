@@ -81,7 +81,7 @@
                         if (currentOffCanvasId === offcanvasDate) {
                             active = " active";
                         }
-                        html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return timelineSettings.jumpToTimelineToc(event,\'undated\',\''+mediaTypeFilter+'\')" href="#undated">'+text+'</a>\n';
+                        html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\'undated\',\''+mediaTypeFilter+'\')" href="#undated">'+text+'</a>\n';
                     } else {
                         offcanvasDate = "offcanvas_"+year+"-"+month+"-"+day;
                         if (currentOffCanvasId === offcanvasDate) {
@@ -89,7 +89,7 @@
                         }
                         const dateObj = new Date(year, month-1, day);
                         text = dateObj.format("mmm d, yyyy");
-                        html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return timelineSettings.jumpToTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\')" href="#'+year+'-'+month+'-'+day+'">'+text+'</a>\n';
+                        html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\')" href="#'+year+'-'+month+'-'+day+'">'+text+'</a>\n';
                     }
                 }
                 $("#offcanvasTocBody").append(html);
@@ -146,7 +146,6 @@
                 timelineSettings.renderThumbnails(id,mediaTypeFilter).then(function (msg) {
                     if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                         timelineSettings.setScrollSpyActive(id);
-                        timelineSettings.reinitLightGalleryInstance();
                     }
                 });
                 timelineSettings.prevAnchor = id;
@@ -154,19 +153,18 @@
         });
     }
 
-    timelineSettings.jumpToTimelineToc = function (e,anchor,mediaTypeFilter) {
+    timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
         timelineSettings.scrollDirection = "down";
         timelineSettings.enableScrollSpy = false;
 
-        shashin.printMessageToConsole("jumpToTimelineToc anchor:"+anchor);
-        shashin.printMessageToConsole("jumpToTimelineToc mediaTypeFilter:"+mediaTypeFilter);
+        shashin.printMessageToConsole("jumpFromTimelineToc anchor:"+anchor);
+        shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:"+mediaTypeFilter);
 
         timelineSettings.renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
             if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                 timelineSettings.setScrollSpyActive(anchor);
-                timelineSettings.reinitLightGalleryInstance();
                 timelineSettings.observeAnchorChange(anchor, timelineSettings.scrollToToc);
             }
         });
@@ -647,7 +645,9 @@
                                     mediaContent.width = metadata.originalImageWidth;
                                 }
                                 if ($("#mediaLink"+metadata.id).length === 0) {
-                                    $("#tncentered"+metadata.id).append(html);
+                                    $("#tncentered"+metadata.id).append(html).ready(function () {
+                                        timelineSettings.reinitLightGalleryInstance();
+                                    });
                                 }
 
                                 const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
