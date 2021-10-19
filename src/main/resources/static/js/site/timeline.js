@@ -353,7 +353,7 @@
     timelineSettings.renderThumbnails = function(id,mediaTypeFilter) {
         let deferred = new $.Deferred();
 
-        let queryLimit = 3;
+        let queryLimit = 4;
 
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
