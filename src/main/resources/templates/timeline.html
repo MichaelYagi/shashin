@@ -181,27 +181,32 @@
         });
 
         const scrollHandler = function (e) {
+            // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.scrollToTimeline(elementsInViewport);
             }
 
-            const delayInMs = e.timeStamp - timelineSettings.lastDate;
-            const offset = e.target.scrollTop - timelineSettings.lastOffset;
-            timelineSettings.scrollSpeedInpxPerMs = offset / delayInMs;
-            timelineSettings.lastDate = e.timeStamp;
-            timelineSettings.lastOffset = e.target.scrollTop;
-
-            const st = $(this).scrollTop();
-            if (st > timelineSettings.lastScrollTop){
-                timelineSettings.scrollDirection = "down";
-            } else {
-                timelineSettings.scrollDirection = "up";
-            }
-            timelineSettings.lastScrollTop = st;
+            // if (/firefox/.test(navigator.userAgent.toLowerCase()) === false) {
+            //     // Capture scroll speed and scroll direction
+            //     const delayInMs = e.timeStamp - timelineSettings.lastDate;
+            //     const offset = e.target.scrollTop - timelineSettings.lastOffset;
+            //     timelineSettings.scrollSpeedInpxPerMs = offset / delayInMs;
+            //     timelineSettings.lastDate = e.timeStamp;
+            //     timelineSettings.lastOffset = e.target.scrollTop;
+            //
+            //     const st = $(this).scrollTop();
+            //     if (st > timelineSettings.lastScrollTop) {
+            //         timelineSettings.scrollDirection = "down";
+            //     } else {
+            //         timelineSettings.scrollDirection = "up";
+            //     }
+            //     timelineSettings.lastScrollTop = st;
+            // }
         };
         $("#container").on('scroll', scrollHandler);
         $("main").on('scroll', scrollHandler);
+
     });
 </script>
 </body>

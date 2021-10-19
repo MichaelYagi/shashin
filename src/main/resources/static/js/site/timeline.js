@@ -352,7 +352,7 @@
     timelineSettings.renderThumbnails = function(id,mediaTypeFilter) {
         let deferred = new $.Deferred();
 
-        let queryLimit = 3;
+        let queryLimit = 10;
 
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
@@ -362,13 +362,13 @@
         shashin.printMessageToConsole("scrollDirection:"+timelineSettings.scrollDirection);
 
         // If velocity of scroll is really fast, add padding to # of results
-        if (timelineSettings.scrollSpeedInpxPerMs > 5 || timelineSettings.scrollSpeedInpxPerMs < -5) {
-            if (timelineSettings.scrollDirection === "down") {
-                depthDown = depthDown + 3;
-            } else {
-                depthUp = depthUp + 3;
-            }
-        }
+        // if (timelineSettings.scrollSpeedInpxPerMs > 5 || timelineSettings.scrollSpeedInpxPerMs < -5) {
+        //     if (timelineSettings.scrollDirection === "down") {
+        //         depthDown = depthDown + 3;
+        //     } else {
+        //         depthUp = depthUp + 3;
+        //     }
+        // }
 
         shashin.printMessageToConsole("depthDown:"+depthDown);
         shashin.printMessageToConsole("depthUp:"+depthUp);
@@ -392,12 +392,12 @@
         });
 
         // Hack to prevent infinite scroll upwards and throttle scrolling
-        if (timelineSettings.scrollDirection === "up" && $('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
-            document.getElementById("container").scrollBy({top: 1});
-            if (document.getElementsByTagName("MAIN").length > 0) {
-                document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-            }
-        }
+        // if (timelineSettings.scrollDirection === "up" && $('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
+        //     document.getElementById("container").scrollBy({top: 1});
+        //     if (document.getElementsByTagName("MAIN").length > 0) {
+        //         document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
+        //     }
+        // }
 
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
