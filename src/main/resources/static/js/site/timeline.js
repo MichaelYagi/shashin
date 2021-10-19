@@ -144,7 +144,8 @@
 
         elements.each(function(index) {
             let id = $(this).attr("id");
-            if (id.indexOf("tail_") === -1 && timelineSettings.prevAnchor !== id && (index === 0 || index === 1)) {
+
+            if (id.indexOf("tail_") === -1 && (index === 0 || index === 1) && timelineSettings.prevAnchor !== id) {
                 timelineSettings.renderThumbnails(id,mediaTypeFilter).then(function (msg) {
                     if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                         timelineSettings.setScrollSpyActive(id);
@@ -228,7 +229,7 @@
         navElem.addClass('active').siblings().removeClass('active');
     }
 
-    timelineSettings.scrollToTimeline = function(elementsInViewport) {
+    timelineSettings.scrollToTimelineToc = function(elementsInViewport) {
         elementsInViewport.each(function(index) {
             let id = $(this).attr("id");
             if (id.indexOf("tail_") < 0 && $("#offcanvas_"+id).length > 0 && (index === 0 || index === 1)) {
@@ -358,18 +359,6 @@
         let depthDown = queryLimit;
         let depthUp = queryLimit;
 
-        shashin.printMessageToConsole("scrollSpeedInpxPerMs:"+timelineSettings.scrollSpeedInpxPerMs);
-        shashin.printMessageToConsole("scrollDirection:"+timelineSettings.scrollDirection);
-
-        // If velocity of scroll is really fast, add padding to # of results
-        // if (timelineSettings.scrollSpeedInpxPerMs > 5 || timelineSettings.scrollSpeedInpxPerMs < -5) {
-        //     if (timelineSettings.scrollDirection === "down") {
-        //         depthDown = depthDown + 3;
-        //     } else {
-        //         depthUp = depthUp + 3;
-        //     }
-        // }
-
         shashin.printMessageToConsole("depthDown:"+depthDown);
         shashin.printMessageToConsole("depthUp:"+depthUp);
         shashin.printMessageToConsole("renderThumbnails id:"+id);
@@ -382,11 +371,7 @@
             shashin.printMessageToConsole(element.id + " checking to remove beginning");
             if ($("#"+element.id).length > 1 || prevElementId === element.id) {
                 shashin.printMessageToConsole(element.id + " removed beginning");
-                $("#br"+element.id).remove();
-                $("#row"+element.id).remove();
-                $("#amp_"+element.id).remove();
-                $("#tail_"+element.id).remove();
-                $("#"+element.id).remove();
+                shashin.removeDateGallery(element.id);
             }
             prevElementId = element.id;
         });
@@ -484,7 +469,13 @@
             action = "above";
         }
 
-        shashin.printMessageToConsole("attempting to attaching id mid:"+id)
+        shashin.printMessageToConsole("attempting to attaching id mid "+id+" "+action+" "+attachPoint+" length "+$("#"+id).length)
+
+        // Hack for attaching mid point
+        if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length-1].id === id && $("#"+id).length === 1) {
+            shashin.printMessageToConsole("removing already existing id "+id+" for mid point")
+            shashin.removeDateGallery(id);
+        }
 
         if ($("#"+id).length === 0) {
             shashin.printMessageToConsole("attaching mid attachPoint:"+attachPoint)
@@ -504,12 +495,7 @@
             shashin.printMessageToConsole(element.id + " checking to remove end");
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#"+element.id).length > 1 || prevElementId === element.id)) {
                 shashin.printMessageToConsole(element.id + " removed end");
-
-                $("#br"+element.id).remove();
-                $("#row"+element.id).remove();
-                $("#amp_"+element.id).remove();
-                $("#tail_"+element.id).remove();
-                $("#"+element.id).remove();
+                shashin.removeDateGallery(element.id);
             }
             prevElementId = element.id;
         });

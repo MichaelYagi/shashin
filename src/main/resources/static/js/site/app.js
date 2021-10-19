@@ -679,6 +679,14 @@ $.fn.serializeObject = function() {
         }
         _this.src = "https://via.placeholder.com"+dimensions+"?text="+encodeURI(text);
     }
+
+    shashin.removeDateGallery = function (id) {
+        $("#br"+id).remove();
+        $("#row"+id).remove();
+        $("#amp_"+id).remove();
+        $("#tail_"+id).remove();
+        $("#"+id).remove();
+    }
 }( window.shashin = window.shashin || {}, jQuery ));
 
 if (typeof module !== 'undefined') {
