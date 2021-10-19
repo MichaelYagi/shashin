@@ -376,15 +376,6 @@
             prevElementId = element.id;
         });
 
-        // Hack to prevent infinite scroll upwards and throttle scrolling
-        // if (timelineSettings.scrollDirection === "up" && $('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
-        if ($('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
-            document.getElementById("container").scrollBy({top: 1});
-            if (document.getElementsByTagName("MAIN").length > 0) {
-                document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-            }
-        }
-
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
         for (let i = 0; i <= depthUp - 1; i++) {
@@ -434,6 +425,15 @@
                 action = "below";
             }
             attachPoint = currentId;
+        }
+
+        // Hack to prevent infinite scroll upwards and throttle scrolling
+        // if (timelineSettings.scrollDirection === "up" && $('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
+        if ($('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
+            document.getElementById("container").scrollBy({top: 1});
+            if (document.getElementsByTagName("MAIN").length > 0) {
+                document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
+            }
         }
 
         // Render bottom
