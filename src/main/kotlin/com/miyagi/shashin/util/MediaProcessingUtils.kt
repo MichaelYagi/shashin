@@ -97,6 +97,14 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             if (metadataObj.getCreatedAt() != null) {
                 metadataObj.setTakenAt(metadataObj.getCreatedAt())
             }
+
+            val dateArray = metadataObj.getTakenAt().toString().split(" ")
+            val takenDateArray = dateArray[0].split("-")
+
+            metadataObj.setYear(takenDateArray[0].toInt())
+            metadataObj.setMonth(takenDateArray[1].toInt())
+            metadataObj.setDay(takenDateArray[2].toInt())
+            metadataObj.setTime(dateArray[1])
         }
 
         val accessTime = attr.lastAccessTime().toString()
