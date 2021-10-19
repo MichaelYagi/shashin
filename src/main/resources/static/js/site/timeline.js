@@ -352,7 +352,7 @@
     timelineSettings.renderThumbnails = function(id,mediaTypeFilter) {
         let deferred = new $.Deferred();
 
-        let queryLimit = 10;
+        let queryLimit = 3;
 
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
@@ -393,11 +393,12 @@
 
         // Hack to prevent infinite scroll upwards and throttle scrolling
         // if (timelineSettings.scrollDirection === "up" && $('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
-        //     document.getElementById("container").scrollBy({top: 1});
-        //     if (document.getElementsByTagName("MAIN").length > 0) {
-        //         document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-        //     }
-        // }
+        if ($('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
+            document.getElementById("container").scrollBy({top: 1});
+            if (document.getElementsByTagName("MAIN").length > 0) {
+                document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
+            }
+        }
 
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
