@@ -90,6 +90,15 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         }
         metadataObj.setModifiedAt(destFormat.format(date))
 
+        if (metadataObj.getCreatedAt() != null || metadataObj.getModifiedAt() != null) {
+            if (metadataObj.getModifiedAt() != null) {
+                metadataObj.setTakenAt(metadataObj.getModifiedAt())
+            }
+            if (metadataObj.getCreatedAt() != null) {
+                metadataObj.setTakenAt(metadataObj.getCreatedAt())
+            }
+        }
+
         val accessTime = attr.lastAccessTime().toString()
         date = if (accessTime.contains(".")) {
             sourceFormatMS.parse(accessTime)
@@ -380,15 +389,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         }
 
         saveExifdata(exifMap, sidecarDir, rootDir, file.path)
-
-        if (metadataObj.getTakenAt() == null && (metadataObj.getCreatedAt() != null || metadataObj.getModifiedAt() != null)) {
-            if (metadataObj.getModifiedAt() != null) {
-                metadataObj.setTakenAt(metadataObj.getModifiedAt())
-            }
-            if (metadataObj.getCreatedAt() != null) {
-                metadataObj.setTakenAt(metadataObj.getCreatedAt())
-            }
-        }
 
         metadataObj.setId(
             TextUtils.generateUUID(
