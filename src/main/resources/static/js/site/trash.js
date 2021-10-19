@@ -7,6 +7,7 @@
     trashSettings.tryCount = 0;
 
     trashSettings.setLightGalleryElement = function (name) {
+        trashSettings.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
             trashSettings.infiniteScrollGallery = document.getElementById(name);
         }

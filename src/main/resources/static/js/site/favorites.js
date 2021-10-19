@@ -7,6 +7,7 @@
     favoritesSettings.tryCount = 0;
 
     favoritesSettings.setLightGalleryElement = function (name) {
+        favoritesSettings.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
             favoritesSettings.infiniteScrollGallery = document.getElementById(name);
         }

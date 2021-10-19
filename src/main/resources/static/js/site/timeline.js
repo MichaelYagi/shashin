@@ -2,7 +2,8 @@
     timelineSettings.lightGalleryEl = document.getElementById('infinite-scroll-gallery');
     timelineSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
     timelineSettings.lightGalleryConfigs["selector"] = '.mediaLink';
-    timelineSettings.lg = null; //lightGallery(timelineSettings.lightGalleryEl, timelineSettings.lightGalleryConfigs);
+    timelineSettings.lg = null;
+    timelineSettings.infiniteScrollGallery = null;
     timelineSettings.enableScrollSpy = true;
     timelineSettings.prevAnchor = "";
     timelineSettings.lastOffset = $("#container").scrollTop() ? $("#container").scrollTop() : $("#main").scrollTop();
@@ -17,6 +18,7 @@
     timelineSettings.tryCount = 0;
 
     timelineSettings.setLightGalleryElement = function (name) {
+        timelineSettings.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
             timelineSettings.infiniteScrollGallery = document.getElementById(name);
         }
@@ -972,12 +974,12 @@
         if (offset === null ) {
             offset = "";
         }
-        var dayValidate = "([1-9]|[12]\d|3[01])";
-        var monthValidate = "^(0?[1-9]|1[012])$";
-        var timeValidate = "^(\\d{2}:\\d{2}:\\d{2})$";
-        var offsetValidate = "^([+-±](?:2[0-3]|[01][0-9]):[0-5][0-9])$";
+        const dayValidate = "([1-9]|[12]\d|3[01])";
+        const monthValidate = "^(0?[1-9]|1[012])$";
+        const timeValidate = "^(\\d{2}:\\d{2}:\\d{2})$";
+        const offsetValidate = "^([+-±](?:2[0-3]|[01][0-9]):[0-5][0-9])$";
 
-        var msg = "";
+        let msg = "";
         if (day !== "" && !day.match(dayValidate)) {
             msg = "Enter Valid Day";
         }
@@ -1000,7 +1002,7 @@
 
         if (latlng !== "") {
             latlng = $.trim(latlng);
-            var latlngArr = latlng.split(",");
+            const latlngArr = latlng.split(",");
 
             if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !shashin.isNumeric(latlngArr[0]) || !shashin.isNumeric(latlngArr[1])) {
                 msg = "Enter Valid Latitude/Longitude";
@@ -1028,3 +1030,7 @@ $(document).click(function(event) {
         $("#offcanvasTocCloseButton").click();
     }
 });
+
+if (typeof module !== 'undefined') {
+    module.exports = window.timelineSettings;
+}

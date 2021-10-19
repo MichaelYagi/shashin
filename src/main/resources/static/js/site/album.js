@@ -14,6 +14,7 @@
     }
 
     albumSettings.setLightGalleryElement = function (name) {
+        albumSettings.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
             albumSettings.infiniteScrollGallery = document.getElementById(name);
         }

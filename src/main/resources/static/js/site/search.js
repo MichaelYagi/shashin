@@ -7,6 +7,7 @@
     searchSettings.tryCount = 0;
 
     searchSettings.setLightGalleryElement = function (name) {
+        searchSettings.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
             searchSettings.infiniteScrollGallery = document.getElementById(name);
         }
