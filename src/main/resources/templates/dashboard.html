@@ -108,12 +108,13 @@
 </div>
 
 <script th:inline="javascript" type="text/javascript">
-    /*<![CDATA[*/
     let ctx = $('#siteStatChart');
+    /*<![CDATA[*/
     const photosWithPeopleTaggedCount = /*[[${photosWithPeopleTaggedCount}]]*/ 0;
     const favoritesCount = /*[[${favoritesCount}]]*/ 0;
     const commentsCount = /*[[${commentsCount}]]*/ 0;
     const albumCount = /*[[${albumCount}]]*/ 0;
+    /*]]>*/
     const siteStatChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -152,11 +153,13 @@
     });
 
     ctx = $('#userChart');
+    /*<![CDATA[*/
     const activeUserCount = /*[[${allowedUserCount}]]*/ 0;
     const pendingUserCount = /*[[${notAllowedUserCount}]]*/ 0;
     const activeAdminCount = /*[[${allowedAdminCount}]]*/ 0;
     const pendingAdminCount = /*[[${notAllowedAdminCount}]]*/ 0;
     const loggedInCount = /*[[${loggedInCount}]]*/ 0;
+    /*]]>*/
     const userChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -197,10 +200,12 @@
     });
 
     ctx = $('#mediaChart');
+    /*<![CDATA[*/
     const photoCount = /*[[${photoCount}]]*/ 0;
     const videoCount = /*[[${videoCount}]]*/ 0;
     const notLocatedCount = /*[[${notLocatedCount}]]*/ 0;
     const hiddenCount = /*[[${hiddenCount}]]*/ 0;
+    /*]]>*/
     const mediaChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -239,7 +244,9 @@
     });
 
     ctx = $('#cameraChart');
+    /*<![CDATA[*/
     const cameraCountJson = /*[[${cameraCountJson}]]*/ '[{"x":"","y":0}]';
+    /*]]>*/
     const cameraCounts = JSON.parse(shashin.decodeHtml(cameraCountJson));
     const cameraChart = new Chart(ctx, {
         type: 'bar',
@@ -260,10 +267,18 @@
             plugins: {
                 legend: false
             },
-            maintainAspectRatio: false
+            maintainAspectRatio: false,
+            onClick: crameraGraphClickEvent
         }
     });
-    /*]]>*/
+    
+    function crameraGraphClickEvent(event, array){
+        if(array[0]) {
+            if (typeof array[0].element.$context.raw.x !== "undefined" && array[0].element.$context.raw.x !== "Unknown") {
+                window.open("/search?searchTerm="+encodeURI(array[0].element.$context.raw.x.split(' ').join('+')), '_blank').focus();
+            }
+        }
+    }
 
     ctx = $('#cpuChart');
     const cpuChart = new Chart(ctx, {
