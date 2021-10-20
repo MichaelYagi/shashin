@@ -167,10 +167,14 @@ $.fn.serializeObject = function() {
         $("#takenAtDetails").text("");
         $("#manualTakenAtDetails").text("");
         $("#timeZoneDetails").text("");
+        $("#keywordsDetails").text("");
 
         // Fill in details tab data
         if (metadata.path != null) {
             $("#pathDetails").text(metadata.path);
+        }
+        if (metadata.keywords != null) {
+            $("#keywordsDetails").text(metadata.keywords);
         }
         if (metadata.type != null) {
             $("#typeDetails").text(metadata.type);
