@@ -60,6 +60,162 @@ $.fn.serializeObject = function() {
     }
 
     shashin.showDebug = false;
+    shashin.map = null;
+    shashin.layer = null;
+    shashin.feature = null;
+
+    function fixContentHeight(){
+        const viewHeight = $(window).height();
+        const header = $("div[data-role='header']:visible:visible");
+        const navbar = $("div[data-role='navbar']:visible:visible");
+        const content = $("div[data-role='content']:visible:visible");
+        const contentHeight = viewHeight - header.outerHeight() - navbar.outerHeight();
+        content.height(contentHeight);
+        shashin.map.updateSize();
+    }
+
+    shashin.openMap = function (metadata) {
+        if (Object.keys(metadata).length > 0 &&
+            metadata.lat !== null && metadata.lng !== null &&
+            metadata.lat !== "" && metadata.lng !== ""
+        ) {
+            $("#map").css("display","block");
+            $("#mapTabMessage").css("display","block");
+            $("#mapTabMessage").text(metadata.placeName);
+            $("#mapTabMessage").wrapInner('<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" class="bi-pin-fill" style="text-decoration: none;"></a>');
+
+            if (shashin.map === null) {
+                shashin.map = new ol.Map({
+                    controls: new ol.control.defaults({
+                        attributionOptions: {
+                            collapsible: true
+                        }
+                    }),
+                    layers: [
+                        new ol.layer.Tile({
+                            visible: true,
+                            source: shashin.getMapSource("osm")
+                        })
+                    ],
+                    target: 'map',
+                    view: new ol.View({
+                        center: ol.proj.fromLonLat([metadata.lng, metadata.lat]),
+                        maxZoom: 19,
+                        zoom: 15
+                    })
+                });
+            }
+
+            if (shashin.layer !== null && shashin.feature !== null) {
+                shashin.layer.getSource().clear();
+            }
+
+            shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+            shashin.map.getView().setZoom(15);
+
+            shashin.feature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([metadata.lng, metadata.lat])),
+                name: metadata.title
+            });
+
+            const iconSize = 20;
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-pin-fill" style="color: orangered;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.146.146A.5.5 0 014.5 0h7a.5.5 0 01.5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 01-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 01-.5-.5c0-.973.64-1.725 1.17-2.189A5.921 5.921 0 015 6.708V2.277a2.77 2.77 0 01-.354-.298C4.342 1.674 4 1.179 4 .5a.5.5 0 01.146-.354z"/></svg>';
+            const styleIcon = new ol.style.Style({
+                image: new ol.style.Icon({
+                    opacity: 1,
+                    src: 'data:image/svg+xml;utf8,' + svg,
+                    anchor: [0.5, iconSize],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    anchorOrigin: 'top-left',
+                    offset: [0, 0]
+                })
+            });
+            shashin.feature.setStyle(styleIcon);
+            shashin.layer = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: [shashin.feature]
+                })
+            });
+            shashin.map.addLayer(shashin.layer);
+
+            setTimeout(fixContentHeight, 1000);
+        } else {
+            if (shashin.layer !== null && shashin.feature !== null) {
+                shashin.layer.getSource().clear();
+            }
+            $("#map").css("display","none");
+            $("#mapTabMessage > .wrapper").contents().unwrap();
+            $("#mapTabMessage").text("No map data");
+            $("#mapTabMessage").css("display","block");
+        }
+    }
+
+    shashin.populateDetailsTab = function(metadata) {
+        // Clear data
+        $("#pathDetails").text("");
+        $("#typeDetails").text("");
+        $("#isoDetails").text("");
+        $("#exposureDetails").text("");
+        $("#fNumberDetails").text("");
+        $("#focalLengthDetails").text("");
+        $("#cameraDetails").text("");
+        $("#lensDetails").text("");
+        $("#qualityDetails").text("");
+        $("#createdAtDetails").text("");
+        $("#modifiedAtDetails").text("");
+        $("#takenAtDetails").text("");
+        $("#manualTakenAtDetails").text("");
+        $("#timeZoneDetails").text("");
+
+        // Fill in details tab data
+        if (metadata.path != null) {
+            $("#pathDetails").text(metadata.path);
+        }
+        if (metadata.type != null) {
+            $("#typeDetails").text(metadata.type);
+        }
+        if (metadata.iso != null) {
+            $("#isoDetails").text(metadata.iso);
+        }
+        if (metadata.exposure != null) {
+            $("#exposureDetails").text(metadata.exposure);
+        }
+        if (metadata.fNumber != null) {
+            $("#fNumberDetails").text(metadata.fNumber);
+        }
+        if (metadata.focalLength != null) {
+            $("#focalLengthDetails").text(metadata.focalLength);
+        }
+        if (metadata.camera != null) {
+            $("#cameraDetails").text(metadata.camera);
+        }
+        if (metadata.lens != null) {
+            $("#lensDetails").text(metadata.lens);
+        }
+        if (metadata.quality != null) {
+            $("#qualityDetails").text(metadata.quality);
+        }
+        if (metadata.createdAt != null) {
+            $("#createdAtDetails").text(metadata.createdAt);
+        }
+        if (metadata.modifiedAt != null) {
+            $("#modifiedAtDetails").text(metadata.modifiedAt);
+        }
+        if (metadata.takenAt != null) {
+            $("#takenAtDetails").text(metadata.takenAt);
+        }
+        if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
+            let takenDetails = metadata.year + '-' + metadata.month + '-' + metadata.day;
+            if (metadata.time !== null && metadata.time !== "") {
+                takenDetails += ' ' + metadata.time;
+            }
+            $("#manualTakenAtDetails").text(takenDetails);
+        }
+        if (metadata.timeZone != null) {
+            $("#timeZoneDetails").text(metadata.timeZone);
+        }
+    }
 
     shashin.addToMetadataThumbnailsList = function(thumbnail) {
         if ($("#multiSelectThumbnails").length > 0) {
