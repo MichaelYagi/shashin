@@ -28,6 +28,10 @@
         <link href="/css/lg-zoom.min.css" rel="stylesheet">
         <link href="/css/lg-relative-caption.min.css" rel="stylesheet">
         <link href="/css/lg-fullscreen.min.css" rel="stylesheet">
+        <script src="/js/ol.js"></script>
+        <script src="/js/lg-editlocation.js"></script>
+        <link href="/css/ol.css" rel="stylesheet">
+        <link href="/css/lg-editlocation.css" rel="stylesheet">
     </th:block>
     <th:block th:if="${titleDescriptor == 'Timeline'}">
         <style>
@@ -46,12 +50,6 @@
     <th:block th:if="${titleDescriptor == 'Scan' or titleDescriptor == 'Match' or titleDescriptor == 'Dashboard'}">
         <script src="/js/stomp.min.js"></script>
         <script src="/js/sockjs.min.js"></script>
-    </th:block>
-    <th:block th:if="${titleDescriptor == 'Map' or titleDescriptor == 'Timeline'}">
-        <script src="/js/ol.js"></script>
-        <script src="/js/lg-editlocation.js"></script>
-        <link href="/css/ol.css" rel="stylesheet">
-        <link href="/css/lg-editlocation.css" rel="stylesheet">
     </th:block>
     <th:block th:if="${titleDescriptor == 'Dashboard'}">
         <script src="/js/chart.min.js"></script>

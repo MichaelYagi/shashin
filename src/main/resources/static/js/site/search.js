@@ -76,6 +76,14 @@
                             '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
                             '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="shashin.errorImg(this,\''+metadata.title+'\',209)">\n' +
                             '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
+
+                        html +=
+                            '       <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
+                            '           <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
+                            '               <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                            '           </a>\n' +
+                            '       </div>\n';
+
                         if (metadata.type.includes("video")) {
                             const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                             html +=
@@ -113,6 +121,12 @@
 
                         shashin.setPhotoOverlays(metadata, activePage);
                         searchSettings.activateMetadataListeners(metadata);
+                        $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                        $("#infoModalEdit"+metadata.id).click(function(e) {
+                            e.preventDefault();
+                            const metadataObj = JSON.parse($(this).attr("tag"));
+                            shashin.openInfoModal(metadataObj);
+                        });
 
                         html = "";
                     }
