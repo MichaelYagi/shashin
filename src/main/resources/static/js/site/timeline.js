@@ -343,7 +343,7 @@
 
         $("#keywords").val(metadata.keywords);
 
-        timelineSettings.populateDetailsTab(metadata);
+        shashin.populateDetailsTab(metadata);
 
         // Open modal window
         $("#propTimelineModal").modal('show');
@@ -834,72 +834,6 @@
         return promise.done(function(data) {
             return data;
         });
-    }
-
-    timelineSettings.populateDetailsTab = function(metadata) {
-        // Clear data
-        $("#pathDetails").text("");
-        $("#typeDetails").text("");
-        $("#isoDetails").text("");
-        $("#exposureDetails").text("");
-        $("#fNumberDetails").text("");
-        $("#focalLengthDetails").text("");
-        $("#cameraDetails").text("");
-        $("#lensDetails").text("");
-        $("#qualityDetails").text("");
-        $("#createdAtDetails").text("");
-        $("#modifiedAtDetails").text("");
-        $("#takenAtDetails").text("");
-        $("#manualTakenAtDetails").text("");
-        $("#timeZoneDetails").text("");
-
-        // Fill in details tab data
-        if (metadata.path != null) {
-            $("#pathDetails").text(metadata.path);
-        }
-        if (metadata.type != null) {
-            $("#typeDetails").text(metadata.type);
-        }
-        if (metadata.iso != null) {
-            $("#isoDetails").text(metadata.iso);
-        }
-        if (metadata.exposure != null) {
-            $("#exposureDetails").text(metadata.exposure);
-        }
-        if (metadata.fNumber != null) {
-            $("#fNumberDetails").text(metadata.fNumber);
-        }
-        if (metadata.focalLength != null) {
-            $("#focalLengthDetails").text(metadata.focalLength);
-        }
-        if (metadata.camera != null) {
-            $("#cameraDetails").text(metadata.camera);
-        }
-        if (metadata.lens != null) {
-            $("#lensDetails").text(metadata.lens);
-        }
-        if (metadata.quality != null) {
-            $("#qualityDetails").text(metadata.quality);
-        }
-        if (metadata.createdAt != null) {
-            $("#createdAtDetails").text(metadata.createdAt);
-        }
-        if (metadata.modifiedAt != null) {
-            $("#modifiedAtDetails").text(metadata.modifiedAt);
-        }
-        if (metadata.takenAt != null) {
-            $("#takenAtDetails").text(metadata.takenAt);
-        }
-        if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-            var takenDetails = metadata.year+'-'+metadata.month+'-'+metadata.day;
-            if (metadata.time !== null && metadata.time !== "") {
-                takenDetails += ' ' + metadata.time;
-            }
-            $("#manualTakenAtDetails").text(takenDetails);
-        }
-        if (metadata.timeZone != null) {
-            $("#timeZoneDetails").text(metadata.timeZone);
-        }
     }
 
     timelineSettings.activateMetadataListeners = function(metadata) {
