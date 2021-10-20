@@ -221,6 +221,29 @@ $.fn.serializeObject = function() {
         }
     }
 
+    shashin.openInfoModal = function(metadata) {
+        // Populate modal data
+
+        if ($("#infoModalEdit"+metadata.id).attr("tag") && $("#infoModalEdit"+metadata.id).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#infoModalEdit"+metadata.id).attr("tag"));
+        }
+
+        $("#infoModalTitle").text(metadata.fileName);
+        $("#currentfilename").val(metadata.fileName)
+        $("#currentlat").val(metadata.lat)
+        $("#currentlng").val(metadata.lng)
+        $("#metadataId").val(metadata.id);
+
+        if (metadata.thumbnailUrlCentered !== null) {
+            $("#propInfoModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="shashin.errorImg(this,\''+metadata.title+'\',100)">');
+        }
+
+        shashin.populateDetailsTab(metadata);
+
+        // Open modal window
+        $("#propInfoModal").modal('show');
+    }
+
     shashin.addToMetadataThumbnailsList = function(thumbnail) {
         if ($("#multiSelectThumbnails").length > 0) {
             const metadataThumbnailsArray = shashin.getMetadataThumbnailsList();

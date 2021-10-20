@@ -11,16 +11,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <input type="hidden" name="metadataId" id="metadataId" value="">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
+                        <a class="nav-link active" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" id="mapTabLink" href="#mapTab">Map</a>
                     </li>
                 </ul>
                 <div class="tab-content">
-                    <div class="tab-pane container fade" id="detailsTab">
+                    <div class="tab-pane container show active" id="detailsTab">
                         <div class="row"><strong>File name:&nbsp;</strong><span id="pathDetails"></span></div>
                         <div class="row"><strong>Keywords:&nbsp;</strong><span id="keywordsDetails"></span></div>
                         <div class="row"><strong>File type:&nbsp;</strong><span id="typeDetails"></span></div>
@@ -56,7 +57,7 @@
 <script type="text/javascript">
     // Clear message on modal close
     $('#propInfoModal').on('hide.bs.modal', function () {
-        const tab = new bootstrap.Tab($("#generalTabLink"));
+        const tab = new bootstrap.Tab($("#detailsTabLink"));
         tab.show();
     });
 
