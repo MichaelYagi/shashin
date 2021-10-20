@@ -268,14 +268,14 @@
                 legend: false
             },
             maintainAspectRatio: false,
-            onClick: crameraGraphClickEvent
+            onClick: cameraGraphClickEvent
         }
     });
-    
-    function crameraGraphClickEvent(event, array){
-        if(array[0]) {
-            if (typeof array[0].element.$context.raw.x !== "undefined" && array[0].element.$context.raw.x !== "Unknown") {
-                window.open("/search?searchTerm="+encodeURI(array[0].element.$context.raw.x.split(' ').join('+')), '_blank').focus();
+
+    function cameraGraphClickEvent(event, chart) {
+        if(chart[0]) {
+            if (typeof chart[0].element.$context.raw.x !== "undefined" && chart[0].element.$context.raw.x !== "Unknown") {
+                window.open("/search?searchTerm="+encodeURI(chart[0].element.$context.raw.x.split(' ').join('+')), '_blank').focus();
             }
         }
     }
