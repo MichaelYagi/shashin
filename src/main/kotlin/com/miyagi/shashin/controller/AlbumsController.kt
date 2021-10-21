@@ -54,7 +54,7 @@ class AlbumsController {
     private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
 
     val mapper = ObjectMapper()
-    val resp = mutableMapOf<String, String?>()
+    val resp = mutableMapOf<String, Any?>()
 
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/albums")
@@ -669,6 +669,7 @@ class AlbumsController {
 
         var albumPhotoObj: AlbumPhoto
         var albumObj = Album()
+        resp["album"] = ""
 
         if (albumIdString.isBlank()) {
             if (albumMetadataIdList.count() > 0) {
@@ -681,12 +682,14 @@ class AlbumsController {
             val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
             if (albumObject != null) {
                 albumId = albumObject.getId()
+                resp["album"] = albumObject
             } else {
                 albumObj.setName(albumName)
                 albumObj.setCreatedAt(getModifiedCreateTimestamp())
                 albumObj.setModifiedAt(getModifiedCreateTimestamp())
                 albumObj = albumRepository.save(albumObj)
                 albumId = albumObj.getId()
+                resp["album"] = albumObj
             }
         } else {
             albumId = albumIdString.toInt()
