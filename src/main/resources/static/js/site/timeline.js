@@ -576,12 +576,7 @@
 
                                 for (let index in albumList) {
                                     const album = albumList[index];
-                                    batchHtml += '       <a class="dropdown-item" href="#" id="'+album.id+'">'+album.name+'</a>\n';
-                                    $("#"+album.id).click(function (e) {
-                                        e.preventDefault();
-                                        $("#albumNameInput").val(shashin.decodeHtml(album.name));
-                                        $("#albumIdInput").val(album.id);
-                                    });
+                                    batchHtml += '       <a class="dropdown-item" href="#" id="'+album.id+'" onclick="return populateBatchAlbumInput(event,'+album.id+',\''+album.name+'\')">'+album.name+'</a>\n';
                                 }
 
                                 batchHtml += '</div>\n' +

@@ -24,16 +24,7 @@
                                             <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Albums</button>
                                             <div class="dropdown-menu" id="albumNameList">
                                                 <th:block th:each="album, iterStat: ${albumList}">
-                                                    <a class="dropdown-item" href="#" th:id="${album.id}" th:text="${album.name}"></a>
-                                                    <script type="text/javascript">
-                                                        /*<![CDATA[*/
-                                                        $("#[[${album.id}]]").click(function (e) {
-                                                            e.preventDefault();
-                                                            $("#albumNameInput").val(shashin.decodeHtml("[[${album.name}]]"));
-                                                            $("#albumIdInput").val("[[${album.id}]]");
-                                                        });
-                                                        /*]]>*/
-                                                    </script>
+                                                    <a class="dropdown-item" href="#" th:id="${album.id}" th:text="${album.name}" th:onclick="return populateBatchAlbumInput(event,[[${album.id}]],'[[${album.name}]]')"></a>
                                                 </th:block>
                                             </div>
                                         </div>
@@ -53,6 +44,12 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
+                function populateBatchAlbumInput(e,albumId,albumName) {
+                    e.preventDefault();
+                    $("#albumNameInput").val(shashin.decodeHtml(albumName));
+                    $("#albumIdInput").val(albumId);
+                }
+
                 $('#propAddAlbum').on('hide.bs.modal', function () {
                     $("#albumNameInput").val("");
                     $("#albumResponseMsg").html("");
