@@ -5,6 +5,7 @@
 <script type="text/javascript">
     (function( albumModal, $, undefined ) {
         albumModal.renderAlbumModal = function (albumData,metadata,currentUser,albumPhotoCommentsMap) {
+            let index;
             let html =
                 '<div class="modal fade" id="propalbumphotocomment' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true">\n' +
                 '    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">\n' +
@@ -18,7 +19,7 @@
                 '                <ul class="list-group" id="commentList' + metadata.id + '">\n';
 
             const commentIdArray = [];
-            for (var index in albumPhotoCommentsMap[metadata.id]) {
+            for (index in albumPhotoCommentsMap[metadata.id]) {
                 const comments = albumPhotoCommentsMap[metadata.id][index];
                 commentIdArray.push(comments["commentId"]);
 
@@ -55,8 +56,8 @@
                 '</div>';
 
             $("#albummodal"+metadata.id).after(html);
-            for (var index in commentIdArray) {
-                var commentId = commentIdArray[index];
+            for (index in commentIdArray) {
+                const commentId = commentIdArray[index];
                 albumSettings.albumCommentsDeleteEditModalListener(commentId, metadata);
             }
 
