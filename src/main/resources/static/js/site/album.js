@@ -129,8 +129,18 @@
                                         '       </a>\n' +
                                         '   </div>\n' +
                                         '   <div class="thumbnail-bl" id="tnbl' + metadata.id + '">\n' +
+                                        '       <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
+                                        '           <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                        '       </a><br>\n' +
                                         '       <a href="#" id="albumModalEdit'+metadata.id+'" onclick="return albumSettings.openAlbumModal(event,\''+metadata.id+'\')" class="overlayCommentText">\n' +
                                         '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                        '       </a>\n' +
+                                        '   </div>\n';
+                                } else {
+                                    html +=
+                                        '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
+                                        '       <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
+                                        '           <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
                                         '       </a>\n' +
                                         '   </div>\n';
                                 }
@@ -188,6 +198,12 @@
                                 shashin.setPhotoOverlays(metadata, activePage);
                                 albumModal.renderAlbumModal(albumData, metadata, currentUser, albumPhotoCommentsMap);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
+                                $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                                $("#infoModalEdit"+metadata.id).click(function(e) {
+                                    e.preventDefault();
+                                    const metadataObj = JSON.parse($(this).attr("tag"));
+                                    shashin.openInfoModal(metadataObj);
+                                });
                             }
                         } else {
                             $(".appendAlbumPhotos").last().text("EOL").css("display","none")

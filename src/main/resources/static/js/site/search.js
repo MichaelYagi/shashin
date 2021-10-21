@@ -78,11 +78,11 @@
                             '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
 
                         html +=
-                            '       <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
-                            '           <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
-                            '               <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                            '           </a>\n' +
-                            '       </div>\n';
+                            '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
+                            '       <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
+                            '           <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                            '       </a>\n' +
+                            '   </div>\n';
 
                         if (metadata.type.includes("video")) {
                             const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
