@@ -153,7 +153,7 @@
                                     '       </a>\n' +
                                     '       <br>' +
                                     '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" class="overlayCommentIconBackground overlayCommentText">\n' +
-                                    '           ' + albumPhotoCommentsMap[metadata.id].length + ' <span id="bricon' + metadata.id + '" class="bi-chat-square position-relative overlayCommentIcon">';
+                                    '           <span id="brcommentcount' + metadata.id + '">' + albumPhotoCommentsMap[metadata.id].length + '</span> <span id="bricon' + metadata.id + '" class="bi-chat-square position-relative overlayCommentIcon">';
 
                                 if (notificationMap !== null && notificationMap[metadata.id] === true) {
                                     html +=
@@ -285,6 +285,17 @@
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     shashin.printMessageToConsole(data["status"]);
                     shashin.printMessageToConsole(data["msg"]);
+
+                    let currentCount = parseInt($("#briconcount"+metadata.id).text());
+                    if (isFavorite === true) {
+                        currentCount++;
+                    } else {
+                        currentCount--;
+                        if (currentCount < 0) {
+                            currentCount = 0;
+                        }
+                    }
+                    $("#briconcount"+metadata.id).text(currentCount)
                 }
             });
 
@@ -319,6 +330,11 @@
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     // Delete comment
                     $("#comment" + commentId).remove();
+                    let currentCount = parseInt($("#brcommentcount"+metadata.id).text());
+                    if (currentCount > 0) {
+                        currentCount--;
+                    }
+                    $("#brcommentcount"+metadata.id).text(currentCount);
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 }
@@ -460,10 +476,10 @@
                         }
 
                         // Insert comment at top of list
-                        var commentItem = '<li class="list-group-item list-group-item-secondary" id="comment'+commentId+'">\n' +
-                            '<span id="commentcontainer'+commentId+'">\n<p id="commentcontent'+commentId+'">'+comment+'</p>\n' +
-                            '<small>'+currentUser.username+'<span style="float: right"><a href="#" id="deletecomment'+commentId+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment'+commentId+'"><span class="bi-pencil"></span></a></span></small></span>' +
-                            '<span id="textareacontainer'+commentId+'"></span></li>';
+                        const commentItem = '<li class="list-group-item list-group-item-secondary" id="comment' + commentId + '">\n' +
+                            '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
+                            '<small>' + currentUser.username + '<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
+                            '<span id="textareacontainer' + commentId + '"></span></li>';
                         $("#commentText"+metadata.id).val("")
                         $("#commentList"+metadata.id).prepend(commentItem);
 
@@ -476,6 +492,9 @@
                             e.preventDefault();
                             albumSettings.editComment(commentId, metadata);
                         });
+
+                        let currentCount = parseInt($("#brcommentcount"+metadata.id).text());
+                        $("#brcommentcount"+metadata.id).text(currentCount+1)
                     }
                 });
             }
