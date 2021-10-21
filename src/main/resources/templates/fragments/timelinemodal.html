@@ -279,11 +279,12 @@
     $("#refreshTakenDate").click(function (e) {
         e.preventDefault();
 
-        var metadataId = $("#metadataId").val();
+        const metadataId = $("#metadataId").val();
 
-        var json = {
-            id:metadataId
-        }
+        const json = {
+            id: metadataId
+        };
+        
         const posting = $.post({
             url: "/timeline/sync/"+metadataId,
             data: JSON.stringify(json),
@@ -316,7 +317,7 @@
     $('#propTimelineModal').on('hide.bs.modal', function () {
         $("#timelineModalMsg").html("");
         $("#saveMetadata").prop('disabled', false);
-        var tab = new bootstrap.Tab($("#generalTabLink"));
+        const tab = new bootstrap.Tab($("#generalTabLink"));
         tab.show();
     });
 
@@ -328,9 +329,10 @@
     $("#refreshTakenDate").click(function (e) {
         e.preventDefault();
 
-        var originalTakenAtDate = $("#takenAtDetails").text();
-        var originalTakenAtDateArray = originalTakenAtDate.split(" ")
-        var takenAtParts = originalTakenAtDateArray[0].split("-");
+        const originalTakenAtDate = $("#takenAtDetails").text();
+        const originalTakenAtDateArray = originalTakenAtDate.split(" ");
+        const takenAtParts = originalTakenAtDateArray[0].split("-");
+
         if (takenAtParts.length > 3) {
             $("#yearTaken").val(takenAtParts[0]);
             $("#monthTaken").val(takenAtParts[1]);
@@ -365,10 +367,10 @@
     });
 
     $("#isobject").click(function (e) {
-        var metadataId = $("#metadataId").val();
+        const metadataId = $("#metadataId").val();
 
         timelineModal.closeTagPeopleDropdown(metadataId);
-        if($(this).prop("checked") === true) {
+        if ($(this).prop("checked") === true) {
             $("#tagpeople").val("");
         }
     });
@@ -376,7 +378,7 @@
     $("#tagpeople").focus(function (e) {
         e.preventDefault();
 
-        var metadataId = $("#metadataId").val();
+        const metadataId = $("#metadataId").val();
         timelineModal.closeTagPeopleDropdown(metadataId);
     });
 </script>
