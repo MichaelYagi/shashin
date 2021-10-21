@@ -5,12 +5,15 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
+<div th:replace="fragments/infomodal :: infomodal()"></div>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
-            <input type="hidden" id="currentPage" name="currentPage" value="0">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+            <input type="hidden" id="currentPage" name="currentPage" value="0">
+            <input type="hidden" id="currentfilename" name="currentfilename">
 
             <div id="trashMessage"></div>
             <div id="infinite-scroll-gallery">
@@ -39,6 +42,12 @@
                             <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
                                 <a href="#" th:id="'select'+${metadata.id}">
                                     <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
+                                </a>
+                            </div>
+
+                            <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
+                                <a href="#" th:id="'infoModalEdit'+${metadata.id}">
+                                    <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
                                 </a>
                             </div>
 
@@ -86,6 +95,12 @@
                         <script th:inline="javascript" type="text/javascript">
                             /*<![CDATA[*/
                             shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'trash');
+                            $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                            $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
+                                e.preventDefault();
+                                const metadataObj = JSON.parse($(this).attr("tag"));
+                                shashin.openInfoModal(metadataObj);
+                            });
                             /*]]>*/
                         </script>
 
