@@ -260,10 +260,7 @@
                             targetElement.remove();
 
                             if (currentNumChildren === 0) {
-                                // Remove header
-                                $("#br"+headingId).remove();
-                                $("#"+headingId).remove();
-                                $("#row"+headingId).remove();
+                                shashin.removeDateGallery(headingId);
                             }
                         }
                     } else {
@@ -284,7 +281,7 @@
         const json = {
             id: metadataId
         };
-        
+
         const posting = $.post({
             url: "/timeline/sync/"+metadataId,
             data: JSON.stringify(json),
