@@ -5,6 +5,8 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
+<div th:replace="fragments/infomodal :: infomodal()"></div>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
@@ -13,6 +15,7 @@
             <div id="infinite-scroll-gallery">
 
                 <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+                <input type="hidden" id="currentfilename" name="currentfilename">
 
                 <th:block th:if="${metadataList != ''}">
                     <div th:replace="fragments/personmodal :: personmodal()"></div>
@@ -57,8 +60,20 @@
                                     </div>
 
                                     <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
+                                        <a href="#" th:id="'infoModalEdit'+${metadata.id}">
+                                            <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                        <br>
                                         <a href="#" data-bs-toggle="modal" th:data-bs-target="'#propperson'+${metadata.id}">
                                             <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+                                        </a>
+                                    </div>
+                                </th:block>
+
+                                <th:block th:if="${authority == 'ROLE_USER'}">
+                                    <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
+                                        <a href="#" th:id="'infoModalEdit'+${metadata.id}">
+                                            <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
                                         </a>
                                     </div>
                                 </th:block>
@@ -108,6 +123,12 @@
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'person');
                                 personModalSettings.renderPersonModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id).get('labels')}]]*/"");
+                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
+                                    e.preventDefault();
+                                    const metadataObj = JSON.parse($(this).attr("tag"));
+                                    shashin.openInfoModal(metadataObj);
+                                });
                                 /*]]>*/
                             </script>
 

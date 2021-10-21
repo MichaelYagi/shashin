@@ -86,11 +86,18 @@
                                         '   </div>\n';
                                 }
 
-                                html += '<div class="thumbnail-tl" id="tntl' + metadata.id + '">\n' +
-                                    '   <a href="#" id="select' + metadata.id + '">\n' +
-                                    '       <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                    '   </a>\n' +
-                                    '</div>';
+                                html += '   <div class="thumbnail-tl" id="tntl' + metadata.id + '">\n' +
+                                    '           <a href="#" id="select' + metadata.id + '">\n' +
+                                    '               <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                    '           </a>\n' +
+                                    '       </div>\n';
+
+                                html +=
+                                    '       <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
+                                    '           <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
+                                    '               <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                    '           </a>\n' +
+                                    '       </div>\n';
 
                                 html += '<div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
 
@@ -117,6 +124,13 @@
                                 $(html).insertBefore($(".appendMetadataPhotos").last())
 
                                 shashin.setPhotoOverlays(metadata, activePage);
+
+                                $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                                $("#infoModalEdit"+metadata.id).click(function(e) {
+                                    e.preventDefault();
+                                    const metadataObj = JSON.parse($(this).attr("tag"));
+                                    shashin.openInfoModal(metadataObj);
+                                });
 
                                 $("#image" + metadata.id).on('load', function () {
                                     $(this).css("background-color", "transparent");
