@@ -544,6 +544,52 @@
 
                         if (metadataList.length > 0) {
 
+                            // Populate batch modals
+                            if (recognitionLabels !== null && recognitionLabels.length > 0) {
+                                let batchHtml =
+                                    '       <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
+                                    '       <div class="input-group-append">\n' +
+                                    '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                                    '           <div class="dropdown-menu" id="albumNameList">';
+
+                                for (let index in recognitionLabels) {
+                                    const recognitionLabel = recognitionLabels[index];
+                                    batchHtml +=
+                                        '           <button class="dropdown-item" type="button">\n' +
+                                        '               <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
+                                        '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
+                                        '           </button>'
+                                }
+                                batchHtml +=
+                                    '   </div>\n' +
+                                    '</div>\n';
+
+                                $("#batchLabelIds").html(batchHtml);
+                            }
+
+                            if (albumList !== null && albumList.length > 0) {
+                                let batchHtml = '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
+                                    '       <input type="hidden" id="albumIdInput" name="albumIdInput" value="">\n' +
+                                    '       <div class="input-group-append">\n' +
+                                    '           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                                    '           <div class="dropdown-menu" id="albumNameList">\n';
+
+                                for (let index in albumList) {
+                                    const album = albumList[index];
+                                    batchHtml += '       <a class="dropdown-item" href="#" id="'+album.id+'">'+album.name+'</a>\n';
+                                    $("#"+album.id).click(function (e) {
+                                        e.preventDefault();
+                                        $("#albumNameInput").val(shashin.decodeHtml(album.name));
+                                        $("#albumIdInput").val(album.id);
+                                    });
+                                }
+
+                                batchHtml += '</div>\n' +
+                                    '</div>\n';
+
+                                $("#albumListForModal").html(batchHtml);
+                            }
+
                             for (const index in metadataList) {
                                 const metadata = metadataList[index];
 
@@ -656,52 +702,6 @@
                                         timelineSettings.openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
                                     });
                                     $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
-
-                                    if (recognitionLabels !== null && recognitionLabels.length > 0) {
-                                        let batchHtml =
-                                            '       <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
-                                            '       <div class="input-group-append">\n' +
-                                            '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                                            '           <div class="dropdown-menu" id="albumNameList">';
-
-                                        for (let index in recognitionLabels) {
-                                            const recognitionLabel = recognitionLabels[index];
-                                            let checkedString = "";
-                                            batchHtml +=
-                                                '           <button class="dropdown-item" type="button">\n' +
-                                                '               <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
-                                                '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                                                '           </button>'
-                                        }
-                                        batchHtml +=
-                                            '   </div>\n' +
-                                            '</div>\n';
-
-                                        $("#batchLabelIds").html(batchHtml);
-                                    }
-
-                                    if (albumList !== null && albumList.length > 0) {
-                                        let html = '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
-                                            '       <input type="hidden" id="albumIdInput" name="albumIdInput" value="">\n' +
-                                            '       <div class="input-group-append">\n' +
-                                            '           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                                            '           <div class="dropdown-menu" id="albumNameList">\n';
-
-                                        for (let index in albumList) {
-                                            const album = albumList[index];
-                                            html += '       <a class="dropdown-item" href="#" id="'+album.id+'">'+album.name+'</a>\n';
-                                            $("#"+album.id).click(function (e) {
-                                                e.preventDefault();
-                                                $("#albumNameInput").val(shashin.decodeHtml(album.name));
-                                                $("#albumIdInput").val(album.id);
-                                            });
-                                        }
-
-                                        html += '</div>\n' +
-                                            '</div>\n';
-                                        
-                                        $("#albumListForModal").html(html);
-                                    }
                                 }
 
                                 html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
