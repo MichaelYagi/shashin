@@ -35,7 +35,7 @@
                         </div>
                         <div class="col-sm">
                             <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
-                            <div class="input-group">
+                            <div class="input-group" id="batchLabelIds">
                                 <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
 
                                 <th:block th:if="${recognitionLabels != ''}">

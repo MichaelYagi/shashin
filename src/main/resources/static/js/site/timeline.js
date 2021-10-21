@@ -241,8 +241,9 @@
     }
 
     timelineSettings.openTimelineModal = function(metadata,recognitionLabels,taggedPeopleList) {
-        // Populate modal data
+        let index;
 
+        // Populate modal data
         if ($("#timelineModalEdit"+metadata.id).attr("tag") && $("#timelineModalEdit"+metadata.id).attr("tag").trim() !== "") {
             metadata = JSON.parse($("#timelineModalEdit"+metadata.id).attr("tag"));
         }
@@ -292,7 +293,7 @@
         var taggedPeopleArray = taggedPeopleList.split(",");
         var isObject = false;
         var taggedPeopleString = "";
-        for (var index in taggedPeopleArray) {
+        for (index in taggedPeopleArray) {
             var person = taggedPeopleArray[index];
             if (person === "object") {
                 isObject = true;
@@ -312,15 +313,18 @@
             $("#recognitionLabelInput").remove();
         }
         if (recognitionLabels !== null && recognitionLabels.length > 0) {
-            var html = '<div class="input-group-append" id="recognitionLabelInput">\n' +
-                '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown'+metadata.id+'" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+            let html = '<div class="input-group-append" id="recognitionLabelInput">\n' +
+                '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                 '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
-            for (var index in recognitionLabels) {
-                var recognitionLabel = recognitionLabels[index];
-                var checkedString = "";
+
+            for (index in recognitionLabels) {
+                const recognitionLabel = recognitionLabels[index];
+                let checkedString = "";
+
                 if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                     checkedString = " checked";
                 }
+
                 html +=
                     '           <button class="dropdown-item" type="button">\n' +
                     '               <input type="checkbox" onclick="return timelineModal.populateLabel(\'' + metadata.id + '\');" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
@@ -334,7 +338,7 @@
         }
 
         if (isObject === true) {
-            $("#isobject")[0].checked = true;
+            $("#batchLabelIdData")[0].checked = true;
         }
 
         if (metadata.hidden !== null && metadata.hidden === true) {
@@ -536,6 +540,7 @@
                         const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
                         const recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
                         const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
+                        const albumList = data["albumList"] === "" ? null : data["albumList"];
 
                         if (metadataList.length > 0) {
 
@@ -651,6 +656,52 @@
                                         timelineSettings.openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
                                     });
                                     $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+
+                                    if (recognitionLabels !== null && recognitionLabels.length > 0) {
+                                        let batchHtml =
+                                            '       <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
+                                            '       <div class="input-group-append">\n' +
+                                            '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                                            '           <div class="dropdown-menu" id="albumNameList">';
+
+                                        for (let index in recognitionLabels) {
+                                            const recognitionLabel = recognitionLabels[index];
+                                            let checkedString = "";
+                                            batchHtml +=
+                                                '           <button class="dropdown-item" type="button">\n' +
+                                                '               <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
+                                                '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
+                                                '           </button>'
+                                        }
+                                        batchHtml +=
+                                            '   </div>\n' +
+                                            '</div>\n';
+
+                                        $("#batchLabelIds").html(batchHtml);
+                                    }
+
+                                    if (albumList !== null && albumList.length > 0) {
+                                        let html = '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
+                                            '       <input type="hidden" id="albumIdInput" name="albumIdInput" value="">\n' +
+                                            '       <div class="input-group-append">\n' +
+                                            '           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                                            '           <div class="dropdown-menu" id="albumNameList">\n';
+
+                                        for (let index in albumList) {
+                                            const album = albumList[index];
+                                            html += '       <a class="dropdown-item" href="#" id="'+album.id+'">'+album.name+'</a>\n';
+                                            $("#"+album.id).click(function (e) {
+                                                e.preventDefault();
+                                                $("#albumNameInput").val(shashin.decodeHtml(album.name));
+                                                $("#albumIdInput").val(album.id);
+                                            });
+                                        }
+
+                                        html += '</div>\n' +
+                                            '</div>\n';
+                                        
+                                        $("#albumListForModal").html(html);
+                                    }
                                 }
 
                                 html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
