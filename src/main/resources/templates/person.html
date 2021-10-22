@@ -16,12 +16,12 @@
 
                 <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts})" class="col-sm p-3 min-vh-100"></div>
                 <input type="hidden" id="currentfilename" name="currentfilename">
+                <input type="hidden" id="currentPage" name="currentPage" value="0">
 
                 <th:block th:if="${metadataList != ''}">
                     <div th:replace="fragments/personmodal :: personmodal()"></div>
 
                     <h1 th:text="${personInfo.name}"></h1>
-                    <input type="hidden" id="currentPage" name="currentPage" value="0">
 
                     <div id="personMessage"></div>
 
@@ -144,16 +144,79 @@
 </div>
 
 <script src="/js/site/applisteners.js"></script>
-<script type="text/javascript">
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        const $infiniteScrollGallery = document.getElementById(
-            'infinite-scroll-gallery'
-        );
-        const lightGalleryConfigs = shashin.getLightGalleryConfigs();
-        lightGalleryConfigs["selector"] = '.mediaLink';
-        var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-        $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-            shashin.jumpToLightGalleryIndex(e.detail.index);
+        /*<![CDATA[*/
+        const personId = /*[[${personInfo.id}]]*/ 0;
+        /*]]>*/
+
+        personSettings.setLightGalleryElement('infinite-scroll-gallery');
+        personSettings.setLightGallery();
+
+        $(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+
+        let mediaContentList = [];
+        $.each($('.mediaLink'), function(index, element) {
+            const mediaContent = {};
+            mediaContent.subHtml =$(this).attr("data-sub-html")
+            if ($(this).attr("data-src")) {
+                mediaContent.src = $(this).attr("data-src");
+            } else if ($(this).attr("data-video")) {
+                mediaContent.video = $(this).attr("data-video");
+            }
+            mediaContentList.push(mediaContent);
+        });
+        if (personSettings.getLightGallery() !== null) {
+            personSettings.getLightGallery().refresh(mediaContentList);
+            personSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+                shashin.jumpToLightGalleryIndex(e.detail.index);
+            })
+        }
+
+        function loadNextPage() {
+            const currentPage = parseInt($("#currentPage").val());
+            const nextPage = currentPage + 1;
+            /*<![CDATA[*/
+            const activePage = /*[[${activePage}]]*/ 'person';
+            /*]]>*/
+            personSettings.updatePerson(personId,nextPage,activePage).then(function(additionalMediaContentList) {
+                if (additionalMediaContentList.length > 0) {
+                    mediaContentList = mediaContentList.concat(additionalMediaContentList);
+                    personSettings.getLightGallery().refresh(mediaContentList);
+                    personSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+                        shashin.jumpToLightGalleryIndex(e.detail.index);
+                    })
+                }
+            });
+            $("#currentPage").val(nextPage);
+        }
+        const refreshIntervalId = window.setInterval(function () {
+            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
+                setTimeout(() => {
+                    loadNextPage();
+                }, 1000);
+            } else {
+                clearInterval(refreshIntervalId);
+            }
+
+            /*<![CDATA[*/
+            const metadataList = /*[[${metadataList}]]*/ '[]';
+            /*]]>*/
+            if ($(".appendMetadataPhotos").last().text() === "EOL" || metadataList === '' || metadataList === '[]') {
+                clearInterval(refreshIntervalId);
+            }
+        }, 200);
+        $("#container").on('scroll', function() {
+            if (shashin.atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+                loadNextPage();
+            }
+        })
+        $("main").on('scroll', function() {
+            if (shashin.atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+                loadNextPage();
+            }
         })
 
         shashin.matchingListeners()

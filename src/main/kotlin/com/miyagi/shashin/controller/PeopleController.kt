@@ -32,6 +32,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.ArrayList
 import java.util.HashMap
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
 @Controller
@@ -272,7 +273,7 @@ class PeopleController {
 
     @RequestMapping(value = ["/person/{personId}"], method = [RequestMethod.GET])
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    fun getPagedTimeline(model: Model, @PathVariable personId: Int): String {
+    fun getPerson(model: Model, @PathVariable personId: Int): String {
         val module = "person"
         val page = 0
         val response = buildPersonAlbum(model,personId,page)
@@ -284,6 +285,12 @@ class PeopleController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @RequestMapping(value = ["/person/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedPerson(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
+        return mapper.writeValueAsString(buildPersonAlbum(model,personId,page))
     }
 
     private fun buildPersonAlbum(model: Model,personId: Int,page: Int): MutableMap<String, Any?> {
@@ -306,8 +313,10 @@ class PeopleController {
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
             val settings = model.getAttribute("settings") as Settings
-//            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-//            val pageValue = page*queryLimit
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page*queryLimit
+
+            response["currentUser"] = currentUserObj
 
             val recognitionLabel = recognitionLabelRepository?.findById(personId)
             if (recognitionLabel != null && recognitionLabel.isPresent) {
@@ -321,18 +330,24 @@ class PeopleController {
             }
 
             var metadataList: MutableIterable<Metadata>? = null
+            var completeMetadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
-                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),page,2000)
+                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),pageValue,queryLimit)
+                completeMetadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),0,9999)
+
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
-                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,page,2000)
+                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,pageValue,queryLimit)
+                completeMetadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,0,9999)
             }
 
             if (metadataList != null && metadataList.count() > 0) {
-                counts["person"] = metadataList.count()
+                if (completeMetadataList != null) {
+                    counts["person"] = completeMetadataList.count()
+                }
                 response["message"] = ""
 
                 val labelPhotoMap = mutableMapOf<String, MutableMap<String,Any>>()

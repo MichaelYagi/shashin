@@ -47,7 +47,7 @@ class SearchController {
 
     @RequestMapping(value = ["/search/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getPagedTimeline(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
+    fun getPagedSearch(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         val searchTerm = request.getParameter("searchTerm").toString()
         return mapper.writeValueAsString(buildSearchData(model,searchTerm,page))
     }
