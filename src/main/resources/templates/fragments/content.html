@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="content(message,activePage,authority,parameter)">
+<body th:fragment="content(message,activePage,authority,parameter,counts)">
 <th:block th:if="${activePage == 'settings' or activePage == 'scan' or activePage == 'users' or activePage == 'match' or activePage == 'logs'}">
     <div th:replace="fragments/settingsgroup :: settings(${activePage})"></div>
 </th:block>
 <th:block th:if="${authority == 'ROLE_ADMIN' && (activePage == 'person' or activePage == 'matches')}">
-    <div th:replace="fragments/persongroup :: person(${activePage},${parameter})"></div>
+    <div th:replace="fragments/persongroup :: person(${activePage},${parameter},${counts})"></div>
 </th:block>
 <th:block th:if="${message != ''}">
     <br><p id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></p>

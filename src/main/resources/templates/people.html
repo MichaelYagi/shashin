@@ -9,7 +9,7 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <div id="albumsMessage"></div>
 
             <th:block th:if="${peopleList != ''}">
@@ -21,7 +21,12 @@
                             </a>
                             <div class="card-body">
                                 <p class="card-text"><strong th:text="${person.name}"></strong></p>
-                                <p class="card-text"><small class="text-muted" th:text="${person.tagCount + ' items'}"></small></p>
+                                <p class="card-text">
+                                    <small class="text-muted" th:text="${person.tagCount + ' items'}"></small>
+                                    <th:block th:if="${#maps.containsKey(counts, person.id)}">
+                                        <br><small class="text-muted" th:text="${counts.get(person.id) + ' matches'}"></small>
+                                    </th:block>
+                                </p>
                             </div>
                         </div>
 

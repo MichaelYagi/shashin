@@ -7,14 +7,12 @@ import com.miyagi.shashin.component.FaceRecognizer
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
-import com.miyagi.shashin.repository.AlbumRepository
-import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
-import com.miyagi.shashin.repository.RecognitionLabelRepository
+import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.data.repository.query.Param
 import org.springframework.messaging.handler.annotation.MessageMapping
@@ -43,13 +41,19 @@ class PeopleController {
     private var metadataRepository: MetadataRepository? = null
 
     @Autowired
-    private var albumRepository: AlbumRepository? = null
+    private var notificationRepository: NotificationRepository? = null
+
+    @Autowired
+    private var userRepository: UserRepository? = null
 
     @Autowired
     private var recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
+    @Value("\${app.role.admin}")
+    private lateinit var adminRole: String
 
     private val threadExtensionName: String = "facescan_shashinscan"
 
@@ -132,7 +136,15 @@ class PeopleController {
 
         // Start matching in a separate thread
         if (testImages != null && trainingData != null && distinctLabelRecords != null && distinctLabelRecords.count() > 1) {
-            val faceRecognizer = FaceRecognizer(testImages, trainingData, recognitionLabelPhotoRepository, recognitionLabelRepository)
+            val faceRecognizer = FaceRecognizer(
+                testImages,
+                trainingData,
+                recognitionLabelPhotoRepository,
+                recognitionLabelRepository,
+                notificationRepository,
+                userRepository,
+                adminRole
+            )
             faceRecognizer.runRecognizer()
         } else {
             resp["msg"] = "Training data not detected. At least 2 people must be tagged."
@@ -153,6 +165,10 @@ class PeopleController {
         model["lowMatchResults"] = ""
         model["recognitionLabels"] = ""
         model["labelPhotoMap"] = ""
+        val counts = HashMap<String,Int>()
+        counts["person"] = 0
+        counts["matches"] = 0
+        model["counts"] = counts
         model["parameter"] = personId
 
         val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
@@ -166,9 +182,23 @@ class PeopleController {
         }
 
         val settings = model.getAttribute("settings") as Settings
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            var metadataList: MutableIterable<Metadata>? = null
+            if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
+                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),0,2000)
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,0,2000)
+            }
+            if (metadataList != null && metadataList.count() > 0) {
+                counts["person"] = metadataList.count()
+            }
+        }
         // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
         val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
         if (lowMatchResults != null && lowMatchResults.count() > 0) {
+            counts["matches"] = lowMatchResults.count()
             model["lowMatchResults"] = lowMatchResults
             model["message"] = ""
 
@@ -192,6 +222,7 @@ class PeopleController {
             model["labelPhotoMap"] = labelPhotoMap
         }
 
+        model["counts"] = counts
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -204,6 +235,7 @@ class PeopleController {
         val module = "people"
         model["message"] = "There are no people tagged."
         model["peopleList"] = ""
+        model["counts"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -214,6 +246,17 @@ class PeopleController {
                 peopleList = metadataRepository?.findAlbumPhotoByPeople(settings.getRecognitionConfidenceThreshold()!!,currentUserObj.getId())
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!)
+
+                if (peopleList != null && peopleList.count() > 0) {
+                    val counts = HashMap<Int,Int>()
+                    for (person in peopleList) {
+                        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(person.getId()!!,settings.getRecognitionConfidenceThreshold()!!)
+                        if (lowMatchResults != null && lowMatchResults.count() > 0) {
+                            counts[person.getId()!!] = lowMatchResults.count()
+                        }
+                    }
+                    model["counts"] = counts
+                }
             }
             if (peopleList != null && peopleList.count() > 0) {
                 model["peopleList"] = peopleList
@@ -252,12 +295,17 @@ class PeopleController {
         response["personInfo"] = ""
         response["recognitionLabels"] = ""
         response["parameter"] = personId
+        val counts = HashMap<String,Int>()
+        counts["person"] = 0
+        counts["matches"] = 0
+        response["counts"] = counts
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
 
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
+            val settings = model.getAttribute("settings") as Settings
 //            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
 //            val pageValue = page*queryLimit
 
@@ -266,8 +314,13 @@ class PeopleController {
                 response["personInfo"] = recognitionLabel.get()
             }
 
+            // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
+            val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
+            if (lowMatchResults != null && lowMatchResults.count() > 0) {
+                counts["matches"] = lowMatchResults.count()
+            }
+
             var metadataList: MutableIterable<Metadata>? = null
-            val settings = model.getAttribute("settings") as Settings
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
                 metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),page,2000)
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
@@ -279,6 +332,7 @@ class PeopleController {
             }
 
             if (metadataList != null && metadataList.count() > 0) {
+                counts["person"] = metadataList.count()
                 response["message"] = ""
 
                 val labelPhotoMap = mutableMapOf<String, MutableMap<String,Any>>()
@@ -308,6 +362,8 @@ class PeopleController {
                 response["labelPhotoMap"] = labelPhotoMap
                 response["metadataList"] = metadataList
             }
+
+            response["counts"] = counts
 
             response["msg"] = "Results"
             response["status"] = "success"

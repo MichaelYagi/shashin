@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<ul class="nav nav-tabs" th:fragment="person(activePage,parameter)">
+<ul class="nav nav-tabs" th:fragment="person(activePage,parameter,counts)">
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}">Person</a>
+        <a th:attr="class='nav-link' + ${activePage=='person' ? ' active' : ''}" th:href="${'/person/'+parameter}">Person <span class="badge bg-secondary" th:text="${counts.get('person')}"></span></a>
     </li>
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}">Matches</a>
+        <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}">Matches <span class="badge bg-secondary" th:text="${counts.get('matches')}"></span></a>
     </li>
 </ul>
 </body>
