@@ -199,6 +199,17 @@
         const albumId = /*[[${albumId}]]*/ 0;
         /*]]>*/
 
+        $("#removeFromAlbum").change(function() {
+            if(this.checked) {
+                $('#setCoverAlbum').prop('checked', false);
+            }
+        });
+        $("#setCoverAlbum").change(function() {
+            if(this.checked) {
+                $('#removeFromAlbum').prop('checked', false);
+            }
+        });
+
         albumSettings.setLightGalleryElement('infinite-scroll-gallery');
         albumSettings.setLightGallery();
 
