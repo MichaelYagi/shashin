@@ -2,11 +2,15 @@ package com.miyagi.shashin.component
 
 import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.RecognitionLabelPhoto
 import com.miyagi.shashin.model.TrainingData
+import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.RecognitionLabelPhotoRepository
 import com.miyagi.shashin.repository.RecognitionLabelRepository
+import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.TextUtils
 import org.bytedeco.javacpp.DoublePointer
 import org.bytedeco.javacpp.IntPointer
 import org.bytedeco.opencv.global.opencv_core
@@ -15,6 +19,7 @@ import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.tensorflow.Graph
 import org.tensorflow.Session
@@ -38,7 +43,10 @@ class FaceRecognizer() {
     private var testImages: MutableIterable<Metadata>? = null
     private var trainingData: MutableIterable<TrainingData>? = null
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+    private var notificationRepository: NotificationRepository? = null
     private var recognitionLabelRepository: RecognitionLabelRepository? = null
+    private var userRepository: UserRepository? = null
+    private var adminRole: String? = null
     private var cascadeDir: String = "lib/cascades"
     private var modelDir: String = "lib/models"
     private lateinit var cascadeFileList: MutableList<String>
@@ -48,11 +56,14 @@ class FaceRecognizer() {
     private val graph: Graph = Graph()
     private val fullFaceFeaturesList = ArrayList<FullFaceFeatures>()
 
-    internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?) : this() {
+    internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?, notificationRepository: NotificationRepository?, userRepository: UserRepository?, adminRole: String?) : this() {
         this.trainingData = trainingData
         this.testImages = testImages
         this.recognitionLabelPhotoRepository = recognitionLabelPhotoRepository
         this.recognitionLabelRepository = recognitionLabelRepository
+        this.notificationRepository = notificationRepository
+        this.userRepository = userRepository
+        this.adminRole = adminRole
         this.cascadeFileList = mutableListOf()
         this.graph.importGraphDef(loadGraphDef());
         loadCascadeData()
@@ -315,8 +326,11 @@ class FaceRecognizer() {
                     }
                 }
 
+                var found = false
+
                 for ((labelId, confidence) in matchMap) {
                     if (labelId != 0) {
+                        found = true
                         val confidenceVal: String = "%.1f".format(confidence)
                         val message =
                             "Final outcome - Label: $labelId - Confidence: $confidence for $path"
@@ -339,6 +353,23 @@ class FaceRecognizer() {
                                 this.recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
                             }
                         }
+                    }
+                }
+
+                val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+                if (found && admins != null) {
+                    val notificationObjList = mutableListOf<Notification>()
+                    for (admin in admins) {
+                        val notificationObj = Notification()
+                        notificationObj.setUserId(admin.getId())
+                        notificationObj.setCreatedAt(TextUtils.getModifiedCreateTimestamp())
+                        notificationObj.setModifiedAt(TextUtils.getModifiedCreateTimestamp())
+                        notificationObj.setRead(false)
+                        notificationObj.setMessage("Matches to people found!")
+                        notificationObjList.add(notificationObj)
+                    }
+                    if (notificationObjList.isNotEmpty()) {
+                        notificationRepository?.saveAll(notificationObjList)
                     }
                 }
                 matchMap.clear()
