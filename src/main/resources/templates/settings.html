@@ -28,7 +28,7 @@
                     <th:block th:if="${settings != ''}">
                     <div class="row">
                         <div class="col-4">
-                            <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.2)</strong></label>
+                            <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.6)</strong></label>
                             <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
                         </div>
                         <div class="col-4">
@@ -42,7 +42,7 @@
                     </div>
                     <div class="row">
                         <div class="col-4">
-                            <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit (Default 10)</strong></label>
+                            <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit (Default 50)</strong></label>
                             <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
                         </div>
                         <div class="col-4">

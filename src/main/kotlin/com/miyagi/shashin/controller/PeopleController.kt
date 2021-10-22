@@ -144,7 +144,8 @@ class PeopleController {
                 recognitionLabelRepository,
                 notificationRepository,
                 userRepository,
-                adminRole
+                adminRole,
+                settings.getRecognitionConfidenceThreshold()!!.toDouble()
             )
             faceRecognizer.runRecognizer()
         } else {
