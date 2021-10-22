@@ -55,8 +55,9 @@ class FaceRecognizer() {
     private val imageSize: Int = 170
     private val graph: Graph = Graph()
     private val fullFaceFeaturesList = ArrayList<FullFaceFeatures>()
+    private var distanceThreshold: Double = 0.6
 
-    internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?, notificationRepository: NotificationRepository?, userRepository: UserRepository?, adminRole: String?) : this() {
+    internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?, notificationRepository: NotificationRepository?, userRepository: UserRepository?, adminRole: String?, distanceThreshold: Double) : this() {
         this.trainingData = trainingData
         this.testImages = testImages
         this.recognitionLabelPhotoRepository = recognitionLabelPhotoRepository
@@ -65,7 +66,8 @@ class FaceRecognizer() {
         this.userRepository = userRepository
         this.adminRole = adminRole
         this.cascadeFileList = mutableListOf()
-        this.graph.importGraphDef(loadGraphDef());
+        this.graph.importGraphDef(loadGraphDef())
+        this.distanceThreshold = distanceThreshold
         loadCascadeData()
     }
 
@@ -465,9 +467,8 @@ class FaceRecognizer() {
     ): Prediction {
         val distance: Float = euclidDistance(first.features, second.features)
 //        println("distance with $identifier = $distance")
-        val distanceThreshold = 0.6f
-        val percentageThreshold = 70.0f
-        val percentage = 100f.coerceAtMost(100 * distanceThreshold / distance)
+        val percentageThreshold = 75.0f //70.0f
+        val percentage = 100f.coerceAtMost(100 * this.distanceThreshold.toFloat() / distance)
 //        println("percentage = $percentage")
 //        println("isIdentified = ${percentage >= percentageThreshold}")
 //        println("=================================")
