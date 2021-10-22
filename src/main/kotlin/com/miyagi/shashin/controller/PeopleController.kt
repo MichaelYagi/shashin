@@ -235,7 +235,8 @@ class PeopleController {
         val module = "people"
         model["message"] = "There are no people tagged."
         model["peopleList"] = ""
-        model["counts"] = ""
+        val counts = HashMap<Int,Int>()
+        model["counts"] = counts
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -248,7 +249,6 @@ class PeopleController {
                 peopleList = metadataRepository?.findMetadataByPeople(settings.getRecognitionConfidenceThreshold()!!)
 
                 if (peopleList != null && peopleList.count() > 0) {
-                    val counts = HashMap<Int,Int>()
                     for (person in peopleList) {
                         val lowMatchResults = metadataRepository?.findLowMatchesByPerson(person.getId()!!,settings.getRecognitionConfidenceThreshold()!!)
                         if (lowMatchResults != null && lowMatchResults.count() > 0) {
