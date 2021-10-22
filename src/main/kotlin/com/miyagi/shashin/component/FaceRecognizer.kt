@@ -16,10 +16,10 @@ import org.bytedeco.opencv.opencv_core.*
 import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier
 import org.springframework.stereotype.Component
-import org.tensorflow.Graph
-import org.tensorflow.Session
-import org.tensorflow.Tensor
-import org.tensorflow.Tensors
+//import org.tensorflow.Graph
+//import org.tensorflow.Session
+//import org.tensorflow.Tensor
+//import org.tensorflow.Tensors
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.*
@@ -45,7 +45,7 @@ class FaceRecognizer() {
     private var logger: Logger = Logger.getLogger(FaceRecognizer::class.simpleName)
     private val threadExtensionName: String = "facescan_shashinscan"
     private val imageSize: Int = 170
-    private val graph: Graph = Graph()
+//    private val graph: Graph = Graph()
     private val fullFaceFeaturesList = ArrayList<FullFaceFeatures>()
 
     internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?) : this() {
@@ -54,7 +54,7 @@ class FaceRecognizer() {
         this.recognitionLabelPhotoRepository = recognitionLabelPhotoRepository
         this.recognitionLabelRepository = recognitionLabelRepository
         this.cascadeFileList = mutableListOf()
-        this.graph.importGraphDef(loadGraphDef());
+//        this.graph.importGraphDef(loadGraphDef());
         loadCascadeData()
     }
 
@@ -114,8 +114,8 @@ class FaceRecognizer() {
         var totalCount = 0
 
         // Load training data
-//        val faceMap = mutableMapOf<Mat,Int>()
-//        val trainingDataMap = mutableMapOf<String,MutableMap<Mat,Int>>()
+        val faceMap = mutableMapOf<Mat,Int>()
+        val trainingDataMap = mutableMapOf<String,MutableMap<Mat,Int>>()
 
         // Process each training image through different cascades and load into map
         if (this.cascadeFileList.isNotEmpty()) {
@@ -164,20 +164,22 @@ class FaceRecognizer() {
 //                            val testOutput = "C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$totalCount-${trainingImage.getMetadataId()}.jpg"
 //                            opencv_imgcodecs.imwrite(testOutput, resizetrainingimage)
 
-                            val tempFilePath = System.getProperty("java.io.tmpdir")+"/temp.jpg"
-                            opencv_imgcodecs.imwrite(tempFilePath, resizetrainingimage)
-                            val tempImg = ImageIO.read(File(tempFilePath))
-                            val faceFeatures = passImageThroughNeuralNetwork(tempImg, 1, graph)
-                            val fullFaceFeatures = FullFaceFeatures()
-                            fullFaceFeatures.setIdentifier(label)
-                            fullFaceFeatures.setFaceFeatures(1,faceFeatures)
+                            // TensorFlow
+//                            val tempFilePath = System.getProperty("java.io.tmpdir")+"/temp.jpg"
+//                            opencv_imgcodecs.imwrite(tempFilePath, resizetrainingimage)
+//                            val tempImg = ImageIO.read(File(tempFilePath))
+//                            val faceFeatures = passImageThroughNeuralNetwork(tempImg, 1, graph)
+//                            val fullFaceFeatures = FullFaceFeatures()
+//                            fullFaceFeatures.setIdentifier(label)
+//                            fullFaceFeatures.setFaceFeatures(1,faceFeatures)
+
 //                        val tempFile = createFile("C:/Users/micha/Downloads/outputfolder/trainingset/","C:/Users/micha/Downloads/outputfolder/trainingset/testImage-$label-$i-${image.name}-$counter.jpg", "Thumbnail")
 //                        ImageIO.write(tempImg, "jpg", tempFile)
-                            fullFaceFeaturesList.add(fullFaceFeatures)
+//                            fullFaceFeaturesList.add(fullFaceFeatures)
 
                             // Save in map
-//                            faceMap[resizetrainingimage] = label
-//                            trainingDataMap[cascadeFile] = faceMap
+                            faceMap[resizetrainingimage] = label
+                            trainingDataMap[cascadeFile] = faceMap
 
                         }
                         image.release()
@@ -216,22 +218,22 @@ class FaceRecognizer() {
 
                             if (this.trainingData != null && this.trainingData!!.count() > 0) {
                                 // Loop through training image map and label
-//                                val images = MatVector(faceMap.size.toLong())
-//                                val labels = Mat(faceMap.size, 1, opencv_core.CV_32SC1)
-//                                val labelsBuf: IntBuffer = labels.createBuffer()
-//                                var counter = 0
-//                                for ((mat, label) in trainingDataMap[cascadeFile].orEmpty()) {
-//                                    images.put(counter.toLong(), mat)
-//                                    labelsBuf.put(counter, label)
-//                                    counter++
-//                                }
-//                                val faceRecognizer: org.bytedeco.opencv.opencv_face.FaceRecognizer = FisherFaceRecognizer.create()
-//                                faceRecognizer.train(images, labels)
-//                                labels.release()
-//                                images.clear()
-//
-//                                val label = IntPointer(1)
-//                                val confidence = DoublePointer(1)
+                                val images = MatVector(faceMap.size.toLong())
+                                val labels = Mat(faceMap.size, 1, opencv_core.CV_32SC1)
+                                val labelsBuf: IntBuffer = labels.createBuffer()
+                                var counter = 0
+                                for ((mat, label) in trainingDataMap[cascadeFile].orEmpty()) {
+                                    images.put(counter.toLong(), mat)
+                                    labelsBuf.put(counter, label)
+                                    counter++
+                                }
+                                val faceRecognizer: org.bytedeco.opencv.opencv_face.FaceRecognizer = FisherFaceRecognizer.create()
+                                faceRecognizer.train(images, labels)
+                                labels.release()
+                                images.clear()
+
+                                val label = IntPointer(1)
+                                val confidence = DoublePointer(1)
 
                                 val faceDetectorTestImage = CascadeClassifier()
                                 faceDetectorTestImage.load(cascadeFile)
@@ -263,35 +265,36 @@ class FaceRecognizer() {
                                     imageRoi.release()
 
                                     // Execute prediction
-//                                    faceRecognizer.predict(resizeimage, label, confidence)
-//                                    val predictedLabel = label[0]
+                                    faceRecognizer.predict(resizeimage, label, confidence)
+                                    val predictedLabel = label[0]
 
                                     // Test save
-//                                    val testOutput = "C:/Users/micha/Downloads/outputfolder/testimage/testImage-$predictedLabel-${confidence[0]/1000}-${testImage.getFileName()}.jpg"
-//                                    opencv_imgcodecs.imwrite(testOutput, resizeimage)
+                                    val testOutput = "C:/Users/micha/Downloads/outputfolder/testimage/testImage-$predictedLabel-${confidence[0]/1000}-${testImage.getFileName()}.jpg"
+                                    opencv_imgcodecs.imwrite(testOutput, resizeimage)
 
                                     // Discriminate as much as possible and pick least confident match
-//                                    logger.log(Level.INFO, "Predicted label: "+predictedLabel+" Distance :"+confidence[0]/1000+" for "+testImage.getFileName()+" using "+cascadeFile)
-//                                    if (!matchMap.containsKey(predictedLabel) || (matchMap.containsKey(predictedLabel) && ((confidence[0]/1000) > matchMap[predictedLabel].toString().toFloat()))) {
-//                                        matchMap[predictedLabel] = (confidence[0]/1000)
-//                                    }
-
-                                    val tempFilePath = System.getProperty("java.io.tmpdir")+"/temp.jpg"
-                                    opencv_imgcodecs.imwrite(tempFilePath, resizeimage)
-                                    val tempImg = ImageIO.read(File(tempFilePath))
-                                    val faceFeatures = passImageThroughNeuralNetwork(tempImg, 1, graph)
-                                    predictions[i.toInt()] = predictBestMatchFromPool(faceFeatures!!,
-                                        fullFaceFeaturesList.toTypedArray()
-                                    )
-
-                                    var candidate: Prediction? = null
-                                    try {
-                                        candidate = predictions.maxByOrNull { it!!.getPercentage() }
-                                    } catch (e: Exception) {}
-                                    if (candidate != null && candidate.isIdentified) {
-                                        logger.log(Level.INFO, "Predicted label: " + candidate.identifier + " Distance :"+ candidate.distance+" Percentage :"+candidate.percentage+" for "+testImage.getFileName()+" using "+cascadeFile)
-                                        matchMap[candidate.identifier] = candidate.distance
+                                    logger.log(Level.INFO, "Predicted label: "+predictedLabel+" Distance :"+confidence[0]/1000+" for "+testImage.getFileName()+" using "+cascadeFile)
+                                    if (!matchMap.containsKey(predictedLabel) || (matchMap.containsKey(predictedLabel) && ((confidence[0]/1000) > matchMap[predictedLabel].toString().toFloat()))) {
+                                        matchMap[predictedLabel] = (confidence[0]/1000)
                                     }
+
+//                                    // TensorFlow
+//                                    val tempFilePath = System.getProperty("java.io.tmpdir")+"/temp.jpg"
+//                                    opencv_imgcodecs.imwrite(tempFilePath, resizeimage)
+//                                    val tempImg = ImageIO.read(File(tempFilePath))
+//                                    val faceFeatures = passImageThroughNeuralNetwork(tempImg, 1, graph)
+//                                    predictions[i.toInt()] = predictBestMatchFromPool(faceFeatures!!,
+//                                        fullFaceFeaturesList.toTypedArray()
+//                                    )
+//
+//                                    var candidate: Prediction? = null
+//                                    try {
+//                                        candidate = predictions.maxByOrNull { it!!.getPercentage() }
+//                                    } catch (e: Exception) {}
+//                                    if (candidate != null && candidate.isIdentified) {
+//                                        logger.log(Level.INFO, "Predicted label: " + candidate.identifier + " Distance :"+ candidate.distance+" Percentage :"+candidate.percentage+" for "+testImage.getFileName()+" using "+cascadeFile)
+//                                        matchMap[candidate.identifier] = candidate.distance
+//                                    }
                                 }
                             }
                         } else {
@@ -368,31 +371,29 @@ class FaceRecognizer() {
         return tempFile.readBytes()
     }
 
-    private fun passImageThroughNeuralNetwork(image: BufferedImage, faceType: Int, graph: Graph): FaceFeatures? {
-        var features: FaceFeatures
-        Session(graph).use { session ->
-            val feedImage: Tensor<Float> = Tensors.create(imageToMultiDimensionalArray(image))
-            val response = session.runner()
-                .feed("input", feedImage)
-                .feed("phase_train", Tensor.create(false))
-                .fetch("embeddings")
-                .run()[0]
-//            .expect(Float::class.java)
-            val shape = response.shape()
-
-
-//        println(shape.joinToString(", "))
-            //first dimension should return 1 as for image with normal size
-            //second dimension should give 128 characteristics of face
-            check(!(shape[0].toInt() != 1 || shape[1].toInt() != 128)) { "illegal output values: 1 = " + shape[0] + " 2 = " + shape[1] }
-            val featuresHolder =
-                Array(1) { FloatArray(128) }
-            response.copyTo(featuresHolder)
-            features = FaceFeatures(featuresHolder[0], faceType)
-            response.close()
-        }
-        return features
-    }
+//    private fun passImageThroughNeuralNetwork(image: BufferedImage, faceType: Int, graph: Graph): FaceFeatures? {
+//        var features: FaceFeatures
+//        Session(graph).use { session ->
+//            val feedImage: Tensor<Float> = Tensors.create(imageToMultiDimensionalArray(image))
+//            val response = session.runner()
+//                .feed("input", feedImage)
+//                .feed("phase_train", Tensor.create(false))
+//                .fetch("embeddings")
+//                .run()[0]
+//            val shape = response.shape()
+//
+//
+//            //first dimension should return 1 as for image with normal size
+//            //second dimension should give 128 characteristics of face
+//            check(!(shape[0].toInt() != 1 || shape[1].toInt() != 128)) { "illegal output values: 1 = " + shape[0] + " 2 = " + shape[1] }
+//            val featuresHolder =
+//                Array(1) { FloatArray(128) }
+//            response.copyTo(featuresHolder)
+//            features = FaceFeatures(featuresHolder[0], faceType)
+//            response.close()
+//        }
+//        return features
+//    }
 
     private fun imageToMultiDimensionalArray(bi: BufferedImage?): Array<Array<Array<FloatArray>>>? {
         requireNotNull(bi) { "image for neural network is null" }
