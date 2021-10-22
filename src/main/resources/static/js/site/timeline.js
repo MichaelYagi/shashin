@@ -338,7 +338,7 @@
         }
 
         if (isObject === true) {
-            $("#batchLabelIdData")[0].checked = true;
+            $("#isobject")[0].checked = true;
         }
 
         if (metadata.hidden !== null && metadata.hidden === true) {
