@@ -200,6 +200,7 @@ class FaceRecognizer() {
         // Process test images through each cascade and run against training data
         if (this.testImages != null && this.testImages!!.count() > 0) {
             writeToThreadFileAndLogMessage("Starting face matching.",threadFile)
+            var found = false
 
             for (testImage in this.testImages!!) {
                 matchMap[0] = 0.0
@@ -326,7 +327,7 @@ class FaceRecognizer() {
                     }
                 }
 
-                var found = false
+
 
                 for ((labelId, confidence) in matchMap) {
                     if (labelId != 0) {
@@ -355,24 +356,24 @@ class FaceRecognizer() {
                         }
                     }
                 }
-
-                val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
-                if (found && admins != null) {
-                    val notificationObjList = mutableListOf<Notification>()
-                    for (admin in admins) {
-                        val notificationObj = Notification()
-                        notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(TextUtils.getModifiedCreateTimestamp())
-                        notificationObj.setModifiedAt(TextUtils.getModifiedCreateTimestamp())
-                        notificationObj.setRead(false)
-                        notificationObj.setMessage("Matches to people found!")
-                        notificationObjList.add(notificationObj)
-                    }
-                    if (notificationObjList.isNotEmpty()) {
-                        notificationRepository?.saveAll(notificationObjList)
-                    }
-                }
                 matchMap.clear()
+            }
+
+            val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+            if (found && admins != null) {
+                val notificationObjList = mutableListOf<Notification>()
+                for (admin in admins) {
+                    val notificationObj = Notification()
+                    notificationObj.setUserId(admin.getId())
+                    notificationObj.setCreatedAt(TextUtils.getModifiedCreateTimestamp())
+                    notificationObj.setModifiedAt(TextUtils.getModifiedCreateTimestamp())
+                    notificationObj.setRead(false)
+                    notificationObj.setMessage("Matches to people found!")
+                    notificationObjList.add(notificationObj)
+                }
+                if (notificationObjList.isNotEmpty()) {
+                    notificationRepository?.saveAll(notificationObjList)
+                }
             }
         }
 
