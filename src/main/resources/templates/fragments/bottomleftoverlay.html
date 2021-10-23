@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="bottomleftoverlay(id, targetPrefix, onclickIdPrefix, onclickFunctionCall, editClass)">
+
+<div class="thumbnail-bl" th:id="${'tnbl'+id}">
+    <a href="#" th:id="${'infoModalEdit'+id}">
+        <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
+    </a>
+    <th:block th:if="${onclickFunctionCall != null or targetPrefix != null}">
+        <br>
+        <th:block th:if="${onclickFunctionCall != null}">
+            <a href="#" th:id="${onclickIdPrefix+id}" th:attr="onclick=${'return '+onclickFunctionCall+'(event,&quot;'+id+'&quot;)'}" th:class="${editClass}">
+                <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+            </a>
+        </th:block>
+        <th:block th:if="${targetPrefix != null}">
+            <a href="#" data-bs-toggle="modal" th:data-bs-target="${'#'+targetPrefix+id}">
+                <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+            </a>
+        </th:block>
+    </th:block>
+</div>
+
+</body>
+</html>

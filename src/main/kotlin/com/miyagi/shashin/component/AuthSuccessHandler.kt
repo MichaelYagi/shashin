@@ -80,7 +80,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 }
 
                 if (isAllowed) {
-                    notifyLogin(user,currentAuthority)
+                    notifyLogin(user)
                     if (currentAuthority == adminRole) {
                         redirectStrategy.sendRedirect(request, response, "/timeline")
                     } else {
@@ -91,7 +91,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
         }
     }
 
-    private fun notifyLogin(currentUserObj: User?, authority: String) {
+    private fun notifyLogin(currentUserObj: User?) {
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
         val sdtf = DateTimeFormatter
             .ofLocalizedTime(FormatStyle.LONG)

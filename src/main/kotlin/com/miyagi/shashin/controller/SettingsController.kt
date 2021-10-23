@@ -615,7 +615,7 @@ class SettingsController {
         }
 
         if (submit == "Scan") {
-            val threadFileContent = FileUtils.readThreadFile("shashinscan")
+            var threadFileContent = FileUtils.readThreadFile("shashinscan")
 //
 //            println("testzzz")
 //            println(shouldStop.get())
@@ -640,7 +640,7 @@ class SettingsController {
                     // Clean up any existing thread files
                     deleteThreadScan()
 
-                    val rootPath = FileSystemResource("").file.absolutePath
+                    val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                     val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
 
                     // Iterate through directory in another thread
@@ -690,8 +690,6 @@ class SettingsController {
                                                     }
                                                 }
 
-                                                val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-                                                val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
                                                 val metadataDir = sidecarDir + "metadata/"
                                                 val thumbnailDir = sidecarDir.replace('\\', '/')+"thumbnails"
                                                 var relativePath: String = metadata.getThumbnailPathCentered()!!.replace('\\', '/').lowercase().replace(thumbnailDir.lowercase(), "")
@@ -794,7 +792,7 @@ class SettingsController {
                     return mapper.writeValueAsString(resp)
                 }
 
-                val threadFileContent = FileUtils.readThreadFile("shashinscan")
+                threadFileContent = FileUtils.readThreadFile("shashinscan")
                 var msg = "Scan in progress"
                 if (shouldStop.get()) {
                     msg = "Scan cancellation in progress"
@@ -859,7 +857,7 @@ class SettingsController {
                                 val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())
 
                                 if (metadataCount == 0) {
-                                    metadataObj = mediaProcessingUtils.createThumbnails(file, sidecarDir, rootDir, metadataObj)
+                                    metadataObj = mediaProcessingUtils.createThumbnails(file, sidecarDir, metadataObj)
                                     if (metadataObj != null) {
                                         metadataObj.setHidden(false)
 

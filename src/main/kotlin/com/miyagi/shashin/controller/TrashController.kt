@@ -74,11 +74,11 @@ class TrashController {
     fun postUnhideMetadata(model: Model, @RequestBody requestBody: JsonNode): String {
         val trashMp = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (trashMp.containsKey("metadataIdList")) {
-            val metadataIdList = trashMp["metadataIdList"] as MutableList<String>
+            val metadataIdList = trashMp["metadataIdList"] as MutableList<*>
 
             if (metadataIdList.count() > 0) {
                 for (metadataId in metadataIdList) {
-                    val metadataObj = metadataRepository.findById(metadataId)
+                    val metadataObj = metadataRepository.findById(metadataId as String)
                     metadataObj.get().setHidden(false)
                     metadataRepository.save(metadataObj.get())
                 }

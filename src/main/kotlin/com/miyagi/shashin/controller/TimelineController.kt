@@ -627,48 +627,18 @@ class TimelineController {
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         var idArray: Array<String>? = null
-        var dayTaken: Int? = null
-        var monthTaken: Int? = null
-        var yearTaken: Int? = null
-        var latlng: String? = null
-        var keywords: String? = null
-        var recognitionLabelNames: String? = null
-        var isObject = false
         var isHidden = false
 
         for ((k, v) in batchMetadataMap) {
             if (v != "") {
                 when (k) {
-                    "batchisobject" -> {
-                        if (v.toString() == "on") {
-                            isObject = true
-                        }
-                    }
                     "batchhidden" -> {
                         if (v.toString() == "on") {
                             isHidden = true
                         }
                     }
-                    "tagBatchDataInput" -> {
-                        recognitionLabelNames = v.toString().trim()
-                    }
                     "batchMetadataIds" -> {
                         idArray = mapper.readValue(v.toString(), Array<String>::class.java)
-                    }
-                    "dayTakenBatchData" -> {
-                        dayTaken = v.toString().toInt()
-                    }
-                    "monthTakenBatchData" -> {
-                        monthTaken = v.toString().toInt()
-                    }
-                    "yearTakenBatchData" -> {
-                        yearTaken = v.toString().toInt()
-                    }
-                    "latlngBatchData" -> {
-                        latlng = v.toString()
-                    }
-                    "keywordsBatchData"  -> {
-                        keywords = v.toString()
                     }
                 }
             }
