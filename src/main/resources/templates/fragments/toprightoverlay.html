@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="toprightoverlay(type, id, content, width, height)">
+
+<th:block th:if="${type.contains('video')}">
+    <div class="thumbnail-tr" th:id="${'tntr'+id}">
+        <span class="overlayIconBackground"><th:block th:text="${content}"></th:block>&nbsp;<span th:id="${'video'+id}" class="bi-camera-video overlayIcon"></span></span>
+    </div>
+</th:block>
+
+<th:block th:if="${!type.contains('video') and width != null and height != null and width > height*2}">
+    <div class="thumbnail-tr" th:id="${'tntr'+id}">
+        <span th:id="${'panorama'+id}" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
+    </div>
+</th:block>
+
+</body>
+</html>

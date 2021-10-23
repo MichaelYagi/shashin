@@ -779,6 +779,24 @@ $.fn.serializeObject = function() {
         });
     }
 
+    shashin.renderTopRightOverlay = function (type, id, content, width, height) {
+        let html = "";
+
+        if (type.includes("video")) {
+            html +=
+                '   <div class="thumbnail-tr" id="tntr' + id + '">\n' +
+                '       <span class="overlayIconBackground">'+content+'&nbsp;<span id="video' + id + '" class="bi-camera-video overlayIcon"></span></span>\n' +
+                '   </div>\n';
+        } else if (width !== null && height !== null && width > height*2) {
+            html +=
+                '   <div class="thumbnail-tr" id="tntr' + id + '">\n' +
+                '       <span id="panorama' + id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>\n' +
+                '   </div>\n';
+        }
+
+        return html;
+    }
+
     shashin.clearTimelineSelection = function () {
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
