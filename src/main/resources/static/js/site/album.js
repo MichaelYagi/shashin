@@ -99,7 +99,6 @@
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = albumMetadataList[index];
 
-                                let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
                                 const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                 const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
@@ -140,7 +139,7 @@
                                     '       </a>\n' +
                                     '   </div>\n';
 
-                                const centeredObj = shashin.renderBottomLeftOverlay(metadata,'albumSettings.openGallery',currentMediaLinkIndex);
+                                const centeredObj = shashin.renderCenteredOverlay(metadata,'albumSettings.openGallery',currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 
