@@ -189,12 +189,12 @@ class NotificationsController {
     fun markNotificationsReadByUsers(model: Model, @RequestBody requestBody: JsonNode): String? {
         val notificationIdList = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (notificationIdList.containsKey("notificationIds")) {
-            val notificationIds = notificationIdList["notificationIds"] as ArrayList<Int>
+            val notificationIds = notificationIdList["notificationIds"] as ArrayList<*>
 
             val notificationObjList = mutableListOf<Notification>()
             for (notificationId in notificationIds) {
                 val currentUserObj = model.getAttribute("currentUser") as User?
-                if (currentUserObj != null && notificationId > 0) {
+                if (currentUserObj != null && notificationId as Int > 0) {
                     val notificationObj = notificationRepository.findById(notificationId)
                     notificationObj.get().setRead(true)
                     notificationObjList.add(notificationObj.get())

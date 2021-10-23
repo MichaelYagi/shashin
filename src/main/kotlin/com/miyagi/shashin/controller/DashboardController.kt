@@ -83,7 +83,6 @@ class DashboardController {
     @Throws(java.lang.Exception::class)
     fun sendScanMessage(message: StatMessage): Message? {
         //println("message:${message.getMessage()}")
-        var msg = "Dashboard stats"
         val metricsMap = mutableMapOf<String,Any>()
 
         val memoryMXBean = ManagementFactory.getMemoryMXBean()
@@ -104,7 +103,7 @@ class DashboardController {
         val now = LocalDateTime.now()
         metricsMap["timestamp"] = now.format(dtf)
 
-        msg = mapper.writeValueAsString(metricsMap)
+        val msg: String = mapper.writeValueAsString(metricsMap)
 //        println(msg)
 
         val messageObj = Message()

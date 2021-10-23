@@ -97,7 +97,6 @@
                             const mediaLinkLength = $(".mediaLink").length;
                             for (const index in albumMetadataList) {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                                const mediaContent = {};
                                 const metadata = albumMetadataList[index];
 
                                 let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
@@ -110,31 +109,15 @@
                                     '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="shashin.errorImg(this,\''+metadata.title+'\',209)">\n';
 
                                 const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight)
+                                html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight);
 
                                 if (currentUser.authority === "ROLE_ADMIN") {
-                                    html +=
-                                        '   <div class="thumbnail-tl" id="tntl' + metadata.id + '">\n' +
-                                        '       <a href="#" id="select' + metadata.id + '">\n' +
-                                        '           <span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                        '       </a>\n' +
-                                        '   </div>\n' +
-                                        '   <div class="thumbnail-bl" id="tnbl' + metadata.id + '">\n' +
-                                        '       <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
-                                        '           <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                        '       </a><br>\n' +
-                                        '       <a href="#" id="albumModalEdit'+metadata.id+'" onclick="return albumSettings.openAlbumModal(event,\''+metadata.id+'\')" class="overlayCommentText">\n' +
-                                        '           <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                        '       </a>\n' +
-                                        '   </div>\n';
+                                    html += shashin.renderTopLeftOverlay(metadata.id);
+                                    html += shashin.renderBottomLeftOverlay(id, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText');
                                 } else {
-                                    html +=
-                                        '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
-                                        '       <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
-                                        '           <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                        '       </a>\n' +
-                                        '   </div>\n';
+                                    html += shashin.renderBottomLeftOverlay(id, null, null, null, null);
                                 }
+
                                 html +=
                                     '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
                                     '       <a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
@@ -155,29 +138,13 @@
                                 html +=
                                     '           </span>\n' +
                                     '       </a>\n' +
-                                    '   </div>\n' +
-                                    '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+                                    '   </div>\n';
 
-                                mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
-                                if (metadata.type.includes("video")) {
-                                    mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
-                                    html +=
-                                        '   <a class="mediaLink" onclick="return albumSettings.openGallery(event,'+currentMediaLinkIndex+')"\n' +
-                                        '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                        '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
-                                        '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                        '   </a>\n';
-                                } else {
-                                    mediaContent.src = metadata.thumbnailUrlOriginal;
-                                    html +=
-                                        '   <a class="mediaLink" onclick="return albumSettings.openGallery(event,'+currentMediaLinkIndex+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
-                                        '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
-                                        '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                        '   </a>\n';
-                                }
-                                mediaContentList.push(mediaContent);
+                                const centeredObj = shashin.renderBottomLeftOverlay(metadata,'albumSettings.openGallery',currentMediaLinkIndex);
+                                html += centeredObj.html;
+                                mediaContentList.push(centeredObj.mediaContent);
+
                                 html +=
-                                    '   </div>\n' +
                                     '</div>\n' +
                                     '<span id="albummodal' + metadata.id + '" style="width:0;height:0;padding:0"></span>\n';
 

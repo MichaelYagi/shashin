@@ -396,7 +396,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             )
         }
 
-        saveExifdata(exifMap, sidecarDir, rootDir, file.path)
+        saveExifdata(exifMap, sidecarDir, file.path)
 
         metadataObj.setId(
             TextUtils.generateUUID(
@@ -426,7 +426,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         return metadataObj
     }
 
-    fun createThumbnails(file: File, sidecarDir: String, rootDir: String, metadataObj: Metadata?): Metadata? {
+    fun createThumbnails(file: File, sidecarDir: String, metadataObj: Metadata?): Metadata? {
         var _metadataObj = metadataObj
 
         // Check rotation
@@ -573,28 +573,27 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered.jpg")
 
             // Map marker thumbnail
-            if (img != null) {
-                thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"
-                tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-                if (tnFile != null) {
-                    val mapMarker: BufferedImage
-                    if (img.height > img.width) {
-                        val temp = Thumbnails.of(img)
-                            .width(45)
-                            .asBufferedImage()
-                        mapMarker = Thumbnails.of(temp)
-                            .width(45)
-                            .sourceRegion(Positions.CENTER, 45, 45)
-                            .asBufferedImage()
-                    } else {
-                        val temp = Thumbnails.of(img)
-                            .height(45)
-                            .asBufferedImage()
-                        mapMarker = Thumbnails.of(temp)
-                            .height(45)
-                            .sourceRegion(Positions.CENTER, 45, 45)
-                            .asBufferedImage()
-                    }
+            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker.jpg"
+            tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
+            if (tnFile != null) {
+                val mapMarker: BufferedImage
+                if (img.height > img.width) {
+                    val temp = Thumbnails.of(img)
+                        .width(45)
+                        .asBufferedImage()
+                    mapMarker = Thumbnails.of(temp)
+                        .width(45)
+                        .sourceRegion(Positions.CENTER, 45, 45)
+                        .asBufferedImage()
+                } else {
+                    val temp = Thumbnails.of(img)
+                        .height(45)
+                        .asBufferedImage()
+                    mapMarker = Thumbnails.of(temp)
+                        .height(45)
+                        .sourceRegion(Positions.CENTER, 45, 45)
+                        .asBufferedImage()
+                }
 
 //                    val scaled: BufferedImage
 //                    if (img.height > img.width) {
@@ -604,11 +603,10 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                    }
 //                    val mapMarker: BufferedImage = getSquareThumbnail(scaled)
 
-                    ImageIO.write(mapMarker, "jpg", tnFile)
-                }
-                _metadataObj?.setMapMarkerPath(thumbnailFileStr)
-                _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker.jpg")
+                ImageIO.write(mapMarker, "jpg", tnFile)
             }
+            _metadataObj?.setMapMarkerPath(thumbnailFileStr)
+            _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker.jpg")
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)
             _metadataObj = null
@@ -725,7 +723,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         )
     }
 
-   private fun saveExifdata(exifMap: HashMap<String, String>, _sidecarDir: String, rootDir: String, path: String) {
+   private fun saveExifdata(exifMap: HashMap<String, String>, _sidecarDir: String, path: String) {
         if (exifMap.isNotEmpty()) {
             // Update Exif file
             val metadataDirectory = _sidecarDir.dropLast(1) + "/metadata"

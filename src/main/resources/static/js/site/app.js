@@ -797,6 +797,79 @@ $.fn.serializeObject = function() {
         return html;
     }
 
+    shashin.renderTopLeftOverlay = function (id) {
+        return '<div class="thumbnail-tl" id="tntl' + id + '">\n' +
+            '   <a href="#" id="select' + id + '">\n' +
+            '       <span id="tlicon' + id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+            '   </a>\n' +
+            '</div>\n';
+    }
+
+    shashin.renderBottomLeftOverlay = function (id, targetPrefix, onclickIdPrefix, onclickFunctionCall, editClass) {
+        let html = "";
+
+        html =
+            '<div class="thumbnail-bl" id="tnbl'+id+'">\n' +
+            '   <a href="#" th:id="infoModalEdit'+id+'">\n' +
+            '       <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
+            '   </a>\n';
+
+        if (onclickFunctionCall != null || targetPrefix != null) {
+            html +=
+                '<br>\n';
+
+            if (onclickFunctionCall != null) {
+                html +=
+                '<a href="#" id="'+onclickIdPrefix+id+'"\n' +
+                '   onclick="return '+onclickFunctionCall+'(event, '+id+')" th:class="'+editClass+'">\n' +
+                '   <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                '</a>\n';
+            } else if (targetPrefix != null) {
+                html +=
+                '<a href="#" data-bs-toggle="modal" data-bs-target="#'+targetPrefix+id+'">\n' +
+                '   <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                '</a>\n';
+            }
+        }
+
+        html += '</div>\n';
+
+        return html;
+    }
+
+    shashin.renderBottomLeftOverlay = function (metadata,onclickFunctionCall,index) {
+        let html = "";
+        const mediaContent = {};
+
+        html +=
+            '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+
+        mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
+        if (metadata.type.includes("video")) {
+            mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
+            html +=
+                '   <a class="mediaLink" onclick="return onclickFunctionCall(event,'+index+')"\n' +
+                '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
+                '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                '   </a>\n';
+        } else {
+            mediaContent.src = metadata.thumbnailUrlOriginal;
+            html +=
+                '   <a class="mediaLink" onclick="return onclickFunctionCall(event,'+index+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                '   </a>\n';
+        }
+        mediaContentList.push(mediaContent);
+
+        html +=
+            '   </div>\n';
+
+        return {html:html,mediaContent:mediaContent}
+    }
+
+
     shashin.clearTimelineSelection = function () {
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
