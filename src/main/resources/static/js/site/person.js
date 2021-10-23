@@ -75,10 +75,7 @@
                             const mediaLinkLength = $(".mediaLink").length;
                             for (const index in metadataList) {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                                const mediaContent = {};
                                 const metadata = metadataList[index];
-
-                                let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                                 html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
                                     '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
@@ -86,78 +83,28 @@
                                     '   <input type="hidden" name="filename'+metadata.id+'" id="filename'+metadata.id+'" value="'+metadata.fileName+'">\n' +
                                     '   <input type="hidden" name="thumbnailCentered'+metadata.id+'" id="thumbnailCentered'+metadata.id+'" th:value="'+metadata.thumbnailUrlCentered+'">\n';
 
-                                if (metadata.type.includes("video")) {
-                                    const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                    html +=
-                                        '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                        '       <span class="overlayIconBackground">'+duration+'&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>\n' +
-                                        '   </div>\n';
-                                } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight*2) {
-                                    html +=
-                                        '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                        '       <span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>\n' +
-                                        '   </div>\n';
-                                }
-
+                                const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
+                                html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight);
 
                                 if (currentUser.authority === "ROLE_ADMIN") {
                                     if (labelPhotoMap[metadata.id]["isTagged"] === true) {
-
                                         html +=
                                             '<div class="thumbnail-br" id="tntr'+metadata.id+'">\n' +
                                             '   <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>\n' +
                                             '</div>\n';
                                     }
 
-
-                                    html +=
-                                        '   <div class="thumbnail-tl" id="tntl'+metadata.id+'">\n' +
-                                        '       <a href="#" id="select'+metadata.id+'">\n' +
-                                        '           <span id="tlicon'+metadata.id+'" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                        '       </a>\n' +
-                                        '   </div>\n';
-                                    html +=
-                                        '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
-                                        '       <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
-                                        '           <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                        '       </a><br>\n' +
-                                        '       <a href="#" data-bs-toggle="modal" data-bs-target="#propperson'+metadata.id+'">\n' +
-                                        '           <span className="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                        '       </a>\n' +
-                                        '   </div>\n';
-
-
-
+                                    html += shashin.renderTopLeftOverlay(metadata.id);
+                                    html += shashin.renderBottomLeftOverlay(id, 'propperson', null, null, null);
                                 } else {
-                                    html +=
-                                        '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
-                                        '       <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
-                                        '           <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                                        '       </a>\n' +
-                                        '   </div>\n';
+                                    html += shashin.renderBottomLeftOverlay(id, null, null, null, null);
                                 }
 
-                                html += '<div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+                                const centeredObj = shashin.renderCenteredOverlay(metadata,'personSettings.openGallery',currentMediaLinkIndex);
+                                html += centeredObj.html;
+                                mediaContentList.push(centeredObj.mediaContent);
 
-                                mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
-                                if (metadata.type.includes("video")) {
-                                    mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
-                                    html +=
-                                        '   <a class="mediaLink" onclick="return personSettings.openGallery(event,'+currentMediaLinkIndex+')" \n' +
-                                        '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                        '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
-                                        '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                        '   </a>\n';
-                                } else {
-                                    mediaContent.src = metadata.thumbnailUrlOriginal;
-                                    html +=
-                                        '   <a class="mediaLink" onclick="return personSettings.openGallery(event,'+currentMediaLinkIndex+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
-                                        '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
-                                        '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                        '   </a>\n';
-                                }
-                                mediaContentList.push(mediaContent);
-                                html += '</div></div>\n';
+                                html += '</div>\n';
 
                                 $(html).insertBefore($(".appendPersonPhotos").last())
 

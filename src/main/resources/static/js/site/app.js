@@ -837,7 +837,7 @@ $.fn.serializeObject = function() {
         return html;
     }
 
-    shashin.renderBottomLeftOverlay = function (metadata,onclickFunctionCall,index) {
+    shashin.renderCenteredOverlay = function (metadata,onclickFunctionCall,index) {
         let html = "";
         const mediaContent = {};
 
@@ -848,7 +848,7 @@ $.fn.serializeObject = function() {
         if (metadata.type.includes("video")) {
             mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
             html +=
-                '   <a class="mediaLink" onclick="return onclickFunctionCall(event,'+index+')"\n' +
+                '   <a class="mediaLink" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
                 '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
                 '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
@@ -856,7 +856,7 @@ $.fn.serializeObject = function() {
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;
             html +=
-                '   <a class="mediaLink" onclick="return onclickFunctionCall(event,'+index+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                '   <a class="mediaLink" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
                 '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
