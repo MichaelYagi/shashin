@@ -35,17 +35,7 @@
 
                                 <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;" th:onError="shashin.errorImg(this,[[${metadata.title}]],209)">
 
-                                <th:block th:if="${metadata.type.contains('video')}">
-                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                        <span class="overlayIconBackground" th:text="${metadata.duration != null ? metadata.duration : '0:00'}">&nbsp;<span class="bi-camera-video overlayIcon"></span></span>
-                                    </div>
-                                </th:block>
-
-                                <th:block th:if="${!metadata.type.contains('video') and metadata.originalImageWidth != null and metadata.originalImageHeight != null and metadata.originalImageWidth > metadata.originalImageHeight*2}">
-                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                        <span class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
-                                    </div>
-                                </th:block>
+                                <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight})"></div>
 
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
                                     <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
