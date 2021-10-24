@@ -79,7 +79,7 @@
                         html += shashin.renderBottomLeftOverlay(id, 'propperson', null, null, null);
 
                         const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                        html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight);
+                        html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
 
                         const centeredObj = shashin.renderCenteredOverlay(metadata,'searchSettings.openGallery',currentMediaLinkIndex);
                         html += centeredObj.html;

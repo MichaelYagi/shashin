@@ -38,7 +38,7 @@
                                 '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" class="photo-thumbnail-image" id="image' + metadata.id + '" onError="shashin.errorImg(this,\'' + metadata.title + '\',209)">\n';
 
                             const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                            html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight);
+                            html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
 
                             const centeredObj = shashin.renderCenteredOverlay(metadata,'favoritesSettings.openGallery',currentMediaLinkIndex);
                             html += centeredObj.html;

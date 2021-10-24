@@ -84,16 +84,9 @@
                                     '   <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" th:value="' + metadata.thumbnailUrlCentered + '">\n';
 
                                 const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight);
+                                html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, (currentUser.authority === "ROLE_ADMIN" && labelPhotoMap[metadata.id]["isTagged"] === true));
 
                                 if (currentUser.authority === "ROLE_ADMIN") {
-                                    if (labelPhotoMap[metadata.id]["isTagged"] === true) {
-                                        html +=
-                                            '<div class="thumbnail-br" id="tntr' + metadata.id + '">\n' +
-                                            '   <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>\n' +
-                                            '</div>\n';
-                                    }
-
                                     html += shashin.renderTopLeftOverlay(metadata.id);
                                     html += shashin.renderBottomLeftOverlay(metadata.id, 'propperson', null, null, null);
                                 } else {
