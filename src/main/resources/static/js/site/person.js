@@ -95,9 +95,9 @@
                                     }
 
                                     html += shashin.renderTopLeftOverlay(metadata.id);
-                                    html += shashin.renderBottomLeftOverlay(id, 'propperson', null, null, null);
+                                    html += shashin.renderBottomLeftOverlay(metadata.id, 'propperson', null, null, null);
                                 } else {
-                                    html += shashin.renderBottomLeftOverlay(id, null, null, null, null);
+                                    html += shashin.renderBottomLeftOverlay(metadata.id, null, null, null, null);
                                 }
 
                                 const centeredObj = shashin.renderCenteredOverlay(metadata,'personSettings.openGallery',currentMediaLinkIndex);
