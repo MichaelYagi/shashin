@@ -84,16 +84,16 @@
                                     '   <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" th:value="' + metadata.thumbnailUrlCentered + '">\n';
 
                                 const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, (currentUser.authority === "ROLE_ADMIN" && labelPhotoMap[metadata.id]["isTagged"] === true));
+                                html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, (currentUser.authority === "ROLE_ADMIN" && labelPhotoMap[metadata.id]["isTagged"] === true));
 
                                 if (currentUser.authority === "ROLE_ADMIN") {
-                                    html += shashin.renderTopLeftOverlay(metadata.id);
-                                    html += shashin.renderBottomLeftOverlay(metadata.id, 'propperson', null, null, null);
+                                    html += shashin.getTopLeftOverlay(metadata.id);
+                                    html += shashin.getBottomLeftOverlay(metadata.id, 'propperson', null, null, null);
                                 } else {
-                                    html += shashin.renderBottomLeftOverlay(metadata.id, null, null, null, null);
+                                    html += shashin.getBottomLeftOverlay(metadata.id, null, null, null, null);
                                 }
 
-                                const centeredObj = shashin.renderCenteredOverlay(metadata, 'personSettings.openGallery', currentMediaLinkIndex);
+                                const centeredObj = shashin.getCenteredOverlay(metadata, 'personSettings.openGallery', currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 
