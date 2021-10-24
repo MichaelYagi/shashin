@@ -77,46 +77,16 @@
                             '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="shashin.errorImg(this,\''+metadata.title+'\',209)">\n' +
                             '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
 
-                        html +=
-                            '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
-                            '       <a href="#" id="infoModalEdit'+metadata.id+'">\n' +
-                            '           <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                            '       </a>\n' +
-                            '   </div>\n';
+                        html += shashin.renderBottomLeftOverlay(id, 'propperson', null, null, null);
 
-                        if (metadata.type.includes("video")) {
-                            const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                            html +=
-                                '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                '       <span class="overlayIconBackground">'+duration+'&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>\n' +
-                                '   </div>\n';
-                        } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight*2) {
-                            html +=
-                                '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                '       <span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>\n' +
-                                '   </div>\n';
-                        }
-                        html += '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
+                        const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
+                        html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight);
 
-                        mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
-                        if (metadata.type.includes("video")) {
-                            mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
-                            html +=
-                                '       <a class="mediaLink" onclick="return searchSettings.openGallery(event,'+currentMediaLinkIndex+')" \n' +
-                                '           data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                '           data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
-                                '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                '       </a>\n';
-                        } else {
-                            mediaContent.src = metadata.thumbnailUrlOriginal;
-                            html +=
-                                '       <a class="mediaLink" onclick="return searchSettings.openGallery(event,'+currentMediaLinkIndex+')" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
-                                '           data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
-                                '           <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                '       </a>\n';
-                        }
-                        mediaContentList.push(mediaContent);
-                        html += '</div></div>\n<span class="appendSearchPhotos" style="width:0;height:0;padding:0"></span>\n';
+                        const centeredObj = shashin.renderCenteredOverlay(metadata,'searchSettings.openGallery',currentMediaLinkIndex);
+                        html += centeredObj.html;
+                        mediaContentList.push(centeredObj.mediaContent);
+
+                        html += '</div>\n<span class="appendSearchPhotos" style="width:0;height:0;padding:0"></span>\n';
                         $(html).insertAfter($(".appendSearchPhotos").last())
 
                         shashin.setPhotoOverlays(metadata, activePage);
