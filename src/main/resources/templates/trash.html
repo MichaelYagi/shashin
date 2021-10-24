@@ -73,8 +73,10 @@
             mediaContent.subHtml =$(this).attr("data-sub-html")
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
+                mediaContent.downloadUrl = $(this).attr("data-src");
             } else if ($(this).attr("data-video")) {
                 mediaContent.video = $(this).attr("data-video");
+                mediaContent.downloadUrl = $(this).attr("data-video");
             }
             mediaContentList.push(mediaContent);
         });

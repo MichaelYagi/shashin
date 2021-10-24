@@ -196,12 +196,14 @@ function showMap(mapdata,authority) {
             if (featureProperties.type.includes("image")) {
                 mediaContent.src = featureProperties.thumbnailUrlOriginal
                 mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal);
             } else if (featureProperties.type.includes("video")) {
                 mediaContent.video = {
                     "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
                     "attributes": {"preload": false, "controls": true}
                 }
                 mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl);
             }
             mediaContentList.push(mediaContent);
         }
