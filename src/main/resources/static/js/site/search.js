@@ -76,12 +76,12 @@
                             '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="shashin.errorImg(this,\''+metadata.title+'\',209)">\n' +
                             '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
 
-                        html += shashin.renderBottomLeftOverlay(id, 'propperson', null, null, null);
+                        html += shashin.getBottomLeftOverlay(id, 'propperson', null, null, null);
 
                         const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                        html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
+                        html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
 
-                        const centeredObj = shashin.renderCenteredOverlay(metadata,'searchSettings.openGallery',currentMediaLinkIndex);
+                        const centeredObj = shashin.getCenteredOverlay(metadata,'searchSettings.openGallery',currentMediaLinkIndex);
                         html += centeredObj.html;
                         mediaContentList.push(centeredObj.mediaContent);
 

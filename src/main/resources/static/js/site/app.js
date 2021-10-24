@@ -464,13 +464,16 @@ $.fn.serializeObject = function() {
     }
 
     shashin.setPhotoOverlays = function (metadata, view) {
+        const opaque = 0.3
+        const transparent = 1.0
+
         let metadataIdArray = shashin.getMetdataIdList();
         shashin.printMessageToConsole(metadataIdArray);
         const index = metadataIdArray.indexOf(metadata.id);
         if (index > -1) {
             $("#tntl" + metadata.id).css("display", "block");
             $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
-            $("#image" + metadata.id).css("opacity", 0.3);
+            $("#image" + metadata.id).css("opacity", opaque);
             $("#tncentered" + metadata.id).css("display", "none");
             $("#tnbr" + metadata.id).css("display", "none");
             $("#tnbl" + metadata.id).css("display", "none");
@@ -482,7 +485,7 @@ $.fn.serializeObject = function() {
             if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                 $("#tntl" + metadata.id).css("display", "block");
                 $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
-                $("#image" + metadata.id).css("opacity", 0.3);
+                $("#image" + metadata.id).css("opacity", opaque);
                 //$("#tntr" + metadata.id).css("display", "none");
                 $("#tncentered" + metadata.id).css("display", "none");
                 $("#tnbr" + metadata.id).css("display", "none");
@@ -493,7 +496,7 @@ $.fn.serializeObject = function() {
             } else {
                 $("#tntl" + metadata.id).css("display", "block");
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
-                $("#image" + metadata.id).css("opacity", 0.3);
+                $("#image" + metadata.id).css("opacity", opaque);
                 $("#tntr" + metadata.id).css("display", "block");
                 $("#tncentered" + metadata.id).css("display", "block");
                 $("#tnbr" + metadata.id).css("display", "block");
@@ -548,7 +551,7 @@ $.fn.serializeObject = function() {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
                     $("#tntl" + metadata.id).css("display", "block");
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
-                    $("#image" + metadata.id).css("opacity", 0.3);
+                    $("#image" + metadata.id).css("opacity", opaque);
                     $("#tncentered" + metadata.id).css("display", "none");
                     $("#tnbr" + metadata.id).css("display", "none");
                     $("#tnbl" + metadata.id).css("display", "none");
@@ -558,7 +561,7 @@ $.fn.serializeObject = function() {
                 } else {
                     $("#tntl" + metadata.id).css("display", "block");
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
-                    $("#image" + metadata.id).css("opacity", 0.3);
+                    $("#image" + metadata.id).css("opacity", opaque);
                     $("#tncentered" + metadata.id).css("display", "block");
                     $("#tnbr" + metadata.id).css("display", "block");
                     $("#tnbl" + metadata.id).css("display", "block");
@@ -662,7 +665,7 @@ $.fn.serializeObject = function() {
             $(this).siblings(".thumbnail-bl").css("display", "block");
             $(this).siblings(".thumbnail-br").css("display", "block");
             $(this).siblings(".thumbnail-tr").css("display", "block");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+            $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
@@ -676,7 +679,7 @@ $.fn.serializeObject = function() {
             $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".thumbnail-br").css("display", "none");
             //$(this).siblings(".thumbnail-tr").css("display", "none");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+            $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
 
         $("#tntl" + metadata.id).hover(function () {
@@ -688,7 +691,7 @@ $.fn.serializeObject = function() {
                 $(this).siblings(".thumbnail-tr").css("display", "block");
                 $(this).siblings(".thumbnail-br").css("display", "block");
                 $(this).siblings(".thumbnail-bl").css("display", "block");
-                $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+                $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
                 if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                     $('.thumbnail-bl').hide();
                     $('.thumbnail-centered').hide();
@@ -699,9 +702,9 @@ $.fn.serializeObject = function() {
         }, function () {
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill") {
                 $(this).css("display", "none");
-                $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+                $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
             } else {
-                $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+                $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             }
             $(this).siblings(".thumbnail-centered").css("display", "none");
             //$(this).siblings(".thumbnail-tr").css("display", "none");
@@ -716,7 +719,7 @@ $.fn.serializeObject = function() {
             $(this).siblings(".thumbnail-centered").css("display", "block");
             $(this).siblings(".thumbnail-tr").css("display", "block");
             $(this).siblings(".thumbnail-br").css("display", "block");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+            $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
@@ -729,7 +732,7 @@ $.fn.serializeObject = function() {
             $(this).siblings(".thumbnail-centered").css("display", "none");
             //$(this).siblings(".thumbnail-tr").css("display", "none");
             $(this).siblings(".thumbnail-br").css("display", "none");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+            $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
 
         $("#tnbr" + metadata.id).hover(function () {
@@ -739,7 +742,7 @@ $.fn.serializeObject = function() {
             $(this).siblings(".thumbnail-centered").css("display", "block");
             $(this).siblings(".thumbnail-tr").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+            $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
@@ -752,7 +755,7 @@ $.fn.serializeObject = function() {
             $(this).siblings(".thumbnail-centered").css("display", "none");
             //$(this).siblings(".thumbnail-tr").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+            $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
 
         $("#tntr" + metadata.id).hover(function () {
@@ -762,7 +765,7 @@ $.fn.serializeObject = function() {
             $(this).siblings(".thumbnail-centered").css("display", "block");
             $(this).siblings(".thumbnail-bl").css("display", "block");
             $(this).siblings(".thumbnail-br").css("display", "block");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 0.3);
+            $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
                 $('.thumbnail-centered').hide();
@@ -775,11 +778,11 @@ $.fn.serializeObject = function() {
             $(this).siblings(".thumbnail-centered").css("display", "none");
             $(this).siblings(".thumbnail-bl").css("display", "none");
             $(this).siblings(".thumbnail-br").css("display", "none");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", 1.0);
+            $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
     }
 
-    shashin.renderTopRightOverlay = function (type, id, content, width, height, isTagged) {
+    shashin.getTopRightOverlay = function (type, id, content, width, height, isTagged) {
         let html = '<div class="thumbnail-tr" id="tntr' + id + '">\n';
 
         if (type.includes("video")) {
@@ -799,7 +802,7 @@ $.fn.serializeObject = function() {
         return html;
     }
 
-    shashin.renderTopLeftOverlay = function (id) {
+    shashin.getTopLeftOverlay = function (id) {
         return '<div class="thumbnail-tl" id="tntl' + id + '">\n' +
             '   <a href="#" id="select' + id + '">\n' +
             '       <span id="tlicon' + id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
@@ -807,7 +810,7 @@ $.fn.serializeObject = function() {
             '</div>\n';
     }
 
-    shashin.renderBottomLeftOverlay = function (id, targetPrefix, onclickIdPrefix, onclickFunctionCall, editClass) {
+    shashin.getBottomLeftOverlay = function (id, targetPrefix, onclickIdPrefix, onclickFunctionCall, editClass) {
         let html = "";
 
         html =
@@ -839,7 +842,7 @@ $.fn.serializeObject = function() {
         return html;
     }
 
-    shashin.renderCenteredOverlay = function (metadata,onclickFunctionCall,index) {
+    shashin.getCenteredOverlay = function (metadata,onclickFunctionCall,index) {
         let html = "";
         const dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
         const mediaContent = {};
