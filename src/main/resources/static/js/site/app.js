@@ -839,6 +839,7 @@ $.fn.serializeObject = function() {
 
     shashin.renderCenteredOverlay = function (metadata,onclickFunctionCall,index) {
         let html = "";
+        const dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
         const mediaContent = {};
 
         html +=
