@@ -43,7 +43,8 @@ function showMap(mapdata,authority) {
             metadata.year = locationArgs[17];
             metadata.month = locationArgs[18];
             metadata.day = locationArgs[19];
-            metadata.timeZone = locationArgs[20];
+            metadata.time = locationArgs[20];
+            metadata.timeZone = locationArgs[21];
         }
         if (modalLabel && modalLabel.length > 0) {
             $("#editPhotoLocationModalLabel").text("for " + modalLabel);
@@ -275,6 +276,7 @@ function showMap(mapdata,authority) {
                     featureProperties["year"],
                     featureProperties["month"],
                     featureProperties["day"],
+                    featureProperties["time"],
                     featureProperties["timeZone"]
                 ]
             };
@@ -430,6 +432,7 @@ function showMap(mapdata,authority) {
             const createdAt = data["createdAt"];
             const modifiedAt = data["modifiedAt"];
             const takenAt = data["takenAt"];
+            const time = data["time"];
             const timeZone = data["timeZone"];
 
             const iconFeature = new ol.Feature({
@@ -460,6 +463,7 @@ function showMap(mapdata,authority) {
                 createdAt: createdAt,
                 modifiedAt: modifiedAt,
                 takenAt: takenAt,
+                time: time,
                 timeZone: timeZone
             });
             const iconStyle = new ol.style.Style({
