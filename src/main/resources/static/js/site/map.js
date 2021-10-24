@@ -56,96 +56,9 @@ function showMap(mapdata,authority) {
         }
         $("#propMetadataLocation").css('z-index', 9999);
 
-        populateDetailsTab(metadata);
+        shashin.populateDetailsTab(metadata);
 
         $("#propMetadataLocation").modal('show');
-    }
-
-    $('#propMetadataLocation').on('hide.bs.modal', function () {
-        $("#locationMapResponseMsg").html("");
-        const tab = new bootstrap.Tab($("#locationTabLink"));
-        tab.show();
-    });
-
-    $("#detailsTabLink").click(function (e) {
-        e.preventDefault();
-        $("#locationMapResponseMsg").html("");
-        $("#saveMetadata").prop('disabled', true);
-    });
-
-    $("#locationTabLink").click(function (e) {
-        e.preventDefault();
-        $("#saveMetadata").prop('disabled', false);
-    });
-
-    function populateDetailsTab(metadata) {
-        // Clear data
-        $("#pathDetails").text("");
-        $("#typeDetails").text("");
-        $("#isoDetails").text("");
-        $("#exposureDetails").text("");
-        $("#fNumberDetails").text("");
-        $("#focalLengthDetails").text("");
-        $("#cameraDetails").text("");
-        $("#lensDetails").text("");
-        $("#qualityDetails").text("");
-        $("#createdAtDetails").text("");
-        $("#modifiedAtDetails").text("");
-        $("#takenAtDetails").text("");
-        $("#manualTakenAtDetails").text("");
-        $("#timeZoneDetails").text("");
-        $("#keywordsDetails").text("");
-
-        // Fill in details tab data
-        if (metadata.path != null) {
-            $("#pathDetails").text(metadata.path);
-        }
-        if (metadata.keywords != null) {
-            $("#keywordsDetails").text(metadata.keywords);
-        }
-        if (metadata.type != null) {
-            $("#typeDetails").text(metadata.type);
-        }
-        if (metadata.iso != null) {
-            $("#isoDetails").text(metadata.iso);
-        }
-        if (metadata.exposure != null) {
-            $("#exposureDetails").text(metadata.exposure);
-        }
-        if (metadata.fNumber != null) {
-            $("#fNumberDetails").text(metadata.fNumber);
-        }
-        if (metadata.focalLength != null) {
-            $("#focalLengthDetails").text(metadata.focalLength);
-        }
-        if (metadata.camera != null) {
-            $("#cameraDetails").text(metadata.camera);
-        }
-        if (metadata.lens != null) {
-            $("#lensDetails").text(metadata.lens);
-        }
-        if (metadata.quality != null) {
-            $("#qualityDetails").text(metadata.quality);
-        }
-        if (metadata.createdAt != null) {
-            $("#createdAtDetails").text(metadata.createdAt);
-        }
-        if (metadata.modifiedAt != null) {
-            $("#modifiedAtDetails").text(metadata.modifiedAt);
-        }
-        if (metadata.takenAt != null) {
-            $("#takenAtDetails").text(metadata.takenAt);
-        }
-        if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-            let takenDetails = metadata.year + '-' + metadata.month + '-' + metadata.day;
-            if (metadata.time !== null && metadata.time !== "") {
-                takenDetails += ' ' + metadata.time;
-            }
-            $("#manualTakenAtDetails").text(takenDetails);
-        }
-        if (metadata.timeZone != null) {
-            $("#timeZoneDetails").text(metadata.timeZone);
-        }
     }
 
     function createMapStyle(feature) {
@@ -281,7 +194,7 @@ function showMap(mapdata,authority) {
                 ]
             };
             if (featureProperties.type.includes("image")) {
-                mediaContent.src = featureProperties.photoUrl
+                mediaContent.src = featureProperties.thumbnailUrlOriginal
                 mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
             } else if (featureProperties.type.includes("video")) {
                 mediaContent.video = {
@@ -406,65 +319,35 @@ function showMap(mapdata,authority) {
         if (data["lat"] !== null && data["lng"] !== null &&
             data["lat"] !== "" && data["lng"] !== "") {
 
-            const lat = data["lat"];
-            const lng = data["lng"];
-
-            const year = data["year"];
-            const month = data["month"];
-            const day = data["day"];
-            const fileName = data["fileName"];
-            const mapMarkerUrl = data["mapMarkerUrl"];
-            const thumbnailUrlOriginal = data["thumbnailUrlOriginal"];
-            const thumbnailUrlSmall = data["thumbnailUrlSmall"];
-            const videoUrl = data["videoUrl"];
-            const type = data["type"];
-            const placeName = data["placeName"];
-            const metadataId = data["id"];
-            const title = data["title"];
-            const path = data["path"];
-            const keywords = data["keywords"];
-            const iso = data["iso"];
-            const exposure = data["exposure"];
-            const fNumber = data["fNumber"];
-            const camera = data["camera"];
-            const lens = data["lens"];
-            const quality = data["quality"];
-            const createdAt = data["createdAt"];
-            const modifiedAt = data["modifiedAt"];
-            const takenAt = data["takenAt"];
-            const time = data["time"];
-            const timeZone = data["timeZone"];
-
             const iconFeature = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.transform([lng, lat], 'EPSG:4326', 'EPSG:900913')),
-                fileName: fileName,
-                thumbnailUrlSmall: thumbnailUrlSmall,
-                photoUrl: thumbnailUrlOriginal,
-                mapMarkerUrl: mapMarkerUrl,
-                videoUrl: videoUrl,
-                year: year,
-                month: month,
-                day: day,
-                placeName: placeName,
-                metadataId: metadataId,
-                title: title,
-                lat: lat,
-                lng: lng,
-                type: type,
-                name: fileName,
-                path: path,
-                keywords: keywords,
-                iso: iso,
-                exposure: exposure,
-                fNumber: fNumber,
-                camera: camera,
-                lens: lens,
-                quality: quality,
-                createdAt: createdAt,
-                modifiedAt: modifiedAt,
-                takenAt: takenAt,
-                time: time,
-                timeZone: timeZone
+                geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
+                fileName: data["fileName"],
+                thumbnailUrlSmall: data["thumbnailUrlSmall"],
+                thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
+                mapMarkerUrl: data["mapMarkerUrl"],
+                videoUrl: data["videoUrl"],
+                year: data["year"],
+                month: data["month"],
+                day: data["day"],
+                placeName: data["placeName"],
+                metadataId: data["id"],
+                title: data["title"],
+                lat: data["lat"],
+                lng: data["lng"],
+                type: data["type"],
+                path: data["path"],
+                keywords: data["keywords"],
+                iso: data["iso"],
+                exposure: data["exposure"],
+                fNumber: data["fNumber"],
+                camera: data["camera"],
+                lens: data["lens"],
+                quality: data["quality"],
+                createdAt: data["createdAt"],
+                modifiedAt: data["modifiedAt"],
+                takenAt: data["takenAt"],
+                time: data["time"],
+                timeZone: data["timeZone"]
             });
             const iconStyle = new ol.style.Style({
                 image: new ol.style.Icon(({
@@ -472,7 +355,7 @@ function showMap(mapdata,authority) {
                     anchorXUnits: 'fraction',
                     anchorYUnits: 'pixels',
                     opacity: 1.0,
-                    src: mapMarkerUrl
+                    src: data["mapMarkerUrl"]
                 }))
             });
             iconFeature.setStyle(iconStyle);
@@ -511,6 +394,23 @@ function showMap(mapdata,authority) {
         } else {
             this.getTargetElement().style.cursor = '';
         }
+    });
+
+    $('#propMetadataLocation').on('hide.bs.modal', function () {
+        $("#locationMapResponseMsg").html("");
+        const tab = new bootstrap.Tab($("#locationTabLink"));
+        tab.show();
+    });
+
+    $("#detailsTabLink").click(function (e) {
+        e.preventDefault();
+        $("#locationMapResponseMsg").html("");
+        $("#saveMetadata").prop('disabled', true);
+    });
+
+    $("#locationTabLink").click(function (e) {
+        e.preventDefault();
+        $("#saveMetadata").prop('disabled', false);
     });
 
     $("#propMetadataLocation").on('hide.bs.modal', function () {
