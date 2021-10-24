@@ -312,7 +312,7 @@
 
             $("#commentcontainer" + commentId).hide();
             $("#textareacontainer" + commentId).show();
-            var commentText = $("#commentcontent" + commentId).text();
+            const commentText = $("#commentcontent" + commentId).text();
             $("#textareacontainer" + commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">' + commentText + '</textarea>');
         }
     }
@@ -336,7 +336,7 @@
         $("#cancelEditCommentMetadata"+metadata.id).click(function (e) {
             e.preventDefault();
 
-            var currentCommentId = $("#currentCommentId"+metadata.id).val()
+            const currentCommentId = $("#currentCommentId" + metadata.id).val();
 
             if (currentCommentId !== "") {
                 $("#saveCommentMetadata"+metadata.id).show();
@@ -355,10 +355,10 @@
         $("#updateCommentMetadata"+metadata.id).click(function (e) {
             e.preventDefault();
 
-            var currentCommentId = $("#currentCommentId"+metadata.id).val()
+            const currentCommentId = $("#currentCommentId" + metadata.id).val();
 
             if (currentCommentId !== "") {
-                var updatedComment = $.trim($("#commenttext"+currentCommentId).val());
+                const updatedComment = $.trim($("#commenttext" + currentCommentId).val());
 
                 if (updatedComment.length > 0) {
                     let json = {commentId: currentCommentId, comment: updatedComment}

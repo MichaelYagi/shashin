@@ -287,14 +287,14 @@
             $("#offsetTaken").prop('checked', true);
         }
 
-        var latlngValue = (metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
+        const latlngValue = (metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
         $("#latlng").val(latlngValue);
 
-        var taggedPeopleArray = taggedPeopleList.split(",");
-        var isObject = false;
-        var taggedPeopleString = "";
+        const taggedPeopleArray = taggedPeopleList.split(",");
+        let isObject = false;
+        let taggedPeopleString = "";
         for (index in taggedPeopleArray) {
-            var person = taggedPeopleArray[index];
+            const person = taggedPeopleArray[index];
             if (person === "object") {
                 isObject = true;
             } else {
@@ -615,22 +615,10 @@
                                     $("#photoThumbnailContainer" + metadata.id).prepend(html);
                                 }
 
-                                // const img = new Image();
-                                // img.onload = function () {
-                                //     const imageId = img.id;
-                                //     const metadataId = imageId.substring("image".length,imageId.length);
-                                //     $("#photoThumbnailContainer"+metadataId).prepend(img);
-                                // }
-                                // img.src = metadata.thumbnailUrlSmall;
-                                // img.className = "photo-thumbnail-image";
-                                // img.id = "image"+metadata.id;
-                                // img.width = metadata.thumbnailSmallWidth;
-                                // img.height = metadata.thumbnailSmallHeight;
-                                // img.style.backgroundColor  = "lightgray";
-
                                 if ($("#tnbl"+metadata.id+".thumbnail-bl").length === 0) {
                                     $("#tnbl" + metadata.id).addClass("thumbnail-bl");
                                 }
+
                                 if ($("#tncentered"+metadata.id+".thumbnail-centered").length === 0) {
                                     $("#tncentered" + metadata.id).addClass("thumbnail-centered");
                                 }

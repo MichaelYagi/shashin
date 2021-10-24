@@ -76,8 +76,8 @@
                     }
 
                     matchModalBatchSettings.populateBatchLabel = function () {
-                        var checkedBoxes = $('input[name="recognitionLabel[]"]:checked')
-                        var labelString = ""
+                        const checkedBoxes = $('input[name="recognitionLabel[]"]:checked');
+                        let labelString = "";
                         checkedBoxes.each(function () {
                             labelString += $(this).val() + ",";
                         });
@@ -150,8 +150,8 @@
         }
 
         matchModalSettings.populateLabel = function(metadataId) {
-            var checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked')
-            var labelString = ""
+            const checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked');
+            let labelString = "";
             checkedBoxes.each(function () {
                 labelString += $(this).val() + ",";
             });
@@ -165,7 +165,7 @@
             taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
             shashin.printMessageToConsole('taggedPeopleList:'+taggedPeopleList)
 
-            var html = '<div class="modal fade" id="propmatches' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
+            let html = '<div class="modal fade" id="propmatches' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
                 '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit ' + metadata.fileName + '<div id="propmatchesThumbnail' + metadata.id + '"><img src="' + encodeURI(metadata.thumbnailUrlCentered) + '" width="100" height="100" onError="shashin.errorImg(this,\''+metadata.title+'\',100)"></div></h5>\n' +
                 '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n' +
                 '<div class="modal-body">\n' +
@@ -180,10 +180,10 @@
                 html += '           <div class="input-group-append">\n' +
                     '                   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return matchModalSettings.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                     '                   <div class="dropdown-menu" id="recognitionLabelsList' + metadata.id + '">\n';
-                for (var index in recognitionLabels) {
-                    var recognitionLabel = recognitionLabels[index];
-                    var taggedPeopleArray = taggedPeopleList.split(",");
-                    var checkedString = "";
+                for (const index in recognitionLabels) {
+                    const recognitionLabel = recognitionLabels[index];
+                    const taggedPeopleArray = taggedPeopleList.split(",");
+                    let checkedString = "";
                     if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                         checkedString = " checked";
                     }
@@ -231,11 +231,11 @@
                 e.preventDefault();
                 matchModalSettings.closeTagPeopleDropdown(metadata.id);
 
-                var json = {
+                const json = {
                     metadataId: metadata.id,
                     tagpeople: $("#tagpeople" + metadata.id).val(),
                     isObject: $("#isobject" + metadata.id).prop("checked")
-                }
+                };
 
                 const posting = $.post({
                     url: "/person/update",

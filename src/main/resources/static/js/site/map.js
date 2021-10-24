@@ -247,12 +247,12 @@ function showMap(mapdata,authority) {
         styles.push(createMapStyle(originalFeature));
 
         // Show gallery for each cluster
-        var mediaContentList = [];
+        const mediaContentList = [];
         for (let i = originalFeatures.length - 1; i >= 0; --i) {
-            var featureProperties = originalFeatures[i].getProperties();
+            const featureProperties = originalFeatures[i].getProperties();
             let dateString = shashin.getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
 
-            var mediaContent = {
+            const mediaContent = {
                 func: editLocation,
                 args: [
                     featureProperties["metadataId"],
@@ -277,7 +277,7 @@ function showMap(mapdata,authority) {
                     featureProperties["day"],
                     featureProperties["timeZone"]
                 ]
-            }
+            };
             if (featureProperties.type.includes("image")) {
                 mediaContent.src = featureProperties.photoUrl
                 mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
@@ -484,13 +484,13 @@ function showMap(mapdata,authority) {
     $("#progressBarWrapper").css("visibility", "hidden");
 
     if (iconFeatures.length > 0) {
-        var vectorSource = new ol.source.Vector({
+        const vectorSource = new ol.source.Vector({
             features: iconFeatures //add an array of features
         });
-        var clusterSource = new ol.source.Cluster({
+        const clusterSource = new ol.source.Cluster({
             distance: 40,
             source: vectorSource,
-        })
+        });
         vector = new ol.layer.Vector({
             source: clusterSource,
             style: styleFunction
@@ -499,7 +499,7 @@ function showMap(mapdata,authority) {
     }
 
     map.on("pointermove", function (evt) {
-        var hit = this.forEachFeatureAtPixel(evt.pixel, function () {
+        const hit = this.forEachFeatureAtPixel(evt.pixel, function () {
             return true;
         });
         if (hit) {
@@ -521,10 +521,10 @@ function showMap(mapdata,authority) {
         let metadataIdList = [];
         metadataIdList.push($("#mapMetadataId").val());
 
-        var data = {
+        const data = {
             "batchMetadataIds": JSON.stringify(metadataIdList),
             "latlngBatchData": $("#locationDataInput").val()
-        }
+        };
 
         const posting = $.post({
             url: "/timeline/update/batch",
@@ -537,10 +537,10 @@ function showMap(mapdata,authority) {
                 let message = "Error";
                 if (data["status"] === "success") {
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    var latlng = $("#locationDataInput").val();
-                    var latlngArray = latlng.split(",");
-                    var lat = latlngArray[0].trim();
-                    var lng = latlngArray[1].trim();
+                    const latlng = $("#locationDataInput").val();
+                    const latlngArray = latlng.split(",");
+                    const lat = latlngArray[0].trim();
+                    const lng = latlngArray[1].trim();
                     localStorage.setItem("lat", lat);
                     localStorage.setItem("lng", lng);
 

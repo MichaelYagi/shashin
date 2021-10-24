@@ -98,11 +98,11 @@
 </div>
 
 <script type="text/javascript">
-    var promise = $.ajax({
+    const promise = $.ajax({
         type: 'get',
         url: "/notifications/markread/users",
         contentType: 'application/json; charset=utf-8',
-        async:true
+        async: true
     }).then(function (data) {
 
     });

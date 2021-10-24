@@ -58,7 +58,7 @@
             }
         }).then(function (data) {
             searchSettings.tryCount = 0;
-            var mediaContentList = [];
+            const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
                 const metadataList = data["metadataSearchList"] === "" ? null : data["metadataSearchList"];
 

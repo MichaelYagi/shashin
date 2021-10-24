@@ -914,7 +914,7 @@ $.fn.serializeObject = function() {
             let metadataIdList = [];
             let thumbnailList = "";
             $('.bi-circle-fill').each(function(i, obj) {
-                var metadataId = obj.id.substring(6, obj.id.length);
+                const metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
                 thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="shashin.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\',75)">';
             });

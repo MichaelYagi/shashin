@@ -61,7 +61,7 @@
         }
 
         function connect() {
-            var socket = new SockJS('/websocket-endpoint');
+            const socket = new SockJS('/websocket-endpoint');
             stompClient = Stomp.over(socket);
             if (shashin.showDebug === false) {
                 stompClient.debug = null
