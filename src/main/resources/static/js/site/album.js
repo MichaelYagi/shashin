@@ -112,9 +112,9 @@
 
                                 if (currentUser.authority === "ROLE_ADMIN") {
                                     html += shashin.renderTopLeftOverlay(metadata.id);
-                                    html += shashin.renderBottomLeftOverlay(id, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText');
+                                    html += shashin.renderBottomLeftOverlay(metadata.id, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText');
                                 } else {
-                                    html += shashin.renderBottomLeftOverlay(id, null, null, null, null);
+                                    html += shashin.renderBottomLeftOverlay(metadata.id, null, null, null, null);
                                 }
 
                                 html +=
