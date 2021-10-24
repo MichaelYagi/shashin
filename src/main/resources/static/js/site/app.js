@@ -810,7 +810,7 @@ $.fn.serializeObject = function() {
 
         html =
             '<div class="thumbnail-bl" id="tnbl'+id+'">\n' +
-            '   <a href="#" th:id="infoModalEdit'+id+'">\n' +
+            '   <a href="#" id="infoModalEdit'+id+'">\n' +
             '       <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
             '   </a>\n';
 
@@ -821,7 +821,7 @@ $.fn.serializeObject = function() {
             if (onclickFunctionCall != null) {
                 html +=
                 '<a href="#" id="'+onclickIdPrefix+id+'"\n' +
-                '   onclick="return '+onclickFunctionCall+'(event, '+id+')" th:class="'+editClass+'">\n' +
+                '   onclick="return '+onclickFunctionCall+'(event, \''+id+'\')" class="'+editClass+'">\n' +
                 '   <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
                 '</a>\n';
             } else if (targetPrefix != null) {

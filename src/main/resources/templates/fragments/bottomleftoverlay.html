@@ -9,7 +9,7 @@
     <th:block th:if="${onclickFunctionCall != null or targetPrefix != null}">
         <br>
         <th:block th:if="${onclickFunctionCall != null}">
-            <a href="#" th:id="${onclickIdPrefix+id}" th:attr="onclick=${'return '+onclickFunctionCall+'(event,&quot;'+id+'&quot;)'}" th:class="${editClass}">
+            <a href="#" th:id="${onclickIdPrefix+id}" th:attr="onclick='return '+${onclickFunctionCall}+'(event,&quot;'+${id}+'&quot;)'" th:class="${editClass}">
                 <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
             </a>
         </th:block>

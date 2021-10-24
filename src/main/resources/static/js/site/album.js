@@ -34,7 +34,7 @@
 
     albumSettings.openAlbumModal = function (e,metadataId) {
         e.preventDefault();
-        let metadata;
+        let metadata = null;
         if ($("#albumModalEdit"+metadataId).attr("tag") && $("#albumModalEdit"+metadataId).attr("tag").trim() !== "") {
             metadata = JSON.parse($("#albumModalEdit"+metadataId).attr("tag"));
         }
