@@ -104,7 +104,7 @@
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 
-                                html += '</div>\n';
+                                html += '</div>\n<span id="personmodal'+metadata.id+'" style="width:0;height:0;padding:0"></span>\n';
 
                                 $(html).insertBefore($(".appendPersonPhotos").last())
 
