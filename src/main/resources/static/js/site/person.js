@@ -42,19 +42,19 @@
 
     personSettings.updatePerson = function (personId,nextPage,activePage) {
         // Get paged results
-        var promise = $.ajax({
+        const promise = $.ajax({
             type: 'get',
-            url: "/person/"+personId+"/"+nextPage,
+            url: "/person/" + personId + "/" + nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:true
+            async: true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating person. Attempt: "+personSettings.tryCount+"/"+personSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating person. Attempt: " + personSettings.tryCount + "/" + personSettings.retryLimit + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 personSettings.tryCount++;
                 if (personSettings.tryCount <= personSettings.retryLimit) {
                     //try again
-                    personSettings.updatePerson(personId,nextPage,activePage);
+                    personSettings.updatePerson(personId, nextPage, activePage);
                 }
             }
         }).then(function (data) {
@@ -77,11 +77,11 @@
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = metadataList[index];
 
-                                html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
-                                    '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
-                                    '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="shashin.errorImg(this,\''+metadata.title+'\',209)">\n' +
-                                    '   <input type="hidden" name="filename'+metadata.id+'" id="filename'+metadata.id+'" value="'+metadata.fileName+'">\n' +
-                                    '   <input type="hidden" name="thumbnailCentered'+metadata.id+'" id="thumbnailCentered'+metadata.id+'" th:value="'+metadata.thumbnailUrlCentered+'">\n';
+                                html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
+                                    '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
+                                    '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="shashin.errorImg(this,\'' + metadata.title + '\',209)">\n' +
+                                    '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n' +
+                                    '   <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" th:value="' + metadata.thumbnailUrlCentered + '">\n';
 
                                 const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                                 html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight);
@@ -89,7 +89,7 @@
                                 if (currentUser.authority === "ROLE_ADMIN") {
                                     if (labelPhotoMap[metadata.id]["isTagged"] === true) {
                                         html +=
-                                            '<div class="thumbnail-br" id="tntr'+metadata.id+'">\n' +
+                                            '<div class="thumbnail-br" id="tntr' + metadata.id + '">\n' +
                                             '   <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>\n' +
                                             '</div>\n';
                                     }
@@ -100,7 +100,7 @@
                                     html += shashin.renderBottomLeftOverlay(metadata.id, null, null, null, null);
                                 }
 
-                                const centeredObj = shashin.renderCenteredOverlay(metadata,'personSettings.openGallery',currentMediaLinkIndex);
+                                const centeredObj = shashin.renderCenteredOverlay(metadata, 'personSettings.openGallery', currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 
@@ -109,9 +109,9 @@
                                 $(html).insertBefore($(".appendPersonPhotos").last())
 
                                 shashin.setPhotoOverlays(metadata, activePage);
-                                personModalSettings.renderPersonModal(metadata,recognitionLabels,labelPhotoMap[metadata.id]["labels"]);
-                                $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
-                                $("#infoModalEdit"+metadata.id).click(function(e) {
+                                personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
+                                $("#infoModalEdit" + metadata.id).attr("tag", JSON.stringify(metadata));
+                                $("#infoModalEdit" + metadata.id).click(function (e) {
                                     e.preventDefault();
                                     const metadataObj = JSON.parse($(this).attr("tag"));
                                     shashin.openInfoModal(metadataObj);
@@ -124,16 +124,16 @@
                                 html = "";
                             }
                         } else {
-                            $(".appendPersonPhotos").last().text("EOL").css("display","none")
+                            $(".appendPersonPhotos").last().text("EOL").css("display", "none")
                         }
                     }
                 } else {
-                    $(".appendPersonPhotos").last().text("EOL").css("display","none")
+                    $(".appendPersonPhotos").last().text("EOL").css("display", "none")
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
-                $(".appendPersonPhotos").last().text("EOL").css("display","none")
+                $(".appendPersonPhotos").last().text("EOL").css("display", "none")
             }
 
             return mediaContentList;

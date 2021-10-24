@@ -72,10 +72,10 @@
                 $("#copyLink[[${album.id}]]").click(function(e) {
                     e.preventDefault();
 
-                    var shareLink = $("#shareLink[[${album.id}]]").val().trim();
+                    const shareLink = $("#shareLink[[${album.id}]]").val().trim();
 
                     if (shareLink !== "") {
-                        var fullShareLink = "[[${baseUrl}]]share/"+shareLink+"/album/[[${album.id}]]";
+                        const fullShareLink = "[[${baseUrl}]]share/" + shareLink + "/album/[[${album.id}]]";
                         shashin.copyTextToClipboard(fullShareLink,[[${album.id}]]);
                     } else {
                         $("#msg[[${album.id}]]").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
@@ -220,7 +220,7 @@
 
                                 $("#commentcontainer"+commentId).hide();
                                 $("#textareacontainer"+commentId).show();
-                                var commentText = $("#commentcontent"+commentId).text();
+                                const commentText = $("#commentcontent" + commentId).text();
                                 $("#textareacontainer"+commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
                             }
                         }
@@ -273,11 +273,11 @@
             <script type="text/javascript">
                 /*<![CDATA[*/
                 $("#propcommentalbums[[${album.id}]]").on('show.bs.modal', function () {
-                    var promise = $.ajax({
+                    const promise = $.ajax({
                         type: 'get',
                         url: "/notifications/markread/album/[[${album.id}]]",
                         contentType: 'application/json; charset=utf-8',
-                        async:true
+                        async: true
                     }).then(function (data) {
 
                     });
@@ -289,7 +289,7 @@
                 $("#cancelEditCommentAlbum[[${album.id}]]").click(function (e) {
                     e.preventDefault();
 
-                    var currentCommentId = $("#currentCommentId[[${album.id}]]").val()
+                    const currentCommentId = $("#currentCommentId[[${album.id}]]").val();
 
                     if (currentCommentId !== "") {
                         $("#saveCommentAlbum[[${album.id}]]").show();
@@ -308,10 +308,10 @@
                 $("#updateCommentAlbum[[${album.id}]]").click(function (e) {
                     e.preventDefault();
 
-                    var currentCommentId = $("#currentCommentId[[${album.id}]]").val()
+                    const currentCommentId = $("#currentCommentId[[${album.id}]]").val();
 
                     if (currentCommentId !== "") {
-                        var updatedComment = $.trim($("#commenttext"+currentCommentId).val());
+                        const updatedComment = $.trim($("#commenttext" + currentCommentId).val());
 
                         if (updatedComment.length > 0) {
                             let json = {commentId: currentCommentId, comment: updatedComment}
@@ -388,10 +388,10 @@
                                 //$("#albumCommentMessage[[${album.id}]]").html(message);
 
                                 // Insert comment at top of list
-                                var commentItem = '<li class="list-group-item list-group-item-secondary" id="comment'+commentId+'">\n' +
-                                    '<span id="commentcontainer'+commentId+'">\n<p id="commentcontent'+commentId+'">'+comment+'</p>\n' +
-                                    '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="deletecomment'+commentId+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment'+commentId+'"><span class="bi-pencil"></span></a></span></small></span>' +
-                                    '<span id="textareacontainer'+commentId+'"></span></li>';
+                                const commentItem = '<li class="list-group-item list-group-item-secondary" id="comment' + commentId + '">\n' +
+                                    '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
+                                    '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
+                                    '<span id="textareacontainer' + commentId + '"></span></li>';
                                 $("#commentText[[${album.id}]]").val("")
                                 $("#commentList[[${album.id}]]").prepend(commentItem);
 
@@ -419,7 +419,7 @@
         albumsModalSettings.updateShareLink = function (baseUrl,albumId,action) {
             $("#generateLink"+albumId).prop('disabled', true);
             $("#msg"+albumId).html("");
-            var relativeShareLink = "";
+            let relativeShareLink = "";
             if (action === "generate") {
                 relativeShareLink = albumsModalSettings.makeShareLinkId(8, 11);
                 $("#shareLink"+albumId).val(relativeShareLink);
@@ -463,13 +463,13 @@
         }
 
         albumsModalSettings.makeShareLinkId = function (minLength, maxLength) {
-            var length = Math.floor(
+            const length = Math.floor(
                 Math.random() * (Math.ceil(maxLength) - Math.floor(minLength) + 1) + minLength
             );
-            var result           = '';
-            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            var charactersLength = characters.length;
-            for ( var i = 0; i < length; i++ ) {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            for (let i = 0; i < length; i++ ) {
                 result += characters.charAt(Math.floor(Math.random() *
                     charactersLength));
             }

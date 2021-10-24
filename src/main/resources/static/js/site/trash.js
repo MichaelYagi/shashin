@@ -51,7 +51,7 @@
             }
         }).then(function (data) {
             trashSettings.tryCount = 0;
-            var mediaContentList = [];
+            const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -62,7 +62,7 @@
                         if (metadataList.length > 0) {
                             const mediaLinkLength = $(".mediaLink").length;
 
-                            for (var index in metadataList) {
+                            for (const index in metadataList) {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = metadataList[index];
 

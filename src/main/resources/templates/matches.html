@@ -119,7 +119,7 @@
         );
         const lightGalleryConfigs = shashin.getLightGalleryConfigs();
         lightGalleryConfigs["selector"] = '.mediaLink';
-        var lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
+        const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
         $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
             shashin.jumpToLightGalleryIndex(e.detail.index);
         })

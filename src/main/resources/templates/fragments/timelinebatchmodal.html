@@ -99,8 +99,8 @@
                     }
 
                     timelineBatchModal.populateBatchLabel = function() {
-                        var checkedBoxes = $('input[name="recognitionLabel[]"]:checked')
-                        var labelString = ""
+                        const checkedBoxes = $('input[name="recognitionLabel[]"]:checked');
+                        let labelString = "";
                         checkedBoxes.each(function() {
                             labelString += $(this).val() + ",";
                         });
@@ -141,7 +141,7 @@
                             $("#batchhidden").val("on");
                         }
 
-                        var posting;
+                        let posting;
 
                         if($("#batchhidden").is(':checked')) {
                             posting = $.post({
@@ -162,9 +162,9 @@
                                 let message = "Error";
                                 if (data["status"] === "success") {
 
-                                    var metadataIds = JSON.parse($("#batchMetadataIds").val());
-                                    for (var index in metadataIds) {
-                                        var metadataId = metadataIds[index];
+                                    const metadataIds = JSON.parse($("#batchMetadataIds").val());
+                                    for (const index in metadataIds) {
+                                        const metadataId = metadataIds[index];
 
                                         if ($("#photoThumbnailContainer" + metadataId).length > 0) {
                                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
@@ -188,8 +188,8 @@
                                                     $("#row" + headingId).remove();
                                                 }
                                             } else if ($("#latlngBatchData").val() !== "") {
-                                                var latlngArray = $("#latlngBatchData").val().split(",");
-                                                var metadataTaggedObj = JSON.parse($("#timelineModalEdit" + metadataId).attr("tag"));
+                                                const latlngArray = $("#latlngBatchData").val().split(",");
+                                                const metadataTaggedObj = JSON.parse($("#timelineModalEdit" + metadataId).attr("tag"));
                                                 metadataTaggedObj["lat"] = $.trim(latlngArray[0]);
                                                 metadataTaggedObj["lng"] = $.trim(latlngArray[1]);
                                                 $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataTaggedObj));

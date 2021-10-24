@@ -167,7 +167,7 @@
         e.preventDefault();
         $("#timelineModalMsg").html("");
         $("#timelineModalStatus").css("visibility","visible");
-        var metadataId = $("#metadataId").val();
+        const metadataId = $("#metadataId").val();
 
         timelineModal.closeTagPeopleDropdown(metadataId);
 
@@ -180,7 +180,7 @@
             $("#latlng").val(),
             "timelineModalMsg"
         ) === true) {
-            var json = {
+            const json = {
                 id:metadataId,
                 title:$("#title").val().trim(),
                 year:$("#yearTaken").val(),
@@ -195,7 +195,7 @@
                 isObject:$("#isobject").prop("checked")
             }
 
-            var posting;
+            let posting;
 
             if($("#hidden").is(':checked')) {
                 posting = $.post({

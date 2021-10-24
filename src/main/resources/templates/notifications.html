@@ -28,7 +28,7 @@
 </div>
 
 <script type="text/javascript">
-    var promise = $.ajax({
+    const promise = $.ajax({
         type: 'get',
         url: "/notifications/markread/favorites",
         contentType: 'application/json; charset=utf-8'
@@ -36,8 +36,8 @@
         toggleNotificationBadge();
     });
 
-    var listItems = $('.list-group-item');
-    var lastSelected = null;
+    const listItems = $('.list-group-item');
+    let lastSelected = null;
 
     listItems.click(function(e) {
         if (e.shiftKey) {
