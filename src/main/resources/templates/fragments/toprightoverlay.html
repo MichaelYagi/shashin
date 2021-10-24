@@ -5,14 +5,15 @@
 
 <th:block th:if="${type.contains('video')}">
     <span class="overlayIconBackground"><th:block th:text="${content}"></th:block>&nbsp;<span th:id="${'video'+id}" class="bi-camera-video overlayIcon"></span></span>
+    <br>
 </th:block>
 
 <th:block th:if="${!type.contains('video') and width != null and height != null and width > height*2}">
     <span th:id="${'panorama'+id}" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
+    <br>
 </th:block>
 
 <th:block th:if="${isTagged}">
-    <br>
     <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>
 </th:block>
 
