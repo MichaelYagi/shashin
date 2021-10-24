@@ -138,17 +138,17 @@
             /*<![CDATA[*/
             const metadataList = /*[[${metadataList}]]*/ '[]';
             /*]]>*/
-            if ($(".appendMetadataPhotos").last().text() === "EOL" || metadataList === '' || metadataList === '[]') {
+            if ($(".appendPersonPhotos").last().text() === "EOL" || metadataList === '' || metadataList === '[]') {
                 clearInterval(refreshIntervalId);
             }
         }, 200);
         $("#container").on('scroll', function() {
-            if (shashin.atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+            if (shashin.atEndOfPage(this) && $(".appendPersonPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
         $("main").on('scroll', function() {
-            if (shashin.atEndOfPage(this) && $(".attachMetadataPhotos").last().text() !== "EOL") {
+            if (shashin.atEndOfPage(this) && $(".appendPersonPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
