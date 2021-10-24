@@ -784,14 +784,13 @@ $.fn.serializeObject = function() {
 
         if (type.includes("video")) {
             html +=
-                '       <span class="overlayIconBackground">'+content+'&nbsp;<span id="video' + id + '" class="bi-camera-video overlayIcon"></span></span>\n';
+                '       <span class="overlayIconBackground">'+content+'&nbsp;<span id="video' + id + '" class="bi-camera-video overlayIcon"></span></span><br>\n';
         } else if (width !== null && height !== null && width > height*2) {
             html +=
-                '       <span id="panorama' + id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>\n';
+                '       <span id="panorama' + id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span><br>\n';
         }
         if (isTagged === true) {
             html +=
-                '       <br>\n' +
                 '       <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>\n';
         }
 
