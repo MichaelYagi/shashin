@@ -862,7 +862,6 @@ $.fn.serializeObject = function() {
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
         }
-        mediaContentList.push(mediaContent);
 
         html +=
             '   </div>\n';
