@@ -26,69 +26,14 @@
 
                                 <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;" th:onError="shashin.errorImg(this,[[${metadata.title}]],209)">
 
-                                <th:block th:if="${metadata.type.contains('video')}">
-                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                        <span class="overlayIconBackground"><th:block th:text="${metadata.duration != null ? metadata.duration : '0:00'}"></th:block>&nbsp;<span class="bi-camera-video overlayIcon"></span></span>
-                                    </div>
-                                </th:block>
+                                <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight})"></div>
 
-                                <th:block th:if="${!metadata.type.contains('video') and metadata.originalImageWidth != null and metadata.originalImageHeight != null and metadata.originalImageWidth > metadata.originalImageHeight*2}">
-                                    <div class="thumbnail-tr" th:id="'tntr'+${metadata.id}">
-                                        <span class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
-                                    </div>
-                                </th:block>
+                                <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
 
-                                <div class="thumbnail-tl" th:id="'tntl'+${metadata.id}">
-                                    <a href="#" th:id="'select'+${metadata.id}">
-                                        <span th:id="'tlicon'+${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
-                                    </a>
-                                </div>
+                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
 
-                                <div class="thumbnail-bl" th:id="'tnbl'+${metadata.id}">
-                                    <a href="#" th:id="'infoModalEdit'+${metadata.id}">
-                                        <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
-                                    </a>
-                                </div>
+                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'favoritesSettings.openGallery',${iterStat.index})"></div>
 
-                                <div class="thumbnail-centered" th:id="'tncentered'+${metadata.id}">
-                                    <th:block th:unless="${metadata.type.contains('video')}">
-                                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                                <a class="mediaLink" th:onclick="return favoritesSettings.openGallery(event,[[${iterStat.index}]])"
-                                                   th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                                   th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
-                                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                                </a>
-                                            </th:block>
-                                        </th:block>
-                                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                            <a class="mediaLink" th:onclick="return favoritesSettings.openGallery(event,[[${iterStat.index}]])"
-                                               th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}"
-                                               th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.fileName}">
-                                                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                            </a>
-                                        </th:block>
-                                    </th:block>
-
-                                    <th:block th:if="${metadata.type.contains('video')}">
-                                        <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                                <a class="mediaLink" th:onclick="return favoritesSettings.openGallery(event,[[${iterStat.index}]])"
-                                                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                                                   th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.fileName+' taken on '+#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}">
-                                                    <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                                </a>
-                                            </th:block>
-                                        </th:block>
-                                        <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                            <a class="mediaLink" th:onclick="return favoritesSettings.openGallery(event,[[${iterStat.index}]])"
-                                               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}"
-                                               th:data-sub-html="${(metadata.placeName != null ? '<a href=&quot;/map?lat='+metadata.lat+'&lng='+metadata.lng+'&quot; target=&quot;_blank&quot;>'+metadata.placeName+'</a><br>' : '<br>')+metadata.fileName}">
-                                                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-                                            </a>
-                                        </th:block>
-                                    </th:block>
-                                </div>
                             </div>
 
                             <script th:inline="javascript" type="text/javascript">
