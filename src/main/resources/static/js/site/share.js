@@ -28,50 +28,22 @@
                 let message = "Error";
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("albumMetadataList")) {
-                        var albumMetadataList = data["albumMetadataList"] === "" ? [] : data["albumMetadataList"];
+                        const albumMetadataList = data["albumMetadataList"] === "" ? [] : data["albumMetadataList"];
 
-                        for (var index in albumMetadataList) {
-                            var metadata = albumMetadataList[index];
+                        for (const index in albumMetadataList) {
+                            const metadata = albumMetadataList[index];
 
-                            let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                            let html =
+                                '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
+                                '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" class="photo-thumbnail-image" id="image' + metadata.id + '" onError="shashin.errorImg(this,\'' + metadata.title + '\',209)">\n';
 
-                            var html =
-                                '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
-                                '   <img src="'+encodeURI(metadata.thumbnailUrlSmall)+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" class="photo-thumbnail-image" id="image'+metadata.id+'" onError="shashin.errorImg(this,\''+metadata.title+'\',209)">\n';
-                            if (metadata.type.includes("video")) {
-                                const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                html +=
-                                    '   <div class="thumbnail-tr" id="tntr'+metadata.id+'">\n' +
-                                    '       <span class="overlayIconBackground">'+duration+'&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>\n' +
-                                    '   </div>\n';
-                            } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight*2) {
-                                html +=
-                                    '   <div class="thumbnail-tr" id="tntr' + metadata.id + '">\n' +
-                                    '       <span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>\n' +
-                                    '   </div>\n';
-                            }
+                            const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
+                            html += shashin.renderTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight);
 
-                            html +=
-                                '   <div class="thumbnail-centered" id="tncentered'+metadata.id+'">\n';
+                            const centeredObj = shashin.renderCenteredOverlay(metadata,'favoritesSettings.openGallery',currentMediaLinkIndex);
+                            html += centeredObj.html;
 
-                            if (metadata.type.includes("video")) {
-                                html +=
-                                    '   <a class="mediaLink" onclick="return false"\n' +
-                                    '       data-video=\'{"source": [{"src":"'+metadata.videoUrl+'", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                                    '       data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "<br>")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
-                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                    '   </a>\n';
-                            } else {
-                                html +=
-                                    '   <a class="mediaLink" onclick="return false" data-src="'+metadata.thumbnailUrlOriginal+'" href="'+metadata.thumbnailUrlOriginal+'"' +
-                                    '       data-sub-html="'+(metadata.placeName !== null ? metadata.placeName+'<br>' : "<br>")+metadata.fileName+(dateString !== "" ? ' taken on '+dateString : '')+'">\n' +
-                                    '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                                    '   </a>\n';
-                            }
-
-                            html +=
-                                '   </div>\n' +
-                                '</div>\n';
+                            html += '</div>\n';
 
                             // Append HTML
                             $(html).insertBefore($(".appendAlbumPhotos").last())

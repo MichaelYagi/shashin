@@ -63,13 +63,12 @@
                 const metadataList = data["metadataSearchList"] === "" ? null : data["metadataSearchList"];
 
                 if (metadataList !== null && metadataList.length > 0) {
-                    var html = "";
-                    var mediaLinkLength = $(".mediaLink").length;
-                    for (var index in metadataList) {
+                    let html = "";
+                    const mediaLinkLength = $(".mediaLink").length;
+
+                    for (const index in metadataList) {
                         const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                        var mediaContent = {}
-                        var metadata = metadataList[index];
-                        let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                        const metadata = metadataList[index];
 
                         html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                         html +=

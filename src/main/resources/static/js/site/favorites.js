@@ -61,13 +61,11 @@
                         var html = "";
 
                         if (metadataList.length > 0) {
-                            var mediaLinkLength = $(".mediaLink").length;
-                            for (var index in metadataList) {
-                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                                var mediaContent = {}
-                                var metadata = metadataList[index];
+                            const mediaLinkLength = $(".mediaLink").length;
 
-                                let dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                            for (const index in metadataList) {
+                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                                const metadata = metadataList[index];
 
                                 html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n' +
                                     '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
@@ -86,7 +84,7 @@
                                 const centeredObj = shashin.renderCenteredOverlay(metadata,'favoritesSettings.openGallery',currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
-                                
+
                                 html += '</div>\n';
 
                                 $(html).insertBefore($(".appendMetadataPhotos").last())
