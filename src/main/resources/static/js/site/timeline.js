@@ -628,8 +628,10 @@
                                 mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                 if (metadata.type.indexOf("video") >= 0) {
                                     mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
+                                    mediaContent.downloadUrl = encodeURI(metadata.videoUrl);
                                     html =
                                         '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
+                                        'data-download-url="'+encodeURI(metadata.videoUrl)+'" ' +
                                         'data-metadataid="'+metadata.id+'" ' +
                                         'data-video="'+shashin.encodeHtml(mediaContent.video)+'" ';
                                     if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
@@ -647,8 +649,10 @@
 
                                 } else {
                                     mediaContent.src = metadata.thumbnailUrlOriginal;
+                                    mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
                                     html =
                                         '<a class="mediaLink" id="mediaLink'+metadata.id+'" ' +
+                                        'data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'" ' +
                                         'data-metadataid="'+metadata.id+'" ' +
                                         'data-src="'+encodeURI(metadata.thumbnailUrlOriginal)+'" ';
                                     if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
