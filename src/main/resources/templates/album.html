@@ -160,7 +160,7 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (albumSettings.getLightGallery() !== null) {
+        if (mediaContentList.length > 0 && albumSettings.getLightGallery() !== null) {
             albumSettings.getLightGallery().refresh(mediaContentList);
             albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);

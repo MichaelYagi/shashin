@@ -483,7 +483,7 @@ class AlbumsController {
     @RequestMapping(value = ["/album/{albumId}"], method = [RequestMethod.GET])
     fun getAlbum(model: Model, @PathVariable albumId: Int): String {
         val module = "album"
-        model["message"] = "Oops, something went wrong!"
+        model["message"] = "Nothing to see here."
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
