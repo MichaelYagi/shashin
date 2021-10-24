@@ -779,20 +779,23 @@ $.fn.serializeObject = function() {
         });
     }
 
-    shashin.renderTopRightOverlay = function (type, id, content, width, height) {
-        let html = "";
+    shashin.renderTopRightOverlay = function (type, id, content, width, height, isTagged) {
+        let html = '<div class="thumbnail-tr" id="tntr' + id + '">\n';
 
         if (type.includes("video")) {
             html +=
-                '   <div class="thumbnail-tr" id="tntr' + id + '">\n' +
-                '       <span class="overlayIconBackground">'+content+'&nbsp;<span id="video' + id + '" class="bi-camera-video overlayIcon"></span></span>\n' +
-                '   </div>\n';
+                '       <span class="overlayIconBackground">'+content+'&nbsp;<span id="video' + id + '" class="bi-camera-video overlayIcon"></span></span>\n';
         } else if (width !== null && height !== null && width > height*2) {
             html +=
-                '   <div class="thumbnail-tr" id="tntr' + id + '">\n' +
-                '       <span id="panorama' + id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>\n' +
-                '   </div>\n';
+                '       <span id="panorama' + id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>\n';
         }
+        if (isTagged === true) {
+            html +=
+                '       <br>\n' +
+                '       <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>\n';
+        }
+
+        html += '</div>\n';
 
         return html;
     }
