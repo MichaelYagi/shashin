@@ -49,74 +49,79 @@
                 <button type="button" class="btn btn-primary" th:id="'saveUserShare'+${album.id}">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript">
+            <script th:inline="javascript" type="text/javascript">
                 /*<![CDATA[*/
-                if ($("#shareLink[[${album.id}]]").val() === "") {
-                    $("#copyLink[[${album.id}]]").prop('disabled', true);
-                }
+                // const albumModalId = /*[[${album.id}]]*/ 0;
+                // const baseUrl = /*[[${baseUrl}]]*/ '';
+                // console.log(baseUrl)
+                // if ($("#shareLink[[${album.id}]]").val() === "") {
+                //     $("#copyLink[[${album.id}]]").prop('disabled', true);
+                // }
+                //
+                // $("#clearLink[[${album.id}]]").click(function(e) {
+                //     e.preventDefault();
+                //     albumsModalSettings.updateShareLink("[[${baseUrl}]]",[[${album.id}]],"clear");
+                // });
+                //
+                // $("#generateLink[[${album.id}]]").click(function(e) {
+                //     e.preventDefault();
+                //     albumsModalSettings.updateShareLink("[[${baseUrl}]]",[[${album.id}]],"generate");
+                // });
+                //
+                // $('#propalbums[[${album.id}]]').on('hide.bs.modal', function () {
+                //     $("#msg[[${album.id}]]").html("");
+                // })
+                //
+                // $("#copyLink[[${album.id}]]").click(function(e) {
+                //     e.preventDefault();
+                //
+                //     const shareLink = $("#shareLink[[${album.id}]]").val().trim();
+                //
+                //     if (shareLink !== "") {
+                //         const fullShareLink = "[[${baseUrl}]]share/" + shareLink + "/album/[[${album.id}]]";
+                //         shashin.copyTextToClipboard(fullShareLink,[[${album.id}]]);
+                //     } else {
+                //         $("#msg[[${album.id}]]").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+                //     }
+                // });
+                //
+                // $("#saveUserShare[[${album.id}]]").click(function(e) {
+                //     e.preventDefault();
+                //
+                //     let albumId = "[[${album.id}]]";
+                //     let userShareMap = {};
+                //     $('input[name^="userShare[[${album.id}]]"]').each( function() {
+                //         let checkboxId = $(this).attr('id');
+                //         let isChecked = $(this).prop("checked");
+                //
+                //         let checkboxIdArray = checkboxId.split("-");
+                //         let userId = checkboxIdArray[1];
+                //         userShareMap[userId] = isChecked
+                //     });
+                //
+                //     let json = {albumId: albumId,userShareMap: JSON.stringify(userShareMap)}
+                //     const posting = $.post({
+                //         url: "/album/share/" + albumId,
+                //         data: JSON.stringify(json),
+                //         contentType: 'application/json; charset=utf-8'
+                //     });
+                //
+                //     posting.done(function (data) {
+                //         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                //             let message = "Error";
+                //             if (data["status"] === "success") {
+                //                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                //             } else {
+                //                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                //             }
+                //             $("#albumsMessage").html(message);
+                //         }
+                //         $("#propalbums[[${album.id}]]").modal('hide');
+                //     });
+                //
+                // });
 
-                $("#clearLink[[${album.id}]]").click(function(e) {
-                    e.preventDefault();
-                    albumsModalSettings.updateShareLink("[[${baseUrl}]]",[[${album.id}]],"clear");
-                });
-
-                $("#generateLink[[${album.id}]]").click(function(e) {
-                    e.preventDefault();
-                    albumsModalSettings.updateShareLink("[[${baseUrl}]]",[[${album.id}]],"generate");
-                });
-
-                $('#propalbums[[${album.id}]]').on('hide.bs.modal', function () {
-                    $("#msg[[${album.id}]]").html("");
-                })
-
-                $("#copyLink[[${album.id}]]").click(function(e) {
-                    e.preventDefault();
-
-                    const shareLink = $("#shareLink[[${album.id}]]").val().trim();
-
-                    if (shareLink !== "") {
-                        const fullShareLink = "[[${baseUrl}]]share/" + shareLink + "/album/[[${album.id}]]";
-                        shashin.copyTextToClipboard(fullShareLink,[[${album.id}]]);
-                    } else {
-                        $("#msg[[${album.id}]]").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
-                    }
-                });
-
-                $("#saveUserShare[[${album.id}]]").click(function(e) {
-                    e.preventDefault();
-
-                    let albumId = "[[${album.id}]]";
-                    let userShareMap = {};
-                    $('input[name^="userShare[[${album.id}]]"]').each( function() {
-                        let checkboxId = $(this).attr('id');
-                        let isChecked = $(this).prop("checked");
-
-                        let checkboxIdArray = checkboxId.split("-");
-                        let userId = checkboxIdArray[1];
-                        userShareMap[userId] = isChecked
-                    });
-
-                    let json = {albumId: albumId,userShareMap: JSON.stringify(userShareMap)}
-                    const posting = $.post({
-                        url: "/album/share/" + albumId,
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8'
-                    });
-
-                    posting.done(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            $("#albumsMessage").html(message);
-                        }
-                        $("#propalbums[[${album.id}]]").modal('hide');
-                    });
-
-                });
+                albumsModalListeners.setAlbumModalListeners(/*[[${album.id}]]*/ 0, /*[[${baseUrl}]]*/ '');
                 /*]]>*/
             </script>
         </div>
@@ -135,34 +140,38 @@
                 <button type="button" class="btn btn-primary" th:id="'deleteAlbum'+${album.id}">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript">
+            <script th:inline="javascript" type="text/javascript">
                 /*<![CDATA[*/
-                $("#deleteAlbum[[${album.id}]]").click(function(e) {
-                    e.preventDefault();
+                // const deleteAlbumId = /*[[${album.id}]]*/ 0;
 
-                    let albumId = "[[${album.id}]]";
+                // $("#deleteAlbum[[${album.id}]]").click(function(e) {
+                //     e.preventDefault();
+                //
+                //     let albumId = "[[${album.id}]]";
+                //
+                //     let json = {albumId: albumId, delete: true}
+                //     const posting = $.post({
+                //         url: "/album/delete/" + albumId,
+                //         data: JSON.stringify(json),
+                //         contentType: 'application/json; charset=utf-8'
+                //     });
+                //
+                //     posting.done(function (data) {
+                //         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                //             let message = "Error";
+                //             if (data["status"] === "success") {
+                //                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                //                 window.top.location = window.top.location
+                //             } else {
+                //                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                //             }
+                //             $("#albumsMessage").html(message);
+                //         }
+                //     });
+                //
+                // });
 
-                    let json = {albumId: albumId, delete: true}
-                    const posting = $.post({
-                        url: "/album/delete/" + albumId,
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8'
-                    });
-
-                    posting.done(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                window.top.location = window.top.location
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            $("#albumsMessage").html(message);
-                        }
-                    });
-
-                });
+                albumsModalListeners.setDeleteAlbumsListeners(/*[[${album.id}]]*/ 0);
                 /*]]>*/
             </script>
         </div>
@@ -179,56 +188,6 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" th:id="'currentCommentId'+${album.id}" th:name="'currentCommentId'+${album.id}">
-                <script type="text/javascript">
-                    (function( albumsCommentsSettings, $, undefined ) {
-                        albumsCommentsSettings.deleteComment = function(commentId, albumId) {
-
-                            let json = {commentId: commentId}
-
-                            const posting = $.post({
-                                url: "/comment/album/delete/",
-                                data: JSON.stringify(json),
-                                contentType: 'application/json; charset=utf-8'
-                            });
-
-                            posting.done(function (data) {
-                                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                                    let commentId = data["commentId"];
-                                    let message = "Error";
-                                    if (data["status"] === "success") {
-                                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-
-                                        // Delete comment
-                                        $("#comment"+commentId).remove();
-                                    } else {
-                                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                    }
-                                }
-                            });
-
-                            $("#currentCommentId"+albumId).val("");
-                        }
-
-                        albumsCommentsSettings.editComment = function(albumId,commentId) {
-                            if ($("#currentCommentId"+albumId).val() === "") {
-                                $("#currentCommentId"+albumId).val(commentId);
-
-                                $("#saveCommentAlbum"+albumId).hide();
-                                $("#dismissModalCommentAlbum"+albumId).hide();
-                                $("#updateCommentAlbum"+albumId).show();
-                                $("#cancelEditCommentAlbum"+albumId).show();
-
-                                $("#commentcontainer"+commentId).hide();
-                                $("#textareacontainer"+commentId).show();
-                                const commentText = $("#commentcontent" + commentId).text();
-                                $("#textareacontainer"+commentId).html('<textarea class="form-control" id="commenttext' + commentId + '" rows="2">'+commentText+'</textarea>');
-                            }
-                        }
-                    }( window.albumsCommentsSettings = window.albumsCommentsSettings || {}, jQuery ));
-
-
-
-                </script>
                 <ul class="list-group" th:id="'commentList'+${album.id}">
                     <th:block th:if="${albumCommentsMap != ''}" th:each="comments: ${albumsCommentsMap.get(album.id)}">
                         <th:block th:if="${comments.get('albumId') == album.id}">
@@ -246,17 +205,21 @@
                                 <span th:id="'textareacontainer'+${comments.get('commentId')}"></span>
                             </li>
 
-                            <script type="text/javascript">
+                            <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
-                                $("#deletecomment[[${comments.get('commentId')}]]").click(function(e) {
-                                    e.preventDefault();
-                                    albumsCommentsSettings.deleteComment([[${comments.get('commentId')}]],[[${album.id}]]);
-                                });
+                                // const editAlbumId = /*[[${album.id}]]*/ 0;
+                                // const commentId = /*[[${comments.get('commentId')}]]*/ 0;
+                                // $("#deletecomment[[${comments.get('commentId')}]]").click(function(e) {
+                                //     e.preventDefault();
+                                //     albumsCommentsSettings.deleteComment([[${comments.get('commentId')}]],[[${album.id}]]);
+                                // });
+                                //
+                                // $("#editcomment[[${comments.get('commentId')}]]").click(function(e) {
+                                //     e.preventDefault();
+                                //     albumsCommentsSettings.editComment([[${album.id}]],[[${comments.get('commentId')}]]);
+                                // });
 
-                                $("#editcomment[[${comments.get('commentId')}]]").click(function(e) {
-                                    e.preventDefault();
-                                    albumsCommentsSettings.editComment([[${album.id}]],[[${comments.get('commentId')}]]);
-                                });
+                                albumsModalListeners.setEditCommentModalListeners(/*[[${comments.get('commentId')}]]*/ 0, /*[[${album.id}]]*/ 0);
                                 /*]]>*/
                             </script>
                         </th:block>
@@ -270,213 +233,154 @@
                 <button type="button" class="btn btn-secondary" th:id="'dismissModalCommentAlbum'+${album.id}" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-secondary" th:id="'cancelEditCommentAlbum'+${album.id}" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript">
+            <script th:inline="javascript" type="text/javascript">
                 /*<![CDATA[*/
-                $("#propcommentalbums[[${album.id}]]").on('show.bs.modal', function () {
-                    const promise = $.ajax({
-                        type: 'get',
-                        url: "/notifications/markread/album/[[${album.id}]]",
-                        contentType: 'application/json; charset=utf-8',
-                        async: true
-                    }).then(function (data) {
+                // const modalAlbumId = /*[[${album.id}]]*/ 0;
+                // const username = /*[[${currentUser.username}]]*/ '';
+                // $("#propcommentalbums[[${album.id}]]").on('show.bs.modal', function () {
+                //     const promise = $.ajax({
+                //         type: 'get',
+                //         url: "/notifications/markread/album/[[${album.id}]]",
+                //         contentType: 'application/json; charset=utf-8',
+                //         async: true
+                //     }).then(function (data) {
+                //
+                //     });
+                // })
+                //
+                // $("#updateCommentAlbum[[${album.id}]]").hide();
+                // $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+                //
+                // $("#cancelEditCommentAlbum[[${album.id}]]").click(function (e) {
+                //     e.preventDefault();
+                //
+                //     const currentCommentId = $("#currentCommentId[[${album.id}]]").val();
+                //
+                //     if (currentCommentId !== "") {
+                //         $("#saveCommentAlbum[[${album.id}]]").show();
+                //         $("#dismissModalCommentAlbum[[${album.id}]]").show();
+                //         $("#updateCommentAlbum[[${album.id}]]").hide();
+                //         $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+                //
+                //         $("#commentcontainer" + currentCommentId).show();
+                //         $("#textareacontainer" + currentCommentId).html('');
+                //         $("#textareacontainer" + currentCommentId).hide();
+                //
+                //         $("#currentCommentId[[${album.id}]]").val("");
+                //     }
+                // });
+                //
+                // $("#updateCommentAlbum[[${album.id}]]").click(function (e) {
+                //     e.preventDefault();
+                //
+                //     const currentCommentId = $("#currentCommentId[[${album.id}]]").val();
+                //
+                //     if (currentCommentId !== "") {
+                //         const updatedComment = $.trim($("#commenttext" + currentCommentId).val());
+                //
+                //         if (updatedComment.length > 0) {
+                //             let json = {commentId: currentCommentId, comment: updatedComment}
+                //
+                //             const posting = $.post({
+                //                 url: "/comment/update",
+                //                 data: JSON.stringify(json),
+                //                 contentType: 'application/json; charset=utf-8'
+                //             });
+                //
+                //             posting.done(function (data) {
+                //                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                //                     let commentId = data["commentId"];
+                //                     let message = "Error";
+                //                     if (data["status"] === "success") {
+                //                         message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                //                     } else {
+                //                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                //                     }
+                //
+                //                     // Update comment
+                //                     $("#commentcontent"+commentId).text(updatedComment);
+                //
+                //                     $("#saveCommentAlbum[[${album.id}]]").show();
+                //                     $("#dismissModalCommentAlbum[[${album.id}]]").show();
+                //                     $("#updateCommentAlbum[[${album.id}]]").hide();
+                //                     $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+                //
+                //                     $("#commentcontainer" + commentId).show();
+                //                     $("#textareacontainer" + commentId).html('');
+                //                     $("#textareacontainer" + commentId).hide();
+                //                     $("#commenttext"+commentId).val("");
+                //                 }
+                //             });
+                //         }
+                //
+                //         $("#saveCommentAlbum[[${album.id}]]").show();
+                //         $("#dismissModalCommentAlbum[[${album.id}]]").show();
+                //         $("#updateCommentAlbum[[${album.id}]]").hide();
+                //         $("#cancelEditCommentAlbum[[${album.id}]]").hide();
+                //
+                //         $("#commentcontainer" + currentCommentId).show();
+                //         $("#textareacontainer" + currentCommentId).html('');
+                //         $("#textareacontainer" + currentCommentId).hide();
+                //
+                //         $("#currentCommentId[[${album.id}]]").val("");
+                //     }
+                // });
+                //
+                // $("#saveCommentAlbum[[${album.id}]]").click(function(e) {
+                //     e.preventDefault();
+                //
+                //     let comment = $.trim($("#commentText[[${album.id}]]").val());
+                //
+                //     if (comment.length > 0) {
+                //         let json = {albumId: [[${album.id}]], comment: comment}
+                //
+                //         const posting = $.post({
+                //             url: "/comment/album/save/",
+                //             data: JSON.stringify(json),
+                //             contentType: 'application/json; charset=utf-8'
+                //         });
+                //
+                //         posting.done(function (data) {
+                //             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                //                 let commentId = data["commentId"];
+                //                 let message = "Error";
+                //                 if (data["status"] === "success") {
+                //                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                //                 } else {
+                //                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                //                 }
+                //
+                //                 //$("#albumCommentMessage[[${album.id}]]").html(message);
+                //
+                //                 // Insert comment at top of list
+                //                 const commentItem = '<li class="list-group-item list-group-item-secondary" id="comment' + commentId + '">\n' +
+                //                     '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
+                //                     '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
+                //                     '<span id="textareacontainer' + commentId + '"></span></li>';
+                //                 $("#commentText[[${album.id}]]").val("")
+                //                 $("#commentList[[${album.id}]]").prepend(commentItem);
+                //
+                //                 $("#deletecomment"+commentId).click(function(e) {
+                //                     e.preventDefault();
+                //                     albumsCommentsSettings.deleteComment(commentId,[[${album.id}]]);
+                //                 });
+                //
+                //                 $("#editcomment"+commentId).click(function(e) {
+                //                     e.preventDefault();
+                //                     albumsCommentsSettings.editComment([[${album.id}]],commentId);
+                //                 });
+                //             }
+                //         });
+                //     }
+                // });
 
-                    });
-                })
-
-                $("#updateCommentAlbum[[${album.id}]]").hide();
-                $("#cancelEditCommentAlbum[[${album.id}]]").hide();
-
-                $("#cancelEditCommentAlbum[[${album.id}]]").click(function (e) {
-                    e.preventDefault();
-
-                    const currentCommentId = $("#currentCommentId[[${album.id}]]").val();
-
-                    if (currentCommentId !== "") {
-                        $("#saveCommentAlbum[[${album.id}]]").show();
-                        $("#dismissModalCommentAlbum[[${album.id}]]").show();
-                        $("#updateCommentAlbum[[${album.id}]]").hide();
-                        $("#cancelEditCommentAlbum[[${album.id}]]").hide();
-
-                        $("#commentcontainer" + currentCommentId).show();
-                        $("#textareacontainer" + currentCommentId).html('');
-                        $("#textareacontainer" + currentCommentId).hide();
-
-                        $("#currentCommentId[[${album.id}]]").val("");
-                    }
-                });
-
-                $("#updateCommentAlbum[[${album.id}]]").click(function (e) {
-                    e.preventDefault();
-
-                    const currentCommentId = $("#currentCommentId[[${album.id}]]").val();
-
-                    if (currentCommentId !== "") {
-                        const updatedComment = $.trim($("#commenttext" + currentCommentId).val());
-
-                        if (updatedComment.length > 0) {
-                            let json = {commentId: currentCommentId, comment: updatedComment}
-
-                            const posting = $.post({
-                                url: "/comment/update",
-                                data: JSON.stringify(json),
-                                contentType: 'application/json; charset=utf-8'
-                            });
-
-                            posting.done(function (data) {
-                                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                                    let commentId = data["commentId"];
-                                    let message = "Error";
-                                    if (data["status"] === "success") {
-                                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                    } else {
-                                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                    }
-
-                                    // Update comment
-                                    $("#commentcontent"+commentId).text(updatedComment);
-
-                                    $("#saveCommentAlbum[[${album.id}]]").show();
-                                    $("#dismissModalCommentAlbum[[${album.id}]]").show();
-                                    $("#updateCommentAlbum[[${album.id}]]").hide();
-                                    $("#cancelEditCommentAlbum[[${album.id}]]").hide();
-
-                                    $("#commentcontainer" + commentId).show();
-                                    $("#textareacontainer" + commentId).html('');
-                                    $("#textareacontainer" + commentId).hide();
-                                    $("#commenttext"+commentId).val("");
-                                }
-                            });
-                        }
-
-                        $("#saveCommentAlbum[[${album.id}]]").show();
-                        $("#dismissModalCommentAlbum[[${album.id}]]").show();
-                        $("#updateCommentAlbum[[${album.id}]]").hide();
-                        $("#cancelEditCommentAlbum[[${album.id}]]").hide();
-
-                        $("#commentcontainer" + currentCommentId).show();
-                        $("#textareacontainer" + currentCommentId).html('');
-                        $("#textareacontainer" + currentCommentId).hide();
-
-                        $("#currentCommentId[[${album.id}]]").val("");
-                    }
-                });
-
-                $("#saveCommentAlbum[[${album.id}]]").click(function(e) {
-                    e.preventDefault();
-
-                    let comment = $.trim($("#commentText[[${album.id}]]").val());
-
-                    if (comment.length > 0) {
-                        let json = {albumId: [[${album.id}]], comment: comment}
-
-                        const posting = $.post({
-                            url: "/comment/album/save/",
-                            data: JSON.stringify(json),
-                            contentType: 'application/json; charset=utf-8'
-                        });
-
-                        posting.done(function (data) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                                let commentId = data["commentId"];
-                                let message = "Error";
-                                if (data["status"] === "success") {
-                                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                } else {
-                                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                                }
-
-                                //$("#albumCommentMessage[[${album.id}]]").html(message);
-
-                                // Insert comment at top of list
-                                const commentItem = '<li class="list-group-item list-group-item-secondary" id="comment' + commentId + '">\n' +
-                                    '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
-                                    '<small>[[${currentUser.username}]]<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
-                                    '<span id="textareacontainer' + commentId + '"></span></li>';
-                                $("#commentText[[${album.id}]]").val("")
-                                $("#commentList[[${album.id}]]").prepend(commentItem);
-
-                                $("#deletecomment"+commentId).click(function(e) {
-                                    e.preventDefault();
-                                    albumsCommentsSettings.deleteComment(commentId,[[${album.id}]]);
-                                });
-
-                                $("#editcomment"+commentId).click(function(e) {
-                                    e.preventDefault();
-                                    albumsCommentsSettings.editComment([[${album.id}]],commentId);
-                                });
-                            }
-                        });
-                    }
-                });
-                /*]]>*/
+                albumsModalListeners.setCommentModalListeners(/*[[${album.id}]]*/ 0,/*[[${currentUser.username}]]*/ '');
+                // /*]]>*/
             </script>
         </div>
     </div>
 </div>
-
-<script type="text/javascript">
-    (function( albumsModalSettings, $, undefined ) {
-        albumsModalSettings.updateShareLink = function (baseUrl,albumId,action) {
-            $("#generateLink"+albumId).prop('disabled', true);
-            $("#msg"+albumId).html("");
-            let relativeShareLink = "";
-            if (action === "generate") {
-                relativeShareLink = albumsModalSettings.makeShareLinkId(8, 11);
-                $("#shareLink"+albumId).val(relativeShareLink);
-            }
-            if ($("#shareLink"+albumId).val() !== "") {
-                $("#copyLink"+albumId).prop('disabled', false);
-            } else {
-                $("#copyLink"+albumId).prop('disabled', true);
-            }
-
-            let json = {albumId: albumId,relativeShareUrl: relativeShareLink}
-            const posting = $.post({
-                url: "/album/"+albumId+"/save/sharelink",
-                data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8'
-            });
-
-            posting.done(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {
-                    let message = "Generated link not saved";
-                    let relativeShareUrlData = data["relativeShareUrl"] === null ? "" : data["relativeShareUrl"];
-                    $("#shareLink"+albumId).val(relativeShareUrlData);
-                    $("#fullShareLinkContainer"+albumId).css("display","none");
-                    $("#fullShareLink"+albumId).text("");
-                    if (relativeShareUrlData !== "") {
-                        $("#fullShareLinkContainer"+albumId).css("display","block");
-                        $("#fullShareLink"+albumId).html("<a target='_blank' href='"+baseUrl+"share/"+relativeShareUrlData+"/album/"+albumId+"'>"+baseUrl+"share/"+relativeShareUrlData+"/album/"+albumId+"</a>");
-                    }
-                    if (data["status"] === "success" && $("#shareLink"+albumId).val() === relativeShareUrlData) {
-                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    } else {
-                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    }
-                    $("#generateLink"+albumId).prop('disabled', false);
-                    $("#msg"+albumId).html(message);
-                } else {
-                    $("#generateLink"+albumId).prop('disabled', false);
-                    $("#msg"+albumId).html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
-                }
-            });
-        }
-
-        albumsModalSettings.makeShareLinkId = function (minLength, maxLength) {
-            const length = Math.floor(
-                Math.random() * (Math.ceil(maxLength) - Math.floor(minLength) + 1) + minLength
-            );
-            let result = '';
-            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            const charactersLength = characters.length;
-            for (let i = 0; i < length; i++ ) {
-                result += characters.charAt(Math.floor(Math.random() *
-                    charactersLength));
-            }
-            return result;
-        }
-    }( window.albumsModalSettings = window.albumsModalSettings || {}, jQuery ));
-</script>
+<script src="/js/site/albumsmodal.js"></script>
 
 </body>
 </html>

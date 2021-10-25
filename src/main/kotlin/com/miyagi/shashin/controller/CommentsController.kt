@@ -8,6 +8,7 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestBody
@@ -54,7 +55,7 @@ class CommentsController {
     private var userRole: String? = null
 
     val mapper = ObjectMapper()
-    val resp = mutableMapOf<String, String?>()
+    val resp = mutableMapOf<String, Any?>()
 
     @RequestMapping(value = ["/comment/album/save"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
@@ -119,6 +120,8 @@ class CommentsController {
                 }
                 notificationRepository.saveAll(notificationObjList)
 
+                val comments = commentRepository.findCommentsByAlbumId(albumId)
+                resp["commentCount"] = comments.count()
                 resp["msg"] = "Comment saved!"
                 resp["status"] = "success"
                 resp["commentId"] = savedCommentObj.getId().toString()
@@ -126,6 +129,7 @@ class CommentsController {
             }
         }
 
+        resp["commentCount"] = 0
         resp["msg"] = "Could not save to comment"
         resp["status"] = "fail"
         resp["commentId"] = ""
@@ -278,8 +282,9 @@ class CommentsController {
     @Transactional
     fun postDeleteComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (commentMap.containsKey("commentId")) {
+        if (commentMap.containsKey("commentId") && commentMap.containsKey("albumId")) {
             val commentId = commentMap["commentId"].toString().toInt()
+            val albumId = commentMap["albumId"].toString().toInt()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
@@ -289,6 +294,8 @@ class CommentsController {
                     albumCommentRepository.deleteByCommentId(commentId)
                     commentRepository.deleteById(commentId)
 
+                    val comments = commentRepository.findCommentsByAlbumId(albumId)
+                    resp["commentCount"] = comments.count()
                     resp["msg"] = "Comment deleted"
                     resp["status"] = "success"
                     resp["commentId"] = commentId.toString()
@@ -297,6 +304,7 @@ class CommentsController {
             }
         }
 
+        resp["commentCount"] = 0
         resp["msg"] = "Could not delete comment"
         resp["status"] = "fail"
         resp["commentId"] = ""
