@@ -302,6 +302,9 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             "ISO Speed Ratings" -> {
                                 metadataObj.setIso(tag.description.toInt())
                             }
+                            "Compression Type" -> {
+                                metadataObj.setCompressionType(tag.description)
+                            }
                             "Exposure Time" -> {
                                 val exposureArray = tag.description.split(" ")
                                 var fraction = exposureArray[0]

@@ -1,6 +1,7 @@
 package com.miyagi.shashin.model
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.apache.commons.compress.archivers.dump.DumpArchiveConstants
 import java.io.IOException
 import javax.persistence.*
 
@@ -42,6 +43,7 @@ class Metadata {
     private var camera: String? = null
     private var lens: String? = null
     private var quality: String? = null
+    private var compressionType: String? = null
     private var keywords: String? = null
     private var hidden: Boolean? = null
     private var createdAt: String? = null
@@ -152,6 +154,9 @@ class Metadata {
     }
     fun setQuality(quality: String?) {
         this.quality = quality
+    }
+    fun setCompressionType(compressionType: String?) {
+        this.compressionType = compressionType
     }
     fun setKeywords(keywords: String?) {
         this.keywords = keywords
@@ -271,6 +276,9 @@ class Metadata {
     fun getQuality(): String? {
         return this.quality
     }
+    fun getCompressionType(): String? {
+        return this.compressionType
+    }
     fun getKeywords(): String? {
         return this.keywords
     }
@@ -319,6 +327,7 @@ class Metadata {
         map["camera"] = this.camera
         map["lens"] = this.lens
         map["quality"] = this.quality
+        map["compressionType"] = this.compressionType
         map["keywords"] = this.keywords
         map["hidden"] = this.hidden
         map["createdAt"] = this.createdAt

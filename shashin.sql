@@ -39,6 +39,7 @@ CREATE TABLE `metadata` (
     `exposure` VARCHAR(20) DEFAULT NULL,
     `fNumber` REAL(10) DEFAULT NULL,
     `focalLength` REAL(10) DEFAULT NULL,
+    `compressionType` VARCHAR(255) DEFAULT NULL,
     `keywords` VARCHAR(500) DEFAULT NULL,
     `hidden` BOOLEAN NOT NULL DEFAULT FALSE,
     `createdAt` DATETIME DEFAULT NULL,

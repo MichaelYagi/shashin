@@ -22,21 +22,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane container show active" id="detailsTab">
-                        <div class="row"><strong>File name:&nbsp;</strong><span id="pathDetails"></span></div>
-                        <div class="row"><strong>Keywords:&nbsp;</strong><span id="keywordsDetails"></span></div>
-                        <div class="row"><strong>File type:&nbsp;</strong><span id="typeDetails"></span></div>
-                        <div class="row"><strong>ISO:&nbsp;</strong><span id="isoDetails"></span></div>
-                        <div class="row"><strong>Exposure:&nbsp;</strong><span id="exposureDetails"></span></div>
-                        <div class="row"><strong>F-stop:&nbsp;</strong><span id="fNumberDetails"></span></div>
-                        <div class="row"><strong>Focal length:&nbsp;</strong><span id="focalLengthDetails"></span></div>
-                        <div class="row"><strong>Camera:&nbsp;</strong><span id="cameraDetails"></span></div>
-                        <div class="row"><strong>Lens:&nbsp;</strong><span id="lensDetails"></span></div>
-                        <div class="row"><strong>Quality:&nbsp;</strong><span id="qualityDetails"></span></div>
-                        <div class="row"><strong>Created:&nbsp;</strong><span id="createdAtDetails"></span></div>
-                        <div class="row"><strong>Modified:&nbsp;</strong><span id="modifiedAtDetails"></span></div>
-                        <div class="row"><strong>Taken:&nbsp;</strong><span id="takenAtDetails"></span></div>
-                        <div class="row"><strong>Taken Manually Updated:&nbsp;</strong><span id="manualTakenAtDetails"></span></div>
-                        <div class="row"><strong>GMT Offset:&nbsp;</strong><span id="timeZoneDetails"></span></div>
+                        <div th:replace="fragments/detailsinfo :: detailsinfo()"></div>
                     </div>
                     <div class="tab-pane container fade" id="mapTab">
                         <br>
