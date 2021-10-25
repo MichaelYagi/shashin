@@ -78,6 +78,11 @@
             <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>ws.schild</groupId>
+            <artifactId>jave-all-deps</artifactId>
+            <version>3.2.0</version>
+        </dependency>
         <!-- Thumbnail processing -->
         <dependency>
             <groupId>net.iakovlev</groupId>
