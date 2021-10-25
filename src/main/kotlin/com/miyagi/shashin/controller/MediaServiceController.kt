@@ -50,8 +50,10 @@ class MediaServiceController {
     fun getVideo(response: HttpServletResponse?, @PathVariable metadataId: String): FileSystemResource? {
         val metadataObj = metadataRepository.findById(metadataId)
         var path = metadataObj.get().getPath()!!
+        val metadata = metadataObj.get()
 
-        if (metadataObj.get().getCompressionType()!!.lowercase() != "h.264") {
+        if (metadata.getType() != null && metadata.getType()!!.lowercase().contains("mp4") &&
+            metadata.getCompressionType() != null && metadata.getCompressionType()!!.lowercase() != "h.264") {
             /* Step 1. Declaring source file and Target file */
             val source = File(path)
 
@@ -74,7 +76,7 @@ class MediaServiceController {
             video.setCodec("h264")
             video.setX264Profile(X264_PROFILE.BASELINE)
             // More the frames more quality and size, but keep it low based on devices like mobile
-            video.setBitRate(350000)
+            video.setBitRate(450000)
             video.setFrameRate(20)
 //            video.setSize(VideoSize(400, 300))
 
@@ -94,6 +96,14 @@ class MediaServiceController {
                 e.printStackTrace()
             }
         }
+        return FileSystemResource(path)
+    }
+
+    @RequestMapping(value = ["/api/v1/video/{metadataId}/download"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
+    @ResponseBody
+    fun getVideoDownload(response: HttpServletResponse?, @PathVariable metadataId: String): FileSystemResource? {
+        val metadataObj = metadataRepository.findById(metadataId)
+        val path = metadataObj.get().getPath()!!
         return FileSystemResource(path)
     }
 

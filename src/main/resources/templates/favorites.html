@@ -75,7 +75,7 @@
                 mediaContent.downloadUrl = $(this).attr("data-src");
             } else if ($(this).attr("data-video")) {
                 mediaContent.video = $(this).attr("data-video");
-                mediaContent.downloadUrl = $(this).attr("data-video");
+                mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
             }
             mediaContentList.push(mediaContent);
         });

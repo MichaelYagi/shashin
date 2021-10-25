@@ -857,10 +857,10 @@ $.fn.serializeObject = function() {
         mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
         if (metadata.type.includes("video")) {
             mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
-            mediaContent.downloadUrl = encodeURI(metadata.videoUrl);
+            mediaContent.downloadUrl = encodeURI(metadata.videoUrl)+"/download";
             html +=
                 '   <a class="mediaLink" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
-                '       data-download-url="'+encodeURI(metadata.videoUrl)+'" \n' +
+                '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n' +
                 '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
                 '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +

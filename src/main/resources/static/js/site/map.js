@@ -205,7 +205,7 @@ function showMap(mapdata,authority) {
                     "attributes": {"preload": false, "controls": true}
                 }
                 mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
-                mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl);
+                mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl)+"/download";
             }
             mediaContentList.push(mediaContent);
         }

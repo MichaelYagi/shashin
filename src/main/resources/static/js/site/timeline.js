@@ -628,10 +628,10 @@
                                 mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                 if (metadata.type.indexOf("video") >= 0) {
                                     mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
-                                    mediaContent.downloadUrl = encodeURI(metadata.videoUrl);
+                                    mediaContent.downloadUrl = encodeURI(metadata.videoUrl)+"/download";
                                     html =
                                         '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
-                                        'data-download-url="'+encodeURI(metadata.videoUrl)+'" ' +
+                                        'data-download-url="'+encodeURI(metadata.videoUrl)+'/download" ' +
                                         'data-metadataid="'+metadata.id+'" ' +
                                         'data-video="'+shashin.encodeHtml(mediaContent.video)+'" ';
                                     if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
