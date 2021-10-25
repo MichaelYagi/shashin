@@ -28,23 +28,24 @@ function showMap(mapdata,authority) {
             lng = locationArgs[2];
             modalLabel = locationArgs[3];
             metadata.path = locationArgs[4];
-            metadata.keywords = locationArgs[5];
-            metadata.type = locationArgs[6];
-            metadata.iso = locationArgs[7];
-            metadata.exposure = locationArgs[8];
-            metadata.fNumber = locationArgs[9];
-            metadata.focalLength = locationArgs[10];
-            metadata.camera = locationArgs[11];
-            metadata.lens = locationArgs[12];
-            metadata.quality = locationArgs[13];
-            metadata.createdAt = locationArgs[14];
-            metadata.modifiedAt = locationArgs[15];
-            metadata.takenAt = locationArgs[16];
-            metadata.year = locationArgs[17];
-            metadata.month = locationArgs[18];
-            metadata.day = locationArgs[19];
-            metadata.time = locationArgs[20];
-            metadata.timeZone = locationArgs[21];
+            metadata.compressionType = locationArgs[5];
+            metadata.keywords = locationArgs[6];
+            metadata.type = locationArgs[7];
+            metadata.iso = locationArgs[8];
+            metadata.exposure = locationArgs[9];
+            metadata.fNumber = locationArgs[10];
+            metadata.focalLength = locationArgs[11];
+            metadata.camera = locationArgs[12];
+            metadata.lens = locationArgs[13];
+            metadata.quality = locationArgs[14];
+            metadata.createdAt = locationArgs[15];
+            metadata.modifiedAt = locationArgs[16];
+            metadata.takenAt = locationArgs[17];
+            metadata.year = locationArgs[18];
+            metadata.month = locationArgs[19];
+            metadata.day = locationArgs[20];
+            metadata.time = locationArgs[21];
+            metadata.timeZone = locationArgs[22];
         }
         if (modalLabel && modalLabel.length > 0) {
             $("#editPhotoLocationModalLabel").text("for " + modalLabel);
@@ -174,6 +175,7 @@ function showMap(mapdata,authority) {
                     featureProperties["lng"],
                     featureProperties["title"],
                     featureProperties["path"],
+                    featureProperties["compressionType"],
                     featureProperties["keywords"],
                     featureProperties["type"],
                     featureProperties["iso"],
@@ -324,6 +326,7 @@ function showMap(mapdata,authority) {
             const iconFeature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
                 fileName: data["fileName"],
+                compressionType: data["compressionType"],
                 thumbnailUrlSmall: data["thumbnailUrlSmall"],
                 thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
                 mapMarkerUrl: data["mapMarkerUrl"],

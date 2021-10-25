@@ -156,6 +156,7 @@ $.fn.serializeObject = function() {
         $("#pathDetails").text("");
         $("#typeDetails").text("");
         $("#isoDetails").text("");
+        $("#compressionDetails").text("");
         $("#exposureDetails").text("");
         $("#fNumberDetails").text("");
         $("#focalLengthDetails").text("");
@@ -181,6 +182,9 @@ $.fn.serializeObject = function() {
         }
         if (metadata.iso != null) {
             $("#isoDetails").text(metadata.iso);
+        }
+        if (metadata.compressionType != null) {
+            $("#compressionDetails").text(metadata.compressionType);
         }
         if (metadata.exposure != null) {
             $("#exposureDetails").text(metadata.exposure);

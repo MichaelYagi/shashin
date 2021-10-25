@@ -19,29 +19,10 @@ class MvcConfig : WebMvcConfigurer {
     @Value("\${app.api.version}")
     private val apiVersion: String? = null
 
-    @Autowired
-    private val mediaDirRepository: MediaDirectoryRepository? = null
-
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         val rootPath = FileSystemResource("").file.absolutePath
         var thumbnailDir = "file:///$rootPath$relativeSidecarDir"+"thumbnails/"
         thumbnailDir = thumbnailDir.replace('\\', '/').lowercase()
-
-//        val mediaDirs = mediaDirRepository?.findAll()
-//        if (mediaDirs != null) {
-//            for (mediaDir in mediaDirs) {
-//                val _mediaDir = mediaDir?.getDirectory().toString().lowercase()
-//                val parentDir = Paths.get(_mediaDir)
-//                val parentDirString = parentDir.fileName.toString().lowercase()
-//
-//                registry
-//                    .addResourceHandler("/api/$apiVersion/original/video/$parentDirString/**")
-//                    .addResourceLocations("file:///$_mediaDir/")
-//                    .setCachePeriod(3600)
-//                    .resourceChain(true)
-//                    .addResolver(PathResourceResolver())
-//            }
-//        }
 
         registry
             .addResourceHandler("/api/$apiVersion/thumbnails/**")
