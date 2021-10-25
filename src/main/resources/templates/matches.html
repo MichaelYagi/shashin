@@ -5,13 +5,15 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
+<div th:replace="fragments/infomodal :: infomodal()"></div>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts})" class="col-sm p-3 min-vh-100"></div>
-            <div th:replace="fragments/matchesmodal :: matchesmodal()"></div>
+            <div th:replace="fragments/matchesmodal :: matchesmodal(${recognitionLabels})"></div>
 
             <div id="infinite-scroll-gallery">
             <th:block th:if="${lowMatchResults != ''}">
@@ -41,6 +43,12 @@
                             /*<![CDATA[*/
                             shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'matches');
                             matchModalSettings.renderMatchesModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id)}]]*/"");
+                            $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                            $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
+                                e.preventDefault();
+                                const metadataObj = JSON.parse($(this).attr("tag"));
+                                shashin.openInfoModal(metadataObj);
+                            });
                             /*]]>*/
                         </script>
 
