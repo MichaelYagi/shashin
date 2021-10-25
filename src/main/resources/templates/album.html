@@ -26,7 +26,6 @@
                 <h1 th:text="${album.name}"></h1>
                 <span id="albumId" style="display: none" th:text="${album.id}"></span>
                 <div id="infinite-scroll-gallery">
-                    <div th:replace="fragments/albummodal :: albummodal()"></div>
 
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${albumMetadataList}">
@@ -74,7 +73,7 @@
                                 /*<![CDATA[*/
                                 $("#albumModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag", shashin.decodeHtml(JSON.stringify(/*[[${metadata}]]*/{})));
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
-                                albumModal.renderAlbumModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${currentUser}]]*/{},/*[[${albumPhotoCommentsMapString}]]*/{})
+                                albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${currentUser}]]*/{},/*[[${albumPhotoCommentsMapString}]]*/{})
                                 albumSettings.activateAlbumListeners(/*[[${metadata}]]*/{},/*[[${album}]]*/{})
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
