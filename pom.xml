@@ -78,6 +78,7 @@
             <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
+        <!-- Audio/Video encoder -->
         <dependency>
             <groupId>ws.schild</groupId>
             <artifactId>jave-all-deps</artifactId>
