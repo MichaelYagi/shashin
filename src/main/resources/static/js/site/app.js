@@ -389,6 +389,7 @@ $.fn.serializeObject = function() {
         return {
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen],
             counter: false,
+            preload: 0,
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,
