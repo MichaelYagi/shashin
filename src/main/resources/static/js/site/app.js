@@ -528,7 +528,6 @@ $.fn.serializeObject = function() {
                 //$('.thumbnail-tr').hide();
                 $('.thumbnail-centered').hide();
             } else {
-                $('.thumbnail-br').show();
                 $("#appSearch").css("display", "block");
                 $("#timelineAppTools").css("display", "none");
                 $("#albumAppTools").css("display", "none");
