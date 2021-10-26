@@ -23,6 +23,8 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.logging.Level
+import java.util.logging.Logger
 import javax.servlet.http.HttpServletResponse
 
 
@@ -32,18 +34,7 @@ class MediaServiceController {
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
 
-    @Throws(IOException::class)
-    private fun copyInputStreamToFile(inputStream: InputStream, file: File) {
-
-        // append = false
-        FileOutputStream(file, false).use { outputStream ->
-            var read: Int
-            val bytes = ByteArray(DEFAULT_BUFFER_SIZE)
-            while (inputStream.read(bytes).also { read = it } != -1) {
-                outputStream.write(bytes, 0, read)
-            }
-        }
-    }
+    private var logger: Logger = Logger.getLogger(MediaServiceController::class.simpleName)
 
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
@@ -54,6 +45,7 @@ class MediaServiceController {
 
         if (metadata.getType() != null && metadata.getType()!!.lowercase().contains("mp4") &&
             metadata.getCompressionType() != null && metadata.getCompressionType()!!.lowercase() != "h.264") {
+            logger.log(Level.INFO, "Converting video "+metadata.getPath()+" to h.264.")
             /* Step 1. Declaring source file and Target file */
             val source = File(path)
 
@@ -75,10 +67,11 @@ class MediaServiceController {
             val video = VideoAttributes()
             video.setCodec("h264")
             video.setX264Profile(X264_PROFILE.BASELINE)
+            // Here 160 kbps video is 160000
+            video.setBitRate(160000)
             // More the frames more quality and size, but keep it low based on devices like mobile
-            video.setBitRate(450000)
-            video.setFrameRate(20)
-//            video.setSize(VideoSize(400, 300))
+            video.setFrameRate(15)
+            video.setSize(VideoSize(300, 300))
 
             /* Step 4. Set Encoding Attributes*/
             val attrs = EncodingAttributes()
@@ -93,7 +86,8 @@ class MediaServiceController {
                 path = target.path
             } catch (e: Exception) {
                 /*Handle here the video failure*/
-                e.printStackTrace()
+                logger.log(Level.SEVERE, "Could not convert video "+metadata.getPath()+" to h.264: "+e.message)
+
             }
         }
         return FileSystemResource(path)
