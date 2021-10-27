@@ -503,7 +503,6 @@ class TimelineController {
             if (albumPhotos != null) {
                 for (albumPhoto in albumPhotos) {
                     if (!currentAlbumIdList.contains(albumPhoto!!.getAlbumId()!!)) {
-                        println("adding:"+albumPhoto.getAlbumId()!!)
                         currentAlbumIdList.add(albumPhoto.getAlbumId()!!)
                     }
                 }
@@ -517,10 +516,6 @@ class TimelineController {
                     val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
                     var albumObj = albumRepository.findAlbumByNameIgnoreCase(albumName)
                     var albumId = 0
-
-                    println(albumName)
-                    println(albumObj)
-                    println(currentAlbumIdList.toString())
 
                     // Add new album
                     if (albumObj == null) {
