@@ -777,12 +777,13 @@ $.fn.serializeObject = function() {
                 $('.thumbnail-br').hide();
             }
         }, function () {
-            //$(this).css("display", "none");
-            $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-centered").css("display", "none");
-            $(this).siblings(".thumbnail-bl").css("display", "none");
-            $(this).siblings(".thumbnail-br").css("display", "none");
-            $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
+            if ($(this).siblings(".thumbnail-tl").find('.bi-circle-fill').length === 0) {
+                $(this).siblings(".thumbnail-tl").css("display", "none");
+                $(this).siblings(".thumbnail-centered").css("display", "none");
+                $(this).siblings(".thumbnail-bl").css("display", "none");
+                $(this).siblings(".thumbnail-br").css("display", "none");
+                $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
+            }
         });
     }
 

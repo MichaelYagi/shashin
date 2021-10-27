@@ -662,68 +662,68 @@ class AlbumsController {
     fun postAddAlbum(model: Model, @RequestBody requestBody: JsonNode): String? {
         val albumData = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
-        val albumId: Int?
-        val albumIdString = albumData["albumId"].toString().trim()
-        val albumName = albumData["albumName"].toString().trim()
+        val albumNameList = mapper.convertValue(albumData["albumNames"], object : TypeReference<Array<String>>() {})
         val albumMetadataIdList = mapper.convertValue(albumData["albumMetadataIds"], object : TypeReference<Array<String>>() {})
 
         var albumPhotoObj: AlbumPhoto
         var albumObj = Album()
-        resp["album"] = ""
 
-        if (albumIdString.isBlank()) {
-            if (albumMetadataIdList.count() > 0) {
-                // Get the first one and set as album cover
-                val metadataObj = metadataRepository.findById(albumMetadataIdList[0])
-                albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+
+        if (albumMetadataIdList.isNotEmpty() && albumNameList.isNotEmpty()) {
+            for (albumNameRaw in albumNameList) {
+                val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
+                val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
+                var albumId = 0
+
+                if (albumObject != null) {
+                    albumId = albumObject.getId()
+                } else {
+                    val firstAvailableMetadataId = albumMetadataIdList[0]
+                    val metadataObj = metadataRepository.findById(firstAvailableMetadataId)
+                    if (metadataObj.get().getThumbnailUrlCentered() != null) {
+                        albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                    }
+                    albumObj.setName(albumName)
+                    albumObj.setCreatedAt(getModifiedCreateTimestamp())
+                    albumObj.setModifiedAt(getModifiedCreateTimestamp())
+                    albumObj = albumRepository.save(albumObj)
+                    albumId = albumObj.getId()
+                }
+
+                if (albumId > 0) {
+                    val currentUserObj = model.getAttribute("currentUser") as User?
+                    if (currentUserObj != null) {
+                        val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+                        if (userAlbumCount == 0) {
+                            val userAlbumObj = UserAlbum()
+                            userAlbumObj.setAlbumId(albumId)
+                            userAlbumObj.setUserId(currentUserObj.getId())
+                            userAlbumObj.setCreatedAt(getModifiedCreateTimestamp())
+                            userAlbumObj.setModifiedAt(getModifiedCreateTimestamp())
+                            userAlbumRepository.save(userAlbumObj)
+                        }
+                    }
+
+                    var albumPhotoCount: Int
+                    for (metadataId in albumMetadataIdList) {
+                        albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
+                        if (albumPhotoCount == 0) {
+                            albumPhotoObj = AlbumPhoto()
+                            albumPhotoObj.setMetadataId(metadataId)
+                            albumPhotoObj.setAlbumId(albumId)
+                            albumPhotoObj.setCreatedAt(getModifiedCreateTimestamp())
+                            albumPhotoObj.setModifiedAt(getModifiedCreateTimestamp())
+                            albumPhotoRepository.save(albumPhotoObj)
+                        }
+                    }
+                }
             }
 
-            // Check if albumName exists
-            val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
-            if (albumObject != null) {
-                albumId = albumObject.getId()
-                resp["album"] = albumObject
-            } else {
-                albumObj.setName(albumName)
-                albumObj.setCreatedAt(getModifiedCreateTimestamp())
-                albumObj.setModifiedAt(getModifiedCreateTimestamp())
-                albumObj = albumRepository.save(albumObj)
-                albumId = albumObj.getId()
-                resp["album"] = albumObj
-            }
-        } else {
-            albumId = albumIdString.toInt()
+            resp["msg"] = "Saved!"
+            resp["status"] = "success"
         }
-
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null) {
-            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
-            if (userAlbumCount == 0) {
-                val userAlbumObj = UserAlbum()
-                userAlbumObj.setAlbumId(albumId)
-                userAlbumObj.setUserId(currentUserObj.getId())
-                userAlbumObj.setCreatedAt(getModifiedCreateTimestamp())
-                userAlbumObj.setModifiedAt(getModifiedCreateTimestamp())
-                userAlbumRepository.save(userAlbumObj)
-            }
-        }
-
-
-        var albumPhotoCount: Int
-        for (metadataId in albumMetadataIdList) {
-            albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
-            if (albumPhotoCount == 0) {
-                albumPhotoObj = AlbumPhoto()
-                albumPhotoObj.setMetadataId(metadataId)
-                albumPhotoObj.setAlbumId(albumId)
-                albumPhotoObj.setCreatedAt(getModifiedCreateTimestamp())
-                albumPhotoObj.setModifiedAt(getModifiedCreateTimestamp())
-                albumPhotoRepository.save(albumPhotoObj)
-            }
-        }
-
-        resp["msg"] = "Saved!"
-        resp["status"] = "success"
 
         return mapper.writeValueAsString(resp)
     }
