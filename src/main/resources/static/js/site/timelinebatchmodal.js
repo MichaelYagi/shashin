@@ -20,20 +20,34 @@
         $("#tagBatchDataInput").val(shashin.decodeHtml(labelString));
     }
 
-}( window.timelineBatchModal = window.timelineBatchModal || {}, jQuery ));
-
-$("#batchisobject").click(function (e) {
-    timelineBatchModal.closeBatchTagPeopleDropdown();
-    if($(this).prop("checked") === true) {
-        $("#tagBatchDataInput").val("");
+    timelineBatchModal.toggleBatchTagAlbumDropdown = function() {
+        $("#tagalbumdropdown").dropdown('toggle');
     }
-});
+
+    timelineBatchModal.closeBatchTagAlbumDropdown = function() {
+        $("#tagalbumdropdown").dropdown('hide');
+    }
+
+    timelineBatchModal.populateBatchAlbum = function() {
+        const checkedBoxes = $('input[name="albums[]"]:checked');
+        let albumsString = "";
+        checkedBoxes.each(function() {
+            albumsString += $(this).val().replace(/ +(?= )/g,'').trim() + ",";
+        });
+        if (albumsString.length > 0) {
+            albumsString = albumsString.slice(0,-1)
+        }
+        $("#albumNameInput").val(shashin.decodeHtml(albumsString));
+    }
+
+}( window.timelineBatchModal = window.timelineBatchModal || {}, jQuery ));
 
 $("#saveBatchMetadata").click(function (e) {
     e.preventDefault();
     $("#msgBatchMetadata").html("");
     $("#timelineBatchModalStatus").css("visibility","visible");
     timelineBatchModal.closeBatchTagPeopleDropdown();
+    timelineBatchModal.closeBatchTagAlbumDropdown();
 
     if (timelineSettings.validateMetadataInputs(
         $("#dayTakenBatchData").val(),
@@ -131,6 +145,23 @@ $("#saveBatchMetadata").click(function (e) {
     return false;
 });
 
+$('#propAddAlbum').on('hide.bs.modal', function () {
+    $("#albumNameInput").val("");
+    $("#albumResponseMsg").html("");
+})
+
+// Clear message on input editing
+$('#propAddAlbum').bind('keypress', function() {
+    $("#albumResponseMsg").html("");
+});
+
+$("#batchisobject").click(function (e) {
+    timelineBatchModal.closeBatchTagPeopleDropdown();
+    if($(this).prop("checked") === true) {
+        $("#tagBatchDataInput").val("");
+    }
+});
+
 // Clear message on modal close
 $('#propBatchMetadata').on('hide.bs.modal', function () {
     $("#msgBatchMetadata").html("");
@@ -145,6 +176,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#tagBatchDataInput').val('');
     $('#keywordsBatchData').val('');
     timelineBatchModal.closeBatchTagPeopleDropdown();
+    timelineBatchModal.closeBatchTagAlbumDropdown();
 });
 
 // Clear message on input editing

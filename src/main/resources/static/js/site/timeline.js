@@ -574,14 +574,14 @@
                                 let batchHtml =
                                     '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
                                     '<div class="input-group-append">\n' +
-                                    '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineAddAlbumModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                                    '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineBatchModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                                     '   <div class="dropdown-menu" id="albumNameList">\n';
 
                                 for (let index in albumList) {
                                     const album = albumList[index];
                                     batchHtml +=
                                         '<button class="dropdown-item" type="button">\n' +
-                                        '    <input type="checkbox" onclick="return timelineAddAlbumModal.populateBatchAlbum();" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                                        '    <input type="checkbox" onclick="return timelineBatchModal.populateBatchAlbum();" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
                                         '    <label for="'+album.id+'">'+album.name+'</label>\n' +
                                         '</button>\n';
                                 }
