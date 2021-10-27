@@ -7,6 +7,14 @@
         $("#tagpeopledropdown"+metadataId).dropdown('hide')
     }
 
+    timelineModal.toggleAlbumDropdown = function (metadataId) {
+        $("#albumdropdown"+metadataId).dropdown('toggle')
+    }
+
+    timelineModal.closeAlbumDropdown = function (metadataId) {
+        $("#albumdropdown"+metadataId).dropdown('hide')
+    }
+
     timelineModal.populateLabel = function (metadataId) {
         const checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked');
         let labelString = "";
@@ -20,6 +28,21 @@
         }
 
         $("#tagpeople").val(shashin.decodeHtml(labelString));
+    }
+
+    timelineModal.populateAlbum = function (metadataId) {
+        const checkedBoxes = $('input[name="album' + metadataId + '[]"]:checked');
+        let albumString = "";
+
+        checkedBoxes.each(function() {
+            albumString += $(this).val() + ",";
+        });
+
+        if (albumString.length > 0) {
+            albumString = albumString.slice(0,-1)
+        }
+
+        $("#albumnames").val(shashin.decodeHtml(albumString));
     }
 
 }( window.timelineModal = window.timelineModal || {}, jQuery ));
@@ -52,6 +75,7 @@ $("#saveMetadata").click(function (e) {
             latlng:$("#latlng").val(),
             keywords:$("#keywords").val(),
             tagpeople:$("#tagpeople").val(),
+            albumnames:$("#albumnames").val(),
             hidden:$("#hidden").prop("checked"),
             isObject:$("#isobject").prop("checked")
         }
@@ -95,6 +119,7 @@ $("#saveMetadata").click(function (e) {
                     }
                     metadataObj.keywords = $("#keywords").val()
                     metadataObj.tagpeople = $("#tagpeople").val()
+                    metadataObj.albumlist = $("#albumnames").val()
                     metadataObj.hidden = $("#hidden").prop("checked")
 
                     const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");

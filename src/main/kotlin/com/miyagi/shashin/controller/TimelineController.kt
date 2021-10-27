@@ -51,6 +51,12 @@ class TimelineController {
     private lateinit var userAlbumRepository: UserAlbumRepository
 
     @Autowired
+    private lateinit var commentRepository: CommentRepository
+
+    @Autowired
+    private lateinit var albumCommentRepository: AlbumCommentRepository
+
+    @Autowired
     private var recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
@@ -379,8 +385,9 @@ class TimelineController {
                                     albumMetadataList += album.get().getName()+","
                                 }
                                 if (albumMetadataList.isNotEmpty()) {
-                                    albumMap[metadata.getId()] = albumMetadataList.dropLast(1)
+                                    albumMetadataList = albumMetadataList.dropLast(1)
                                 }
+                                albumMap[metadata.getId()] = albumMetadataList
                             }
                         }
                         response["labelPhotoMap"] = labelPhotoMap
@@ -482,13 +489,121 @@ class TimelineController {
             metadataMap.containsKey("keywords") &&
             metadataMap.containsKey("latlng") &&
             metadataMap.containsKey("title") &&
-//            metadataMap.containsKey("labelIds") &&
+            metadataMap.containsKey("albumnames") &&
             metadataMap.containsKey("tagpeople") &&
             metadataMap.containsKey("hidden") &&
             metadataMap.containsKey("isObject") &&
             metadataMap["id"].toString() == metadataId
         ) {
             val metadataObj = metadataRepository.findById(metadataId)
+
+            // Process albums
+            val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadataId)
+            val currentAlbumIdList = mutableListOf<Int>()
+            if (albumPhotos != null) {
+                for (albumPhoto in albumPhotos) {
+                    currentAlbumIdList.add(albumPhoto!!.getAlbumId()!!)
+                }
+            }
+            if (metadataMap["albumnames"].toString().trim() != "") {
+                val albumsArray = metadataMap["albumnames"].toString().split(",")
+
+                for (albumNameRaw in albumsArray) {
+
+                    val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
+                    var albumObj = albumRepository.findAlbumByNameIgnoreCase(albumName)
+                    var albumId = 0
+
+                    // Add new album
+                    if (albumObj == null) {
+                        albumObj = Album()
+                        if (metadataObj.get().getThumbnailUrlCentered() != null) {
+                            albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                        }
+                        albumObj.setName(albumName)
+                        albumObj.setCreatedAt(getModifiedCreateTimestamp())
+                        albumObj.setModifiedAt(getModifiedCreateTimestamp())
+                        albumObj = albumRepository.save(albumObj)
+                        albumId = albumObj.getId()
+
+                        if (albumId > 0) {
+                            val currentUserObj = model.getAttribute("currentUser") as User?
+                            if (currentUserObj != null) {
+                                val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+                                if (userAlbumCount == 0) {
+                                    val userAlbumObj = UserAlbum()
+                                    userAlbumObj.setAlbumId(albumId)
+                                    userAlbumObj.setUserId(currentUserObj.getId())
+                                    userAlbumObj.setCreatedAt(getModifiedCreateTimestamp())
+                                    userAlbumObj.setModifiedAt(getModifiedCreateTimestamp())
+                                    userAlbumRepository.save(userAlbumObj)
+                                }
+                            }
+
+                            val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
+                            if (albumPhotoCount == 0) {
+                                val albumPhotoObj = AlbumPhoto()
+                                albumPhotoObj.setMetadataId(metadataId)
+                                albumPhotoObj.setAlbumId(albumId)
+                                albumPhotoObj.setCreatedAt(getModifiedCreateTimestamp())
+                                albumPhotoObj.setModifiedAt(getModifiedCreateTimestamp())
+                                albumPhotoRepository.save(albumPhotoObj)
+                            }
+                        }
+                    } else {
+                        albumId = albumObj.getId()
+                    }
+                    if (currentAlbumIdList.contains(albumId)) {
+                        // Collect to delete
+                        val indexToRemove = currentAlbumIdList.indexOf(albumObj.getId())
+                        currentAlbumIdList.removeAt(indexToRemove)
+                    }
+                }
+                if (currentAlbumIdList.isNotEmpty()) {
+                    for (albumId in currentAlbumIdList) {
+                        albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
+                        val count = albumPhotoRepository.countByAlbumId(albumId)
+
+                        if (count != null) {
+                            if (count.toInt() > 0) {
+                                val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
+                                val album = albumRepository.findById(albumId)
+                                if (album.get().getCoverUrl() == coverAlbumUrl) {
+                                    // Use the first photo in album
+                                    val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
+                                    if (albumPhoto != null) {
+                                        val albumMetadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
+                                        album.get().setCoverUrl(albumMetadataObj.get().getThumbnailUrlCentered())
+                                        albumRepository.save(album.get())
+                                    }
+                                }
+
+                            } else {
+                                userAlbumRepository.deleteByAlbumId(albumId)
+                                albumRepository.deleteById(albumId)
+                                // Delete comments
+                                val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                                if (albumComments != null) {
+                                    val commentIdList = ArrayList<Int>()
+                                    for (albumComment in albumComments) {
+                                        if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
+                                            commentIdList.add(albumComment.getCommentId()!!)
+                                        }
+                                    }
+
+                                    if (commentIdList.isNotEmpty()) {
+                                        commentRepository.deleteAllById(commentIdList)
+                                        albumCommentRepository.deleteByAlbumId(albumId)
+                                        albumPhotoCommentRepository.deleteByAlbumId(albumId)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Process tagged people
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataObj.get().getId())
             if (recognitionLabelPhotos != null) {
                 for (recognitionLabelPhoto in recognitionLabelPhotos) {
@@ -827,7 +942,6 @@ class TimelineController {
                     // Add album photo
                     if (albumIdList.isNotEmpty()) {
                         for (albumId in albumIdList) {
-                            println(albumId)
                             val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadata.getId(), albumId)!!
                             if (albumPhotoCount == 0) {
                                 var albumPhotoObj: AlbumPhoto
