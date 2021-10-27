@@ -1,8 +1,24 @@
-function populateBatchAlbumInput(e,albumId,albumName) {
-    e.preventDefault();
-    $("#albumNameInput").val(shashin.decodeHtml(albumName));
-    $("#albumIdInput").val(albumId);
-}
+(function( timelineAddAlbumModal, $, undefined ) {
+    timelineAddAlbumModal.toggleBatchTagAlbumDropdown = function() {
+        $("#tagalbumdropdown").dropdown('toggle');
+    }
+
+    timelineAddAlbumModal.closeBatchTagAlbumDropdown = function() {
+        $("#tagalbumdropdown").dropdown('hide');
+    }
+
+    timelineAddAlbumModal.populateBatchAlbum = function() {
+        const checkedBoxes = $('input[name="albums[]"]:checked');
+        let albumsString = "";
+        checkedBoxes.each(function() {
+            albumsString += $(this).val().replace(/ +(?= )/g,'').trim() + ",";
+        });
+        if (albumsString.length > 0) {
+            albumsString = albumsString.slice(0,-1)
+        }
+        $("#albumNameInput").val(shashin.decodeHtml(albumsString));
+    }
+}( window.timelineAddAlbumModal = window.timelineAddAlbumModal || {}, jQuery ));
 
 $('#propAddAlbum').on('hide.bs.modal', function () {
     $("#albumNameInput").val("");
@@ -15,25 +31,15 @@ $("#saveAlbum").click(function (e) {
     $("#albumResponseMsg").html("");
 
     let albumMetadataIds = $.trim($("#albumMetadataIds").val());
-    let albumNameInput = $.trim($("#albumNameInput").val());
+    let albumNameInputs = $.trim($("#albumNameInput").val());
 
-    if (albumMetadataIds !== "" && albumNameInput !== "") {
-        let albumIdInput = $.trim($("#albumIdInput").val())
+    if (albumMetadataIds !== "" && albumNameInputs !== "") {
         let albumMetadataIdArray = $.parseJSON(albumMetadataIds);
-
-        if (albumIdInput === "" && $('#albumNameList').length > 0) {
-            // Iterate through list and find id by name
-            $('#albumNameList').children('a').each(function() {
-                if (albumNameInput.toLowerCase() === $(this).text().toLowerCase()) {
-                    albumIdInput = $(this).attr('id');
-                    return false;
-                }
-            });
-        }
+        let albumNameArray = albumNameInputs.split(",");
 
         const posting = $.post({
             url: "/albums/add",
-            data: JSON.stringify({albumId:albumIdInput,albumName:albumNameInput,albumMetadataIds:albumMetadataIdArray}),
+            data: JSON.stringify({albumNames:albumNameArray,albumMetadataIds:albumMetadataIdArray}),
             contentType: 'application/json; charset=utf-8'
         });
 

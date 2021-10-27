@@ -292,6 +292,7 @@ class TimelineController {
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = mediaTypeFilter
         response["timeOffsets"] = timeOffsets()
+        response["albumMap"] = mutableMapOf<String, String>()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -334,6 +335,8 @@ class TimelineController {
                         }
 
                         val labelPhotoMap = mutableMapOf<String, String>()
+                        val albumMap = mutableMapOf<String, String>()
+
                         for (metadata in metadataList) {
                             val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
                             if (favorites != null) {
@@ -364,8 +367,21 @@ class TimelineController {
                                 labelString = labelString.dropLast(1)
                             }
                             labelPhotoMap[metadata.getId()] = labelString
+
+                            val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
+                            if (albumPhotos != null) {
+                                var albumMetadataList = ""
+                                for (albumPhoto in albumPhotos) {
+                                    val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
+                                    albumMetadataList += album.get().getName()+","
+                                }
+                                if (albumMetadataList.isNotEmpty()) {
+                                    albumMap[metadata.getId()] = albumMetadataList.dropLast(1)
+                                }
+                            }
                         }
                         response["labelPhotoMap"] = labelPhotoMap
+                        response["albumMap"] = albumMap
 
                         val albumList = albumRepository.findAll()
                         if (albumList.count() > 0) {

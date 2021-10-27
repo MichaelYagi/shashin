@@ -14,6 +14,7 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     @Query("SELECT * FROM albumphoto WHERE album_id = :albumId LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByAlbumIdAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
     fun findFirstByOrderByIdAsc(): AlbumPhoto?
+    fun findAlbumPhotoByMetadataId(metadataId: String?): MutableIterable<AlbumPhoto?>?
     fun deleteByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Long?
     fun deleteByAlbumId(albumId: Int?): Long?
     fun deleteByMetadataId(metadataId: String?): Long?

@@ -240,7 +240,7 @@
         });
     }
 
-    timelineSettings.openTimelineModal = function(metadata,recognitionLabels,taggedPeopleList) {
+    timelineSettings.openTimelineModal = function(metadata,recognitionLabels,taggedPeopleList,albumList) {
         let index;
 
         // Populate modal data
@@ -347,7 +347,9 @@
 
         $("#keywords").val(metadata.keywords);
 
+        $("#albumDetailRow").remove();
         shashin.populateDetailsTab(metadata);
+        $("#detailsTab").append("<div id=\"albumDetailRow\" class=\"row\"><strong>Albums:&nbsp;</strong><span id=\"albumsDetails\">"+((typeof albumList !== 'undefined') ? albumList : "")+"</span></div>")
 
         // Open modal window
         $("#propTimelineModal").modal('show');
@@ -540,6 +542,7 @@
                         const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
                         const recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
                         const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
+                        const albumMap = data["albumMap"] === "" ? null : data["albumMap"];
                         const albumList = data["albumList"] === "" ? null : data["albumList"];
 
                         if (metadataList.length > 0) {
@@ -568,18 +571,23 @@
                             }
 
                             if (albumList !== null && albumList.length > 0) {
-                                let batchHtml = '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
-                                    '       <input type="hidden" id="albumIdInput" name="albumIdInput" value="">\n' +
-                                    '       <div class="input-group-append">\n' +
-                                    '           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                                    '           <div class="dropdown-menu" id="albumNameList">\n';
+                                let batchHtml =
+                                    '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
+                                    '<div class="input-group-append">\n' +
+                                    '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineAddAlbumModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                                    '   <div class="dropdown-menu" id="albumNameList">\n';
 
                                 for (let index in albumList) {
                                     const album = albumList[index];
-                                    batchHtml += '       <a class="dropdown-item" href="#" id="'+album.id+'" onclick="return populateBatchAlbumInput(event,'+album.id+',\''+album.name+'\')">'+album.name+'</a>\n';
+                                    batchHtml +=
+                                        '<button class="dropdown-item" type="button">\n' +
+                                        '    <input type="checkbox" onclick="return timelineAddAlbumModal.populateBatchAlbum();" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                                        '    <label for="'+album.id+'">'+album.name+'</label>\n' +
+                                        '</button>\n';
                                 }
 
-                                batchHtml += '</div>\n' +
+                                batchHtml +=
+                                    '   </div>\n' +
                                     '</div>\n';
 
                                 $("#albumListForModal").html(batchHtml);
@@ -686,7 +694,7 @@
                                         e.preventDefault();
 
                                         const metadataObj = JSON.parse($(this).attr("tag"));
-                                        timelineSettings.openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id]);
+                                        timelineSettings.openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id],albumMap[metadataObj.id]);
                                     });
                                     $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
                                 }

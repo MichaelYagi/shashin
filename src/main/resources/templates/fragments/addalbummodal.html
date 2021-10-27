@@ -17,18 +17,8 @@
                             <div class="col-sm">
                                 <div class="input-group" id="albumListForModal">
                                     <input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">
-                                    <input type="hidden" id="albumIdInput" name="albumIdInput" value="">
 
-                                    <th:block th:if="${albumList != ''}">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Albums</button>
-                                            <div class="dropdown-menu" id="albumNameList">
-                                                <th:block th:each="album, iterStat: ${albumList}">
-                                                    <a class="dropdown-item" href="#" th:id="${album.id}" th:text="${album.name}" th:onclick="return populateBatchAlbumInput(event,[[${album.id}]],'[[${album.name}]]')"></a>
-                                                </th:block>
-                                            </div>
-                                        </div>
-                                    </th:block>
+                                    <!-- Populated in timeline.js -->
 
                                 </div>
                             </div>
