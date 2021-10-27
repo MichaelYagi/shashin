@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.transaction.Transactional
 import kotlin.collections.HashMap
@@ -1094,6 +1093,35 @@ class TimelineController {
         albumPhotoRepository.deleteByMetadataId(id)
         favoriteRepository.deleteByMetadataId(id)
         albumPhotoCommentRepository.deleteByMetadataId(id)
+        // Find albums
+        val allAlbums = albumRepository.findAll()
+        for (album in allAlbums) {
+            val albumId = album?.getId()
+            if (albumId != null && albumId > 0) {
+                val albumPhotoCount = albumPhotoRepository.countByAlbumId(albumId)
+                // Delete album
+                if (albumPhotoCount == 0) {
+                    albumRepository.deleteById(albumId)
+                    albumCommentRepository.deleteByAlbumId(albumId)
+                    userAlbumRepository.deleteByAlbumId(albumId)
+                }
+            }
+        }
+
+        // Find people
+        val allPeople = recognitionLabelRepository?.findAll()
+        if (allPeople != null) {
+            for (person in allPeople) {
+                val peronLabelId = person?.getId()
+                if (peronLabelId != null && peronLabelId > 0) {
+                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelId(peronLabelId)
+                    if (recognitionLabelPhotoCount == 0) {
+                        recognitionLabelRepository?.deleteById(peronLabelId)
+                    }
+                }
+            }
+        }
+
     }
 
     @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
