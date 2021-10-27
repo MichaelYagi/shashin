@@ -34,6 +34,23 @@
                             <input type="text" class="form-control" id="latlngBatchData" name="latlngBatchData" value="">
                         </div>
                         <div class="col-sm">
+                            <label for="keywordsBatchData" class="col-form-label">Keywords (comma separated)</label>
+                            <input type="text" class="form-control" id="keywordsBatchData" name="keywordsBatchData" value="">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm">
+                            <label for="albumNameInput" class="col-form-label">Add to Album (comma separated)</label>
+                            <div class="input-group" id="batchAlbumNames">
+                                <div class="input-group" id="albumListForModal">
+                                    <input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">
+
+                                    <!-- Populated in timeline.js -->
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm">
                             <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
                             <div class="input-group" id="batchLabelIds">
                                 <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
@@ -58,12 +75,6 @@
                                     <label class="form-check-label" for="batchisobject">These are objects</label>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <div class="col-sm">
-                            <label for="keywordsBatchData" class="col-form-label">Keywords (comma separated)</label>
-                            <input type="text" class="form-control" id="keywordsBatchData" name="keywordsBatchData" value="">
                         </div>
                     </div>
                     <hr>
