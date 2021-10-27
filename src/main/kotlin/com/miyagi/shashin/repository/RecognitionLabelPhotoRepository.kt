@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional
 interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto?, Int?> {
     fun countByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): Int
 
+    fun countByRecognitionLabelId(recognitionLabelId: Int): Int
+
     @Query("SELECT recognition_label_id as recognitionLabelId FROM recognitionlabelphoto GROUP BY recognition_label_id", nativeQuery = true)
     fun findGroupByRecognitionLabelId(): MutableIterable<RecognitionLabelId>
 
