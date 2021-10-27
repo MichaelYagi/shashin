@@ -137,7 +137,17 @@ $("#saveBatchMetadata").click(function (e) {
                 shashin.removeAllMetadataFilenamesList();
                 shashin.removeAllMetadataThumbnailsList();
                 $("#timelineBatchModalStatus").css("visibility","hidden");
-                $('#propBatchMetadata').find(':input').val('');
+                $("#batchMetadataIds").val("");
+                $("#batchFilenames").val("");
+                $("#dayTakenBatchData").val("");
+                $("#monthTakenBatchData").val("");
+                $("#yearTakenBatchData").val("");
+                $("#latlngBatchData").val("");
+                $("#keywordsBatchData").val("");
+                $("#albumNameInput").val("");
+                $("#tagBatchDataInput").val("");
+                $("#batchisobject")[0].checked = false;
+                $("#batchhidden")[0].checked = false;
             }
         });
     }
