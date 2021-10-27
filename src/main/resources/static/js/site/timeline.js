@@ -240,7 +240,7 @@
         });
     }
 
-    timelineSettings.openTimelineModal = function(metadata,recognitionLabels,taggedPeopleList,albumList) {
+    timelineSettings.openTimelineModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList) {
         let index;
 
         // Populate modal data
@@ -337,6 +337,48 @@
             $(html).insertAfter($("#labelIdData"))
         }
 
+        const albumListArray = albumList.split(",");
+        let albumListString = "";
+        for (index in albumListArray) {
+            const album = albumListArray[index];
+            albumListString += album + ",";
+        }
+        albumListString = albumListString.replace(/,\s*$/, "");
+        albumListString = albumListString.trim();
+        if (albumListString !== "") {
+            $("#albumnames").val(albumListString);
+        } else if (metadata.albumlist !== null) {
+            $("#albumnames").val(metadata.albumlist);
+        }
+
+        if ($("#albumListInput").length > 0) {
+            $("#albumListInput").remove();
+        }
+        if (allAlbumList !== null && allAlbumList.length > 0) {
+            let html = '<div class="input-group-append" id="albumListInput">\n' +
+                '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleAlbumDropdown(\'' + metadata.id + '\');" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                '           <div class="dropdown-menu" id="albumsList">\n';
+
+            for (index in allAlbumList) {
+                const eachAlbum = allAlbumList[index];
+                let checkedString = "";
+
+                if ($.inArray(eachAlbum.name, albumListArray) !== -1) {
+                    checkedString = " checked";
+                }
+
+                html +=
+                    '           <button class="dropdown-item" type="button">\n' +
+                    '               <input type="checkbox" onclick="return timelineModal.populateAlbum(\'' + metadata.id + '\');" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
+                    '               <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + eachAlbum.name + '</label>\n' +
+                    '           </button>\n';
+            }
+            html += '   </div>\n' +
+                '</div>\n';
+
+            $(html).insertAfter($("#albumNameData"))
+        }
+
         if (isObject === true) {
             $("#isobject")[0].checked = true;
         }
@@ -349,7 +391,6 @@
 
         $("#albumDetailRow").remove();
         shashin.populateDetailsTab(metadata);
-        $("#detailsTab").append("<div id=\"albumDetailRow\" class=\"row\"><strong>Albums:&nbsp;</strong><span id=\"albumsDetails\">"+((typeof albumList !== 'undefined') ? albumList : "")+"</span></div>")
 
         // Open modal window
         $("#propTimelineModal").modal('show');
@@ -694,7 +735,7 @@
                                         e.preventDefault();
 
                                         const metadataObj = JSON.parse($(this).attr("tag"));
-                                        timelineSettings.openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id],albumMap[metadataObj.id]);
+                                        timelineSettings.openTimelineModal(metadataObj,recognitionLabels,labelPhotoMap[metadataObj.id],albumList,albumMap[metadataObj.id]);
                                     });
                                     $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
                                 }

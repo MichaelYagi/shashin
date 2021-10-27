@@ -3,8 +3,10 @@ package com.miyagi.shashin.repository
 import com.miyagi.shashin.model.UserAlbum
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import javax.transaction.Transactional
 
 @Repository
+@Transactional
 interface UserAlbumRepository : CrudRepository<UserAlbum?, Int?> {
     fun countByUserIdAndAlbumId(userId: Int?, albumId: Int?): Int?
     fun findAllByUserId(userId: Int?): MutableIterable<UserAlbum?>?

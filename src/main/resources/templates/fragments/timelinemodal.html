@@ -67,6 +67,23 @@
                                     <input type="text" class="form-control" id="latlng" name="latlng" value="">
                                 </div>
                                 <div class="col-sm">
+                                    <label for="keywords" class="col-form-label">Keywords (comma separated)</label>
+                                    <input type="text" class="form-control" id="keywords" name="keywords" value="">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm">
+                                    <label for="albumnames" class="col-form-label">Add to Album (comma separated)</label>
+                                    <div class="input-group" id="batchAlbumNames">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" aria-label="Albums Name" id="albumnames" name="albumnames" value="">
+
+                                            <!-- Populated in timeline.js -->
+                                            <span id="albumNameData"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm">
                                     <label for="tagpeople" class="col-form-label">Tag People (comma separated)</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" aria-label="Tag People" id="tagpeople" name="tagpeople" value="">
@@ -79,12 +96,6 @@
                                             <label class="form-check-label" for="isobject">Cannot identify</label>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <div class="col-sm">
-                                    <label for="keywords" class="col-form-label">Keywords (comma separated)</label>
-                                    <input type="text" class="form-control" id="keywords" name="keywords" value="">
                                 </div>
                             </div>
                             <hr>
