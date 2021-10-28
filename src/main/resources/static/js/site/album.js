@@ -3,8 +3,6 @@
     albumSettings.lg = null;
     albumSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
     albumSettings.lightGalleryConfigs["dynamic"] = true;
-    albumSettings.retryLimit = 3;
-    albumSettings.tryCount = 0;
 
     albumSettings.openGallery = function(e,index) {
         e.preventDefault();
@@ -58,23 +56,25 @@
     }
 
     albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
+        const shashinUtil = new ShashinUtil();
+
         const promise =  $.ajax({
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
             async:true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating album. Attempt: "+albumSettings.tryCount+"/"+albumSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating album. Attempt: "+shashinUtil.getTryCount()+"/"+ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                albumSettings.tryCount++;
-                if (albumSettings.tryCount <= albumSettings.retryLimit) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     albumSettings.updateAlbum(albumId,nextPage,activePage);
                 }
             }
         }).then(function (data) {
-            albumSettings.tryCount = 0;
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";

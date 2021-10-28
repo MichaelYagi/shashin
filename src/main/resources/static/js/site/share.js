@@ -1,6 +1,4 @@
 class ShareAlbum {
-    #retryLimit = 3;
-    #tryCount = 0;
     #shareLink = '';
 
     constructor(shareLink) {
@@ -11,32 +9,21 @@ class ShareAlbum {
         return this.#shareLink;
     }
 
-    getRetryLimit() {
-        return this.#retryLimit;
-    }
-
-    getTryCount() {
-        return this.#tryCount;
-    }
-
-    setTryCount(tryCount) {
-        this.#tryCount = tryCount;
-    }
-
     updateAlbum(albumId, nextPage, activePage) {
         const self = this;
+        const shashinUtil = new ShashinUtil();
 
         return $.ajax({
             type: 'get',
             url: "/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage,
             contentType: 'application/json; charset=utf-8'
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating share album. Attempt: "+self.getTryCount()+"/"+self.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating share album. Attempt: "+shashinUtil.getTryCount()+"/"+ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                self.setTryCount(self.getTryCount()+1);
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
-                if (self.getTryCount() <= self.getRetryLimit()) {
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     self.updateAlbum(albumId, nextPage, activePage);
                 }
