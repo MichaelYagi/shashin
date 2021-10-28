@@ -1,35 +1,52 @@
-(function( shareAlbumSettings, $, undefined ) {
-    shareAlbumSettings.retryLimit = 3;
-    shareAlbumSettings.tryCount = 0;
-    shareAlbumSettings.shareLink = '';
+class ShareAlbum {
+    #retryLimit = 3;
+    #tryCount = 0;
+    #shareLink = '';
 
-    shareAlbumSettings.setShareLink = function (shareLink) {
-        shareAlbumSettings.shareLink = shareLink;
+    constructor(shareLink) {
+        this.#shareLink = shareLink;
     }
 
-    shareAlbumSettings.updateAlbum = function (albumId, nextPage, activePage) {
+    getShareLink() {
+        return this.#shareLink;
+    }
+
+    getRetryLimit() {
+        return this.#retryLimit;
+    }
+
+    getTryCount() {
+        return this.#tryCount;
+    }
+
+    setTryCount(tryCount) {
+        this.#tryCount = tryCount;
+    }
+
+    updateAlbum(albumId, nextPage, activePage) {
+        const self = this;
+
         return $.ajax({
             type: 'get',
-            url: "/share/"+shareAlbumSettings.shareLink+"/album/"+albumId+"/"+nextPage,
+            url: "/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage,
             contentType: 'application/json; charset=utf-8'
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating share album. Attempt: "+shareAlbumSettings.tryCount+"/"+shareAlbumSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating share album. Attempt: "+self.getTryCount()+"/"+self.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shareAlbumSettings.tryCount++;
-                if (shareAlbumSettings.tryCount <= shareAlbumSettings.retryLimit) {
+                self.setTryCount(self.getTryCount()+1);
+
+                if (self.getTryCount() <= self.getRetryLimit()) {
                     //try again
-                    shareAlbumSettings.updateAlbum(albumId, nextPage, activePage);
+                    self.updateAlbum(albumId, nextPage, activePage);
                 }
             }
         }).then(function (data) {
-            shareAlbumSettings.tryCount = 0;
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("albumMetadataList")) {
                         const albumMetadataList = data["albumMetadataList"] === "" ? [] : data["albumMetadataList"];
-
                         for (const index in albumMetadataList) {
                             const metadata = albumMetadataList[index];
 
@@ -40,7 +57,7 @@
                             const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                             html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
 
-                            const centeredObj = shashin.getCenteredOverlay(metadata,'favoritesSettings.openGallery',currentMediaLinkIndex);
+                            const centeredObj = shashin.getCenteredOverlay(metadata,null,null);
                             html += centeredObj.html;
 
                             html += '</div>\n';
@@ -64,4 +81,4 @@
             }
         });
     }
-}( window.shareAlbumSettings = window.shareAlbumSettings || {}, jQuery ));
+}
