@@ -3,6 +3,8 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body>
 
+<script type="text/babel" src="/js/site/test.js"></script>
+
 <div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
 <div class="container-fluid">
@@ -35,6 +37,8 @@
                     </div>
                 </div>
             </div>
+
+            <div id="rnRoot"></div>
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
