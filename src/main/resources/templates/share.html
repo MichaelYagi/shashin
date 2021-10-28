@@ -52,7 +52,7 @@
         const shareLink = /*[[${shareLink}]]*/ '';
         /*]]>*/
 
-        shareAlbumSettings.setShareLink(shareLink);
+        const shareAlbum = new ShareAlbum(shareLink);
 
         const infiniteScrollGallery = document.getElementById(
             'infinite-scroll-gallery',
@@ -69,7 +69,7 @@
             const albumId = /*[[${album.id}]]*/ 0;
             /*]]>*/
             if (albumId > 0) {
-                shareAlbumSettings.updateAlbum(albumId, nextPage, activePage).then(function () {
+                shareAlbum.updateAlbum(albumId, nextPage, activePage).then(function () {
                     lg.closeGallery(true);
                     lg.destroyModules(true);
                     lg.invalidateItems();
@@ -106,9 +106,15 @@
                 clearInterval(refreshIntervalId);
             }
         }, 200);
-        $(window).on('scroll', function () {
-            // Uset to detect near bottom
-            if (shashin.atEndOfPage() && $(".appendAlbumPhotos").last().text() !== "EOL") {
+
+        $("#container").on('scroll', function () {
+            if (shashin.atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
+                loadNextPage();
+            }
+        })
+
+        $("main").on('scroll', function () {
+            if (shashin.atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
                 loadNextPage();
             }
         })
