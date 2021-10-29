@@ -110,33 +110,33 @@ class ShashinUtil {
             }
             mediaContentList.push(mediaContent);
         });
-        shashin.initMediaContent(mediaContentList,shashin.getLightGallery(),shashin.getLightGalleryElement());
+        shashin.initMediaContent(mediaContentList);
 
         return mediaContentList;
     }
 
-    shashin.initMediaContent = function(mediaContentList,lg,lgElement) {
+    shashin.initMediaContent = function(mediaContentList) {
         if (mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
-            shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
+            shashin.refreshAndActivateLgListener(mediaContentList);
         }
     }
 
-    shashin.updateMediaContent = function(mediaContentList,additionalMediaContentList,lg,lgElement) {
+    shashin.updateMediaContent = function(mediaContentList,additionalMediaContentList) {
         if (additionalMediaContentList.length > 0) {
             mediaContentList = mediaContentList.concat(additionalMediaContentList);
-            if (lg !== null) {
-                shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
-            }
+            shashin.refreshAndActivateLgListener(mediaContentList);
         }
 
         return mediaContentList;
     }
 
-    shashin.refreshAndActivateLgListener = function (mediaContentList,lg,lgElement) {
-        lg.refresh(mediaContentList);
-        lgElement.addEventListener('lgAfterSlide', function(e) {
-            shashin.jumpToLightGalleryIndex(e.detail.index);
-        })
+    shashin.refreshAndActivateLgListener = function (mediaContentList) {
+        if (shashin.getLightGallery() !== null) {
+            shashin.getLightGallery().refresh(mediaContentList);
+            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function (e) {
+                shashin.jumpToLightGalleryIndex(e.detail.index);
+            })
+        }
     }
 
     shashin.pageLoader = function(func, appendClass, list, conditionOnNext) {
