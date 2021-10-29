@@ -83,7 +83,7 @@
             const searchTerm = /*[[${searchTerm}]]*/ '';
             /*]]>*/
             searchSettings.updateSearch(nextPage,searchTerm,activePage).then(function(additionalMediaContentList) {
-                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList,shashin.getLightGallery(),shashin.getLightGalleryElement());
+                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);
         }

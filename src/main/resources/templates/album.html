@@ -197,7 +197,7 @@
 
             if (albumId > 0) {
                 albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
-                    mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList,shashin.getLightGallery(),shashin.getLightGalleryElement());
+                    mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
                 });
             }
 
