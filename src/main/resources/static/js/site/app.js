@@ -80,6 +80,8 @@ class ShashinUtil {
     shashin.map = null;
     shashin.layer = null;
     shashin.feature = null;
+    shashin.infiniteScrollGallery = null;
+    shashin.lg = null;
 
     function fixContentHeight(){
         const viewHeight = $(window).height();
@@ -402,8 +404,35 @@ class ShashinUtil {
         }
     }
 
-    shashin.getLightGalleryConfigs = function() {
-        return {
+    shashin.setLightGalleryElement = function (name) {
+        shashin.infiniteScrollGallery = null;
+        if (document.getElementById(name)) {
+            shashin.infiniteScrollGallery = document.getElementById(name);
+        }
+    };
+
+    shashin.setLightGallery = function (additionalConfigs) {
+        let configs = shashin.getLightGalleryConfigs(additionalConfigs);
+        shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
+    }
+
+    shashin.getLightGalleryElement = function () {
+        return shashin.infiniteScrollGallery;
+    };
+
+    shashin.getLightGallery = function () {
+        return shashin.lg;
+    }
+
+    shashin.openGallery = function (e, index) {
+        e.preventDefault();
+        if (shashin.getLightGallery() !== null) {
+            shashin.getLightGallery().openGallery(index);
+        }
+    }
+
+    shashin.getLightGalleryConfigs = function(additionalConfigs) {
+        const configs = {
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen],
             counter: false,
             preload: 0,
@@ -413,6 +442,12 @@ class ShashinUtil {
             speed:0,
             licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
         }
+
+        for (const key in additionalConfigs) {
+            configs[key] = additionalConfigs[key];
+        }
+
+        return configs;
     }
 
     shashin.getMapSource = function (source) {

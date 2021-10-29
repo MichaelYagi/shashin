@@ -1,35 +1,4 @@
 (function( personSettings, $, undefined ) {
-    personSettings.infiniteScrollGallery = null;
-    personSettings.lg = null;
-    personSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    personSettings.lightGalleryConfigs["dynamic"] = true;
-
-    personSettings.setLightGalleryElement = function (name) {
-        personSettings.infiniteScrollGallery = null;
-        if (document.getElementById(name)) {
-            personSettings.infiniteScrollGallery = document.getElementById(name);
-        }
-    };
-
-    personSettings.setLightGallery = function () {
-        personSettings.lg = lightGallery(personSettings.getLightGalleryElement(), personSettings.lightGalleryConfigs);
-    }
-
-    personSettings.getLightGalleryElement = function () {
-        return personSettings.infiniteScrollGallery;
-    };
-
-    personSettings.getLightGallery = function () {
-        return personSettings.lg;
-    }
-
-    personSettings.openGallery = function (e,index) {
-        e.preventDefault();
-        if (personSettings.getLightGallery() !== null) {
-            personSettings.getLightGallery().openGallery(index);
-        }
-    }
-
     personSettings.activateMetadataListeners = function (metadata) {
         shashin.printMessageToConsole(metadata.id);
 
@@ -93,7 +62,7 @@
                                     html += shashin.getBottomLeftOverlay(metadata.id, null, null, null, null);
                                 }
 
-                                const centeredObj = shashin.getCenteredOverlay(metadata, 'personSettings.openGallery', currentMediaLinkIndex);
+                                const centeredObj = shashin.getCenteredOverlay(metadata, 'shashin.openGallery', currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 

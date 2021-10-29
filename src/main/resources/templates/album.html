@@ -63,7 +63,7 @@
                                     </a>
                                 </div>
 
-                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'albumSettings.openGallery',${iterStat.index})"></div>
+                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
 
                             </div>
 
@@ -145,8 +145,8 @@
             }
         });
 
-        albumSettings.setLightGalleryElement('infinite-scroll-gallery');
-        albumSettings.setLightGallery();
+        shashin.setLightGalleryElement('infinite-scroll-gallery');
+        shashin.setLightGallery({"dynamic":true});
 
         let mediaContentList = [];
         $.each($('.mediaLink'), function(index, element) {
@@ -161,9 +161,9 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (mediaContentList.length > 0 && albumSettings.getLightGallery() !== null) {
-            albumSettings.getLightGallery().refresh(mediaContentList);
-            albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+        if (mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
+            shashin.getLightGallery().refresh(mediaContentList);
+            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
         }
@@ -220,9 +220,9 @@
                 albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
                     if (additionalMediaContentList.length > 0) {
                         mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                        if (albumSettings.getLightGallery() !== null) {
-                            albumSettings.getLightGallery().refresh(mediaContentList);
-                            albumSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function (e) {
+                        if (shashin.getLightGallery() !== null) {
+                            shashin.getLightGallery().refresh(mediaContentList);
+                            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function (e) {
                                 shashin.jumpToLightGalleryIndex(e.detail.index);
                             })
                         }

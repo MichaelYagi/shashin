@@ -1,35 +1,4 @@
 (function( albumSettings, $, undefined ) {
-    albumSettings.infiniteScrollGallery = null;
-    albumSettings.lg = null;
-    albumSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    albumSettings.lightGalleryConfigs["dynamic"] = true;
-
-    albumSettings.openGallery = function(e,index) {
-        e.preventDefault();
-        if (albumSettings.getLightGallery() !== null) {
-            albumSettings.getLightGallery().openGallery(index);
-        }
-    }
-
-    albumSettings.setLightGalleryElement = function (name) {
-        albumSettings.infiniteScrollGallery = null;
-        if (document.getElementById(name)) {
-            albumSettings.infiniteScrollGallery = document.getElementById(name);
-        }
-    };
-
-    albumSettings.setLightGallery = function () {
-        albumSettings.lg = lightGallery(albumSettings.getLightGalleryElement(), albumSettings.lightGalleryConfigs);
-    }
-
-    albumSettings.getLightGalleryElement = function () {
-        return albumSettings.infiniteScrollGallery;
-    };
-
-    albumSettings.getLightGallery = function () {
-        return albumSettings.lg;
-    }
-
     albumSettings.openAlbumModal = function (e,metadataId) {
         e.preventDefault();
         let metadata = null;
@@ -139,7 +108,7 @@
                                     '       </a>\n' +
                                     '   </div>\n';
 
-                                const centeredObj = shashin.getCenteredOverlay(metadata,'albumSettings.openGallery',currentMediaLinkIndex);
+                                const centeredObj = shashin.getCenteredOverlay(metadata,'shashin.openGallery',currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 

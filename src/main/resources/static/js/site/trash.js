@@ -1,35 +1,4 @@
 (function( trashSettings, $, undefined ) {
-    trashSettings.infiniteScrollGallery = null;
-    trashSettings.lg = null;
-    trashSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    trashSettings.lightGalleryConfigs["dynamic"] = true;
-
-    trashSettings.setLightGalleryElement = function (name) {
-        trashSettings.infiniteScrollGallery = null;
-        if (document.getElementById(name)) {
-            trashSettings.infiniteScrollGallery = document.getElementById(name);
-        }
-    };
-
-    trashSettings.setLightGallery = function () {
-        trashSettings.lg = lightGallery(trashSettings.getLightGalleryElement(), trashSettings.lightGalleryConfigs);
-    }
-
-    trashSettings.getLightGalleryElement = function () {
-        return trashSettings.infiniteScrollGallery;
-    };
-
-    trashSettings.getLightGallery = function () {
-        return trashSettings.lg;
-    }
-    
-    trashSettings.openGallery = function (e, index) {
-        e.preventDefault();
-        if (trashSettings.getLightGallery() !== null) {
-            trashSettings.getLightGallery().openGallery(index);
-        }
-    }
-
     trashSettings.updateTrash = function (nextPage, activePage) {
         const shashinUtil = new ShashinUtil();
 
@@ -77,7 +46,7 @@
 
                                 html += shashin.getBottomLeftOverlay(metadata.id, null, null, null, null);
 
-                                const centeredObj = shashin.getCenteredOverlay(metadata,'trashSettings.openGallery',currentMediaLinkIndex);
+                                const centeredObj = shashin.getCenteredOverlay(metadata,'shashin.openGallery',currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 
