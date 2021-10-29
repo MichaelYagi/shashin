@@ -110,14 +110,21 @@ class ShashinUtil {
             }
             mediaContentList.push(mediaContent);
         });
+        shashin.updateMediaContent(mediaContentList, []);
+
+        return mediaContentList;
+    }
+
+    shashin.updateMediaContent = function(mediaContentList, additionalMediaContentList) {
         if (mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
+            if (additionalMediaContentList.length > 0) {
+                mediaContentList = mediaContentList.concat(additionalMediaContentList);
+            }
             shashin.getLightGallery().refresh(mediaContentList);
             shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
         }
-
-        return mediaContentList;
     }
 
     shashin.pageLoader = function(func, appendClass, list, conditionOnNext) {

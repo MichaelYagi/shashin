@@ -83,13 +83,7 @@
             const searchTerm = /*[[${searchTerm}]]*/ '';
             /*]]>*/
             searchSettings.updateSearch(nextPage,searchTerm,activePage).then(function(additionalMediaContentList) {
-                if (additionalMediaContentList.length > 0) {
-                    mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    shashin.getLightGallery().refresh(mediaContentList);
-                    shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
-                        shashin.jumpToLightGalleryIndex(e.detail.index);
-                    })
-                }
+                shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);
         }
