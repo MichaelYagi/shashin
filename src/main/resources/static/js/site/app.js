@@ -121,7 +121,14 @@ class ShashinUtil {
         }
     }
 
-    shashin.updateMediaContent = function(mediaContentList, additionalMediaContentList,lg,lgElement) {
+    shashin.updateMediaContent = function(mediaContentList,additionalMediaContentList,lg,lgElement) {
+        if (additionalMediaContentList.length > 0) {
+            mediaContentList = mediaContentList.concat(additionalMediaContentList);
+            if (lg !== null) {
+                shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
+            }
+        }
+
         if (additionalMediaContentList.length > 0 && mediaContentList.length > 0 && lg !== null) {
             mediaContentList = mediaContentList.concat(additionalMediaContentList);
             shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
