@@ -12,35 +12,6 @@ global.lgFullscreen = require('../../../../../main/resources/static/js/lg-fullsc
 const timelineSettings = require('../../../../../main/resources/static/js/site/timeline');
 
 describe('#shashin timeline tests', function() {
-    it('gallery element', function () {
-        $("body").append($("<div/>", {
-            id: 'someelelement'
-        }))
-
-        timelineSettings.setLightGalleryElement('someelelement')
-        assert.equal(timelineSettings.getLightGalleryElement().id,'someelelement');
-
-        timelineSettings.setLightGalleryElement('asdf')
-        assert.isNull(timelineSettings.getLightGalleryElement());
-    })
-
-    it('lightgallery element', function () {
-        $("body").append($("<div/>", {
-            id: 'someelement'
-        }))
-
-        timelineSettings.setLightGalleryElement('someelement');
-        timelineSettings.setLightGallery();
-        let lightGallery = timelineSettings.getLightGallery();
-        assert.equal(lightGallery.settings.licenseKey,'A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3');
-
-
-        timelineSettings.setLightGalleryElement('asdf');
-        timelineSettings.setLightGallery();
-        lightGallery = timelineSettings.getLightGallery();
-        assert.isFalse(lightGallery.hasOwnProperty("settings"))
-    })
-
     it('lightgallery element', function () {
         $("body").append($("<div/>", {
             id: 'someelement'

@@ -3,6 +3,7 @@ const { expect } = require('chai')
 require('../helper.js')
 
 const shashin = require('../../../../../main/resources/static/js/site/app');
+const timelineSettings = require("../../../../../main/resources/static/js/site/timeline");
 
 describe('#shashin app tests', function() {
     it('enable debug console output', function() {
@@ -182,5 +183,39 @@ describe('#shashin app tests', function() {
         assert.equal(tntlElA.children("a").children("span").attr("class"),tntlElB.children("a").children("span").attr("class"))
         assert.equal(tntlElA.children("a").children("span").attr("style"),tntlElB.children("a").children("span").attr("style"))
 
+    })
+
+    it('gallery element', function () {
+        $("body").append($("<div/>", {
+            id: 'someelelement'
+        }))
+
+        shashin.setLightGalleryElement('someelelement')
+        assert.equal(shashin.getLightGalleryElement().id,'someelelement');
+
+        shashin.setLightGalleryElement('asdf')
+        assert.isNull(shashin.getLightGalleryElement());
+    })
+
+    it('lightgallery element', function () {
+        $("body").append($("<div/>", {
+            id: 'someelement'
+        }))
+
+        shashin.setLightGalleryElement('someelement');
+        shashin.setLightGallery();
+        let lightGallery = shashin.getLightGallery();
+        assert.equal(lightGallery.settings.licenseKey,'A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3');
+
+        shashin.setLightGalleryElement('asdf');
+        shashin.setLightGallery();
+        lightGallery = shashin.getLightGallery();
+        assert.isFalse(lightGallery.hasOwnProperty("settings"))
+
+        shashin.setLightGalleryElement('someelement');
+        shashin.setLightGallery({"selector":".mediaLink"});
+        lightGallery = shashin.getLightGallery();
+        assert.isTrue(lightGallery.hasOwnProperty("selector"))
+        assert.equal(lightGallery["selector"],".mediaLink")
     })
 })
