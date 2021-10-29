@@ -32,7 +32,7 @@
 
                                 <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
 
-                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'favoritesSettings.openGallery',${iterStat.index})"></div>
+                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
 
                             </div>
 
@@ -63,8 +63,8 @@
 <script src="/js/site/applisteners.js"></script>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        favoritesSettings.setLightGalleryElement('infinite-scroll-gallery');
-        favoritesSettings.setLightGallery();
+        shashin.setLightGalleryElement('infinite-scroll-gallery');
+        shashin.setLightGallery({"dynamic":true});
 
         let mediaContentList = [];
         $.each($('.mediaLink'), function(index, element) {
@@ -79,9 +79,9 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (favoritesSettings.getLightGallery() !== null) {
-            favoritesSettings.getLightGallery().refresh(mediaContentList);
-            favoritesSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+        if (shashin.getLightGallery() !== null) {
+            shashin.getLightGallery().refresh(mediaContentList);
+            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
         }
@@ -99,8 +99,8 @@
             favoritesSettings.updateFavorites(nextPage,activePage).then(function(additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    favoritesSettings.getLightGallery().refresh(mediaContentList);
-                    favoritesSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+                    shashin.getLightGallery().refresh(mediaContentList);
+                    shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
                         shashin.jumpToLightGalleryIndex(e.detail.index);
                     })
                 }

@@ -144,8 +144,8 @@
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
 
-        timelineSettings.setLightGalleryElement('infinite-scroll-gallery');
-        timelineSettings.setLightGallery();
+        shashin.setLightGalleryElement('infinite-scroll-gallery');
+        shashin.setLightGallery({"selector":".mediaLink"});
 
         /*<![CDATA[*/
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';

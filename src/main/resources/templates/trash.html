@@ -33,7 +33,7 @@
 
                             <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
 
-                            <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'trashSettings.openGallery',${iterStat.index})"></div>
+                            <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
                         </div>
 
                         <script th:inline="javascript" type="text/javascript">
@@ -64,8 +64,8 @@
 <script src="/js/site/applisteners.js"></script>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        trashSettings.setLightGalleryElement('infinite-scroll-gallery');
-        trashSettings.setLightGallery();
+        shashin.setLightGalleryElement('infinite-scroll-gallery');
+        shashin.setLightGallery({"dynamic":true});
 
         let mediaContentList = [];
         $.each($('.mediaLink'), function(index, element) {
@@ -80,9 +80,9 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (trashSettings.getLightGallery() !== null) {
-            trashSettings.getLightGallery().refresh(mediaContentList);
-            trashSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+        if (shashin.getLightGallery() !== null) {
+            shashin.getLightGallery().refresh(mediaContentList);
+            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
         }
@@ -100,8 +100,8 @@
             trashSettings.updateTrash(nextPage,activePage).then(function(additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    trashSettings.getLightGallery().refresh(mediaContentList);
-                    trashSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+                    shashin.getLightGallery().refresh(mediaContentList);
+                    shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
                         shashin.jumpToLightGalleryIndex(e.detail.index);
                     })
                 }

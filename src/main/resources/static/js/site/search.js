@@ -1,35 +1,4 @@
 (function( searchSettings, $, undefined ) {
-    searchSettings.infiniteScrollGallery = null;
-    searchSettings.lg = null;
-    searchSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    searchSettings.lightGalleryConfigs["dynamic"] = true;
-
-    searchSettings.setLightGalleryElement = function (name) {
-        searchSettings.infiniteScrollGallery = null;
-        if (document.getElementById(name)) {
-            searchSettings.infiniteScrollGallery = document.getElementById(name);
-        }
-    };
-
-    searchSettings.setLightGallery = function () {
-        searchSettings.lg = lightGallery(searchSettings.getLightGalleryElement(), searchSettings.lightGalleryConfigs);
-    }
-
-    searchSettings.getLightGalleryElement = function () {
-        return searchSettings.infiniteScrollGallery;
-    };
-
-    searchSettings.getLightGallery = function () {
-        return searchSettings.lg;
-    }
-
-    searchSettings.openGallery = function (e,index) {
-        e.preventDefault();
-        if (searchSettings.getLightGallery() !== null) {
-            searchSettings.getLightGallery().openGallery(index);
-        }
-    }
-
     searchSettings.activateMetadataListeners = function (metadata) {
         shashin.printMessageToConsole(metadata.id);
 
@@ -81,7 +50,7 @@
                         const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                         html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
 
-                        const centeredObj = shashin.getCenteredOverlay(metadata,'searchSettings.openGallery',currentMediaLinkIndex);
+                        const centeredObj = shashin.getCenteredOverlay(metadata,'shashin.openGallery',currentMediaLinkIndex);
                         html += centeredObj.html;
                         mediaContentList.push(centeredObj.mediaContent);
 

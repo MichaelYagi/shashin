@@ -1,9 +1,4 @@
 (function( timelineSettings, $, undefined ) {
-    timelineSettings.lightGalleryEl = document.getElementById('infinite-scroll-gallery');
-    timelineSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    timelineSettings.lightGalleryConfigs["selector"] = '.mediaLink';
-    timelineSettings.lg = null;
-    timelineSettings.infiniteScrollGallery = null;
     timelineSettings.enableScrollSpy = true;
     timelineSettings.prevAnchor = "";
     timelineSettings.lastOffset = $("#container").scrollTop() ? $("#container").scrollTop() : $("#main").scrollTop();
@@ -14,25 +9,6 @@
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
-
-    timelineSettings.setLightGalleryElement = function (name) {
-        timelineSettings.infiniteScrollGallery = null;
-        if (document.getElementById(name)) {
-            timelineSettings.infiniteScrollGallery = document.getElementById(name);
-        }
-    };
-
-    timelineSettings.setLightGallery = function () {
-        timelineSettings.lg = lightGallery(timelineSettings.getLightGalleryElement(), timelineSettings.lightGalleryConfigs);
-    }
-
-    timelineSettings.getLightGalleryElement = function () {
-        return timelineSettings.infiniteScrollGallery;
-    };
-
-    timelineSettings.getLightGallery = function () {
-        return timelineSettings.lg;
-    }
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         // const aTag = $("#lightGalleryIndex" + metadataId);
@@ -100,27 +76,27 @@
     }
 
     timelineSettings.reinitLightGalleryInstance = function () {
-        if (timelineSettings.getLightGallery() !== null) {
-            const closeTimeout = timelineSettings.getLightGallery().closeGallery(true);
+        if (shashin.getLightGallery() !== null) {
+            const closeTimeout = shashin.getLightGallery().closeGallery(true);
             setTimeout(() => {
-                if (timelineSettings.getLightGallery() !== null) {
-                    timelineSettings.getLightGallery().destroyModules(true);
-                    timelineSettings.getLightGallery().invalidateItems();
-                    $(window).off(`.lg.global${timelineSettings.getLightGallery().lgId}`);
-                    timelineSettings.getLightGallery().LGel.off('.lg');
+                if (shashin.getLightGallery() !== null) {
+                    shashin.getLightGallery().destroyModules(true);
+                    shashin.getLightGallery().invalidateItems();
+                    $(window).off(`.lg.global${shashin.getLightGallery().lgId}`);
+                    shashin.getLightGallery().LGel.off('.lg');
                     // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
                     // Hack because lg.destroy() errors out
                     // when photos appear slower than destroy called, then there's an error
                     try {
-                        timelineSettings.getLightGallery().$container.remove();
+                        shashin.getLightGallery().$container.remove();
                     } catch (e) {
                         shashin.printMessageToConsole(e)
                     }
 
-                    timelineSettings.lg = null;
+                    shashin.lg = null;
 
                     setTimeout(() => {
-                        timelineSettings.setLightGallery();
+                        shashin.setLightGallery({"selector":".mediaLink"});
                     }, 500);
                 }
             }, closeTimeout);

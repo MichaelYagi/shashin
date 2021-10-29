@@ -1,35 +1,4 @@
 (function( favoritesSettings, $, undefined ) {
-    favoritesSettings.infiniteScrollGallery = null;
-    favoritesSettings.lg = null;
-    favoritesSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    favoritesSettings.lightGalleryConfigs["dynamic"] = true;
-
-    favoritesSettings.setLightGalleryElement = function (name) {
-        favoritesSettings.infiniteScrollGallery = null;
-        if (document.getElementById(name)) {
-            favoritesSettings.infiniteScrollGallery = document.getElementById(name);
-        }
-    };
-
-    favoritesSettings.setLightGallery = function () {
-        favoritesSettings.lg = lightGallery(favoritesSettings.getLightGalleryElement(), favoritesSettings.lightGalleryConfigs);
-    }
-
-    favoritesSettings.getLightGalleryElement = function () {
-        return favoritesSettings.infiniteScrollGallery;
-    };
-
-    favoritesSettings.getLightGallery = function () {
-        return favoritesSettings.lg;
-    }
-
-    favoritesSettings.openGallery = function (e,index) {
-        e.preventDefault();
-        if (favoritesSettings.getLightGallery() !== null) {
-            favoritesSettings.getLightGallery().openGallery(index);
-        }
-    }
-
     favoritesSettings.updateFavorites = function (nextPage,activePage) {
         const shashinUtil = new ShashinUtil();
 
@@ -81,7 +50,7 @@
 
                                 html += '<div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
 
-                                const centeredObj = shashin.getCenteredOverlay(metadata, 'favoritesSettings.openGallery', currentMediaLinkIndex);
+                                const centeredObj = shashin.getCenteredOverlay(metadata, 'shashin.openGallery', currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 

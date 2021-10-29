@@ -47,7 +47,7 @@
                                     <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
                                 </th:block>
 
-                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'personSettings.openGallery',${iterStat.index})"></div>
+                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
 
                             </div>
 
@@ -84,8 +84,8 @@
         const personId = /*[[${personInfo.id}]]*/ 0;
         /*]]>*/
 
-        personSettings.setLightGalleryElement('infinite-scroll-gallery');
-        personSettings.setLightGallery();
+        shashin.setLightGalleryElement('infinite-scroll-gallery');
+        shashin.setLightGallery({"dynamic":true});
 
         $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip()
@@ -104,9 +104,9 @@
             }
             mediaContentList.push(mediaContent);
         });
-        if (personSettings.getLightGallery() !== null) {
-            personSettings.getLightGallery().refresh(mediaContentList);
-            personSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+        if (shashin.getLightGallery() !== null) {
+            shashin.getLightGallery().refresh(mediaContentList);
+            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
                 shashin.jumpToLightGalleryIndex(e.detail.index);
             })
         }
@@ -120,8 +120,8 @@
             personSettings.updatePerson(personId,nextPage,activePage).then(function(additionalMediaContentList) {
                 if (additionalMediaContentList.length > 0) {
                     mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    personSettings.getLightGallery().refresh(mediaContentList);
-                    personSettings.infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+                    shashin.getLightGallery().refresh(mediaContentList);
+                    shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
                         shashin.jumpToLightGalleryIndex(e.detail.index);
                     })
                 }
