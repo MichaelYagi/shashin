@@ -3,7 +3,12 @@ const { expect } = require('chai')
 require('../helper.js')
 
 const shashin = require('../../../../../main/resources/static/js/site/app');
-const timelineSettings = require("../../../../../main/resources/static/js/site/timeline");
+global.lightGallery = require('../../../../../main/resources/static/js/lightgallery.min');
+global.lgZoom = require('../../../../../main/resources/static/js/lg-zoom.min');
+global.lgVideo = require('../../../../../main/resources/static/js/lg-video.min');
+global.lgRelativeCaption = require('../../../../../main/resources/static/js/lg-relative-caption.min');
+global.lgFullscreen = require('../../../../../main/resources/static/js/lg-fullscreen.min');
+global.ol = require('../../../../../main/resources/static/js/ol');
 
 describe('#shashin app tests', function() {
     it('enable debug console output', function() {
@@ -79,7 +84,6 @@ describe('#shashin app tests', function() {
     })
 
     it('Map sources', function() {
-        global.ol = require('../../../../../main/resources/static/js/ol');
         let source = shashin.getMapSource();
         expect(source.urls.join('|')).to.include('openstreetmap')
 
@@ -215,7 +219,6 @@ describe('#shashin app tests', function() {
         shashin.setLightGalleryElement('someelement');
         shashin.setLightGallery({"selector":".mediaLink"});
         lightGallery = shashin.getLightGallery();
-        assert.isTrue(lightGallery.hasOwnProperty("selector"))
-        assert.equal(lightGallery["selector"],".mediaLink")
+        assert.equal(lightGallery.settings.selector,".mediaLink")
     })
 })
