@@ -68,32 +68,11 @@
 <script src="/js/site/applisteners.js"></script>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function(){
-        shashin.setLightGalleryElement('scroll-gallery');
-        shashin.setLightGallery({"dynamic":true});
-
         $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        let mediaContentList = [];
-        $.each($('.mediaLink'), function(index, element) {
-            const mediaContent = {};
-            mediaContent.subHtml =$(this).attr("data-sub-html")
-            if ($(this).attr("data-src")) {
-                mediaContent.src = $(this).attr("data-src");
-                mediaContent.downloadUrl = $(this).attr("data-src");
-            } else if ($(this).attr("data-video")) {
-                mediaContent.video = $(this).attr("data-video");
-                mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
-            }
-            mediaContentList.push(mediaContent);
-        });
-        if (shashin.getLightGallery() !== null) {
-            shashin.getLightGallery().refresh(mediaContentList);
-            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
-                shashin.jumpToLightGalleryIndex(e.detail.index);
-            })
-        }
+        let mediaContentList = shashin.initLightGallery('scroll-gallery',{"dynamic":true},'.mediaLink');
 
         function loadNextPage() {
             $("#spinner").css("display","block");
@@ -115,31 +94,11 @@
             $("#currentPage").val(nextPage);
         }
 
-        const refreshIntervalId = window.setInterval(function () {
-            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
-                setTimeout(() => {
-                    loadNextPage();
-                }, 1000);
-            } else {
-                clearInterval(refreshIntervalId);
-            }
-            /*<![CDATA[*/
-            const metadataSearchList = /*[[${metadataSearchList}]]*/ '[]';
-            /*]]>*/
-            if ($(".appendSearchPhotos").last().text() === "EOL" || metadataSearchList === '' || metadataSearchList === '[]') {
-                clearInterval(refreshIntervalId);
-            }
-        }, 200);
-        $("#container").on('scroll', function() {
-            if (shashin.atEndOfPage(this) && $(".appendSearchPhotos").last().text() !== "EOL") {
-                loadNextPage();
-            }
-        })
-        $("main").on('scroll', function() {
-            if (shashin.atEndOfPage(this) && $(".appendSearchPhotos").last().text() !== "EOL") {
-                loadNextPage();
-            }
-        })
+        /*<![CDATA[*/
+        shashin.pageLoader(loadNextPage, ".appendSearchPhotos", /*[[${metadataSearchList}]]*/ '[]',true);
+        /*]]>*/
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 </script>
 
