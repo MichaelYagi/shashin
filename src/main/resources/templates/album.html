@@ -197,15 +197,7 @@
 
             if (albumId > 0) {
                 albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
-                    if (additionalMediaContentList.length > 0) {
-                        mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                        if (shashin.getLightGallery() !== null) {
-                            shashin.getLightGallery().refresh(mediaContentList);
-                            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function (e) {
-                                shashin.jumpToLightGalleryIndex(e.detail.index);
-                            })
-                        }
-                    }
+                    mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList,shashin.getLightGallery(),shashin.getLightGalleryElement());
                 });
             }
 

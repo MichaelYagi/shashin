@@ -73,13 +73,7 @@
             const activePage = /*[[${activePage}]]*/ 'trash';
             /*]]>*/
             trashSettings.updateTrash(nextPage,activePage).then(function(additionalMediaContentList) {
-                if (additionalMediaContentList.length > 0) {
-                    mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    shashin.getLightGallery().refresh(mediaContentList);
-                    shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
-                        shashin.jumpToLightGalleryIndex(e.detail.index);
-                    })
-                }
+                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList,shashin.getLightGallery(),shashin.getLightGalleryElement());
             });
             $("#currentPage").val(nextPage);
         }

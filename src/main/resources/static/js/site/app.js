@@ -128,6 +128,8 @@ class ShashinUtil {
                 shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
             }
         }
+
+        return mediaContentList;
     }
 
     shashin.refreshAndActivateLgListener = function (mediaContentList,lg,lgElement) {
