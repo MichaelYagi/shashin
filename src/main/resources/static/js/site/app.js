@@ -128,11 +128,6 @@ class ShashinUtil {
                 shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
             }
         }
-
-        if (additionalMediaContentList.length > 0 && mediaContentList.length > 0 && lg !== null) {
-            mediaContentList = mediaContentList.concat(additionalMediaContentList);
-            shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
-        }
     }
 
     shashin.refreshAndActivateLgListener = function (mediaContentList,lg,lgElement) {
