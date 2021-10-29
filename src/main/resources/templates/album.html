@@ -145,28 +145,7 @@
             }
         });
 
-        shashin.setLightGalleryElement('infinite-scroll-gallery');
-        shashin.setLightGallery({"dynamic":true});
-
-        let mediaContentList = [];
-        $.each($('.mediaLink'), function(index, element) {
-            const mediaContent = {};
-            mediaContent.subHtml =$(this).attr("data-sub-html")
-            if ($(this).attr("data-src")) {
-                mediaContent.src = $(this).attr("data-src");
-                mediaContent.downloadUrl = $(this).attr("data-src");
-            } else if ($(this).attr("data-video")) {
-                mediaContent.video = $(this).attr("data-video");
-                mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
-            }
-            mediaContentList.push(mediaContent);
-        });
-        if (mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
-            shashin.getLightGallery().refresh(mediaContentList);
-            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
-                shashin.jumpToLightGalleryIndex(e.detail.index);
-            })
-        }
+        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{"dynamic":true},'.mediaLink');
 
         $('#saveAlbumModal').click(function (e) {
             // $('#saveAlbum'+metadata.id).click(function (e) {
@@ -233,36 +212,11 @@
             $("#currentPage").val(nextPage);
         }
 
-        const refreshIntervalId = window.setInterval(function () {
-            if (albumId > 0 && !$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
-                setTimeout(() => {
-                    loadNextPage();
-                }, 1000);
-            } else {
-                clearInterval(refreshIntervalId);
-            }
+        /*<![CDATA[*/
+        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',albumId > 0);
+        /*]]>*/
 
-            /*<![CDATA[*/
-            const albumMetadataList = /*[[${albumMetadataList}]]*/ '[]';
-            /*]]>*/
-            if ($(".appendAlbumPhotos").last().text() === "EOL"  || albumMetadataList === '' || albumMetadataList === '[]') {
-                clearInterval(refreshIntervalId);
-            }
-        }, 200);
-        $("#container").on('scroll', function() {
-            if (albumId > 0 && shashin.atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
-                loadNextPage();
-            }
-        })
-        $("main").on('scroll', function() {
-            if (albumId > 0 && shashin.atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
-                loadNextPage();
-            }
-        })
-
-        $(function() {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 </script>
 </body>

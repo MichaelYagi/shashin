@@ -93,6 +93,65 @@ class ShashinUtil {
         shashin.map.updateSize();
     }
 
+    shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {
+        shashin.setLightGalleryElement(lgElement);
+        shashin.setLightGallery(additionalLgConfigs);
+
+        let mediaContentList = [];
+        $.each($(mediaElement), function() {
+            const mediaContent = {};
+            mediaContent.subHtml =$(this).attr("data-sub-html")
+            if ($(this).attr("data-src")) {
+                mediaContent.src = $(this).attr("data-src");
+                mediaContent.downloadUrl = $(this).attr("data-src");
+            } else if ($(this).attr("data-video")) {
+                mediaContent.video = $(this).attr("data-video");
+                mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
+            }
+            mediaContentList.push(mediaContent);
+        });
+        if (mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
+            shashin.getLightGallery().refresh(mediaContentList);
+            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
+                shashin.jumpToLightGalleryIndex(e.detail.index);
+            })
+        }
+
+        return mediaContentList;
+    }
+
+    shashin.pageLoader = function(func, appendClass, list, conditionOnNext) {
+        const refreshIntervalId = window.setInterval(function () {
+            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
+                setTimeout(() => {
+                    if (conditionOnNext === true) {
+                        func();
+                    }
+                }, 1000);
+            } else {
+                clearInterval(refreshIntervalId);
+            }
+
+            if ($(appendClass).last().text() === "EOL" || list === '' || list === '[]') {
+                clearInterval(refreshIntervalId);
+            }
+        }, 200);
+        $("#container").on('scroll', function() {
+            if (shashin.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
+                if (conditionOnNext === true) {
+                    func();
+                }
+            }
+        })
+        $("main").on('scroll', function() {
+            if (shashin.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
+                if (conditionOnNext === true) {
+                    func();
+                }
+            }
+        })
+    }
+
     shashin.openMap = function (metadata) {
         if (Object.keys(metadata).length > 0 &&
             metadata.lat !== null && metadata.lng !== null &&

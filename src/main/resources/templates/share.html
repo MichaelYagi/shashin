@@ -93,35 +93,11 @@
             }
         }
 
-        const refreshIntervalId = window.setInterval(function () {
-            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
-                setTimeout(() => {
-                    loadNextPage();
-                }, 1000);
-            } else {
-                clearInterval(refreshIntervalId);
-            }
+        /*<![CDATA[*/
+        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',true);
+        /*]]>*/
 
-            if ($(".appendAlbumPhotos").last().text() === "EOL" || '[[${albumMetadataList}]]' === '' || '[[${albumMetadataList}]]' === '[]') {
-                clearInterval(refreshIntervalId);
-            }
-        }, 200);
-
-        $("#container").on('scroll', function () {
-            if (shashin.atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
-                loadNextPage();
-            }
-        })
-
-        $("main").on('scroll', function () {
-            if (shashin.atEndOfPage(this) && $(".appendAlbumPhotos").last().text() !== "EOL") {
-                loadNextPage();
-            }
-        })
-
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 </script>
 </body>
