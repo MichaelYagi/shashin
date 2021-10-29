@@ -110,21 +110,29 @@ class ShashinUtil {
             }
             mediaContentList.push(mediaContent);
         });
-        shashin.updateMediaContent(mediaContentList, []);
+        shashin.initMediaContent(mediaContentList);
 
         return mediaContentList;
     }
 
-    shashin.updateMediaContent = function(mediaContentList, additionalMediaContentList) {
+    shashin.initMediaContent = function(mediaContentList) {
         if (mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
-            if (additionalMediaContentList.length > 0) {
-                mediaContentList = mediaContentList.concat(additionalMediaContentList);
-            }
-            shashin.getLightGallery().refresh(mediaContentList);
-            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
-                shashin.jumpToLightGalleryIndex(e.detail.index);
-            })
+            shashin.refreshAndActivateLgListener(mediaContentList);
         }
+    }
+
+    shashin.updateMediaContent = function(mediaContentList, additionalMediaContentList) {
+        if (additionalMediaContentList.length > 0 && mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
+            mediaContentList = mediaContentList.concat(additionalMediaContentList);
+            shashin.refreshAndActivateLgListener(mediaContentList);
+        }
+    }
+
+    shashin.refreshAndActivateLgListener = function (mediaContentList) {
+        shashin.getLightGallery().refresh(mediaContentList);
+        shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
+            shashin.jumpToLightGalleryIndex(e.detail.index);
+        })
     }
 
     shashin.pageLoader = function(func, appendClass, list, conditionOnNext) {
