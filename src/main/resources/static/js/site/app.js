@@ -110,27 +110,27 @@ class ShashinUtil {
             }
             mediaContentList.push(mediaContent);
         });
-        shashin.initMediaContent(mediaContentList);
+        shashin.initMediaContent(mediaContentList,shashin.getLightGallery(),shashin.getLightGalleryElement());
 
         return mediaContentList;
     }
 
-    shashin.initMediaContent = function(mediaContentList) {
+    shashin.initMediaContent = function(mediaContentList,lg,lgElement) {
         if (mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
-            shashin.refreshAndActivateLgListener(mediaContentList);
+            shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
         }
     }
 
-    shashin.updateMediaContent = function(mediaContentList, additionalMediaContentList) {
-        if (additionalMediaContentList.length > 0 && mediaContentList.length > 0 && shashin.getLightGallery() !== null) {
+    shashin.updateMediaContent = function(mediaContentList, additionalMediaContentList,lg,lgElement) {
+        if (additionalMediaContentList.length > 0 && mediaContentList.length > 0 && lg !== null) {
             mediaContentList = mediaContentList.concat(additionalMediaContentList);
-            shashin.refreshAndActivateLgListener(mediaContentList);
+            shashin.refreshAndActivateLgListener(mediaContentList,lg,lgElement);
         }
     }
 
-    shashin.refreshAndActivateLgListener = function (mediaContentList) {
-        shashin.getLightGallery().refresh(mediaContentList);
-        shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
+    shashin.refreshAndActivateLgListener = function (mediaContentList,lg,lgElement) {
+        lg.refresh(mediaContentList);
+        lgElement.addEventListener('lgAfterSlide', function(e) {
             shashin.jumpToLightGalleryIndex(e.detail.index);
         })
     }
