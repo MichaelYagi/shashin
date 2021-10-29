@@ -3,8 +3,6 @@
     searchSettings.lg = null;
     searchSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
     searchSettings.lightGalleryConfigs["dynamic"] = true;
-    searchSettings.retryLimit = 3;
-    searchSettings.tryCount = 0;
 
     searchSettings.setLightGalleryElement = function (name) {
         searchSettings.infiniteScrollGallery = null;
@@ -41,23 +39,25 @@
     }
 
     searchSettings.updateSearch = function(nextPage,searchTerm,activePage) {
+        const shashinUtil = new ShashinUtil();
+
         const promise = $.ajax({
             type: 'get',
             url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
             contentType: 'application/json; charset=utf-8',
             async:true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating search. Attempt: "+searchSettings.tryCount+"/"+searchSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating search. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                searchSettings.tryCount++;
-                if (searchSettings.tryCount <= searchSettings.retryLimit) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     searchSettings.updateSearch(nextPage,searchTerm,activePage);
                 }
             }
         }).then(function (data) {
-            searchSettings.tryCount = 0;
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
                 const metadataList = data["metadataSearchList"] === "" ? null : data["metadataSearchList"];

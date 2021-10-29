@@ -3,8 +3,6 @@
     personSettings.lg = null;
     personSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
     personSettings.lightGalleryConfigs["dynamic"] = true;
-    personSettings.retryLimit = 3;
-    personSettings.tryCount = 0;
 
     personSettings.setLightGalleryElement = function (name) {
         personSettings.infiniteScrollGallery = null;
@@ -41,6 +39,8 @@
     }
 
     personSettings.updatePerson = function (personId,nextPage,activePage) {
+        const shashinUtil = new ShashinUtil();
+
         // Get paged results
         const promise = $.ajax({
             type: 'get',
@@ -48,17 +48,17 @@
             contentType: 'application/json; charset=utf-8',
             async: true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating person. Attempt: " + personSettings.tryCount + "/" + personSettings.retryLimit + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating person. Attempt: " + shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit() + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                personSettings.tryCount++;
-                if (personSettings.tryCount <= personSettings.retryLimit) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     personSettings.updatePerson(personId, nextPage, activePage);
                 }
             }
         }).then(function (data) {
-            personSettings.tryCount = 0;
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
