@@ -6,6 +6,7 @@ const { Blob } = require('blob-polyfill');
 
 global.window = dom.window;
 global.document = dom.window.document;
+global.URL.createObjectURL = function() {};
 global.Image = dom.window.Image;
 global.Blob = Blob;
 global.$ = global.jQuery = require('../../../../main/resources/static/js/jquery-3.5.1.min');

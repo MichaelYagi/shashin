@@ -1,13 +1,5 @@
 const {assert} = require("chai")
-const { expect } = require('chai')
 require('../helper.js')
-
-global.shashin = require('../../../../../main/resources/static/js/site/app');
-global.lightGallery = require('../../../../../main/resources/static/js/lightgallery.min');
-global.lgZoom = require('../../../../../main/resources/static/js/lg-zoom.min');
-global.lgVideo = require('../../../../../main/resources/static/js/lg-video.min');
-global.lgRelativeCaption = require('../../../../../main/resources/static/js/lg-relative-caption.min');
-global.lgFullscreen = require('../../../../../main/resources/static/js/lg-fullscreen.min');
 
 const timelineSettings = require('../../../../../main/resources/static/js/site/timeline');
 
