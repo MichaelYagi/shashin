@@ -3,8 +3,6 @@
     trashSettings.lg = null;
     trashSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
     trashSettings.lightGalleryConfigs["dynamic"] = true;
-    trashSettings.retryLimit = 3;
-    trashSettings.tryCount = 0;
 
     trashSettings.setLightGalleryElement = function (name) {
         trashSettings.infiniteScrollGallery = null;
@@ -33,6 +31,8 @@
     }
 
     trashSettings.updateTrash = function (nextPage, activePage) {
+        const shashinUtil = new ShashinUtil();
+
         // Get paged results
         const promise = $.ajax({
             type: 'get',
@@ -40,17 +40,17 @@
             contentType: 'application/json; charset=utf-8',
             async: true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating trash. Attempt: "+trashSettings.tryCount+"/"+trashSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating trash. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                trashSettings.tryCount++;
-                if (trashSettings.tryCount <= trashSettings.retryLimit) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     trashSettings.updateTrash(nextPage, activePage);
                 }
             }
         }).then(function (data) {
-            trashSettings.tryCount = 0;
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";

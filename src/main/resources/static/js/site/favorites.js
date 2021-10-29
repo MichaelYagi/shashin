@@ -3,8 +3,6 @@
     favoritesSettings.lg = null;
     favoritesSettings.lightGalleryConfigs = shashin.getLightGalleryConfigs();
     favoritesSettings.lightGalleryConfigs["dynamic"] = true;
-    favoritesSettings.retryLimit = 3;
-    favoritesSettings.tryCount = 0;
 
     favoritesSettings.setLightGalleryElement = function (name) {
         favoritesSettings.infiniteScrollGallery = null;
@@ -33,6 +31,8 @@
     }
 
     favoritesSettings.updateFavorites = function (nextPage,activePage) {
+        const shashinUtil = new ShashinUtil();
+
         // Get paged results
         const promise = $.ajax({
             type: 'get',
@@ -40,17 +40,17 @@
             contentType: 'application/json; charset=utf-8',
             async: true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating favorites. Attempt: " + favoritesSettings.tryCount + "/" + favoritesSettings.retryLimit + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating favorites. Attempt: " + shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit() + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                favoritesSettings.tryCount++;
-                if (favoritesSettings.tryCount <= favoritesSettings.retryLimit) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     favoritesSettings.updateFavorites(nextPage, activePage);
                 }
             }
         }).then(function (data) {
-            favoritesSettings.tryCount = 0;
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";

@@ -14,8 +14,6 @@
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
-    timelineSettings.retryLimit = 3;
-    timelineSettings.tryCount = 0;
 
     timelineSettings.setLightGalleryElement = function (name) {
         timelineSettings.infiniteScrollGallery = null;
@@ -47,23 +45,25 @@
     }
 
     timelineSettings.refreshTimeline = function (mediaTypeFilter,currentOffCanvasId) {
+        const shashinUtil = new ShashinUtil();
+
         $.ajax({
             type: 'get',
             url: "/timeline/dates/"+mediaTypeFilter,
             contentType: 'application/json; charset=utf-8',
             async:true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                timelineSettings.tryCount++;
-                if (timelineSettings.tryCount <= timelineSettings.retryLimit) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     timelineSettings.refreshTimeline(mediaTypeFilter);
                 }
             }
         }).then(function(data) {
-            timelineSettings.tryCount = 0;
             if (data.hasOwnProperty("metadataDates")) {
                 $("#offcanvasTocBody").empty();
 
@@ -555,22 +555,24 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = function(date,mediaTypeFilter) {
+        const shashinUtil = new ShashinUtil();
+
         $.ajax({
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
             contentType: 'application/json; charset=utf-8',
             async:true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                timelineSettings.tryCount++;
-                if (timelineSettings.tryCount <= timelineSettings.retryLimit) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     timelineSettings.attachAssociatedMetadata(date,mediaTypeFilter);
                 }
             }
         }).then(function(data) {
-            timelineSettings.tryCount = 0;
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("metadataList") &&
@@ -778,22 +780,24 @@
     }
 
     timelineSettings.updateTimeline = function(date,mediaTypeFilter,action,attachToId) {
+        const shashinUtil = new ShashinUtil();
+
         const promise = $.ajax({
             type: 'get',
             url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
             contentType: 'application/json; charset=utf-8',
             async: false
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating timeline. Attempt: "+timelineSettings.tryCount+"/"+timelineSettings.retryLimit+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating timeline. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                timelineSettings.tryCount++;
-                if (timelineSettings.tryCount <= timelineSettings.retryLimit) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
                     //try again
                     timelineSettings.updateTimeline(date,mediaTypeFilter,action,attachToId);
                 }
             }
         }).then(function (data) {
-            timelineSettings.tryCount = 0;
             let deferred = new $.Deferred();
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
