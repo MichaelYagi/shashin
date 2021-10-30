@@ -38,6 +38,8 @@
                 </div>
             </div>
 
+            <br><th:block th:text="${@environment.getProperty('app.js.useMinified')}"></th:block>
+
             <div id="rnRoot"></div>
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
