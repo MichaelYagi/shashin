@@ -47,14 +47,9 @@
 
                                 html += shashin.getBottomLeftOverlay(metadata.id, null, null, null, null);
 
-
-                                html += '<div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
-
                                 const centeredObj = shashin.getCenteredOverlay(metadata, 'shashin.openGallery', currentMediaLinkIndex);
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
-
-                                html += '</div>\n';
 
                                 $(html).insertBefore($(".appendMetadataPhotos").last())
 

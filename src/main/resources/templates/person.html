@@ -84,32 +84,11 @@
         const personId = /*[[${personInfo.id}]]*/ 0;
         /*]]>*/
 
-        shashin.setLightGalleryElement('infinite-scroll-gallery');
-        shashin.setLightGallery({"dynamic":true});
-
         $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        let mediaContentList = [];
-        $.each($('.mediaLink'), function(index, element) {
-            const mediaContent = {};
-            mediaContent.subHtml =$(this).attr("data-sub-html")
-            if ($(this).attr("data-src")) {
-                mediaContent.src = $(this).attr("data-src");
-                mediaContent.downloadUrl = $(this).attr("data-src");
-            } else if ($(this).attr("data-video")) {
-                mediaContent.video = $(this).attr("data-video");
-                mediaContent.downloadUrl = $(this).attr("data-video")+"/download";
-            }
-            mediaContentList.push(mediaContent);
-        });
-        if (shashin.getLightGallery() !== null) {
-            shashin.getLightGallery().refresh(mediaContentList);
-            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
-                shashin.jumpToLightGalleryIndex(e.detail.index);
-            })
-        }
+        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{"dynamic":true},'.mediaLink');
 
         function loadNextPage() {
             const currentPage = parseInt($("#currentPage").val());
@@ -118,48 +97,18 @@
             const activePage = /*[[${activePage}]]*/ 'person';
             /*]]>*/
             personSettings.updatePerson(personId,nextPage,activePage).then(function(additionalMediaContentList) {
-                if (additionalMediaContentList.length > 0) {
-                    mediaContentList = mediaContentList.concat(additionalMediaContentList);
-                    shashin.getLightGallery().refresh(mediaContentList);
-                    shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function(e) {
-                        shashin.jumpToLightGalleryIndex(e.detail.index);
-                    })
-                }
+                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);
         }
-        const refreshIntervalId = window.setInterval(function () {
-            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
-                setTimeout(() => {
-                    loadNextPage();
-                }, 1000);
-            } else {
-                clearInterval(refreshIntervalId);
-            }
 
-            /*<![CDATA[*/
-            const metadataList = /*[[${metadataList}]]*/ '[]';
-            /*]]>*/
-            if ($(".appendPersonPhotos").last().text() === "EOL" || metadataList === '' || metadataList === '[]') {
-                clearInterval(refreshIntervalId);
-            }
-        }, 200);
-        $("#container").on('scroll', function() {
-            if (shashin.atEndOfPage(this) && $(".appendPersonPhotos").last().text() !== "EOL") {
-                loadNextPage();
-            }
-        })
-        $("main").on('scroll', function() {
-            if (shashin.atEndOfPage(this) && $(".appendPersonPhotos").last().text() !== "EOL") {
-                loadNextPage();
-            }
-        })
+        /*<![CDATA[*/
+        shashin.pageLoader(loadNextPage, ".appendPersonPhotos", /*[[${metadataList}]]*/ '[]',true);
+        /*]]>*/
 
-        shashin.matchingListeners()
+        shashin.matchingListeners();
 
-        $(function() {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
+        $('[data-bs-toggle="tooltip"]').tooltip();
     });
 </script>
 </body>
