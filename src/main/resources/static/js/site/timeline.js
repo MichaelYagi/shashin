@@ -331,9 +331,10 @@
             $("#albumListInput").remove();
         }
         if (allAlbumList !== null && allAlbumList.length > 0) {
-            let html = '<div class="input-group-append" id="albumListInput">\n' +
-                '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleAlbumDropdown(\'' + metadata.id + '\');" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                '           <div class="dropdown-menu" id="albumsList">\n';
+            let html =
+                '<div class="input-group-append" id="albumListInput">\n' +
+                '   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleAlbumDropdown(\'' + metadata.id + '\');" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                '   <div class="dropdown-menu" id="albumsList">\n';
 
             for (index in allAlbumList) {
                 const eachAlbum = allAlbumList[index];
@@ -344,12 +345,12 @@
                 }
 
                 html +=
-                    '           <button class="dropdown-item" type="button">\n' +
-                    '               <input type="checkbox" onclick="return timelineModal.populateAlbum(\'' + metadata.id + '\');" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
-                    '               <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + eachAlbum.name + '</label>\n' +
-                    '           </button>\n';
+                    '   <button class="dropdown-item" type="button">\n' +
+                    '       <input type="checkbox" onclick="return timelineModal.populateAlbum(\'' + metadata.id + '\');" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
+                    '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + eachAlbum.name + '</label>\n' +
+                    '   </button>\n';
             }
-            html += '   </div>\n' +
+            html += '</div>\n' +
                 '</div>\n';
 
             $(html).insertAfter($("#albumNameData"))
