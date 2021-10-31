@@ -130,7 +130,13 @@
         </div>
     </div>
 </div>
-<script src="/js/site/albumsmodal.js"></script>
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+<script src="/js/site/albumsmodal.js" type="text/javascript"></script>
+</th:block>
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+<script src="/js/site/albumsmodal.min.js" type="text/javascript"></script>
+</th:block>
+
 
 </body>
 </html>

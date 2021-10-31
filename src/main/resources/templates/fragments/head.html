@@ -56,6 +56,7 @@
     <th:block th:if="${titleDescriptor == 'Dashboard'}">
         <script src="/js/chart.min.js"></script>
     </th:block>
+
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
         <script src="/js/site/app.js"></script>
         <th:block th:if="${titleDescriptor == 'Album'}">
@@ -81,6 +82,34 @@
         </th:block>
         <th:block th:if="${titleDescriptor == 'Albums'}">
             <script src="/js/site/albumsmodallisteners.js"></script>
+        </th:block>
+    </th:block>
+
+    <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+        <script src="/js/site/app.min.js"></script>
+        <th:block th:if="${titleDescriptor == 'Album'}">
+            <script src="/js/site/album.min.js"></script>
+        </th:block>
+        <th:block th:if="${titleDescriptor == 'Timeline'}">
+            <script src="/js/site/timeline.min.js"></script>
+        </th:block>
+        <th:block th:if="${titleDescriptor == 'Favorites'}">
+            <script src="/js/site/favorites.min.js"></script>
+        </th:block>
+        <th:block th:if="${titleDescriptor == 'Search'}">
+            <script src="/js/site/search.min.js"></script>
+        </th:block>
+        <th:block th:if="${titleDescriptor == 'Trash'}">
+            <script src="/js/site/trash.min.js"></script>
+        </th:block>
+        <th:block th:if="${titleDescriptor == 'Share'}">
+            <script src="/js/site/share.min.js"></script>
+        </th:block>
+        <th:block th:if="${titleDescriptor == 'Person'}">
+            <script src="/js/site/person.min.js"></script>
+        </th:block>
+        <th:block th:if="${titleDescriptor == 'Albums'}">
+            <script src="/js/site/albumsmodallisteners.min.js"></script>
         </th:block>
     </th:block>
 </head>

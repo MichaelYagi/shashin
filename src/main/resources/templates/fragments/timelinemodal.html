@@ -132,7 +132,12 @@
         </div>
     </div>
 </div>
-<script src="/js/site/timelinemodal.js"></script>
 
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+    <script src="/js/site/timelinemodal.js" type="text/javascript"></script>
+</th:block>
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+    <script src="/js/site/timelinemodal.min.js" type="text/javascript"></script>
+</th:block>
 </body>
 </html>

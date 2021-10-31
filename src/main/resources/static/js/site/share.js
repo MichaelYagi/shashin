@@ -1,19 +1,17 @@
 class ShareAlbum {
-    #shareLink = '';
-
     constructor(shareLink) {
-        this.#shareLink = shareLink;
+        this.shareLink = shareLink;
     }
 
     getShareLink() {
-        return this.#shareLink;
+        return this.shareLink;
     }
 
     updateAlbum(albumId, nextPage, activePage) {
         const self = this;
         const shashinUtil = new ShashinUtil();
 
-        return $.ajax({
+        const promise = $.ajax({
             type: 'get',
             url: "/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage,
             contentType: 'application/json; charset=utf-8'
@@ -29,12 +27,17 @@ class ShareAlbum {
                 }
             }
         }).then(function (data) {
+            const mediaContentList = [];
+
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("albumMetadataList")) {
                         const albumMetadataList = data["albumMetadataList"] === "" ? [] : data["albumMetadataList"];
+                        const mediaLinkLength = $(".mediaLink").length;
+
                         for (const index in albumMetadataList) {
+                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             const metadata = albumMetadataList[index];
 
                             let html =
@@ -44,13 +47,12 @@ class ShareAlbum {
                             const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                             html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
 
-                            const centeredObj = shashin.getCenteredOverlay(metadata,null,null);
+                            const centeredObj = shashin.getCenteredOverlay(metadata,'shashin.openGallery',currentMediaLinkIndex);
                             html += centeredObj.html;
+                            mediaContentList.push(centeredObj.mediaContent);
 
-                            html += '</div>\n';
-
-                            // Append HTML
-                            $(html).insertBefore($(".appendAlbumPhotos").last())
+                            html += '</div>\n<span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>\n';
+                            $(html).insertAfter($(".appendAlbumPhotos").last())
 
                             // Call JS and modal
                             shashin.setPhotoOverlays(metadata, activePage);
@@ -66,6 +68,12 @@ class ShareAlbum {
             } else {
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none")
             }
+
+            return mediaContentList;
+        });
+
+        return promise.done(function(data) {
+            return data;
         });
     }
 }
