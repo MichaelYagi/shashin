@@ -2,6 +2,7 @@ const {assert} = require("chai")
 require('../helper.js')
 
 const timelineSettings = require('../../../../../main/resources/static/js/site/timeline');
+global.shashin = require('../../../../../main/resources/static/js/site/app');
 
 describe('#shashin timeline tests', function() {
     it('lightgallery element', function () {
