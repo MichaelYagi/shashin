@@ -564,10 +564,10 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @GetMapping("/settings/scan")
-    fun getScan(model: Model): String {
-        val module = "scan"
-        model["message"] = "Click scan to scan photo directories"
+    @GetMapping("/settings/match")
+    fun getMatchScan(model: Model): String {
+        val module = "match"
+        model["message"] = "Click scan to start finding people"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -575,10 +575,10 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @GetMapping("/settings/match")
-    fun getMatchScan(model: Model): String {
-        val module = "match"
-        model["message"] = "Click scan to start finding people"
+    @GetMapping("/settings/scan")
+    fun getScan(model: Model): String {
+        val module = "scan"
+        model["message"] = "Click scan to scan photo directories"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

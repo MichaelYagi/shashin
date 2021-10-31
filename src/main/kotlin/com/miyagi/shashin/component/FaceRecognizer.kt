@@ -31,6 +31,7 @@ import java.io.*
 import java.nio.IntBuffer
 import java.util.ArrayList
 import java.util.Arrays
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -106,19 +107,24 @@ class FaceRecognizer() {
         }
     }
 
-    fun runRecognizer() {
-        if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
+    fun runRecognizer(stopProcesses: Boolean) {
+        val tempDir = System.getProperty("java.io.tmpdir")
 
+        if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
             // Clean up any existing thread files
             FileUtils.deleteThreadFiles(threadExtensionName)
 
+            val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".facescan_shashinscan", "Thread")
+
             Thread {
-                val tempDir = System.getProperty("java.io.tmpdir")
-                val threadFile = FileUtils.createFile(tempDir, tempDir + "/" + Thread.currentThread().name + ".facescan_shashinscan", "Thread")
                 if (threadFile != null) {
                     getPrediction(threadFile)
                 }
             }.start()
+        }
+
+        if (stopProcesses) {
+            FileUtils.deleteThreadFiles(threadExtensionName)
         }
     }
 
@@ -133,8 +139,15 @@ class FaceRecognizer() {
         // Process each training image through different cascades and load into map
         if (this.cascadeFileList.isNotEmpty()) {
             for (cascadeFile in this.cascadeFileList) {
+                if (FileUtils.readThreadFile(threadExtensionName) == null || !FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                    break
+                }
                 if (this.trainingData != null && this.trainingData!!.count() > 0) {
                     for (trainingImage in this.trainingData!!) {
+                        if (FileUtils.readThreadFile(threadExtensionName) == null || !FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                            break
+                        }
+
                         var path = trainingImage.getPath()
                         if (trainingImage.getType()?.contains("video") == true) {
                             path = trainingImage.getThumbnailPathSmall()
@@ -154,6 +167,9 @@ class FaceRecognizer() {
                         // Crop image into square
                         var rectCrop: Rect?
                         for (i in 0 until faceDetections.size()) {
+                            if (FileUtils.readThreadFile(threadExtensionName) == null || !FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                                break
+                            }
                             // Crop and resize
                             val rect: Rect = faceDetections.get(i)
                             opencv_imgproc.rectangle(
@@ -205,6 +221,9 @@ class FaceRecognizer() {
             var found = false
 
             for (testImage in this.testImages!!) {
+                if (FileUtils.readThreadFile(threadExtensionName) == null || !FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                    break
+                }
                 matchMap[0] = 0.0
                 var path = testImage.getPath()
                 if (testImage.getType()?.contains("video") == true) {
@@ -214,6 +233,9 @@ class FaceRecognizer() {
 
                 if (this.cascadeFileList.isNotEmpty()) {
                     for (cascadeFile in this.cascadeFileList) {
+                        if (FileUtils.readThreadFile(threadExtensionName) == null || !FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                            break
+                        }
                         val testimage: Mat = opencv_imgcodecs.imread(path, opencv_imgcodecs.IMREAD_COLOR)
 
                         // Load cascade file
@@ -257,6 +279,9 @@ class FaceRecognizer() {
                                 // Loop through each detected face in image and crop image into square
                                 var rectCrop: Rect?
                                 for (i in 0 until testimageFaceDetections.size()) {
+                                    if (FileUtils.readThreadFile(threadExtensionName) == null || !FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                                        break
+                                    }
                                     val rect: Rect = testimageFaceDetections.get(i)
                                     opencv_imgproc.rectangle(
                                         testimage,
@@ -332,6 +357,9 @@ class FaceRecognizer() {
 
 
                 for ((labelId, confidence) in matchMap) {
+                    if (FileUtils.readThreadFile(threadExtensionName)?.contains("Scan Cancelled") == true) {
+                        break
+                    }
                     if (labelId != 0) {
                         found = true
                         val confidenceVal: String = "%.1f".format(confidence)

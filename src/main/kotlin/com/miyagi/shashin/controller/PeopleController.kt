@@ -32,6 +32,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.ArrayList
 import java.util.HashMap
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
@@ -56,6 +57,8 @@ class PeopleController {
     @Value("\${app.role.admin}")
     private lateinit var adminRole: String
 
+    private var shouldStop = AtomicBoolean(false)
+
     private val threadExtensionName: String = "facescan_shashinscan"
 
     val mapper = ObjectMapper()
@@ -67,13 +70,15 @@ class PeopleController {
     fun sendMatcnMessage(message: ScanMessage): Message? {
         var msg = "Start Matching"
 
-        if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
+        if (shouldStop.get()) {
+            msg = "Matching Cancelled"
+        } else if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
             msg = "Matching Complete"
-        }
-
-        val threadFileContent = FileUtils.readThreadFile(threadExtensionName)
-        if (threadFileContent != null) {
-            msg = "Matching in progress: " + threadFileContent.replace("\\", "/")
+        } else {
+            val threadFileContent = FileUtils.readThreadFile(threadExtensionName)
+            if (threadFileContent != null) {
+                msg = "Matching in progress: " + threadFileContent.replace("\\", "/")
+            }
         }
 
         val messageObj = Message()
@@ -114,21 +119,15 @@ class PeopleController {
 //        println(event.message)
     }
 
-    @RequestMapping(value = ["/person/matches/deletethread"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/person/matches/start"], method = [RequestMethod.POST], produces = ["application/json"])
     @PreAuthorize("hasRole('ADMIN')")
     @ResponseBody
-    fun deleteThread(model: Model): String {
-        FileUtils.deleteThreadFiles("facescan_shashinscan")
-        resp["msg"] = "Thread file manually deleted"
-        resp["status"] = "success"
-        return mapper.writeValueAsString(resp)
-    }
-
-    @RequestMapping(value = ["/person/matches/start"], method = [RequestMethod.GET], produces = ["application/json"])
-    @PreAuthorize("hasRole('ADMIN')")
-    @ResponseBody
-    fun startPredictions(model: Model): String {
+    fun startPredictions(model: Model,@RequestParam cancelScan: Boolean): String {
         val settings = model.getAttribute("settings") as Settings
+
+        if (cancelScan) {
+            shouldStop.set(true)
+        }
 
         // Scan records of photos that haven't been scanned in a separate thread
         val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
@@ -136,7 +135,7 @@ class PeopleController {
         val distinctLabelRecords = this.recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
         // Start matching in a separate thread
-        if (testImages != null && trainingData != null && distinctLabelRecords != null && distinctLabelRecords.count() > 1) {
+        if (testImages != null && trainingData != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
             val faceRecognizer = FaceRecognizer(
                 testImages,
                 trainingData,
@@ -147,9 +146,10 @@ class PeopleController {
                 adminRole,
                 settings.getRecognitionConfidenceThreshold()!!.toDouble()
             )
-            faceRecognizer.runRecognizer()
+            faceRecognizer.runRecognizer(shouldStop.get())
+            shouldStop.set(false)
         } else {
-            resp["msg"] = "Training data not detected. At least 2 people must be tagged."
+            resp["msg"] = "Training data not detected."
             resp["status"] = "fail"
             return mapper.writeValueAsString(resp)
         }

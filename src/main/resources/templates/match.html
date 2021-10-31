@@ -11,7 +11,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
-            <button class="btn btn-danger" id="deleteThread">Delete Thread</button>
+            <button class="btn btn-danger" id="cancelThread">Cancel</button>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -28,7 +28,12 @@
         $("#matchAction").click(function(e) {
             e.preventDefault();
 
-            $.get("/person/matches/start", function(data) {
+            let posting = $.post(
+                "/person/matches/start",
+                {"cancelScan": false}
+            );
+
+            posting.done(function(data) {
                 if (data["status"] === "success") {
                     window.location.href = window.location.href;
                 } else {
@@ -37,10 +42,15 @@
             });
         });
 
-        $("#deleteThread").click(function(e) {
+        $("#cancelThread").click(function(e) {
             e.preventDefault();
 
-            $.get("/person/matches/deletethread", function(data) {
+            let posting = $.post(
+                "/person/matches/start",
+                {"cancelScan": true}
+            );
+
+            posting.done(function(data) {
                 if (data["msg"]) {
                     $("#msg").text(data["msg"]);
                 }

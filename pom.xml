@@ -11,8 +11,8 @@
     <groupId>com.miyagi</groupId>
     <artifactId>shashin</artifactId>
     <version>1.0.0</version>
-    <name>shashin</name>
-    <description>shashin</description>
+    <name>Shashin</name>
+    <description>Shashin</description>
     <properties>
         <java.version>16</java.version>
         <kotlin.version>1.5.21</kotlin.version>
