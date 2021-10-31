@@ -2,7 +2,6 @@ package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.*
-import org.springframework.core.io.ClassPathResource
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
