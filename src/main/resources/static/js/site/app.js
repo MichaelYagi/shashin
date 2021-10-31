@@ -20,19 +20,21 @@ $.fn.serializeObject = function() {
 };
 
 class ShashinUtil {
-    static #retryLimit = 3;
-    #tryCount = 0;
+    constructor() {
+        this.retryLimit = 3;
+        this.tryCount = 0;
+    }
 
     static getRetryLimit() {
-        return this.#retryLimit;
+        return this.retryLimit;
     }
 
     setTryCount(tryCount) {
-        this.#tryCount = tryCount;
+        this.tryCount = tryCount;
     }
 
     getTryCount() {
-        return this.#tryCount;
+        return this.tryCount;
     }
 }
 
