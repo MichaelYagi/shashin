@@ -6,3 +6,10 @@ Must be updated in POM file
 
 # Install
 Run ```mvn -Pprod clean install``` to run with minified JS assets.
+
+# Docker
+```mvn -Pprod clean install```
+
+```docker build -t michaeltyagi/shashin .```
+
+```docker run -d -p 6624:6624 michaeltyagi/shashin```
