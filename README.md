@@ -15,5 +15,3 @@ Run ```mvn -Pprod clean install``` to run with minified JS assets.
 ```docker run -d -p 6624:6624 michaeltyagi/shashin```
 
 Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
-
-docker-compose.yaml files available as well in docker-compose directory.
