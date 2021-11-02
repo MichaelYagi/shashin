@@ -1,0 +1,40 @@
+version: '3.5'
+
+# Example Docker Compose config file for Shashin
+#
+# Documentation : https://github.com/MichaelYagi/shashin
+# Docker Hub URL: https://hub.docker.com/repository/docker/michaeltyagi/shashin
+# Install Docker Desktop and run below commands where this yaml file is located
+#
+# ------------------------------------------------------------------
+# DOCKER COMPOSE COMMAND REFERENCE
+# ------------------------------------------------------------------
+# Start    | docker-compose up -d
+# Stop     | docker-compose stop
+# Update   | docker-compose pull
+# Logs     | docker-compose logs --tail=25 -f
+# -------------------------------------------------------------------
+# Note: All commands may have to be prefixed with "sudo" when not running as root.
+#       This will change the home directory "~" to "/root" in your configuration.
+
+services:
+  shashin:
+    image: michaeltyagi/shashin:latest
+    container_name: shashin
+    ports:
+      - 6624:6624 # [local port]:[container port]
+    volumes:
+      - "/mnt:/app"
+
+# Uncomment the following lines to upgrade automatically, whenever there is a new Docker image available:
+#
+#  watchtower:
+#    image: containrrr/watchtower
+#    container_name: watchtower
+#    restart: unless-stopped
+#    environment:
+#      WATCHTOWER_CLEANUP: "true"
+#      WATCHTOWER_POLL_INTERVAL: 7200 # Checks for updates every two hours
+#    volumes:
+#      - "/var/run/docker.sock:/var/run/docker.sock"
+#      - "~/.docker/config.json:/config.json" # Optional, for authentication if you have a Docker Hub account
