@@ -13,3 +13,5 @@ Run ```mvn -Pprod clean install``` to run with minified JS assets.
 ```docker build -t michaeltyagi/shashin .```
 
 ```docker run -d -p 6624:6624 michaeltyagi/shashin```
+
+Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
