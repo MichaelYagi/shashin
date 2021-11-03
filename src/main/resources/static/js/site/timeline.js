@@ -752,17 +752,27 @@
     }
 
     timelineSettings.updateTimeline = async function (date, mediaTypeFilter) {
+        let result;
         const shashinUtil = new ShashinUtil();
 
-        // return promise.done(function (data) {
-        //     return data;
-        // });
-        return await $.ajax({
-            type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
-            contentType: 'application/json; charset=utf-8',
-            async: true
-        });
+        try {
+            result = await $.ajax({
+                type: 'get',
+                url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
+                contentType: 'application/json; charset=utf-8',
+                async: true
+            });
+        } catch (error) {
+            shashin.printMessageToConsole("AJAX error updating timeline. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Error: " + error + ".");
+            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+            if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
+                //try again
+                result = await timelineSettings.updateTimeline(date, mediaTypeFilter);
+            }
+        }
+
+        return result;
     }
 
     timelineSettings.renderUpdateData = function (data, action, attachToId) {
