@@ -39,3 +39,4 @@ build/
 /sidecar/
 /logs/
 /node_modules/
+/jdk-11.0.12/
