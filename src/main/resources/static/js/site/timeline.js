@@ -442,8 +442,11 @@
                 shashin.printMessageToConsole("actionAbove:" + action)
 
                 const data = await timelineSettings.updateTimeline(currentId, mediaTypeFilter);
-                timelineSettings.renderUpdateData(data, action, attachPoint);
-                timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                timelineSettings.renderUpdateData(data, action, attachPoint).then(function (msg) {
+                    if (msg === "success") {
+                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    }
+                });
 
                 action = "below";
             }
@@ -474,8 +477,11 @@
                 shashin.printMessageToConsole("actionBelow:"+action)
 
                 const data = await timelineSettings.updateTimeline(currentId, mediaTypeFilter);
-                timelineSettings.renderUpdateData(data, action, attachPoint);
-                timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                timelineSettings.renderUpdateData(data, action, attachPoint).then(function (msg) {
+                    if (msg === "success") {
+                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    }
+                });
             }
             attachPoint = currentId;
         }
@@ -504,8 +510,11 @@
             shashin.printMessageToConsole("attaching mid action:"+action)
 
             const data = await timelineSettings.updateTimeline(id, mediaTypeFilter);
-            timelineSettings.renderUpdateData(data, action, attachPoint);
-            timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+            timelineSettings.renderUpdateData(data, action, attachPoint).then(function (msg) {
+                if (msg === "success") {
+                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                }
+            });
         }
 
         // Remove elements that are not visible
@@ -776,8 +785,8 @@
     }
 
     timelineSettings.renderUpdateData = function (data, action, attachToId) {
-
         let deferred = new $.Deferred();
+
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
@@ -855,50 +864,50 @@
 
                             if (action === "above") {
                                 $(html).insertBefore($("#br" + attachToId)).ready(function () {
-                                    //deferred.resolve("success");
+                                    deferred.resolve("success");
                                 });
                             } else if (action === "new") {
                                 $("#infinite-scroll-gallery").prepend(html).ready(function () {
-                                    //deferred.resolve("success");
+                                    deferred.resolve("success");
                                 });
                             } else {
                                 if (attachToId == null) {
                                     if ($(".attachMetadataPhotos").length > 0) {
                                         $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                            //deferred.resolve("success");
+                                            deferred.resolve("success");
                                         });
                                     } else {
                                         $("#infinite-scroll-gallery").prepend(html).ready(function () {
-                                            //deferred.resolve("success");
+                                            deferred.resolve("success");
                                         });
                                     }
                                 } else {
                                     $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
-                                        //deferred.resolve("success");
+                                        deferred.resolve("success");
                                     });
                                 }
                             }
                         } else {
                             // Already attached
-                            //deferred.resolve("success");
+                            deferred.resolve("success");
                         }
                     } else {
                         $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
-                        //deferred.resolve("success");
+                        deferred.resolve("success");
                     }
                 }
             } else {
                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 $("#msgTimeline").html(message);
-                //deferred.resolve("fail");
+                deferred.resolve("fail");
             }
+        } else {
+            deferred.resolve("fail");
         }
 
-        //deferred.resolve("success");
         $("#spinner").css("display", "none");
-        //return deferred.promise();
 
-        //return deferred.promise();
+        return deferred.promise();
     }
 
     timelineSettings.activateMetadataListeners = function(metadata) {
