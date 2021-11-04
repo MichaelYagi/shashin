@@ -26,21 +26,22 @@
 
     albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
         const shashinUtil = new ShashinUtil();
-
-        const promise =  $.ajax({
+        const ajaxParams = {
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
             async:true
-        }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating album. Attempt: "+shashinUtil.getTryCount()+"/"+shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        }
 
+        const promise = $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating album. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
                 if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
-                    albumSettings.updateAlbum(albumId,nextPage,activePage);
+                    $.ajax(ajaxParams);
                 }
             }
         }).then(function (data) {
@@ -167,13 +168,24 @@
         });
 
         $('#propalbumphotocomment'+metadata.id).on('show.bs.modal', function () {
-            const promise = $.ajax({
+            const shashinUtil = new ShashinUtil();
+            const ajaxParams = {
                 type: 'get',
                 url: "/notifications/markread/metadata/"+metadata.id,
                 contentType: 'application/json; charset=utf-8',
                 async:true
-            }).then(function (data) {
+            }
 
+            $.ajax(ajaxParams).fail(function (xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error marking notification on album photo comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                        //try again
+                        $.ajax(ajaxParams);
+                    }
+                }
             });
         });
 
@@ -264,7 +276,7 @@
 
         $.ajax(ajaxParams)
         .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error deleting album comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error deleting album photo comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
@@ -366,7 +378,7 @@
 
                     $.ajax(ajaxParams)
                     .fail(function (xhr, textStatus) {
-                        shashin.printMessageToConsole("AJAX error updating album comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                        shashin.printMessageToConsole("AJAX error updating album photo comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
                         if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                             shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
@@ -431,7 +443,7 @@
 
                 $.ajax(ajaxParams)
                 .fail(function (xhr, textStatus) {
-                    shashin.printMessageToConsole("AJAX error saving album comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                    shashin.printMessageToConsole("AJAX error saving album photo comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
                     if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                         shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
