@@ -120,6 +120,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <div id="albumsModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" id="saveAlbumModal">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -155,6 +156,7 @@
         $('#saveAlbumModal').click(function (e) {
             // $('#saveAlbum'+metadata.id).click(function (e) {
             e.preventDefault();
+            $("#albumsModalStatus").css("visibility","visible");
 
             const metadataId = $("#metadataId").val();
             const albumId = $("#albumId").text();
@@ -168,13 +170,26 @@
                 albumId:albumId
             }
 
-            const posting = $.post({
+            const shashinUtil = new ShashinUtil();
+            const ajaxParams = {
+                type: "post",
                 url: "/album/update",
                 data: JSON.stringify(requestJson),
                 contentType: 'application/json; charset=utf-8'
-            });
+            }
 
-            posting.done(function (data) {
+            $.ajax(ajaxParams)
+            .fail(function (xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error saving album. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                        //try again
+                        $.ajax(ajaxParams);
+                    }
+                }
+            }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     if (data["status"] === "redirect") {
                         window.location.replace(data["msg"]);
@@ -183,14 +198,21 @@
                         if (data["status"] === "success") {
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             // window.top.location = window.top.location;
+                            $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                         }
-                        $('#albumModalMsg').html(message);
+                        //$('#albumModalMsg').html(message);
                     }
                 }
             });
             return false;
+        });
+
+        $('#propAlbumModal').on('hide.bs.modal', function () {
+            $("#albumsModalStatus").attr("class","spinner-grow me-auto");
+            $("#albumsModalStatus").css("visibility","hidden");
         });
 
         function loadNextPage() {
