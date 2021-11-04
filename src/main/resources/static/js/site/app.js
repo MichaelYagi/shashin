@@ -25,7 +25,7 @@ class ShashinUtil {
         this.tryCount = 0;
     }
 
-    static getRetryLimit() {
+    getRetryLimit() {
         return this.retryLimit;
     }
 

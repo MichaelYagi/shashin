@@ -9,12 +9,12 @@
             contentType: 'application/json; charset=utf-8',
             async: true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating favorites. Attempt: " + shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit() + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error updating favorites. Attempt: " + shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit() + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
-                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
+                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
                     favoritesSettings.updateFavorites(nextPage, activePage);
                 }
