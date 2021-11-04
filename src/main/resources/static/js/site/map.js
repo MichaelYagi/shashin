@@ -419,6 +419,8 @@ function showMap(mapdata,authority) {
     });
 
     $("#propMetadataLocation").on('hide.bs.modal', function () {
+        $("#metadataLocationModalStatus").attr("class","spinner-grow me-auto");
+        $("#metadataLocationModalStatus").css("visibility","hidden");
         $(this).find(':input').val('');
         $("#locationMapResponseMsg").html("");
     })
@@ -435,17 +437,32 @@ function showMap(mapdata,authority) {
             "latlngBatchData": $("#locationDataInput").val()
         };
 
-        const posting = $.post({
+        const shashinUtil = new ShashinUtil();
+        const ajaxParams = {
+            type: "post",
             url: "/timeline/update/batch",
             data: JSON.stringify(data),
             contentType: 'application/json; charset=utf-8'
-        });
+        }
 
-        posting.done(function (data) {
+        $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error saving map location data. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                    //try again
+                    $.ajax(ajaxParams);
+                }
+            }
+        }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                    $("#metadataLocationModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+
                     const latlng = $("#locationDataInput").val();
                     const latlngArray = latlng.split(",");
                     const lat = latlngArray[0].trim();
@@ -456,10 +473,11 @@ function showMap(mapdata,authority) {
                     window.top.location = window.location.href.split("?")[0];
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
-                $("#locationMapResponseMsg").html(message);
+                //$("#locationMapResponseMsg").html(message);
             }
-            $("#metadataLocationModalStatus").css("visibility", "hidden");
+            //$("#metadataLocationModalStatus").css("visibility", "hidden");
         });
 
     });
