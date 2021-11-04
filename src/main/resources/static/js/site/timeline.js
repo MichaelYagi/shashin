@@ -136,7 +136,7 @@
         e.preventDefault();
 
         timelineSettings.scrollDirection = "down";
-        //timelineSettings.enableScrollSpy = false;
+        timelineSettings.enableScrollSpy = false;
 
         shashin.printMessageToConsole("jumpFromTimelineToc anchor:"+anchor);
         shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:"+mediaTypeFilter);
