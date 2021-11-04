@@ -32,23 +32,41 @@ $("#batchisobject").click(function (e) {
 $("#saveBatchMetadata").click(function (e) {
     e.preventDefault();
     matchModalBatchSettings.closeBatchTagPeopleDropdown();
+    $("#matchesBatchModalStatus").css("visibility","visible");
 
-    const posting = $.post({
+    const shashinUtil = new ShashinUtil();
+    const ajaxParams = {
+        type: "post",
         url: "/timeline/update/batch",
         data: JSON.stringify($('#saveBatchData').serializeObject()),
         contentType: 'application/json; charset=utf-8'
-    });
+    }
 
-    posting.done(function (data) {
+    $.ajax(ajaxParams)
+    .fail(function (xhr, textStatus) {
+        shashin.printMessageToConsole("AJAX error saving persons matches. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                //try again
+                $.ajax(ajaxParams);
+            }
+        }
+    }).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                 // window.top.location = window.top.location
+
+                $("#matchesBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
             } else {
                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+
+                $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             }
-            $("#msgBatchMetadata").html(message);
+            //$("#msgBatchMetadata").html(message);
             shashin.clearTimelineSelection();
         }
     });
@@ -57,6 +75,8 @@ $("#saveBatchMetadata").click(function (e) {
 
 // Clear message on modal close
 $('#propBatchMetadata').on('hide.bs.modal', function () {
+    $("#matchesBatchModalStatus").attr("class","spinner-grow me-auto");
+    $("#matchesBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
     $('#tagBatchDataInput').val('');
     $('input:checkbox').prop('checked', false);
@@ -65,6 +85,8 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
 
 // Clear message on input editing
 $('#propBatchMetadata').bind('keypress', function () {
+    $("#matchesBatchModalStatus").attr("class","spinner-grow me-auto");
+    $("#matchesBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
 });
 
@@ -141,6 +163,7 @@ $('#propBatchMetadata').bind('keypress', function () {
             '   </div>\n' +
             '</div>\n' +
             '<div class="modal-footer">\n' +
+            '   <div id="matchesModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>' +
             '   <button type="button" class="btn btn-primary" id="saveMetadata' + metadata.id + '">Save</button>\n' +
             '   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
             '</div></div></div></div>';
@@ -158,29 +181,44 @@ $('#propBatchMetadata').bind('keypress', function () {
         $("#saveMetadata" + metadata.id).click(function (e) {
             e.preventDefault();
             matchModalSettings.closeTagPeopleDropdown(metadata.id);
+            $("#matchesModalStatus"+metadata.id).css("visibility","visible");
 
+            const shashinUtil = new ShashinUtil();
             const json = {
                 metadataId: metadata.id,
                 tagpeople: $("#tagpeople" + metadata.id).val(),
                 isObject: $("#isobject" + metadata.id).prop("checked")
             };
-
-            const posting = $.post({
+            const ajaxParams = {
+                type: "post",
                 url: "/person/update",
                 data: JSON.stringify(json),
                 contentType: 'application/json; charset=utf-8'
-            });
+            }
 
-            posting.done(function (data) {
+            $.ajax(ajaxParams)
+            .fail(function (xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error saving person matches. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                        //try again
+                        $.ajax(ajaxParams);
+                    }
+                }
+            }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {
                         message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                         // window.top.location = window.top.location
+                        $("#matchesModalStatus"+metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                     }
-                    $("#msg" + metadata.id).html(message);
+                    //$("#msg" + metadata.id).html(message);
                 }
             });
 
@@ -189,12 +227,16 @@ $('#propBatchMetadata').bind('keypress', function () {
 
         // Clear message on modal close
         $('#propmatches' + metadata.id).on('hide.bs.modal', function () {
+            $("#matchesModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
+            $("#matchesModalStatus" + metadata.id).css("visibility","hidden");
             $("#msg" + metadata.id).html("");
             $("#isobject" + metadata.id)[0].checked = false;
         });
 
         // Clear message on input editing
         $('#propmatches' + metadata.id + ' input').bind('keypress', function () {
+            $("#matchesModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
+            $("#matchesModalStatus" + metadata.id).css("visibility","hidden");
             $("#msg" + metadata.id).html("");
         });
     }
