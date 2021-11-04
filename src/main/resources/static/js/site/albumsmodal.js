@@ -1,6 +1,7 @@
 (function( albumsModalSettings, $, undefined ) {
     albumsModalSettings.updateShareLink = function (baseUrl,albumId,action) {
         $("#generateLink"+albumId).prop('disabled', true);
+        $("#albumsModalStatus").css("visibility","visible");
         $("#msg"+albumId).html("");
         let relativeShareLink = "";
         if (action === "generate") {
@@ -14,13 +15,26 @@
         }
 
         let json = {albumId: albumId,relativeShareUrl: relativeShareLink}
-        const posting = $.post({
+        const shashinUtil = new ShashinUtil();
+        const ajaxParams = {
+            type: "post",
             url: "/album/"+albumId+"/save/sharelink",
             data: JSON.stringify(json),
             contentType: 'application/json; charset=utf-8'
-        });
+        }
 
-        posting.done(function (data) {
+        $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating album share link. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                    //try again
+                    $.ajax(ajaxParams);
+                }
+            }
+        }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {
                 let message = "Generated link not saved";
                 let relativeShareUrlData = data["relativeShareUrl"] === null ? "" : data["relativeShareUrl"];
@@ -33,14 +47,17 @@
                 }
                 if (data["status"] === "success" && $("#shareLink"+albumId).val() === relativeShareUrlData) {
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                    $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
                 $("#generateLink"+albumId).prop('disabled', false);
-                $("#msg"+albumId).html(message);
+                //$("#msg"+albumId).html(message);
             } else {
                 $("#generateLink"+albumId).prop('disabled', false);
-                $("#msg"+albumId).html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
+                //$("#msg"+albumId).html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
+                $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             }
         });
     }
