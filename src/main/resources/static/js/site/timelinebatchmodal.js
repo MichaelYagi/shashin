@@ -65,23 +65,37 @@ $("#saveBatchMetadata").click(function (e) {
             $("#batchhidden").val("on");
         }
 
-        let posting;
+        const shashinUtil = new ShashinUtil();
+        let ajaxParams = {}
 
         if($("#batchhidden").is(':checked')) {
-            posting = $.post({
+            ajaxParams = {
+                type: "post",
                 url: "/timeline/remove/batch",
                 data: JSON.stringify($('#saveBatchData').serializeObject()),
                 contentType: 'application/json; charset=utf-8'
-            });
+            }
         } else {
-            posting = $.post({
+            ajaxParams = {
+                type: "post",
                 url: "/timeline/update/batch",
                 data: JSON.stringify($('#saveBatchData').serializeObject()),
                 contentType: 'application/json; charset=utf-8'
-            });
+            }
         }
 
-        posting.done(function (data) {
+        $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating batch timeline modal. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                    //try again
+                    $.ajax(ajaxParams);
+                }
+            }
+        }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -123,20 +137,23 @@ $("#saveBatchMetadata").click(function (e) {
                     }
 
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                    $("#timelineBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     // window.top.location = window.top.location
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
                 const offCanvasId = ($("#dayTakenBatchData").val() == null || $("#dayTakenBatchData").val() === "" || $("#monthTakenBatchData").val() == null || $("#monthTakenBatchData").val() === "" || $("#yearTakenBatchData").val() == null || $("#yearTakenBatchData").val() == "") ?
                     "offcanvas_undated" : "offcanvas_"+$("#yearTakenBatchData").val()+'-'+$("#monthTakenBatchData").val()+'-'+$("#dayTakenBatchData").val();
                 timelineSettings.refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
 
-                $("#msgBatchMetadata").html(message);
+                //$("#msgBatchMetadata").html(message);
+                //$("#timelineBatchModalStatus").css("visibility","hidden");
+
                 shashin.clearTimelineSelection();
                 shashin.removeAllMetadataIdList();
                 shashin.removeAllMetadataFilenamesList();
                 shashin.removeAllMetadataThumbnailsList();
-                $("#timelineBatchModalStatus").css("visibility","hidden");
                 $("#batchMetadataIds").val("");
                 $("#batchFilenames").val("");
                 $("#dayTakenBatchData").val("");
@@ -174,6 +191,8 @@ $("#batchisobject").click(function (e) {
 
 // Clear message on modal close
 $('#propBatchMetadata').on('hide.bs.modal', function () {
+    $("#timelineBatchModalStatus").attr("class","spinner-grow me-auto");
+    $("#timelineBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
     $("#msgBatchMetadata").html("");
     $('input:checkbox').prop('checked', false);
@@ -191,5 +210,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
 
 // Clear message on input editing
 $('#propBatchMetadata').bind('keypress', function() {
+    $("#timelineBatchModalStatus").attr("class","spinner-grow me-auto");
+    $("#timelineBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
 });

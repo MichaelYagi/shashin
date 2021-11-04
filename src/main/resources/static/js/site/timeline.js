@@ -22,21 +22,22 @@
 
     timelineSettings.refreshTimeline = function (mediaTypeFilter,currentOffCanvasId) {
         const shashinUtil = new ShashinUtil();
-
-        $.ajax({
+        const ajaxParams = {
             type: 'get',
             url: "/timeline/dates/"+mediaTypeFilter,
             contentType: 'application/json; charset=utf-8',
             async:true
-        }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        }
 
+        $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
                 if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
-                    timelineSettings.refreshTimeline(mediaTypeFilter);
+                    $.ajax(ajaxParams);
                 }
             }
         }).then(function(data) {
@@ -537,20 +538,22 @@
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = function(date,mediaTypeFilter) {
         const shashinUtil = new ShashinUtil();
-
-        $.ajax({
+        const ajaxParams = {
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
             contentType: 'application/json; charset=utf-8',
             async:true
-        }).fail(function (xhr, textStatus) {
+        }
+
+        $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
             shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
                 if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
-                    timelineSettings.attachAssociatedMetadata(date,mediaTypeFilter);
+                    $.ajax(ajaxParams);
                 }
             }
         }).then(function(data) {
@@ -763,21 +766,22 @@
     timelineSettings.updateTimeline = async function (date, mediaTypeFilter) {
         let result;
         const shashinUtil = new ShashinUtil();
+        const ajaxParams = {
+            type: 'get',
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
+            contentType: 'application/json; charset=utf-8',
+            async: true
+        }
 
         try {
-            result = await $.ajax({
-                type: 'get',
-                url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
-                contentType: 'application/json; charset=utf-8',
-                async: true
-            });
+            result = await $.ajax(ajaxParams);
         } catch (error) {
             shashin.printMessageToConsole("AJAX error updating timeline. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Error: " + error + ".");
             shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
             if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                 //try again
-                result = await timelineSettings.updateTimeline(date, mediaTypeFilter);
+                result = await $.ajax(ajaxParams);
             }
         }
 
@@ -929,26 +933,36 @@
             }
 
             const isFavorite = ($("#bricon" + metadataId).hasClass("bi-suit-heart-fill"));
-
+            const shashinUtil = new ShashinUtil();
             const json = {metadataId: metadataId, isFavorite: isFavorite};
-
-            let posting;
+            let ajaxParams = {}
 
             if (isFavorite === true) {
-                posting = $.post({
+                ajaxParams = {
                     url: "/favorite/save",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8'
-                });
+                }
             } else {
-                posting = $.post({
+                ajaxParams = {
                     url: "/favorite/delete",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8'
-                });
+                }
             }
 
-            posting.done(function (data) {
+            $.ajax(ajaxParams)
+            .fail(function (xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error saving timeline favorite. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                        //try again
+                        $.ajax(ajaxParams);
+                    }
+                }
+            }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let currentCount = parseInt($("#briconcount"+metadata.id).text());
                     if (isFavorite === true) {

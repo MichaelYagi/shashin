@@ -80,23 +80,37 @@ $("#saveMetadata").click(function (e) {
             isObject:$("#isobject").prop("checked")
         }
 
-        let posting;
+        const shashinUtil = new ShashinUtil();
+        let ajaxParams = {}
 
         if($("#hidden").is(':checked')) {
-            posting = $.post({
+            ajaxParams = {
+                type: "post",
                 url: "/timeline/remove/" + metadataId,
                 data: JSON.stringify(json),
                 contentType: 'application/json; charset=utf-8'
-            });
+            }
         } else {
-            posting = $.post({
+            ajaxParams = {
+                type: "post",
                 url: "/timeline/update/" + metadataId,
                 data: JSON.stringify(json),
                 contentType: 'application/json; charset=utf-8'
-            });
+            }
         }
 
-        posting.done(function (data) {
+        $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating timeline data. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                    //try again
+                    $.ajax(ajaxParams);
+                }
+            }
+        }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -149,12 +163,15 @@ $("#saveMetadata").click(function (e) {
                             shashin.removeDateGallery(headingId);
                         }
                     }
+
+                    $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
-                $("#timelineModalMsg").html(message);
+                //$("#timelineModalMsg").html(message);
             }
-            $("#timelineModalStatus").css("visibility","hidden");
+            //$("#timelineModalStatus").css("visibility","hidden");
         });
     }
 });
@@ -164,17 +181,29 @@ $("#refreshTakenDate").click(function (e) {
 
     const metadataId = $("#metadataId").val();
 
+    const shashinUtil = new ShashinUtil();
     const json = {
         id: metadataId
     };
-
-    const posting = $.post({
+    const ajaxParams = {
+        type: "post",
         url: "/timeline/sync/"+metadataId,
         data: JSON.stringify(json),
         contentType: 'application/json; charset=utf-8'
-    });
+    }
 
-    posting.done(function (data) {
+    $.ajax(ajaxParams)
+    .fail(function (xhr, textStatus) {
+        shashin.printMessageToConsole("AJAX error refreshing taken date. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                //try again
+                $.ajax(ajaxParams);
+            }
+        }
+    }).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
@@ -198,6 +227,8 @@ $("#refreshTakenDate").click(function (e) {
 
 // Clear message on modal close
 $('#propTimelineModal').on('hide.bs.modal', function () {
+    $("#timelineModalStatus").attr("class","spinner-grow me-auto");
+    $("#timelineModalStatus").css("visibility","hidden");
     $("#timelineModalMsg").html("");
     $("#saveMetadata").prop('disabled', false);
     const tab = new bootstrap.Tab($("#generalTabLink"));
@@ -206,6 +237,8 @@ $('#propTimelineModal').on('hide.bs.modal', function () {
 
 // Clear message on input editing
 $('#propTimelineModal').find(':input').bind('keypress', function() {
+    $("#timelineModalStatus").attr("class","spinner-grow me-auto");
+    $("#timelineModalStatus").css("visibility","hidden");
     $("#timelineModalMsg").html("");
 });
 
