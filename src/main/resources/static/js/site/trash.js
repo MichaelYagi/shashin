@@ -1,22 +1,23 @@
 (function( trashSettings, $, undefined ) {
     trashSettings.updateTrash = function (nextPage, activePage) {
         const shashinUtil = new ShashinUtil();
-
-        // Get paged results
-        const promise = $.ajax({
+        const ajaxParams = {
             type: 'get',
             url: "/trash/" + nextPage,
             contentType: 'application/json; charset=utf-8',
             async: true
-        }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating trash. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        }
 
+        // Get paged results
+        const promise = $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating trash. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
                 if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
-                    trashSettings.updateTrash(nextPage, activePage);
+                    $.ajax(ajaxParams);
                 }
             }
         }).then(function (data) {
