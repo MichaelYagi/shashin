@@ -48,6 +48,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <div id="personBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -84,23 +85,39 @@
                 $("#saveBatchMetadata").click(function (e) {
                     e.preventDefault();
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
+                    $("#personBatchModalStatus").css("visibility","visible");
 
-                    const posting = $.post({
+                    const shashinUtil = new ShashinUtil();
+                    const ajaxParams = {
+                        type: "post",
                         url: "/timeline/update/batch",
                         data: JSON.stringify($('#saveBatchData').serializeObject()),
                         contentType: 'application/json; charset=utf-8'
-                    });
+                    }
 
-                    posting.done(function (data) {
+                    $.ajax(ajaxParams)
+                    .fail(function (xhr, textStatus) {
+                        shashin.printMessageToConsole("AJAX error saving batch modal for person. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                        if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                                //try again
+                                $.ajax(ajaxParams);
+                            }
+                        }
+                    }).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             let message = "Error";
                             if (data["status"] === "success") {
                                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                                 // window.top.location = window.top.location
+                                $("#personBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                             } else {
                                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                                $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                             }
-                            $("#msgBatchMetadata").html(message);
+                            //$("#msgBatchMetadata").html(message);
                             shashin.clearTimelineSelection();
                         }
                     });
@@ -109,6 +126,8 @@
 
                 // Clear message on modal close
                 $('#propBatchMetadata').on('hide.bs.modal', function () {
+                    $("#personBatchModalStatus").attr("class","spinner-grow me-auto");
+                    $("#personBatchModalStatus").css("visibility","hidden");
                     $("#msgBatchMetadata").html("");
                     $('#tagBatchDataInput').val('');
                     $('input:checkbox').prop('checked', false);
@@ -117,6 +136,8 @@
 
                 // Clear message on input editing
                 $('#propBatchMetadata').bind('keypress', function() {
+                    $("#personBatchModalStatus").attr("class","spinner-grow me-auto");
+                    $("#personBatchModalStatus").css("visibility","hidden");
                     $("#msgBatchMetadata").html("");
                 });
             </script>
@@ -198,6 +219,7 @@
                 '   </div>\n' +
                 '</div>\n' +
                 '<div class="modal-footer">\n' +
+                '   <div id="personModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>' +
                 '   <button type="button" class="btn btn-primary" id="saveMetadata'+metadata.id+'">Save</button>\n' +
                 '   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
                 '</div></div></div></div>';
@@ -215,29 +237,44 @@
             $("#saveMetadata"+metadata.id).click(function (e) {
                 e.preventDefault();
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
+                $("#personModalStatus" + metadata.id).css("visibility","visible");
 
+                const shashinUtil = new ShashinUtil();
                 const json = {
                     metadataId: metadata.id,
                     tagpeople: $("#tagpeople" + metadata.id).val(),
                     isObject: $("#isobject" + metadata.id).prop("checked")
                 };
-
-                const posting = $.post({
+                const ajaxParams = {
+                    type: "post",
                     url: "/person/update",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8'
-                });
+                }
 
-                posting.done(function (data) {
+                $.ajax(ajaxParams)
+                .fail(function (xhr, textStatus) {
+                    shashin.printMessageToConsole("AJAX error saving person in matches. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                    if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
+                        shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
+
+                        if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
+                            //try again
+                            $.ajax(ajaxParams);
+                        }
+                    }
+                }).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         let message = "Error";
                         if (data["status"] === "success") {
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             // window.top.location = window.top.location
+                            $("#personModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                         }
-                        $("#msg"+metadata.id).html(message);
+                        //$("#msg"+metadata.id).html(message);
                     }
                 });
 
@@ -245,12 +282,16 @@
             });
 
             // Clear message on modal close
-            $('#prop'+metadata.id).on('hide.bs.modal', function () {
+            $('#propperson'+metadata.id).on('hide.bs.modal', function () {
+                $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
+                $("#personModalStatus" + metadata.id).css("visibility","hidden");
                 $("#msg"+metadata.id).html("");
             });
 
             // Clear message on input editing
-            $('#prop'+metadata.id+' input').bind('keypress', function() {
+            $('#propperson'+metadata.id+' input').bind('keypress', function() {
+                $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
+                $("#personModalStatus" + metadata.id).css("visibility","hidden");
                 $("#msg"+metadata.id).html("");
             });
         }
