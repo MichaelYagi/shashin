@@ -10,20 +10,21 @@ class ShareAlbum {
     updateAlbum(albumId, nextPage, activePage) {
         const self = this;
         const shashinUtil = new ShashinUtil();
-
-        const promise = $.ajax({
+        const ajaxParams = {
             type: 'get',
             url: "/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage,
             contentType: 'application/json; charset=utf-8'
-        }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating share album. Attempt: "+shashinUtil.getTryCount()+"/"+shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        }
 
+        const promise = $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating share album. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
                 if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
-                    self.updateAlbum(albumId, nextPage, activePage);
+                    $.ajax(ajaxParams);
                 }
             }
         }).then(function (data) {
