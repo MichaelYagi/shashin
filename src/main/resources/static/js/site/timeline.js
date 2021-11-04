@@ -29,12 +29,12 @@
             contentType: 'application/json; charset=utf-8',
             async:true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
 
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
-                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
+                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
                     timelineSettings.refreshTimeline(mediaTypeFilter);
                 }
@@ -544,11 +544,11 @@
             contentType: 'application/json; charset=utf-8',
             async:true
         }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
-                if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
+                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
                     timelineSettings.attachAssociatedMetadata(date,mediaTypeFilter);
                 }
@@ -772,10 +772,10 @@
                 async: true
             });
         } catch (error) {
-            shashin.printMessageToConsole("AJAX error updating timeline. Attempt: "+shashinUtil.getTryCount() + "/" + ShashinUtil.getRetryLimit()+". Error: " + error + ".");
+            shashin.printMessageToConsole("AJAX error updating timeline. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Error: " + error + ".");
             shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
-            if (shashinUtil.getTryCount() <= ShashinUtil.getRetryLimit()) {
+            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                 //try again
                 result = await timelineSettings.updateTimeline(date, mediaTypeFilter);
             }
