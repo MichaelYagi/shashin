@@ -9,21 +9,22 @@
 
     searchSettings.updateSearch = function(nextPage,searchTerm,activePage) {
         const shashinUtil = new ShashinUtil();
-
-        const promise = $.ajax({
+        const ajaxParams = {
             type: 'get',
             url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
             contentType: 'application/json; charset=utf-8',
             async:true
-        }).fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating search. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        }
 
+        const promise = $.ajax(ajaxParams)
+        .fail(function (xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating search. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
             if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                 shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
                 if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
                     //try again
-                    searchSettings.updateSearch(nextPage,searchTerm,activePage);
+                    $.ajax(ajaxParams);
                 }
             }
         }).then(function (data) {
