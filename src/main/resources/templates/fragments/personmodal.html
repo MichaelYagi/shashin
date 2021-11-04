@@ -254,7 +254,7 @@
 
                 $.ajax(ajaxParams)
                 .fail(function (xhr, textStatus) {
-                    shashin.printMessageToConsole("AJAX error saving person in matches. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                    shashin.printMessageToConsole("AJAX error saving person. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
                     if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
                         shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
 
