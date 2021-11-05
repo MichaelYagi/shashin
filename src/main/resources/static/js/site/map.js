@@ -442,7 +442,7 @@ function showMap(mapdata,authority) {
             url: "/timeline/update/batch",
             data: JSON.stringify(data),
             contentType: 'application/json; charset=utf-8',
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {

@@ -7,7 +7,7 @@
             url: "/comment/album/delete",
             data: JSON.stringify(json),
             contentType: 'application/json; charset=utf-8',
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {
@@ -67,7 +67,7 @@
                 url: "/album/delete/" + albumId,
                 data: JSON.stringify(json),
                 contentType: 'application/json; charset=utf-8',
-                retries: 3
+                retries: shashin.ajaxRetries
             }
 
             function onFail(xhr, textStatus) {
@@ -148,7 +148,7 @@
                 url: "/album/share/" + albumId,
                 data: JSON.stringify(json),
                 contentType: 'application/json; charset=utf-8',
-                retries: 3
+                retries: shashin.ajaxRetries
             }
 
             function onFail(xhr, textStatus) {
@@ -184,7 +184,7 @@
                 url: "/notifications/markread/album/" + albumId,
                 contentType: 'application/json; charset=utf-8',
                 async: true,
-                retries: 3
+                retries: shashin.ajaxRetries
             }
 
             function onFail(xhr, textStatus) {
@@ -234,7 +234,7 @@
                         url: "/comment/update",
                         data: JSON.stringify(json),
                         contentType: 'application/json; charset=utf-8',
-                        retries: 3
+                        retries: shashin.ajaxRetries
                     }
 
                     function onFail(xhr, textStatus) {
@@ -296,7 +296,7 @@
                     url: "/comment/album/save",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8',
-                    retries: 3
+                    retries: shashin.ajaxRetries
                 }
 
                 function onFail(xhr, textStatus) {

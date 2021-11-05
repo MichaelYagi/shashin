@@ -88,7 +88,7 @@ $("#saveMetadata").click(function (e) {
                 url: "/timeline/remove/" + metadataId,
                 data: JSON.stringify(json),
                 contentType: 'application/json; charset=utf-8',
-                retries: 3
+                retries: shashin.ajaxRetries
             }
         } else {
             ajaxParams = {
@@ -96,7 +96,7 @@ $("#saveMetadata").click(function (e) {
                 url: "/timeline/update/" + metadataId,
                 data: JSON.stringify(json),
                 contentType: 'application/json; charset=utf-8',
-                retries: 3
+                retries: shashin.ajaxRetries
             }
         }
 
@@ -187,7 +187,7 @@ $("#refreshTakenDate").click(function (e) {
         url: "/timeline/sync/"+metadataId,
         data: JSON.stringify(json),
         contentType: 'application/json; charset=utf-8',
-        retries: 3
+        retries: shashin.ajaxRetries
     }
 
     function onFail(xhr, textStatus) {

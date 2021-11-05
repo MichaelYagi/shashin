@@ -27,7 +27,7 @@
                         url: "/settings/user/delete/"+userId,
                         data: JSON.stringify(json),
                         contentType: 'application/json; charset=utf-8',
-                        retries: 3
+                        retries: shashin.ajaxRetries
                     }
 
                     function onFail(xhr, textStatus) {
@@ -85,7 +85,7 @@
                         url: "/settings/user/role/"+userId,
                         data: JSON.stringify(json),
                         contentType: 'application/json; charset=utf-8',
-                        retries: 3
+                        retries: shashin.ajaxRetries
                     }
 
                     function onFail(xhr, textStatus) {
@@ -143,7 +143,7 @@
                         url: "/settings/user/permission/"+userId,
                         data: JSON.stringify(json),
                         contentType: 'application/json; charset=utf-8',
-                        retries: 3
+                        retries: shashin.ajaxRetries
                     }
 
                     function onFail(xhr, textStatus) {

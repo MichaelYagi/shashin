@@ -26,7 +26,7 @@
             url: "/timeline/dates/"+mediaTypeFilter,
             contentType: 'application/json; charset=utf-8',
             async:true,
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {
@@ -539,7 +539,7 @@
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
             contentType: 'application/json; charset=utf-8',
             async:true,
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {
@@ -764,7 +764,7 @@
             url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
             contentType: 'application/json; charset=utf-8',
             async: true,
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         try {
@@ -932,14 +932,14 @@
                     url: "/favorite/save",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8',
-                    retries: 3
+                    retries: shashin.ajaxRetries
                 }
             } else {
                 ajaxParams = {
                     url: "/favorite/delete",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8',
-                    retries: 3
+                    retries: shashin.ajaxRetries
                 }
             }
 

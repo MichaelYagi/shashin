@@ -66,7 +66,7 @@ $("#albumAppToolsRemoveAlbum").click(function(e) {
             url: "/album/delete/batch",
             data: JSON.stringify(json),
             contentType: 'application/json; charset=utf-8',
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {
@@ -111,7 +111,7 @@ $("#albumAppToolsRemoveFavorites").click(function(e) {
             url: "/favorites/delete",
             data: JSON.stringify(json),
             contentType: 'application/json; charset=utf-8',
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {
@@ -154,7 +154,7 @@ $("#albumAppToolsUntrash").click(function(e) {
             url: "/trash/unhide",
             data: JSON.stringify(json),
             contentType: 'application/json; charset=utf-8',
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {

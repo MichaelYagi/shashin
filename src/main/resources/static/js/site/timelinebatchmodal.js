@@ -73,7 +73,7 @@ $("#saveBatchMetadata").click(function (e) {
                 url: "/timeline/remove/batch",
                 data: JSON.stringify($('#saveBatchData').serializeObject()),
                 contentType: 'application/json; charset=utf-8',
-                retries: 3
+                retries: shashin.ajaxRetries
             }
         } else {
             ajaxParams = {
@@ -81,7 +81,7 @@ $("#saveBatchMetadata").click(function (e) {
                 url: "/timeline/update/batch",
                 data: JSON.stringify($('#saveBatchData').serializeObject()),
                 contentType: 'application/json; charset=utf-8',
-                retries: 3
+                retries: shashin.ajaxRetries
             }
         }
 

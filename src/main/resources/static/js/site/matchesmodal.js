@@ -39,7 +39,7 @@ $("#saveBatchMetadata").click(function (e) {
         url: "/timeline/update/batch",
         data: JSON.stringify($('#saveBatchData').serializeObject()),
         contentType: 'application/json; charset=utf-8',
-        retries: 3
+        retries: shashin.ajaxRetries
     }
 
     function onFail(xhr, textStatus) {
@@ -190,7 +190,7 @@ $('#propBatchMetadata').bind('keypress', function () {
                 url: "/person/update",
                 data: JSON.stringify(json),
                 contentType: 'application/json; charset=utf-8',
-                retries: 3
+                retries: shashin.ajaxRetries
             }
 
             function onFail(xhr, textStatus) {
