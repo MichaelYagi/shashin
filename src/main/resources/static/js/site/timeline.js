@@ -21,26 +21,23 @@
     }
 
     timelineSettings.refreshTimeline = function (mediaTypeFilter,currentOffCanvasId) {
-        const shashinUtil = new ShashinUtil();
         const ajaxParams = {
             type: 'get',
             url: "/timeline/dates/"+mediaTypeFilter,
             contentType: 'application/json; charset=utf-8',
-            async:true
+            async:true,
+            retries: 3
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
+            }
         }
 
         $.ajax(ajaxParams)
-        .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                    //try again
-                    $.ajax(ajaxParams);
-                }
-            }
-        }).then(function(data) {
+        .fail(onFail).then(function(data) {
             if (data.hasOwnProperty("metadataDates")) {
                 $("#offcanvasTocBody").empty();
 
@@ -537,26 +534,23 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = function(date,mediaTypeFilter) {
-        const shashinUtil = new ShashinUtil();
         const ajaxParams = {
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
             contentType: 'application/json; charset=utf-8',
-            async:true
+            async:true,
+            retries: 3
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
+            }
         }
 
         $.ajax(ajaxParams)
-        .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                    //try again
-                    $.ajax(ajaxParams);
-                }
-            }
-        }).then(function(data) {
+        .fail(onFail).then(function(data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("metadataList") &&
@@ -765,22 +759,19 @@
 
     timelineSettings.updateTimeline = async function (date, mediaTypeFilter) {
         let result;
-        const shashinUtil = new ShashinUtil();
         const ajaxParams = {
             type: 'get',
             url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
             contentType: 'application/json; charset=utf-8',
-            async: true
+            async: true,
+            retries: 3
         }
 
         try {
             result = await $.ajax(ajaxParams);
         } catch (error) {
-            shashin.printMessageToConsole("AJAX error updating timeline. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Error: " + error + ".");
-            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                //try again
+            shashin.printMessageToConsole("AJAX error updating timeline. Attempts left: "+ajaxParams.retries + ". Error: "+error);
+            if (ajaxParams.retries-- > 0) {
                 result = await $.ajax(ajaxParams);
             }
         }
@@ -933,7 +924,6 @@
             }
 
             const isFavorite = ($("#bricon" + metadataId).hasClass("bi-suit-heart-fill"));
-            const shashinUtil = new ShashinUtil();
             const json = {metadataId: metadataId, isFavorite: isFavorite};
             let ajaxParams = {}
 
@@ -941,28 +931,27 @@
                 ajaxParams = {
                     url: "/favorite/save",
                     data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
+                    contentType: 'application/json; charset=utf-8',
+                    retries: 3
                 }
             } else {
                 ajaxParams = {
                     url: "/favorite/delete",
                     data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
+                    contentType: 'application/json; charset=utf-8',
+                    retries: 3
+                }
+            }
+
+            function onFail(xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error saving timeline favorite. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                    $.ajax(ajaxParams).fail(onFail);
                 }
             }
 
             $.ajax(ajaxParams)
-            .fail(function (xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error saving timeline favorite. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                        //try again
-                        $.ajax(ajaxParams);
-                    }
-                }
-            }).then(function (data) {
+            .fail(onFail).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let currentCount = parseInt($("#briconcount"+metadata.id).text());
                     if (isFavorite === true) {

@@ -34,26 +34,23 @@ $("#saveBatchMetadata").click(function (e) {
     matchModalBatchSettings.closeBatchTagPeopleDropdown();
     $("#matchesBatchModalStatus").css("visibility","visible");
 
-    const shashinUtil = new ShashinUtil();
     const ajaxParams = {
         type: "post",
         url: "/timeline/update/batch",
         data: JSON.stringify($('#saveBatchData').serializeObject()),
-        contentType: 'application/json; charset=utf-8'
+        contentType: 'application/json; charset=utf-8',
+        retries: 3
+    }
+
+    function onFail(xhr, textStatus) {
+        shashin.printMessageToConsole("AJAX error saving persons matches. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+            $.ajax(ajaxParams).fail(onFail);
+        }
     }
 
     $.ajax(ajaxParams)
-    .fail(function (xhr, textStatus) {
-        shashin.printMessageToConsole("AJAX error saving persons matches. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-        if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                //try again
-                $.ajax(ajaxParams);
-            }
-        }
-    }).then(function (data) {
+    .fail(onFail).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
@@ -183,7 +180,6 @@ $('#propBatchMetadata').bind('keypress', function () {
             matchModalSettings.closeTagPeopleDropdown(metadata.id);
             $("#matchesModalStatus"+metadata.id).css("visibility","visible");
 
-            const shashinUtil = new ShashinUtil();
             const json = {
                 metadataId: metadata.id,
                 tagpeople: $("#tagpeople" + metadata.id).val(),
@@ -193,21 +189,19 @@ $('#propBatchMetadata').bind('keypress', function () {
                 type: "post",
                 url: "/person/update",
                 data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8'
+                contentType: 'application/json; charset=utf-8',
+                retries: 3
+            }
+
+            function onFail(xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error saving person matches. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                    $.ajax(ajaxParams).fail(onFail);
+                }
             }
 
             $.ajax(ajaxParams)
-            .fail(function (xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error saving person matches. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                        //try again
-                        $.ajax(ajaxParams);
-                    }
-                }
-            }).then(function (data) {
+            .fail(onFail).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {

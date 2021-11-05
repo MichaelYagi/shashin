@@ -25,26 +25,23 @@
     }
 
     albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
-        const shashinUtil = new ShashinUtil();
         const ajaxParams = {
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:true
+            async:true,
+            retries: 3
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating album. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
+            }
         }
 
         const promise = $.ajax(ajaxParams)
-        .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating album. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                    //try again
-                    $.ajax(ajaxParams);
-                }
-            }
-        }).then(function (data) {
+        .fail(onFail).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
@@ -168,25 +165,22 @@
         });
 
         $('#propalbumphotocomment'+metadata.id).on('show.bs.modal', function () {
-            const shashinUtil = new ShashinUtil();
             const ajaxParams = {
                 type: 'get',
                 url: "/notifications/markread/metadata/"+metadata.id,
                 contentType: 'application/json; charset=utf-8',
-                async:true
+                async:true,
+                retries: 3
             }
 
-            $.ajax(ajaxParams).fail(function (xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error marking notification on album photo comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                        //try again
-                        $.ajax(ajaxParams);
-                    }
+            function onFail(xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error marking notification on album photo comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                    $.ajax(ajaxParams).fail(onFail);
                 }
-            });
+            }
+
+            $.ajax(ajaxParams).fail(onFail);
         });
 
         $("#favorite"+metadata.id).click(function (e) {
@@ -201,7 +195,6 @@
             }
 
             const isFavorite = ($("#brfavoriteicon" + metadataId).hasClass("bi-suit-heart-fill"));
-            const shashinUtil = new ShashinUtil();
             const json = {metadataId: metadataId, isFavorite: isFavorite};
             let ajaxParams = {}
 
@@ -210,29 +203,28 @@
                     type: "post",
                     url: "/favorite/save",
                     data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
+                    contentType: 'application/json; charset=utf-8',
+                    retries: 3
                 };
             } else {
                 ajaxParams = {
                     type: "post",
                     url: "/favorite/delete",
                     data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
+                    contentType: 'application/json; charset=utf-8',
+                    retries: 3
                 };
             }
 
-            $.ajax(ajaxParams)
-            .fail(function (xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error saving album favorite. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                        //try again
-                        $.ajax(ajaxParams);
-                    }
+            function onFail(xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error saving album favorite. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                    $.ajax(ajaxParams).fail(onFail);
                 }
-            }).then(function (data) {
+            }
+
+            $.ajax(ajaxParams)
+            .fail(onFail).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     shashin.printMessageToConsole(data["status"]);
                     shashin.printMessageToConsole(data["msg"]);
@@ -265,27 +257,24 @@
     }
 
     albumSettings.deleteComment = function(commentId, metadata) {
-        const shashinUtil = new ShashinUtil();
         const json = {commentId: commentId, metadataId: metadata.id}
         const ajaxParams = {
             type: "post",
             url: "/comment/albumphoto/delete/",
             data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8'
+            contentType: 'application/json; charset=utf-8',
+            retries: 3
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error deleting album photo comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
+            }
         }
 
         $.ajax(ajaxParams)
-        .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error deleting album photo comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                    //try again
-                    $.ajax(ajaxParams);
-                }
-            }
-        }).then(function (data) {
+        .fail(onFail).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                 let commentId = data["commentId"];
                 let message = "Error";
@@ -367,27 +356,24 @@
                 const updatedComment = $.trim($("#commenttext" + currentCommentId).val());
 
                 if (updatedComment.length > 0) {
-                    const shashinUtil = new ShashinUtil();
                     const json = {commentId: currentCommentId, comment: updatedComment}
                     const ajaxParams = {
                         type: "post",
                         url: "/comment/update",
                         data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8'
+                        contentType: 'application/json; charset=utf-8',
+                        retries: 3
+                    }
+
+                    function onFail(xhr, textStatus) {
+                        shashin.printMessageToConsole("AJAX error updating album photo comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                            $.ajax(ajaxParams).fail(onFail);
+                        }
                     }
 
                     $.ajax(ajaxParams)
-                    .fail(function (xhr, textStatus) {
-                        shashin.printMessageToConsole("AJAX error updating album photo comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                        if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                                //try again
-                                $.ajax(ajaxParams);
-                            }
-                        }
-                    }).then(function (data) {
+                    .fail(onFail).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                             let commentId = data["commentId"];
                             let message = "Error";
@@ -432,27 +418,24 @@
             let comment = $.trim($("#commentText"+metadata.id).val());
 
             if (comment.length > 0) {
-                const shashinUtil = new ShashinUtil();
                 const json = {metadataId: metadata.id, albumId: album.id, comment: comment};
                 const ajaxParams = {
                     type: "post",
                     url: "/comment/albumphoto/save/",
                     data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
+                    contentType: 'application/json; charset=utf-8',
+                    retries: 3
+                }
+
+                function onFail(xhr, textStatus) {
+                    shashin.printMessageToConsole("AJAX error saving album photo comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                    if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                        $.ajax(ajaxParams).fail(onFail);
+                    }
                 }
 
                 $.ajax(ajaxParams)
-                .fail(function (xhr, textStatus) {
-                    shashin.printMessageToConsole("AJAX error saving album photo comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                    if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                        shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                        if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                            //try again
-                            $.ajax(ajaxParams);
-                        }
-                    }
-                }).then(function (data) {
+                .fail(onFail).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                         let commentId = data["commentId"];
                         let message = "Error";

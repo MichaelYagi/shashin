@@ -87,26 +87,23 @@
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
                     $("#personBatchModalStatus").css("visibility","visible");
 
-                    const shashinUtil = new ShashinUtil();
                     const ajaxParams = {
                         type: "post",
                         url: "/timeline/update/batch",
                         data: JSON.stringify($('#saveBatchData').serializeObject()),
-                        contentType: 'application/json; charset=utf-8'
+                        contentType: 'application/json; charset=utf-8',
+                        retries: 3
+                    }
+
+                    function onFail(xhr, textStatus) {
+                        shashin.printMessageToConsole("AJAX error saving batch modal for person. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                            $.ajax(ajaxParams).fail(onFail);
+                        }
                     }
 
                     $.ajax(ajaxParams)
-                    .fail(function (xhr, textStatus) {
-                        shashin.printMessageToConsole("AJAX error saving batch modal for person. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                        if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                                //try again
-                                $.ajax(ajaxParams);
-                            }
-                        }
-                    }).then(function (data) {
+                    .fail(onFail).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             let message = "Error";
                             if (data["status"] === "success") {
@@ -239,7 +236,6 @@
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
                 $("#personModalStatus" + metadata.id).css("visibility","visible");
 
-                const shashinUtil = new ShashinUtil();
                 const json = {
                     metadataId: metadata.id,
                     tagpeople: $("#tagpeople" + metadata.id).val(),
@@ -249,21 +245,19 @@
                     type: "post",
                     url: "/person/update",
                     data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
+                    contentType: 'application/json; charset=utf-8',
+                    retries: 3
+                }
+
+                function onFail(xhr, textStatus) {
+                    shashin.printMessageToConsole("AJAX error saving person. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                    if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                        $.ajax(ajaxParams).fail(onFail);
+                    }
                 }
 
                 $.ajax(ajaxParams)
-                .fail(function (xhr, textStatus) {
-                    shashin.printMessageToConsole("AJAX error saving person. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                    if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                        shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                        if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                            //try again
-                            $.ajax(ajaxParams);
-                        }
-                    }
-                }).then(function (data) {
+                .fail(onFail).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         let message = "Error";
                         if (data["status"] === "success") {
