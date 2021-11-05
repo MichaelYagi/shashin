@@ -851,7 +851,7 @@ class SettingsController {
                         var metadataObj: Metadata? = Metadata()
 
                         if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                            metadataObj = mediaProcessingUtils.populateMetadata(file, sidecarDir, rootDir, metadataObj)
+                            metadataObj = mediaProcessingUtils.populateMetadata(file, sidecarDir, metadataObj)
                             if (metadataObj != null && metadataObj.getId().isNotEmpty()) {
                                 // Check for entry
                                 val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())

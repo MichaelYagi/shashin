@@ -35,10 +35,11 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
     private var logger: Logger = Logger.getLogger(MediaProcessingUtils::class.simpleName)
 
-    fun populateMetadata(file: File, sidecarDir: String, rootDir: String, _metadataObj: Metadata?): Metadata? {
+    fun populateMetadata(file: File, sidecarDir: String, _metadataObj: Metadata?): Metadata? {
         val metadataDirectory = sidecarDir.dropLast(1) + "/metadata/"
 
-        var fileRootDir: String = file.parent.replace('\\', '/').replace(":","").lowercase()  //.replace(rootDirFilePath.replace('\\', '/').lowercase(), "")
+        var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "")
+            .lowercase()  //.replace(rootDirFilePath.replace('\\', '/').lowercase(), "")
         fileRootDir = fileRootDir.replace('\\', '/')
 
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
@@ -69,9 +70,9 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         )
 
         val datePattern = "yyyy-MM-dd HH:mm:ss"
-        val sourceFormatMS = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",Locale.ENGLISH)
-        val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.ENGLISH)
-        val destFormat = SimpleDateFormat(datePattern,Locale.ENGLISH)
+        val sourceFormatMS = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
+        val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
+        val destFormat = SimpleDateFormat(datePattern, Locale.ENGLISH)
         var date: Date?
 
         val creationTime = attr.creationTime().toString()
@@ -114,7 +115,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             sourceFormat.parse(accessTime)
         }
         metadataObj.setLastAccessedAt(destFormat.format(date))
-        val exifMap = hashMapOf<String,String>()
+        val exifMap = hashMapOf<String, String>()
 
 //        println("=================")
 
@@ -343,7 +344,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 val seconds = durationParts[2]
 
                                 val hoursToMinutes = hours * 60
-                                val totalMinutes = minutes+hoursToMinutes
+                                val totalMinutes = minutes + hoursToMinutes
                                 val duration = "$totalMinutes:$seconds"
 
                                 metadataObj.setDuration(duration)
@@ -474,7 +475,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
 
         // Map path to sidecar file
-        var fileRootDir: String = file.parent.replace('\\', '/').replace(":","").lowercase()
+        var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "").lowercase()
         fileRootDir = fileRootDir.replace('\\', '/')
         if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
             fileRootDir = "/$fileRootDir"
@@ -529,7 +530,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             var scaled209: BufferedImage = Thumbnails.of(img)
                 .height(209)
                 .asBufferedImage()
-            if (scaled209.width > scaled209.height*2) {
+            if (scaled209.width > scaled209.height * 2) {
                 scaled209 = Thumbnails.of(scaled209)
                     .height(209)
                     .sourceRegion(Positions.CENTER, 209, 209)
@@ -726,15 +727,19 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         )
     }
 
-   private fun saveExifdata(exifMap: HashMap<String, String>, _sidecarDir: String, path: String) {
+    private fun saveExifdata(exifMap: HashMap<String, String>, _sidecarDir: String, path: String) {
         if (exifMap.isNotEmpty()) {
             // Update Exif file
             val metadataDirectory = _sidecarDir.dropLast(1) + "/metadata"
             val photoFile = File(path)
             val photoFileParent = photoFile.parent.replace('\\', '/')
-            var fileRootDir: String = photoFileParent.replace('\\', '/').replace(":","").lowercase()
+            var fileRootDir: String = photoFileParent.replace('\\', '/').replace(":", "").lowercase()
             fileRootDir = fileRootDir.replace('\\', '/')
-            val exifFile = FileUtils.createFile("$metadataDirectory/$fileRootDir", "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml", "Exif")
+            val exifFile = FileUtils.createFile(
+                "$metadataDirectory/$fileRootDir",
+                "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml",
+                "Exif"
+            )
             if (exifFile != null) {
                 val yamlFactory: YAMLFactory = YAMLFactory.builder()
                     .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
@@ -746,14 +751,14 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         }
     }
 
-    fun saveMetadata(metadataObj: Metadata?, _sidecarDir: String, rootDir: String) {
+    fun saveMetadata(metadataObj: Metadata?, _sidecarDir: String) {
         if (metadataObj != null) {
             // Update MD file
             val rootPath = FileSystemResource("").file.absolutePath
             val sidecarDir = rootPath + _sidecarDir
             val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
             val photoFile = File(metadataObj.getPath()!!)
-            var fileRootDir: String = photoFile.parent.replace('\\', '/').replace(":","").lowercase()
+            var fileRootDir: String = photoFile.parent.replace('\\', '/').replace(":", "").lowercase()
             fileRootDir = fileRootDir.replace('\\', '/')
             val metadataFileStr = metadataDirectory + fileRootDir + "/" + photoFile.name + ".yaml"
             val mdFile = File(metadataFileStr)
