@@ -5,7 +5,7 @@
             url: "/trash/" + nextPage,
             contentType: 'application/json; charset=utf-8',
             async: true,
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {

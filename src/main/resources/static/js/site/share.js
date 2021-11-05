@@ -13,7 +13,7 @@ class ShareAlbum {
             type: 'get',
             url: "/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {

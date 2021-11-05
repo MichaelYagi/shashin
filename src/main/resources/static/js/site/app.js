@@ -65,6 +65,7 @@ $.fn.serializeObject = function() {
     shashin.feature = null;
     shashin.infiniteScrollGallery = null;
     shashin.lg = null;
+    shashin.ajaxRetries = 3;
 
     function fixContentHeight(){
         const viewHeight = $(window).height();

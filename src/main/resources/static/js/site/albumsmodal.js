@@ -20,7 +20,7 @@
             url: "/album/"+albumId+"/save/sharelink",
             data: JSON.stringify(json),
             contentType: 'application/json; charset=utf-8',
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {

@@ -30,7 +30,7 @@
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
             async:true,
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {
@@ -170,7 +170,7 @@
                 url: "/notifications/markread/metadata/"+metadata.id,
                 contentType: 'application/json; charset=utf-8',
                 async:true,
-                retries: 3
+                retries: shashin.ajaxRetries
             }
 
             function onFail(xhr, textStatus) {
@@ -204,7 +204,7 @@
                     url: "/favorite/save",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8',
-                    retries: 3
+                    retries: shashin.ajaxRetries
                 };
             } else {
                 ajaxParams = {
@@ -212,7 +212,7 @@
                     url: "/favorite/delete",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8',
-                    retries: 3
+                    retries: shashin.ajaxRetries
                 };
             }
 
@@ -263,7 +263,7 @@
             url: "/comment/albumphoto/delete/",
             data: JSON.stringify(json),
             contentType: 'application/json; charset=utf-8',
-            retries: 3
+            retries: shashin.ajaxRetries
         }
 
         function onFail(xhr, textStatus) {
@@ -362,7 +362,7 @@
                         url: "/comment/update",
                         data: JSON.stringify(json),
                         contentType: 'application/json; charset=utf-8',
-                        retries: 3
+                        retries: shashin.ajaxRetries
                     }
 
                     function onFail(xhr, textStatus) {
@@ -424,7 +424,7 @@
                     url: "/comment/albumphoto/save/",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8',
-                    retries: 3
+                    retries: shashin.ajaxRetries
                 }
 
                 function onFail(xhr, textStatus) {
