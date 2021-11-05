@@ -462,7 +462,7 @@ class TimelineController {
             }
 
             if (rootDir != null) {
-                mediaProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString(), rootDir)
+                mediaProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
             }
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -746,7 +746,7 @@ class TimelineController {
             }
 
             if (rootDir != null) {
-                mediaProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString(), rootDir)
+                mediaProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
             }
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -816,7 +816,7 @@ class TimelineController {
                         }
                     }
                     if (rootDir != null) {
-                        mediaProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString(), rootDir)
+                        mediaProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
                     }
                 }
                 resp["msg"] = "Saved!"
@@ -1074,7 +1074,7 @@ class TimelineController {
                         }
                     }
                     if (rootDir != null) {
-                        mediaProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString(), rootDir)
+                        mediaProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
                     }
                 }
                 resp["msg"] = "Saved!"

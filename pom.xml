@@ -279,6 +279,57 @@
                     </dependency>
                 </dependencies>
             </plugin>
+            <plugin>
+                <groupId>com.samaxes.maven</groupId>
+                <artifactId>minify-maven-plugin</artifactId>
+                <version>1.7.6</version>
+                <executions>
+                    <execution>
+                        <id>default-minify</id>
+                        <!--<phase>package</phase>-->
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                        <configuration>
+
+                            <webappSourceDir>${project.basedir}/src/main/resources/static</webappSourceDir>
+                            <webappTargetDir>${project.basedir}/src/main/resources/static</webappTargetDir>
+
+                            <cssSourceDir>css/site</cssSourceDir>
+                            <cssSourceFiles>
+                                <cssSourceFile>style.css</cssSourceFile>
+                            </cssSourceFiles>
+
+                            <jsSourceDir>js/site</jsSourceDir>
+                            <jsSourceFiles>
+                                <jsSourceFile>app.js</jsSourceFile>
+                                <jsSourceFile>applisteners.js</jsSourceFile>
+                                <jsSourceFile>album.js</jsSourceFile>
+                                <jsSourceFile>albumsmodal.js</jsSourceFile>
+                                <jsSourceFile>albumsmodallisteners.js</jsSourceFile>
+                                <jsSourceFile>favorites.js</jsSourceFile>
+                                <jsSourceFile>map.js</jsSourceFile>
+                                <jsSourceFile>matchesmodal.js</jsSourceFile>
+                                <jsSourceFile>person.js</jsSourceFile>
+                                <jsSourceFile>search.js</jsSourceFile>
+                                <jsSourceFile>share.js</jsSourceFile>
+                                <jsSourceFile>timeline.js</jsSourceFile>
+                                <jsSourceFile>timelinebatchmodal.js</jsSourceFile>
+                                <jsSourceFile>timelinemodal.js</jsSourceFile>
+                                <jsSourceFile>trash.js</jsSourceFile>
+                                <jsSourceFile>test.js</jsSourceFile>
+                            </jsSourceFiles>
+
+                            <cssEngine>YUI</cssEngine>
+                            <jsEngine>CLOSURE</jsEngine>
+                            <closureCompilationLevel>SIMPLE_OPTIMIZATIONS</closureCompilationLevel>
+
+                            <skipMerge>true</skipMerge>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
