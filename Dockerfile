@@ -8,7 +8,7 @@ RUN mvn dependency:go-offline -B
 # copy your other files
 COPY ./src ./src
 # build for release
-RUN mvn package && cp target/shashin-*.jar shashin.jar
+RUN mvn -Pprod package && cp target/shashin-*.jar shashin.jar
 
 # smaller, final base image
 FROM openjdk:11
