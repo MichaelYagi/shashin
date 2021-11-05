@@ -8,27 +8,24 @@
     }
 
     personSettings.updatePerson = function (personId,nextPage,activePage) {
-        const shashinUtil = new ShashinUtil();
         const ajaxParams = {
             type: 'get',
             url: "/person/" + personId + "/" + nextPage,
             contentType: 'application/json; charset=utf-8',
-            async: true
+            async: true,
+            retries: 3
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating person. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
+            }
         }
 
         // Get paged results
         const promise = $.ajax(ajaxParams)
-        .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating person. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                    //try again
-                    $.ajax(ajaxParams);
-                }
-            }
-        }).then(function (data) {
+        .fail(onFail).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";

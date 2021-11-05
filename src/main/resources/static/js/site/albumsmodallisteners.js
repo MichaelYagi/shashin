@@ -2,26 +2,23 @@
     albumsCommentsSettings.deleteComment = function(commentId, albumId) {
 
         let json = {commentId: commentId,albumId: albumId}
-        const shashinUtil = new ShashinUtil();
         const ajaxParams = {
             type: "post",
             url: "/comment/album/delete",
             data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8'
+            contentType: 'application/json; charset=utf-8',
+            retries: 3
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error deleting album comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
+            }
         }
 
         $.ajax(ajaxParams)
-        .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error deleting album comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                    //try again
-                    $.ajax(ajaxParams);
-                }
-            }
-        }).then(function (data) {
+        .fail(onFail).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
                 let commentId = data["commentId"];
                 let commentCount = data["commentCount"];
@@ -65,26 +62,23 @@
             e.preventDefault();
 
             let json = {albumId: albumId, delete: true}
-            const shashinUtil = new ShashinUtil();
             const ajaxParams = {
                 type: "post",
                 url: "/album/delete/" + albumId,
                 data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8'
+                contentType: 'application/json; charset=utf-8',
+                retries: 3
+            }
+
+            function onFail(xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error deleting album. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                    $.ajax(ajaxParams).fail(onFail);
+                }
             }
 
             $.ajax(ajaxParams)
-            .fail(function (xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error deleting album. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                        //try again
-                        $.ajax(ajaxParams);
-                    }
-                }
-            }).then(function (data) {
+            .fail(onFail).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {
@@ -148,29 +142,24 @@
                 userShareMap[userId] = isChecked
             });
 
-            const shashinUtil = new ShashinUtil();
             let json = {albumId: albumId, userShareMap: JSON.stringify(userShareMap)}
             const ajaxParams = {
                 type: "post",
                 url: "/album/share/" + albumId,
                 data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8'
+                contentType: 'application/json; charset=utf-8',
+                retries: 3
+            }
+
+            function onFail(xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX saving user share. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                    $.ajax(ajaxParams).fail(onFail);
+                }
             }
 
             $.ajax(ajaxParams)
-            .fail(function (xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX saving user share. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                        //try again
-                        $.ajax(ajaxParams);
-                    } else {
-                        $("#albumsModalStatus").css("visibility","hidden");
-                    }
-                }
-            }).then(function (data) {
+            .fail(onFail).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {
@@ -190,25 +179,22 @@
 
     albumsModalListeners.setCommentModalListeners = function (albumId, username) {
         $("#propcommentalbums" + albumId).on('show.bs.modal', function () {
-            const shashinUtil = new ShashinUtil();
             const ajaxParams = {
                 type: 'get',
                 url: "/notifications/markread/album/" + albumId,
                 contentType: 'application/json; charset=utf-8',
-                async: true
+                async: true,
+                retries: 3
             }
 
-            $.ajax(ajaxParams).fail(function (xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error marking notification on album comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                    shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                    if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                        //try again
-                        $.ajax(ajaxParams);
-                    }
+            function onFail(xhr, textStatus) {
+                shashin.printMessageToConsole("AJAX error marking notification on album comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                    $.ajax(ajaxParams).fail(onFail);
                 }
-            });
+            }
+
+            $.ajax(ajaxParams).fail(onFail);
         })
 
         $("#updateCommentAlbum" + albumId).hide();
@@ -243,26 +229,23 @@
 
                 if (updatedComment.length > 0) {
                     let json = {commentId: currentCommentId, comment: updatedComment}
-                    const shashinUtil = new ShashinUtil();
                     const ajaxParams = {
                         type: "post",
                         url: "/comment/update",
                         data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8'
+                        contentType: 'application/json; charset=utf-8',
+                        retries: 3
+                    }
+
+                    function onFail(xhr, textStatus) {
+                        shashin.printMessageToConsole("AJAX error updating album comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                            $.ajax(ajaxParams).fail(onFail);
+                        }
                     }
 
                     $.ajax(ajaxParams)
-                    .fail(function (xhr, textStatus) {
-                        shashin.printMessageToConsole("AJAX error updating album comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                        if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                                //try again
-                                $.ajax(ajaxParams);
-                            }
-                        }
-                    }).then(function (data) {
+                    .fail(onFail).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                             let commentId = data["commentId"];
                             let message = "Error";
@@ -308,26 +291,23 @@
 
             if (comment.length > 0) {
                 let json = {albumId: albumId, comment: comment}
-                const shashinUtil = new ShashinUtil();
                 const ajaxParams = {
                     type: "post",
                     url: "/comment/album/save",
                     data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
+                    contentType: 'application/json; charset=utf-8',
+                    retries: 3
+                }
+
+                function onFail(xhr, textStatus) {
+                    shashin.printMessageToConsole("AJAX error saving album comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                    if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                        $.ajax(ajaxParams).fail(onFail);
+                    }
                 }
 
                 $.ajax(ajaxParams)
-                .fail(function (xhr, textStatus) {
-                    shashin.printMessageToConsole("AJAX error saving album comment. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                    if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                        shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                        if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                            //try again
-                            $.ajax(ajaxParams);
-                        }
-                    }
-                }).then(function (data) {
+                .fail(onFail).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
                         let commentId = data["commentId"];
                         let commentCount = data["commentCount"];

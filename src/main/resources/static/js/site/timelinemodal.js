@@ -80,7 +80,6 @@ $("#saveMetadata").click(function (e) {
             isObject:$("#isobject").prop("checked")
         }
 
-        const shashinUtil = new ShashinUtil();
         let ajaxParams = {}
 
         if($("#hidden").is(':checked')) {
@@ -88,29 +87,28 @@ $("#saveMetadata").click(function (e) {
                 type: "post",
                 url: "/timeline/remove/" + metadataId,
                 data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8'
+                contentType: 'application/json; charset=utf-8',
+                retries: 3
             }
         } else {
             ajaxParams = {
                 type: "post",
                 url: "/timeline/update/" + metadataId,
                 data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8'
+                contentType: 'application/json; charset=utf-8',
+                retries: 3
+            }
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating timeline data. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
             }
         }
 
         $.ajax(ajaxParams)
-        .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating timeline data. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                    //try again
-                    $.ajax(ajaxParams);
-                }
-            }
-        }).then(function (data) {
+        .fail(onFail).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -181,7 +179,6 @@ $("#refreshTakenDate").click(function (e) {
 
     const metadataId = $("#metadataId").val();
 
-    const shashinUtil = new ShashinUtil();
     const json = {
         id: metadataId
     };
@@ -189,21 +186,19 @@ $("#refreshTakenDate").click(function (e) {
         type: "post",
         url: "/timeline/sync/"+metadataId,
         data: JSON.stringify(json),
-        contentType: 'application/json; charset=utf-8'
+        contentType: 'application/json; charset=utf-8',
+        retries: 3
+    }
+
+    function onFail(xhr, textStatus) {
+        shashin.printMessageToConsole("AJAX error refreshing taken date. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+            $.ajax(ajaxParams).fail(onFail);
+        }
     }
 
     $.ajax(ajaxParams)
-    .fail(function (xhr, textStatus) {
-        shashin.printMessageToConsole("AJAX error refreshing taken date. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-        if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-            shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-            if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                //try again
-                $.ajax(ajaxParams);
-            }
-        }
-    }).then(function (data) {
+    .fail(onFail).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {

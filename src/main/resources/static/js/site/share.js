@@ -9,25 +9,22 @@ class ShareAlbum {
 
     updateAlbum(albumId, nextPage, activePage) {
         const self = this;
-        const shashinUtil = new ShashinUtil();
         const ajaxParams = {
             type: 'get',
             url: "/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage,
-            contentType: 'application/json; charset=utf-8'
+            contentType: 'application/json; charset=utf-8',
+            retries: 3
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error updating share album. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
+            }
         }
 
         const promise = $.ajax(ajaxParams)
-        .fail(function (xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating share album. Attempt: "+shashinUtil.getTryCount() + "/" + shashinUtil.getRetryLimit()+". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if (textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) {
-                shashinUtil.setTryCount(shashinUtil.getTryCount()+1);
-
-                if (shashinUtil.getTryCount() <= shashinUtil.getRetryLimit()) {
-                    //try again
-                    $.ajax(ajaxParams);
-                }
-            }
-        }).then(function (data) {
+        .fail(onFail).then(function (data) {
             const mediaContentList = [];
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {

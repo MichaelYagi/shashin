@@ -19,25 +19,6 @@ $.fn.serializeObject = function() {
     return o;
 };
 
-class ShashinUtil {
-    constructor() {
-        this.retryLimit = 3;
-        this.tryCount = 0;
-    }
-
-    getRetryLimit() {
-        return this.retryLimit;
-    }
-
-    setTryCount(tryCount) {
-        this.tryCount = tryCount;
-    }
-
-    getTryCount() {
-        return this.tryCount;
-    }
-}
-
 (function( shashin, $, undefined ) {
     // private function
     function fallbackCopyTextToClipboard(text) {
