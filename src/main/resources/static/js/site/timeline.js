@@ -929,6 +929,7 @@
 
             if (isFavorite === true) {
                 ajaxParams = {
+                    type: 'post',
                     url: "/favorite/save",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8',
@@ -936,6 +937,7 @@
                 }
             } else {
                 ajaxParams = {
+                    type: 'post',
                     url: "/favorite/delete",
                     data: JSON.stringify(json),
                     contentType: 'application/json; charset=utf-8',
