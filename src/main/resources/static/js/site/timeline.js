@@ -451,7 +451,7 @@
 
                 const data = await timelineSettings.updateTimeline(currentId, mediaTypeFilter);
                 timelineSettings.renderUpdateData(data, action, attachPoint).then(function (msg) {
-                    if (msg === "success") {
+                    if (msg === "success" && $("#"+currentId).length === 0) {
                         timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                     }
                 });
@@ -479,7 +479,7 @@
 
                 const data = await timelineSettings.updateTimeline(currentId, mediaTypeFilter);
                 timelineSettings.renderUpdateData(data, action, attachPoint).then(function (msg) {
-                    if (msg === "success") {
+                    if (msg === "success" && $("#"+currentId).length === 0) {
                         timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                     }
                 });
@@ -512,7 +512,7 @@
 
             const data = await timelineSettings.updateTimeline(id, mediaTypeFilter);
             timelineSettings.renderUpdateData(data, action, attachPoint).then(function (msg) {
-                if (msg === "success") {
+                if (msg === "success" && $("#"+id).length === 0) {
                     timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                 }
             });
