@@ -628,6 +628,8 @@
                             for (const index in metadataList) {
                                 const metadata = metadataList[index];
 
+                                let attachOverlay = false;
+
                                 let dateReformatted = "";
                                 if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
                                     const dateObj = new Date(metadata.year, metadata.month-1, metadata.day);
@@ -648,6 +650,7 @@
                                     const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
                                     $("#bricon"+metadata.id).addClass(favoriteIcon);
                                     $("#briconcount"+metadata.id).text(favoriteCount);
+                                    attachOverlay = true;
                                 }
 
                                 html = '<img src="'+encodeURI(metadata.thumbnailUrlSmall)+'" class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'" style="background-color:lightgray;" onError="shashin.errorImg(this,\''+metadata.title+'\',209)">';
@@ -734,6 +737,7 @@
                                 html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
                                 if ($("#select"+metadata.id).length === 0) {
                                     $("#tntl" + metadata.id).append(html);
+                                    attachOverlay = true;
                                 }
                                 if ($("#tntl"+metadata.id+".thumbnail-tl").length === 0) {
                                     $("#tntl" + metadata.id).addClass("thumbnail-tl");
@@ -758,8 +762,10 @@
                                     }
                                 }
 
-                                shashin.setPhotoOverlays(metadata, "timeline")
-                                timelineSettings.activateMetadataListeners(metadata);
+                                if (attachOverlay === true) {
+                                    shashin.setPhotoOverlays(metadata, "timeline");
+                                    timelineSettings.activateMetadataListeners(metadata);
+                                }
                             }
                         }
                     }
