@@ -119,7 +119,11 @@
         elements.each(function(index) {
             let id = $(this).attr("id");
 
-            if (id.indexOf("tail_") === -1 && (index === 0 || index === 1) && timelineSettings.prevAnchor !== id) {
+            if (id.indexOf("tail_") === -1 && ($("footer").withinviewport().length > 0 || (index <= 1 && timelineSettings.prevAnchor !== id))) {
+                // If the footer is visible, increase the query limit for more results
+                if ($("footer").withinviewport().length > 0) {
+                    shashin.timelineQueryLimit++;
+                }
                 timelineSettings.renderThumbnails(id,mediaTypeFilter).then(function (msg) {
                     if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                         timelineSettings.setScrollSpyActive(id);
@@ -375,7 +379,7 @@
     timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
         let deferred = new $.Deferred();
 
-        let queryLimit = 2;
+        let queryLimit = shashin.timelineQueryLimit;
 
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
