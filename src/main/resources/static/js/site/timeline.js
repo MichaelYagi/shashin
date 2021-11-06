@@ -375,7 +375,7 @@
     timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
         let deferred = new $.Deferred();
 
-        let queryLimit = 3;
+        let queryLimit = 2;
 
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
@@ -425,6 +425,16 @@
         shashin.printMessageToConsole("attachBelowArray");
         shashin.printMessageToConsole(attachBelowArray);
 
+        // Hack to prevent infinite scroll upwards and throttle scrolling
+        if (($('section')[0].id === id || $('section')[1].id === id || $('section')[2].id === id) && timelineSettings.enableScrollSpy === true) {
+            document.getElementById("container").scrollBy({top: 1});
+            if (document.getElementsByTagName("MAIN").length > 0) {
+                document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
+            }
+        }
+
+
+
         // Render top
         let action = "new";
         let attachPoint = id;
@@ -451,14 +461,7 @@
             attachPoint = currentId;
         }
 
-        // Hack to prevent infinite scroll upwards and throttle scrolling
-        // if (timelineSettings.scrollDirection === "up" && $('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
-        if ($('section')[0].id === id && timelineSettings.enableScrollSpy === true) {
-            document.getElementById("container").scrollBy({top: 1});
-            if (document.getElementsByTagName("MAIN").length > 0) {
-                document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-            }
-        }
+
 
         // Render bottom
         action = "below"
@@ -513,6 +516,14 @@
                     timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                 }
             });
+        }
+
+        // Hack to prevent infinite scroll downwards and throttle scrolling
+        if ((($('section')[4] && $('section')[4].id === id) || ($('section')[5] && $('section')[5].id === id) || ($('section')[6] && $('section')[6].id === id)) && timelineSettings.enableScrollSpy === true) {
+            document.getElementById("container").scrollBy(0,-1);
+            if (document.getElementsByTagName("MAIN").length > 0) {
+                document.getElementsByTagName("MAIN")[0].scrollBy(0,-1);
+            }
         }
 
         // Remove elements that are not visible
