@@ -203,8 +203,11 @@
 
     // Set the active nav
     timelineSettings.setScrollSpyActive = function (id) {
-        const navElem = $('a[href="#' + id + '"]');
-        navElem.addClass('active').siblings().removeClass('active');
+        if (typeof id === "string") {
+            const navElem = $('#offcanvas_' + id);
+            navElem.siblings().removeClass('active');
+            navElem.addClass('active');
+        }
     }
 
     timelineSettings.scrollToTimelineToc = function(elementsInViewport) {
