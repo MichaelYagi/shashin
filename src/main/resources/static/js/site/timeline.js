@@ -119,7 +119,7 @@
         elements.each(function(index) {
             let id = $(this).attr("id");
 
-            if (id.indexOf("tail_") === -1 && ($("footer").withinviewport().length > 0 || (index <= 1 && timelineSettings.prevAnchor !== id))) {
+            if ($(".attachMetadataPhotos").last().text() !== "EOL" && id.indexOf("tail_") === -1 && ($("footer").withinviewport().length > 0 || (index <= 1 && timelineSettings.prevAnchor !== id))) {
                 // If the footer is visible, increase the query limit for more results
                 if ($("footer").withinviewport().length > 0) {
                     shashin.timelineQueryLimit++;
@@ -873,8 +873,8 @@
                                 html += '<span class="scrollspy metadataprocessed" id="tail_undated"></span>';
                                 html += '</div><span class="attachMetadataPhotos" id="amp_undated" style="visibility: hidden">EOL</span>';
                             } else if (lastDate === (metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day)) {
-                                html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '" style="visibility: hidden">EOL</span>';
-                                html += '</div><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
+                                html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
+                                html += '</div><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '" style="visibility: hidden">EOL</span>';
                             } else {
                                 html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
                                 html += '</div><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
