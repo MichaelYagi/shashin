@@ -194,7 +194,7 @@
 
         const navElem = $("#offcanvas_" + anchor);
         const timer = setInterval(function () {
-            if (navElem.attr("class") === 'list-group-item list-group-item-action active') {
+            if (navElem.hasClass("active") === true) {
                 timelineSettings.enableScrollSpy = true;
                 clearInterval(timer);
             }
@@ -437,8 +437,6 @@
             }
         }
 
-
-
         // Render top
         let action = "new";
         let attachPoint = id;
@@ -464,8 +462,6 @@
             }
             attachPoint = currentId;
         }
-
-
 
         // Render bottom
         action = "below"
