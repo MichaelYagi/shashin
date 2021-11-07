@@ -830,6 +830,9 @@
                         }
 
                         if ($("#" + idCheck).length === 0) {
+                            const lastDateParts = $("#offcanvasTocBody").children().last().attr("id").split("offcanvas_");
+                            const lastDate = lastDateParts[1];
+
                             for (let index in metadataList) {
                                 index = parseInt(index);
                                 const metadata = metadataList[index];
@@ -872,6 +875,9 @@
 
                             if (metadataList[0].year == null || metadataList[0].month == null || metadataList[0].day == null) {
                                 html += '<span class="scrollspy metadataprocessed" id="tail_undated"></span>';
+                                html += '</div><span class="attachMetadataPhotos" id="amp_undated" style="visibility: hidden">EOL</span>';
+                            } else if (lastDate === (metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day)) {
+                                html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '" style="visibility: hidden">EOL</span>';
                                 html += '</div><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
                             } else {
                                 html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
