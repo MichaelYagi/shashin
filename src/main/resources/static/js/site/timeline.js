@@ -481,14 +481,7 @@
             }
 
             // Render mid
-            action = "new";
-            if (attachAboveArray.length > 0) {
-                attachPoint = attachAboveArray[attachAboveArray.length-1];
-                action = "below";
-            } else if (attachBelowArray.length > 0) {
-                attachPoint = attachBelowArray[0];
-                action = "above";
-            }
+            action = "below";
 
             shashin.printMessageToConsole("attempting to attaching id mid "+id+" "+action+" "+attachPoint+" length "+$("#"+id).length)
 
