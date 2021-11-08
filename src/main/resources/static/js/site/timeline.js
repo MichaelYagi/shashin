@@ -5,7 +5,6 @@
     timelineSettings.lastDate = new Date().getTime();
     timelineSettings.lastScrollTop = 0;
     timelineSettings.scrollSpeedInpxPerMs = 0;
-    timelineSettings.scrollDirection = "down";
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
@@ -131,7 +130,7 @@
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
-        timelineSettings.scrollDirection = "down";
+        shashin.scrollDirection = "up";
         timelineSettings.enableScrollSpy = false;
         shashin.timelineQueryLimit = 1;
 
@@ -389,6 +388,7 @@
         let depthDown = queryLimit;
         let depthUp = queryLimit;
 
+        shashin.printMessageToConsole("scrollDirection:"+shashin.scrollDirection);
         shashin.printMessageToConsole("depthDown:"+depthDown);
         shashin.printMessageToConsole("depthUp:"+depthUp);
         shashin.printMessageToConsole("renderThumbnails id:"+id);
@@ -423,19 +423,21 @@
         shashin.printMessageToConsole(attachBelowArray);
 
         // Remove elements that are not visible
-        $('section').each(function(index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove beginning");
-            if ($("#"+element.id).withinviewport().length === 0 && $("#tail_"+element.id).withinviewport().length === 0) {
-                shashin.printMessageToConsole(element.id + " removed beginning");
-                shashin.removeDateGallery(element.id);
-            }
-        });
+        if (shashin.scrollDirection === "down") {
+            $('section').each(function (index, element) {
+                shashin.printMessageToConsole(element.id + " checking to remove beginning");
+                if ($("#" + element.id).withinviewport().length === 0 && $("#tail_" + element.id).withinviewport().length === 0) {
+                    shashin.printMessageToConsole(element.id + " removed beginning");
+                    shashin.removeDateGallery(element.id);
+                }
+            });
+        }
 
         // Render top
         let action = "new";
         let attachPoint = id;
 
-        if (attachAboveArray.length > 0) {
+        if (attachAboveArray.length > 0 && shashin.scrollDirection === "up") {
             let currentId = null;
             while (true) {
                 let firstDate = null;
@@ -470,9 +472,9 @@
                     break;
                 }
 
-                if (($("#"+currentId).withinviewport().length === 0 || $("#tail_"+currentId).withinviewport().length === 0) || (firstDate !== null && currentId === firstDate)) {
-                    break;
-                }
+                // if (($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0) || (firstDate !== null && currentId === firstDate)) {
+                //     break;
+                // }
 
                 attachPoint = currentId;
             }
@@ -500,7 +502,7 @@
                 }
             });
 
-            if ($("#" + currentId).length === 0) {
+            if (currentId !== null && $("#" + currentId).length === 0) {
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
                 if (msg === "success" && $("#"+currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
@@ -515,27 +517,27 @@
         }
 
         // Render mid
-        action = "new";
-        if (attachAboveArray.length > 0) {
-            attachPoint = attachAboveArray[attachAboveArray.length-1];
-            action = "below";
-        } else if (attachBelowArray.length > 0) {
-            attachPoint = attachBelowArray[0];
-            action = "above";
-        }
+        // action = "new";
+        // if (attachAboveArray.length > 0) {
+        //     attachPoint = attachAboveArray[attachAboveArray.length-1];
+        //     action = "below";
+        // } else if (attachBelowArray.length > 0) {
+        //     attachPoint = attachBelowArray[0];
+        //     action = "above";
+        // }
 
-        shashin.printMessageToConsole("attempting to attaching id mid "+id+" "+action+" "+attachPoint+" length "+$("#"+id).length)
-
-        if ($("#"+id).length === 0) {
-            shashin.printMessageToConsole("attaching mid attachPoint:"+attachPoint)
-            shashin.printMessageToConsole("attaching id:" + id);
-            shashin.printMessageToConsole("attaching mid action:"+action)
-
-            const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
-            if (msg === "success" && $("#"+id).length === 1) {
-                timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-            }
-        }
+        // shashin.printMessageToConsole("attempting to attaching id mid "+id+" "+action+" "+attachPoint+" length "+$("#"+id).length)
+        //
+        // if (id !== null && $("#"+id).length === 0) {
+        //     shashin.printMessageToConsole("attaching mid attachPoint:"+attachPoint)
+        //     shashin.printMessageToConsole("attaching id:" + id);
+        //     shashin.printMessageToConsole("attaching mid action:"+action)
+        //
+        //     const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
+        //     if (msg === "success" && $("#"+id).length === 1) {
+        //         timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+        //     }
+        // }
 
         shashin.printMessageToConsole("==============================================");
 
