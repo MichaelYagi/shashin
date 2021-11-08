@@ -514,7 +514,7 @@ class TimelineController {
 
                     val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
                     var albumObj = albumRepository.findAlbumByNameIgnoreCase(albumName)
-                    var albumId = 0
+                    var albumId: Int
 
                     // Add new album
                     if (albumObj == null) {
@@ -899,7 +899,7 @@ class TimelineController {
                     val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
                     val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
                     var albumObj = Album()
-                    var albumId = 0
+                    var albumId: Int
 
                     if (albumObject != null) {
                         albumId = albumObject.getId()

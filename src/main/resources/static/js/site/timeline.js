@@ -500,16 +500,17 @@
                 }
             });
 
-            if ($("footer").withinviewport().length === 0 || currentId === attachPoint) {
-                break;
-            }
-
             if ($("#" + currentId).length === 0) {
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
                 if (msg === "success" && $("#"+currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
             }
+
+            if ($("footer").withinviewport().length === 0 || currentId === attachPoint) {
+                break;
+            }
+
             attachPoint = currentId;
         }
 
