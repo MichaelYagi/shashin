@@ -174,12 +174,13 @@
         let didScroll = false;
         let topScroll = true;
         let initRender = true;
+        let start = true;
 
         // Scroll spy at intervals
         window.setInterval(function() {
 
             // Hack to keep scrolling up
-            if (topScroll === true && initRender === false) {
+            if (topScroll === true && start === false) {
                 document.getElementById("container").scrollBy({top: 3});
                 if (document.getElementsByTagName("MAIN").length > 0) {
                     document.getElementsByTagName("MAIN")[0].scrollBy({top: 3});
@@ -189,8 +190,16 @@
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
 
-                didScroll = false;
+                const firstDateToc = $("#offcanvasTocBody").children().first();
+                const firstDateParts = firstDateToc.attr("id").split("offcanvas_");
+                const firstDate = firstDateParts[1];
+                start = false;
+                if ($(elementsInViewport[0]).attr("id") === firstDate) {
+                    start = true;
+
+                }
                 initRender = false;
+                didScroll = false;
                 topScroll = false;
             }
         }, 200);
