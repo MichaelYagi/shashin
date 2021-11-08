@@ -180,9 +180,9 @@
 
             // Hack to keep scrolling up
             if (topScroll === true && initRender === false) {
-                document.getElementById("container").scrollBy({top: 2});
+                document.getElementById("container").scrollBy({top: 3});
                 if (document.getElementsByTagName("MAIN").length > 0) {
-                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 2});
+                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 3});
                 }
             }
             if (timelineSettings.enableScrollSpy === true && (didScroll === true || initRender === true)) {
