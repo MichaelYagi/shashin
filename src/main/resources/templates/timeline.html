@@ -93,6 +93,8 @@
                             <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
                             <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="${metadata.thumbnailUrlCentered}">
 
+                            <img class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}">
+
                             <div th:id="'tntl'+${metadata.id}"></div>
 
                             <div th:id="'tnbr'+${metadata.id}"></div>
@@ -169,11 +171,27 @@
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
+        let didScroll = false;
+        let topScroll = true;
+        let initRender = true;
+
         // Scroll spy at intervals
         window.setInterval(function() {
-            if (timelineSettings.enableScrollSpy === true) {
+
+            // Hack to keep scrolling up
+            if (topScroll === true && initRender === false) {
+                document.getElementById("container").scrollBy({top: 2});
+                if (document.getElementsByTagName("MAIN").length > 0) {
+                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 2});
+                }
+            }
+            if (timelineSettings.enableScrollSpy === true && (didScroll === true || initRender === true)) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+
+                didScroll = false;
+                initRender = false;
+                topScroll = false;
             }
         }, 200);
 
@@ -185,6 +203,11 @@
         });
 
         const scrollHandler = function (e) {
+            if ($(this).scrollTop() === 0) {
+                topScroll = true;
+            }
+
+            didScroll = true;
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
