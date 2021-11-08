@@ -503,7 +503,7 @@ $.fn.serializeObject = function() {
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,
-            speed:0,
+            speed: 0,
             licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
         }
 

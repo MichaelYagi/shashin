@@ -387,6 +387,8 @@
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
         let depthUp = queryLimit;
+        let action = "new";
+        let attachPoint = id;
 
         shashin.printMessageToConsole("scrollDirection:"+shashin.scrollDirection);
         shashin.printMessageToConsole("depthDown:"+depthDown);
@@ -434,13 +436,12 @@
         }
 
         // Render top
-        let action = "new";
-        let attachPoint = id;
-
         if (attachAboveArray.length > 0 && shashin.scrollDirection === "up") {
-            let currentId = null;
+            let currentId = id;
             while (true) {
+
                 let firstDate = null;
+
                 $("#offcanvasTocBody").children().each(function () {
                     const dateParts = $(this).attr("id").split("offcanvas_");
                     const date = dateParts[1];
@@ -449,7 +450,7 @@
                         firstDate = date;
                     }
 
-                    if ($(this).prev().length > 0 && id === date) {
+                    if ($(this).prev().length > 0 && currentId === date) {
                         const prevDateParts = $(this).prev().attr("id").split("offcanvas_");
                         currentId = prevDateParts[1];
                         return false;
@@ -467,16 +468,16 @@
                         timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                     }
 
-                    action = "below";
+                    action = "above";
                 } else {
                     break;
                 }
 
-                // if (($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0) || (firstDate !== null && currentId === firstDate)) {
-                //     break;
-                // }
-
                 attachPoint = currentId;
+
+                if (($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0) || (firstDate !== null && currentId === firstDate)) {
+                    break;
+                }
             }
         }
 
