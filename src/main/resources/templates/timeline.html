@@ -175,6 +175,7 @@
         let topScroll = true;
         let initRender = true;
         let start = true;
+        let lastScrollTop = 0;
 
         // Scroll spy at intervals
         window.setInterval(function() {
@@ -196,7 +197,6 @@
                 start = false;
                 if ($(elementsInViewport[0]).attr("id") === firstDate) {
                     start = true;
-
                 }
                 initRender = false;
                 didScroll = false;
@@ -212,6 +212,19 @@
         });
 
         const scrollHandler = function (e) {
+            const st = $(this).scrollTop();
+
+            if (topScroll === true && start === false) {
+                shashin.scrollDirection = "up";
+            } else {
+                if (st < lastScrollTop) {
+                    shashin.scrollDirection = "up";
+                } else {
+                    shashin.scrollDirection = "down";
+                }
+                lastScrollTop = st;
+            }
+
             if ($(this).scrollTop() === 0) {
                 topScroll = true;
             }
