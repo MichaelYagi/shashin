@@ -194,10 +194,8 @@
                 const firstDateToc = $("#offcanvasTocBody").children().first();
                 const firstDateParts = firstDateToc.attr("id").split("offcanvas_");
                 const firstDate = firstDateParts[1];
-                start = false;
-                if ($(elementsInViewport[0]).attr("id") === firstDate) {
-                    start = true;
-                }
+
+                start = $(elementsInViewport[0]).attr("id") === firstDate;
                 initRender = false;
                 didScroll = false;
                 topScroll = false;
@@ -230,6 +228,7 @@
             }
 
             didScroll = true;
+
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();

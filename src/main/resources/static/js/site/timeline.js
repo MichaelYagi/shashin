@@ -1,10 +1,6 @@
 (function( timelineSettings, $, undefined ) {
     timelineSettings.enableScrollSpy = true;
     timelineSettings.prevAnchor = "";
-    timelineSettings.lastOffset = $("#container").scrollTop() ? $("#container").scrollTop() : $("#main").scrollTop();
-    timelineSettings.lastDate = new Date().getTime();
-    timelineSettings.lastScrollTop = 0;
-    timelineSettings.scrollSpeedInpxPerMs = 0;
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
@@ -114,19 +110,18 @@
         elements.each(function(index) {
             let id = $(this).attr("id");
 
-            if (id.indexOf("tail_") >= 0) {
-                const idParts = id.split("tail_");
-                id = idParts[1];
-            }
+            // if (id.indexOf("tail_") >= 0) {
+            //     const idParts = id.split("tail_");
+            //     id = idParts[1];
+            // }
 
-            if (timelineSettings.prevAnchor !== id) {
+            if (id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id) {
                 timelineSettings.renderThumbnails(id,mediaTypeFilter).then(function (msg) {
                     if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                         timelineSettings.setScrollSpyActive(id);
                     }
                 });
                 timelineSettings.prevAnchor = id;
-                return false;
             }
         });
     }
@@ -210,8 +205,26 @@
         navElem.addClass('active').siblings().removeClass('active');
     }
 
-    timelineSettings.scrollToTimelineToc = function(elementsInViewport) {
-        elementsInViewport.each(function(index) {
+    timelineSettings.scrollToTimelineToc = function(elements) {
+        // if (elements.length === 0) {
+        //     const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
+        //     elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
+        // }
+        //
+        // elements.each(function(index) {
+        //     let id = $(this).attr("id");
+        //
+        //     if (id.indexOf("tail_") < 0 && index === 1) {
+        //         document.getElementById("offcanvas_" + id).scrollIntoView({
+        //             behavior: 'smooth'
+        //         });
+        //         return false;
+        //     }
+        // });
+
+
+
+        elements.each(function(index) {
             let id = $(this).attr("id");
 
             if (id.indexOf("tail_") < 0 && index === 1) {
@@ -429,16 +442,6 @@
         shashin.printMessageToConsole(attachBelowArray);
 
         //console.log(id)
-        // Remove elements that are not visible
-        if (shashin.scrollDirection === "down") {
-            $('section').each(function (index, element) {
-                shashin.printMessageToConsole(element.id + " checking to remove beginning");
-                if (element.id !== id && $("#" + element.id).withinviewport().length === 0 && $("#tail_" + element.id).withinviewport().length === 0 && $("footer").withinviewport().length === 0) {
-                    shashin.printMessageToConsole(element.id + " removed beginning");
-                    shashin.removeDateGallery(element.id);
-                }
-            });
-        }
 
         // Render top
         if (attachAboveArray.length > 0 && shashin.scrollDirection === "up") {
@@ -505,7 +508,25 @@
                 }
                 attachPoint = currentId;
             }
+
+            // Remove elements that are not visible
+            // $('section').each(function (index, element) {
+            //     shashin.printMessageToConsole(element.id + " checking to remove beginning");
+            //     if (element.id !== id && $("#" + element.id).withinviewport().length === 0 && $("#tail_" + element.id).withinviewport().length === 0 && $("footer").withinviewport().length === 0) {
+            //         shashin.printMessageToConsole(element.id + " removed beginning");
+            //         shashin.removeDateGallery(element.id);
+            //     }
+            // });
         } else {
+            // Remove elements that are not visible
+            $('section').each(function (index, element) {
+                shashin.printMessageToConsole(element.id + " checking to remove beginning");
+                if (element.id !== id && $("#" + element.id).withinviewport().length === 0 && $("#tail_" + element.id).withinviewport().length === 0 && $("footer").withinviewport().length === 0) {
+                    shashin.printMessageToConsole(element.id + " removed beginning");
+                    shashin.removeDateGallery(element.id);
+                }
+            });
+
             // Render bottom
             action = "below"
             if (attachAboveArray.length === 0 && $("#"+id).length === 0) {
