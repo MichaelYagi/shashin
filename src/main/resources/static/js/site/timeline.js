@@ -399,10 +399,8 @@
 
         //shashin.enableDebug();
 
-        let queryLimit = 1;
-
         // Depth of results in section of page above and below anchor
-        let depthDown = queryLimit;
+        let depthDown = 1;
         let depthUp = 3;
         let action = "new";
         let attachPoint = id;
