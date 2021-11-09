@@ -110,7 +110,7 @@
 
         let render = false;
         const diff = $(lastElements).not(elements).get();
-        if (diff.length > 0) {
+        if (lastElements === null || diff.length > 0) {
             render = true;
         }
 
