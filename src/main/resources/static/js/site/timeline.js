@@ -111,7 +111,7 @@
 
         let render = false;
         const diff = $(lastElements).not(elements).get();
-        if (lastElements === null || diff.length > 0) {
+        if ((shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || lastElements === null || diff.length > 0) {
             render = true;
         }
 
@@ -573,12 +573,18 @@
                     }
                 }
 
+                console.log(currentId)
+                console.log(attachPoint)
+                console.log($("footer").withinviewport().length)
+                console.log($(".propBatchMetadata").withinviewport().length)
+
                 if ($("footer").withinviewport().length === 0 || currentId === attachPoint) {
                     break;
                 }
 
                 attachPoint = currentId;
             }
+            console.log("====================")
         }
 
         // Render mid

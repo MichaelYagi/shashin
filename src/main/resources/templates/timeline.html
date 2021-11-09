@@ -187,7 +187,7 @@
                 }
             }
 
-            if (timelineSettings.enableScrollSpy === true && (timelineSettings.didScroll === true || initRender === true)) {
+            if ((shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || (timelineSettings.enableScrollSpy === true && (timelineSettings.didScroll === true || initRender === true))) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
 
