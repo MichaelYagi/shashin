@@ -123,8 +123,6 @@
                 //     id = idParts[1];
                 // }
 
-                console.log(id)
-
                 if (id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id) {
                     timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
                         if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
@@ -136,7 +134,6 @@
             });
         }
 
-        console.log("===========================")
         lastElements = elements;
     }
 
