@@ -492,7 +492,7 @@
 
                 attachPoint = currentId;
 
-                if (((index <= depthUp || ($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0)) && $("footer").withinviewport().length === 0) || (firstDate !== null && currentId === firstDate)) {
+                if (((index <= depthUp || ($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0))) || (firstDate !== null && currentId === firstDate) || $("footer").withinviewport().length === 0) {
                     break;
                 }
             }
