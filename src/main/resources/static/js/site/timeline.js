@@ -114,7 +114,12 @@
         elements.each(function(index) {
             let id = $(this).attr("id");
 
-            if (id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id && index < 2) {
+            if (id.indexOf("tail_") >= 0) {
+                const idParts = id.split("tail_");
+                id = idParts[1];
+            }
+
+            if (timelineSettings.prevAnchor !== id) {
                 timelineSettings.renderThumbnails(id,mediaTypeFilter).then(function (msg) {
                     if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                         timelineSettings.setScrollSpyActive(id);
@@ -499,22 +504,6 @@
                 }
                 attachPoint = currentId;
             }
-
-            // Render mid
-            action = "below";
-
-            shashin.printMessageToConsole("attempting to attaching id mid "+id+" "+action+" "+attachPoint+" length "+$("#"+id).length)
-
-            if (id !== null && $("#"+id).length === 0) {
-                shashin.printMessageToConsole("attaching mid attachPoint:"+attachPoint)
-                shashin.printMessageToConsole("attaching id:" + id);
-                shashin.printMessageToConsole("attaching mid action:"+action)
-
-                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
-                if (msg === "success" && $("#"+id).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                }
-            }
         } else {
             // Render bottom
             action = "below"
@@ -550,6 +539,22 @@
                 }
 
                 attachPoint = currentId;
+            }
+        }
+
+        // Render mid
+        action = "below";
+
+        shashin.printMessageToConsole("attempting to attaching id mid "+id+" "+action+" "+attachPoint+" length "+$("#"+id).length)
+
+        if (id !== null && $("#"+id).length === 0) {
+            shashin.printMessageToConsole("attaching mid attachPoint:"+attachPoint)
+            shashin.printMessageToConsole("attaching id:" + id);
+            shashin.printMessageToConsole("attaching mid action:"+action)
+
+            const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
+            if (msg === "success" && $("#"+id).length === 1) {
+                timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
             }
         }
 
