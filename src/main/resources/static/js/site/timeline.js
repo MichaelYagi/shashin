@@ -519,7 +519,11 @@
             // Remove elements that are not visible
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove beginning");
-                if (element.id !== id && $("#" + element.id).withinviewport().length === 0 && $("#tail_" + element.id).withinviewport().length === 0 && $("footer").withinviewport().length === 0) {
+                if (element.id !== id &&
+                    $("#" + element.id).withinviewport().length === 0 &&
+                    $("#tail_" + element.id).withinviewport().length === 0 &&
+                    $("footer").withinviewport().length === 0
+                ) {
                     shashin.printMessageToConsole(element.id + " removed beginning");
                     shashin.removeDateGallery(element.id);
                 }
@@ -548,7 +552,7 @@
                 });
 
                 if (currentId !== null && $("#" + currentId).length === 0) {
-                    const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
+                    const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
                     if (msg === "success" && $("#"+currentId).length === 1) {
                         timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                     }
