@@ -53,10 +53,10 @@
             <input type="hidden" id="mediaTypeFilter" name="mediaTypeFilter" th:value="${mediaTypeFilter}">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
-            
-            <div id="infinite-scroll-gallery">
-                <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
 
+            <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
+
+            <div id="infinite-scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <br id="brundated">
@@ -174,13 +174,13 @@
         let didScroll = false;
         let topScroll = true;
         let initRender = true;
-        let start = true;
+        let topOfPage = true;
         let lastScrollTop = 0;
 
         // Scroll spy at intervals
         window.setInterval(function() {
             // Hack to keep scrolling up
-            if (topScroll === true && start === false) {
+            if (topScroll === true && topOfPage === false) {
                 document.getElementById("container").scrollBy({top: 3});
                 if (document.getElementsByTagName("MAIN").length > 0) {
                     document.getElementsByTagName("MAIN")[0].scrollBy({top: 3});
@@ -195,7 +195,7 @@
                 const firstDateParts = firstDateToc.attr("id").split("offcanvas_");
                 const firstDate = firstDateParts[1];
 
-                start = $(elementsInViewport[0]).attr("id") === firstDate;
+                topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
                 initRender = false;
                 didScroll = false;
                 topScroll = false;
@@ -212,7 +212,7 @@
         const scrollHandler = function (e) {
             const st = $(this).scrollTop();
 
-            if (topScroll === true && start === false) {
+            if (topScroll === true && topOfPage === false) {
                 shashin.scrollDirection = "up";
             } else {
                 if (st < lastScrollTop) {
