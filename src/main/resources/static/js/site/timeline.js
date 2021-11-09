@@ -114,8 +114,7 @@
         elements.each(function(index) {
             let id = $(this).attr("id");
 
-            if ((id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id)) {
-
+            if (id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id && index < 2) {
                 timelineSettings.renderThumbnails(id,mediaTypeFilter).then(function (msg) {
                     if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                         timelineSettings.setScrollSpyActive(id);
@@ -386,7 +385,7 @@
 
         // Depth of results in section of page above and below anchor
         let depthDown = queryLimit;
-        let depthUp = 2;
+        let depthUp = 3;
         let action = "new";
         let attachPoint = id;
 
@@ -438,6 +437,7 @@
         // Render top
         if (attachAboveArray.length > 0 && shashin.scrollDirection === "up") {
             let currentId = id;
+            let index = 0;
             while (true) {
 
                 let firstDate = null;
@@ -469,11 +469,12 @@
                     }
 
                     action = "above";
+                    index++;
                 }
 
                 attachPoint = currentId;
 
-                if (($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0 && $("footer").withinviewport().length === 0) || (firstDate !== null && currentId === firstDate)) {
+                if (((index <= depthUp || ($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0)) && $("footer").withinviewport().length === 0) || (firstDate !== null && currentId === firstDate)) {
                     break;
                 }
             }
@@ -551,10 +552,6 @@
                 attachPoint = currentId;
             }
         }
-
-
-
-
 
         shashin.printMessageToConsole("==============================================");
 
