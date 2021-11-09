@@ -428,11 +428,12 @@
         shashin.printMessageToConsole("attachBelowArray");
         shashin.printMessageToConsole(attachBelowArray);
 
+        //console.log(id)
         // Remove elements that are not visible
         if (shashin.scrollDirection === "down") {
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove beginning");
-                if ($("#" + element.id).withinviewport().length === 0 && $("#tail_" + element.id).withinviewport().length === 0 && $("footer").withinviewport().length === 0) {
+                if (element.id !== id && $("#" + element.id).withinviewport().length === 0 && $("#tail_" + element.id).withinviewport().length === 0 && $("footer").withinviewport().length === 0) {
                     shashin.printMessageToConsole(element.id + " removed beginning");
                     shashin.removeDateGallery(element.id);
                 }
