@@ -179,7 +179,6 @@
 
         // Scroll spy at intervals
         window.setInterval(function() {
-
             // Hack to keep scrolling up
             if (topScroll === true && start === false) {
                 document.getElementById("container").scrollBy({top: 3});
@@ -187,6 +186,7 @@
                     document.getElementsByTagName("MAIN")[0].scrollBy({top: 3});
                 }
             }
+
             if (timelineSettings.enableScrollSpy === true && (didScroll === true || initRender === true)) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
@@ -225,7 +225,7 @@
                 lastScrollTop = st;
             }
 
-            if ($(this).scrollTop() === 0) {
+            if (st === 0) {
                 topScroll = true;
             }
 
