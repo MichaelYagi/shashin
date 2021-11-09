@@ -171,7 +171,7 @@
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        let didScroll = false;
+        timelineSettings.didScroll = false;
         let topScroll = true;
         let initRender = true;
         let topOfPage = true;
@@ -187,7 +187,7 @@
                 }
             }
 
-            if (timelineSettings.enableScrollSpy === true && (didScroll === true || initRender === true)) {
+            if (timelineSettings.enableScrollSpy === true && (timelineSettings.didScroll === true || initRender === true)) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
 
@@ -197,7 +197,7 @@
 
                 topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
                 initRender = false;
-                didScroll = false;
+                timelineSettings.didScroll = false;
                 topScroll = false;
             }
         }, 200);
@@ -227,7 +227,7 @@
                 topScroll = true;
             }
 
-            didScroll = true;
+            timelineSettings.didScroll = true;
 
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {

@@ -4,6 +4,7 @@
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
+    timelineSettings.didScroll = false;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
@@ -205,6 +206,8 @@
         const timer = setInterval(function () {
             if (navElem.hasClass("active") === true) {
                 timelineSettings.enableScrollSpy = true;
+                timelineSettings.didScroll = true;
+                shashin.scrollDirection = "down";
                 clearInterval(timer);
             }
         }, 200);
@@ -492,9 +495,10 @@
 
                 attachPoint = currentId;
 
-                if (((index <= depthUp || ($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0))) || (firstDate !== null && currentId === firstDate) || $("footer").withinviewport().length === 0) {
+                if (((index <= depthUp || ($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0 && $("footer").withinviewport().length === 0))) || (firstDate !== null && currentId === firstDate)) {
                     break;
                 }
+
             }
 
             for (let index in attachAboveArray) {
