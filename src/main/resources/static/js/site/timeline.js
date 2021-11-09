@@ -99,6 +99,7 @@
         // }, 500);
     }
 
+    let lastElements = null;
     timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter) {
         // If no scrollspy elements found, find current thumbnail container
         // and closest previous scrollspy element
@@ -107,23 +108,36 @@
             elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
         }
 
-        elements.each(function(index) {
-            let id = $(this).attr("id");
+        let render = false;
+        const diff = $(lastElements).not(elements).get();
+        if (diff.length > 0) {
+            render = true;
+        }
 
-            // if (id.indexOf("tail_") >= 0) {
-            //     const idParts = id.split("tail_");
-            //     id = idParts[1];
-            // }
+        if (render === true) {
+            elements.each(function (index) {
+                let id = $(this).attr("id");
 
-            if (id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id) {
-                timelineSettings.renderThumbnails(id,mediaTypeFilter).then(function (msg) {
-                    if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
-                        timelineSettings.setScrollSpyActive(id);
-                    }
-                });
-                timelineSettings.prevAnchor = id;
-            }
-        });
+                // if (id.indexOf("tail_") >= 0) {
+                //     const idParts = id.split("tail_");
+                //     id = idParts[1];
+                // }
+
+                console.log(id)
+
+                if (id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id) {
+                    timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
+                        if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
+                            timelineSettings.setScrollSpyActive(id);
+                        }
+                    });
+                    timelineSettings.prevAnchor = id;
+                }
+            });
+        }
+
+        console.log("===========================")
+        lastElements = elements;
     }
 
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
