@@ -472,6 +472,10 @@
                     const dateParts = $(this).attr("id").split("offcanvas_");
                     const date = dateParts[1];
 
+                    if (firstDate === null) {
+                        firstDate = date;
+                    }
+
                     if ($(this).prev().length > 0 && currentId === date) {
                         currentId = $(this).prev().attr("id").split("offcanvas_")[1];
                         return false;
@@ -499,7 +503,7 @@
 
                 attachPoint = currentId;
 
-                if (((index >= depthUp || (/*$("#"+currentId).withinviewport().length > 0 && */$("#tail_"+currentId).withinviewport().length > 0 && $("footer").withinviewport().length === 0))) || (firstDate !== null && currentId === firstDate)) {
+                if (((index >= depthUp || (/*$("#"+currentId).withinviewport().length > 0 && */$("#tail_" + currentId).withinviewport().length > 0 && $("footer").withinviewport().length === 0))) || (firstDate !== null && currentId === firstDate)) {
                     break;
                 }
 
