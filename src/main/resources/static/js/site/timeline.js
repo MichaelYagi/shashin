@@ -119,14 +119,19 @@
             render = true;
         }
 
+console.log("====================")
+console.log(elements)
+
         if (render === true) {
             elements.each(function (index) {
                 let id = $(this).attr("id");
 
-                if (elements.length === 1 && id.indexOf("tail_") >= 0) {
+                if ((shashin.scrollDirection === "down" && elements.length === 1 && id.indexOf("tail_") >= 0) || (shashin.scrollDirection === "up" && id.indexOf("tail_") >= 0)) {
                     const idParts = id.split("tail_");
                     id = idParts[1];
                 }
+
+console.log(id)
 
                 if (id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id && (shashin.scrollDirection === "down" || (shashin.scrollDirection === "up" && index < 2))) {
                     timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
@@ -460,6 +465,7 @@
 
         // Render top
         if (attachBelowArray.length > 0 && shashin.scrollDirection === "up") {
+
             let currentId = id;
             let index = 0;
             let nextAttachPoint = null;
@@ -502,7 +508,7 @@
 
                 attachPoint = currentId;
 
-                if (((index >= depthUp || ($("#"+currentId).withinviewport().length > 0 && $("#tail_"+currentId).withinviewport().length > 0 && $("footer").withinviewport().length === 0))) || (firstDate !== null && currentId === firstDate)) {
+                if (((index >= depthUp || (/*$("#"+currentId).withinviewport().length > 0 && */$("#tail_"+currentId).withinviewport().length > 0 && $("footer").withinviewport().length === 0))) || (firstDate !== null && currentId === firstDate)) {
                     break;
                 }
 
@@ -553,7 +559,11 @@
 
                 if (deleteEntries === true &&
                     $("#" + element.id).withinviewport().length === 0 &&
+                    $("#br" + element.id).withinviewport().length === 0 &&
+                    $("#row" + element.id).withinviewport().length === 0 &&
+                    $("#amp_" + element.id).withinviewport().length === 0 &&
                     $("#tail_" + element.id).withinviewport().length === 0 &&
+                    $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0 &&
                     $("footer").withinviewport().length === 0
                 ) {
                     shashin.printMessageToConsole(element.id + " removed beginning");
@@ -561,15 +571,54 @@
                 }
             });
 
-        } else {
             // Remove elements that are not visible
+            // $('section').each(function (index, element) {
+            //     shashin.printMessageToConsole(element.id + " checking to remove beginning");
+            //
+            //     if ($("#" + element.id).withinviewport().length > 0 ||
+            //         $("#br" + element.id).withinviewport().length > 0 ||
+            //         $("#row" + element.id).withinviewport().length > 0 ||
+            //         $("#amp_" + element.id).withinviewport().length > 0 ||
+            //         $("#tail_" + element.id).withinviewport().length > 0
+            //         || $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length > 0
+            //     ) {
+            //         console.log(element.id+" within view")
+            //         return;
+            //     } else {
+            //         console.log("removing "+element.id)
+            //         shashin.printMessageToConsole(element.id + " removed beginning");
+            //         shashin.removeDateGallery(element.id);
+            //     }
+            // });
+
+        } else { // Scrolling down
+            // Remove elements that are not visible
+            // $('section').each(function (index, element) {
+            //     shashin.printMessageToConsole(element.id + " checking to remove beginning");
+            //     if (element.id !== id &&
+            //         $("#" + element.id).withinviewport().length === 0 &&
+            //         $("#tail_" + element.id).withinviewport().length === 0 &&
+            //         $("footer").withinviewport().length === 0
+            //     ) {
+            //         shashin.printMessageToConsole(element.id + " removed beginning");
+            //         shashin.removeDateGallery(element.id);
+            //     }
+            // });
+
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove beginning");
-                if (element.id !== id &&
-                    $("#" + element.id).withinviewport().length === 0 &&
-                    $("#tail_" + element.id).withinviewport().length === 0 &&
-                    $("footer").withinviewport().length === 0
+
+                if ($("#" + element.id).withinviewport().length > 0 ||
+                    $("#br" + element.id).withinviewport().length > 0 ||
+                    $("#row" + element.id).withinviewport().length > 0 ||
+                    $("#amp_" + element.id).withinviewport().length > 0 ||
+                    $("#tail_" + element.id).withinviewport().length > 0
+                    || $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length > 0
                 ) {
+                    console.log(element.id+" within view")
+                    return;
+                } else {
+                    console.log("removing "+element.id)
                     shashin.printMessageToConsole(element.id + " removed beginning");
                     shashin.removeDateGallery(element.id);
                 }
@@ -917,13 +966,14 @@
 
                                     if (metadata.year == null || metadata.month == null || metadata.day == null) {
                                         html +=
-                                            '   <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlSmall) + '">';
+                                            '   <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlSmall) + '">\n' +
+                                            '   <img class="photo-thumbnail-image thumbnailTag_undated" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'">\n';
+
                                     } else {
                                         html +=
-                                            '   <input type="hidden" name="thumbnailUrl-' + metadata.year + '-' + metadata.month + '-' + metadata.day + '[]" id="thumbnailUrl_' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlSmall) + '">';
+                                            '   <input type="hidden" name="thumbnailUrl-' + metadata.year + '-' + metadata.month + '-' + metadata.day + '[]" id="thumbnailUrl_' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlSmall) + '">\n' +
+                                            '   <img class="photo-thumbnail-image thumbnailTag_'+metadata.year + '-' + metadata.month + '-' + metadata.day+'" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'">\n';
                                     }
-
-                                    html += '<img class="photo-thumbnail-image" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'">\n';
 
                                     html += '   <div id="tntl' + metadata.id + '"></div>\n' +
                                         '       <div id="tnbr' + metadata.id + '"></div>\n' +
