@@ -194,6 +194,9 @@
                 if (document.getElementsByTagName("MAIN").length > 0) {
                     document.getElementsByTagName("MAIN")[0].scrollBy({top: 3});
                 }
+
+                shashin.scrollDirection = "up";
+                topScroll = false;
                 scrollHack = true;
             }
 
@@ -208,7 +211,7 @@
                 topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
                 initRender = false;
                 timelineSettings.didScroll = false;
-                topScroll = false;
+
             }
 
             scrollHack = false;
@@ -224,6 +227,10 @@
         const scrollHandler = function (e) {
             const st = $(this).scrollTop();
 
+            if (st === 0) {
+                topScroll = true;
+            }
+
             if (topScroll === true && topOfPage === false) {
                 shashin.scrollDirection = "up";
             } else {
@@ -233,10 +240,6 @@
                     shashin.scrollDirection = "down";
                 }
                 lastScrollTop = st;
-            }
-
-            if (st === 0) {
-                topScroll = true;
             }
 
             timelineSettings.didScroll = true;
