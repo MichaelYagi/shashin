@@ -5,6 +5,8 @@
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
     timelineSettings.didScroll = false;
+    timelineSettings.stopTrackingScroll = false;
+    timelineSettings.lastScrollTop = 0;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
@@ -102,6 +104,8 @@
 
     let lastElements = null;
     timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter,scrollHack) {
+        timelineSettings.stopTrackingScroll = true;
+
         if (typeof scrollHack === "undefined") {
             scrollHack = false;
         }
@@ -125,13 +129,17 @@
             lastDateFound = true;
         }
 
-        if (scrollHack === true || lastElements === null || diff.length > 0 || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
+        if (scrollHack === true || lastElements === null || diff.length > 0 || (diff.length > 0 && shashin.scrollDirection === "up") || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
             render = true;
         }
 
         if (render === true) {
             elements.each(function (index) {
                 let id = $(this).attr("id");
+
+                if (shashin.scrollDirection === "up") {
+                    id = $(elements).first().attr("id");
+                }
 
                 if ((shashin.scrollDirection === "down" && elements.length === 1 && id.indexOf("tail_") >= 0) || (shashin.scrollDirection === "up" && id.indexOf("tail_") >= 0)) {
                     const idParts = id.split("tail_");
@@ -143,11 +151,18 @@
                         if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                             timelineSettings.setScrollSpyActive(id);
                         }
+                        shashin.scrollDirection = "up";
+                        timelineSettings.stopTrackingScroll = false;
+                        timelineSettings.lastScrollTop = 9999;
                     });
                     timelineSettings.prevAnchor = id;
                 }
                 timelineSettings.prevAnchor = "";
             });
+        } else {
+            shashin.scrollDirection = "up";
+            timelineSettings.stopTrackingScroll = false;
+            timelineSettings.lastScrollTop = 9999;
         }
 
         lastElements = elements;
@@ -218,14 +233,14 @@
         history.replaceState(null, null, url);
 
         const navElem = $("#offcanvas_" + anchor);
-        const timer = setInterval(function () {
+        // const timer = setInterval(function () {
             if (navElem.hasClass("active") === true) {
                 timelineSettings.enableScrollSpy = true;
                 timelineSettings.didScroll = true;
                 shashin.scrollDirection = "down";
-                clearInterval(timer);
+                //clearInterval(timer);
             }
-        }, 200);
+        // }, 200);
     }
 
     // Set the active nav
@@ -429,7 +444,7 @@
         //shashin.enableDebug();
         // Depth of results in section of page above and below anchor
         let depthDown = 1;
-        let depthUp = 3;
+        let depthUp = 4;
         let action = "new";
         let attachPoint = id;
 
@@ -473,8 +488,25 @@
         // Render top
         if ((attachBelowArray.length > 0 && shashin.scrollDirection === "up") || lastDate === id) {
 
+            // Remove elements that are not visible
+            $('section').each(function (index, element) {
+                shashin.printMessageToConsole(element.id + " checking to remove beginning");
+
+                if ($("#" + element.id).withinviewport().length === 0 &&
+                    $("#br" + element.id).withinviewport().length === 0 &&
+                    $("#row" + element.id).withinviewport().length === 0 &&
+                    $("#amp_" + element.id).withinviewport().length === 0 &&
+                    $("#tail_" + element.id).withinviewport().length === 0 &&
+                    $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0 &&
+                    $("footer").withinviewport().length === 0
+                ) {
+                    shashin.printMessageToConsole(element.id + " removed beginning");
+                    shashin.removeDateGallery(element.id);
+                }
+            });
+
             let currentId = id;
-            let index = 0;
+            let numberAdded = 0;
             let nextAttachPoint = null;
 
             while (true) {
@@ -511,12 +543,12 @@
                     }
 
                     action = "above";
-                    index++;
+                    numberAdded++;
                 }
 
                 attachPoint = currentId;
 
-                if (((index >= depthUp || (($("#"+currentId).withinviewport().length > 0 || $("#tail_" + currentId).withinviewport().length > 0) && $("footer").withinviewport().length === 0))) || (firstDate !== null && currentId === firstDate)) {
+                if (numberAdded > depthUp || /*(($("#br"+currentId).withinviewport().length > 0 && $("#amp_" + currentId).withinviewport().length === 0) && $("footer").withinviewport().length === 0) || */(firstDate !== null && currentId === firstDate)) {
                     break;
                 }
 
@@ -553,31 +585,6 @@
                     timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                 }
             }
-
-            // Remove elements that are not visible
-            let deleteEntries = false;
-            $('section').each(function (index, element) {
-                shashin.printMessageToConsole(element.id + " checking to remove beginning");
-
-                if (attachPoint === element.id) {
-                    deleteEntries = true;
-                    return;
-                }
-
-                if (deleteEntries === true &&
-                    $("#" + element.id).withinviewport().length === 0 &&
-                    $("#br" + element.id).withinviewport().length === 0 &&
-                    $("#row" + element.id).withinviewport().length === 0 &&
-                    $("#amp_" + element.id).withinviewport().length === 0 &&
-                    $("#tail_" + element.id).withinviewport().length === 0 &&
-                    $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0 &&
-                    $("footer").withinviewport().length === 0
-                ) {
-                    shashin.printMessageToConsole(element.id + " removed beginning");
-                    shashin.removeDateGallery(element.id);
-                }
-            });
-
         } else { // Scrolling down
 
             $('section').each(function (index, element) {

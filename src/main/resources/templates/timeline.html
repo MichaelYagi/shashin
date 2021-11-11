@@ -183,7 +183,6 @@
         let topScroll = true;
         let initRender = true;
         let topOfPage = true;
-        let lastScrollTop = 0;
         let scrollHack = false;
 
         // Scroll spy at intervals
@@ -194,10 +193,13 @@
                 if (document.getElementsByTagName("MAIN").length > 0) {
                     document.getElementsByTagName("MAIN")[0].scrollBy({top: 3});
                 }
+
+                shashin.scrollDirection = "up";
+                topScroll = false;
                 scrollHack = true;
             }
 
-            if (scrollHack === true || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || (timelineSettings.enableScrollSpy === true && (timelineSettings.didScroll === true || initRender === true))) {
+            if (scrollHack === true || (timelineSettings.didScroll === true && shashin.scrollDirection === "up") || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || (timelineSettings.enableScrollSpy === true && (timelineSettings.didScroll === true || initRender === true))) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter, scrollHack);
 
@@ -208,7 +210,10 @@
                 topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
                 initRender = false;
                 timelineSettings.didScroll = false;
-                topScroll = false;
+            } else {
+                shashin.scrollDirection = "up";
+                timelineSettings.stopTrackingScroll = false;
+                timelineSettings.lastScrollTop = 9999;
             }
 
             scrollHack = false;
@@ -222,24 +227,22 @@
         });
 
         const scrollHandler = function (e) {
-            const st = $(this).scrollTop();
-
-            if (topScroll === true && topOfPage === false) {
-                shashin.scrollDirection = "up";
-            } else {
-                if (st < lastScrollTop) {
-                    shashin.scrollDirection = "up";
-                } else {
-                    shashin.scrollDirection = "down";
-                }
-                lastScrollTop = st;
-            }
+            const st = $(e.target).scrollTop();
 
             if (st === 0) {
                 topScroll = true;
             }
 
-            timelineSettings.didScroll = true;
+            // Don't track scrolling while getting results and dynamically changing element
+            if (timelineSettings.stopTrackingScroll === false) {
+                if (st <= timelineSettings.lastScrollTop) {
+                    shashin.scrollDirection = "up";
+                } else {
+                    shashin.scrollDirection = "down";
+                }
+                timelineSettings.lastScrollTop = st <= 0 ? 0 : st;
+                timelineSettings.didScroll = true;
+            }
 
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
