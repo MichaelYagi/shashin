@@ -115,7 +115,17 @@
 
         let render = false;
         const diff = $(lastElements).not(elements).get();
-        if (scrollHack === true || lastElements === null || diff.length > 0 || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
+        const lastIdToc = $("#offcanvasTocBody").children().last();
+        const lastDate = lastIdToc.attr("id").split("offcanvas_")[1];
+        let lastDateFound = false;
+        const dateElements = $(elements).map(function() {
+            return $(this).attr('id');
+        }).get();
+        if($.inArray(lastDate, dateElements) !== -1) {
+            lastDateFound = true;
+        }
+
+        if (scrollHack === true || lastElements === null || diff.length > 0 || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
             render = true;
         }
 
@@ -457,8 +467,11 @@
         shashin.printMessageToConsole("attachBelowArray");
         shashin.printMessageToConsole(attachBelowArray);
 
+        const lastIdToc = $("#offcanvasTocBody").children().last();
+        const lastDate = lastIdToc.attr("id").split("offcanvas_")[1];
+
         // Render top
-        if (attachBelowArray.length > 0 && shashin.scrollDirection === "up") {
+        if ((attachBelowArray.length > 0 && shashin.scrollDirection === "up") || lastDate === id) {
 
             let currentId = id;
             let index = 0;
