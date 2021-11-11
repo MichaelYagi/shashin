@@ -455,38 +455,38 @@
 
         let offCanvasId = $("#offcanvas_"+id);
 
-        const attachAboveArray = [];
-        let tempOffCanvasIdAbove = offCanvasId;
-        for (let i = 0; i <= depthUp - 1; i++) {
-            tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
-            if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
-                const offcanvasIdParts = tempOffCanvasIdAbove.attr("id").split("_");
-                const offcanvasId = offcanvasIdParts[1];
-                attachAboveArray.unshift(offcanvasId);
-            }
-        }
+        // const attachAboveArray = [];
+        // let tempOffCanvasIdAbove = offCanvasId;
+        // for (let i = 0; i <= depthUp - 1; i++) {
+        //     tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
+        //     if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
+        //         const offcanvasIdParts = tempOffCanvasIdAbove.attr("id").split("_");
+        //         const offcanvasId = offcanvasIdParts[1];
+        //         attachAboveArray.unshift(offcanvasId);
+        //     }
+        // }
+        //
+        // const attachBelowArray = [];
+        // let tempOffCanvasIdBelow = offCanvasId;
+        // for (let i = 0;i <= depthDown-1;i++) {
+        //     tempOffCanvasIdBelow = tempOffCanvasIdBelow.next();
+        //     if (typeof tempOffCanvasIdBelow.attr("id") !== 'undefined') {
+        //         const offcanvasIdParts = tempOffCanvasIdBelow.attr("id").split("_");
+        //         const offcanvasId = offcanvasIdParts[1];
+        //         attachBelowArray.push(offcanvasId);
+        //     }
+        // }
 
-        const attachBelowArray = [];
-        let tempOffCanvasIdBelow = offCanvasId;
-        for (let i = 0;i <= depthDown-1;i++) {
-            tempOffCanvasIdBelow = tempOffCanvasIdBelow.next();
-            if (typeof tempOffCanvasIdBelow.attr("id") !== 'undefined') {
-                const offcanvasIdParts = tempOffCanvasIdBelow.attr("id").split("_");
-                const offcanvasId = offcanvasIdParts[1];
-                attachBelowArray.push(offcanvasId);
-            }
-        }
-
-        shashin.printMessageToConsole("attachAboveArray");
-        shashin.printMessageToConsole(attachAboveArray);
-        shashin.printMessageToConsole("attachBelowArray");
-        shashin.printMessageToConsole(attachBelowArray);
+        // shashin.printMessageToConsole("attachAboveArray");
+        // shashin.printMessageToConsole(attachAboveArray);
+        // shashin.printMessageToConsole("attachBelowArray");
+        // shashin.printMessageToConsole(attachBelowArray);
 
         const lastIdToc = $("#offcanvasTocBody").children().last();
         const lastDate = lastIdToc.attr("id").split("offcanvas_")[1];
 
         // Render top
-        if ((attachBelowArray.length > 0 && shashin.scrollDirection === "up") || lastDate === id) {
+        if ((/*attachBelowArray.length > 0 && */shashin.scrollDirection === "up") || lastDate === id) {
 
             // Remove elements that are not visible
             $('section').each(function (index, element) {
@@ -554,24 +554,24 @@
 
             }
 
-            action = "below";
-            attachPoint = nextAttachPoint;
-            for (let index in attachBelowArray) {
-                const currentId = attachBelowArray[index];
-                shashin.printMessageToConsole("attempting to attaching id below:" + currentId);
-                if (attachPoint !== null && $("#" + currentId).length === 0) {
-                    shashin.printMessageToConsole("attaching above attachPoint:" + attachPoint);
-                    shashin.printMessageToConsole("attaching id:" + currentId);
-                    shashin.printMessageToConsole("actionAbove:" + action)
-                    const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
-                    if (msg === "success" && $("#"+currentId).length === 1) {
-                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
-                    }
-
-                    action = "below";
-                }
-                attachPoint = currentId;
-            }
+            // action = "below";
+            // attachPoint = nextAttachPoint;
+            // for (let index in attachBelowArray) {
+            //     const currentId = attachBelowArray[index];
+            //     shashin.printMessageToConsole("attempting to attaching id below:" + currentId);
+            //     if (attachPoint !== null && $("#" + currentId).length === 0) {
+            //         shashin.printMessageToConsole("attaching above attachPoint:" + attachPoint);
+            //         shashin.printMessageToConsole("attaching id:" + currentId);
+            //         shashin.printMessageToConsole("actionAbove:" + action)
+            //         const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+            //         if (msg === "success" && $("#"+currentId).length === 1) {
+            //             timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+            //         }
+            //
+            //         action = "below";
+            //     }
+            //     attachPoint = currentId;
+            // }
 
             // Render mid
             action = "above";
