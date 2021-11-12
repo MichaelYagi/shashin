@@ -143,6 +143,13 @@
         if (dateElements[0] === lastDateElements[0] && diff.length === 1 && lastDateElements[lastDateElements.length-1] === $(diff[0]).attr("id") && $(diff[0]).attr("id").indexOf("tail_") >= 0) {
             shashin.scrollDirection = "up";
         }
+        if (dateElements[dateElements.length-1] && lastDateElements[lastDateElements.length-1] && shashin.getDateObject(dateElements[dateElements.length-1]) < shashin.getDateObject(lastDateElements[lastDateElements.length-1])) {
+            shashin.scrollDirection = "down";
+        }
+        if (dateElements[dateElements.length-1] && lastDateElements[lastDateElements.length-1] && shashin.getDateObject(dateElements[dateElements.length-1]).toString() === shashin.getDateObject(lastDateElements[lastDateElements.length-1]).toString() && dateElements[dateElements.length-1].indexOf("tail_") >= 0) {
+            shashin.scrollDirection = "down";
+        }
+
 
         if (scrollHack === true || lastElements === null || diff.length > 0 || (diff.length > 0 && shashin.scrollDirection === "up" && dateElements[0] !== lastDateElements[0]) || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
             render = true;
@@ -175,6 +182,7 @@
                     timelineSettings.prevAnchor = id;
 
                     if (shashin.scrollDirection === "up") {
+                        lastElements = elements;
                         return false;
                     }
                 }
@@ -186,7 +194,6 @@
             timelineSettings.stopTrackingScroll = false;
             timelineSettings.lastScrollTop = 9999;
         }
-
         lastElements = elements;
     }
 
@@ -590,9 +597,27 @@
             });
 
             // Render bottom
+
+            // Above mid
             action = null;
-            if ($("#"+id).length === 0) {
+            //attachPoint = null;
+            let tempOffCanvasId = $("#offcanvas_"+id);
+            let tempOffCanvasIdAbove = tempOffCanvasId.prev();
+            if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
                 attachPoint = null;
+                const offcanvasId = tempOffCanvasIdAbove.attr("id").split("_")[1];
+                const msg = await timelineSettings.updateTimeline(offcanvasId, mediaTypeFilter, action, attachPoint)
+                if (msg === "success" && $("#" + offcanvasId).length === 1) {
+                    timelineSettings.attachAssociatedMetadata(offcanvasId, mediaTypeFilter);
+                }
+                attachPoint = offcanvasId;
+                action = "below";
+            }
+
+            // Render mid
+            //action = null;
+            if ($("#"+id).length === 0) {
+                //attachPoint = null;
                 const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
                 if (msg === "success" && $("#"+id).length === 1) {
                     timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
