@@ -6,6 +6,7 @@
     timelineSettings.successMidMsg = "success_mid";
     timelineSettings.didScroll = false;
     timelineSettings.stopTrackingScroll = false;
+    timelineSettings.processRender = true;
     timelineSettings.lastScrollTop = 0;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
@@ -161,6 +162,7 @@
                 }
 
                 if (id.indexOf("tail_") < 0 && timelineSettings.prevAnchor !== id && (shashin.scrollDirection === "down" || (shashin.scrollDirection === "up" && index < 2))) {
+                    timelineSettings.processRender = false;
                     timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
                         if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                             timelineSettings.setScrollSpyActive(id);
@@ -192,6 +194,7 @@
         e.preventDefault();
 
         shashin.scrollDirection = "down";
+        timelineSettings.processRender = false;
         timelineSettings.enableScrollSpy = false;
         shashin.timelineQueryLimit = 1;
         timelineSettings.didScroll = false;
@@ -631,6 +634,8 @@
                 attachPoint = currentId;
             }
         }
+
+        timelineSettings.processRender = true;
 
         shashin.printMessageToConsole("==============================================");
 
