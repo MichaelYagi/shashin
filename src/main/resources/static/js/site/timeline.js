@@ -132,7 +132,18 @@
             lastDateFound = true;
         }
 
-        if (scrollHack === true || lastElements === null || diff.length > 0 || (diff.length > 0 && shashin.scrollDirection === "up") || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
+        // Additional hacks for scroll direction as the detection gets "confused" when dealing with dynamic content
+        if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) > shashin.getDateObject(lastDateElements[0])) {
+            shashin.scrollDirection = "up";
+        }
+        if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) < shashin.getDateObject(lastDateElements[0])) {
+            shashin.scrollDirection = "down";
+        }
+        if (dateElements[0] === lastDateElements[0] && diff.length === 1 && lastDateElements[lastDateElements.length-1] === $(diff[0]).attr("id") && $(diff[0]).attr("id").indexOf("tail_") >= 0) {
+            shashin.scrollDirection = "up";
+        }
+
+        if (scrollHack === true || lastElements === null || diff.length > 0 || (diff.length > 0 && shashin.scrollDirection === "up" && dateElements[0] !== lastDateElements[0]) || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
             render = true;
         }
 
@@ -160,7 +171,12 @@
                     });
 
                     timelineSettings.prevAnchor = id;
+
+                    if (shashin.scrollDirection === "up") {
+                        return false;
+                    }
                 }
+
                 timelineSettings.prevAnchor = "";
             });
         } else {
@@ -246,7 +262,7 @@
                 timelineSettings.enableScrollSpy = true;
                 timelineSettings.stopTrackingScroll = true;
                 // timelineSettings.didScroll = true;
-                //shashin.scrollDirection = "down";
+                shashin.scrollDirection = "up";
                 //clearInterval(timer);
             }
         // }, 200);
@@ -452,7 +468,6 @@
             // Remove elements that are not visible
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove beginning");
-
                 if ($("#" + element.id).withinviewport().length === 0 &&
                     $("#br" + element.id).withinviewport().length === 0 &&
                     $("#row" + element.id).withinviewport().length === 0 &&
@@ -473,7 +488,6 @@
             while (true) {
 
                 let firstDate = null;
-
                 $("#offcanvasTocBody").children().each(function () {
                     const dateParts = $(this).attr("id").split("offcanvas_");
                     const date = dateParts[1];
@@ -517,10 +531,11 @@
                         /*(($("#br"+currentId).withinviewport().length > 0 && $("#amp_" + currentId).withinviewport().length === 0) && $("footer").withinviewport().length === 0) || */
                         (firstDate !== null && currentId === firstDate)
                     ) {
-                        console.log("currentId:"+currentId)
-                        console.log("-----------------")
                         break;
                     }
+                } else if (currentId === firstDate) {
+                    attachPoint = currentId;
+                    break;
                 }
                 attachPoint = currentId;
             }
