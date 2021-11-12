@@ -568,6 +568,7 @@
             }
         } else { // Scrolling down
 
+            // Delete visible elements
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove beginning");
 
@@ -598,6 +599,7 @@
 
             // Render bottom until footer not visible
             action = "below";
+            let deleteMarker = false;
             while (true) {
                 let currentId = attachPoint;
 
@@ -618,8 +620,12 @@
                     }
                 }
 
-                if ($("footer").withinviewport().length === 0 || currentId === attachPoint) {
+                if (deleteMarker === true) {
                     break;
+                }
+
+                if ($("footer").withinviewport().length === 0 || currentId === attachPoint) {
+                    deleteMarker = true;
                 }
 
                 attachPoint = currentId;
