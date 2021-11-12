@@ -191,12 +191,12 @@
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
-        shashin.scrollDirection = "up";
+        shashin.scrollDirection = "down";
         timelineSettings.enableScrollSpy = false;
         shashin.timelineQueryLimit = 1;
         timelineSettings.didScroll = false;
         timelineSettings.stopTrackingScroll = false;
-        timelineSettings.lastScrollTop = 9999;
+        //timelineSettings.lastScrollTop = 9999;
         lastElements = null;
 
         shashin.printMessageToConsole("jumpFromTimelineToc anchor:"+anchor);
@@ -262,7 +262,7 @@
                 timelineSettings.enableScrollSpy = true;
                 timelineSettings.stopTrackingScroll = true;
                 // timelineSettings.didScroll = true;
-                shashin.scrollDirection = "up";
+                shashin.scrollDirection = "down";
                 //clearInterval(timer);
             }
         // }, 200);
