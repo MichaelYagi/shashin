@@ -568,6 +568,29 @@ $.fn.serializeObject = function() {
         return "";
     }
 
+    shashin.getDateObject = function (dateString) {
+        if (dateString.indexOf("tail_") >= 0) {
+            const idParts = dateString.split("tail_");
+            dateString = idParts[1];
+        }
+        if (typeof dateString !== "undefined" && dateString !== null) {
+            const dateStringParts = dateString.split("-");
+            if (dateStringParts.length === 3) {
+                const year = dateStringParts[0];
+                const month = dateStringParts[1];
+                const day = dateStringParts[2];
+
+                if (year !== null && year !== "" &&
+                    month !== null && month !== "" &&
+                    day !== null && day !== ""
+                ) {
+                    return new Date(month + "/" + day + "/" + year);
+                }
+            }
+        }
+        return null;
+    }
+
     shashin.isNumeric = function (str) {
         if (typeof str != "string") return false // we only process strings!
         return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...

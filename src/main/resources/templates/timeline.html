@@ -227,7 +227,7 @@
         });
 
         const scrollHandler = function (e) {
-            const st = $(e.target).scrollTop();
+            let st = $(e.target).scrollTop();
 
             if (st === 0) {
                 topScroll = true;
