@@ -199,7 +199,7 @@
                 scrollHack = true;
             }
 
-            if (scrollHack === true || (timelineSettings.didScroll === true && shashin.scrollDirection === "up") || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || (timelineSettings.enableScrollSpy === true && (timelineSettings.didScroll === true || initRender === true))) {
+            if (timelineSettings.stopTrackingScroll === false && (scrollHack === true || (timelineSettings.didScroll === true && shashin.scrollDirection === "up") || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || (timelineSettings.enableScrollSpy === true && (timelineSettings.didScroll === true || initRender === true)))) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter, scrollHack);
 
