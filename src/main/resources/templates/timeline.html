@@ -179,15 +179,30 @@
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        timelineSettings.didScroll = false;
-        let topScroll = true;
-        let initRender = true;
-        let topOfPage = true;
-        let scrollHack = false;
+        $("#offcanvasToc").on('show.bs.offcanvas', function () {
+            if (timelineSettings.enableScrollSpy === true) {
+                const elementsInViewport = $(".scrollspy").withinviewport();
+                timelineSettings.scrollToTimelineToc(elementsInViewport);
+            }
+        });
 
-        // Scroll spy at intervals
-        window.setInterval(function() {
-            // Hack to keep scrolling up
+        let topScroll = true;
+        let topOfPage = true;
+        let lastScrollTop = 0;
+        const scrollHandler = function (e) {
+            let st = $(e.target).scrollTop();
+
+            if (st === 0) {
+                topScroll = true;
+            }
+
+            if (st > lastScrollTop){
+                shashin.scrollDirection = "down";
+            } else {
+                shashin.scrollDirection = "up";
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
+
             if (shashin.scrollDirection === "up" && topScroll === true && topOfPage === false) {
                 document.getElementById("container").scrollBy({top: 3});
                 if (document.getElementsByTagName("MAIN").length > 0) {
@@ -196,39 +211,6 @@
 
                 shashin.scrollDirection = "up";
                 topScroll = false;
-                scrollHack = true;
-            }
-
-            if (timelineSettings.processRender === true && (scrollHack === true || (timelineSettings.didScroll === true && shashin.scrollDirection === "up") || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || (timelineSettings.enableScrollSpy === true && (timelineSettings.didScroll === true || initRender === true)))) {
-                const elementsInViewport = $(".scrollspy").withinviewport();
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter, scrollHack);
-
-                const firstDateToc = $("#offcanvasTocBody").children().first();
-                const firstDateParts = firstDateToc.attr("id").split("offcanvas_");
-                const firstDate = firstDateParts[1];
-
-                topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
-                initRender = false;
-                timelineSettings.didScroll = false;
-            } else {
-                timelineSettings.stopTrackingScroll = false;
-            }
-
-            scrollHack = false;
-        }, 200);
-
-        $("#offcanvasToc").on('show.bs.offcanvas', function () {
-            if (timelineSettings.enableScrollSpy === true) {
-                const elementsInViewport = $(".scrollspy").withinviewport();
-                timelineSettings.scrollToTimelineToc(elementsInViewport);
-            }
-        });
-
-        const scrollHandler = function (e) {
-            let st = $(e.target).scrollTop();
-
-            if (st === 0) {
-                topScroll = true;
             }
 
             // Don't track scrolling while getting results and dynamically changing element
@@ -241,6 +223,21 @@
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.scrollToTimelineToc(elementsInViewport);
             }
+
+            if (timelineSettings.processRender === true && (shashin.scrollDirection === "up" || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || timelineSettings.enableScrollSpy === true)) {
+                const elementsInViewport = $(".scrollspy").withinviewport();
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+
+                const firstDateToc = $("#offcanvasTocBody").children().first();
+                const firstDateParts = firstDateToc.attr("id").split("offcanvas_");
+                const firstDate = firstDateParts[1];
+
+                topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
+                timelineSettings.didScroll = false;
+            } else {
+                timelineSettings.stopTrackingScroll = false;
+            }
+
         };
         $("#container").on('scroll', scrollHandler);
         $("main").on('scroll', scrollHandler);

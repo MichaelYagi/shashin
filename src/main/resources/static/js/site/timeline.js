@@ -103,12 +103,8 @@
     }
 
     let lastElements = null;
-    timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter,scrollHack) {
+    timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter) {
         timelineSettings.stopTrackingScroll = true;
-
-        if (typeof scrollHack === "undefined") {
-            scrollHack = false;
-        }
 
         // If no scrollspy elements found, find current thumbnail container
         // and closest previous scrollspy element
@@ -131,19 +127,11 @@
         if($.inArray(lastDate, dateElements) !== -1) {
             lastDateFound = true;
         }
-console.log(dateElements)
-console.log(lastDateElements)
-console.log(shashin.scrollDirection)
+
         // Additional hacks for scroll direction as the detection gets "confused" when dealing with dynamic content
-        // if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) > shashin.getDateObject(lastDateElements[0])) {
-        //     shashin.scrollDirection = "up";
-        // }
         if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) < shashin.getDateObject(lastDateElements[0])) {
             shashin.scrollDirection = "down";
         }
-        // if (dateElements[0] === lastDateElements[0] && diff.length === 1 && lastDateElements[lastDateElements.length-1] === $(diff[0]).attr("id") && $(diff[0]).attr("id").indexOf("tail_") >= 0) {
-        //     shashin.scrollDirection = "up";
-        // }
         if (dateElements[dateElements.length-1] && lastDateElements[lastDateElements.length-1] && shashin.getDateObject(dateElements[dateElements.length-1]) > shashin.getDateObject(lastDateElements[lastDateElements.length-1])) {
             shashin.scrollDirection = "up";
         }
@@ -154,14 +142,7 @@ console.log(shashin.scrollDirection)
             shashin.scrollDirection = "down";
         }
 
-
-console.log(shashin.scrollDirection)
-
-        if (scrollHack === true || lastElements === null || diff.length > 0 || (diff.length > 0 && shashin.scrollDirection === "up" && dateElements[0] !== lastDateElements[0]) || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
-            render = true;
-        }
-
-        if (render === true) {
+        if (lastElements === null || diff.length > 0 || (diff.length === 0 && shashin.scrollDirection === "up") || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
             elements.each(function (index) {
                 let id = $(this).attr("id");
 
@@ -196,7 +177,7 @@ console.log(shashin.scrollDirection)
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
-        shashin.scrollDirection = "up";
+        shashin.scrollDirection = "down";
         timelineSettings.processRender = false;
         timelineSettings.enableScrollSpy = false;
         shashin.timelineQueryLimit = 1;
@@ -265,8 +246,7 @@ console.log(shashin.scrollDirection)
         if (navElem.hasClass("active") === true) {
             timelineSettings.enableScrollSpy = true;
             timelineSettings.stopTrackingScroll = true;
-            shashin.scrollDirection = "up";
-            //clearInterval(timer);
+            shashin.scrollDirection = "down";
         }
     }
 
@@ -467,6 +447,7 @@ console.log(shashin.scrollDirection)
 
         // Render top
         if ((/*attachBelowArray.length > 0 && */shashin.scrollDirection === "up") || lastDate === id) {
+
             // Remove elements that are not visible
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove beginning");
@@ -592,7 +573,6 @@ console.log(shashin.scrollDirection)
 
             // Above mid
             // action = null;
-            // //attachPoint = null;
             // let tempOffCanvasId = $("#offcanvas_"+id);
             // let tempOffCanvasIdAbove = tempOffCanvasId.prev();
             // if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
