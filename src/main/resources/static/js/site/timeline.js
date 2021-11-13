@@ -7,7 +7,6 @@
     timelineSettings.didScroll = false;
     timelineSettings.stopTrackingScroll = false;
     timelineSettings.processRender = true;
-    timelineSettings.lastScrollTop = 0;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
@@ -132,15 +131,20 @@
         if($.inArray(lastDate, dateElements) !== -1) {
             lastDateFound = true;
         }
-
+console.log(dateElements)
+console.log(lastDateElements)
+console.log(shashin.scrollDirection)
         // Additional hacks for scroll direction as the detection gets "confused" when dealing with dynamic content
-        if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) > shashin.getDateObject(lastDateElements[0])) {
-            shashin.scrollDirection = "up";
-        }
+        // if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) > shashin.getDateObject(lastDateElements[0])) {
+        //     shashin.scrollDirection = "up";
+        // }
         if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) < shashin.getDateObject(lastDateElements[0])) {
             shashin.scrollDirection = "down";
         }
-        if (dateElements[0] === lastDateElements[0] && diff.length === 1 && lastDateElements[lastDateElements.length-1] === $(diff[0]).attr("id") && $(diff[0]).attr("id").indexOf("tail_") >= 0) {
+        // if (dateElements[0] === lastDateElements[0] && diff.length === 1 && lastDateElements[lastDateElements.length-1] === $(diff[0]).attr("id") && $(diff[0]).attr("id").indexOf("tail_") >= 0) {
+        //     shashin.scrollDirection = "up";
+        // }
+        if (dateElements[dateElements.length-1] && lastDateElements[lastDateElements.length-1] && shashin.getDateObject(dateElements[dateElements.length-1]) > shashin.getDateObject(lastDateElements[lastDateElements.length-1])) {
             shashin.scrollDirection = "up";
         }
         if (dateElements[dateElements.length-1] && lastDateElements[lastDateElements.length-1] && shashin.getDateObject(dateElements[dateElements.length-1]) < shashin.getDateObject(lastDateElements[lastDateElements.length-1])) {
@@ -150,6 +154,8 @@
             shashin.scrollDirection = "down";
         }
 
+
+console.log(shashin.scrollDirection)
 
         if (scrollHack === true || lastElements === null || diff.length > 0 || (diff.length > 0 && shashin.scrollDirection === "up" && dateElements[0] !== lastDateElements[0]) || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
             render = true;
@@ -174,25 +180,15 @@
                         if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                             timelineSettings.setScrollSpyActive(id);
                         }
-                        shashin.scrollDirection = "up";
                         timelineSettings.stopTrackingScroll = false;
-                        timelineSettings.lastScrollTop = 9999;
                     });
 
                     timelineSettings.prevAnchor = id;
 
-                    if (shashin.scrollDirection === "up") {
-                        lastElements = elements;
-                        return false;
-                    }
+                } else {
+                    timelineSettings.prevAnchor = "";
                 }
-
-                timelineSettings.prevAnchor = "";
             });
-        } else {
-            shashin.scrollDirection = "up";
-            timelineSettings.stopTrackingScroll = false;
-            timelineSettings.lastScrollTop = 9999;
         }
         lastElements = elements;
     }
@@ -200,13 +196,12 @@
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
-        shashin.scrollDirection = "down";
+        shashin.scrollDirection = "up";
         timelineSettings.processRender = false;
         timelineSettings.enableScrollSpy = false;
         shashin.timelineQueryLimit = 1;
         timelineSettings.didScroll = false;
         timelineSettings.stopTrackingScroll = false;
-        //timelineSettings.lastScrollTop = 9999;
         lastElements = null;
 
         shashin.printMessageToConsole("jumpFromTimelineToc anchor:"+anchor);
@@ -267,15 +262,12 @@
         history.replaceState(null, null, url);
 
         const navElem = $("#offcanvas_" + anchor);
-        // const timer = setInterval(function () {
-            if (navElem.hasClass("active") === true) {
-                timelineSettings.enableScrollSpy = true;
-                timelineSettings.stopTrackingScroll = true;
-                // timelineSettings.didScroll = true;
-                shashin.scrollDirection = "down";
-                //clearInterval(timer);
-            }
-        // }, 200);
+        if (navElem.hasClass("active") === true) {
+            timelineSettings.enableScrollSpy = true;
+            timelineSettings.stopTrackingScroll = true;
+            shashin.scrollDirection = "up";
+            //clearInterval(timer);
+        }
     }
 
     // Set the active nav
@@ -599,25 +591,25 @@
             // Render bottom
 
             // Above mid
-            action = null;
-            //attachPoint = null;
-            let tempOffCanvasId = $("#offcanvas_"+id);
-            let tempOffCanvasIdAbove = tempOffCanvasId.prev();
-            if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
-                attachPoint = null;
-                const offcanvasId = tempOffCanvasIdAbove.attr("id").split("_")[1];
-                const msg = await timelineSettings.updateTimeline(offcanvasId, mediaTypeFilter, action, attachPoint)
-                if (msg === "success" && $("#" + offcanvasId).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(offcanvasId, mediaTypeFilter);
-                }
-                attachPoint = offcanvasId;
-                action = "below";
-            }
+            // action = null;
+            // //attachPoint = null;
+            // let tempOffCanvasId = $("#offcanvas_"+id);
+            // let tempOffCanvasIdAbove = tempOffCanvasId.prev();
+            // if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
+            //     attachPoint = null;
+            //     const offcanvasId = tempOffCanvasIdAbove.attr("id").split("_")[1];
+            //     const msg = await timelineSettings.updateTimeline(offcanvasId, mediaTypeFilter, action, attachPoint)
+            //     if (msg === "success" && $("#" + offcanvasId).length === 1) {
+            //         timelineSettings.attachAssociatedMetadata(offcanvasId, mediaTypeFilter);
+            //     }
+            //     attachPoint = offcanvasId;
+            //     action = "below";
+            // }
 
             // Render mid
-            //action = null;
+            action = null;
             if ($("#"+id).length === 0) {
-                //attachPoint = null;
+                attachPoint = null;
                 const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
                 if (msg === "success" && $("#"+id).length === 1) {
                     timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);

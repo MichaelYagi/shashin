@@ -211,9 +211,7 @@
                 initRender = false;
                 timelineSettings.didScroll = false;
             } else {
-                shashin.scrollDirection = "up";
                 timelineSettings.stopTrackingScroll = false;
-                timelineSettings.lastScrollTop = 9999;
             }
 
             scrollHack = false;
@@ -235,12 +233,6 @@
 
             // Don't track scrolling while getting results and dynamically changing element
             if (timelineSettings.stopTrackingScroll === false) {
-                if (st <= timelineSettings.lastScrollTop) {
-                    shashin.scrollDirection = "up";
-                } else {
-                    shashin.scrollDirection = "down";
-                }
-                timelineSettings.lastScrollTop = st <= 0 ? 0 : st;
                 timelineSettings.didScroll = true;
             }
 
