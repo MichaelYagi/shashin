@@ -146,7 +146,7 @@
             }
         }
 
-        if (scrollHack === true || lastElements === null || diff.length > 0 || (diff.length === 0 && shashin.scrollDirection === "up") || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
+        if ((scrollHack === true && diff.length === 0) || lastElements === null || diff.length > 0 || (diff.length === 0 && shashin.scrollDirection === "up") || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
             elements.each(function (index) {
                 let id = $(this).attr("id");
 
@@ -176,7 +176,6 @@
                             if (firstId !== currentActiveId) {
                                 timelineSettings.setScrollSpyActive(id);
                             }
-
                         }
                         timelineSettings.stopTrackingScroll = false;
                     });

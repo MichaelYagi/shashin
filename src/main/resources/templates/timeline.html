@@ -205,9 +205,9 @@
             lastScrollTop = st <= 0 ? 0 : st;
 
             if (shashin.scrollDirection === "up" && topScroll === true && topOfPage === false) {
-                document.getElementById("container").scrollBy({top: 10});
+                document.getElementById("container").scrollBy({top: 1});
                 if (document.getElementsByTagName("MAIN").length > 0) {
-                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 10});
+                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
                 }
 
                 shashin.scrollDirection = "up";
@@ -226,7 +226,7 @@
                 timelineSettings.scrollToTimelineToc(elementsInViewport);
             }
 
-            if (timelineSettings.processRender === true && (shashin.scrollDirection === "up" || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || timelineSettings.enableScrollSpy === true)) {
+            if (scrollHack === true || timelineSettings.processRender === true && (shashin.scrollDirection === "up" || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || timelineSettings.enableScrollSpy === true)) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter,scrollHack);
 
