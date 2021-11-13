@@ -113,7 +113,6 @@
             elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
         }
 
-        let render = false;
         const diff = $(lastElements).not(elements).get();
         const lastIdToc = $("#offcanvasTocBody").children().last();
         const lastDate = lastIdToc.attr("id").split("offcanvas_")[1];
