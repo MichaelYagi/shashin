@@ -188,6 +188,7 @@
 
         let topScroll = true;
         let topOfPage = true;
+        let scrollHack = false;
         let lastScrollTop = 0;
         const scrollHandler = function (e) {
             let st = $(e.target).scrollTop();
@@ -211,6 +212,7 @@
 
                 shashin.scrollDirection = "up";
                 topScroll = false;
+                scrollHack = true;
             }
 
             // Don't track scrolling while getting results and dynamically changing element
@@ -226,7 +228,7 @@
 
             if (timelineSettings.processRender === true && (shashin.scrollDirection === "up" || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || timelineSettings.enableScrollSpy === true)) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter,scrollHack);
 
                 const firstDateToc = $("#offcanvasTocBody").children().first();
                 const firstDateParts = firstDateToc.attr("id").split("offcanvas_");
@@ -238,6 +240,7 @@
                 timelineSettings.stopTrackingScroll = false;
             }
 
+            scrollHack = false;
         };
         $("#container").on('scroll', scrollHandler);
         $("main").on('scroll', scrollHandler);

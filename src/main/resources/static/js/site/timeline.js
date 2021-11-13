@@ -103,7 +103,10 @@
     }
 
     let lastElements = null;
-    timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter) {
+    timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter,scrollHack) {
+        if (typeof scrollHack === "undefined") {
+            scrollHack = false;
+        }
         timelineSettings.stopTrackingScroll = true;
 
         // If no scrollspy elements found, find current thumbnail container
@@ -127,21 +130,23 @@
             lastDateFound = true;
         }
 
-        // Additional hacks for scroll direction as the detection gets "confused" when dealing with dynamic content
-        if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) < shashin.getDateObject(lastDateElements[0])) {
-            shashin.scrollDirection = "down";
-        }
-        if (dateElements[dateElements.length-1] && lastDateElements[lastDateElements.length-1] && shashin.getDateObject(dateElements[dateElements.length-1]) > shashin.getDateObject(lastDateElements[lastDateElements.length-1])) {
-            shashin.scrollDirection = "up";
-        }
-        if (dateElements[dateElements.length-1] && lastDateElements[lastDateElements.length-1] && shashin.getDateObject(dateElements[dateElements.length-1]) < shashin.getDateObject(lastDateElements[lastDateElements.length-1])) {
-            shashin.scrollDirection = "down";
-        }
-        if (dateElements[dateElements.length-1] && lastDateElements[lastDateElements.length-1] && shashin.getDateObject(dateElements[dateElements.length-1]).toString() === shashin.getDateObject(lastDateElements[lastDateElements.length-1]).toString() && dateElements[dateElements.length-1].indexOf("tail_") >= 0) {
-            shashin.scrollDirection = "down";
+        if (scrollHack === false) {
+            // Additional hacks for scroll direction as the detection gets "confused" when dealing with dynamic content
+            if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) < shashin.getDateObject(lastDateElements[0])) {
+                shashin.scrollDirection = "down";
+            }
+            if (dateElements[dateElements.length - 1] && lastDateElements[lastDateElements.length - 1] && shashin.getDateObject(dateElements[dateElements.length - 1]) > shashin.getDateObject(lastDateElements[lastDateElements.length - 1])) {
+                shashin.scrollDirection = "up";
+            }
+            if (dateElements[dateElements.length - 1] && lastDateElements[lastDateElements.length - 1] && shashin.getDateObject(dateElements[dateElements.length - 1]) < shashin.getDateObject(lastDateElements[lastDateElements.length - 1])) {
+                shashin.scrollDirection = "down";
+            }
+            if (dateElements[dateElements.length - 1] && lastDateElements[lastDateElements.length - 1] && shashin.getDateObject(dateElements[dateElements.length - 1]).toString() === shashin.getDateObject(lastDateElements[lastDateElements.length - 1]).toString() && dateElements[dateElements.length - 1].indexOf("tail_") >= 0) {
+                shashin.scrollDirection = "down";
+            }
         }
 
-        if (lastElements === null || diff.length > 0 || (diff.length === 0 && shashin.scrollDirection === "up") || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
+        if (scrollHack === true || lastElements === null || diff.length > 0 || (diff.length === 0 && shashin.scrollDirection === "up") || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
             elements.each(function (index) {
                 let id = $(this).attr("id");
 
@@ -158,7 +163,20 @@
                     timelineSettings.processRender = false;
                     timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
                         if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
-                            timelineSettings.setScrollSpyActive(id);
+                            let firstId = dateElements[0];
+                            if (firstId.indexOf("tail_") >= 0) {
+                                const idParts = id.split("tail_");
+                                firstId = idParts[1];
+                            }
+
+                            let currentActiveId = $("#offcanvasTocBody").find(".active").attr("id");
+                            const idParts = currentActiveId.split("offcanvas_");
+                            currentActiveId = idParts[1];
+
+                            if (firstId !== currentActiveId) {
+                                timelineSettings.setScrollSpyActive(id);
+                            }
+
                         }
                         timelineSettings.stopTrackingScroll = false;
                     });
