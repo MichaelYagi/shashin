@@ -204,9 +204,9 @@
             lastScrollTop = st <= 0 ? 0 : st;
 
             if (shashin.scrollDirection === "up" && topScroll === true && topOfPage === false) {
-                document.getElementById("container").scrollBy({top: 3});
+                document.getElementById("container").scrollBy({top: 10});
                 if (document.getElementsByTagName("MAIN").length > 0) {
-                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 3});
+                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 10});
                 }
 
                 shashin.scrollDirection = "up";
