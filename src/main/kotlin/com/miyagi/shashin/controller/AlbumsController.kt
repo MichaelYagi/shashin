@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
@@ -317,7 +317,7 @@ class AlbumsController {
                 val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
                 val album = albumRepository.findById(albumId)
                 album.get().setCoverUrl(coverAlbumUrl)
-                album.get().setModifiedAt(getModifiedCreateTimestamp())
+                album.get().setModifiedAt(getCurrentTimestamp())
                 albumRepository.save(album.get())
             }
 
@@ -450,8 +450,8 @@ class AlbumsController {
                         val userAlbumObj = UserAlbum()
                         userAlbumObj.setUserId(userId.toInt())
                         userAlbumObj.setAlbumId(shareAlbumId)
-                        userAlbumObj.setCreatedAt(getModifiedCreateTimestamp())
-                        userAlbumObj.setModifiedAt(getModifiedCreateTimestamp())
+                        userAlbumObj.setCreatedAt(getCurrentTimestamp())
+                        userAlbumObj.setModifiedAt(getCurrentTimestamp())
                         userAlbumList.add(userAlbumObj)
                     }
                 } else {

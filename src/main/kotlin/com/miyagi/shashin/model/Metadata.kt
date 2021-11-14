@@ -25,7 +25,6 @@ class Metadata {
     private var mapMarkerUrl: String? = null
     private var videoUrl: String? = null
     private var duration: String? = null
-    private var takenAt: String? = null
     private var type: String? = null
     private var fileName: String? = null
     private var timeZone: String? = null
@@ -46,6 +45,8 @@ class Metadata {
     private var compressionType: String? = null
     private var keywords: String? = null
     private var hidden: Boolean? = null
+    private var addedAt: String? = null
+    private var takenAt: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
     private var lastAccessedAt: String? = null
@@ -100,6 +101,9 @@ class Metadata {
     }
     fun setTakenAt(takenAt: String?) {
         this.takenAt = takenAt
+    }
+    fun setAddedAt(addedAt: String?) {
+        this.addedAt = addedAt
     }
     fun setId(id: String) {
         this.id = id
@@ -222,6 +226,9 @@ class Metadata {
     fun getTakenAt(): String? {
         return this.takenAt
     }
+    fun getAddedAt(): String? {
+        return this.addedAt
+    }
     fun getId(): String {
         return this.id
     }
@@ -308,7 +315,6 @@ class Metadata {
         map["mapMarkerUrl"] = this.mapMarkerUrl
         map["videoUrl"] = this.videoUrl
         map["duration"] = this.duration
-        map["takenAt"] = this.takenAt
         map["type"] = this.type
         map["fileName"] = this.fileName
         map["title"] = this.title
@@ -330,6 +336,8 @@ class Metadata {
         map["compressionType"] = this.compressionType
         map["keywords"] = this.keywords
         map["hidden"] = this.hidden
+        map["takenAt"] = this.takenAt
+        map["addedAt"] = this.addedAt
         map["createdAt"] = this.createdAt
         map["modifiedAt"] = this.modifiedAt
         map["lastAccessedAt"] = this.lastAccessedAt

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import net.iakovlev.timeshape.TimeZoneEngine
@@ -401,6 +402,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         }
 
         saveExifdata(exifMap, sidecarDir, file.path)
+
+        metadataObj.setAddedAt(getCurrentTimestamp())
 
         metadataObj.setId(
             TextUtils.generateUUID(

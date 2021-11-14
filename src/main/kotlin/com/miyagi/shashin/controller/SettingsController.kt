@@ -13,7 +13,7 @@ import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
@@ -255,8 +255,8 @@ class SettingsController {
                     mediaDirObj = MediaDirectory()
                     mediaDirObj.setDirectory(mediaDir)
                 }
-                mediaDirObj.setCreatedAt(getModifiedCreateTimestamp())
-                mediaDirObj.setModifiedAt(getModifiedCreateTimestamp())
+                mediaDirObj.setCreatedAt(getCurrentTimestamp())
+                mediaDirObj.setModifiedAt(getCurrentTimestamp())
                 mediaDirArrayList.add(mediaDirObj)
 
                 val path: Path = Paths.get(mediaDir)
@@ -448,7 +448,7 @@ class SettingsController {
             if (userId == userIdRequest) {
                 val userObj = userRepository?.findById(userId)?.get()
                 if (userObj != null) {
-                    userObj.setModifiedAt(getModifiedCreateTimestamp())
+                    userObj.setModifiedAt(getCurrentTimestamp())
                     userObj.setAuthority(changeRoleTo)
                     userRepository?.save(userObj)
                 }
@@ -477,7 +477,7 @@ class SettingsController {
             if (userId == userIdRequest) {
                 val userObj = userRepository?.findById(userId)?.get()
                 if (userObj != null) {
-                    userObj.setModifiedAt(getModifiedCreateTimestamp())
+                    userObj.setModifiedAt(getCurrentTimestamp())
                     userObj.setIsAllowed(changePermissionTo)
                     userRepository?.save(userObj)
                 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.repository.query.Param
@@ -74,16 +74,16 @@ class CommentsController {
                 val comment = Comment()
                 comment.setUserId(currentUserObj.getId())
                 comment.setComment(commentText)
-                comment.setCreatedAt(getModifiedCreateTimestamp())
-                comment.setModifiedAt(getModifiedCreateTimestamp())
+                comment.setCreatedAt(getCurrentTimestamp())
+                comment.setModifiedAt(getCurrentTimestamp())
                 val savedCommentObj = commentRepository.save(comment)
 
                 // Insert into album comment
                 val albumComment = AlbumComment()
                 albumComment.setCommentId(savedCommentObj.getId())
                 albumComment.setAlbumId(albumId)
-                albumComment.setCreatedAt(getModifiedCreateTimestamp())
-                albumComment.setModifiedAt(getModifiedCreateTimestamp())
+                albumComment.setCreatedAt(getCurrentTimestamp())
+                albumComment.setModifiedAt(getCurrentTimestamp())
                 albumCommentRepository.save(albumComment)
 
                 // Notify if admin or other users in album
@@ -110,8 +110,8 @@ class CommentsController {
                             notificationObj.setUserId(user.getId())
                             notificationObj.setCommentId(albumComment.getId())
                             notificationObj.setAlbumId(albumId)
-                            notificationObj.setCreatedAt(getModifiedCreateTimestamp())
-                            notificationObj.setModifiedAt(getModifiedCreateTimestamp())
+                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                            notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
                             notificationObj.setMessage(currentUserObj.getUsername()+" commented on album <a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" on "+sdtf.format(now))
                             notificationObjList.add(notificationObj)
@@ -153,8 +153,8 @@ class CommentsController {
                 val comment = Comment()
                 comment.setUserId(currentUserObj.getId())
                 comment.setComment(commentText)
-                comment.setCreatedAt(getModifiedCreateTimestamp())
-                comment.setModifiedAt(getModifiedCreateTimestamp())
+                comment.setCreatedAt(getCurrentTimestamp())
+                comment.setModifiedAt(getCurrentTimestamp())
                 val savedCommentObj = commentRepository.save(comment)
 
                 // Insert into album photo comment
@@ -162,8 +162,8 @@ class CommentsController {
                 albumPhotoComment.setCommentId(savedCommentObj.getId())
                 albumPhotoComment.setMetadataId(metadataId)
                 albumPhotoComment.setAlbumId(albumId)
-                albumPhotoComment.setCreatedAt(getModifiedCreateTimestamp())
-                albumPhotoComment.setModifiedAt(getModifiedCreateTimestamp())
+                albumPhotoComment.setCreatedAt(getCurrentTimestamp())
+                albumPhotoComment.setModifiedAt(getCurrentTimestamp())
                 albumPhotoCommentRepository.save(albumPhotoComment)
 
                 // Notify if admin or other users in album
@@ -193,8 +193,8 @@ class CommentsController {
                             notificationObj.setMetadataId(metadataId)
                             notificationObj.setAlbumId(albumId)
                             notificationObj.setRead(false)
-                            notificationObj.setCreatedAt(getModifiedCreateTimestamp())
-                            notificationObj.setModifiedAt(getModifiedCreateTimestamp())
+                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                            notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" for photo <a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+sdtf.format(now))
                             notificationObjList.add(notificationObj)
                         }
@@ -230,7 +230,7 @@ class CommentsController {
                 val commentObj = commentRepository.findById(commentId)
                 if (currentUserObj.getId() == commentObj.get().getUserId()) {
                     commentObj.get().setComment(commentText)
-                    commentObj.get().setModifiedAt(getModifiedCreateTimestamp())
+                    commentObj.get().setModifiedAt(getCurrentTimestamp())
                     commentRepository.save(commentObj.get())
 
                     resp["msg"] = "Comment saved!"

@@ -64,7 +64,7 @@ class TextUtils {
             return "${h1.toInt()}/${k1.toInt()}"
         }
 
-        fun getModifiedCreateTimestamp(): String {
+        fun getCurrentTimestamp(): String {
             val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
             val now = LocalDateTime.now()
             return dtf.format(now)
