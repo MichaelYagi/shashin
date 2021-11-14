@@ -8,7 +8,7 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -102,7 +102,7 @@ class UserController {
             if (currentUserObj != null) {
                 if (newPassword == newPasswordConfirm) {
                     if (bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
-                        currentUserObj.setModifiedAt(getModifiedCreateTimestamp())
+                        currentUserObj.setModifiedAt(getCurrentTimestamp())
                         currentUserObj.setPassword(bcrypt.encode(newPassword))
                         userRepository?.save(currentUserObj)
                         model["message"] = "Success"
@@ -167,8 +167,8 @@ class UserController {
             val encodedPassword: String = bcrypt.encode(newUser.getPassword())
             newUser.setPassword(encodedPassword)
             val now = LocalDateTime.now()
-            newUser.setCreatedAt(getModifiedCreateTimestamp())
-            newUser.setModifiedAt(getModifiedCreateTimestamp())
+            newUser.setCreatedAt(getCurrentTimestamp())
+            newUser.setModifiedAt(getCurrentTimestamp())
             newUser.setLoggedIn(false)
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
@@ -188,8 +188,8 @@ class UserController {
                     for (admin in admins) {
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
-                        notificationObj.setCreatedAt(getModifiedCreateTimestamp())
-                        notificationObj.setModifiedAt(getModifiedCreateTimestamp())
+                        notificationObj.setCreatedAt(getCurrentTimestamp())
+                        notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
                         notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+sdtf.format(now)+" and is pending approval.")
                         notificationObjList.add(notificationObj)
@@ -335,7 +335,7 @@ class UserController {
 
             if (user != null) {
                 user.setLoggedIn(false)
-                user.setModifiedAt(getModifiedCreateTimestamp())
+                user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
             }
         }

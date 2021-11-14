@@ -4,7 +4,7 @@ import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
@@ -82,8 +82,8 @@ class BaseController {
             settingsObj.setNotificationLimit(20)
             settingsObj.setPort("6624")
             settingsObj.setRecognitionConfidenceThreshold("0.6")
-            settingsObj.setCreatedAt(getModifiedCreateTimestamp())
-            settingsObj.setModifiedAt(getModifiedCreateTimestamp())
+            settingsObj.setCreatedAt(getCurrentTimestamp())
+            settingsObj.setModifiedAt(getCurrentTimestamp())
             settingsRepository?.save(settingsObj)
 
             model["settings"] = settingsObj

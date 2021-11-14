@@ -5,7 +5,7 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
@@ -61,7 +61,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null) {
                     if (currentAuthority == userRole && user.getIsAllowed() == false) {
-                        user.setModifiedAt(getModifiedCreateTimestamp())
+                        user.setModifiedAt(getCurrentTimestamp())
                         user.setLoggedIn(false)
                         userRepository?.save(user)
                         SecurityContextLogoutHandler().logout(request, response, authentication)
@@ -69,7 +69,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         redirectStrategy.sendRedirect(request, response, "/users/login?msg=loginfail")
                         isAllowed = false
                     } else {
-                        user.setModifiedAt(getModifiedCreateTimestamp())
+                        user.setModifiedAt(getCurrentTimestamp())
                         user.setLoggedIn(true)
                         try {
                             userRepository?.save(user)
@@ -103,8 +103,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             for (admin in admins) {
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
-                notificationObj.setCreatedAt(getModifiedCreateTimestamp())
-                notificationObj.setModifiedAt(getModifiedCreateTimestamp())
+                notificationObj.setCreatedAt(getCurrentTimestamp())
+                notificationObj.setModifiedAt(getCurrentTimestamp())
                 var identity = "<a href='/settings/users' target='_blank'>"+currentUserObj.getUsername()+"</a>"
                 if (admin.getId() == currentUserObj.getId()) {
                     notificationObj.setRead(true)

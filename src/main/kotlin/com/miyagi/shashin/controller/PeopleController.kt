@@ -10,7 +10,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
@@ -410,8 +410,8 @@ class PeopleController {
                     var recognitionLabelObj = RecognitionLabel()
                     if (recognitionLabelRecord == null) {
                         recognitionLabelObj.setName(recognitionLabel.trim())
-                        recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
-                        recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
+                        recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                        recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                         recognitionLabelRepository?.save(recognitionLabelObj)
                     } else {
                         recognitionLabelObj = recognitionLabelRecord
@@ -435,8 +435,8 @@ class PeopleController {
                 var recognitionLabelObj = RecognitionLabel()
                 if (recognitionLabelRecord == null) {
                     recognitionLabelObj.setName("object")
-                    recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
-                    recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
+                    recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                    recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                     recognitionLabelRepository?.save(recognitionLabelObj)
                 } else {
                     recognitionLabelObj = recognitionLabelRecord

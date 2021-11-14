@@ -3,7 +3,7 @@ package com.miyagi.shashin.component
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.AuthenticationException
@@ -58,8 +58,8 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
             for (admin in admins) {
                 val notificationObj = Notification()
                 notificationObj.setUserId(admin.getId())
-                notificationObj.setCreatedAt(getModifiedCreateTimestamp())
-                notificationObj.setModifiedAt(getModifiedCreateTimestamp())
+                notificationObj.setCreatedAt(getCurrentTimestamp())
+                notificationObj.setModifiedAt(getCurrentTimestamp())
                 notificationObj.setRead(false)
                 notificationObj.setMessage(message)
                 notificationObjList.add(notificationObj)

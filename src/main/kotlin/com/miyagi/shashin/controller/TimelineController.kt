@@ -7,7 +7,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.MediaProcessingUtils
 import com.miyagi.shashin.util.TextUtils
-import com.miyagi.shashin.util.TextUtils.Companion.getModifiedCreateTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.timeOffsets
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Autowired
@@ -523,8 +523,8 @@ class TimelineController {
                             albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
                         }
                         albumObj.setName(albumName)
-                        albumObj.setCreatedAt(getModifiedCreateTimestamp())
-                        albumObj.setModifiedAt(getModifiedCreateTimestamp())
+                        albumObj.setCreatedAt(getCurrentTimestamp())
+                        albumObj.setModifiedAt(getCurrentTimestamp())
                         albumObj = albumRepository.save(albumObj)
                         albumId = albumObj.getId()
                     } else {
@@ -539,8 +539,8 @@ class TimelineController {
                                 val userAlbumObj = UserAlbum()
                                 userAlbumObj.setAlbumId(albumId)
                                 userAlbumObj.setUserId(currentUserObj.getId())
-                                userAlbumObj.setCreatedAt(getModifiedCreateTimestamp())
-                                userAlbumObj.setModifiedAt(getModifiedCreateTimestamp())
+                                userAlbumObj.setCreatedAt(getCurrentTimestamp())
+                                userAlbumObj.setModifiedAt(getCurrentTimestamp())
                                 userAlbumRepository.save(userAlbumObj)
                             }
                         }
@@ -550,8 +550,8 @@ class TimelineController {
                             val albumPhotoObj = AlbumPhoto()
                             albumPhotoObj.setMetadataId(metadataId)
                             albumPhotoObj.setAlbumId(albumId)
-                            albumPhotoObj.setCreatedAt(getModifiedCreateTimestamp())
-                            albumPhotoObj.setModifiedAt(getModifiedCreateTimestamp())
+                            albumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                            albumPhotoObj.setModifiedAt(getCurrentTimestamp())
                             albumPhotoRepository.save(albumPhotoObj)
                         }
                     }
@@ -626,8 +626,8 @@ class TimelineController {
                     var recognitionLabelObj = RecognitionLabel()
                     if (recognitionLabelRecord == null) {
                         recognitionLabelObj.setName(recognitionLabel.trim())
-                        recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
-                        recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
+                        recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                        recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                         recognitionLabelRepository?.save(recognitionLabelObj)
                     } else {
                         recognitionLabelObj = recognitionLabelRecord
@@ -647,8 +647,8 @@ class TimelineController {
                 var recognitionLabelObj = RecognitionLabel()
                 if (recognitionLabelRecord == null) {
                     recognitionLabelObj.setName("object")
-                    recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
-                    recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
+                    recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                    recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                     recognitionLabelRepository?.save(recognitionLabelObj)
                 } else {
                     recognitionLabelObj = recognitionLabelRecord
@@ -910,8 +910,8 @@ class TimelineController {
                             albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
                         }
                         albumObj.setName(albumName)
-                        albumObj.setCreatedAt(getModifiedCreateTimestamp())
-                        albumObj.setModifiedAt(getModifiedCreateTimestamp())
+                        albumObj.setCreatedAt(getCurrentTimestamp())
+                        albumObj.setModifiedAt(getCurrentTimestamp())
                         albumObj = albumRepository.save(albumObj)
                         albumId = albumObj.getId()
                     }
@@ -925,8 +925,8 @@ class TimelineController {
                                 val userAlbumObj = UserAlbum()
                                 userAlbumObj.setAlbumId(albumId)
                                 userAlbumObj.setUserId(currentUserObj.getId())
-                                userAlbumObj.setCreatedAt(getModifiedCreateTimestamp())
-                                userAlbumObj.setModifiedAt(getModifiedCreateTimestamp())
+                                userAlbumObj.setCreatedAt(getCurrentTimestamp())
+                                userAlbumObj.setModifiedAt(getCurrentTimestamp())
                                 userAlbumRepository.save(userAlbumObj)
                             }
                         }
@@ -952,8 +952,8 @@ class TimelineController {
                                 albumPhotoObj = AlbumPhoto()
                                 albumPhotoObj.setMetadataId(metadata.getId())
                                 albumPhotoObj.setAlbumId(albumId)
-                                albumPhotoObj.setCreatedAt(getModifiedCreateTimestamp())
-                                albumPhotoObj.setModifiedAt(getModifiedCreateTimestamp())
+                                albumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                albumPhotoObj.setModifiedAt(getCurrentTimestamp())
                                 albumPhotoRepository.save(albumPhotoObj)
                             }
                         }
@@ -973,8 +973,8 @@ class TimelineController {
                         var recognitionLabelObj = RecognitionLabel()
                         if (recognitionLabelRecord == null) {
                             recognitionLabelObj.setName("object")
-                            recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
-                            recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
+                            recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                             recognitionLabelRepository?.save(recognitionLabelObj)
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
@@ -995,8 +995,8 @@ class TimelineController {
                             var recognitionLabelObj = RecognitionLabel()
                             if (recognitionLabelRecord == null) {
                                 recognitionLabelObj.setName(recognitionLabel.trim())
-                                recognitionLabelObj.setCreatedAt(getModifiedCreateTimestamp())
-                                recognitionLabelObj.setModifiedAt(getModifiedCreateTimestamp())
+                                recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                                recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                                 recognitionLabelRepository?.save(recognitionLabelObj)
                             } else {
                                 recognitionLabelObj = recognitionLabelRecord

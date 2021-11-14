@@ -395,8 +395,8 @@ class FaceRecognizer() {
                 for (admin in admins) {
                     val notificationObj = Notification()
                     notificationObj.setUserId(admin.getId())
-                    notificationObj.setCreatedAt(TextUtils.getModifiedCreateTimestamp())
-                    notificationObj.setModifiedAt(TextUtils.getModifiedCreateTimestamp())
+                    notificationObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                    notificationObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                     notificationObj.setRead(false)
                     notificationObj.setMessage("Matches to people found!")
                     notificationObjList.add(notificationObj)
