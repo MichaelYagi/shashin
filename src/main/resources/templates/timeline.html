@@ -169,7 +169,10 @@
         // Initialize
         if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
+            const elementsInViewport = $(".scrollspy").withinviewport();
+
             timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
+            timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
         } else {
             timelineSettings.enableScrollSpy = false;

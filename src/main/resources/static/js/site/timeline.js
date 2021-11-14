@@ -198,8 +198,6 @@
             });
         }
         lastElements = elements;
-
-console.log("====================")
     }
 
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
@@ -474,22 +472,43 @@ console.log("====================")
         const lastDate = lastIdToc.attr("id").split("offcanvas_")[1];
 
         // Render top
-        if ((/*attachBelowArray.length > 0 && */shashin.scrollDirection === "up") || lastDate === id) {
-
+        if (shashin.scrollDirection === "up" || lastDate === id) {
             // Remove elements that are not visible
-            // let removeElement = false;
+            let addedToIgnoreList = false;
             $('section').each(function (index, element) {
-                shashin.printMessageToConsole(element.id + " checking to remove beginning");
-                if ($("#" + element.id).withinviewport().length === 0 &&
+                let ignoreDeleteList = [];
+
+                if (addedToIgnoreList === false &&
+                    ($("#" + element.id).withinviewport().length > 0 ||
+                    $("#br" + element.id).withinviewport().length > 0 ||
+                    $("#row" + element.id).withinviewport().length > 0 ||
+                    $("#amp_" + element.id).withinviewport().length > 0 ||
+                    $("#tail_" + element.id).withinviewport().length > 0 ||
+                    $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length > 0)
+                ) {
+                    const navElem = $("#offcanvas_" + element.id);
+                    if (navElem.prev().length > 0) {
+                        ignoreDeleteList.push(navElem.prev().attr("id").split("offcanvas_")[1]);
+                    }
+                    if (navElem.prev().prev().length > 0) {
+                        ignoreDeleteList.push(navElem.prev().prev().attr("id").split("offcanvas_")[1]);
+                    }
+                    if (navElem.prev().prev().prev().length > 0) {
+                        ignoreDeleteList.push(navElem.prev().prev().prev().attr("id").split("offcanvas_")[1]);
+                    }
+                    addedToIgnoreList = true;
+                }
+
+                if (((ignoreDeleteList.length > 0 && $.inArray(element.id, ignoreDeleteList) === -1) || ignoreDeleteList.length === 0) &&
+                    $("#" + element.id).withinviewport().length === 0 &&
                     $("#br" + element.id).withinviewport().length === 0 &&
                     $("#row" + element.id).withinviewport().length === 0 &&
                     $("#amp_" + element.id).withinviewport().length === 0 &&
                     $("#tail_" + element.id).withinviewport().length === 0 &&
                     $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
-                    //&& $("footer").withinviewport().length === 0
                 ) {
-                    // if (removeElement === false) {
-                    //     removeElement = true;
+                    // if (removeElementIndex <= 4) {
+                    //     removeElementIndex++;
                     //     return;
                     // }
                     shashin.printMessageToConsole(element.id + " removed beginning");
@@ -583,7 +602,6 @@ console.log("====================")
                 }
             }
         } else { // Scrolling down
-
             // Delete visible elements
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove beginning");
