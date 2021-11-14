@@ -924,7 +924,7 @@
             type: 'get',
             url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
             contentType: 'application/json; charset=utf-8',
-            async: true,
+            async: false,
             retries: shashin.ajaxRetries
         }
 
