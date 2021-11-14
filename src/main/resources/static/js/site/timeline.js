@@ -116,7 +116,7 @@
             elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
         }
 
-        const diff = $(lastElements).not(elements).get();
+        const lastCurrentIsSame = $(lastElements).not(elements).get().length === 0 && $(elements).not(lastElements).get().length === 0;
         const lastIdToc = $("#offcanvasTocBody").children().last();
         const lastDate = lastIdToc.attr("id").split("offcanvas_")[1];
         let lastDateFound = false;
@@ -131,6 +131,7 @@
         }
 
         if (scrollHack === false) {
+
             // Additional hacks for scroll direction as the detection gets "confused" when dealing with dynamic content
             if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) < shashin.getDateObject(lastDateElements[0])) {
                 shashin.scrollDirection = "down";
@@ -141,12 +142,21 @@
             if (dateElements[dateElements.length - 1] && lastDateElements[lastDateElements.length - 1] && shashin.getDateObject(dateElements[dateElements.length - 1]) < shashin.getDateObject(lastDateElements[lastDateElements.length - 1])) {
                 shashin.scrollDirection = "down";
             }
-            if (dateElements[dateElements.length - 1] && lastDateElements[lastDateElements.length - 1] && shashin.getDateObject(dateElements[dateElements.length - 1]).toString() === shashin.getDateObject(lastDateElements[lastDateElements.length - 1]).toString() && dateElements[dateElements.length - 1].indexOf("tail_") >= 0) {
+            if (lastCurrentIsSame === false && dateElements[dateElements.length - 1] && lastDateElements[lastDateElements.length - 1] && shashin.getDateObject(dateElements[dateElements.length - 1]).toString() === shashin.getDateObject(lastDateElements[lastDateElements.length - 1]).toString() && dateElements[dateElements.length - 1].indexOf("tail_") >= 0) {
                 shashin.scrollDirection = "down";
             }
+            if (dateElements[dateElements.length - 1] && lastDateElements[lastDateElements.length - 1] && shashin.getDateObject(dateElements[dateElements.length - 1]).toString() === shashin.getDateObject(lastDateElements[lastDateElements.length - 1]).toString() && dateElements[dateElements.length - 1].indexOf("tail_") < 0 && lastDateElements[lastDateElements.length - 1].indexOf("tail_") >= 0) {
+                shashin.scrollDirection = "up";
+            }
+
+            if (dateElements[0] && lastDateElements[0] && shashin.getDateObject(dateElements[0]) > shashin.getDateObject(lastDateElements[0])) {
+                shashin.scrollDirection = "up";
+            }
+        } else {
+            shashin.scrollDirection = "up";
         }
 
-        if ((scrollHack === true && diff.length === 0) || lastElements === null || diff.length > 0 || (diff.length === 0 && shashin.scrollDirection === "up") || (lastDateFound === false && shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0)) {
+        if ((scrollHack === true && lastCurrentIsSame === true) || (scrollHack === false && lastCurrentIsSame === false) || lastElements === null || (lastDateFound === false && $("footer").withinviewport().length > 0)) {
             elements.each(function (index) {
                 let id = $(this).attr("id");
 
@@ -262,7 +272,7 @@
         if (navElem.hasClass("active") === true) {
             timelineSettings.enableScrollSpy = true;
             timelineSettings.stopTrackingScroll = true;
-            shashin.scrollDirection = "down";
+            shashin.scrollDirection = "up";
         }
     }
 
@@ -465,6 +475,7 @@
         if ((/*attachBelowArray.length > 0 && */shashin.scrollDirection === "up") || lastDate === id) {
 
             // Remove elements that are not visible
+            // let removeElement = false;
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove beginning");
                 if ($("#" + element.id).withinviewport().length === 0 &&
@@ -475,6 +486,10 @@
                     $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
                     //&& $("footer").withinviewport().length === 0
                 ) {
+                    // if (removeElement === false) {
+                    //     removeElement = true;
+                    //     return;
+                    // }
                     shashin.printMessageToConsole(element.id + " removed beginning");
                     shashin.removeDateGallery(element.id);
                 }
