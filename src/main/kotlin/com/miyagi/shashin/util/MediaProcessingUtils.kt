@@ -480,10 +480,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         // Map path to sidecar file
         var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "").lowercase()
         fileRootDir = fileRootDir.replace('\\', '/')
+
         if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
             fileRootDir = "/$fileRootDir"
         }
-
+        if (fileRootDir.take(2) == "//") {
+            fileRootDir = fileRootDir.drop(2)
+        }
         val supportedImageFormats = FileUtils.allowableImageFiles()
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
 

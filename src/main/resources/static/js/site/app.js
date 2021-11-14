@@ -246,6 +246,7 @@ $.fn.serializeObject = function() {
         $("#cameraDetails").text("");
         $("#lensDetails").text("");
         $("#qualityDetails").text("");
+        $("#addedAtDetails").text("");
         $("#createdAtDetails").text("");
         $("#modifiedAtDetails").text("");
         $("#takenAtDetails").text("");
@@ -286,6 +287,9 @@ $.fn.serializeObject = function() {
         }
         if (metadata.quality != null) {
             $("#qualityDetails").text(metadata.quality);
+        }
+        if (metadata.addedAt != null) {
+            $("#addedAtDetails").text(metadata.addedAt);
         }
         if (metadata.createdAt != null) {
             $("#createdAtDetails").text(metadata.createdAt);
