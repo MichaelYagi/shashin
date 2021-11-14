@@ -198,6 +198,8 @@
             });
         }
         lastElements = elements;
+
+console.log("====================")
     }
 
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
