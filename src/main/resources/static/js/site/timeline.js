@@ -156,7 +156,7 @@
             shashin.scrollDirection = "up";
         }
 
-        if ((scrollHack === true && lastCurrentIsSame === true) || (scrollHack === false && lastCurrentIsSame === false) || lastElements === null || (lastDateFound === false && $("footer").withinviewport().length > 0)) {
+        if (/*(scrollHack === true && lastCurrentIsSame === true) || */(scrollHack === false && lastCurrentIsSame === false) || lastElements === null || (lastDateFound === false && $("footer").withinviewport().length > 0)) {
             elements.each(function (index) {
                 let id = $(this).attr("id");
 
