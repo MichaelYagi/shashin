@@ -18,6 +18,11 @@
                         <span class="bi-calendar4" style="font-size: 1rem;"></span> Timeline
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a th:attr="class='nav-link' + ${activeSidebar=='recent' or activeSidebar=='folders' ? ' active' : ''}" href="/recent">
+                        <span class="bi-folder" style="font-size: 1rem;"></span> Browse
+                    </a>
+                </li>
             </th:block>
             <li class="nav-item">
                 <a th:attr="class='nav-link' + ${activeSidebar=='albums' or activeSidebar=='album'? ' active' : ''}" href="/albums">
