@@ -575,18 +575,18 @@
                 attachPoint = currentId;
             }
 
-            let tempOffCanvasIdAbove = $("#offcanvas_"+attachPoint);
-            for (let i = 0; i <= depthUp; i++) {
-                tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
-                if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
-                    const offcanvasId = tempOffCanvasIdAbove.attr("id").split("_")[1];
-                    const msg = await timelineSettings.updateTimeline(offcanvasId, mediaTypeFilter, action, attachPoint)
-                    if (msg === "success" && $("#" + offcanvasId).length === 1) {
-                        timelineSettings.attachAssociatedMetadata(offcanvasId, mediaTypeFilter);
-                    }
-                    attachPoint = offcanvasId;
-                }
-            }
+            // let tempOffCanvasIdAbove = $("#offcanvas_"+attachPoint);
+            // for (let i = 0; i <= depthUp; i++) {
+            //     tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
+            //     if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
+            //         const offcanvasId = tempOffCanvasIdAbove.attr("id").split("_")[1];
+            //         const msg = await timelineSettings.updateTimeline(offcanvasId, mediaTypeFilter, action, attachPoint)
+            //         if (msg === "success" && $("#" + offcanvasId).length === 1) {
+            //             timelineSettings.attachAssociatedMetadata(offcanvasId, mediaTypeFilter);
+            //         }
+            //         attachPoint = offcanvasId;
+            //     }
+            // }
 
             // Render mid
             action = "below";
