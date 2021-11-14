@@ -197,19 +197,17 @@
                 topScroll = true;
             }
 
-            if (st > lastScrollTop){
+            if (topOfPage === true && scrollHack === true) {
                 shashin.scrollDirection = "down";
-            } else {
-                shashin.scrollDirection = "up";
             }
+
             lastScrollTop = st <= 0 ? 0 : st;
 
-            if (shashin.scrollDirection === "up" && topScroll === true && topOfPage === false) {
+            if (topScroll === true && topOfPage === false) {
                 document.getElementById("container").scrollBy({top: 1});
                 if (document.getElementsByTagName("MAIN").length > 0) {
                     document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
                 }
-
                 shashin.scrollDirection = "up";
                 topScroll = false;
                 scrollHack = true;
