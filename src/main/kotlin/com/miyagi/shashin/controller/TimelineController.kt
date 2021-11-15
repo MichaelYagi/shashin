@@ -437,7 +437,6 @@ class TimelineController {
 
     private fun buildRecentlyAdded(model: Model,page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-println("recent: "+page)
         response["message"] = "There are no photos. Please setup directories in Settings and scan ."
         response["metadataList"] = ""
         response["favorites"] = ""
