@@ -25,6 +25,7 @@ CREATE TABLE `metadata` (
     `originalImageHeight` INTEGER DEFAULT NULL,
     `mapMarkerPath` VARCHAR (255) DEFAULT NULL,
     `mapMarkerUrl` VARCHAR (255) DEFAULT NULL,
+    `folder` VARCHAR (255) DEFAULT NULL,
     `videoUrl` VARCHAR (255) DEFAULT NULL,
     `duration` VARCHAR (8) DEFAULT NULL,
     `type` VARCHAR(20) DEFAULT NULL,

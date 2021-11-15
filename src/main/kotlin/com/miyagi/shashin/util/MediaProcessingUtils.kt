@@ -42,6 +42,12 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "")
             .lowercase()  //.replace(rootDirFilePath.replace('\\', '/').lowercase(), "")
         fileRootDir = fileRootDir.replace('\\', '/')
+        if (fileRootDir.take(2) == "//") {
+            fileRootDir = fileRootDir.drop(1)
+        }
+        if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
+            fileRootDir = "/$fileRootDir"
+        }
 
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
 
@@ -480,12 +486,11 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         // Map path to sidecar file
         var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "").lowercase()
         fileRootDir = fileRootDir.replace('\\', '/')
-
+        if (fileRootDir.take(2) == "//") {
+            fileRootDir = fileRootDir.drop(1)
+        }
         if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
             fileRootDir = "/$fileRootDir"
-        }
-        if (fileRootDir.take(2) == "//") {
-            fileRootDir = fileRootDir.drop(2)
         }
         val supportedImageFormats = FileUtils.allowableImageFiles()
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
@@ -517,6 +522,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
         // Create thumbnails
         if (img != null) {
+            _metadataObj?.setFolder(fileRootDir)
+
             // Raw file to jpg conversion
             var thumbnailFileStr: String
             var tnFile: File?
@@ -751,6 +758,12 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             val photoFileParent = photoFile.parent.replace('\\', '/')
             var fileRootDir: String = photoFileParent.replace('\\', '/').replace(":", "").lowercase()
             fileRootDir = fileRootDir.replace('\\', '/')
+            if (fileRootDir.take(2) == "//") {
+                fileRootDir = fileRootDir.drop(1)
+            }
+            if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
+                fileRootDir = "/$fileRootDir"
+            }
             val exifFile = FileUtils.createFile(
                 "$metadataDirectory/$fileRootDir",
                 "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml",
@@ -776,6 +789,12 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             val photoFile = File(metadataObj.getPath()!!)
             var fileRootDir: String = photoFile.parent.replace('\\', '/').replace(":", "").lowercase()
             fileRootDir = fileRootDir.replace('\\', '/')
+            if (fileRootDir.take(2) == "//") {
+                fileRootDir = fileRootDir.drop(1)
+            }
+            if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
+                fileRootDir = "/$fileRootDir"
+            }
             val metadataFileStr = metadataDirectory + fileRootDir + "/" + photoFile.name + ".yaml"
             val mdFile = File(metadataFileStr)
             val yamlFactory: YAMLFactory = YAMLFactory.builder()

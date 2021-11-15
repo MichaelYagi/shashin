@@ -258,3 +258,10 @@ footer {
   padding:3px 5px 0 5px;
   border-radius: 5px;
 }
+
+.card{
+  overflow: hidden;
+}
+.card-text{
+  word-wrap: break-word;
+}
