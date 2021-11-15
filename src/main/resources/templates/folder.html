@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
+
+<div th:replace="fragments/infomodal :: infomodal()"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
+            <input type="hidden" id="multiSelectMetadataIds" name="multiSelectMetadataIds" value="[]">
+            <input type="hidden" id="multiSelectFilenames" name="multiSelectFilenames" value="[]">
+            <input type="hidden" id="multiSelectThumbnails" name="multiSelectThumbnails" value="[]">
+            <input type="hidden" id="currentlat" name="currentlat">
+            <input type="hidden" id="currentlng" name="currentlng">
+            <input type="hidden" id="currentfilename" name="currentfilename">
+            <input type="hidden" id="currentPage" name="currentPage" value="0">
+
+            <div id="scroll-gallery">
+                <th:block th:if="${metadataList != ''}">
+                    <h1 th:text="${folder}"></h1>
+                    <div class="row p-3">
+                        <th:block th:each="metadata, iterStat: ${metadataList}">
+                            <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                                <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
+
+                                <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" th:onError="shashin.errorImg(this,[[${metadata.title}]],209)">
+
+                                <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},false)"></div>
+
+                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
+
+                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
+
+                            </div>
+
+                            <script th:inline="javascript" type="text/javascript">
+                                /*<![CDATA[*/
+                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'folder');
+                                folderSettings.activateMetadataListeners(/*[[${metadata}]]*/{});
+                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
+                                    e.preventDefault();
+                                    const metadataObj = JSON.parse($(this).attr("tag"));
+                                    shashin.openInfoModal(metadataObj);
+                                });
+                                /*]]>*/
+                            </script>
+
+                            <span class="appendFolderPhotos" style="width:0;height:0;padding:0"></span>
+
+                        </th:block>
+                    </div>
+
+                    <th:block th:if="${#lists.size(metadataList) == 0}">
+                        <span class="appendFolderPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
+                    </th:block>
+
+                </th:block>
+            </div>
+
+            <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
+        </main>
+    </div>
+</div>
+
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+    <script src="/js/site/applisteners.js" type="text/javascript"></script>
+</th:block>
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+    <script src="/js/site/applisteners.min.js" type="text/javascript"></script>
+</th:block>
+<script th:inline="javascript" type="text/javascript">
+    $(document).ready(function(){
+        $(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+
+        let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,counter: true},'.mediaLink');
+
+        function loadNextPage() {
+            $("#spinner").css("display","block");
+            const currentPage = parseInt($("#currentPage").val());
+            const nextPage = currentPage + 1;
+            /*<![CDATA[*/
+            const activePage = /*[[${activePage}]]*/ 'folder';
+            const folderName = /*[[${folder}]]*/ '';
+            /*]]>*/
+            folderSettings.updateRecent(nextPage,folderName,activePage).then(function(additionalMediaContentList) {
+                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
+            });
+            $("#currentPage").val(nextPage);
+        }
+
+        /*<![CDATA[*/
+        shashin.pageLoader(loadNextPage, ".appendFolderPhotos", /*[[${metadataList}]]*/ '[]',true);
+        /*]]>*/
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    });
+</script>
+
+</body>
+</html>

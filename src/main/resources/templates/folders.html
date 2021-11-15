@@ -16,12 +16,12 @@
                 <div class="row p-3">
                     <th:block th:each="folder, iterStat: ${foldersList}">
                         <div class="card" style="width:235px;padding-top:10px;">
-                            <a th:href="'/folder'+${#uris.escapePath(folder.folder)}" style="text-decoration: none !important;color: black;">
+                            <a th:href="'/folder/'+${#uris.escapePath(#uris.escapePathSegment(folder.folder))}" style="text-decoration: none !important;color: black;">
                                 <img class="card-img-top" th:src="${#uris.escapePath(folder.thumbnailUrlCentered)}" width="209" height="209" style="width: 209px;height: 209px;" th:onError="shashin.errorImg(this,[[${folder.folder}]],209)">
                             </a>
                             <div class="card-body">
                                 <p class="card-text">
-                                    <a th:href="'/folder'+${#uris.escapePath(folder.folder)}" style="text-decoration: none !important;color: black;">
+                                    <a th:href="'/folder/'+${#uris.escapePath(#uris.escapePathSegment(folder.folder))}" style="text-decoration: none !important;color: black;">
                                         <strong th:text="${folder.folder}"></strong><br>
                                     </a>
                                 </p>

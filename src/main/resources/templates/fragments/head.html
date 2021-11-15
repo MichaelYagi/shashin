@@ -32,7 +32,7 @@
     titleDescriptor == 'Share' or
     titleDescriptor == 'Trash' or
     titleDescriptor == 'Recent' or
-    titleDescriptor == 'Folders'}">
+    titleDescriptor == 'Folder'}">
         <script src="/js/lightgallery.min.js"></script>
         <script src="/js/lg-video.min.js"></script>
         <script src="/js/lg-zoom.min.js"></script>
@@ -81,6 +81,9 @@
         <th:block th:if="${titleDescriptor == 'Recent'}">
             <script src="/js/site/recent.js"></script>
         </th:block>
+        <th:block th:if="${titleDescriptor == 'Folder'}">
+            <script src="/js/site/folder.js"></script>
+        </th:block>
         <th:block th:if="${titleDescriptor == 'Favorites'}">
             <script src="/js/site/favorites.js"></script>
         </th:block>
@@ -111,6 +114,9 @@
         </th:block>
         <th:block th:if="${titleDescriptor == 'Recent'}">
             <script src="/js/site/recent.min.js"></script>
+        </th:block>
+        <th:block th:if="${titleDescriptor == 'Folder'}">
+            <script src="/js/site/folder.min.js"></script>
         </th:block>
         <th:block th:if="${titleDescriptor == 'Favorites'}">
             <script src="/js/site/favorites.min.js"></script>

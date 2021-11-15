@@ -117,6 +117,7 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
         val firewall = StrictHttpFirewall()
         firewall.setAllowUrlEncodedPercent(true)
         firewall.setAllowSemicolon(true)
+        firewall.setAllowUrlEncodedSlash(true)
         return firewall
     }
 
