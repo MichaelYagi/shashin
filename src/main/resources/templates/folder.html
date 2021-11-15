@@ -5,8 +5,6 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
 
-<div th:replace="fragments/infomodal :: infomodal()"></div>
-
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
@@ -20,6 +18,8 @@
             <input type="hidden" id="currentfilename" name="currentfilename">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
 
+            <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
+
             <div id="scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
                     <h1 th:text="${folder}"></h1>
@@ -29,10 +29,17 @@
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
                                 <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" th:onError="shashin.errorImg(this,[[${metadata.title}]],209)">
+                                <input type="hidden" th:name="'filename'+${metadata.id}" th:id="'filename'+${metadata.id}" th:value="${metadata.fileName}">
+                                <input type="hidden" th:name="'thumbnailCentered'+${metadata.id}" th:id="'thumbnailCentered'+${metadata.id}" th:value="${metadata.thumbnailUrlCentered}">
 
                                 <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},false)"></div>
 
-                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
+                                <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
+                                <div class="thumbnail-bl" th:id="${'tnbl'+metadata.id}">
+                                    <a href="#" th:id="${'timelineModalEdit'+metadata.id}" data-bs-target="#propTimelinModal">
+                                        <span th:class="${metadata.lat == null || metadata.lng == null ? 'bi-pencil-square' : 'bi-pencil'}" style="font-size: 1rem;color: lightgray;"></span>
+                                    </a>
+                                </div>
 
                                 <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
 
@@ -40,14 +47,15 @@
 
                             <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
+                                $("#timelineModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                                $("#timelineModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
+                                    e.preventDefault();
+
+                                    shashin.openEditMetadataModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/[],/*[[${labelPhotoMap.get(metadata.id)}]]*/{},/*[[${albumList}]]*/[],/*[[${albumMap.get(metadata.id)}]]*/{});
+                                });
+
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'folder');
                                 folderSettings.activateMetadataListeners(/*[[${metadata}]]*/{});
-                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
-                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
-                                    e.preventDefault();
-                                    const metadataObj = JSON.parse($(this).attr("tag"));
-                                    shashin.openInfoModal(metadataObj);
-                                });
                                 /*]]>*/
                             </script>
 
@@ -62,6 +70,36 @@
 
                 </th:block>
             </div>
+
+            <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels})"></div>
+            <script th:inline="javascript" type="text/javascript">
+                /*<![CDATA[*/
+                const albumList = /*[[${albumList}]]*/[];
+
+                if (albumList.length > 0) {
+                    let batchHtml =
+                        '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
+                        '<div class="input-group-append">\n' +
+                        '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineBatchModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                        '   <div class="dropdown-menu" id="albumNameList">\n';
+
+                    for (let index in albumList) {
+                        const album = albumList[index];
+                        batchHtml +=
+                            '<button class="dropdown-item" type="button">\n' +
+                            '    <input type="checkbox" onclick="return timelineBatchModal.populateBatchAlbum();" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                            '    <label for="'+album.id+'">'+album.name+'</label>\n' +
+                            '</button>\n';
+                    }
+
+                    batchHtml +=
+                        '   </div>\n' +
+                        '</div>\n';
+
+                    $("#albumListForModal").html(batchHtml);
+                }
+                /*]]>*/
+            </script>
 
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>

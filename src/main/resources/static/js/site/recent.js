@@ -7,7 +7,7 @@
         });
     }
 
-    recentSettings.updateRecent = function(nextPage,searchTerm,activePage) {
+    recentSettings.updateRecent = function(nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/recent/"+nextPage,
@@ -28,6 +28,11 @@
                 const mediaContentList = [];
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
                     const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                    const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
+                    const recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
+                    const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
+                    const albumMap = data["albumMap"] === "" ? null : data["albumMap"];
+                    const albumList = data["albumList"] === "" ? null : data["albumList"];
 
                     if (metadataList !== null && metadataList.length > 0) {
                         let html = "";
@@ -41,9 +46,18 @@
                             html +=
                                 '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
                                 '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="shashin.errorImg(this,\''+metadata.title+'\',209)">\n' +
-                                '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
+                                '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n' +
+                                '   <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlCentered) + '">\n';
 
-                            html += shashin.getBottomLeftOverlay(metadata.id, null, null, null, null);
+                            html += shashin.getTopLeftOverlay(metadata.id);
+
+                            const ediIcon = (metadata.lat === null || metadata.lng === null) ? 'bi-pencil-square' : 'bi-pencil';
+                            html +=
+                                '   <div class="thumbnail-bl" id="tnbl'+metadata.id+'">\n' +
+                                '       <a href="#" id="timelineModalEdit'+metadata.id+'" data-bs-target="#propTimelinModal">\n' +
+                                '           <span class="'+ediIcon+'" style="font-size: 1rem;color: lightgray;"></span>\n' +
+                                '       </a>\n' +
+                                '   </div>\n';
 
                             const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                             html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
@@ -55,14 +69,15 @@
                             html += '</div>\n<span class="appendRecentPhotos" style="width:0;height:0;padding:0"></span>\n';
                             $(html).insertAfter($(".appendRecentPhotos").last())
 
+                            $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                            $("#timelineModalEdit"+metadata.id).click(function(e) {
+                                e.preventDefault();
+
+                                shashin.openEditMetadataModal(metadata,recognitionLabels,labelPhotoMap[metadata.id],albumList,albumMap[metadata.id]);
+                            });
+
                             shashin.setPhotoOverlays(metadata, activePage);
                             recentSettings.activateMetadataListeners(metadata);
-                            $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
-                            $("#infoModalEdit"+metadata.id).click(function(e) {
-                                e.preventDefault();
-                                const metadataObj = JSON.parse($(this).attr("tag"));
-                                shashin.openInfoModal(metadataObj);
-                            });
 
                             html = "";
                         }

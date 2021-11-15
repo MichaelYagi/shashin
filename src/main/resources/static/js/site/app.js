@@ -79,6 +79,163 @@ $.fn.serializeObject = function() {
         shashin.map.updateSize();
     }
 
+    shashin.openEditMetadataModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList) {
+        let index;
+
+        // Populate modal data
+        if ($("#timelineModalEdit"+metadata.id).attr("tag") && $("#timelineModalEdit"+metadata.id).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#timelineModalEdit"+metadata.id).attr("tag"));
+        }
+
+        // Clear modal data
+        $('#propTimelineModal').find(':input').val('');
+        $("#propTimelineModalThumbnail").html("");
+        $("#isobject")[0].checked = false;
+        $("#hidden")[0].checked = false;
+
+        $("#timelineModalTitle").text(metadata.fileName);
+        $("#currentfilename").val(metadata.fileName)
+        $("#currentlat").val(metadata.lat)
+        $("#currentlng").val(metadata.lng)
+        $("#metadataId").val(metadata.id);
+
+        if (metadata.thumbnailUrlCentered !== null) {
+            $("#propTimelineModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="shashin.errorImg(this,\''+metadata.title+'\',100)">');
+        }
+
+        if (metadata.title !== null) {
+            $("#title").val(metadata.title);
+        }
+
+        if (metadata.timeZone !== null) {
+            $("#offsetTaken").val(metadata.timeZone);
+        }
+        if (metadata.time !== null) {
+            $("#timeTaken").val(metadata.time);
+        }
+        if (metadata.day !== null) {
+            $("#dayTaken").val(metadata.day);
+        }
+        if (metadata.month !== null) {
+            $("#monthTaken").val(metadata.month);
+        }
+        if (metadata.year !== null) {
+            $("#yearTaken").val(metadata.year);
+        }
+        if (metadata.hidden !== null && metadata.hidden === true) {
+            $("#offsetTaken").prop('checked', true);
+        }
+
+        const latlngValue = (metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
+        $("#latlng").val(latlngValue);
+
+        const taggedPeopleArray = taggedPeopleList.split(",");
+        let isObject = false;
+        let taggedPeopleString = "";
+        for (index in taggedPeopleArray) {
+            const person = taggedPeopleArray[index];
+            if (person === "object") {
+                isObject = true;
+            } else {
+                taggedPeopleString += person + ",";
+            }
+        }
+        taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
+        taggedPeopleString = taggedPeopleString.trim();
+        if (taggedPeopleString !== "") {
+            $("#tagpeople").val(taggedPeopleString);
+        } else if (metadata.tagpeople !== null) {
+            $("#tagpeople").val(metadata.tagpeople);
+        }
+
+        if ($("#recognitionLabelInput").length > 0) {
+            $("#recognitionLabelInput").remove();
+        }
+        if (recognitionLabels !== null && recognitionLabels.length > 0) {
+            let html = '<div class="input-group-append" id="recognitionLabelInput">\n' +
+                '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
+
+            for (index in recognitionLabels) {
+                const recognitionLabel = recognitionLabels[index];
+                let checkedString = "";
+
+                if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                    checkedString = " checked";
+                }
+
+                html +=
+                    '           <button class="dropdown-item" type="button">\n' +
+                    '               <input type="checkbox" onclick="return timelineModal.populateLabel(\'' + metadata.id + '\');" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
+                    '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
+                    '           </button>\n';
+            }
+            html += '   </div>\n' +
+                '</div>\n';
+
+            $(html).insertAfter($("#labelIdData"))
+        }
+
+        const albumListArray = albumList.split(",");
+        let albumListString = "";
+        for (index in albumListArray) {
+            const album = albumListArray[index];
+            albumListString += album + ",";
+        }
+        albumListString = albumListString.replace(/,\s*$/, "");
+        albumListString = albumListString.trim();
+        if (albumListString !== "") {
+            $("#albumnames").val(albumListString);
+        } else if (metadata.albumlist !== null) {
+            $("#albumnames").val(metadata.albumlist);
+        }
+
+        if ($("#albumListInput").length > 0) {
+            $("#albumListInput").remove();
+        }
+        if (allAlbumList !== null && allAlbumList.length > 0) {
+            let html =
+                '<div class="input-group-append" id="albumListInput">\n' +
+                '   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleAlbumDropdown(\'' + metadata.id + '\');" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                '   <div class="dropdown-menu" id="albumsList">\n';
+
+            for (index in allAlbumList) {
+                const eachAlbum = allAlbumList[index];
+                let checkedString = "";
+
+                if ($.inArray(eachAlbum.name, albumListArray) !== -1) {
+                    checkedString = " checked";
+                }
+
+                html +=
+                    '   <button class="dropdown-item" type="button">\n' +
+                    '       <input type="checkbox" onclick="return timelineModal.populateAlbum(\'' + metadata.id + '\');" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
+                    '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + eachAlbum.name + '</label>\n' +
+                    '   </button>\n';
+            }
+            html += '</div>\n' +
+                '</div>\n';
+
+            $(html).insertAfter($("#albumNameData"))
+        }
+
+        if (isObject === true) {
+            $("#isobject")[0].checked = true;
+        }
+
+        if (metadata.hidden !== null && metadata.hidden === true) {
+            $("#hidden")[0].checked = true;
+        }
+
+        $("#keywords").val(metadata.keywords);
+
+        $("#albumDetailRow").remove();
+        shashin.populateDetailsTab(metadata);
+
+        // Open modal window
+        $("#propTimelineModal").modal('show');
+    }
+
     shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {
         shashin.setLightGalleryElement(lgElement);
         shashin.setLightGallery(additionalLgConfigs);
@@ -155,6 +312,107 @@ $.fn.serializeObject = function() {
                 }
             }
         })
+    }
+
+    shashin.refreshTimeline = function (mediaTypeFilter,currentOffCanvasId) {
+        const ajaxParams = {
+            type: 'get',
+            url: "/timeline/dates/"+mediaTypeFilter,
+            contentType: 'application/json; charset=utf-8',
+            async:true,
+            retries: shashin.ajaxRetries
+        }
+
+        function onFail(xhr, textStatus) {
+            shashin.printMessageToConsole("AJAX error refreshing timeline TOC. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                $.ajax(ajaxParams).fail(onFail);
+            }
+        }
+
+        $.ajax(ajaxParams)
+            .fail(onFail).then(function(data) {
+            if (data.hasOwnProperty("metadataDates")) {
+                $("#offcanvasTocBody").empty();
+
+                const metadataDates = data["metadataDates"];
+                let html = "";
+                for (const index in metadataDates) {
+                    const metadataDate = metadataDates[index];
+                    const year = metadataDate["year"];
+                    const month = metadataDate["month"];
+                    const day = metadataDate["day"];
+
+                    let offcanvasDate = "";
+                    let text = "Undated";
+                    let active = "";
+                    if (year == null || month == null || day == null) {
+                        offcanvasDate = "offcanvas_undated";
+                        if (currentOffCanvasId === offcanvasDate) {
+                            active = " active";
+                        }
+                        html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\'undated\',\''+mediaTypeFilter+'\')" href="#undated">'+text+'</a>\n';
+                    } else {
+                        offcanvasDate = "offcanvas_"+year+"-"+month+"-"+day;
+                        if (currentOffCanvasId === offcanvasDate) {
+                            active = " active";
+                        }
+                        const dateObj = new Date(year, month-1, day);
+                        text = dateObj.format("mmm d, yyyy");
+                        html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\')" href="#'+year+'-'+month+'-'+day+'">'+text+'</a>\n';
+                    }
+                }
+                $("#offcanvasTocBody").append(html);
+            }
+        });
+    }
+
+    shashin.validateMetadataInputs = function(day, month, year, time, offset, latlng, msgId) {
+        if (offset === null ) {
+            offset = "";
+        }
+        const dayValidate = "([1-9]|[12]\d|3[01])";
+        const monthValidate = "^(0?[1-9]|1[012])$";
+        const timeValidate = "^(\\d{2}:\\d{2}:\\d{2})$";
+        const offsetValidate = "^([+-±](?:2[0-3]|[01][0-9]):[0-5][0-9])$";
+
+        let msg = "";
+        if (day !== "" && !day.match(dayValidate)) {
+            msg = "Enter Valid Day";
+        }
+
+        if (month !== "" && !month.match(monthValidate)) {
+            msg = "Enter Valid Month";
+        }
+
+        if (year !== "" && !(+year >= 1888 && +year <= new Date().getFullYear())) {
+            msg = "Enter Valid Year";
+        }
+
+        if (time !== "" && !time.match(timeValidate)) {
+            msg = "Enter Valid Time";
+        }
+
+        if (offset !== "" && !offset.match(offsetValidate)) {
+            msg = "Enter Valid Offset";
+        }
+
+        if (latlng !== "") {
+            latlng = $.trim(latlng);
+            const latlngArr = latlng.split(",");
+
+            if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !shashin.isNumeric(latlngArr[0]) || !shashin.isNumeric(latlngArr[1])) {
+                msg = "Enter Valid Latitude/Longitude";
+            }
+        }
+
+        if (msg !== "") {
+            $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
+            return false;
+        } else {
+            return true;
+        }
+
     }
 
     shashin.openMap = function (metadata) {
@@ -660,7 +918,7 @@ $.fn.serializeObject = function() {
                 $("#appSearch").css("display", "none");
                 if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").css("display", "block");
-                } else if (view === "timeline") {
+                } else if (view === "timeline" || view === "recent" || view === "folder") {
                     $("#timelineAppTools").css("display", "block");
                 } else if (view === "matches" || view === "person") {
                     $("#matchesAppTools").css("display", "block");
@@ -724,7 +982,7 @@ $.fn.serializeObject = function() {
                 $("#appSearch").css("display", "none");
                 if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").css("display", "block");
-                } else if (view === "timeline") {
+                } else if (view === "timeline" || view === "recent" || view === "folder") {
                     $("#timelineAppTools").css("display", "block");
                 } else if (view === "matches" || view === "person") {
                     $("#matchesAppTools").css("display", "block");

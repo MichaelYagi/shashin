@@ -55,7 +55,7 @@ $("#saveMetadata").click(function (e) {
 
     timelineModal.closeTagPeopleDropdown(metadataId);
 
-    if (timelineSettings.validateMetadataInputs(
+    if (shashin.validateMetadataInputs(
         $("#dayTaken").val(),
         $("#monthTaken").val(),
         $("#yearTaken").val(),
@@ -134,13 +134,13 @@ $("#saveMetadata").click(function (e) {
                     metadataObj.albumlist = $("#albumnames").val()
                     metadataObj.hidden = $("#hidden").prop("checked")
 
-                    const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
-                    const headingId = rowId.replace("row", "");
-                    const targetElement = $("#photoThumbnailContainer" + metadataId);
 
-                    const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
-                        "offcanvas_undated" : "offcanvas_"+metadataObj.year+'-'+metadataObj.month+'-'+metadataObj.day;
-                    timelineSettings.refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
+
+                    if ($("#offcanvasToc").length > 0) {
+                        const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
+                            "offcanvas_undated" : "offcanvas_" + metadataObj.year + '-' + metadataObj.month + '-' + metadataObj.day;
+                        shashin.refreshTimeline($("#mediaTypeFilter").val(), offCanvasId);
+                    }
 
                     if (metadataObj.hidden === false) {
                         shashin.populateDetailsTab(metadataObj)
@@ -151,6 +151,8 @@ $("#saveMetadata").click(function (e) {
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                         }
                     } else {
+                        const targetElement = $("#photoThumbnailContainer" + metadataId);
+
                         // Count children
                         const currentNumChildren = targetElement.siblings("div").length;
 
@@ -158,6 +160,8 @@ $("#saveMetadata").click(function (e) {
                         targetElement.remove();
 
                         if (currentNumChildren === 0) {
+                            const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
+                            const headingId = rowId.replace("row", "");
                             shashin.removeDateGallery(headingId);
                         }
                     }
