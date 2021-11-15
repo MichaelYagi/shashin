@@ -200,9 +200,6 @@ class BrowseController {
         val module = "folder"
         val page = 0
         val response = buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page)
-        for ((k, v) in response) {
-            model[k] = v!!
-        }
 
         for ((k, v) in response) {
             model[k] = v!!

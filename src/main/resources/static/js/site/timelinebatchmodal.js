@@ -49,7 +49,7 @@ $("#saveBatchMetadata").click(function (e) {
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
 
-    if (timelineSettings.validateMetadataInputs(
+    if (shashin.validateMetadataInputs(
         $("#dayTakenBatchData").val(),
         $("#monthTakenBatchData").val(),
         $("#yearTakenBatchData").val(),
@@ -141,9 +141,12 @@ $("#saveBatchMetadata").click(function (e) {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
-                const offCanvasId = ($("#dayTakenBatchData").val() == null || $("#dayTakenBatchData").val() === "" || $("#monthTakenBatchData").val() == null || $("#monthTakenBatchData").val() === "" || $("#yearTakenBatchData").val() == null || $("#yearTakenBatchData").val() == "") ?
-                    "offcanvas_undated" : "offcanvas_"+$("#yearTakenBatchData").val()+'-'+$("#monthTakenBatchData").val()+'-'+$("#dayTakenBatchData").val();
-                timelineSettings.refreshTimeline($("#mediaTypeFilter").val(),offCanvasId);
+
+                if ($("#offcanvasToc").length > 0) {
+                    const offCanvasId = ($("#dayTakenBatchData").val() == null || $("#dayTakenBatchData").val() === "" || $("#monthTakenBatchData").val() == null || $("#monthTakenBatchData").val() === "" || $("#yearTakenBatchData").val() == null || $("#yearTakenBatchData").val() == "") ?
+                        "offcanvas_undated" : "offcanvas_" + $("#yearTakenBatchData").val() + '-' + $("#monthTakenBatchData").val() + '-' + $("#dayTakenBatchData").val();
+                    shashin.refreshTimeline($("#mediaTypeFilter").val(), offCanvasId);
+                }
 
                 //$("#msgBatchMetadata").html(message);
                 //$("#timelineBatchModalStatus").css("visibility","hidden");
