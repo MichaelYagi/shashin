@@ -896,6 +896,11 @@ class TimelineController {
             if (!isHidden && albumNames != null && albumNames.toString().trim() != "") {
                 val albumNameList = albumNames.toString().split(",")
 
+                val currentUserObj = model.getAttribute("currentUser") as User?
+                if (currentUserObj != null && albumNameList.isNotEmpty()) {
+                    userAlbumRepository.deleteByUserId(currentUserObj.getId())
+                }
+
                 for (albumNameRaw in albumNameList) {
                     val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
                     val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
@@ -919,7 +924,7 @@ class TimelineController {
 
                     if (albumId > 0) {
                         albumIdList.add(albumId)
-                        val currentUserObj = model.getAttribute("currentUser") as User?
+
                         if (currentUserObj != null) {
                             val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
                             if (userAlbumCount == 0) {
@@ -946,6 +951,8 @@ class TimelineController {
                 } else {
                     // Add album photo
                     if (albumIdList.isNotEmpty()) {
+                        albumPhotoRepository.deleteByMetadataId(metadata.getId())
+
                         for (albumId in albumIdList) {
                             val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadata.getId(), albumId)!!
                             if (albumPhotoCount == 0) {
