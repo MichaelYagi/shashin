@@ -78,4 +78,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    @Query("SELECT DISTINCT m.id as metadataId,m.type,m.path,m.thumbnail_path_small as thumbnailPathSmall,rlp.recognition_label_id as recognitionLabelId,rl.name as recognitionLabelName FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id LEFT JOIN recognitionlabel rl ON rlp.recognition_label_id = rl.id WHERE m.hidden = false AND rlp.id IN (SELECT rlp2.id FROM recognitionlabelphoto rlp2 WHERE rlp.recognition_label_id = rlp2.recognition_label_id LIMIT :trainingDataLimit) AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold ORDER BY rlp.recognition_label_id, RANDOM()",nativeQuery = true)
    fun findTrainingData(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("trainingDataLimit") trainingDataLimit: Int): MutableIterable<TrainingData>
+
+   @Query("SELECT m.folder, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder) as count FROM metadata m GROUP BY m.folder", nativeQuery = true)
+   fun findFolders(): MutableIterable<Folder?>?
 }

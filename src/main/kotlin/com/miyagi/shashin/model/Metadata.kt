@@ -23,6 +23,7 @@ class Metadata {
     private var thumbnailUrlOriginal: String? = null
     private var mapMarkerPath: String? = null
     private var mapMarkerUrl: String? = null
+    private var folder: String? = null
     private var videoUrl: String? = null
     private var duration: String? = null
     private var type: String? = null
@@ -92,6 +93,9 @@ class Metadata {
     }
     fun setMapMarkerUrl(mapMarkerUrl: String?) {
         this.mapMarkerUrl = mapMarkerUrl
+    }
+    fun setFolder(folder: String?) {
+        this.folder = folder
     }
     fun setVideoUrl(videoUrl: String?) {
         this.videoUrl = videoUrl
@@ -217,6 +221,9 @@ class Metadata {
     fun getMapMarkerUrl(): String? {
         return this.mapMarkerUrl
     }
+    fun getFolder(): String? {
+        return this.folder
+    }
     fun getVideoUrl(): String? {
         return this.videoUrl
     }
@@ -313,6 +320,7 @@ class Metadata {
         map["originalImageWidth"] = this.originalImageWidth
         map["originalImageHeight"] = this.originalImageHeight
         map["mapMarkerUrl"] = this.mapMarkerUrl
+        map["folder"] = this.folder
         map["videoUrl"] = this.videoUrl
         map["duration"] = this.duration
         map["type"] = this.type
