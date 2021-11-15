@@ -127,11 +127,13 @@
                             }
 
                             let currentActiveId = $("#offcanvasTocBody").find(".active").attr("id");
-                            const idParts = currentActiveId.split("offcanvas_");
-                            currentActiveId = idParts[1];
+                            if (typeof currentActiveId !== 'undefined') {
+                                const idParts = currentActiveId.split("offcanvas_");
+                                currentActiveId = idParts[1];
 
-                            if (firstId !== currentActiveId) {
-                                timelineSettings.setScrollSpyActive(id);
+                                if (firstId !== currentActiveId) {
+                                    timelineSettings.setScrollSpyActive(id);
+                                }
                             }
                         }
                         timelineSettings.stopTrackingScroll = false;
@@ -675,6 +677,8 @@
                                 }
                                 if ($("#tntl"+metadata.id+".thumbnail-tl").length === 0) {
                                     $("#tntl" + metadata.id).addClass("thumbnail-tl");
+                                    shashin.setPhotoOverlays(metadata, "timeline")
+                                    timelineSettings.activateMetadataListeners(metadata);
                                 }
 
                                 if (metadata.type.indexOf("video") >= 0) {
@@ -695,9 +699,6 @@
                                         $("#tntr" + metadata.id).addClass("thumbnail-tr");
                                     }
                                 }
-
-                                shashin.setPhotoOverlays(metadata, "timeline")
-                                timelineSettings.activateMetadataListeners(metadata);
                             }
                         }
                     }
