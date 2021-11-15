@@ -14,6 +14,9 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.util.ArrayList
 import javax.servlet.http.HttpServletRequest
 
@@ -190,5 +193,134 @@ class BrowseController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @RequestMapping(value = ["/folder/{folder}"], method = [RequestMethod.GET])
+    fun getRecentlyAdded(model: Model, @PathVariable folder: String): String {
+        val module = "folder"
+        val page = 0
+        val response = buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String): String {
+        return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page))
+    }
+
+    private fun buildFolder(model: Model, folder: String, page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+        response["message"] = "There are no photos.."
+        response["metadataList"] = ""
+        response["favorites"] = ""
+        response["albumList"] = ""
+        response["recognitionLabels"] = ""
+        response["labelPhotoMap"] = mutableMapOf<String, String>()
+        response["mediaTypeFilter"] = "all"
+        response["timeOffsets"] = TextUtils.timeOffsets()
+        response["albumMap"] = mutableMapOf<String, String>()
+        response["folder"] = folder
+
+        response["msg"] = "Could not get results"
+        response["status"] = "fail"
+
+        if (model.getAttribute("currentUser") != "") {
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page*queryLimit
+
+            val favoritesMap = HashMap<String, HashMap<String, Any>>()
+
+            val metadataList: MutableList<Metadata> = metadataRepository.findAllByFolderOffsetAndLimit(
+                folder,
+                pageValue,
+                model.getAttribute("queryLimit").toString().toInt()
+            ).toMutableList()
+
+            if (metadataList != null && metadataList.isNotEmpty()) {
+                response["metadataList"] = metadataList
+                response["message"] = ""
+                response["favorites"] = favoritesMap
+
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+                if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                    response["recognitionLabels"] = recognitionLabels
+                }
+
+                val labelPhotoMap = mutableMapOf<String, String>()
+                val albumMap = mutableMapOf<String, String>()
+
+                for (metadata in metadataList) {
+                    val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
+                    if (favorites != null) {
+                        for (favorite in favorites) {
+                            if (favorite != null) {
+                                favoritesMap[metadata.getId()] = hashMapOf(
+                                    "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
+                                )
+
+                                if ((favorite.getUserId() == currentUserObj?.getId())) {
+                                    break
+                                }
+                            }
+                        }
+                    }
+                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                    var labelString = ""
+                    if (recognitionLabelPhotos != null) {
+                        for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                            val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                            if (recognitionLabelObj != null) {
+                                labelString += recognitionLabelObj.get().getName() + ","
+                            }
+                        }
+                    }
+                    if (labelString.isNotBlank()) {
+                        labelString = labelString.dropLast(1)
+                    }
+                    labelPhotoMap[metadata.getId()] = labelString
+
+                    val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
+                    if (albumPhotos != null) {
+                        var albumMetadataList = ""
+                        for (albumPhoto in albumPhotos) {
+                            val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
+                            albumMetadataList += album.get().getName()+","
+                        }
+                        if (albumMetadataList.isNotEmpty()) {
+                            albumMetadataList = albumMetadataList.dropLast(1)
+                        }
+                        albumMap[metadata.getId()] = albumMetadataList
+                    }
+                }
+                response["labelPhotoMap"] = labelPhotoMap
+                response["albumMap"] = albumMap
+
+                val albumList = albumRepository.findAll()
+                if (albumList.count() > 0) {
+                    response["albumList"] = albumList
+                }
+
+                response["favorites"] = favoritesMap
+            }
+
+            response["msg"] = "Results"
+            response["status"] = "success"
+        }
+
+        return response
     }
 }
