@@ -22,7 +22,6 @@
 
             <div id="scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
-                    <h1>Recently Added</h1>
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
