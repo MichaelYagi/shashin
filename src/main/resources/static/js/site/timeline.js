@@ -265,11 +265,12 @@
 
         // Render top
         if (shashin.scrollDirection === "up" || lastDate === id) {
+console.log("scrolling up")
+
             // Remove elements that are not visible
             let addedToIgnoreList = false;
+            let ignoreDeleteList = [];
             $('section').each(function (index, element) {
-                let ignoreDeleteList = [];
-
                 if (addedToIgnoreList === false &&
                     ($("#" + element.id).withinviewport().length > 0 ||
                     $("#br" + element.id).withinviewport().length > 0 ||
@@ -394,55 +395,40 @@
                 }
             }
         } else { // Scrolling down
-            // Delete visible elements
+            // Remove elements that are not visible
             $('section').each(function (index, element) {
-                shashin.printMessageToConsole(element.id + " checking to remove beginning");
-
-                if ($("#" + element.id).withinviewport().length > 0 ||
-                    $("#br" + element.id).withinviewport().length > 0 ||
-                    $("#row" + element.id).withinviewport().length > 0 ||
-                    $("#amp_" + element.id).withinviewport().length > 0 ||
-                    $("#tail_" + element.id).withinviewport().length > 0
-                    || $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length > 0
+                if ($("#" + element.id).withinviewport().length === 0 &&
+                    $("#br" + element.id).withinviewport().length === 0 &&
+                    $("#row" + element.id).withinviewport().length === 0 &&
+                    $("#amp_" + element.id).withinviewport().length === 0 &&
+                    $("#tail_" + element.id).withinviewport().length === 0 &&
+                    $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
                 ) {
-                    return;
-                } else {
                     shashin.printMessageToConsole(element.id + " removed beginning");
                     shashin.removeDateGallery(element.id);
                 }
             });
 
-            // Render bottom
+            if ($('section').first().length > 0) {
+                const firstVisible = $('section').first().attr("id");
+                const navElem = $("#offcanvas_" + firstVisible);
+                if (navElem.prev().length > 0) {
+                    const prevElem = navElem.prev().attr("id").split("offcanvas_")[1];
+                    if ($("#" + prevElem).length === 0) {
+                        action = "above";
+                        attachPoint = firstVisible;
 
-            // Above mid
-            // action = null;
-            // let tempOffCanvasId = $("#offcanvas_"+id);
-            // let tempOffCanvasIdAbove = tempOffCanvasId.prev();
-            // if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
-            //     attachPoint = null;
-            //     const offcanvasId = tempOffCanvasIdAbove.attr("id").split("_")[1];
-            //     const msg = await timelineSettings.updateTimeline(offcanvasId, mediaTypeFilter, action, attachPoint)
-            //     if (msg === "success" && $("#" + offcanvasId).length === 1) {
-            //         timelineSettings.attachAssociatedMetadata(offcanvasId, mediaTypeFilter);
-            //     }
-            //     attachPoint = offcanvasId;
-            //     action = "below";
-            // }
-
-            // Render mid
-            action = null;
-            if ($("#"+id).length === 0) {
-                attachPoint = null;
-                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
-                if (msg === "success" && $("#"+id).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                        const msg = await timelineSettings.updateTimeline(prevElem, mediaTypeFilter, action, attachPoint);
+                        if (msg === "success" && $("#" + prevElem).length === 1) {
+                            timelineSettings.attachAssociatedMetadata(prevElem, mediaTypeFilter);
+                        }
+                    }
                 }
-                attachPoint = id;
             }
 
             // Render bottom until footer not visible
             action = "below";
-            let deleteMarker = false;
+            let stopMarker = false;
             while (true) {
                 let currentId = attachPoint;
 
@@ -463,16 +449,17 @@
                     }
                 }
 
-                if (deleteMarker === true) {
+                if (stopMarker === true) {
                     break;
                 }
 
                 if ($("footer").withinviewport().length === 0 || currentId === attachPoint) {
-                    deleteMarker = true;
+                    stopMarker = true;
                 }
 
                 attachPoint = currentId;
             }
+
         }
 
         timelineSettings.processRender = true;
