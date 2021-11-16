@@ -46,7 +46,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <div id="albumsModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                <div th:id="'albumsModalStatus'+${album.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" th:id="'saveUserShare'+${album.id}">Save</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>

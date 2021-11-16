@@ -110,8 +110,8 @@
         });
 
         $("#propalbums"+albumId).on('hide.bs.modal', function () {
-            $("#albumsModalStatus").attr("class","spinner-grow me-auto");
-            $("#albumsModalStatus").css("visibility","hidden");
+            $("#albumsModalStatus"+albumId).attr("class","spinner-grow me-auto");
+            $("#albumsModalStatus"+albumId).css("visibility","hidden");
             $("#msg"+albumId).html("");
         })
 
@@ -130,7 +130,7 @@
 
         $("#saveUserShare"+albumId).click(function (e) {
             e.preventDefault();
-            $("#albumsModalStatus").css("visibility","visible");
+            $("#albumsModalStatus"+albumId).css("visibility","visible");
 
             let userShareMap = {};
             $('input[name^="userShare'+albumId+'"]').each(function () {
@@ -164,10 +164,10 @@
                     let message = "Error";
                     if (data["status"] === "success") {
                         message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#albumsModalStatus"+albumId).addClass('bi-check-circle').removeClass('spinner-grow');
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                        $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
                     }
                     //$("#albumsMessage").html(message);
                 }
