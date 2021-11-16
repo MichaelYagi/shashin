@@ -897,9 +897,6 @@ class TimelineController {
                 val albumNameList = albumNames.toString().split(",")
 
                 val currentUserObj = model.getAttribute("currentUser") as User?
-                if (currentUserObj != null && albumNameList.isNotEmpty()) {
-                    userAlbumRepository.deleteByUserId(currentUserObj.getId())
-                }
 
                 for (albumNameRaw in albumNameList) {
                     val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
