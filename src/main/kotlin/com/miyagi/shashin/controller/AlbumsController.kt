@@ -655,4 +655,29 @@ class AlbumsController {
         response["status"] = "fail"
         return mapper.writeValueAsString(response)
     }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun updateAlbumName(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
+        val albumPayload = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (albumPayload.containsKey("albumId") && albumPayload.containsKey("albumName")) {
+            val postAlbumId = albumPayload["albumId"].toString().toInt()
+            val albumName = albumPayload["albumName"].toString()
+
+            if (postAlbumId == albumId && albumName.isNotEmpty()) {
+                val albumObj = albumRepository.findById(albumId).get()
+                albumObj.setName(albumName)
+                albumRepository.save(albumObj)
+
+                resp["msg"] = "Saved"
+                resp["status"] = "success"
+                return mapper.writeValueAsString(resp)
+            }
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
 }
