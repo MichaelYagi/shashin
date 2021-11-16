@@ -263,52 +263,23 @@
         const lastIdToc = $("#offcanvasTocBody").children().last();
         const lastDate = lastIdToc.attr("id").split("offcanvas_")[1];
 
+        // Remove elements that are not visible
+        $('section').each(function (index, element) {
+            if ($("#" + element.id).withinviewport().length === 0 &&
+                $("#br" + element.id).withinviewport().length === 0 &&
+                $("#row" + element.id).withinviewport().length === 0 &&
+                $("#amp_" + element.id).withinviewport().length === 0 &&
+                $("#tail_" + element.id).withinviewport().length === 0 &&
+                $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
+            ) {
+                shashin.printMessageToConsole(element.id + " removed beginning");
+                shashin.removeDateGallery(element.id);
+            }
+        });
+
         // Render top
         if (shashin.scrollDirection === "up" || lastDate === id) {
-            // Remove elements that are not visible
-            let addedToIgnoreList = false;
-            let ignoreDeleteList = [];
-            $('section').each(function (index, element) {
-                if (addedToIgnoreList === false &&
-                    ($("#" + element.id).withinviewport().length > 0 ||
-                    $("#br" + element.id).withinviewport().length > 0 ||
-                    $("#row" + element.id).withinviewport().length > 0 ||
-                    $("#amp_" + element.id).withinviewport().length > 0 ||
-                    $("#tail_" + element.id).withinviewport().length > 0 ||
-                    $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length > 0)
-                ) {
-                    const navElem = $("#offcanvas_" + element.id);
-                    if (navElem.prev().length > 0) {
-                        ignoreDeleteList.push(navElem.prev().attr("id").split("offcanvas_")[1]);
-                    }
-                    if (navElem.prev().prev().length > 0) {
-                        ignoreDeleteList.push(navElem.prev().prev().attr("id").split("offcanvas_")[1]);
-                    }
-                    if (navElem.prev().prev().prev().length > 0) {
-                        ignoreDeleteList.push(navElem.prev().prev().prev().attr("id").split("offcanvas_")[1]);
-                    }
-                    addedToIgnoreList = true;
-                }
-
-                if (((ignoreDeleteList.length > 0 && $.inArray(element.id, ignoreDeleteList) === -1) || ignoreDeleteList.length === 0) &&
-                    $("#" + element.id).withinviewport().length === 0 &&
-                    $("#br" + element.id).withinviewport().length === 0 &&
-                    $("#row" + element.id).withinviewport().length === 0 &&
-                    $("#amp_" + element.id).withinviewport().length === 0 &&
-                    $("#tail_" + element.id).withinviewport().length === 0 &&
-                    $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
-                ) {
-                    // if (removeElementIndex <= 4) {
-                    //     removeElementIndex++;
-                    //     return;
-                    // }
-                    shashin.printMessageToConsole(element.id + " removed beginning");
-                    shashin.removeDateGallery(element.id);
-                }
-            });
-
             let currentId = id;
-            let numberAdded = 0;
             let nextAttachPoint = null;
 
             while (true) {
@@ -344,11 +315,9 @@
                     }
 
                     action = "above";
-                    numberAdded++;
                     attachPoint = currentId;
 
-                    if (//numberAdded > depthUp ||
-                        // $("#br" + currentId).withinviewport().length === 0 ||
+                    if (// $("#br" + currentId).withinviewport().length === 0 ||
                         // $("#row" + currentId).withinviewport().length === 0 ||
                         $("#amp_" + currentId).withinviewport().length === 0 ||
                         // $("#tail_" + currentId).withinviewport().length === 0 ||
@@ -363,6 +332,7 @@
                     attachPoint = currentId;
                     break;
                 }
+
                 attachPoint = currentId;
             }
 
@@ -380,20 +350,6 @@
                 }
             }
         } else { // Scrolling down
-            // Remove elements that are not visible
-            $('section').each(function (index, element) {
-                if ($("#" + element.id).withinviewport().length === 0 &&
-                    $("#br" + element.id).withinviewport().length === 0 &&
-                    $("#row" + element.id).withinviewport().length === 0 &&
-                    $("#amp_" + element.id).withinviewport().length === 0 &&
-                    $("#tail_" + element.id).withinviewport().length === 0 &&
-                    $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
-                ) {
-                    shashin.printMessageToConsole(element.id + " removed beginning");
-                    shashin.removeDateGallery(element.id);
-                }
-            });
-
             if ($('section').first().length > 0) {
 
                 const firstVisible = $('section').first().attr("id");
