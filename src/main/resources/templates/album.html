@@ -23,7 +23,7 @@
             <div id="albumMessage"></div>
 
             <th:block th:if="${album != '' and albumMetadataList != ''}">
-                <h1 th:text="${album.name}"></h1>
+                <span id="albumNameHeader"><h1 id="albumNameHeading" th:text="${album.name}"></h1></span>
                 <span id="albumId" style="display: none" th:text="${album.id}"></span>
                 <div id="infinite-scroll-gallery">
 
@@ -138,6 +138,7 @@
     $(document).ready(function() {
         /*<![CDATA[*/
         const albumId = /*[[${albumId}]]*/ 0;
+        const albumName = /*[[${album.name}]]*/ '';
         /*]]>*/
 
         $("#removeFromAlbum").change(function() {
@@ -233,6 +234,50 @@
         /*]]>*/
 
         $('[data-bs-toggle="tooltip"]').tooltip();
+
+        const authority = /*[[${authority}]]*/ '';
+
+        if (authority === 'ROLE_ADMIN') {
+            $("#albumNameHeader").click(function () {
+                if ($("#albumNameHeading").length > 0) {
+                    $(this).html('<h1><input id="albumNameHeaderEdit" type="text" style="width: 100%" value="' + $("#albumNameHeader").text() + '"></h1>');
+                }
+            });
+
+            $('#albumNameHeader').keypress(function (e) {
+                const key = e.which;
+                if (key === 13) {
+                    const val = $("#albumNameHeaderEdit").val();
+                    if (val.length > 0) {
+                        let json = {albumId: albumId,albumName: val}
+                        const ajaxParams = {
+                            type: "post",
+                            url: "/album/updatename/"+albumId,
+                            data: JSON.stringify(json),
+                            contentType: 'application/json; charset=utf-8',
+                            retries: shashin.ajaxRetries
+                        }
+
+                        function onFail(xhr, textStatus) {
+                            shashin.printMessageToConsole("AJAX error updating album name. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
+                            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+                                $.ajax(ajaxParams).fail(onFail);
+                            }
+                        }
+
+                        $.ajax(ajaxParams)
+                        .fail(onFail).then(function (data) {
+                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
+                                $('#albumNameHeader').html('<h1 id="albumNameHeading">'+val+'</h1>');
+                            } else {
+                                $('#albumNameHeader').html('<h1 id="albumNameHeading">'+albumName+'</h1>');
+                            }
+                        });
+                    }
+                    return false;
+                }
+            });
+        }
     });
 </script>
 </body>
