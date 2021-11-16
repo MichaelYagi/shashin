@@ -265,8 +265,6 @@
 
         // Render top
         if (shashin.scrollDirection === "up" || lastDate === id) {
-console.log("scrolling up")
-
             // Remove elements that are not visible
             let addedToIgnoreList = false;
             let ignoreDeleteList = [];
@@ -368,19 +366,6 @@ console.log("scrolling up")
                 attachPoint = currentId;
             }
 
-            // let tempOffCanvasIdAbove = $("#offcanvas_"+attachPoint);
-            // for (let i = 0; i <= depthUp; i++) {
-            //     tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
-            //     if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
-            //         const offcanvasId = tempOffCanvasIdAbove.attr("id").split("_")[1];
-            //         const msg = await timelineSettings.updateTimeline(offcanvasId, mediaTypeFilter, action, attachPoint)
-            //         if (msg === "success" && $("#" + offcanvasId).length === 1) {
-            //             timelineSettings.attachAssociatedMetadata(offcanvasId, mediaTypeFilter);
-            //         }
-            //         attachPoint = offcanvasId;
-            //     }
-            // }
-
             // Render mid
             action = "below";
             shashin.printMessageToConsole("attempting to attach id mid "+id+" "+action+" "+attachPoint+" length "+$("#"+id).length)
@@ -410,8 +395,10 @@ console.log("scrolling up")
             });
 
             if ($('section').first().length > 0) {
+
                 const firstVisible = $('section').first().attr("id");
                 const navElem = $("#offcanvas_" + firstVisible);
+
                 if (navElem.prev().length > 0) {
                     const prevElem = navElem.prev().attr("id").split("offcanvas_")[1];
                     if ($("#" + prevElem).length === 0) {
@@ -423,6 +410,16 @@ console.log("scrolling up")
                             timelineSettings.attachAssociatedMetadata(prevElem, mediaTypeFilter);
                         }
                     }
+                }
+            } else {
+                action = null;
+                if ($("#"+id).length === 0) {
+                    attachPoint = null;
+                    const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
+                    if (msg === "success" && $("#"+id).length === 1) {
+                        timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                    }
+                    attachPoint = id;
                 }
             }
 
@@ -456,7 +453,6 @@ console.log("scrolling up")
                 if ($("footer").withinviewport().length === 0 || currentId === attachPoint) {
                     stopMarker = true;
                 }
-
                 attachPoint = currentId;
             }
 
