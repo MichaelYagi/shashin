@@ -1,7 +1,7 @@
 (function( albumsModalSettings, $, undefined ) {
     albumsModalSettings.updateShareLink = function (baseUrl,albumId,action) {
         $("#generateLink"+albumId).prop('disabled', true);
-        $("#albumsModalStatus").css("visibility","visible");
+        $("#albumsModalStatus"+albumId).css("visibility","visible");
         $("#msg"+albumId).html("");
         let relativeShareLink = "";
         if (action === "generate") {
@@ -44,17 +44,17 @@
                 }
                 if (data["status"] === "success" && $("#shareLink"+albumId).val() === relativeShareUrlData) {
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                    $("#albumsModalStatus"+albumId).addClass('bi-check-circle').removeClass('spinner-grow');
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
                 }
                 $("#generateLink"+albumId).prop('disabled', false);
                 //$("#msg"+albumId).html(message);
             } else {
                 $("#generateLink"+albumId).prop('disabled', false);
                 //$("#msg"+albumId).html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
-                $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
             }
         });
     }
