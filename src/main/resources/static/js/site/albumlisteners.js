@@ -1,7 +1,6 @@
 $(document).ready(function () {
-    const metadataId = $("#metadataId").val();
     const albumId = $("#albumId").val();
-    const albumName = $("#albumName").val();
+    let albumName = $("#albumName").val();
     const authority = $("#authority").val();
 
     $("#removeFromAlbum").change(function() {
@@ -20,9 +19,8 @@ $(document).ready(function () {
         e.preventDefault();
         $("#albumsModalStatus").css("visibility","visible");
 
-
-
         $('#albumModalMsg').html("");
+        const metadataId = $("#metadataId").val();
 
         let requestJson = {
             removeFromAlbum:$('#removeFromAlbum').prop("checked"),
@@ -122,6 +120,7 @@ $(document).ready(function () {
                     .fail(onFail).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
                         $('#albumNameHeader').html('<h1 id="albumNameHeading">'+val+'</h1>');
+                        albumName = val;
                     } else {
                         $('#albumNameHeader').html('<h1 id="albumNameHeading">'+albumName+'</h1>');
                     }
