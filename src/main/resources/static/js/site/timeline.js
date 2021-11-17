@@ -269,8 +269,6 @@
                 if ($(this).next().length > 0 && currentId === date) {
 
                     currentId = $(this).next().attr("id").split("offcanvas_")[1];
-console.log("testzzz1")
-console.log(currentId)
                     dateFound = true;
                     return false;
                 }
