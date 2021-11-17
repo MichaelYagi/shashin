@@ -181,18 +181,7 @@
             timelineSettings.enableScrollSpy = false;
         }
 
-        $(function() {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
-        // Scroll spy at intervals
-        window.setInterval(function() {
-            if (timelineSettings.enableScrollSpy === true) {
-                topScroll = false;
-                const elementsInViewport = $(".scrollspy").withinviewport();
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
-            }
-        }, 200);
+        $('[data-bs-toggle="tooltip"]').tooltip();
 
         const scrollHandler = function (e) {
             let st = $(e.target).scrollTop();
@@ -220,10 +209,9 @@
                 timelineSettings.scrollToTimelineToc(elementsInViewport);
             }
 
-            // Scroll to toc
             if (timelineSettings.enableScrollSpy === true) {
-                const elementsInViewport = $(".scrollspy").withinviewport();
-                timelineSettings.scrollToTimelineToc(elementsInViewport);
+                topScroll = false;
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             }
         };
         $("#container").on('scroll', scrollHandler);

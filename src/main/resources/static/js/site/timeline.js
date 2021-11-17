@@ -4,7 +4,6 @@
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
-    timelineSettings.processRender = true;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
@@ -157,7 +156,9 @@
 
     // Render only what's needed
     timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
+
         let deferred = new $.Deferred();
+        timelineSettings.enableScrollSpy = false;
         let queryLimit = 3;
 
         // Depth of results in section of page above and below anchor
@@ -169,16 +170,6 @@
         shashin.printMessageToConsole("renderThumbnails id:"+id);
 
         let offCanvasId = $("#offcanvas_"+id);
-
-        let prevElementId = "";
-        $('section').each(function(index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove beginning");
-            if ($("#"+element.id).length > 1 || prevElementId === element.id) {
-                shashin.printMessageToConsole(element.id + " removed beginning");
-                shashin.removeDateGallery(element.id);
-            }
-            prevElementId = element.id;
-        });
 
         const attachAboveArray = [];
         let tempOffCanvasIdAbove = offCanvasId;
@@ -202,6 +193,27 @@
             }
         }
 
+        // Remove elements that are not visible
+        let prevElementId = "";
+        $('section').each(function(index, element) {
+            shashin.printMessageToConsole(element.id + " checking to remove beginning");
+            if ($("#"+element.id).length > 1 || prevElementId === element.id) {
+                shashin.printMessageToConsole(element.id + " removed beginning");
+                shashin.removeDateGallery(element.id);
+            }
+            prevElementId = element.id;
+        });
+
+        prevElementId = "";
+        $('section').each(function(index, element) {
+            shashin.printMessageToConsole(element.id + " checking to remove end");
+            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#"+element.id).length > 1 || prevElementId === element.id)) {
+                shashin.printMessageToConsole(element.id + " removed end");
+                shashin.removeDateGallery(element.id);
+            }
+            prevElementId = element.id;
+        });
+
         shashin.printMessageToConsole("attachAboveArray");
         shashin.printMessageToConsole(attachAboveArray);
         shashin.printMessageToConsole("attachBelowArray");
@@ -220,7 +232,6 @@
                 shashin.printMessageToConsole("attaching above attachPoint:" + attachPoint);
                 shashin.printMessageToConsole("attaching id:" + currentId);
                 shashin.printMessageToConsole("actionAbove:" + action)
-
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
                 if (msg === "success" && $("#"+currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
@@ -245,7 +256,6 @@
                 shashin.printMessageToConsole("attaching below attachPoint:" + attachPoint);
                 shashin.printMessageToConsole("attaching id:" + currentId);
                 shashin.printMessageToConsole("actionBelow:"+action)
-
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
                 if (msg === "success" && $("#"+currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
@@ -254,62 +264,64 @@
             attachPoint = currentId;
         }
 
-        // Render bottom until out of view port
-        let rendered = false;
-        while (true) {
-            if (rendered === true) {
-                break;
-            }
-            let dateFound = false;
-            let currentId = attachPoint;
-            $("#offcanvasTocBody").children().each(function () {
-                const dateParts = $(this).attr("id").split("offcanvas_");
-                const date = dateParts[1];
+        // Render bottom until out of view port if not firefox
+        if(navigator.userAgent.toLowerCase().indexOf('firefox') <= -1) {
+            let rendered = false;
+            while (true) {
+                if (rendered === true) {
+                    break;
+                }
+                let dateFound = false;
+                let currentId = attachPoint;
+                $("#offcanvasTocBody").children().each(function () {
+                    const dateParts = $(this).attr("id").split("offcanvas_");
+                    const date = dateParts[1];
 
-                if ($(this).next().length > 0 && currentId === date) {
+                    if ($(this).next().length > 0 && currentId === date) {
 
-                    currentId = $(this).next().attr("id").split("offcanvas_")[1];
-                    dateFound = true;
-                    return false;
+                        currentId = $(this).next().attr("id").split("offcanvas_")[1];
+                        dateFound = true;
+                        return false;
+                    }
+
+                });
+
+                if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
+                    if (action === "new") {
+                        attachPoint = null;
+                    }
+
+                    const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
+                    if (msg === "success" && $("#" + currentId).length === 1) {
+                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    }
+
+                    action = "below";
+                    attachPoint = currentId;
+                    attachBelowArray.push(currentId);
+
+                    if (
+                        rendered === false &&
+                        //($("footer").withinviewport().length === 0) &&
+                        (//$("#br" + currentId).withinviewport().length === 0 ||
+                            //$("#row" + currentId).withinviewport().length === 0 ||
+                            $("#amp_" + currentId).withinviewport().length === 0 //||
+                            //$("#tail_" + currentId).withinviewport().length === 0 ||
+                            //$("#" + currentId).withinviewport().length === 0 ||
+                            //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
+                        )
+                    ) {
+                        rendered = true;
+                        continue;
+                    }
                 }
 
-            });
-
-            if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
-                if (action === "new") {
-                    attachPoint = null;
+                if (dateFound === false) {
+                    break;
                 }
 
-                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
-                if (msg === "success" && $("#" + currentId).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
-                }
-
-                action = "below";
                 attachPoint = currentId;
-                attachBelowArray.push(currentId);
-
-                if (
-                    rendered === false &&
-                    //($("footer").withinviewport().length === 0) &&
-                    (//$("#br" + currentId).withinviewport().length === 0 ||
-                    //$("#row" + currentId).withinviewport().length === 0 ||
-                    $("#amp_" + currentId).withinviewport().length === 0 //||
-                    //$("#tail_" + currentId).withinviewport().length === 0 ||
-                    //$("#" + currentId).withinviewport().length === 0 ||
-                    //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
-                    )
-                ) {
-                    rendered = true;
-                    continue;
-                }
             }
-
-            if (dateFound === false) {
-                break;
-            }
-
-            attachPoint = currentId;
         }
 
         // Render mid
@@ -335,27 +347,14 @@
             shashin.printMessageToConsole("attaching mid attachPoint:"+attachPoint)
             shashin.printMessageToConsole("attaching id:" + id);
             shashin.printMessageToConsole("attaching mid action:"+action)
-
             const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
             if (msg === "success" && $("#"+id).length === 1) {
                 timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
             }
         }
 
-        // Remove elements that are not visible
-        prevElementId = "";
-        $('section').each(function(index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove end");
-            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#"+element.id).length > 1 || prevElementId === element.id)) {
-                shashin.printMessageToConsole(element.id + " removed end");
-                shashin.removeDateGallery(element.id);
-            }
-            prevElementId = element.id;
-        });
-
-        timelineSettings.processRender = true;
+        timelineSettings.enableScrollSpy = true;
         shashin.printMessageToConsole("==============================================");
-
         deferred.resolve(timelineSettings.successMidMsg);
         return deferred.promise();
     }
