@@ -161,8 +161,6 @@
         if (attachAboveArray.length === 0 && $("#"+id).length === 0) {
             attachPoint = null
         }
-
-        // attachPoint = id;
         for (let index in attachBelowArray) {
             const currentId = attachBelowArray[index];
             shashin.printMessageToConsole("attempting to attaching id below:" + currentId);
