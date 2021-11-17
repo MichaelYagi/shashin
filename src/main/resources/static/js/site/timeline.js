@@ -72,7 +72,6 @@
     timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
 
         let deferred = new $.Deferred();
-        timelineSettings.enableScrollSpy = false;
         let queryLimit = 3;
 
         // Depth of results in section of page above and below anchor
@@ -265,7 +264,6 @@
             }
         }
 
-        timelineSettings.enableScrollSpy = true;
         shashin.printMessageToConsole("==============================================");
         deferred.resolve(timelineSettings.successMidMsg);
         return deferred.promise();
