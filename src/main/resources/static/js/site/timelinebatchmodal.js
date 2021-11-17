@@ -215,3 +215,13 @@ $('#propBatchMetadata').bind('keypress', function() {
     $("#timelineBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
 });
+
+$('body').click(function(event) {
+    if (!$(event.target).closest("#tagalbumdropdown").length && !$(event.target).closest("#albumNameList").length && $("#tagalbumdropdown").hasClass("show")) {
+        timelineBatchModal.toggleBatchTagAlbumDropdown();
+    }
+
+    if (!$(event.target).closest("#tagpeopledropdown").length && !$(event.target).closest("#peopleNameList").length && $("#tagpeopledropdown").hasClass("show")) {
+        timelineBatchModal.toggleBatchTagPeopleDropdown();
+    }
+});

@@ -58,7 +58,7 @@
                                 <th:block th:if="${recognitionLabels != ''}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
-                                        <div class="dropdown-menu" id="albumNameList">
+                                        <div class="dropdown-menu" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
                                                     <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
