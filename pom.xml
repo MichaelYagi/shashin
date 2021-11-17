@@ -320,6 +320,7 @@
                                 <jsSourceFile>trash.js</jsSourceFile>
                                 <jsSourceFile>folder.js</jsSourceFile>
                                 <jsSourceFile>recent.js</jsSourceFile>
+                                <jsSourceFile>albumlisteners.js</jsSourceFile>
                                 <jsSourceFile>test.js</jsSourceFile>
                             </jsSourceFiles>
 

@@ -19,14 +19,17 @@
             <input type="hidden" id="currentday" name="currentday">
             <input type="hidden" id="currentfilename" name="currentfilename">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
+            <input type="hidden" id="albumId" name="albumId" th:value="${album.id}">
+            <input type="hidden" id="albumNameInput" name="albumNameInput" th:value="${album.name}">
+            <input type="hidden" id="authority" name="authority" th:value="${authority}">
+
 
             <div id="albumMessage"></div>
 
             <th:block th:if="${album != '' and albumMetadataList != ''}">
                 <span id="albumNameHeader"><h1 id="albumNameHeading" th:text="${album.name}"></h1></span>
-                <span id="albumId" style="display: none" th:text="${album.id}"></span>
-                <div id="infinite-scroll-gallery">
 
+                <div id="infinite-scroll-gallery">
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${albumMetadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
@@ -130,88 +133,17 @@
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
     <script src="/js/site/applisteners.js" type="text/javascript"></script>
+    <script src="/js/site/albumlisteners.js" type="text/javascript"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
     <script src="/js/site/applisteners.min.js" type="text/javascript"></script>
+    <script src="/js/site/albumlisteners.min.js" type="text/javascript"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        /*<![CDATA[*/
-        const albumId = /*[[${albumId}]]*/ 0;
-        const albumName = /*[[${album.name}]]*/ '';
-        /*]]>*/
-
-        $("#removeFromAlbum").change(function() {
-            if(this.checked) {
-                $('#setCoverAlbum').prop('checked', false);
-            }
-        });
-        $("#setCoverAlbum").change(function() {
-            if(this.checked) {
-                $('#removeFromAlbum').prop('checked', false);
-            }
-        });
+        const albumId = $("#albumId").val();
 
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,counter: true},'.mediaLink');
-
-        $('#saveAlbumModal').click(function (e) {
-            // $('#saveAlbum'+metadata.id).click(function (e) {
-            e.preventDefault();
-            $("#albumsModalStatus").css("visibility","visible");
-
-            const metadataId = $("#metadataId").val();
-            const albumId = $("#albumId").text();
-
-            $('#albumModalMsg').html("");
-
-            let requestJson = {
-                removeFromAlbum:$('#removeFromAlbum').prop("checked"),
-                setCoverAlbum:$('#setCoverAlbum').prop("checked"),
-                metadataId:metadataId,
-                albumId:albumId
-            }
-
-            const ajaxParams = {
-                type: "post",
-                url: "/album/update",
-                data: JSON.stringify(requestJson),
-                contentType: 'application/json; charset=utf-8',
-                retries: shashin.ajaxRetries
-            }
-
-            function onFail(xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error saving album. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                    $.ajax(ajaxParams).fail(onFail);
-                }
-            }
-
-            $.ajax(ajaxParams)
-            .fail(onFail).then(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    if (data["status"] === "redirect") {
-                        window.location.replace(data["msg"]);
-                    } else {
-                        let message = "Error";
-                        if (data["status"] === "success") {
-                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            // window.top.location = window.top.location;
-                            $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                        } else {
-                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                        }
-                        //$('#albumModalMsg').html(message);
-                    }
-                }
-            });
-            return false;
-        });
-
-        $('#propAlbumModal').on('hide.bs.modal', function () {
-            $("#albumsModalStatus").attr("class","spinner-grow me-auto");
-            $("#albumsModalStatus").css("visibility","hidden");
-        });
 
         function loadNextPage() {
             const currentPage = parseInt($("#currentPage").val());
@@ -234,50 +166,6 @@
         /*]]>*/
 
         $('[data-bs-toggle="tooltip"]').tooltip();
-
-        const authority = /*[[${authority}]]*/ '';
-
-        if (authority === 'ROLE_ADMIN') {
-            $("#albumNameHeader").click(function () {
-                if ($("#albumNameHeading").length > 0) {
-                    $(this).html('<h1><input id="albumNameHeaderEdit" type="text" style="width: 100%" value="' + $("#albumNameHeader").text() + '"></h1>');
-                }
-            });
-
-            $('#albumNameHeader').keypress(function (e) {
-                const key = e.which;
-                if (key === 13) {
-                    const val = $("#albumNameHeaderEdit").val();
-                    if (val.length > 0) {
-                        let json = {albumId: albumId,albumName: val}
-                        const ajaxParams = {
-                            type: "post",
-                            url: "/album/updatename/"+albumId,
-                            data: JSON.stringify(json),
-                            contentType: 'application/json; charset=utf-8',
-                            retries: shashin.ajaxRetries
-                        }
-
-                        function onFail(xhr, textStatus) {
-                            shashin.printMessageToConsole("AJAX error updating album name. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                                $.ajax(ajaxParams).fail(onFail);
-                            }
-                        }
-
-                        $.ajax(ajaxParams)
-                        .fail(onFail).then(function (data) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
-                                $('#albumNameHeader').html('<h1 id="albumNameHeading">'+val+'</h1>');
-                            } else {
-                                $('#albumNameHeader').html('<h1 id="albumNameHeading">'+albumName+'</h1>');
-                            }
-                        });
-                    }
-                    return false;
-                }
-            });
-        }
     });
 </script>
 </body>

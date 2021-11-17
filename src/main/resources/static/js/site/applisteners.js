@@ -58,7 +58,7 @@ $("#albumAppToolsRemoveAlbum").click(function(e) {
         metadataIdList.push(obj.id.substring(6, obj.id.length));
     });
 
-    let albumId = $('#albumId').text();
+    let albumId = $('#albumId').val();
     if (metadataIdList.length > 0 && albumId.length > 0) {
         let json = {metadataIdList: metadataIdList, albumId: parseInt(albumId)}
         const ajaxParams = {

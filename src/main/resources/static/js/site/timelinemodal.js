@@ -15,6 +15,8 @@
         $("#albumdropdown"+metadataId).dropdown('hide')
     }
 
+
+
     timelineModal.populateLabel = function (metadataId) {
         const checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked');
         let labelString = "";
@@ -133,8 +135,6 @@ $("#saveMetadata").click(function (e) {
                     metadataObj.tagpeople = $("#tagpeople").val()
                     metadataObj.albumlist = $("#albumnames").val()
                     metadataObj.hidden = $("#hidden").prop("checked")
-
-
 
                     if ($("#offcanvasToc").length > 0) {
                         const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
@@ -295,4 +295,16 @@ $("#tagpeople").focus(function (e) {
 
     const metadataId = $("#metadataId").val();
     timelineModal.closeTagPeopleDropdown(metadataId);
+});
+
+$('body').click(function(event) {
+    const metadataId = $("#metadataId").val();
+
+    if (!$(event.target).closest("#albumdropdown"+metadataId).length && !$(event.target).closest("#albumsList").length && $("#albumdropdown"+metadataId).hasClass("show")) {
+        timelineModal.toggleAlbumDropdown(metadataId);
+    }
+
+    if (!$(event.target).closest("#tagpeopledropdown"+metadataId).length && !$(event.target).closest("#recognitionLabelsList").length && $("#tagpeopledropdown"+metadataId).hasClass("show")) {
+        timelineModal.toggleTagPeopleDropdown(metadataId);
+    }
 });

@@ -404,7 +404,7 @@ console.log(currentId)
                                     '       <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
                                     '       <div class="input-group-append">\n' +
                                     '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                                    '           <div class="dropdown-menu" id="albumNameList">';
+                                    '           <div class="dropdown-menu" id="peopleNameList">';
 
                                 for (let index in recognitionLabels) {
                                     const recognitionLabel = recognitionLabels[index];
