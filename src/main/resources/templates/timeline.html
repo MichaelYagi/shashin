@@ -161,6 +161,10 @@
         shashin.setLightGalleryElement('infinite-scroll-gallery');
         shashin.setLightGallery({"selector":".mediaLink"});
 
+        let topScroll = true;
+        let topOfPage = true;
+        let lastScrollTop = 0;
+
         /*<![CDATA[*/
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
         /*]]>*/
@@ -181,6 +185,15 @@
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
+        // Scroll spy at intervals
+        window.setInterval(function() {
+            if (timelineSettings.enableScrollSpy === true) {
+                topScroll = false;
+                const elementsInViewport = $(".scrollspy").withinviewport();
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+            }
+        }, 200);
+
         $("#offcanvasToc").on('show.bs.offcanvas', function () {
             if (timelineSettings.enableScrollSpy === true) {
                 const elementsInViewport = $(".scrollspy").withinviewport();
@@ -188,10 +201,6 @@
             }
         });
 
-        let topScroll = true;
-        let topOfPage = true;
-        let scrollHack = false;
-        let lastScrollTop = 0;
         const scrollHandler = function (e) {
             let st = $(e.target).scrollTop();
 
@@ -199,48 +208,26 @@
                 topScroll = true;
             }
 
-            if (topOfPage === true && scrollHack === true) {
-                shashin.scrollDirection = "down";
-            }
-
             lastScrollTop = st <= 0 ? 0 : st;
 
+            // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false) {
                 document.getElementById("container").scrollBy({top: 1});
                 if (document.getElementsByTagName("MAIN").length > 0) {
                     document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
                 }
-                shashin.scrollDirection = "up";
-                topScroll = false;
-                scrollHack = true;
             }
 
-            // Don't track scrolling while getting results and dynamically changing element
-            if (timelineSettings.stopTrackingScroll === false) {
-                timelineSettings.didScroll = true;
-            }
+            const firstDate = $("#offcanvasTocBody").children().first().attr("id").split("offcanvas_")[1];
+
+            const elementsInViewport = $(".scrollspy").withinviewport()
+            topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
 
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
-                const elementsInViewport = $(".scrollspy").withinviewport();
+                ;
                 timelineSettings.scrollToTimelineToc(elementsInViewport);
             }
-
-            if (scrollHack === true || timelineSettings.processRender === true && (shashin.scrollDirection === "up" || (shashin.scrollDirection === "down" && $("footer").withinviewport().length > 0) || timelineSettings.enableScrollSpy === true)) {
-                const elementsInViewport = $(".scrollspy").withinviewport();
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter,scrollHack);
-
-                const firstDateToc = $("#offcanvasTocBody").children().first();
-                const firstDateParts = firstDateToc.attr("id").split("offcanvas_");
-                const firstDate = firstDateParts[1];
-
-                topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
-                timelineSettings.didScroll = false;
-            } else {
-                timelineSettings.stopTrackingScroll = false;
-            }
-
-            scrollHack = false;
         };
         $("#container").on('scroll', scrollHandler);
         $("main").on('scroll', scrollHandler);
