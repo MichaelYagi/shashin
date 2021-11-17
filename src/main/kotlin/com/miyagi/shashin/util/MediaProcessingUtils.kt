@@ -39,15 +39,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
     fun populateMetadata(file: File, sidecarDir: String, _metadataObj: Metadata?): Metadata? {
         val metadataDirectory = sidecarDir.dropLast(1) + "/metadata/"
 
-        var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "")
-            .lowercase()  //.replace(rootDirFilePath.replace('\\', '/').lowercase(), "")
-        fileRootDir = fileRootDir.replace('\\', '/')
-        if (fileRootDir.take(2) == "//") {
-            fileRootDir = fileRootDir.drop(1)
-        }
-        if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
-            fileRootDir = "/$fileRootDir"
-        }
+        val fileRootDir: String = getRootDir(file)
 
         val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
 
@@ -484,14 +476,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
 
         // Map path to sidecar file
-        var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "").lowercase()
-        fileRootDir = fileRootDir.replace('\\', '/')
-        if (fileRootDir.take(2) == "//") {
-            fileRootDir = fileRootDir.drop(1)
-        }
-        if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
-            fileRootDir = "/$fileRootDir"
-        }
+        val fileRootDir: String = getRootDir(file)
         val supportedImageFormats = FileUtils.allowableImageFiles()
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
 
@@ -755,15 +740,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             // Update Exif file
             val metadataDirectory = _sidecarDir.dropLast(1) + "/metadata"
             val photoFile = File(path)
-            val photoFileParent = photoFile.parent.replace('\\', '/')
-            var fileRootDir: String = photoFileParent.replace('\\', '/').replace(":", "").lowercase()
-            fileRootDir = fileRootDir.replace('\\', '/')
-            if (fileRootDir.take(2) == "//") {
-                fileRootDir = fileRootDir.drop(1)
-            }
-            if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
-                fileRootDir = "/$fileRootDir"
-            }
+            val fileRootDir: String = getRootDir(photoFile)
             val exifFile = FileUtils.createFile(
                 "$metadataDirectory/$fileRootDir",
                 "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml",
@@ -787,14 +764,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             val sidecarDir = rootPath + _sidecarDir
             val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
             val photoFile = File(metadataObj.getPath()!!)
-            var fileRootDir: String = photoFile.parent.replace('\\', '/').replace(":", "").lowercase()
-            fileRootDir = fileRootDir.replace('\\', '/')
-            if (fileRootDir.take(2) == "//") {
-                fileRootDir = fileRootDir.drop(1)
-            }
-            if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
-                fileRootDir = "/$fileRootDir"
-            }
+            val fileRootDir = getRootDir(photoFile)
             val metadataFileStr = metadataDirectory + fileRootDir + "/" + photoFile.name + ".yaml"
             val mdFile = File(metadataFileStr)
             val yamlFactory: YAMLFactory = YAMLFactory.builder()
@@ -804,5 +774,25 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             val om = ObjectMapper(yamlFactory)
             om.writeValue(mdFile, metadataObj)
         }
+    }
+
+    private fun getRootDir(file: File): String {
+        var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "")
+            .lowercase()  //.replace(rootDirFilePath.replace('\\', '/').lowercase(), "")
+        fileRootDir = fileRootDir.replace('\\', '/')
+
+        if (fileRootDir.last() == '/') {
+            fileRootDir = fileRootDir.dropLast(1)
+        }
+
+        if (fileRootDir.take(2) == "//") {
+            fileRootDir = fileRootDir.drop(1)
+        }
+
+        if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
+            fileRootDir = "/$fileRootDir"
+        }
+
+        return fileRootDir
     }
 }

@@ -260,19 +260,24 @@
             if (rendered === true) {
                 break;
             }
+            let dateFound = false;
             let currentId = attachPoint;
             $("#offcanvasTocBody").children().each(function () {
                 const dateParts = $(this).attr("id").split("offcanvas_");
                 const date = dateParts[1];
 
                 if ($(this).next().length > 0 && currentId === date) {
+
                     currentId = $(this).next().attr("id").split("offcanvas_")[1];
+console.log("testzzz1")
+console.log(currentId)
+                    dateFound = true;
                     return false;
                 }
 
             });
 
-            if (currentId !== null && $("#" + currentId).length === 0) {
+            if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
                 if (action === "new") {
                     attachPoint = null;
                 }
@@ -301,6 +306,11 @@
                     continue;
                 }
             }
+
+            if (dateFound === false) {
+                break;
+            }
+
             attachPoint = currentId;
         }
 
