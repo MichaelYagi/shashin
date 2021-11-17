@@ -194,13 +194,6 @@
             }
         }, 200);
 
-        $("#offcanvasToc").on('show.bs.offcanvas', function () {
-            if (timelineSettings.enableScrollSpy === true) {
-                const elementsInViewport = $(".scrollspy").withinviewport();
-                timelineSettings.scrollToTimelineToc(elementsInViewport);
-            }
-        });
-
         const scrollHandler = function (e) {
             let st = $(e.target).scrollTop();
 
@@ -219,13 +212,17 @@
             }
 
             const firstDate = $("#offcanvasTocBody").children().first().attr("id").split("offcanvas_")[1];
-
             const elementsInViewport = $(".scrollspy").withinviewport()
             topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
 
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
-                ;
+                timelineSettings.scrollToTimelineToc(elementsInViewport);
+            }
+
+            // Scroll to toc
+            if (timelineSettings.enableScrollSpy === true) {
+                const elementsInViewport = $(".scrollspy").withinviewport();
                 timelineSettings.scrollToTimelineToc(elementsInViewport);
             }
         };
