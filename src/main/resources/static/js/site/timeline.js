@@ -68,92 +68,6 @@
         });
     }
 
-    timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
-        e.preventDefault();
-
-        timelineSettings.scrollDirection = "down";
-        timelineSettings.enableScrollSpy = false;
-
-        shashin.printMessageToConsole("jumpFromTimelineToc anchor:"+anchor);
-        shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:"+mediaTypeFilter);
-
-        timelineSettings.renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
-            if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
-                timelineSettings.setScrollSpyActive(anchor);
-                timelineSettings.observeAnchorChange(anchor, timelineSettings.scrollToToc);
-            }
-        });
-    }
-
-    timelineSettings.observeAnchorChange = function(id, functionCall) {
-        if (MutationObserver) {
-            let anchorVisible = false;
-            let offcanvasAnchorVisible = false;
-            const observer = new MutationObserver(function (mutations, me) {
-                const anchorEl = document.getElementById(id);
-                const offcanvasAnchorEl = document.getElementById("offcanvas_"+id);
-
-                if (anchorEl) {
-                    anchorVisible = true;
-                }
-                if (offcanvasAnchorEl) {
-                    offcanvasAnchorVisible = true;
-                }
-
-                if (anchorVisible === true && offcanvasAnchorVisible === true) {
-                    functionCall(id);
-                    me.disconnect(); // stop observing
-                    return true;
-                }
-            });
-
-            observer.observe(document, {
-                childList: true,
-                subtree: true
-            });
-        } else {
-            const existCondition = setInterval(function () {
-                if ($("#" + id).length > 0 && $("#offcanvas_" + id).length > 0) {
-                    clearInterval(existCondition);
-                    functionCall(id);
-                }
-            }, 100);
-        }
-    }
-
-    timelineSettings.scrollToToc = function(anchor) {
-        const url = location.href;
-        location.href = '#' + anchor;
-        history.replaceState(null, null, url);
-
-        const navElem = $("#offcanvas_" + anchor);
-        const timer = setInterval(function () {
-            if (navElem.hasClass("active") === true) {
-                timelineSettings.enableScrollSpy = true;
-                clearInterval(timer);
-            }
-        }, 200);
-    }
-
-    // Set the active nav
-    timelineSettings.setScrollSpyActive = function (id) {
-        const navElem = $('a[href="#' + id + '"]');
-        navElem.addClass('active').siblings().removeClass('active');
-    }
-
-    timelineSettings.scrollToTimelineToc = function(elements) {
-        elements.each(function(index) {
-            let id = $(this).attr("id");
-
-            if (id.indexOf("tail_") < 0 && index === 1) {
-                document.getElementById("offcanvas_"+id).scrollIntoView({
-                    behavior: 'smooth'
-                });
-                return false;
-            }
-        });
-    }
-
     // Render only what's needed
     timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
 
@@ -357,6 +271,92 @@
         shashin.printMessageToConsole("==============================================");
         deferred.resolve(timelineSettings.successMidMsg);
         return deferred.promise();
+    }
+
+    timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
+        e.preventDefault();
+
+        timelineSettings.scrollDirection = "down";
+        timelineSettings.enableScrollSpy = false;
+
+        shashin.printMessageToConsole("jumpFromTimelineToc anchor:"+anchor);
+        shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:"+mediaTypeFilter);
+
+        timelineSettings.renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
+            if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
+                timelineSettings.setScrollSpyActive(anchor);
+                timelineSettings.observeAnchorChange(anchor, timelineSettings.scrollToToc);
+            }
+        });
+    }
+
+    timelineSettings.observeAnchorChange = function(id, functionCall) {
+        if (MutationObserver) {
+            let anchorVisible = false;
+            let offcanvasAnchorVisible = false;
+            const observer = new MutationObserver(function (mutations, me) {
+                const anchorEl = document.getElementById(id);
+                const offcanvasAnchorEl = document.getElementById("offcanvas_"+id);
+
+                if (anchorEl) {
+                    anchorVisible = true;
+                }
+                if (offcanvasAnchorEl) {
+                    offcanvasAnchorVisible = true;
+                }
+
+                if (anchorVisible === true && offcanvasAnchorVisible === true) {
+                    functionCall(id);
+                    me.disconnect(); // stop observing
+                    return true;
+                }
+            });
+
+            observer.observe(document, {
+                childList: true,
+                subtree: true
+            });
+        } else {
+            const existCondition = setInterval(function () {
+                if ($("#" + id).length > 0 && $("#offcanvas_" + id).length > 0) {
+                    clearInterval(existCondition);
+                    functionCall(id);
+                }
+            }, 100);
+        }
+    }
+
+    timelineSettings.scrollToToc = function(anchor) {
+        const url = location.href;
+        location.href = '#' + anchor;
+        history.replaceState(null, null, url);
+
+        const navElem = $("#offcanvas_" + anchor);
+        const timer = setInterval(function () {
+            if (navElem.hasClass("active") === true) {
+                timelineSettings.enableScrollSpy = true;
+                clearInterval(timer);
+            }
+        }, 200);
+    }
+
+    // Set the active nav
+    timelineSettings.setScrollSpyActive = function (id) {
+        const navElem = $('a[href="#' + id + '"]');
+        navElem.addClass('active').siblings().removeClass('active');
+    }
+
+    timelineSettings.scrollToTimelineToc = function(elements) {
+        elements.each(function(index) {
+            let id = $(this).attr("id");
+
+            if (id.indexOf("tail_") < 0 && index === 1) {
+                document.getElementById("offcanvas_"+id).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                return false;
+            }
+        });
     }
 
     // Hook up data to edit albums, favorites and people labels
