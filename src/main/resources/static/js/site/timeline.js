@@ -48,7 +48,6 @@
 
     let prevElements = null;
     timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter) {
-
         const lastDate = $("#offcanvasTocBody").children().last().attr("id").split("offcanvas_")[1];
 
         if (prevElements === null || JSON.stringify(prevElements) !== JSON.stringify(elements) || ($("#"+lastDate).withinviewport() === 0 && $("footer").withinviewport().length > 0)) {
@@ -184,64 +183,61 @@
             attachPoint = currentId;
         }
 
-        // Render bottom until out of view port if not firefox
-        if (navigator.userAgent.toLowerCase().indexOf('firefox') <= -1) {
-            let rendered = false;
-            while (true) {
-                if (rendered === true) {
-                    break;
-                }
-                let dateFound = false;
-                let currentId = attachPoint;
-                $("#offcanvasTocBody").children().each(function () {
-                    const dateParts = $(this).attr("id").split("offcanvas_");
-                    const date = dateParts[1];
-
-                    if ($(this).next().length > 0 && currentId === date) {
-
-                        currentId = $(this).next().attr("id").split("offcanvas_")[1];
-                        dateFound = true;
-                        return false;
-                    }
-
-                });
-
-                if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
-                    if (action === "new") {
-                        attachPoint = null;
-                    }
-
-                    const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
-                    if (msg === "success" && $("#" + currentId).length === 1) {
-                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
-                    }
-
-                    action = "below";
-                    attachPoint = currentId;
-                    attachBelowArray.push(currentId);
-
-                    if (
-                        rendered === false &&
-                        //($("footer").withinviewport().length === 0) &&
-                        (//$("#br" + currentId).withinviewport().length === 0 ||
-                            //$("#row" + currentId).withinviewport().length === 0 ||
-                            $("#amp_" + currentId).withinviewport().length === 0 //||
-                            //$("#tail_" + currentId).withinviewport().length === 0 ||
-                            //$("#" + currentId).withinviewport().length === 0 ||
-                            //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
-                        )
-                    ) {
-                        rendered = true;
-                        continue;
-                    }
-                }
-
-                if (dateFound === false) {
-                    break;
-                }
-
-                attachPoint = currentId;
+        let rendered = false;
+        while (true) {
+            if (rendered === true) {
+                break;
             }
+            let dateFound = false;
+            let currentId = attachPoint;
+            $("#offcanvasTocBody").children().each(function () {
+                const dateParts = $(this).attr("id").split("offcanvas_");
+                const date = dateParts[1];
+
+                if ($(this).next().length > 0 && currentId === date) {
+
+                    currentId = $(this).next().attr("id").split("offcanvas_")[1];
+                    dateFound = true;
+                    return false;
+                }
+
+            });
+
+            if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
+                if (action === "new") {
+                    attachPoint = null;
+                }
+
+                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
+                if (msg === "success" && $("#" + currentId).length === 1) {
+                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                }
+
+                action = "below";
+                attachPoint = currentId;
+                attachBelowArray.push(currentId);
+
+                if (
+                    rendered === false &&
+                    //($("footer").withinviewport().length === 0) &&
+                    (//$("#br" + currentId).withinviewport().length === 0 ||
+                        //$("#row" + currentId).withinviewport().length === 0 ||
+                        $("#amp_" + currentId).withinviewport().length === 0 //||
+                        //$("#tail_" + currentId).withinviewport().length === 0 ||
+                        //$("#" + currentId).withinviewport().length === 0 ||
+                        //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
+                    )
+                ) {
+                    rendered = true;
+                    continue;
+                }
+            }
+
+            if (dateFound === false) {
+                break;
+            }
+
+            attachPoint = currentId;
         }
 
         // Render mid
