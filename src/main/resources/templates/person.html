@@ -93,7 +93,7 @@
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,counter: true},'.mediaLink');
+        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
 
         function loadNextPage() {
             const currentPage = parseInt($("#currentPage").val());
