@@ -185,9 +185,6 @@
 
         let rendered = false;
         while (true) {
-            if (rendered === true) {
-                break;
-            }
             let dateFound = false;
             let currentId = attachPoint;
             $("#offcanvasTocBody").children().each(function () {
@@ -233,7 +230,7 @@
                 }
             }
 
-            if (dateFound === false) {
+            if (dateFound === false || rendered === true) {
                 break;
             }
 
