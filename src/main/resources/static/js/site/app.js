@@ -1375,6 +1375,7 @@ $.fn.serializeObject = function() {
         $("#amp_"+id).remove();
         $("#tail_"+id).remove();
         $("#"+id).remove();
+        $("#container_"+id).remove();
     }
 }( window.shashin = window.shashin || {}, jQuery ));
 
