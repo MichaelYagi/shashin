@@ -5,24 +5,6 @@
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
 
-    let isChrome = false;
-    const isChromium = window.chrome;
-    const winNav = window.navigator;
-    const vendorName = winNav.vendor;
-    const isOpera = typeof window.opr !== "undefined";
-    const isIEedge = winNav.userAgent.indexOf("Edg") > -1;
-    const isIOSChrome = winNav.userAgent.match("CriOS");
-
-    if(isIOSChrome ||
-        (isChromium !== null &&
-        typeof isChromium !== "undefined" &&
-        vendorName === "Google Inc." &&
-        isOpera === false &&
-        isIEedge === false)
-    ) {
-        isChrome = true;
-    }
-
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
         location.href = '#lightGalleryIndex'+metadataId;
@@ -142,17 +124,15 @@
             prevElementId = element.id;
         });
 
-        if (isChrome === true) {
-            prevElementId = "";
-            $('section').each(function (index, element) {
-                shashin.printMessageToConsole(element.id + " checking to remove end");
-                if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
-                    shashin.printMessageToConsole(element.id + " removed end");
-                    shashin.removeDateGallery(element.id);
-                }
-                prevElementId = element.id;
-            });
-        }
+        prevElementId = "";
+        $('section').each(function (index, element) {
+            shashin.printMessageToConsole(element.id + " checking to remove end");
+            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
+                shashin.printMessageToConsole(element.id + " removed end");
+                shashin.removeDateGallery(element.id);
+            }
+            prevElementId = element.id;
+        });
 
         shashin.printMessageToConsole("attachAboveArray");
         shashin.printMessageToConsole(attachAboveArray);
