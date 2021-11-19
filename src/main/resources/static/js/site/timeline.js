@@ -636,11 +636,13 @@
                                     metadataList[0]["month"] === null ||
                                     metadataList[0]["day"] === null)
                                 {
-                                    html += '<br id="brundated"><section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>\n' +
+                                    html += '<span id="container_undated">\n' +
+                                        '<br id="brundated"><section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>\n' +
                                         '<div class="row p-3" id="rowundated">\n';
                                 } else {
                                     idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
-                                    html += '<br id="br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><section class="scrollspy" id="' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><p><strong class="dateHeading p-1">' + dateString + '</strong></p></section>\n' +
+                                    html += '<span id="container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '">\n' +
+                                        '<br id="br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><section class="scrollspy" id="' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><p><strong class="dateHeading p-1">' + dateString + '</strong></p></section>\n' +
                                         '<div class="row p-3" id="row' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '">\n' +
                                         '<span style="display: none;" class="yearTaken">' + metadataList[0]["year"] + '</span>\n' +
                                         '<span style="display: none;" class="monthTaken">' + metadataList[0]["month"] + '</span>\n' +
@@ -696,17 +698,17 @@
 
                                     if (metadataList[0].year == null || metadataList[0].month == null || metadataList[0].day == null) {
                                         html += '<span class="scrollspy metadataprocessed" id="tail_undated"></span>';
-                                        html += '</div><span class="attachMetadataPhotos" id="amp_undated" style="visibility: hidden">EOL</span>';
+                                        html += '</div></span><span class="attachMetadataPhotos" id="amp_undated" style="visibility: hidden">EOL</span>';
                                     } else if (lastDate === (metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day)) {
                                         html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
-                                        html += '</div><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '" style="visibility: hidden">EOL</span>';
+                                        html += '</div></span><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '" style="visibility: hidden">EOL</span>';
                                     } else {
                                         html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
-                                        html += '</div><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
+                                        html += '</div></span><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
                                     }
 
                                     if (action === "above") {
-                                        $(html).insertBefore($("#br" + attachToId)).ready(function () {
+                                        $(html).insertBefore($("#container_" + attachToId)).ready(function () {
                                             // deferred.resolve("success");
                                             ret = "success";
                                         });
