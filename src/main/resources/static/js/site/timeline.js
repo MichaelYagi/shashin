@@ -124,15 +124,18 @@
             prevElementId = element.id;
         });
 
-        prevElementId = "";
-        $('section').each(function(index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove end");
-            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#"+element.id).length > 1 || prevElementId === element.id)) {
-                shashin.printMessageToConsole(element.id + " removed end");
-                shashin.removeDateGallery(element.id);
-            }
-            prevElementId = element.id;
-        });
+        const isSafari = window.safari !== undefined;
+        if (isSafari === false) {
+            prevElementId = "";
+            $('section').each(function (index, element) {
+                shashin.printMessageToConsole(element.id + " checking to remove end");
+                if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
+                    shashin.printMessageToConsole(element.id + " removed end");
+                    shashin.removeDateGallery(element.id);
+                }
+                prevElementId = element.id;
+            });
+        }
 
         shashin.printMessageToConsole("attachAboveArray");
         shashin.printMessageToConsole(attachAboveArray);
@@ -277,6 +280,21 @@
 
         timelineSettings.scrollDirection = "down";
         timelineSettings.enableScrollSpy = false;
+
+        $('section').each(function (index, element) {
+            shashin.printMessageToConsole(element.id + " checking to remove beginning");
+            if ($("#" + element.id).withinviewport().length === 0 &&
+                $("#br" + element.id).withinviewport().length === 0 &&
+                $("#row" + element.id).withinviewport().length === 0 &&
+                $("#amp_" + element.id).withinviewport().length === 0 &&
+                $("#tail_" + element.id).withinviewport().length === 0 &&
+                $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
+                //&& $("footer").withinviewport().length === 0
+            ) {
+                shashin.printMessageToConsole(element.id + " removed beginning");
+                shashin.removeDateGallery(element.id);
+            }
+        });
 
         shashin.printMessageToConsole("jumpFromTimelineToc anchor:"+anchor);
         shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:"+mediaTypeFilter);
