@@ -5,6 +5,24 @@
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
 
+    let isChrome = false;
+    const isChromium = window.chrome;
+    const winNav = window.navigator;
+    const vendorName = winNav.vendor;
+    const isOpera = typeof window.opr !== "undefined";
+    const isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+    const isIOSChrome = winNav.userAgent.match("CriOS");
+
+    if(isIOSChrome ||
+        (isChromium !== null &&
+        typeof isChromium !== "undefined" &&
+        vendorName === "Google Inc." &&
+        isOpera === false &&
+        isIEedge === false)
+    ) {
+        isChrome = true;
+    }
+
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
         location.href = '#lightGalleryIndex'+metadataId;
@@ -124,8 +142,7 @@
             prevElementId = element.id;
         });
 
-        const isSafari = window.safari !== undefined;
-        if (isSafari === false) {
+        if (isChrome === true) {
             prevElementId = "";
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove end");
