@@ -160,24 +160,6 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        let isChrome = false;
-        const isChromium = window.chrome;
-        const winNav = window.navigator;
-        const vendorName = winNav.vendor;
-        const isOpera = typeof window.opr !== "undefined";
-        const isIEedge = winNav.userAgent.indexOf("Edg") > -1;
-        const isIOSChrome = winNav.userAgent.match("CriOS");
-
-        if(isIOSChrome ||
-            (isChromium !== null &&
-                typeof isChromium !== "undefined" &&
-                vendorName === "Google Inc." &&
-                isOpera === false &&
-                isIEedge === false)
-        ) {
-            isChrome = true;
-        }
-
         shashin.setLightGalleryElement('infinite-scroll-gallery');
         shashin.setLightGallery({"selector":".mediaLink"});
 
