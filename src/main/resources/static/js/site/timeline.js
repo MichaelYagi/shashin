@@ -100,10 +100,6 @@
 
         //let deferred = new $.Deferred();
 
-        let removedHeight = 0;
-        let addedHeight = 0;
-        const currScrollTop = $(window).scrollTop();
-
         // Depth of results in section of page above and below anchor
         let depthDown = 2;
         let depthUp = 3;
@@ -137,25 +133,12 @@
         }
 
         // Remove elements that are not visible
-        let prevElementId = "";
-        $('section').each(function(index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove beginning");
-            if ($("#"+element.id).length > 1 || prevElementId === element.id) {
-                const height = $("#container_"+element.id).outerHeight(true);
-                removedHeight += height;
-                shashin.printMessageToConsole(element.id + " removed beginning");
-                shashin.removeDateGallery(element.id);
-            }
-            prevElementId = element.id;
-        });
-
         if ((isChrome === false && timelineSettings.scrollDirection === "up") || isChrome === true) {
-            prevElementId = "";
+            let prevElementId = "";
             $('section').each(function (index, element) {
                 shashin.printMessageToConsole(element.id + " checking to remove end");
                 if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
-                    const height = $("#container_" + element.id).outerHeight(true);
-                    removedHeight += height;
+                    $("#container_" + element.id).outerHeight(true);
                     shashin.printMessageToConsole(element.id + " removed end");
                     shashin.removeDateGallery(element.id);
                 }
@@ -182,8 +165,7 @@
                 shashin.printMessageToConsole("attaching id:" + currentId);
                 shashin.printMessageToConsole("actionAbove:" + action)
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
-                const height = $("#container_"+currentId).outerHeight(true);
-                addedHeight += height;
+                $("#container_"+currentId).outerHeight(true);
                 if (msg === "success" && $("#"+currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
@@ -206,8 +188,6 @@
                 shashin.printMessageToConsole("attaching id:" + currentId);
                 shashin.printMessageToConsole("actionBelow:"+action)
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
-                const height = $("#container_"+currentId).outerHeight(true);
-                addedHeight += height;
                 if (msg === "success" && $("#"+currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
@@ -236,8 +216,6 @@
                 }
 
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
-                const height = $("#container_"+currentId).outerHeight(true);
-                addedHeight += height;
                 if (msg === "success" && $("#" + currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
@@ -293,19 +271,9 @@
             shashin.printMessageToConsole("attaching id:" + id);
             shashin.printMessageToConsole("attaching mid action:"+action)
             const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
-            const height = $("#container_"+id).outerHeight(true);
-            addedHeight += height;
             if (msg === "success" && $("#"+id).length === 1) {
                 timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
             }
-        }
-
-        shashin.printMessageToConsole("currScrollTop:"+currScrollTop)
-        shashin.printMessageToConsole("addedHeight:"+addedHeight)
-        shashin.printMessageToConsole("removedHeight:"+removedHeight)
-        shashin.printMessageToConsole("scrollTop:"+(currScrollTop - (addedHeight-removedHeight)))
-        if (timelineSettings.scrollDirection === "up") {
-            $(".dateContainer").scrollTop(currScrollTop - (addedHeight - removedHeight));
         }
 
         shashin.printMessageToConsole("==============================================");
