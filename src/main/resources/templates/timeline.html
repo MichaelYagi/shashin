@@ -59,7 +59,6 @@
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
-                        <span id="container_undated">
                         <br id="brundated">
                         <section class="scrollspy metadataprocessed" id="undated">
                             <p><strong class="undatedTimelinePhotos p-1">Undated</strong></p>
@@ -67,7 +66,6 @@
                         <div class="row p-3" id="rowundated">
                     </th:block>
                     <th:block th:unless="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
-                        <span th:id="${'container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                         <br th:id="${'br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                         <section class="scrollspy metadataprocessed" th:id="${metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day}">
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
@@ -122,13 +120,11 @@
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="scrollspy metadataprocessed" id="tail_undated"></span>
                         <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
-                        <th:block th:remove="tag" th:utext="'&lt;/span&gt;'"></th:block>
                         <span class="attachMetadataPhotos" id="amp_undated"></span>
                     </th:block>
                     <th:block th:unless="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="scrollspy metadataprocessed" th:id="${'tail_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day}"></span>
                         <th:block th:remove="tag" th:utext="'&lt;/div&gt;'"></th:block>
-                        <th:block th:remove="tag" th:utext="'&lt;/span&gt;'"></th:block>
                         <span class="attachMetadataPhotos" th:id="${'amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day}"></span>
                     </th:block>
 
@@ -161,13 +157,29 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
+        let isChrome = false;
+        const isChromium = window.chrome;
+        const winNav = window.navigator;
+        const vendorName = winNav.vendor;
+        const isOpera = typeof window.opr !== "undefined";
+        const isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+        const isIOSChrome = winNav.userAgent.match("CriOS");
+
+        if(isIOSChrome ||
+            (isChromium !== null &&
+                typeof isChromium !== "undefined" &&
+                vendorName === "Google Inc." &&
+                isOpera === false &&
+                isIEedge === false)
+        ) {
+            isChrome = true;
+        }
 
         shashin.setLightGalleryElement('infinite-scroll-gallery');
         shashin.setLightGallery({"selector":".mediaLink"});
 
         let topScroll = true;
         let topOfPage = true;
-        let lastScrollTop = 0;
 
         /*<![CDATA[*/
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
@@ -187,14 +199,20 @@
 
         $('[data-bs-toggle="tooltip"]').tooltip();
 
+        let lastScrollTop = 0;
         const scrollHandler = function (e) {
             let st = $(e.target).scrollTop();
+
+            if (st > lastScrollTop){
+                timelineSettings.scrollDirection = "down";
+            } else {
+                timelineSettings.scrollDirection = "up";
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
 
             if (st === 0) {
                 topScroll = true;
             }
-
-            lastScrollTop = st <= 0 ? 0 : st;
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false) {
@@ -219,7 +237,7 @@
             }
         };
         $("#container").on('scroll', scrollHandler);
-        $("main").on('scroll', scrollHandler);
+        //$("main").on('scroll', scrollHandler);
     });
 </script>
 </body>
