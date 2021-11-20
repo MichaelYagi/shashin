@@ -184,16 +184,15 @@
 
         $('[data-bs-toggle="tooltip"]').tooltip();
 
-        let lastScrollTop = 0;
         const scrollHandler = function (e) {
             let st = $(e.target).scrollTop();
 
-            if (st > lastScrollTop){
+            if (st > timelineSettings.lastScrollTop){
                 timelineSettings.scrollDirection = "down";
             } else {
                 timelineSettings.scrollDirection = "up";
             }
-            lastScrollTop = st <= 0 ? 0 : st;
+            timelineSettings.lastScrollTop = st <= 0 ? 0 : st;
 
             if (st === 0) {
                 topScroll = true;

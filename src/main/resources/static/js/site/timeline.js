@@ -5,24 +5,7 @@
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
     timelineSettings.scrollDirection = "down";
-
-    let isChrome = false;
-    const isChromium = window.chrome;
-    const winNav = window.navigator;
-    const vendorName = winNav.vendor;
-    const isOpera = typeof window.opr !== "undefined";
-    const isIEedge = winNav.userAgent.indexOf("Edg") > -1;
-    const isIOSChrome = winNav.userAgent.match("CriOS");
-
-    if(isIOSChrome ||
-        (isChromium !== null &&
-            typeof isChromium !== "undefined" &&
-            vendorName === "Google Inc." &&
-            isOpera === false &&
-            isIEedge === false)
-    ) {
-        isChrome = true;
-    }
+    timelineSettings.lastScrollTop = 0;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
@@ -133,17 +116,35 @@
         }
 
         // Remove elements that are not visible
-        if ((isChrome === false && timelineSettings.scrollDirection === "up") || isChrome === true) {
-            let prevElementId = "";
-            $('section').each(function (index, element) {
-                shashin.printMessageToConsole(element.id + " checking to remove end");
-                if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
-                    $("#container_" + element.id).outerHeight(true);
+        let prevElementId = "";
+        let height = 0;
+        const tempScrollTop = $("#container").scrollTop();
+        $('section').each(function (index, element) {
+            shashin.printMessageToConsole(element.id + " checking to remove end");
+            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
+                if ((shashin.isChrome === false && timelineSettings.scrollDirection === "down" && shashin.getDateObject(id) < shashin.getDateObject(element.id)) ||
+                    timelineSettings.scrollDirection === "up" ||
+                    shashin.isChrome === true
+                ) {
+                    height += $("#br" + element.id).outerHeight(true) +
+                       $("#row" + element.id).outerHeight(true) +
+                       $("#amp_" + element.id).outerHeight(true) +
+                       $("#tail_" + element.id).outerHeight(true) +
+                       $("#" + element.id).outerHeight(true);
+
                     shashin.printMessageToConsole(element.id + " removed end");
                     shashin.removeDateGallery(element.id);
                 }
-                prevElementId = element.id;
-            });
+
+
+            }
+            prevElementId = element.id;
+        });
+
+        // Smooth scrolling when element is removed for non chrome browsers
+        if (shashin.isChrome === false && timelineSettings.scrollDirection === "down" && height > 0) {
+            $("#container").scrollTop(tempScrollTop - height);
+            timelineSettings.lastScrollTop = (tempScrollTop - height);
         }
 
         shashin.printMessageToConsole("attachAboveArray");
