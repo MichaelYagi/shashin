@@ -6,6 +6,24 @@
     timelineSettings.successMidMsg = "success_mid";
     timelineSettings.scrollDirection = "down";
 
+    let isChrome = false;
+    const isChromium = window.chrome;
+    const winNav = window.navigator;
+    const vendorName = winNav.vendor;
+    const isOpera = typeof window.opr !== "undefined";
+    const isIEedge = winNav.userAgent.indexOf("Edg") > -1;
+    const isIOSChrome = winNav.userAgent.match("CriOS");
+
+    if(isIOSChrome ||
+        (isChromium !== null &&
+            typeof isChromium !== "undefined" &&
+            vendorName === "Google Inc." &&
+            isOpera === false &&
+            isIEedge === false)
+    ) {
+        isChrome = true;
+    }
+
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
         location.href = '#lightGalleryIndex'+metadataId;
@@ -131,17 +149,19 @@
             prevElementId = element.id;
         });
 
-        prevElementId = "";
-        $('section').each(function (index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove end");
-            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
-                const height = $("#container_"+element.id).outerHeight(true);
-                removedHeight += height;
-                shashin.printMessageToConsole(element.id + " removed end");
-                shashin.removeDateGallery(element.id);
-            }
-            prevElementId = element.id;
-        });
+        if ((isChrome === false && timelineSettings.scrollDirection === "up") || isChrome === true) {
+            prevElementId = "";
+            $('section').each(function (index, element) {
+                shashin.printMessageToConsole(element.id + " checking to remove end");
+                if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
+                    const height = $("#container_" + element.id).outerHeight(true);
+                    removedHeight += height;
+                    shashin.printMessageToConsole(element.id + " removed end");
+                    shashin.removeDateGallery(element.id);
+                }
+                prevElementId = element.id;
+            });
+        }
 
         shashin.printMessageToConsole("attachAboveArray");
         shashin.printMessageToConsole(attachAboveArray);
@@ -285,7 +305,7 @@
         shashin.printMessageToConsole("removedHeight:"+removedHeight)
         shashin.printMessageToConsole("scrollTop:"+(currScrollTop - (addedHeight-removedHeight)))
         if (timelineSettings.scrollDirection === "up") {
-            $(document).scrollTop(currScrollTop - (addedHeight - removedHeight));
+            $(".dateContainer").scrollTop(currScrollTop - (addedHeight - removedHeight));
         }
 
         shashin.printMessageToConsole("==============================================");
