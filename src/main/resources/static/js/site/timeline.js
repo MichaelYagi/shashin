@@ -131,7 +131,7 @@
         // Remove elements that are not visible
         let prevElementId = "";
         let topHeight = 0;
-        const tempScrollTop = $("#container").scrollTop();
+        let tempScrollTop = $("#container").scrollTop();
         $('section').each(function (index, element) {
             shashin.printMessageToConsole(element.id + " checking to remove end");
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
@@ -165,6 +165,9 @@
         // Render top
         let action = "new";
         let attachPoint = id;
+        let topHeightAdded = 0;
+        tempScrollTop = $("#container").scrollTop();
+
         for (let index in attachAboveArray) {
             const currentId = attachAboveArray[index];
             shashin.printMessageToConsole("attempting to attaching id above:" + currentId);
@@ -181,9 +184,22 @@
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
 
+                if (timelineSettings.scrollDirection === "up") {
+                    topHeightAdded +=  $("#br" + currentId).outerHeight(true) +
+                        $("#row" + currentId).outerHeight(true);
+                }
+
                 action = "below";
             }
             attachPoint = currentId;
+        }
+
+        if (shashin.isChrome() === false &&
+            shashin.isSafari() === true &&
+            timelineSettings.scrollDirection === "up" &&
+            topHeightAdded > 0
+        ) {
+            $("#container").scrollTop(tempScrollTop + topHeightAdded);
         }
 
         // Render bottom

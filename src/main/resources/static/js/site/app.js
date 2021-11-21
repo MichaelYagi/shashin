@@ -101,6 +101,16 @@ $.fn.serializeObject = function() {
         return isChrome;
     }
 
+    const isSafari = navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
+        navigator.userAgent &&
+        navigator.userAgent.indexOf('CriOS') == -1 &&
+        navigator.userAgent.indexOf('FxiOS') == -1;
+
+    shashin.isSafari = function () {
+        return isSafari;
+    }
+
+
     shashin.openEditMetadataModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList) {
         let index;
 
