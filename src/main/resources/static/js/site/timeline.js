@@ -84,8 +84,19 @@
         //let deferred = new $.Deferred();
 
         // Depth of results in section of page above and below anchor
-        let depthDown = 2;
-        let depthUp = 3;
+        // Dynamic depending on current number of results on page
+        const idsInView = $(".scrollspy").withinviewport().map(function() {
+            let id = $(this).attr('id');
+            if (id.indexOf("tail_") > -1) {
+                id = id.split("tail_")[1];
+            }
+            return id;
+        }).get().filter(
+            function(a){if (!this[a]) {this[a] = 1; return a;}},
+            {}
+        );
+        let depthDown = idsInView.length-1; //2;
+        let depthUp = idsInView.length; //3;
 
         shashin.printMessageToConsole("depthDown:"+depthDown);
         shashin.printMessageToConsole("depthUp:"+depthUp);
