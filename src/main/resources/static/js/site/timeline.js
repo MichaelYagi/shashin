@@ -95,8 +95,10 @@
             function(a){if (!this[a]) {this[a] = 1; return a;}},
             {}
         );
-        let depthDown = idsInView.length-1; //2;
-        let depthUp = idsInView.length; //3;
+
+        let depth = idsInView.length < 2 ? 2 : idsInView.length;
+        let depthDown = depth-1; //2;
+        let depthUp = depth; //3;
 
         shashin.printMessageToConsole("depthDown:"+depthDown);
         shashin.printMessageToConsole("depthUp:"+depthUp);
