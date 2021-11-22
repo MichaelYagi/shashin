@@ -131,7 +131,8 @@
         // Remove elements that are not visible
         let prevElementId = "";
         let topHeight = 0;
-        let tempScrollTop = $("#container").scrollTop();
+        let bottomHeight = 0;
+        const tempScrollTop = $("#container").scrollTop();
         $('section').each(function (index, element) {
             shashin.printMessageToConsole(element.id + " checking to remove end");
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
@@ -143,6 +144,12 @@
                        $("#amp_" + element.id).outerHeight(true) +
                        $("#tail_" + element.id).outerHeight(true) +
                        $("#" + element.id).outerHeight(true);
+                } else {
+                    bottomHeight += $("#br" + element.id).outerHeight(true) +
+                        $("#row" + element.id).outerHeight(true) +
+                        $("#amp_" + element.id).outerHeight(true) +
+                        $("#tail_" + element.id).outerHeight(true) +
+                        $("#" + element.id).outerHeight(true);
                 }
 
                 shashin.printMessageToConsole(element.id + " removed end");
@@ -166,7 +173,6 @@
         let action = "new";
         let attachPoint = id;
         let topHeightAdded = 0;
-        tempScrollTop = $("#container").scrollTop();
 
         for (let index in attachAboveArray) {
             const currentId = attachAboveArray[index];
@@ -185,8 +191,10 @@
                 }
 
                 if (timelineSettings.scrollDirection === "up") {
-                    topHeightAdded +=  $("#br" + currentId).outerHeight(true) +
-                        $("#row" + currentId).outerHeight(true);
+                    topHeightAdded +=
+                        $("#br" + currentId).height() +
+                        $("#" + currentId).height() +
+                        $("#row" + currentId).height();
                 }
 
                 action = "below";
@@ -195,11 +203,12 @@
         }
 
         if (shashin.isChrome() === false &&
-            shashin.isSafari() === true &&
+            //shashin.isSafari() === true &&
             timelineSettings.scrollDirection === "up" &&
-            topHeightAdded > 0
+            topHeightAdded > 0 && bottomHeight > 0
         ) {
             $("#container").scrollTop(tempScrollTop + topHeightAdded);
+            timelineSettings.lastScrollTop = (tempScrollTop + topHeightAdded);
         }
 
         // Render bottom
