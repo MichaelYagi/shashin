@@ -110,7 +110,6 @@ $.fn.serializeObject = function() {
         return isSafari;
     }
 
-
     shashin.openEditMetadataModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList) {
         let index;
 
