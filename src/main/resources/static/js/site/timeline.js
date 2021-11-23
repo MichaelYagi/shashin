@@ -1,10 +1,11 @@
 (function( timelineSettings, $, undefined ) {
+    timelineSettings.ScrollDirection = Object.freeze({"up":1, "down":0})
     timelineSettings.enableScrollSpy = true;
     timelineSettings.prevAnchor = "";
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
-    timelineSettings.scrollDirection = "down";
+    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.lastScrollTop = 0;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
@@ -138,7 +139,7 @@
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
 
                 // Get height to set scrollTop for non chrome browsers
-                if (timelineSettings.scrollDirection === "down" && shashin.getDateObject(id) < shashin.getDateObject(element.id)) {
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && shashin.getDateObject(id) < shashin.getDateObject(element.id)) {
                     topHeight += $("#br" + element.id).outerHeight(true) +
                        $("#row" + element.id).outerHeight(true) +
                        $("#amp_" + element.id).outerHeight(true) +
@@ -159,7 +160,7 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if (shashin.isChrome() === false && timelineSettings.scrollDirection === "down" && topHeight > 0) {
+        if (shashin.isChrome() === false && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
             $("#container").scrollTop(tempScrollTop - topHeight);
             timelineSettings.lastScrollTop = (tempScrollTop - topHeight);
         }
@@ -190,7 +191,7 @@
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
 
-                if (timelineSettings.scrollDirection === "up") {
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                     topHeightAdded +=
                         $("#br" + currentId).height() +
                         $("#" + currentId).height() +
@@ -204,7 +205,7 @@
 
         if (shashin.isChrome() === false &&
             //shashin.isSafari() === true &&
-            timelineSettings.scrollDirection === "up" &&
+            timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up &&
             topHeightAdded > 0 && bottomHeight > 0
         ) {
             $("#container").scrollTop(tempScrollTop + topHeightAdded);
@@ -322,7 +323,7 @@
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
-        timelineSettings.scrollDirection = "down";
+        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
 
         $('section').each(function (index, element) {

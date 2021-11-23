@@ -188,9 +188,9 @@
             let st = $(e.target).scrollTop();
 
             if (st > timelineSettings.lastScrollTop){
-                timelineSettings.scrollDirection = "down";
+                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
             } else {
-                timelineSettings.scrollDirection = "up";
+                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
             }
             timelineSettings.lastScrollTop = st <= 0 ? 0 : st;
 
