@@ -6,7 +6,6 @@
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-    timelineSettings.lastScrollTop = 0;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
@@ -66,6 +65,29 @@
                 let id = $(this).attr("id");
 
                 if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
+
+                    const prevFirstElement = prevElements !== null ? $(prevElements[0]).attr('id') : prevElements;
+                    const firstElement = $(elements[0]).attr('id');
+                    const prevLastElement = prevElements !== null ? $(prevElements[prevElements.length-1]).attr('id') : prevElements;
+                    const lastElement = $(elements[elements.length-1]).attr('id');
+
+                    const prevFirstWithoutTail = (prevElements !== null && prevFirstElement.indexOf("tail_") > -1) ? prevFirstElement.split("tail_")[1] : prevFirstElement;
+                    const firstWithoutTail = firstElement.indexOf("tail_") > -1 ? firstElement.split("tail_")[1] : firstElement;
+                    const prevLastWithoutTail = (prevElements !== null && prevLastElement.indexOf("tail_") > -1) ? prevLastElement.split("tail_")[1] : prevLastElement;
+                    const lastWithoutTail = lastElement.indexOf("tail_") > -1 ? lastElement.split("tail_")[1] : lastElement;
+
+                    if (prevElements !== null) {
+                        if ((shashin.getDateObject(prevFirstWithoutTail) > shashin.getDateObject(firstWithoutTail)) ||
+                            (shashin.getDateObject(prevLastWithoutTail) > shashin.getDateObject(lastWithoutTail))
+                        ) {
+                            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                        } else if ((shashin.getDateObject(prevFirstWithoutTail) < shashin.getDateObject(firstWithoutTail)) ||
+                            (shashin.getDateObject(prevLastWithoutTail) < shashin.getDateObject(lastWithoutTail))
+                        ) {
+                            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
+                        }
+                    }
+
                     timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
                         if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                             timelineSettings.setScrollSpyActive(id);
@@ -81,7 +103,6 @@
 
     // Render only what's needed
     timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
-
         //let deferred = new $.Deferred();
 
         // Depth of results in section of page above and below anchor
@@ -98,8 +119,8 @@
         );
 
         let depth = shashin.isChrome() === false ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
-        let depthDown = depth-1; //2;
-        let depthUp = depth; //3;
+        let depthDown = depth-1;
+        let depthUp = depth;
 
         shashin.printMessageToConsole("depthDown:"+depthDown);
         shashin.printMessageToConsole("depthUp:"+depthUp);
@@ -133,6 +154,7 @@
         let prevElementId = "";
         let topHeight = 0;
         let bottomHeight = 0;
+        let totalHeight = 0;
         const tempScrollTop = $("#container").scrollTop();
         $('section').each(function (index, element) {
             shashin.printMessageToConsole(element.id + " checking to remove end");
@@ -140,18 +162,12 @@
 
                 // Get height to set scrollTop for non chrome browsers
                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && shashin.getDateObject(id) < shashin.getDateObject(element.id)) {
-                    topHeight += $("#br" + element.id).outerHeight(true) +
-                       $("#row" + element.id).outerHeight(true) +
-                       $("#amp_" + element.id).outerHeight(true) +
-                       $("#tail_" + element.id).outerHeight(true) +
-                       $("#" + element.id).outerHeight(true);
+                    topHeight += shashin.getDateGalleryHeight(element.id);
                 } else {
-                    bottomHeight += $("#br" + element.id).outerHeight(true) +
-                        $("#row" + element.id).outerHeight(true) +
-                        $("#amp_" + element.id).outerHeight(true) +
-                        $("#tail_" + element.id).outerHeight(true) +
-                        $("#" + element.id).outerHeight(true);
+                    bottomHeight += shashin.getDateGalleryHeight(element.id);
                 }
+
+                totalHeight += shashin.getDateGalleryHeight(element.id);
 
                 shashin.printMessageToConsole(element.id + " removed end");
                 shashin.removeDateGallery(element.id);
@@ -160,9 +176,13 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if (shashin.isChrome() === false && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
-            $("#container").scrollTop(tempScrollTop - topHeight);
-            timelineSettings.lastScrollTop = (tempScrollTop - topHeight);
+        if (shashin.isChrome() === false) {
+
+            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
+                $("#container").scrollTop(tempScrollTop - topHeight);
+            } else if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && totalHeight > 0) {
+                $("#container").scrollTop(tempScrollTop + totalHeight - bottomHeight);
+            }
         }
 
         shashin.printMessageToConsole("attachAboveArray");
@@ -204,12 +224,10 @@
         }
 
         if (shashin.isChrome() === false &&
-            //shashin.isSafari() === true &&
             timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up &&
             topHeightAdded > 0 && bottomHeight > 0
         ) {
             $("#container").scrollTop(tempScrollTop + topHeightAdded);
-            timelineSettings.lastScrollTop = (tempScrollTop + topHeightAdded);
         }
 
         // Render bottom
