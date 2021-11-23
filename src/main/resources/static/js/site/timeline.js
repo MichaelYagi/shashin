@@ -96,7 +96,7 @@
             {}
         );
 
-        let depth = shashin.isChrome() === false ? 5 : (idsInView.length < 2 ? 2 : idsInView.length);
+        let depth = shashin.isChrome() === false ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
         let depthDown = depth-1; //2;
         let depthUp = depth; //3;
 
