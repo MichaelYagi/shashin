@@ -187,13 +187,6 @@
         const scrollHandler = function (e) {
             let st = $(e.target).scrollTop();
 
-            if (st > timelineSettings.lastScrollTop){
-                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-            } else {
-                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
-            }
-            timelineSettings.lastScrollTop = st <= 0 ? 0 : st;
-
             if (st === 0) {
                 topScroll = true;
             }

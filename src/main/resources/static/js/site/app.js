@@ -1406,6 +1406,14 @@ $.fn.serializeObject = function() {
         $("#"+id).remove();
         $("#container_"+id).remove();
     }
+
+    shashin.getDateGalleryHeight = function (id) {
+        return $("#br" + id).outerHeight(true) +
+            $("#row" + id).outerHeight(true) +
+            $("#amp_" + id).outerHeight(true) +
+            $("#tail_" + id).outerHeight(true) +
+            $("#" + id).outerHeight(true);
+    }
 }( window.shashin = window.shashin || {}, jQuery ));
 
 if (typeof module !== 'undefined') {
