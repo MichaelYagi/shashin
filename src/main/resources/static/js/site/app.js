@@ -66,8 +66,6 @@ $.fn.serializeObject = function() {
     shashin.infiniteScrollGallery = null;
     shashin.lg = null;
     shashin.ajaxRetries = 3;
-    shashin.timelineQueryLimit = 1;
-    shashin.scrollDirection = "down";
 
     function fixContentHeight(){
         const viewHeight = $(window).height();
