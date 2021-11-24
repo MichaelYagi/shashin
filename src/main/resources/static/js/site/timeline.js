@@ -61,32 +61,32 @@
                 elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
             }
 
+            const prevFirstElement = prevElements !== null ? $(prevElements[0]).attr('id') : prevElements;
+            const firstElement = $(elements[0]).attr('id');
+            const prevLastElement = prevElements !== null ? $(prevElements[prevElements.length-1]).attr('id') : prevElements;
+            const lastElement = $(elements[elements.length-1]).attr('id');
+
+            const prevFirstWithoutTail = (prevElements !== null && prevFirstElement.indexOf("tail_") > -1) ? prevFirstElement.split("tail_")[1] : prevFirstElement;
+            const firstWithoutTail = firstElement.indexOf("tail_") > -1 ? firstElement.split("tail_")[1] : firstElement;
+            const prevLastWithoutTail = (prevElements !== null && prevLastElement.indexOf("tail_") > -1) ? prevLastElement.split("tail_")[1] : prevLastElement;
+            const lastWithoutTail = lastElement.indexOf("tail_") > -1 ? lastElement.split("tail_")[1] : lastElement;
+
+            if (prevElements !== null) {
+                if ((shashin.getDateObject(prevFirstWithoutTail) > shashin.getDateObject(firstWithoutTail)) ||
+                    (shashin.getDateObject(prevLastWithoutTail) > shashin.getDateObject(lastWithoutTail))
+                ) {
+                    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                } else if ((shashin.getDateObject(prevFirstWithoutTail) < shashin.getDateObject(firstWithoutTail)) ||
+                    (shashin.getDateObject(prevLastWithoutTail) < shashin.getDateObject(lastWithoutTail))
+                ) {
+                    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
+                }
+            }
+
             elements.each(function (index) {
                 let id = $(this).attr("id");
 
                 if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
-
-                    const prevFirstElement = prevElements !== null ? $(prevElements[0]).attr('id') : prevElements;
-                    const firstElement = $(elements[0]).attr('id');
-                    const prevLastElement = prevElements !== null ? $(prevElements[prevElements.length-1]).attr('id') : prevElements;
-                    const lastElement = $(elements[elements.length-1]).attr('id');
-
-                    const prevFirstWithoutTail = (prevElements !== null && prevFirstElement.indexOf("tail_") > -1) ? prevFirstElement.split("tail_")[1] : prevFirstElement;
-                    const firstWithoutTail = firstElement.indexOf("tail_") > -1 ? firstElement.split("tail_")[1] : firstElement;
-                    const prevLastWithoutTail = (prevElements !== null && prevLastElement.indexOf("tail_") > -1) ? prevLastElement.split("tail_")[1] : prevLastElement;
-                    const lastWithoutTail = lastElement.indexOf("tail_") > -1 ? lastElement.split("tail_")[1] : lastElement;
-
-                    if (prevElements !== null) {
-                        if ((shashin.getDateObject(prevFirstWithoutTail) > shashin.getDateObject(firstWithoutTail)) ||
-                            (shashin.getDateObject(prevLastWithoutTail) > shashin.getDateObject(lastWithoutTail))
-                        ) {
-                            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-                        } else if ((shashin.getDateObject(prevFirstWithoutTail) < shashin.getDateObject(firstWithoutTail)) ||
-                            (shashin.getDateObject(prevLastWithoutTail) < shashin.getDateObject(lastWithoutTail))
-                        ) {
-                            timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
-                        }
-                    }
 
                     timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
                         if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
@@ -96,9 +96,9 @@
                     timelineSettings.prevAnchor = id;
                 }
             });
-        }
 
-        prevElements = elements;
+            prevElements = elements;
+        }
     }
 
     // Render only what's needed
@@ -193,7 +193,6 @@
         // Render top
         let action = "new";
         let attachPoint = id;
-        let topHeightAdded = 0;
 
         for (let index in attachAboveArray) {
             const currentId = attachAboveArray[index];
@@ -211,23 +210,9 @@
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
 
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                    topHeightAdded +=
-                        $("#br" + currentId).height() +
-                        $("#" + currentId).height() +
-                        $("#row" + currentId).height();
-                }
-
                 action = "below";
             }
             attachPoint = currentId;
-        }
-
-        if (shashin.isChrome() === false &&
-            timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up &&
-            topHeightAdded > 0 && bottomHeight > 0
-        ) {
-            $("#container").scrollTop(tempScrollTop + topHeightAdded);
         }
 
         // Render bottom
@@ -250,57 +235,57 @@
             attachPoint = currentId;
         }
 
-        let rendered = false;
-        while (true) {
-            let dateFound = false;
-            let currentId = attachPoint;
-            $("#offcanvasTocBody").children().each(function () {
-                const dateParts = $(this).attr("id").split("offcanvas_");
-                const date = dateParts[1];
-                if ($(this).next().length > 0 && currentId === date) {
-                    currentId = $(this).next().attr("id").split("offcanvas_")[1];
-                    dateFound = true;
-                    return false;
-                }
-
-            });
-
-            if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
-                if (action === "new") {
-                    attachPoint = null;
-                }
-
-                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
-                if (msg === "success" && $("#" + currentId).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
-                }
-
-                action = "below";
-                attachPoint = currentId;
-                attachBelowArray.push(currentId);
-
-                if (
-                    rendered === false &&
-                    //($("footer").withinviewport().length === 0) &&
-                    (//$("#br" + currentId).withinviewport().length === 0 ||
-                        //$("#row" + currentId).withinviewport().length === 0 ||
-                        $("#amp_" + currentId).withinviewport().length === 0 //||
-                        //$("#tail_" + currentId).withinviewport().length === 0 ||
-                        //$("#" + currentId).withinviewport().length === 0 ||
-                        //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
-                    )
-                ) {
-                    rendered = true;
-                    continue;
-                }
-            }
-
-            if (dateFound === false || rendered === true) {
-                break;
-            }
-
-            attachPoint = currentId;
-        }
+        // let rendered = false;
+        // while (true) {
+        //     let dateFound = false;
+        //     let currentId = attachPoint;
+        //     $("#offcanvasTocBody").children().each(function () {
+        //         const dateParts = $(this).attr("id").split("offcanvas_");
+        //         const date = dateParts[1];
+        //         if ($(this).next().length > 0 && currentId === date) {
+        //             currentId = $(this).next().attr("id").split("offcanvas_")[1];
+        //             dateFound = true;
+        //             return false;
+        //         }
+        //
+        //     });
+        //
+        //     if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
+        //         if (action === "new") {
+        //             attachPoint = null;
+        //         }
+        //
+        //         const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
+        //         if (msg === "success" && $("#" + currentId).length === 1) {
+        //             timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+        //         }
+        //
+        //         action = "below";
+        //         attachPoint = currentId;
+        //         attachBelowArray.push(currentId);
+        //
+        //         if (
+        //             rendered === false &&
+        //             //($("footer").withinviewport().length === 0) &&
+        //             (//$("#br" + currentId).withinviewport().length === 0 ||
+        //                 //$("#row" + currentId).withinviewport().length === 0 ||
+        //                 $("#amp_" + currentId).withinviewport().length === 0 //||
+        //                 //$("#tail_" + currentId).withinviewport().length === 0 ||
+        //                 //$("#" + currentId).withinviewport().length === 0 ||
+        //                 //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
+        //             )
+        //         ) {
+        //             rendered = true;
+        //             continue;
+        //         }
+        //     }
+        //
+        //     if (dateFound === false || rendered === true) {
+        //         break;
+        //     }
+        //
+        //     attachPoint = currentId;
+        // }
 
         // Render mid
         action = "new";
