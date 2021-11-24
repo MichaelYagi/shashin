@@ -161,7 +161,7 @@
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
 
                 // Get height to set scrollTop for non chrome browsers
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && shashin.getDateObject(id) < shashin.getDateObject(element.id)) {
+                if (shashin.getDateObject(id) < shashin.getDateObject(element.id)) {
                     topHeight += shashin.getDateGalleryHeight(element.id);
                 } else {
                     bottomHeight += shashin.getDateGalleryHeight(element.id);
