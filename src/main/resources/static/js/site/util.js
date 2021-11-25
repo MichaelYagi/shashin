@@ -33,4 +33,20 @@ class Util {
     static isFirefox() {
         return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
     }
+
+    static serializeObject(formElement) {
+        const o = {};
+        const a = formElement.serializeArray();
+        $.each(a, function() {
+            if (o[this.name]) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
 }

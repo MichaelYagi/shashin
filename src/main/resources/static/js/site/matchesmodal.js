@@ -37,7 +37,7 @@ $("#saveBatchMetadata").click(function (e) {
     const ajaxParams = {
         type: "post",
         url: "/timeline/update/batch",
-        data: JSON.stringify($('#saveBatchData').serializeObject()),
+        data: JSON.stringify(Util.serializeObject($('#saveBatchData'))),
         contentType: 'application/json; charset=utf-8',
         retries: shashin.ajaxRetries
     }

@@ -1,24 +1,3 @@
-// Globals
-$.fn.hasScrollBar = function() {
-    return this.get(0).scrollHeight > this.get(0).clientHeight;
-}
-
-$.fn.serializeObject = function() {
-    const o = {};
-    const a = this.serializeArray();
-    $.each(a, function() {
-        if (o[this.name]) {
-            if (!o[this.name].push) {
-                o[this.name] = [o[this.name]];
-            }
-            o[this.name].push(this.value || '');
-        } else {
-            o[this.name] = this.value || '';
-        }
-    });
-    return o;
-};
-
 (function( shashin, $, undefined ) {
     // private function
     function fallbackCopyTextToClipboard(text) {
