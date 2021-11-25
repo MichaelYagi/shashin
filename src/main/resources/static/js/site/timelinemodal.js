@@ -102,15 +102,8 @@ $("#saveMetadata").click(function (e) {
             }
         }
 
-        function onFail(xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating timeline data. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                $.ajax(ajaxParams).fail(onFail);
-            }
-        }
-
         $.ajax(ajaxParams)
-        .fail(onFail).then(function (data) {
+        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline data")}).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -194,15 +187,8 @@ $("#refreshTakenDate").click(function (e) {
         retries: shashin.ajaxRetries
     }
 
-    function onFail(xhr, textStatus) {
-        shashin.printMessageToConsole("AJAX error refreshing taken date. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-            $.ajax(ajaxParams).fail(onFail);
-        }
-    }
-
     $.ajax(ajaxParams)
-    .fail(onFail).then(function (data) {
+    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing taken date")}).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {

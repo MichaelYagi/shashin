@@ -42,15 +42,8 @@ $("#saveBatchMetadata").click(function (e) {
         retries: shashin.ajaxRetries
     }
 
-    function onFail(xhr, textStatus) {
-        shashin.printMessageToConsole("AJAX error saving persons matches. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-            $.ajax(ajaxParams).fail(onFail);
-        }
-    }
-
     $.ajax(ajaxParams)
-    .fail(onFail).then(function (data) {
+    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving persons matches")}).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
@@ -193,15 +186,8 @@ $('#propBatchMetadata').bind('keypress', function () {
                 retries: shashin.ajaxRetries
             }
 
-            function onFail(xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error saving person matches. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                    $.ajax(ajaxParams).fail(onFail);
-                }
-            }
-
             $.ajax(ajaxParams)
-            .fail(onFail).then(function (data) {
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving person matches")}).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {

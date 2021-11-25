@@ -10,15 +10,8 @@
             retries: shashin.ajaxRetries
         }
 
-        function onFail(xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error deleting album comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                $.ajax(ajaxParams).fail(onFail);
-            }
-        }
-
         $.ajax(ajaxParams)
-        .fail(onFail).then(function (data) {
+        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " deleting album comment")}).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
                 let commentId = data["commentId"];
                 let commentCount = data["commentCount"];
@@ -70,15 +63,8 @@
                 retries: shashin.ajaxRetries
             }
 
-            function onFail(xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error deleting album. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                    $.ajax(ajaxParams).fail(onFail);
-                }
-            }
-
             $.ajax(ajaxParams)
-            .fail(onFail).then(function (data) {
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " deleting album")}).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {
@@ -151,15 +137,8 @@
                 retries: shashin.ajaxRetries
             }
 
-            function onFail(xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX saving user share. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                    $.ajax(ajaxParams).fail(onFail);
-                }
-            }
-
             $.ajax(ajaxParams)
-            .fail(onFail).then(function (data) {
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving user share")}).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {
@@ -187,14 +166,7 @@
                 retries: shashin.ajaxRetries
             }
 
-            function onFail(xhr, textStatus) {
-                shashin.printMessageToConsole("AJAX error marking notification on album comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                    $.ajax(ajaxParams).fail(onFail);
-                }
-            }
-
-            $.ajax(ajaxParams).fail(onFail);
+            $.ajax(ajaxParams).fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " marking notification on album comment")});
         })
 
         $("#updateCommentAlbum" + albumId).hide();
@@ -237,15 +209,8 @@
                         retries: shashin.ajaxRetries
                     }
 
-                    function onFail(xhr, textStatus) {
-                        shashin.printMessageToConsole("AJAX error updating album comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                            $.ajax(ajaxParams).fail(onFail);
-                        }
-                    }
-
                     $.ajax(ajaxParams)
-                    .fail(onFail).then(function (data) {
+                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album comment")}).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                             let commentId = data["commentId"];
                             let message = "Error";
@@ -299,15 +264,8 @@
                     retries: shashin.ajaxRetries
                 }
 
-                function onFail(xhr, textStatus) {
-                    shashin.printMessageToConsole("AJAX error saving album comment. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                    if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                        $.ajax(ajaxParams).fail(onFail);
-                    }
-                }
-
                 $.ajax(ajaxParams)
-                .fail(onFail).then(function (data) {
+                .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving album comment")}).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
                         let commentId = data["commentId"];
                         let commentCount = data["commentCount"];

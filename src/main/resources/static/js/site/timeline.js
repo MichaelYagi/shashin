@@ -430,15 +430,8 @@
             retries: shashin.ajaxRetries
         }
 
-        function onFail(xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error attaching associated metadata. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                $.ajax(ajaxParams).fail(onFail);
-            }
-        }
-
         $.ajax(ajaxParams)
-            .fail(onFail).then(function(data) {
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " attaching associated metadata")}).then(function(data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("metadataList") &&
@@ -655,16 +648,9 @@
             retries: shashin.ajaxRetries
         }
 
-        function onFail(xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating timeline. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                $.ajax(ajaxParams).fail(onFail);
-            }
-        }
-
         //const promise =
         return await $.ajax(ajaxParams)
-            .fail(onFail).then(function (data) {
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline")}).then(function (data) {
                 // let deferred = new $.Deferred();
                 let ret = "fail";
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {

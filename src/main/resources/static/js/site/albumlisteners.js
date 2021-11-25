@@ -37,15 +37,8 @@ $(document).ready(function () {
             retries: shashin.ajaxRetries
         }
 
-        function onFail(xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error saving album. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                $.ajax(ajaxParams).fail(onFail);
-            }
-        }
-
         $.ajax(ajaxParams)
-            .fail(onFail).then(function (data) {
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving album")}).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "redirect") {
                     window.location.replace(data["msg"]);
@@ -109,15 +102,8 @@ $(document).ready(function () {
                     retries: shashin.ajaxRetries
                 }
 
-                function onFail(xhr, textStatus) {
-                    shashin.printMessageToConsole("AJAX error updating album name. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-                    if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                        $.ajax(ajaxParams).fail(onFail);
-                    }
-                }
-
                 $.ajax(ajaxParams)
-                    .fail(onFail).then(function (data) {
+                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album name")}).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
                         $('#albumNameHeader').html('<h1 id="albumNameHeading">'+val+'</h1>');
                         albumName = val;

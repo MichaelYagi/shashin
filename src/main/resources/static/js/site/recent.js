@@ -8,15 +8,8 @@ class Recent {
             retries: shashin.ajaxRetries
         }
 
-        function onFail(xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating recently added. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                $.ajax(ajaxParams).fail(onFail);
-            }
-        }
-
         const promise = $.ajax(ajaxParams)
-            .fail(onFail).then(function (data) {
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating recently added")}).then(function (data) {
                 const mediaContentList = [];
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
                     const metadataList = data["metadataList"] === "" ? null : data["metadataList"];

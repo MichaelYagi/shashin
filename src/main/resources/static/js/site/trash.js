@@ -8,16 +8,9 @@ class Trash {
             retries: shashin.ajaxRetries
         }
 
-        function onFail(xhr, textStatus) {
-            shashin.printMessageToConsole("AJAX error updating trash. Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-            if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-                $.ajax(ajaxParams).fail(onFail);
-            }
-        }
-
         // Get paged results
         const promise = $.ajax(ajaxParams)
-        .fail(onFail).then(function (data) {
+        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating trash")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
