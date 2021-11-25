@@ -35,6 +35,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites">
+                    <span class="bi-suit-heart" style="font-size: 1rem;"></span> Favorites
+                </a>
+            </li>
+            <li class="nav-item">
                 <a th:attr="class='nav-link' + ${activeSidebar=='map' ? ' active' : ''}" href="/map">
                     <span class="bi-map" style="font-size: 1rem;"></span> Map
                 </a>
@@ -49,11 +54,6 @@
                         </th:block>
                     </span> Notifications
 
-                </a>
-            </li>
-            <li class="nav-item">
-                <a th:attr="class='nav-link' + ${activeSidebar=='favorites' ? ' active' : ''}" href="/favorites">
-                    <span class="bi-suit-heart" style="font-size: 1rem;"></span> Favorites
                 </a>
             </li>
             <th:block th:if="${currentUser != '' and currentUser.authority == 'ROLE_ADMIN'}">
