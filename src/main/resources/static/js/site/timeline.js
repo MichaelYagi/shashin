@@ -225,58 +225,56 @@
             attachPoint = currentId;
         }
 
-        if (shashin.isChrome() === true) {
-            let rendered = false;
-            while (true) {
-                let dateFound = false;
-                let currentId = attachPoint;
-                $("#offcanvasTocBody").children().each(function () {
-                    const dateParts = $(this).attr("id").split("offcanvas_");
-                    const date = dateParts[1];
-                    if ($(this).next().length > 0 && currentId === date) {
-                        currentId = $(this).next().attr("id").split("offcanvas_")[1];
-                        dateFound = true;
-                        return false;
-                    }
-
-                });
-
-                if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
-                    if (action === "new") {
-                        attachPoint = null;
-                    }
-
-                    const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
-                    if (msg === "success" && $("#" + currentId).length === 1) {
-                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
-                    }
-
-                    action = "below";
-                    attachPoint = currentId;
-                    attachBelowArray.push(currentId);
-
-                    if (
-                        rendered === false &&
-                        //($("footer").withinviewport().length === 0) &&
-                        (//$("#br" + currentId).withinviewport().length === 0 ||
-                            //$("#row" + currentId).withinviewport().length === 0 ||
-                            $("#amp_" + currentId).withinviewport().length === 0 //||
-                            //$("#tail_" + currentId).withinviewport().length === 0 ||
-                            //$("#" + currentId).withinviewport().length === 0 ||
-                            //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
-                        )
-                    ) {
-                        rendered = true;
-                        continue;
-                    }
+        let rendered = false;
+        while (true) {
+            let dateFound = false;
+            let currentId = attachPoint;
+            $("#offcanvasTocBody").children().each(function () {
+                const dateParts = $(this).attr("id").split("offcanvas_");
+                const date = dateParts[1];
+                if ($(this).next().length > 0 && currentId === date) {
+                    currentId = $(this).next().attr("id").split("offcanvas_")[1];
+                    dateFound = true;
+                    return false;
                 }
 
-                if (dateFound === false || rendered === true) {
-                    break;
+            });
+
+            if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
+                if (action === "new") {
+                    attachPoint = null;
                 }
 
+                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
+                if (msg === "success" && $("#" + currentId).length === 1) {
+                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                }
+
+                action = "below";
                 attachPoint = currentId;
+                attachBelowArray.push(currentId);
+
+                if (
+                    rendered === false &&
+                    //($("footer").withinviewport().length === 0) &&
+                    (//$("#br" + currentId).withinviewport().length === 0 ||
+                        //$("#row" + currentId).withinviewport().length === 0 ||
+                        $("#amp_" + currentId).withinviewport().length === 0 //||
+                        //$("#tail_" + currentId).withinviewport().length === 0 ||
+                        //$("#" + currentId).withinviewport().length === 0 ||
+                        //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
+                    )
+                ) {
+                    rendered = true;
+                    continue;
+                }
             }
+
+            if (dateFound === false || rendered === true) {
+                break;
+            }
+
+            attachPoint = currentId;
         }
 
         // Render mid
