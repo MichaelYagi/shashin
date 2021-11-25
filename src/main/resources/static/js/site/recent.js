@@ -1,5 +1,5 @@
-(function( recentSettings, $, undefined ) {
-    recentSettings.updateRecent = function(nextPage,activePage) {
+class Recent {
+    static updateRecent(nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/recent/"+nextPage,
@@ -89,4 +89,4 @@
             return data;
         });
     }
-}( window.recentSettings = window.recentSettings || {}, jQuery ));
+}

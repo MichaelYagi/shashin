@@ -1,5 +1,5 @@
-(function( folderSettings, $, undefined ) {
-    folderSettings.updateRecent = function(nextPage,folderName,activePage) {
+class Folder {
+    static updateRecent(nextPage,folderName,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/folder/"+nextPage+"/"+encodeURI(encodeURIComponent(folderName)),
@@ -89,4 +89,4 @@
             return data;
         });
     }
-}( window.folderSettings = window.folderSettings || {}, jQuery ));
+}

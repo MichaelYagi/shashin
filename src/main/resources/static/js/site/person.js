@@ -1,5 +1,5 @@
-(function( personSettings, $, undefined ) {
-    personSettings.updatePerson = function (personId,nextPage,activePage) {
+class Person {
+    static updatePerson(personId,nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/person/" + personId + "/" + nextPage,
@@ -95,4 +95,4 @@
             return data;
         });
     }
-}( window.personSettings = window.personSettings || {}, jQuery ));
+}

@@ -127,7 +127,7 @@
             /*<![CDATA[*/
             const activePage = /*[[${activePage}]]*/ 'recent';
             /*]]>*/
-            recentSettings.updateRecent(nextPage,activePage).then(function(additionalMediaContentList) {
+            Recent.updateRecent(nextPage,activePage).then(function(additionalMediaContentList) {
                 mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);

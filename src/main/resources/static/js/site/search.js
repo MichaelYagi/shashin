@@ -1,5 +1,5 @@
-(function( searchSettings, $, undefined ) {
-    searchSettings.updateSearch = function(nextPage,searchTerm,activePage) {
+class Search {
+    static updateSearch(nextPage,searchTerm,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
@@ -74,4 +74,4 @@
             return data;
         });
     }
-}( window.searchSettings = window.searchSettings || {}, jQuery ));
+}
