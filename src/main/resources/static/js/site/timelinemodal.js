@@ -57,7 +57,7 @@ $("#saveMetadata").click(function (e) {
 
     timelineModal.closeTagPeopleDropdown(metadataId);
 
-    if (shashin.validateMetadataInputs(
+    if (Util.validateMetadataInputs(
         $("#dayTaken").val(),
         $("#monthTaken").val(),
         $("#yearTaken").val(),

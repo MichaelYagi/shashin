@@ -29,15 +29,6 @@
         return msg;
     }
 
-    function getShortDay(index) {
-        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        return days[index];
-    }
-    function getShortMonths(index) {
-        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        return months[index];
-    }
-
     shashin.showDebug = false;
     shashin.map = null;
     shashin.layer = null;
@@ -342,54 +333,6 @@
                 $("#offcanvasTocBody").append(html);
             }
         });
-    }
-
-    shashin.validateMetadataInputs = function(day, month, year, time, offset, latlng, msgId) {
-        if (offset === null ) {
-            offset = "";
-        }
-        const dayValidate = "([1-9]|[12]\d|3[01])";
-        const monthValidate = "^(0?[1-9]|1[012])$";
-        const timeValidate = "^(\\d{2}:\\d{2}:\\d{2})$";
-        const offsetValidate = "^([+-±](?:2[0-3]|[01][0-9]):[0-5][0-9])$";
-
-        let msg = "";
-        if (day !== "" && !day.match(dayValidate)) {
-            msg = "Enter Valid Day";
-        }
-
-        if (month !== "" && !month.match(monthValidate)) {
-            msg = "Enter Valid Month";
-        }
-
-        if (year !== "" && !(+year >= 1888 && +year <= new Date().getFullYear())) {
-            msg = "Enter Valid Year";
-        }
-
-        if (time !== "" && !time.match(timeValidate)) {
-            msg = "Enter Valid Time";
-        }
-
-        if (offset !== "" && !offset.match(offsetValidate)) {
-            msg = "Enter Valid Offset";
-        }
-
-        if (latlng !== "") {
-            latlng = $.trim(latlng);
-            const latlngArr = latlng.split(",");
-
-            if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !shashin.isNumeric(latlngArr[0]) || !shashin.isNumeric(latlngArr[1])) {
-                msg = "Enter Valid Latitude/Longitude";
-            }
-        }
-
-        if (msg !== "") {
-            $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
-            return false;
-        } else {
-            return true;
-        }
-
     }
 
     shashin.openMap = function (metadata) {
@@ -798,9 +741,9 @@
         ) {
             let date = new Date(month+"/"+day+"/"+year);
             if (date.toString() !== "Invalid Date") {
-                let shortMonth = getShortMonths(date.getMonth());
+                let shortMonth = Util.getShortMonths(date.getMonth());
                 let adjustedDay = date.getDate();
-                let dayOfWeek = getShortDay(date.getDay());
+                let dayOfWeek = Util.getShortDay(date.getDay());
                 return dayOfWeek + ", " + shortMonth + " " + adjustedDay + ", " + year;
             }
         }

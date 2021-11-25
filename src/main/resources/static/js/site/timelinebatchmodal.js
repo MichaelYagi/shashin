@@ -49,7 +49,7 @@ $("#saveBatchMetadata").click(function (e) {
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
 
-    if (shashin.validateMetadataInputs(
+    if (Util.validateMetadataInputs(
         $("#dayTakenBatchData").val(),
         $("#monthTakenBatchData").val(),
         $("#yearTakenBatchData").val(),
