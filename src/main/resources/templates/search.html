@@ -87,7 +87,7 @@
             const activePage = /*[[${activePage}]]*/ 'search';
             const searchTerm = /*[[${searchTerm}]]*/ '';
             /*]]>*/
-            searchSettings.updateSearch(nextPage,searchTerm,activePage).then(function(additionalMediaContentList) {
+            Search.updateSearch(nextPage,searchTerm,activePage).then(function(additionalMediaContentList) {
                 mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);

@@ -1,5 +1,5 @@
-(function( favoritesSettings, $, undefined ) {
-    favoritesSettings.updateFavorites = function (nextPage,activePage) {
+class Favorites {
+    static updateFavorites(nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/favorites/" + nextPage,
@@ -86,4 +86,4 @@
             return data;
         });
     }
-}( window.favoritesSettings = window.favoritesSettings || {}, jQuery ));
+}

@@ -101,7 +101,7 @@
             /*<![CDATA[*/
             const activePage = /*[[${activePage}]]*/ 'person';
             /*]]>*/
-            personSettings.updatePerson(personId,nextPage,activePage).then(function(additionalMediaContentList) {
+            Person.updatePerson(personId,nextPage,activePage).then(function(additionalMediaContentList) {
                 mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);

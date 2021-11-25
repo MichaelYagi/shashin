@@ -128,7 +128,7 @@
             const activePage = /*[[${activePage}]]*/ 'folder';
             const folderName = /*[[${folder}]]*/ '';
             /*]]>*/
-            folderSettings.updateRecent(nextPage,folderName,activePage).then(function(additionalMediaContentList) {
+            Folder.updateRecent(nextPage,folderName,activePage).then(function(additionalMediaContentList) {
                 mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);
