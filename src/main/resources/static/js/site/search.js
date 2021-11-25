@@ -1,12 +1,4 @@
 (function( searchSettings, $, undefined ) {
-    searchSettings.activateMetadataListeners = function (metadata) {
-        shashin.printMessageToConsole(metadata.id);
-
-        $("#image"+metadata.id).on('load', function() {
-            $(this).css("background-color","transparent");
-        });
-    }
-
     searchSettings.updateSearch = function(nextPage,searchTerm,activePage) {
         const ajaxParams = {
             type: 'get',
@@ -56,7 +48,7 @@
                         $(html).insertAfter($(".appendSearchPhotos").last())
 
                         shashin.setPhotoOverlays(metadata, activePage);
-                        searchSettings.activateMetadataListeners(metadata);
+                        Util.activateMetadataListeners(metadata);
                         $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
                         $("#infoModalEdit"+metadata.id).click(function(e) {
                             e.preventDefault();

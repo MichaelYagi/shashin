@@ -1,12 +1,4 @@
 (function( folderSettings, $, undefined ) {
-    folderSettings.activateMetadataListeners = function (metadata) {
-        shashin.printMessageToConsole(metadata.id);
-
-        $("#image"+metadata.id).on('load', function() {
-            $(this).css("background-color","transparent");
-        });
-    }
-
     folderSettings.updateRecent = function(nextPage,folderName,activePage) {
         const ajaxParams = {
             type: 'get',
@@ -77,7 +69,7 @@
                             });
 
                             shashin.setPhotoOverlays(metadata, activePage);
-                            folderSettings.activateMetadataListeners(metadata);
+                            Util.activateMetadataListeners(metadata);
 
                             html = "";
                         }
