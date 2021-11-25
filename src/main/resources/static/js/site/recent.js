@@ -1,12 +1,4 @@
 (function( recentSettings, $, undefined ) {
-    recentSettings.activateMetadataListeners = function (metadata) {
-        shashin.printMessageToConsole(metadata.id);
-
-        $("#image"+metadata.id).on('load', function() {
-            $(this).css("background-color","transparent");
-        });
-    }
-
     recentSettings.updateRecent = function(nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
@@ -77,7 +69,7 @@
                             });
 
                             shashin.setPhotoOverlays(metadata, activePage);
-                            recentSettings.activateMetadataListeners(metadata);
+                            Util.activateMetadataListeners(metadata);
 
                             html = "";
                         }

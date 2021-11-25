@@ -1,12 +1,4 @@
 (function( personSettings, $, undefined ) {
-    personSettings.activateMetadataListeners = function (metadata) {
-        shashin.printMessageToConsole(metadata.id);
-
-        $("#image"+metadata.id).on('load', function() {
-            $(this).css("background-color","transparent");
-        });
-    }
-
     personSettings.updatePerson = function (personId,nextPage,activePage) {
         const ajaxParams = {
             type: 'get',

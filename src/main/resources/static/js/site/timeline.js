@@ -849,9 +849,7 @@
     }
 
     timelineSettings.activateMetadataListeners = function(metadata) {
-        $("#image"+metadata.id).on('load', function() {
-            $(this).css("background-color","transparent");
-        });
+        Util.activateMetadataListeners(metadata);
 
         $("#favorite"+metadata.id).click(function (e) {
             e.preventDefault();

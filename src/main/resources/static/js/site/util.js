@@ -191,6 +191,14 @@ class Util {
         _this.src = "https://via.placeholder.com"+dimensions+"?text="+encodeURI(text);
     }
 
+    static activateMetadataListeners(metadata) {
+        if (metadata && metadata.hasOwnProperty("id")) {
+            $("#image" + metadata.id).on('load', function () {
+                $(this).css("background-color", "transparent");
+            });
+        }
+    }
+
     static removeDateGallery(id) {
         $("#br"+id).remove();
         $("#row"+id).remove();
