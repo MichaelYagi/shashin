@@ -742,27 +742,40 @@
 
                                     const tempScrollTop = $("#container").scrollTop();
 
-
                                     let htmlEl = $(html);
 
-                                    if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                        htmlEl = htmlEl.hide();
+                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                        if (Util.isSafari() === true) {
+                                            $("#infinite-scroll-gallery").css('visibility', 'hidden');
+                                        } else if (Util.isFirefox() === true) {
+                                            htmlEl.hide();
+                                        }
                                     }
 
                                     if (action === "above") {
                                         htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
                                             // deferred.resolve("success");
                                             ret = "success";
-                                            if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                htmlEl.show();
+                                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                if (Util.isSafari() === true) {
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                } else if (Util.isFirefox() === true) {
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                    htmlEl.show();
+                                                }
                                             }
                                         });
                                     } else if (action === "new") {
                                         $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                            if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                htmlEl.show();
+                                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                if (Util.isSafari() === true) {
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                } else if (Util.isFirefox() === true) {
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                    htmlEl.show();
+                                                }
                                             }
                                             // deferred.resolve("success");
                                             ret = "success";
@@ -771,18 +784,28 @@
                                         if (attachToId == null) {
                                             if ($(".attachMetadataPhotos").length > 0) {
                                                 htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                                    if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        htmlEl.show();
+                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                        if (Util.isSafari() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        } else if (Util.isFirefox() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            htmlEl.show();
+                                                        }
                                                     }
                                                     // deferred.resolve("success");
                                                     ret = "success";
                                                 });
                                             } else {
                                                 $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                                    if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        htmlEl.show();
+                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                        if (Util.isSafari() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        } else if (Util.isFirefox() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            htmlEl.show();
+                                                        }
                                                     }
                                                     // deferred.resolve("success");
                                                     ret = "success";
@@ -790,9 +813,14 @@
                                             }
                                         } else {
                                             htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
-                                                if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    htmlEl.show();
+                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                    if (Util.isSafari() === true) {
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                    } else if (Util.isFirefox() === true) {
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                        htmlEl.show();
+                                                    }
                                                 }
                                                 // deferred.resolve("success");
                                                 ret = "success";
