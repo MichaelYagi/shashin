@@ -73,12 +73,12 @@
             const lastWithoutTail = lastElement.indexOf("tail_") > -1 ? lastElement.split("tail_")[1] : lastElement;
 
             if (prevElements !== null) {
-                if ((shashin.getDateObject(prevFirstWithoutTail) > shashin.getDateObject(firstWithoutTail)) ||
-                    (shashin.getDateObject(prevLastWithoutTail) > shashin.getDateObject(lastWithoutTail))
+                if ((Util.getDateObject(prevFirstWithoutTail) > Util.getDateObject(firstWithoutTail)) ||
+                    (Util.getDateObject(prevLastWithoutTail) > Util.getDateObject(lastWithoutTail))
                 ) {
                     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-                } else if ((shashin.getDateObject(prevFirstWithoutTail) < shashin.getDateObject(firstWithoutTail)) ||
-                    (shashin.getDateObject(prevLastWithoutTail) < shashin.getDateObject(lastWithoutTail))
+                } else if ((Util.getDateObject(prevFirstWithoutTail) < Util.getDateObject(firstWithoutTail)) ||
+                    (Util.getDateObject(prevLastWithoutTail) < Util.getDateObject(lastWithoutTail))
                 ) {
                     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
                 }
@@ -161,12 +161,12 @@
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
 
                 // Get height to set scrollTop for non chrome browsers
-                if (shashin.getDateObject(id) < shashin.getDateObject(element.id)) {
-                    topHeight += shashin.getDateGalleryHeight(element.id);
+                if (Util.getDateObject(id) < Util.getDateObject(element.id)) {
+                    topHeight += Util.getDateGalleryHeight(element.id);
                 }
 
                 shashin.printMessageToConsole(element.id + " removed end");
-                shashin.removeDateGallery(element.id);
+                Util.removeDateGallery(element.id);
             }
             prevElementId = element.id;
         });
@@ -295,7 +295,7 @@
             // Hack for attaching mid point
             if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length - 1].id === id && $("#" + id).length === 1) {
                 shashin.printMessageToConsole("removing already existing id " + id + " for mid point")
-                shashin.removeDateGallery(id);
+                Util.removeDateGallery(id);
             }
 
             // Render mid
@@ -336,7 +336,7 @@
                 //&& $("footer").withinviewport().length === 0
             ) {
                 shashin.printMessageToConsole(element.id + " removed beginning");
-                shashin.removeDateGallery(element.id);
+                Util.removeDateGallery(element.id);
             }
         });
 
@@ -530,7 +530,7 @@
                                 if ($("#image" + metadata.id).length === 1) {
                                     $("#image" + metadata.id).attr("src",encodeURI(metadata.thumbnailUrlSmall));
                                     $("#image" + metadata.id).css("background-color","lightgray");
-                                    $("#image" + metadata.id).attr("onError","shashin.errorImg(this,\'"+metadata.title+"\',209)");
+                                    $("#image" + metadata.id).attr("onError","Util.errorImg(this,\'"+metadata.title+"\',209)");
                                 }
 
                                 if ($("#tnbl"+metadata.id+".thumbnail-bl").length === 0) {
@@ -551,7 +551,7 @@
                                         '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
                                         'data-download-url="'+encodeURI(metadata.videoUrl)+'/download" ' +
                                         'data-metadataid="'+metadata.id+'" ' +
-                                        'data-video="'+shashin.encodeHtml(mediaContent.video)+'" ';
+                                        'data-video="'+Util.encodeHtml(mediaContent.video)+'" ';
                                     if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                         metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                         html +=
@@ -561,7 +561,7 @@
                                             'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
-                                        'data-sub-html="'+shashin.encodeHtml(mediaContent.subHtml)+'">' +
+                                        'data-sub-html="'+Util.encodeHtml(mediaContent.subHtml)+'">' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
 
@@ -582,7 +582,7 @@
                                             'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
-                                        'data-sub-html="'+shashin.encodeHtml(mediaContent.subHtml)+'">' +
+                                        'data-sub-html="'+Util.encodeHtml(mediaContent.subHtml)+'">' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
                                 }
@@ -676,7 +676,7 @@
                             if (metadataList.length > 0) {
                                 let html = "";
 
-                                let dateString = shashin.getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
+                                let dateString = Util.getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
 
                                 let idCheck = "undated";
                                 if (metadataList[0]["year"] === null ||
@@ -763,7 +763,7 @@
                                             // deferred.resolve("success");
                                             ret = "success";
                                             if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
+                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                             }
                                         });
@@ -772,7 +772,7 @@
 
                                         $("#infinite-scroll-gallery").prepend(html).ready(function () {
                                             if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
+                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                             }
                                             // deferred.resolve("success");
@@ -785,7 +785,7 @@
                                             if ($(".attachMetadataPhotos").length > 0) {
                                                 $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
                                                     if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
                                                     // deferred.resolve("success");
@@ -796,7 +796,7 @@
 
                                                 $("#infinite-scroll-gallery").prepend(html).ready(function () {
                                                     if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
                                                     // deferred.resolve("success");
@@ -808,7 +808,7 @@
 
                                             $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
                                                 if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                     $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                 }
                                                 // deferred.resolve("success");
@@ -849,8 +849,6 @@
     }
 
     timelineSettings.activateMetadataListeners = function(metadata) {
-        //const metadata = JSON.parse(shashin.decodeHtml(rawMetadata));
-
         $("#image"+metadata.id).on('load', function() {
             $(this).css("background-color","transparent");
         });

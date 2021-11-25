@@ -1,6 +1,6 @@
 function showMap(mapdata,authority) {
-    const qslat = shashin.getParameterByName("lat");
-    const qslng = shashin.getParameterByName("lng");
+    const qslat = Util.getParameterByName("lat");
+    const qslng = Util.getParameterByName("lng");
 
     const textFill = new ol.style.Fill({
         color: '#fff',
@@ -165,7 +165,7 @@ function showMap(mapdata,authority) {
         const mediaContentList = [];
         for (let i = originalFeatures.length - 1; i >= 0; --i) {
             const featureProperties = originalFeatures[i].getProperties();
-            let dateString = shashin.getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
+            let dateString = Util.getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
 
             const mediaContent = {
                 func: editLocation,

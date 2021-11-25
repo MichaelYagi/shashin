@@ -22,36 +22,6 @@ describe('#shashin app tests', function() {
         assert.isFalse(shashin.showDebug);
     })
 
-    it('seriarlize form', function() {
-        $("body").append($("<form/>", {
-                action: '#',
-                method: '#',
-                id: 'form1'
-            }).append(
-                $("<input/>", {
-                    type: 'text',
-                    id: 'vname',
-                    name: 'name',
-                    value: 'somename'
-                }), // Creating Input Element With Attribute.
-                $("<input/>", {
-                    type: 'text',
-                    id: 'vemail',
-                    name: 'email',
-                    value: 'someemail'
-                }), $("<input/>", {
-                    type: 'submit',
-                    id: 'submit',
-                    value: 'Submit'
-                })
-            )
-        )
-
-        const serialized = $('#form1').serializeObject();
-        assert.equal(serialized.name,'somename');
-        assert.equal(serialized.email,'someemail');
-    })
-
     it('MetadataIdList tests', function() {
         $("body").append($("<input/>", {
             type: 'hidden',
@@ -77,11 +47,6 @@ describe('#shashin app tests', function() {
         expect(metadataList).to.eql([]);
     })
 
-    it('URL query parameters', function() {
-        const url = "http://localhost/asdf?qp1=test1&qp2=test2&qp3=test3";
-        assert.equal(shashin.getParameterByName("qp2", url),"test2");
-        assert.equal(shashin.getParameterByName("qp4", url),null);
-    })
 
     it('Map sources', function() {
         let source = shashin.getMapSource();
@@ -92,58 +57,6 @@ describe('#shashin app tests', function() {
 
         source = shashin.getMapSource("maptiler");
         expect(source.urls.join('|')).to.include('maptiler')
-    })
-
-    it('Date formatter', function() {
-        assert.equal(shashin.getDateString(2021,10,17),"Sun, Oct 17, 2021");
-        assert.equal(shashin.getDateString(2021,9,2),"Thu, Sep 2, 2021");
-        assert.equal(shashin.getDateString(2021,2,9),"Tue, Feb 9, 2021");
-        assert.equal(shashin.getDateString(2021,14,32),"");
-        assert.equal(shashin.getDateString(2021,14,9),"");
-        assert.equal(shashin.getDateString("asdf","asdf","asdf"),"");
-    })
-
-    it('Numeric check', function() {
-        assert.equal(shashin.isNumeric(),false)
-        assert.equal(shashin.isNumeric("a"),false)
-        assert.equal(shashin.isNumeric("5"),true)
-        assert.equal(shashin.isNumeric("5.5"),true)
-        assert.equal(shashin.isNumeric("0.5"),true)
-        assert.equal(shashin.isNumeric("1e5"),true)
-        assert.equal(shashin.isNumeric(5),false)
-        assert.equal(shashin.isNumeric(5.5),false)
-        assert.equal(shashin.isNumeric(0.5),false)
-    })
-
-    it('Encode/Decode HTML string', function() {
-        const encodedString = shashin.encodeHtml('{"a":"b"}');
-        assert.equal(encodedString,"{&quot;a&quot;:&quot;b&quot;}")
-        const decodedString = shashin.decodeHtml(encodedString);
-        assert.equal(decodedString,'{"a":"b"}')
-    })
-
-    it('Img error', function() {
-        $("body").append($("<img/>", {
-            id: 'someid',
-            src: 'http://asdfasdfasdf.com/'
-        }))
-
-        let imgEl = document.getElementById("someid");
-
-        assert.equal(imgEl.src,'http://asdfasdfasdf.com/')
-
-        shashin.errorImg(imgEl,'Some Title',199)
-        assert.equal(imgEl.src,'https://via.placeholder.com/199?text=Some%20Title')
-
-        shashin.errorImg(imgEl,'Some Title')
-        assert.equal(imgEl.src,'https://via.placeholder.com/209?text=Some%20Title')
-
-        $("#someid").attr("height","100");
-        $("#someid").attr("width","200");
-
-        imgEl = document.getElementById("someid");
-        shashin.errorImg(imgEl,'Some Title')
-        assert.equal(imgEl.src,'https://via.placeholder.com/200x100?text=Some%20Title')
     })
 
     it('Overlay tests', function() {
@@ -220,20 +133,5 @@ describe('#shashin app tests', function() {
         shashin.setLightGallery({"selector":".mediaLink"});
         lightGallery = shashin.getLightGallery();
         assert.equal(lightGallery.settings.selector,".mediaLink")
-    })
-
-    it('lightgallery element', function () {
-        $("body").append($("<div/>", {
-            id: 'someelement'
-        }))
-        assert.isTrue(shashin.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "someelement"));
-        assert.isFalse(shashin.validateMetadataInputs("1", "1", "2021", "00:00:0", "-07:00", "123.1234,-123.1234", "someelement"));
-        assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Time</div>");
-        assert.isFalse(shashin.validateMetadataInputs("1", "13", "2021", "00:00:00", "-07:00", "123.1234,-123.1234", "someelement"));
-        assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Month</div>");
-        assert.isFalse(shashin.validateMetadataInputs("1", "12", "2021", "00:00:00", "-99:00", "123.1234,-123.1234", "someelement"));
-        assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Offset</div>");
-        assert.isFalse(shashin.validateMetadataInputs("1", "1", "2021", "00:00:00", "-07:00", "1231234,-abc.1234", "someelement"));
-        assert.equal($("#someelement").html(),"<div class=\"alert alert-danger\" role=\"alert\">Enter Valid Latitude/Longitude</div>");
     })
 })

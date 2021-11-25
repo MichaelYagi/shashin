@@ -7,7 +7,7 @@ $("#appToolsBatchEdit").click(function(e) {
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
     for (let index in metadataThumbnailsArray) {
         const metadataThumnailUrl = metadataThumbnailsArray[index];
-        thumbnailList += '<img src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'" onError="shashin.errorImg(this,\''+metadataFilenamesArray[index]+'\',75)">';
+        thumbnailList += '<img src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'" onError="Util.errorImg(this,\''+metadataFilenamesArray[index]+'\',75)">';
     }
 
     $("#batchMetadataIds").val(JSON.stringify(metadataIdArray));
@@ -39,7 +39,7 @@ $("#appToolsAddAlbum").click(function(e) {
     let metadataThumbnailsArray = shashin.getMetadataThumbnailsList();
     for (let index in metadataThumbnailsArray) {
         const metadataThumnailUrl = metadataThumbnailsArray[index];
-        thumbnailList += '<img src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'" onError="shashin.errorImg(this,\''+metadataFilenamesArray[index]+'\',75)">';
+        thumbnailList += '<img src="'+metadataThumnailUrl+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+metadataFilenamesArray[index]+'" onError="Util.errorImg(this,\''+metadataFilenamesArray[index]+'\',75)">';
     }
 
     if (thumbnailList !== "") {
