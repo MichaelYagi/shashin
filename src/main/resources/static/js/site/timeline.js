@@ -120,7 +120,7 @@
             {}
         );
 
-        let depth = shashin.isChrome() === false ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
+        let depth = (shashin.isSafari() === true || shashin.isFirefox() === true) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
         let depthDown = depth-1;
         let depthUp = depth;
 
@@ -172,7 +172,7 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if (shashin.isChrome() === false && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
+        if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
             $("#container").scrollTop(tempScrollTop - topHeight);
         }
 
@@ -757,26 +757,22 @@
                                     const tempScrollTop = $("#container").scrollTop();
 
                                     if (action === "above") {
-                                        if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+                                        if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
 
                                         $(html).insertBefore($("#container_" + attachToId)).ready(function () {
                                             // deferred.resolve("success");
                                             ret = "success";
-                                            if (shashin.isChrome() === false) {
-                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
-                                                }
+                                            if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                             }
                                         });
                                     } else if (action === "new") {
-                                        if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+                                        if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
 
                                         $("#infinite-scroll-gallery").prepend(html).ready(function () {
-                                            if (shashin.isChrome() === false) {
-                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
-                                                }
+                                            if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                             }
                                             // deferred.resolve("success");
@@ -784,27 +780,23 @@
                                         });
                                     } else {
                                         if (attachToId == null) {
-                                            if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+                                            if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
 
                                             if ($(".attachMetadataPhotos").length > 0) {
                                                 $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                                    if (shashin.isChrome() === false) {
-                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
-                                                        }
+                                                    if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                        $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
                                                     // deferred.resolve("success");
                                                     ret = "success";
                                                 });
                                             } else {
-                                                if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+                                                if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
 
                                                 $("#infinite-scroll-gallery").prepend(html).ready(function () {
-                                                    if (shashin.isChrome() === false) {
-                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
-                                                        }
+                                                    if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                        $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
                                                     // deferred.resolve("success");
@@ -812,13 +804,11 @@
                                                 });
                                             }
                                         } else {
-                                            if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+                                            if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
 
                                             $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
-                                                if (shashin.isChrome() === false) {
-                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
-                                                    }
+                                                if ((shashin.isSafari() === true || shashin.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                    $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                     $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                 }
                                                 // deferred.resolve("success");

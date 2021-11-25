@@ -108,6 +108,10 @@ $.fn.serializeObject = function() {
         return isSafari;
     }
 
+    shashin.isFirefox = function () {
+        return navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    }
+
     shashin.openEditMetadataModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList) {
         let index;
 
