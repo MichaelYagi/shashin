@@ -77,7 +77,7 @@
             /*<![CDATA[*/
             const activePage = /*[[${activePage}]]*/ 'trash';
             /*]]>*/
-            trashSettings.updateTrash(nextPage,activePage).then(function(additionalMediaContentList) {
+            Trash.updateTrash(nextPage,activePage).then(function(additionalMediaContentList) {
                 mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);
