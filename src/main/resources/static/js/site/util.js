@@ -94,7 +94,7 @@ class Util {
             latlng = $.trim(latlng);
             const latlngArr = latlng.split(",");
 
-            if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !shashin.isNumeric(latlngArr[0]) || !shashin.isNumeric(latlngArr[1])) {
+            if (latlngArr.length !== 2 || latlng.split(".").length !== 3 || !Util.isNumericString(latlngArr[0]) || !Util.isNumericString(latlngArr[1])) {
                 msg = "Enter Valid Latitude/Longitude";
             }
         }
@@ -107,4 +107,108 @@ class Util {
         }
 
     }
+
+    static getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    static atEndOfPage(element) {
+        return ((window.innerHeight + element.scrollTop)  >= element.scrollHeight) // compare with scroll position + some give (*1.5)
+    }
+
+    static getDateString(year,month,day) {
+        if (year !== null && year !== "" &&
+            month !== null && month !== "" &&
+            day !== null && day !== ""
+        ) {
+            let date = new Date(month+"/"+day+"/"+year);
+            if (date.toString() !== "Invalid Date") {
+                let shortMonth = Util.getShortMonths(date.getMonth());
+                let adjustedDay = date.getDate();
+                let dayOfWeek = Util.getShortDay(date.getDay());
+                return dayOfWeek + ", " + shortMonth + " " + adjustedDay + ", " + year;
+            }
+        }
+        return "";
+    }
+
+    static getDateObject(dateString) {
+        if (dateString.indexOf("tail_") >= 0) {
+            const idParts = dateString.split("tail_");
+            dateString = idParts[1];
+        }
+        if (typeof dateString !== "undefined" && dateString !== null) {
+            const dateStringParts = dateString.split("-");
+            if (dateStringParts.length === 3) {
+                const year = dateStringParts[0];
+                const month = dateStringParts[1];
+                const day = dateStringParts[2];
+
+                if (year !== null && year !== "" &&
+                    month !== null && month !== "" &&
+                    day !== null && day !== ""
+                ) {
+                    return new Date(month + "/" + day + "/" + year);
+                }
+            }
+        }
+        return null;
+    }
+
+    static isNumericString(str) {
+        if (typeof str != "string") return false // we only process strings!
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+            !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+    }
+
+    static decodeHtml(html) {
+        const txt = document.createElement("textarea");
+        txt.innerHTML = html;
+        return txt.value;
+    }
+
+    static encodeHtml(str) {
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    static errorImg(_this,text,defaulWidthtHeight) {
+        let dimensions = "/209";
+        if (defaulWidthtHeight != null) {
+            dimensions = "/"+defaulWidthtHeight;
+        }
+        if (_this.width != null && _this.width > 0 && _this.height != null && _this.height > 0) {
+            dimensions = "/"+_this.width+"x"+_this.height;
+        }
+        _this.src = "https://via.placeholder.com"+dimensions+"?text="+encodeURI(text);
+    }
+
+    static removeDateGallery(id) {
+        $("#br"+id).remove();
+        $("#row"+id).remove();
+        $("#amp_"+id).remove();
+        $("#tail_"+id).remove();
+        $("#"+id).remove();
+        $("#container_"+id).remove();
+    }
+
+    static getDateGalleryHeight(id) {
+        if ($("#br" + id).length === 0 && $("#br" + id).length === 0 && $("#br" + id).length === 0 && $("#br" + id).length === 0 && $("#br" + id).length === 0) {
+            return 0;
+        }
+
+        return $("#br" + id).outerHeight(true) +
+            $("#row" + id).outerHeight(true) +
+            $("#amp_" + id).outerHeight(true) +
+            $("#tail_" + id).outerHeight(true) +
+            $("#" + id).outerHeight(true);
+    }
+}
+
+if (typeof module !== 'undefined') {
+    module.exports = Util;
 }

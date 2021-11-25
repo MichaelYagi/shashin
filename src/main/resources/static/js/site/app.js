@@ -37,6 +37,18 @@
     shashin.lg = null;
     shashin.ajaxRetries = 3;
 
+    shashin.copyTextToClipboard = function (text,id) {
+        if (!navigator.clipboard) {
+            $("#msg"+id).html(fallbackCopyTextToClipboard(text));
+        } else {
+            navigator.clipboard.writeText(text).then(function () {
+                $("#msg" + id).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+            }, function (err) {
+                $("#msg" + id).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
+            });
+        }
+    }
+
     function fixContentHeight(){
         const viewHeight = $(window).height();
         const header = $("div[data-role='header']:visible:visible");
@@ -68,7 +80,7 @@
         $("#metadataId").val(metadata.id);
 
         if (metadata.thumbnailUrlCentered !== null) {
-            $("#propTimelineModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="shashin.errorImg(this,\''+metadata.title+'\',100)">');
+            $("#propTimelineModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
         }
 
         if (metadata.title !== null) {
@@ -267,14 +279,14 @@
             }
         }, 200);
         $("#container").on('scroll', function() {
-            if (shashin.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
+            if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
                 if (conditionOnNext === true) {
                     func();
                 }
             }
         })
         $("main").on('scroll', function() {
-            if (shashin.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
+            if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
                 if (conditionOnNext === true) {
                     func();
                 }
@@ -504,7 +516,7 @@
         $("#metadataId").val(metadata.id);
 
         if (metadata.thumbnailUrlCentered !== null) {
-            $("#propInfoModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="shashin.errorImg(this,\''+metadata.title+'\',100)">');
+            $("#propInfoModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
         }
 
         shashin.populateDetailsTab(metadata);
@@ -624,32 +636,6 @@
         history.replaceState(null,null,url);
     }
 
-    shashin.getParameterByName = function (name, url = window.location.href) {
-        name = name.replace(/[\[\]]/g, '\\$&');
-        const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-            results = regex.exec(url);
-        if (!results) return null;
-        if (!results[2]) return '';
-        return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
-
-    // Detect scrolling to bottom of page
-    shashin.atEndOfPage = function (element) {
-        return ((window.innerHeight + element.scrollTop)  >= element.scrollHeight) // compare with scroll position + some give (*1.5)
-    }
-
-    shashin.copyTextToClipboard = function (text,id) {
-        if (!navigator.clipboard) {
-            $("#msg"+id).html(fallbackCopyTextToClipboard(text));
-        } else {
-            navigator.clipboard.writeText(text).then(function () {
-                $("#msg" + id).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
-            }, function (err) {
-                $("#msg" + id).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
-            });
-        }
-    }
-
     shashin.setLightGalleryElement = function (name) {
         shashin.infiniteScrollGallery = null;
         if (document.getElementById(name)) {
@@ -732,61 +718,6 @@
         }
 
         return mapSource
-    }
-
-    shashin.getDateString = function (year,month,day) {
-        if (year !== null && year !== "" &&
-            month !== null && month !== "" &&
-            day !== null && day !== ""
-        ) {
-            let date = new Date(month+"/"+day+"/"+year);
-            if (date.toString() !== "Invalid Date") {
-                let shortMonth = Util.getShortMonths(date.getMonth());
-                let adjustedDay = date.getDate();
-                let dayOfWeek = Util.getShortDay(date.getDay());
-                return dayOfWeek + ", " + shortMonth + " " + adjustedDay + ", " + year;
-            }
-        }
-        return "";
-    }
-
-    shashin.getDateObject = function (dateString) {
-        if (dateString.indexOf("tail_") >= 0) {
-            const idParts = dateString.split("tail_");
-            dateString = idParts[1];
-        }
-        if (typeof dateString !== "undefined" && dateString !== null) {
-            const dateStringParts = dateString.split("-");
-            if (dateStringParts.length === 3) {
-                const year = dateStringParts[0];
-                const month = dateStringParts[1];
-                const day = dateStringParts[2];
-
-                if (year !== null && year !== "" &&
-                    month !== null && month !== "" &&
-                    day !== null && day !== ""
-                ) {
-                    return new Date(month + "/" + day + "/" + year);
-                }
-            }
-        }
-        return null;
-    }
-
-    shashin.isNumeric = function (str) {
-        if (typeof str != "string") return false // we only process strings!
-        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-            !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
-    }
-
-    shashin.decodeHtml = function(html) {
-        const txt = document.createElement("textarea");
-        txt.innerHTML = html;
-        return txt.value;
-    }
-
-    shashin.encodeHtml = function (str) {
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
     shashin.setPhotoOverlays = function (metadata, view) {
@@ -1170,7 +1101,7 @@
 
     shashin.getCenteredOverlay = function (metadata,onclickFunctionCall,index) {
         let html = "";
-        const dateString = shashin.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+        const dateString = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
         const mediaContent = {};
 
         html +=
@@ -1203,7 +1134,6 @@
 
         return {html:html,mediaContent:mediaContent}
     }
-
 
     shashin.clearTimelineSelection = function () {
         shashin.removeAllMetadataFilenamesList();
@@ -1251,7 +1181,7 @@
             $('.bi-circle-fill').each(function(i, obj) {
                 const metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="shashin.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\',75)">';
+                thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="Util.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\',75)">';
             });
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
@@ -1276,34 +1206,6 @@
         if (shashin.showDebug === true) {
             console.log(msg);
         }
-    }
-
-    shashin.errorImg = function (_this,text,defaulWidthtHeight) {
-        let dimensions = "/209";
-        if (defaulWidthtHeight != null) {
-            dimensions = "/"+defaulWidthtHeight;
-        }
-        if (_this.width != null && _this.width > 0 && _this.height != null && _this.height > 0) {
-            dimensions = "/"+_this.width+"x"+_this.height;
-        }
-        _this.src = "https://via.placeholder.com"+dimensions+"?text="+encodeURI(text);
-    }
-
-    shashin.removeDateGallery = function (id) {
-        $("#br"+id).remove();
-        $("#row"+id).remove();
-        $("#amp_"+id).remove();
-        $("#tail_"+id).remove();
-        $("#"+id).remove();
-        $("#container_"+id).remove();
-    }
-
-    shashin.getDateGalleryHeight = function (id) {
-        return $("#br" + id).outerHeight(true) +
-            $("#row" + id).outerHeight(true) +
-            $("#amp_" + id).outerHeight(true) +
-            $("#tail_" + id).outerHeight(true) +
-            $("#" + id).outerHeight(true);
     }
 }( window.shashin = window.shashin || {}, jQuery ));
 

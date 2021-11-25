@@ -247,7 +247,7 @@
     /*<![CDATA[*/
     const cameraCountJson = /*[[${cameraCountJson}]]*/ '[{"x":"","y":0}]';
     /*]]>*/
-    const cameraCounts = JSON.parse(shashin.decodeHtml(cameraCountJson));
+    const cameraCounts = JSON.parse(Util.decodeHtml(cameraCountJson));
     const cameraChart = new Chart(ctx, {
         type: 'bar',
         data: {

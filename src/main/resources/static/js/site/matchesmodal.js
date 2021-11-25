@@ -17,7 +17,7 @@
         if (labelString.length > 0) {
             labelString = labelString.slice(0, -1)
         }
-        $("#tagBatchDataInput").val(shashin.decodeHtml(labelString));
+        $("#tagBatchDataInput").val(Util.decodeHtml(labelString));
     }
 }(window.matchModalBatchSettings = window.matchModalBatchSettings || {}, jQuery));
 
@@ -105,7 +105,7 @@ $('#propBatchMetadata').bind('keypress', function () {
         if (labelString.length > 0) {
             labelString = labelString.slice(0, -1)
         }
-        $("#tagpeople" + metadataId).val(shashin.decodeHtml(labelString));
+        $("#tagpeople" + metadataId).val(Util.decodeHtml(labelString));
     }
 
     matchModalSettings.renderMatchesModal = function(metadata, recognitionLabels, taggedPeopleList) {
@@ -113,7 +113,7 @@ $('#propBatchMetadata').bind('keypress', function () {
         shashin.printMessageToConsole('taggedPeopleList:'+taggedPeopleList)
 
         let html = '<div class="modal fade" id="propmatches' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true"><div class="modal-dialog modal-lg" role="document"><div class="modal-content">\n' +
-            '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit ' + metadata.fileName + '<div id="propmatchesThumbnail' + metadata.id + '"><img src="' + encodeURI(metadata.thumbnailUrlCentered) + '" width="100" height="100" onError="shashin.errorImg(this,\''+metadata.title+'\',100)"></div></h5>\n' +
+            '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit ' + metadata.fileName + '<div id="propmatchesThumbnail' + metadata.id + '"><img src="' + encodeURI(metadata.thumbnailUrlCentered) + '" width="100" height="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)"></div></h5>\n' +
             '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n' +
             '<div class="modal-body">\n' +
             '   <form th:id="saveData' + metadata.id + '">\n' +

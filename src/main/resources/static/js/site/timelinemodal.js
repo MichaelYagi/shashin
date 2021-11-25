@@ -29,7 +29,7 @@
             labelString = labelString.slice(0,-1)
         }
 
-        $("#tagpeople").val(shashin.decodeHtml(labelString));
+        $("#tagpeople").val(Util.decodeHtml(labelString));
     }
 
     timelineModal.populateAlbum = function (metadataId) {
@@ -44,7 +44,7 @@
             albumString = albumString.slice(0,-1)
         }
 
-        $("#albumnames").val(shashin.decodeHtml(albumString));
+        $("#albumnames").val(Util.decodeHtml(albumString));
     }
 
 }( window.timelineModal = window.timelineModal || {}, jQuery ));
@@ -162,7 +162,7 @@ $("#saveMetadata").click(function (e) {
                         if (currentNumChildren === 0) {
                             const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
                             const headingId = rowId.replace("row", "");
-                            shashin.removeDateGallery(headingId);
+                            Util.removeDateGallery(headingId);
                         }
                     }
 
