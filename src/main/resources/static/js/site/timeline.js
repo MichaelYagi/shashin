@@ -5,6 +5,7 @@
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
+    timelineSettings.currentScrollTop = 0;
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
@@ -103,6 +104,7 @@
 
     // Render only what's needed
     timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
+        timelineSettings.enableScrollSpy = false;
         //let deferred = new $.Deferred();
 
         // Depth of results in section of page above and below anchor
@@ -153,9 +155,7 @@
         // Remove elements that are not visible
         let prevElementId = "";
         let topHeight = 0;
-        let bottomHeight = 0;
-        let totalHeight = 0;
-        const tempScrollTop = $("#container").scrollTop();
+        let tempScrollTop = $("#container").scrollTop();
         $('section').each(function (index, element) {
             shashin.printMessageToConsole(element.id + " checking to remove end");
             if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
@@ -163,11 +163,7 @@
                 // Get height to set scrollTop for non chrome browsers
                 if (shashin.getDateObject(id) < shashin.getDateObject(element.id)) {
                     topHeight += shashin.getDateGalleryHeight(element.id);
-                } else {
-                    bottomHeight += shashin.getDateGalleryHeight(element.id);
                 }
-
-                totalHeight += shashin.getDateGalleryHeight(element.id);
 
                 shashin.printMessageToConsole(element.id + " removed end");
                 shashin.removeDateGallery(element.id);
@@ -176,12 +172,8 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if (shashin.isChrome() === false) {
-            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
-                $("#container").scrollTop(tempScrollTop - topHeight);
-            } else if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && totalHeight > 0) {
-                $("#container").scrollTop(tempScrollTop + totalHeight - bottomHeight);
-            }
+        if (shashin.isChrome() === false && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
+            $("#container").scrollTop(tempScrollTop - topHeight);
         }
 
         shashin.printMessageToConsole("attachAboveArray");
@@ -192,7 +184,6 @@
         // Render top
         let action = "new";
         let attachPoint = id;
-
         for (let index in attachAboveArray) {
             const currentId = attachAboveArray[index];
             shashin.printMessageToConsole("attempting to attaching id above:" + currentId);
@@ -289,37 +280,41 @@
         }
 
         // Render mid
-        action = "new";
-        if (attachAboveArray.length > 0) {
-            attachPoint = attachAboveArray[attachAboveArray.length-1];
-            action = "below";
-        } else if (attachBelowArray.length > 0) {
-            attachPoint = attachBelowArray[0];
-            action = "above";
-        }
+        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+            action = "new";
+            if (attachAboveArray.length > 0) {
+                attachPoint = attachAboveArray[attachAboveArray.length - 1];
+                action = "below";
+            } else if (attachBelowArray.length > 0) {
+                attachPoint = attachBelowArray[0];
+                action = "above";
+            }
 
-        shashin.printMessageToConsole("attempting to attaching id mid "+id+" "+action+" "+attachPoint+" length "+$("#"+id).length)
+            shashin.printMessageToConsole("attempting to attaching id mid " + id + " " + action + " " + attachPoint + " length " + $("#" + id).length)
 
-        // Hack for attaching mid point
-        if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length-1].id === id && $("#"+id).length === 1) {
-            shashin.printMessageToConsole("removing already existing id "+id+" for mid point")
-            shashin.removeDateGallery(id);
-        }
+            // Hack for attaching mid point
+            if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length - 1].id === id && $("#" + id).length === 1) {
+                shashin.printMessageToConsole("removing already existing id " + id + " for mid point")
+                shashin.removeDateGallery(id);
+            }
 
-        // Render mid
-        if ($("#"+id).length === 0) {
-            shashin.printMessageToConsole("attaching mid attachPoint:"+attachPoint)
-            shashin.printMessageToConsole("attaching id:" + id);
-            shashin.printMessageToConsole("attaching mid action:"+action)
-            const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
-            if (msg === "success" && $("#"+id).length === 1) {
-                timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+            // Render mid
+            if ($("#" + id).length === 0) {
+                shashin.printMessageToConsole("attaching mid attachPoint:" + attachPoint)
+                shashin.printMessageToConsole("attaching id:" + id);
+                shashin.printMessageToConsole("attaching mid action:" + action)
+                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
+                if (msg === "success" && $("#" + id).length === 1) {
+                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                }
             }
         }
 
         shashin.printMessageToConsole("==============================================");
         //deferred.resolve(timelineSettings.successMidMsg);
         //return deferred.promise();
+
+        timelineSettings.enableScrollSpy = true;
 
         return timelineSettings.successMidMsg;
     }
@@ -759,31 +754,73 @@
                                         html += '</div></span><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
                                     }
 
+                                    const tempScrollTop = $("#container").scrollTop();
+
                                     if (action === "above") {
+                                        if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+
                                         $(html).insertBefore($("#container_" + attachToId)).ready(function () {
                                             // deferred.resolve("success");
                                             ret = "success";
+                                            if (shashin.isChrome() === false) {
+                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                    $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                }
+                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                            }
                                         });
                                     } else if (action === "new") {
+                                        if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+
                                         $("#infinite-scroll-gallery").prepend(html).ready(function () {
+                                            if (shashin.isChrome() === false) {
+                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                    $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                }
+                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                            }
                                             // deferred.resolve("success");
                                             ret = "success";
                                         });
                                     } else {
                                         if (attachToId == null) {
+                                            if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+
                                             if ($(".attachMetadataPhotos").length > 0) {
                                                 $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
+                                                    if (shashin.isChrome() === false) {
+                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                            $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                        }
+                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                    }
                                                     // deferred.resolve("success");
                                                     ret = "success";
                                                 });
                                             } else {
+                                                if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+
                                                 $("#infinite-scroll-gallery").prepend(html).ready(function () {
+                                                    if (shashin.isChrome() === false) {
+                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                            $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                        }
+                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                    }
                                                     // deferred.resolve("success");
                                                     ret = "success";
                                                 });
                                             }
                                         } else {
+                                            if (shashin.isChrome() === false) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
+
                                             $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
+                                                if (shashin.isChrome() === false) {
+                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                        $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                    }
+                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                }
                                                 // deferred.resolve("success");
                                                 ret = "success";
                                             });
