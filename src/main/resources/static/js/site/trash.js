@@ -1,5 +1,5 @@
-(function( trashSettings, $, undefined ) {
-    trashSettings.updateTrash = function (nextPage, activePage) {
+class Trash {
+    static updateTrash(nextPage, activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/trash/" + nextPage,
@@ -87,4 +87,4 @@
             return data;
         });
     }
-}( window.trashSettings = window.trashSettings || {}, jQuery ));
+}

@@ -50,6 +50,10 @@ class Util {
         return o;
     };
 
+    static hasScrollBar(containerElement) {
+        return containerElement.get(0).scrollHeight > containerElement.get(0).clientHeight;
+    }
+
     static getShortDay(index) {
         const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         return days[index];

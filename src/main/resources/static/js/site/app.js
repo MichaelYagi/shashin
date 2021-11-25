@@ -264,7 +264,7 @@
 
     shashin.pageLoader = function(func, appendClass, list, conditionOnNext) {
         const refreshIntervalId = window.setInterval(function () {
-            if (!$("#container").hasScrollBar() && !$("main").hasScrollBar()) {
+            if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
                 setTimeout(() => {
                     if (conditionOnNext === true) {
                         func();
