@@ -318,6 +318,7 @@
                                 <jsSourceFile>timelinebatchmodal.js</jsSourceFile>
                                 <jsSourceFile>timelinemodal.js</jsSourceFile>
                                 <jsSourceFile>trash.js</jsSourceFile>
+                                <jsSourceFile>util.js</jsSourceFile>
                                 <jsSourceFile>folder.js</jsSourceFile>
                                 <jsSourceFile>recent.js</jsSourceFile>
                                 <jsSourceFile>albumlisteners.js</jsSourceFile>

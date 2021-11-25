@@ -71,6 +71,7 @@
     </th:block>
 
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+        <script src="/js/site/util.js"></script>
         <script src="/js/site/app.js"></script>
         <th:block th:if="${titleDescriptor == 'Album'}">
             <script src="/js/site/album.js"></script>
@@ -105,6 +106,7 @@
     </th:block>
 
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+        <script src="/js/site/util.min.js"></script>
         <script src="/js/site/app.min.js"></script>
         <th:block th:if="${titleDescriptor == 'Album'}">
             <script src="/js/site/album.min.js"></script>
