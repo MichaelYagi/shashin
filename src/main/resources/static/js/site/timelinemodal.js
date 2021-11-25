@@ -136,7 +136,7 @@ $("#saveMetadata").click(function (e) {
                     }
 
                     if (metadataObj.hidden === false) {
-                        shashin.populateDetailsTab(metadataObj)
+                        Util.populateDetailsTab(metadataObj)
                         $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
 
                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");

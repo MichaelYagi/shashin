@@ -217,7 +217,7 @@
         $("#keywords").val(metadata.keywords);
 
         $("#albumDetailRow").remove();
-        shashin.populateDetailsTab(metadata);
+        Util.populateDetailsTab(metadata);
 
         // Open modal window
         $("#propTimelineModal").modal('show');
@@ -424,84 +424,6 @@
         }
     }
 
-    shashin.populateDetailsTab = function(metadata) {
-        // Clear data
-        $("#pathDetails").text("");
-        $("#typeDetails").text("");
-        $("#isoDetails").text("");
-        $("#compressionDetails").text("");
-        $("#exposureDetails").text("");
-        $("#fNumberDetails").text("");
-        $("#focalLengthDetails").text("");
-        $("#cameraDetails").text("");
-        $("#lensDetails").text("");
-        $("#qualityDetails").text("");
-        $("#addedAtDetails").text("");
-        $("#createdAtDetails").text("");
-        $("#modifiedAtDetails").text("");
-        $("#takenAtDetails").text("");
-        $("#manualTakenAtDetails").text("");
-        $("#timeZoneDetails").text("");
-        $("#keywordsDetails").text("");
-
-        // Fill in details tab data
-        if (metadata.path != null) {
-            $("#pathDetails").text(metadata.path);
-        }
-        if (metadata.keywords != null) {
-            $("#keywordsDetails").text(metadata.keywords);
-        }
-        if (metadata.type != null) {
-            $("#typeDetails").text(metadata.type);
-        }
-        if (metadata.iso != null) {
-            $("#isoDetails").text(metadata.iso);
-        }
-        if (metadata.compressionType != null) {
-            $("#compressionDetails").text(metadata.compressionType);
-        }
-        if (metadata.exposure != null) {
-            $("#exposureDetails").text(metadata.exposure);
-        }
-        if (metadata.fNumber != null) {
-            $("#fNumberDetails").text(metadata.fNumber);
-        }
-        if (metadata.focalLength != null) {
-            $("#focalLengthDetails").text(metadata.focalLength);
-        }
-        if (metadata.camera != null) {
-            $("#cameraDetails").text(metadata.camera);
-        }
-        if (metadata.lens != null) {
-            $("#lensDetails").text(metadata.lens);
-        }
-        if (metadata.quality != null) {
-            $("#qualityDetails").text(metadata.quality);
-        }
-        if (metadata.addedAt != null) {
-            $("#addedAtDetails").text(metadata.addedAt);
-        }
-        if (metadata.createdAt != null) {
-            $("#createdAtDetails").text(metadata.createdAt);
-        }
-        if (metadata.modifiedAt != null) {
-            $("#modifiedAtDetails").text(metadata.modifiedAt);
-        }
-        if (metadata.takenAt != null) {
-            $("#takenAtDetails").text(metadata.takenAt);
-        }
-        if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-            let takenDetails = metadata.year + '-' + metadata.month + '-' + metadata.day;
-            if (metadata.time !== null && metadata.time !== "") {
-                takenDetails += ' ' + metadata.time;
-            }
-            $("#manualTakenAtDetails").text(takenDetails);
-        }
-        if (metadata.timeZone != null) {
-            $("#timeZoneDetails").text(metadata.timeZone);
-        }
-    }
-
     shashin.openInfoModal = function(metadata) {
         // Populate modal data
 
@@ -519,7 +441,7 @@
             $("#propInfoModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
         }
 
-        shashin.populateDetailsTab(metadata);
+        Util.populateDetailsTab(metadata);
 
         // Open modal window
         $("#propInfoModal").modal('show');
