@@ -742,60 +742,57 @@
 
                                     const tempScrollTop = $("#container").scrollTop();
 
-                                    if (action === "above") {
-                                        if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
 
-                                        $(html).insertBefore($("#container_" + attachToId)).ready(function () {
+                                    let htmlEl = $(html);
+
+                                    if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                        htmlEl = htmlEl.hide();
+                                    }
+
+                                    if (action === "above") {
+                                        htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
                                             // deferred.resolve("success");
                                             ret = "success";
                                             if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                htmlEl.show();
                                             }
                                         });
                                     } else if (action === "new") {
-                                        if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
-
-                                        $("#infinite-scroll-gallery").prepend(html).ready(function () {
+                                        $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                             if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                htmlEl.show();
                                             }
                                             // deferred.resolve("success");
                                             ret = "success";
                                         });
                                     } else {
                                         if (attachToId == null) {
-                                            if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
-
                                             if ($(".attachMetadataPhotos").length > 0) {
-                                                $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
+                                                htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
                                                     if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        htmlEl.show();
                                                     }
                                                     // deferred.resolve("success");
                                                     ret = "success";
                                                 });
                                             } else {
-                                                if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
-
-                                                $("#infinite-scroll-gallery").prepend(html).ready(function () {
+                                                $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                                     if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        htmlEl.show();
                                                     }
                                                     // deferred.resolve("success");
                                                     ret = "success";
                                                 });
                                             }
                                         } else {
-                                            if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {$("#infinite-scroll-gallery").css('visibility', 'hidden');}
-
-                                            $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
+                                            htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
                                                 if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                     $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                    htmlEl.show();
                                                 }
                                                 // deferred.resolve("success");
                                                 ret = "success";
