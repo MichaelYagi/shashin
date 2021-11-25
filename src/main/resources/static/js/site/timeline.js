@@ -764,7 +764,7 @@
                                             ret = "success";
                                             if (shashin.isChrome() === false) {
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                    $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                 }
                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                             }
@@ -775,7 +775,7 @@
                                         $("#infinite-scroll-gallery").prepend(html).ready(function () {
                                             if (shashin.isChrome() === false) {
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                    $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                 }
                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                             }
@@ -790,7 +790,7 @@
                                                 $(html).insertAfter($(".attachMetadataPhotos").last()).ready(function () {
                                                     if (shashin.isChrome() === false) {
                                                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                            $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                         }
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
@@ -803,7 +803,7 @@
                                                 $("#infinite-scroll-gallery").prepend(html).ready(function () {
                                                     if (shashin.isChrome() === false) {
                                                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                            $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                         }
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
@@ -817,7 +817,7 @@
                                             $(html).insertAfter($("#amp_" + attachToId)).ready(function () {
                                                 if (shashin.isChrome() === false) {
                                                     if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        $("#container").scrollTop(tempScrollTop + $("#container_" + date).height());
+                                                        $("#container").scrollTop(tempScrollTop + shashin.getDateGalleryHeight(date));
                                                     }
                                                     $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                 }
