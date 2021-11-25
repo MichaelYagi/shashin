@@ -57,7 +57,7 @@ function showMap(mapdata,authority) {
         }
         $("#propMetadataLocation").css('z-index', 9999);
 
-        shashin.populateDetailsTab(metadata);
+        Util.populateDetailsTab(metadata);
 
         $("#propMetadataLocation").modal('show');
     }
