@@ -103,16 +103,17 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         // Get image data
         try {
             val metadata = ImageMetadataReader.readMetadata(file)
+            var cameraMake: String? = null
+            var cameraModel: String? = null
+            var lensMake: String? = null
+            var lensModel: String? = null
+            var lat: String? = null
+            var lng: String? = null
+            var rotation = 0
+            var originalPixelWidth: Int? = null
+            var originalPixelHeight: Int? = null
+
             for (directory in metadata.directories) {
-                var cameraMake: String? = null
-                var cameraModel: String? = null
-                var lensMake: String? = null
-                var lensModel: String? = null
-                var lat: String? = null
-                var lng: String? = null
-                var rotation = 0
-                var originalPixelWidth: Int? = null
-                var originalPixelHeight: Int? = null
 
                 for (tag in directory.tags) {
                     if (tag.description != null) {
@@ -230,12 +231,14 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             // XXX pixels
                             "Exif Image Width", "Width", "Image Width" -> {
                                 val widthValue = tag.description.filter { it.isDigit() }
+
                                 if ((originalPixelWidth == null && widthValue != "") || (originalPixelWidth != null && widthValue.toInt() > originalPixelWidth)) {
                                     originalPixelWidth = widthValue.toInt()
                                 }
                             }
                             "Exif Image Height", "Height", "Image Height" -> {
                                 val heightValue = tag.description.filter { it.isDigit() }
+
                                 if ((originalPixelHeight == null && heightValue != "")  || (originalPixelHeight != null && heightValue.toInt() > originalPixelHeight)) {
                                     originalPixelHeight = heightValue.toInt()
                                 }
@@ -347,6 +350,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                         metadataObj.setLens(lens.trim())
                     }
                 }
+
                 if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
                     val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
 
@@ -364,6 +368,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                         metadataObj.setTimeZone(offset.toString())
                     }
                 }
+
                 if (originalPixelHeight != null && originalPixelWidth != null) {
                     if (rotation == 90 || rotation == 270) {
                         metadataObj.setOriginalImageWidth(originalPixelHeight)
