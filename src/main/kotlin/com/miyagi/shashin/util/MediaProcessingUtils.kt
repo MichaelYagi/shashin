@@ -30,31 +30,13 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 
-
 @ComponentScan
 class MediaProcessingUtils(private var apiVersion: String?, private var geocodeUrl: String?) {
 
     private var logger: Logger = Logger.getLogger(MediaProcessingUtils::class.simpleName)
 
     fun populateMetadata(file: File, sidecarDir: String, _metadataObj: Metadata?): Metadata? {
-        val metadataDirectory = sidecarDir.dropLast(1) + "/metadata/"
-
-        val fileRootDir: String = getRootDir(file)
-
-        val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
-
-        val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
-        val metadataObj = _metadataObj?.let { getAndSetMetadataExifData(file, sidecarDir, it) }
-        if (mdFile != null) {
-            val yamlFactory: YAMLFactory = YAMLFactory.builder()
-                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                .disable(YAMLGenerator.Feature.SPLIT_LINES)
-                .build()
-            val om = ObjectMapper(yamlFactory)
-            om.writeValue(mdFile, metadataObj)
-        }
-
-        return metadataObj
+        return _metadataObj?.let { getAndSetMetadataExifData(file, sidecarDir, it) }
     }
 
     private fun getAndSetMetadataExifData(file: File, sidecarDir: String, metadataObj: Metadata): Metadata {
@@ -254,7 +236,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             }
                             "Image Height", "Height", "Exif Image Height" -> {
                                 val heightValue = tag.description.filter { it.isDigit() }
-                                if (originalPixelWidth == null && heightValue != "") {
+                                if (originalPixelHeight == null && heightValue != "") {
                                     originalPixelHeight = heightValue.toInt()
                                 }
                             }
@@ -476,7 +458,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         val thumbnailDirectory = sidecarDir.dropLast(1) + "/thumbnails"
 
         // Map path to sidecar file
-        val fileRootDir: String = getRootDir(file)
+        val fileRootDir: String = FileUtils.getRootDir(file)
         val supportedImageFormats = FileUtils.allowableImageFiles()
         val supportedVideoFormats = FileUtils.allowableVideoFiles()
 
@@ -624,6 +606,19 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             _metadataObj = null
         }
 
+        // Save serialized metadata obj
+        val metadataDirectory = sidecarDir.dropLast(1) + "/metadata/"
+        val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
+        val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
+        if (mdFile != null) {
+            val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                .build()
+            val om = ObjectMapper(yamlFactory)
+            om.writeValue(mdFile, _metadataObj)
+        }
+
         return _metadataObj
     }
 
@@ -740,7 +735,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             // Update Exif file
             val metadataDirectory = _sidecarDir.dropLast(1) + "/metadata"
             val photoFile = File(path)
-            val fileRootDir: String = getRootDir(photoFile)
+            val fileRootDir: String = FileUtils.getRootDir(photoFile)
             val exifFile = FileUtils.createFile(
                 "$metadataDirectory/$fileRootDir",
                 "$metadataDirectory/$fileRootDir/" + photoFile.name + ".exif.yaml",
@@ -764,7 +759,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             val sidecarDir = rootPath + _sidecarDir
             val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
             val photoFile = File(metadataObj.getPath()!!)
-            val fileRootDir = getRootDir(photoFile)
+            val fileRootDir = FileUtils.getRootDir(photoFile)
             val metadataFileStr = metadataDirectory + fileRootDir + "/" + photoFile.name + ".yaml"
             val mdFile = File(metadataFileStr)
             val yamlFactory: YAMLFactory = YAMLFactory.builder()
@@ -774,25 +769,5 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             val om = ObjectMapper(yamlFactory)
             om.writeValue(mdFile, metadataObj)
         }
-    }
-
-    private fun getRootDir(file: File): String {
-        var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "")
-            .lowercase()  //.replace(rootDirFilePath.replace('\\', '/').lowercase(), "")
-        fileRootDir = fileRootDir.replace('\\', '/')
-
-        if (fileRootDir.last() == '/') {
-            fileRootDir = fileRootDir.dropLast(1)
-        }
-
-        if (fileRootDir.take(2) == "//") {
-            fileRootDir = fileRootDir.drop(1)
-        }
-
-        if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
-            fileRootDir = "/$fileRootDir"
-        }
-
-        return fileRootDir
     }
 }
