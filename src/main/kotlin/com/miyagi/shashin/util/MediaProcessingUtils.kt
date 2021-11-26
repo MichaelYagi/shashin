@@ -230,13 +230,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             // XXX pixels
                             "Exif Image Width", "Width", "Image Width" -> {
                                 val widthValue = tag.description.filter { it.isDigit() }
-                                if (originalPixelWidth == null && widthValue != "") {
+                                if ((originalPixelWidth == null && widthValue != "") || (originalPixelWidth != null && widthValue.toInt() > originalPixelWidth)) {
                                     originalPixelWidth = widthValue.toInt()
                                 }
                             }
                             "Exif Image Height", "Height", "Image Height" -> {
                                 val heightValue = tag.description.filter { it.isDigit() }
-                                if (originalPixelHeight == null && heightValue != "") {
+                                if ((originalPixelHeight == null && heightValue != "")  || (originalPixelHeight != null && heightValue.toInt() > originalPixelHeight)) {
                                     originalPixelHeight = heightValue.toInt()
                                 }
                             }
