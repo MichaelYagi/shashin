@@ -484,6 +484,10 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         } else if (supportedVideoFormats.contains(file.extension.lowercase())) {
             // Grab screen shot
             img = grabScreenshot(file)
+            if (img != null && _metadataObj?.getOriginalImageWidth() == null && _metadataObj?.getOriginalImageHeight() == null) {
+                _metadataObj?.setOriginalImageWidth(img.width)
+                _metadataObj?.setOriginalImageHeight(img.height)
+            }
 //            _metadataObj?.setVideoUrl("/api/$apiVersion/original/video$fileRootDir/" + file.name)
         }
 

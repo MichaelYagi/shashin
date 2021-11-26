@@ -239,6 +239,7 @@ class Util {
         $("#manualTakenAtDetails").text("");
         $("#timeZoneDetails").text("");
         $("#keywordsDetails").text("");
+        $("#resolutionDetails").text("");
 
         // Fill in details tab data
         if (metadata.path != null) {
@@ -285,6 +286,9 @@ class Util {
         }
         if (metadata.takenAt != null) {
             $("#takenAtDetails").text(metadata.takenAt);
+        }
+        if (metadata.originalImageWidth != null && metadata.originalImageHeight != null) {
+            $("#resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
         }
         if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
             let takenDetails = metadata.year + '-' + metadata.month + '-' + metadata.day;
