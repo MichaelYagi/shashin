@@ -228,13 +228,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 //                        metadataObj.setTitle(tag.description)
 //                    }
                             // XXX pixels
-                            "Image Width", "Width", "Exif Image Width" -> {
+                            "Exif Image Width", "Width", "Image Width" -> {
                                 val widthValue = tag.description.filter { it.isDigit() }
                                 if (originalPixelWidth == null && widthValue != "") {
                                     originalPixelWidth = widthValue.toInt()
                                 }
                             }
-                            "Image Height", "Height", "Exif Image Height" -> {
+                            "Exif Image Height", "Height", "Image Height" -> {
                                 val heightValue = tag.description.filter { it.isDigit() }
                                 if (originalPixelHeight == null && heightValue != "") {
                                     originalPixelHeight = heightValue.toInt()
