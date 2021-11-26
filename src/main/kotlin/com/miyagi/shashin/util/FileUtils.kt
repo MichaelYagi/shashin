@@ -128,5 +128,25 @@ class FileUtils {
 
             return null
         }
+
+        fun getRootDir(file: File): String {
+            var fileRootDir: String = file.parent.replace('\\', '/').replace(":", "")
+                .lowercase()  //.replace(rootDirFilePath.replace('\\', '/').lowercase(), "")
+            fileRootDir = fileRootDir.replace('\\', '/')
+
+            if (fileRootDir.last() == '/') {
+                fileRootDir = fileRootDir.dropLast(1)
+            }
+
+            if (fileRootDir.take(2) == "//") {
+                fileRootDir = fileRootDir.drop(1)
+            }
+
+            if (fileRootDir.first() != '/' && fileRootDir.first() != '\\') {
+                fileRootDir = "/$fileRootDir"
+            }
+
+            return fileRootDir
+        }
     }
 }
