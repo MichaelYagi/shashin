@@ -214,6 +214,9 @@ describe('#Util tests', function() {
                 id: 'timeZoneDetails'
             }),
             $("<div/>", {
+                id: 'resolutionDetails'
+            }),
+            $("<div/>", {
                 id: 'keywordsDetails'
             })
         )
