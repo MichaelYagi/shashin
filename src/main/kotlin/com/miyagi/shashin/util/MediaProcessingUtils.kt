@@ -232,12 +232,22 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             "Exif Image Width", "Width", "Image Width" -> {
                                 val widthValue = tag.description.filter { it.isDigit() }
 
+                                // Bug in EXIF data - prioritize Exif Image Width
+                                if (tag.tagName == "Image Width" && originalPixelHeight != null && originalPixelHeight == widthValue.toInt()) {
+                                    continue
+                                }
+
                                 if ((originalPixelWidth == null && widthValue != "") || (originalPixelWidth != null && widthValue.toInt() > originalPixelWidth)) {
                                     originalPixelWidth = widthValue.toInt()
                                 }
                             }
                             "Exif Image Height", "Height", "Image Height" -> {
                                 val heightValue = tag.description.filter { it.isDigit() }
+
+                                // Bug in EXIF data - prioritize Exif Image Height
+                                if (tag.tagName == "Image Height" && originalPixelWidth != null && originalPixelWidth == heightValue.toInt()) {
+                                    continue
+                                }
 
                                 if ((originalPixelHeight == null && heightValue != "")  || (originalPixelHeight != null && heightValue.toInt() > originalPixelHeight)) {
                                     originalPixelHeight = heightValue.toInt()
@@ -340,43 +350,59 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             "Tag description not available for " + file.name + " for tag " + tag.tagName
                         )
                     }
-
-                    if (!cameraMake.isNullOrBlank() && !cameraModel.isNullOrBlank()) {
-                        val camera = "$cameraMake $cameraModel"
-                        metadataObj.setCamera(camera.trim())
-                    }
-                    if (!lensMake.isNullOrBlank() && !lensModel.isNullOrBlank()) {
-                        val lens = "$lensMake $lensModel"
-                        metadataObj.setLens(lens.trim())
-                    }
                 }
+            }
 
-                if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
-                    val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
-
-                    val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
-                    if (buildPlace.isNotBlank()) {
-                        metadataObj.setPlaceName(buildPlace)
-
-                        val engine = TimeZoneEngine.initialize()
-                        val maybeZoneId: Optional<ZoneId> =
-                            engine.query(lat.toString().toDouble(), lng.toString().toDouble())
-                        val zone = ZoneId.of(maybeZoneId.get().id)
-                        val dt = LocalDateTime.now()
-                        val zdt: ZonedDateTime = dt.atZone(zone)
-                        val offset = zdt.offset
-                        metadataObj.setTimeZone(offset.toString())
-                    }
+            if (metadataObj.getCamera().isNullOrBlank() && (!cameraMake.isNullOrBlank() || !cameraModel.isNullOrBlank())) {
+                var camera = ""
+                if (!cameraMake.isNullOrBlank()) {
+                    camera += cameraMake
                 }
+                if (!cameraModel.isNullOrBlank()) {
+                    camera += if (camera.isNotBlank()) " - $cameraModel" else cameraModel
+                }
+                if (camera.isNotBlank()) {
+                    metadataObj.setCamera(camera.trim())
+                }
+            }
+            if (metadataObj.getLens().isNullOrBlank() && (!lensMake.isNullOrBlank() || !lensModel.isNullOrBlank())) {
+                var lens = ""
+                if (!lensMake.isNullOrBlank()) {
+                    lens += lensMake
+                }
+                if (!lensModel.isNullOrBlank()) {
+                    lens += if (lens.isNotBlank()) " - $lensModel" else lensModel
+                }
+                if (lens.isNotBlank()) {
+                    metadataObj.setLens(lens.trim())
+                }
+            }
 
-                if (originalPixelHeight != null && originalPixelWidth != null) {
-                    if (rotation == 90 || rotation == 270) {
-                        metadataObj.setOriginalImageWidth(originalPixelHeight)
-                        metadataObj.setOriginalImageHeight(originalPixelWidth)
-                    } else {
-                        metadataObj.setOriginalImageWidth(originalPixelWidth)
-                        metadataObj.setOriginalImageHeight(originalPixelHeight)
-                    }
+            if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
+                val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
+
+                val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
+                if (buildPlace.isNotBlank()) {
+                    metadataObj.setPlaceName(buildPlace)
+
+                    val engine = TimeZoneEngine.initialize()
+                    val maybeZoneId: Optional<ZoneId> =
+                        engine.query(lat.toString().toDouble(), lng.toString().toDouble())
+                    val zone = ZoneId.of(maybeZoneId.get().id)
+                    val dt = LocalDateTime.now()
+                    val zdt: ZonedDateTime = dt.atZone(zone)
+                    val offset = zdt.offset
+                    metadataObj.setTimeZone(offset.toString())
+                }
+            }
+
+            if (originalPixelHeight != null && originalPixelWidth != null) {
+                if (rotation == 90 || rotation == 270) {
+                    metadataObj.setOriginalImageWidth(originalPixelHeight)
+                    metadataObj.setOriginalImageHeight(originalPixelWidth)
+                } else {
+                    metadataObj.setOriginalImageWidth(originalPixelWidth)
+                    metadataObj.setOriginalImageHeight(originalPixelHeight)
                 }
             }
         } catch (e: Exception) {
