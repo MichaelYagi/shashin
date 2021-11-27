@@ -359,7 +359,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                     camera += cameraMake
                 }
                 if (!cameraModel.isNullOrBlank()) {
-                    camera += if (camera.isNotBlank()) " - $cameraModel" else cameraModel
+                    camera += if (camera.isNotBlank()) " $cameraModel" else cameraModel
                 }
                 if (camera.isNotBlank()) {
                     metadataObj.setCamera(camera.trim())
@@ -371,7 +371,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                     lens += lensMake
                 }
                 if (!lensModel.isNullOrBlank()) {
-                    lens += if (lens.isNotBlank()) " - $lensModel" else lensModel
+                    lens += if (lens.isNotBlank()) " $lensModel" else lensModel
                 }
                 if (lens.isNotBlank()) {
                     metadataObj.setLens(lens.trim())
