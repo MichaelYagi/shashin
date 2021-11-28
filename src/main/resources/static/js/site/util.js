@@ -240,6 +240,8 @@ class Util {
         $("#timeZoneDetails").text("");
         $("#keywordsDetails").text("");
         $("#resolutionDetails").text("");
+        $("#shareUrlDetails").html("");
+        $("#msgcopyLink").html("");
 
         // Fill in details tab data
         if (metadata.path != null) {
@@ -299,6 +301,20 @@ class Util {
         }
         if (metadata.timeZone != null) {
             $("#timeZoneDetails").text(metadata.timeZone);
+        }
+        if (metadata.thumbnailUrlOriginal != null || metadata.videoUrl != null) {
+            let relativeShareLink = metadata.thumbnailUrlOriginal;
+            if (metadata.videoUrl != null) {
+                relativeShareLink = metadata.videoUrl;
+            }
+            $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-share'></span>");
+            $("#copyLink").click(function (e) {
+                e.preventDefault();
+                const getUrl = window.location;
+                const baseUrl = getUrl.protocol + "//" + getUrl.host;
+                const shareUrl = baseUrl + relativeShareLink;
+                shashin.copyTextToClipboard(shareUrl, "copyLink");
+            });
         }
     }
 }
