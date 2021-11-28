@@ -307,7 +307,7 @@ class Util {
             if (metadata.videoUrl != null) {
                 relativeShareLink = metadata.videoUrl;
             }
-            $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-share'></span>");
+            $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-clipboard-plus'></span>");
             $("#copyLink").click(function (e) {
                 e.preventDefault();
                 const getUrl = window.location;
