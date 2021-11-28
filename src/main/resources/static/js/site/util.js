@@ -311,7 +311,17 @@ class Util {
             const baseUrl = getUrl.protocol + "//" + getUrl.host;
             const shareUrl = baseUrl + relativeShareLink;
             $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-clipboard-plus' data-clipboard-text='"+shareUrl+"'></span>");
-            const clipboard = new ClipboardJS(document.getElementById("copyLink"));
+
+            let containerModalId = "";
+            if ($("#propInfoModal").length > 0) {
+                containerModalId = "propInfoModal";
+            } else if ($("#propTimelineModal").length > 0) {
+                containerModalId = "propTimelineModal";
+            } else if ($("#propMetadataLocation").length > 0) {
+                containerModalId = "propMetadataLocation";
+            }
+
+            const clipboard = new ClipboardJS("#copyLink",{container: document.getElementById(containerModalId)});
             clipboard.on('success', function (e) {
                 $("#copyLinkMessage").html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
             });
