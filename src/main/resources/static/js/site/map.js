@@ -33,7 +33,7 @@ function showMap(mapdata,authority) {
             metadata.type = locationArgs[7];
             metadata.iso = locationArgs[8];
             metadata.exposure = locationArgs[9];
-            metadata.fNumber = locationArgs[10];
+            metadata.fstopNumber = locationArgs[10];
             metadata.focalLength = locationArgs[11];
             metadata.camera = locationArgs[12];
             metadata.lens = locationArgs[13];
@@ -180,7 +180,7 @@ function showMap(mapdata,authority) {
                     featureProperties["type"],
                     featureProperties["iso"],
                     featureProperties["exposure"],
-                    featureProperties["fNumber"],
+                    featureProperties["fstopNumber"],
                     featureProperties["focalLength"],
                     featureProperties["camera"],
                     featureProperties["lens"],
@@ -344,7 +344,7 @@ function showMap(mapdata,authority) {
                 keywords: data["keywords"],
                 iso: data["iso"],
                 exposure: data["exposure"],
-                fNumber: data["fNumber"],
+                fstopNumber: data["fstopNumber"],
                 camera: data["camera"],
                 lens: data["lens"],
                 quality: data["quality"],

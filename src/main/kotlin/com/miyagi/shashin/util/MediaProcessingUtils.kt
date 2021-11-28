@@ -310,11 +310,22 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 metadataObj.setExposure(fraction)
                             }
                             "F-Number" -> {
-                                metadataObj.setFNumber(tag.description.drop(2).toDouble())
+                                val regex = "\\d+(\\.\\d+)?".toRegex()
+                                var matchValue = ""
+                                try {
+                                    val match = regex.find(tag.description)!!
+                                    matchValue=match.value
+                                } catch (e: Exception) {}
+
+                                if (matchValue.isNotBlank()) {
+                                    metadataObj.setFstopNumber(matchValue.toDouble())
+                                }
                             }
                             "Focal Length" -> {
-                                val flArray = tag.description.split(" ")
-                                metadataObj.setFocalLength(flArray[0].toDouble())
+                                val flengthValue = tag.description.filter { it.isDigit() }
+                                if (flengthValue.isNotBlank()) {
+                                    metadataObj.setFocalLength(flengthValue.toDouble())
+                                }
                             }
                             "Make" -> {
                                 cameraMake = tag.description
@@ -422,7 +433,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 metadataObj.getCreatedAt(),
                 metadataObj.getType(),
                 metadataObj.getCamera(),
-                metadataObj.getFNumber(),
+                metadataObj.getFstopNumber(),
                 metadataObj.getIso(),
                 metadataObj.getExposure()
             ).toString()

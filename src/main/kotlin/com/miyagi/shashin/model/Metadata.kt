@@ -38,7 +38,7 @@ class Metadata {
     private var time: String? = null
     private var iso: Int? = null
     private var exposure: String? = null
-    private var fNumber: Double? = null
+    private var fstopNumber: Double? = null
     private var focalLength: Double? = null
     private var camera: String? = null
     private var lens: String? = null
@@ -148,8 +148,8 @@ class Metadata {
     fun setExposure(exposure: String?) {
         this.exposure = exposure
     }
-    fun setFNumber(fNumber: Double?) {
-        this.fNumber = fNumber
+    fun setFstopNumber(fstopNumber: Double?) {
+        this.fstopNumber = fstopNumber
     }
     fun setFocalLength(focalLength: Double?) {
         this.focalLength = focalLength
@@ -275,8 +275,8 @@ class Metadata {
     fun getExposure(): String? {
         return this.exposure
     }
-    fun getFNumber(): Double? {
-        return this.fNumber
+    fun getFstopNumber(): Double? {
+        return this.fstopNumber
     }
     fun getFocalLength(): Double? {
         return this.focalLength
@@ -336,7 +336,7 @@ class Metadata {
         map["time"] = this.time
         map["iso"] = this.iso
         map["exposure"] = this.exposure
-        map["fNumber"] = this.fNumber
+        map["fstopNumber"] = this.fstopNumber
         map["focalLength"] = this.focalLength
         map["camera"] = this.camera
         map["lens"] = this.lens
