@@ -54,7 +54,7 @@
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
 
-            <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
+            <div th:replace="fragments/timelinemodal :: timelinemodal(${currentUser})"></div>
 
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
