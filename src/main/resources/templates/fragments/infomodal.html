@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="infomodal()">
+<body th:fragment="infomodal(${currentUser})">
 
 <!--Modal for each photo-->
 <div class="modal fade" id="propInfoModal" tabindex="-1" role="dialog" aria-labelledby="labelInfoModal" aria-hidden="true">
@@ -22,7 +22,7 @@
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane container show active" id="detailsTab">
-                        <div th:replace="fragments/detailsinfo :: detailsinfo()"></div>
+                        <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
                     </div>
                     <div class="tab-pane container fade" id="mapTab">
                         <br>

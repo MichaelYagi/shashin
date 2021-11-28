@@ -53,7 +53,7 @@
                                 </div>
                             </div>
                             <div class="tab-pane container fade" id="detailsTab">
-                                <div th:replace="fragments/detailsinfo :: detailsinfo()"></div>
+                                <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
                             </div>
                         </div>
                     </div>

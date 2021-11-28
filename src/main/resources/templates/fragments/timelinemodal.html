@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="timelinemodal()">
+<body th:fragment="timelinemodal(${currentUser})">
 
 <!--Modal for each photo-->
 <div class="modal fade" id="propTimelineModal" tabindex="-1" role="dialog" aria-labelledby="labelTimelineModal" aria-hidden="true">
@@ -114,7 +114,7 @@
                         </form>
                     </div>
                     <div class="tab-pane container fade" id="detailsTab">
-                        <div th:replace="fragments/detailsinfo :: detailsinfo()"></div>
+                        <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
                     </div>
                     <div class="tab-pane container fade" id="mapTab">
                         <br>

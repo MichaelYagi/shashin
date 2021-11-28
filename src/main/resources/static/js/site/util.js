@@ -317,8 +317,6 @@ class Util {
                 containerModalId = "propInfoModal";
             } else if ($("#propTimelineModal").length > 0) {
                 containerModalId = "propTimelineModal";
-            } else if ($("#propMetadataLocation").length > 0) {
-                containerModalId = "propMetadataLocation";
             }
 
             const clipboard = new ClipboardJS("#copyLink",{container: document.getElementById(containerModalId)});

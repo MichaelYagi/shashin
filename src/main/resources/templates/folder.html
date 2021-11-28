@@ -18,7 +18,7 @@
             <input type="hidden" id="currentfilename" name="currentfilename">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
 
-            <div th:replace="fragments/timelinemodal :: timelinemodal()"></div>
+            <div th:replace="fragments/timelinemodal :: timelinemodal(${currentUser})"></div>
 
             <div id="scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
