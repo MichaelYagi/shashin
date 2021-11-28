@@ -75,10 +75,10 @@ class TextUtils {
             createdAt:String?,
             type: String?,
             camera: String?,
-            fNumber: Double?,
+            fstopNumber: Double?,
             iso: Int?,
             exposure: String?): UUID {
-            val uuidInput = filePath+createdAt+type+camera+fNumber+iso+exposure
+            val uuidInput = filePath+createdAt+type+camera+fstopNumber+iso+exposure
             return UUID.nameUUIDFromBytes(uuidInput.toByteArray())
         }
 

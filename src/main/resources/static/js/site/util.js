@@ -258,13 +258,13 @@ class Util {
             $("#compressionDetails").text(metadata.compressionType);
         }
         if (metadata.exposure != null) {
-            $("#exposureDetails").text(metadata.exposure);
+            $("#exposureDetails").text(metadata.exposure + " s");
         }
-        if (metadata.fNumber != null) {
-            $("#fNumberDetails").text(metadata.fNumber);
+        if (metadata.fstopNumber != null) {
+            $("#fNumberDetails").text("f/"+metadata.fstopNumber);
         }
         if (metadata.focalLength != null) {
-            $("#focalLengthDetails").text(metadata.focalLength);
+            $("#focalLengthDetails").text(metadata.focalLength + " mm");
         }
         if (metadata.camera != null) {
             $("#cameraDetails").text(metadata.camera);
