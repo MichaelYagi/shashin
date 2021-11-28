@@ -104,11 +104,18 @@
         $("#copyLink"+albumId).click(function (e) {
             e.preventDefault();
 
-            const shareLink = $("#shareLink"+albumId).val().trim();
+            const shareLink = $("#copyLink"+albumId).attr("data-clipboard-text");
 
-            if (shareLink !== "") {
-                const fullShareLink = baseUrl+ "share/" + shareLink + "/album/"+albumId;
-                shashin.copyTextToClipboard(fullShareLink, albumId);
+            if (shareLink !== null && shareLink !== "") {
+                const clipboard = new ClipboardJS("#copyLink" + albumId,{container: document.getElementById("propalbums"+albumId)});
+
+                clipboard.on('success', function (e) {
+                    $("#msg" + albumId).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+                });
+
+                clipboard.on('error', function (e) {
+                    $("#msg" + albumId).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
+                });
             } else {
                 $("#msg"+albumId).html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
             }
