@@ -307,13 +307,17 @@ class Util {
             if (metadata.videoUrl != null) {
                 relativeShareLink = metadata.videoUrl;
             }
-            $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-clipboard-plus'></span>");
-            $("#copyLink").click(function (e) {
-                e.preventDefault();
-                const getUrl = window.location;
-                const baseUrl = getUrl.protocol + "//" + getUrl.host;
-                const shareUrl = baseUrl + relativeShareLink;
-                shashin.copyTextToClipboard(shareUrl, "copyLink");
+            const getUrl = window.location;
+            const baseUrl = getUrl.protocol + "//" + getUrl.host;
+            const shareUrl = baseUrl + relativeShareLink;
+            $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-clipboard-plus' data-clipboard-text='"+shareUrl+"'></span>");
+            const clipboard = new ClipboardJS(document.getElementById("copyLink"));
+            clipboard.on('success', function (e) {
+                $("#copyLinkMessage").html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+            });
+
+            clipboard.on('error', function (e) {
+                $("#copyLinkMessage").html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
             });
         }
     }

@@ -1,34 +1,4 @@
 (function( shashin, $, undefined ) {
-    // private function
-    function fallbackCopyTextToClipboard(text) {
-        let msg = "";
-        const textArea = document.createElement("textarea");
-        textArea.value = text;
-
-        // Avoid scrolling to bottom
-        textArea.style.top = "0";
-        textArea.style.left = "0";
-        textArea.style.position = "fixed";
-
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-
-        try {
-            const successful = document.execCommand('copy');
-            msg = "<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>";
-            if (successful === true) {
-                msg = "<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>";
-            }
-        } catch (err) {
-            msg = "<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>";
-        }
-
-        document.body.removeChild(textArea);
-
-        return msg;
-    }
-
     shashin.showDebug = false;
     shashin.map = null;
     shashin.layer = null;
@@ -36,18 +6,6 @@
     shashin.infiniteScrollGallery = null;
     shashin.lg = null;
     shashin.ajaxRetries = 3;
-
-    shashin.copyTextToClipboard = function (text,id) {
-        if (!navigator.clipboard) {
-            $("#msg"+id).html(fallbackCopyTextToClipboard(text));
-        } else {
-            navigator.clipboard.writeText(text).then(function () {
-                $("#msg" + id).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
-            }, function (err) {
-                $("#msg" + id).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
-            });
-        }
-    }
 
     function fixContentHeight(){
         const viewHeight = $(window).height();

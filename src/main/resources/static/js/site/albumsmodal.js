@@ -32,8 +32,10 @@
                 $("#fullShareLinkContainer"+albumId).css("display","none");
                 $("#fullShareLink"+albumId).text("");
                 if (relativeShareUrlData !== "") {
+                    const fullShareLink = baseUrl+ "share/" + relativeShareUrlData + "/album/"+albumId;
                     $("#fullShareLinkContainer"+albumId).css("display","block");
-                    $("#fullShareLink"+albumId).html("<a target='_blank' href='"+baseUrl+"share/"+relativeShareUrlData+"/album/"+albumId+"'>"+baseUrl+"share/"+relativeShareUrlData+"/album/"+albumId+"</a>");
+                    $("#fullShareLink"+albumId).html("<a target='_blank' href='"+fullShareLink+"'>"+fullShareLink+"</a>");
+                    $("#copyLink"+albumId).attr("data-clipboard-text",fullShareLink);
                 }
                 if (data["status"] === "success" && $("#shareLink"+albumId).val() === relativeShareUrlData) {
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
