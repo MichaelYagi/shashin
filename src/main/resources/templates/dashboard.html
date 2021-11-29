@@ -245,9 +245,10 @@
 
     ctx = $('#cameraChart');
     /*<![CDATA[*/
-    const cameraCountJson = /*[[${cameraCountJson}]]*/ '[{"x":"","y":0}]';
+    const cameraCountJson = /*[[${cameraCountJson}]]*/ '[{"x":0,"y":""}]';
     /*]]>*/
     const cameraCounts = JSON.parse(Util.decodeHtml(cameraCountJson));
+    const cameraCountObj = JSON.parse(cameraCountJson);
     const cameraChart = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -256,14 +257,23 @@
             }]
         },
         options: {
+            indexAxis: 'y',
             scales: {
-                x: {
+                y: {
                     ticks: {
-                        maxRotation: 90,
-                        minRotation: 90
+                        // Truncate ticks
+                        callback: function(index) {
+                            let labelValue = cameraCountObj[index].y;
+                            if (labelValue.length > 9) {
+                                labelValue = labelValue.substr(0,8) + "...";
+                            }
+                            return labelValue;
+                        },
+                        maxRotation: 0,
+                        minRotation: 0
                     }
                 },
-                y: {
+                x: {
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1
@@ -280,9 +290,11 @@
 
     // Click bars
     function cameraGraphClickEvent(event, chart) {
-        if(chart[0]) {
-            if (typeof chart[0].element.$context.raw.x !== "undefined" && chart[0].element.$context.raw.x !== "" && chart[0].element.$context.raw.x !== "Unknown") {
-                window.open("/search?searchTerm="+encodeURI(chart[0].element.$context.raw.x.split(' ').join('+')), '_blank').focus();
+        let datasetIndex = chart[0].element.$context.dataIndex;
+        if(chart[0] && datasetIndex >= 0) {
+            let label = cameraCountObj[datasetIndex].y;
+            if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
+                window.open("/search?searchTerm="+encodeURI(label.split(' ').join('+')), '_blank').focus();
             }
         }
     }
@@ -290,9 +302,9 @@
     // Click label
     document.getElementById("cameraChart").onclick = function(evt) {
         let point = Chart.helpers.getRelativePosition(event, cameraChart);
-        let datasetIndex = cameraChart.scales.x.getValueForPixel(point.x);
+        let datasetIndex = cameraChart.scales.y.getValueForPixel(point.y);
         if (datasetIndex >= 0) {
-            let label = cameraChart.scales.x.ticks[datasetIndex].label;
+            let label = cameraCountObj[datasetIndex].y;
             if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
                 window.open("/search?searchTerm="+encodeURI(label.split(' ').join('+')), '_blank').focus();
             }
