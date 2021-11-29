@@ -403,6 +403,10 @@ function showMap(mapdata,authority) {
 
     $('#propMetadataLocation').on('hide.bs.modal', function () {
         $("#locationMapResponseMsg").html("");
+        $("#metadataLocationModalStatus").attr("class","spinner-grow me-auto");
+        $("#metadataLocationModalStatus").css("visibility","hidden");
+        $(this).find(':input').val('');
+
         const tab = new bootstrap.Tab($("#locationTabLink"));
         tab.show();
     });
@@ -417,13 +421,6 @@ function showMap(mapdata,authority) {
         e.preventDefault();
         $("#saveMetadata").prop('disabled', false);
     });
-
-    $("#propMetadataLocation").on('hide.bs.modal', function () {
-        $("#metadataLocationModalStatus").attr("class","spinner-grow me-auto");
-        $("#metadataLocationModalStatus").css("visibility","hidden");
-        $(this).find(':input').val('');
-        $("#locationMapResponseMsg").html("");
-    })
 
     $("#saveMetadata").click(function (e) {
         e.preventDefault();
