@@ -257,6 +257,12 @@
         },
         options: {
             scales: {
+                x: {
+                    ticks: {
+                        maxRotation: 80,
+                        minRotation: 80
+                    }
+                },
                 y: {
                     beginAtZero: true,
                     ticks: {
@@ -272,13 +278,31 @@
         }
     });
 
+    // Click bars
     function cameraGraphClickEvent(event, chart) {
+        let point = Chart.helpers.getRelativePosition(event, cameraChart);
+        let xIndex = cameraChart.scales.x.getValueForPixel(point.x);
+        let label = cameraChart.scales.x.ticks[xIndex].label;
+        console.log(label + ' at index ' + xIndex);
+
         if(chart[0]) {
             if (typeof chart[0].element.$context.raw.x !== "undefined" && chart[0].element.$context.raw.x !== "Unknown") {
                 window.open("/search?searchTerm="+encodeURI(chart[0].element.$context.raw.x.split(' ').join('+')), '_blank').focus();
             }
         }
     }
+
+    // Click label
+    document.getElementById("cameraChart").onclick = function(evt) {
+        let point = Chart.helpers.getRelativePosition(event, cameraChart);
+        let datasetIndex = cameraChart.scales.x.getValueForPixel(point.x);
+        if (datasetIndex >= 0) {
+            let label = cameraChart.scales.x.ticks[datasetIndex].label;
+            if (typeof label !== "undefined" && label !== "Unknown") {
+                window.open("/search?searchTerm="+encodeURI(label.split(' ').join('+')), '_blank').focus();
+            }
+        }
+    };
 
     ctx = $('#cpuChart');
     const cpuChart = new Chart(ctx, {
