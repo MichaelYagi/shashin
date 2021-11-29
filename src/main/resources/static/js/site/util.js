@@ -241,7 +241,7 @@ class Util {
         $("#keywordsDetails").text("");
         $("#resolutionDetails").text("");
         $("#shareUrlDetails").html("");
-        $("#copyLinkMessage").html("");
+        $("#linkCopyStatus").css("visibility","hidden");
 
         // Fill in details tab data
         if (metadata.path != null) {
@@ -310,7 +310,7 @@ class Util {
             const getUrl = window.location;
             const baseUrl = getUrl.protocol + "//" + getUrl.host;
             const shareUrl = baseUrl + relativeShareLink;
-            $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-clipboard-plus' data-clipboard-text='"+shareUrl+"'></span>");
+            $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-clipboard-plus' data-clipboard-text='"+shareUrl+"'></span>&nbsp;<span id='linkCopyStatus' class='bi-check-circle' style='visibility: hidden;color:green;'></span>");
 
             let containerModalId = "";
             if ($("#propInfoModal").length > 0) {
@@ -321,11 +321,13 @@ class Util {
 
             const clipboard = new ClipboardJS("#copyLink",{container: document.getElementById(containerModalId)});
             clipboard.on('success', function (e) {
-                $("#copyLinkMessage").html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+                $("#linkCopyStatus").addClass('bi-check-circle').removeClass('bi-x-circle');
+                $('#linkCopyStatus').css({'visibility':'visible', 'color':'green'}).hide().fadeIn("slow");
             });
 
             clipboard.on('error', function (e) {
-                $("#copyLinkMessage").html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
+                $("#linkCopyStatus").addClass('bi-x-circle').removeClass('bi-check-circle');
+                $('#linkCopyStatus').css({'visibility':'visible', 'color':'red'}).hide().fadeIn("slow");
             });
         }
     }
