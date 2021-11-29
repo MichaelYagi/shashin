@@ -112,22 +112,27 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             var rotation = 0
             var originalPixelWidth: Int? = null
             var originalPixelHeight: Int? = null
+            var jpegImageWidth = false
+            var jpegImageHeight = false
 
             for (directory in metadata.directories) {
-
                 for (tag in directory.tags) {
                     if (tag.description != null) {
                         val tagName = tag.tagName.replace(" ", "").replace("/", "")
+                        val directoryName = directory.name.replace(" ", "").replace("/", "")
                         if ("unknowntag" !in tagName.lowercase()) {
-                            exifMap[tagName] = tag.description
+                            exifMap["$directoryName-$tagName"] = tag.description
                         }
+//                println(directory.name)
+//                println(directory.tagCount)
 //                println(file.path)
 //                println(tag.tagName)
 //                println(tag.description)
 //                println()
+
                         when (tag.tagName) {
                             "Orientation" -> {
-                                if (tag.description.contains("Rotate")) {
+                                if (tag.description.contains("Rotate") && !jpegImageHeight && !jpegImageWidth) {
                                     val digit = tag.description.filter { it.isDigit() }
                                     var numeric = true
 
@@ -232,9 +237,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             "Exif Image Width", "Width", "Image Width" -> {
                                 val widthValue = tag.description.filter { it.isDigit() }
 
-                                // Bug in EXIF data - prioritize Exif Image Width
-                                if (tag.tagName == "Image Width" && originalPixelHeight != null && originalPixelHeight == widthValue.toInt()) {
+                                if (jpegImageWidth) {
                                     continue
+                                }
+
+                                if (directory.name == "JPEG" && tag.tagName == "Image Width") {
+                                    rotation = 0
+                                    jpegImageWidth = true
                                 }
 
                                 if ((originalPixelWidth == null && widthValue != "") || (originalPixelWidth != null && widthValue.toInt() > originalPixelWidth)) {
@@ -244,9 +253,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             "Exif Image Height", "Height", "Image Height" -> {
                                 val heightValue = tag.description.filter { it.isDigit() }
 
-                                // Bug in EXIF data - prioritize Exif Image Height
-                                if (tag.tagName == "Image Height" && originalPixelWidth != null && originalPixelWidth == heightValue.toInt()) {
+                                if (jpegImageHeight) {
                                     continue
+                                }
+
+                                if (directory.name == "JPEG" && tag.tagName == "Image Height") {
+                                    rotation = 0
+                                    jpegImageHeight = true
                                 }
 
                                 if ((originalPixelHeight == null && heightValue != "")  || (originalPixelHeight != null && heightValue.toInt() > originalPixelHeight)) {
@@ -462,12 +475,13 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
         var rotation = 0
         try {
             val fileMetadata = ImageMetadataReader.readMetadata(file)
-            var breakOuter = false
+            var jpegImageWidth = false
+            var jpegImageHeight = false
             for (directory in fileMetadata.directories) {
                 for (tag in directory.tags) {
                     when (tag.tagName) {
                         "Orientation" -> {
-                            if (tag.description.contains("Rotate")) {
+                            if (tag.description.contains("Rotate") && !jpegImageHeight && !jpegImageWidth) {
                                 val digit = tag.description.filter { it.isDigit() }
                                 var numeric = true
 
@@ -480,13 +494,28 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                     rotation = digit.toInt()
                                 }
                             }
-                            breakOuter = true
-                            break;
+                        }
+                        "Exif Image Height", "Height", "Image Height" -> {
+                            if (jpegImageHeight) {
+                                continue
+                            }
+
+                            if (directory.name == "JPEG" && tag.tagName == "Image Height") {
+                                rotation = 0
+                                jpegImageHeight = true
+                            }
+                        }
+                        "Exif Image Width", "Width", "Image Width" -> {
+                            if (jpegImageWidth) {
+                                continue
+                            }
+
+                            if (directory.name == "JPEG" && tag.tagName == "Image Width") {
+                                rotation = 0
+                                jpegImageWidth = true
+                            }
                         }
                     }
-                }
-                if (breakOuter) {
-                    break;
                 }
             }
 //        println("rotation:$rotation")
