@@ -241,7 +241,7 @@ class Util {
         $("#keywordsDetails").text("");
         $("#resolutionDetails").text("");
         $("#shareUrlDetails").html("");
-        $("#msgcopyLink").html("");
+        $("#copyLinkMessage").html("");
 
         // Fill in details tab data
         if (metadata.path != null) {
