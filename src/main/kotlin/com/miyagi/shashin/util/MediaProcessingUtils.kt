@@ -132,7 +132,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
 
                         when (tag.tagName) {
                             "Orientation" -> {
-                                if (tag.description.contains("Rotate") && !jpegImageHeight && !jpegImageWidth) {
+                                if (tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) {
                                     val digit = tag.description.filter { it.isDigit() }
                                     var numeric = true
 
@@ -242,7 +242,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 }
 
                                 if (directory.name == "JPEG" && tag.tagName == "Image Width") {
-                                    rotation = 0
                                     jpegImageWidth = true
                                 }
 
@@ -258,7 +257,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 }
 
                                 if (directory.name == "JPEG" && tag.tagName == "Image Height") {
-                                    rotation = 0
                                     jpegImageHeight = true
                                 }
 
@@ -481,7 +479,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                 for (tag in directory.tags) {
                     when (tag.tagName) {
                         "Orientation" -> {
-                            if (tag.description.contains("Rotate") && !jpegImageHeight && !jpegImageWidth) {
+                            if (tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) {
                                 val digit = tag.description.filter { it.isDigit() }
                                 var numeric = true
 
@@ -501,7 +499,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             }
 
                             if (directory.name == "JPEG" && tag.tagName == "Image Height") {
-                                rotation = 0
                                 jpegImageHeight = true
                             }
                         }
@@ -511,7 +508,6 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             }
 
                             if (directory.name == "JPEG" && tag.tagName == "Image Width") {
-                                rotation = 0
                                 jpegImageWidth = true
                             }
                         }
