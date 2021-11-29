@@ -197,8 +197,8 @@ class DashboardController {
             if (cameraCount.getCamera() == null) {
                 cameraName = "Unknown"
             }
-            cameraCountMap["x"] = cameraName
-            cameraCountMap["y"] = cameraCount.getCount().toString().toInt()
+            cameraCountMap["y"] = cameraName
+            cameraCountMap["x"] = cameraCount.getCount().toString().toInt()
             cameraCountList.add(cameraCountMap)
         }
         response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
