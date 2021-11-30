@@ -114,6 +114,8 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             var originalPixelHeight: Int? = null
             var jpegImageWidth = false
             var jpegImageHeight = false
+            var mp4VideoCreationTime = false
+            var fileModificationTime = false
 
             for (directory in metadata.directories) {
                 for (tag in directory.tags) {
@@ -147,6 +149,15 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 }
                             }
                             "Date/Time", "Creation Time", "Date/Time Original" -> {
+                                // Sometimes created time is incorrect for mp4 files
+                                if (mp4VideoCreationTime) {
+                                    continue
+                                }
+
+                                if (directory.name == "MP4" && tag.tagName == "Creation Time") {
+                                    mp4VideoCreationTime = true
+                                }
+
                                 val takenFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH)
                                 date = null
 
@@ -192,6 +203,15 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                 }
                             }
                             "Modification Time", "File Modified Date" -> {
+                                // Sometimes modified time is incorrect for mp4 files
+                                if (fileModificationTime) {
+                                    continue
+                                }
+
+                                if (tag.tagName == "File Modified Date") {
+                                    fileModificationTime = true
+                                }
+
                                 val modificationFormat = SimpleDateFormat("yyyy:MM:dd HH:mm:ss", Locale.ENGLISH)
                                 date = null
 
