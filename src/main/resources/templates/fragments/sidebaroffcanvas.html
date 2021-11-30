@@ -19,7 +19,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='recent' or activeSidebar=='folders' ? ' active' : ''}" href="/recent">
+                    <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='recent' or activeSidebar=='folders' or activeSidebar=='folder' ? ' active' : ''}" href="/recent">
                         <span class="bi-folder" style="font-size: 1rem;"></span> Browse
                     </a>
                 </li>
