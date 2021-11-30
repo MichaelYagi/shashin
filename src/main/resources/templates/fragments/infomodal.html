@@ -52,11 +52,17 @@
 
         const metadataId = $("#metadataId").val();
         let metadata = {};
-        if (($("#infoModalEdit"+metadataId).attr("tag") && $("#infoModalEdit"+metadataId).attr("tag").trim() !== "") || ($("#mediaLink"+metadataId).attr("tag") && $("#mediaLink"+metadataId).attr("tag").trim() !== "")) {
-            metadata = $("#infoModalEdit"+metadataId).attr("tag") ? JSON.parse($("#infoModalEdit"+metadataId).attr("tag")) : JSON.parse($("#infoModalEdit"+metadataId).attr("tag"));
+        if ($("#infoModalEdit"+metadataId).attr("tag") && $("#infoModalEdit"+metadataId).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#infoModalEdit"+metadataId).attr("tag"));
         }
 
-        shashin.openMap(metadata)
+        if  ($("#mediaLink"+metadataId).attr("tag") && $("#mediaLink"+metadataId).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#mediaLink"+metadataId).attr("tag"));
+        }
+
+        if (metadataId === metadata.id) {
+            shashin.openMap(metadata)
+        }
     });
 </script>
 
