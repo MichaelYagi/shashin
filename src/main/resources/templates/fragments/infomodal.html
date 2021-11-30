@@ -14,10 +14,10 @@
                 <input type="hidden" name="metadataId" id="metadataId" value="">
                 <ul class="nav nav-tabs">
                     <li class="nav-item">
-                        <a class="nav-link active" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
+                        <a class="nav-link active" data-bs-toggle="tab" id="detailsTabLinkInfo" href="#detailsTab">Details</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" id="mapTabLink" href="#mapTab">Map</a>
+                        <a class="nav-link" data-bs-toggle="tab" id="mapTabLinkInfo" href="#mapTab">Map</a>
                     </li>
                 </ul>
                 <div class="tab-content">
@@ -43,11 +43,11 @@
 <script type="text/javascript">
     // Clear message on modal close
     $('#propInfoModal').on('hide.bs.modal', function () {
-        const tab = new bootstrap.Tab($("#detailsTabLink"));
+        const tab = new bootstrap.Tab($("#detailsTabLinkInfo"));
         tab.show();
     });
 
-    $("#mapTabLink").click(function (e) {
+    $("#mapTabLinkInfo").click(function (e) {
         e.preventDefault();
 
         const metadataId = $("#metadataId").val();
