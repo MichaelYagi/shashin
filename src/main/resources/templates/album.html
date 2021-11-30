@@ -78,10 +78,10 @@
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
                                 albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${currentUser}]]*/{},/*[[${albumPhotoCommentsMapString}]]*/{})
                                 albumSettings.activateAlbumListeners(/*[[${metadata}]]*/{},/*[[${album}]]*/{})
-                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
                                     e.preventDefault();
-                                    const metadataObj = JSON.parse($(this).attr("tag"));
+                                    const metadataObj = JSON.parse($("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag"));
                                     shashin.openInfoModal(metadataObj);
                                 });
                                 /*]]>*/
@@ -143,7 +143,7 @@
     $(document).ready(function() {
         const albumId = $("#albumId").val();
 
-        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
+        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:lgMetadataDetail,metadataDetail:true},'.mediaLink');
 
         function loadNextPage() {
             const currentPage = parseInt($("#currentPage").val());

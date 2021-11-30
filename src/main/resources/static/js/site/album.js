@@ -115,10 +115,10 @@
                                 shashin.setPhotoOverlays(metadata, activePage);
                                 albumModal.renderAlbumCommentsModal(albumData, metadata, currentUser, albumPhotoCommentsMap);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
-                                $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                                $("#mediaLink"+metadata.id).attr("tag",JSON.stringify(metadata));
                                 $("#infoModalEdit"+metadata.id).click(function(e) {
                                     e.preventDefault();
-                                    const metadataObj = JSON.parse($(this).attr("tag"));
+                                    const metadataObj = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
                                     shashin.openInfoModal(metadataObj);
                                 });
                             }
