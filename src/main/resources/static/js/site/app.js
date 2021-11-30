@@ -188,7 +188,12 @@
         let mediaContentList = [];
         $.each($(mediaElement), function() {
             const mediaContent = {};
-            mediaContent.subHtml =$(this).attr("data-sub-html")
+            mediaContent.func = shashin.openInfoModal;
+            mediaContent.args = {};
+            try {
+                mediaContent.args = JSON.parse($(this).attr("tag"));
+            } catch(e) {}
+            mediaContent.subHtml = $(this).attr("data-sub-html");
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
                 mediaContent.downloadUrl = $(this).attr("data-src");
@@ -198,6 +203,7 @@
             }
             mediaContentList.push(mediaContent);
         });
+
         shashin.initMediaContent(mediaContentList);
 
         return mediaContentList;
@@ -556,7 +562,11 @@
         }
 
         for (const key in additionalConfigs) {
-            configs[key] = additionalConfigs[key];
+            if (key === "plugins") {
+                configs["plugins"].push(additionalConfigs[key]);
+            } else {
+                configs[key] = additionalConfigs[key];
+            }
         }
 
         return configs;
@@ -984,6 +994,9 @@
         const dateString = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
         const mediaContent = {};
 
+        mediaContent.func = shashin.openInfoModal;
+        mediaContent.args = metadata;
+
         html +=
             '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
 
@@ -992,7 +1005,7 @@
             mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl)+"/download";
             html +=
-                '   <a class="mediaLink" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
+                '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
                 '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n' +
                 '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
                 '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
@@ -1002,7 +1015,7 @@
             mediaContent.src = metadata.thumbnailUrlOriginal;
             mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
             html +=
-                '   <a class="mediaLink" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
                 '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'" \n' +
                 '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +

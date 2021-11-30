@@ -1,0 +1,7 @@
+.lg-metadata-detail:after {
+    content: "\e20c"
+}
+
+.lg-metadata-detail-on .lg-metadata-detail:after {
+    content: "\e20d"
+}
