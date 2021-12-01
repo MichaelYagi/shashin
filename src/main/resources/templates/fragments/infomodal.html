@@ -51,14 +51,7 @@
         e.preventDefault();
 
         const metadataId = $("#metadataId").val();
-        let metadata = {};
-        if ($("#infoModalEdit"+metadataId).attr("tag") && $("#infoModalEdit"+metadataId).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#infoModalEdit"+metadataId).attr("tag"));
-        }
-
-        if  ($("#mediaLink"+metadataId).attr("tag") && $("#mediaLink"+metadataId).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#mediaLink"+metadataId).attr("tag"));
-        }
+        const metadata = shashin.checkMetadata(metadataId);
 
         if (metadataId === metadata.id) {
             shashin.openMap(metadata)

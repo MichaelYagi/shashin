@@ -20,6 +20,8 @@
 
             <div th:replace="fragments/timelinemodal :: timelinemodal(${currentUser})"></div>
 
+            <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
+
             <div id="scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
                     <div class="row p-3">
@@ -47,7 +49,7 @@
 
                             <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
-                                $("#timelineModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
                                 $("#timelineModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
                                     e.preventDefault();
 
@@ -118,7 +120,7 @@
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true},'.mediaLink');
+        let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:lgMetadataDetail,metadataDetail:true},'.mediaLink');
 
         function loadNextPage() {
             $("#spinner").css("display","block");

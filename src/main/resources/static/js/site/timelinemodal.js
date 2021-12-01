@@ -252,10 +252,7 @@ $("#mapTabLink").click(function (e) {
     $("#saveMetadata").prop('disabled', true);
 
     const metadataId = $("#metadataId").val();
-    let metadata = {};
-    if ($("#timelineModalEdit"+metadataId).attr("tag") && $("#timelineModalEdit"+metadataId).attr("tag").trim() !== "") {
-        metadata = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
-    }
+    const metadata = shashin.checkMetadata(metadataId);
 
     shashin.openMap(metadata)
 });

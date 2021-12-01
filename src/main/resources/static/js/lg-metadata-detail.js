@@ -36,6 +36,17 @@
                     if (currentDynamicEl.hasOwnProperty("func")) {
                         $("#metadataId").val(currentDynamicEl.args.id);
                         currentDynamicEl.func(currentDynamicEl.args);
+                    } else if ($($(".thumbnail-bl")[this.core.index].firstChild).attr("tag")) {
+                        //console.log($($(".thumbnail-bl")[this.core.index].firstChild).attr("tag"))
+                        const fn = this.settings.metadataDetailFunc;
+                        let toArgObj = {};
+                        try {
+                            toArgObj = JSON.parse($($(".thumbnail-bl")[this.core.index].firstChild).attr("tag"));
+                        } catch (e) {}
+
+                        if(typeof fn === 'function') {
+                            fn(toArgObj);
+                        }
                     }
                 });
         },

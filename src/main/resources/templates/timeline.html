@@ -56,6 +56,8 @@
 
             <div th:replace="fragments/timelinemodal :: timelinemodal(${currentUser})"></div>
 
+            <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
+
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
@@ -161,7 +163,7 @@
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
         shashin.setLightGalleryElement('infinite-scroll-gallery');
-        shashin.setLightGallery({"selector":".mediaLink"});
+        shashin.setLightGallery({"selector":".mediaLink",plugins:lgMetadataDetail,metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
 
         let topScroll = true;
         let topOfPage = true;

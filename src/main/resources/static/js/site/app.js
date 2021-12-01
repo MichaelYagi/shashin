@@ -24,13 +24,28 @@
         }
     }
 
+    shashin.checkMetadata = function(metadataId) {
+        let metadata = {};
+
+        if ($("#infoModalEdit"+metadataId).attr("tag") && $("#infoModalEdit"+metadataId).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#infoModalEdit"+metadataId).attr("tag"));
+        }
+
+        if  ($("#mediaLink"+metadataId).attr("tag") && $("#mediaLink"+metadataId).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#mediaLink"+metadataId).attr("tag"));
+        }
+
+        if  ($("#timelineModalEdit"+metadataId).attr("tag") && $("#timelineModalEdit"+metadataId).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
+        }
+
+        return metadata;
+    }
+
     shashin.openEditMetadataModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList) {
         let index;
 
-        // Populate modal data
-        if ($("#timelineModalEdit"+metadata.id).attr("tag") && $("#timelineModalEdit"+metadata.id).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#timelineModalEdit"+metadata.id).attr("tag"));
-        }
+        metadata = shashin.checkMetadata(metadata.id);
 
         // Clear modal data
         $('#propTimelineModal').find(':input').val('');
@@ -413,14 +428,7 @@
 
     shashin.openInfoSidebar = function(metadata) {
         // Populate modal data
-
-        if ($("#infoModalEdit"+metadata.id).attr("tag") && $("#infoModalEdit"+metadata.id).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#infoModalEdit"+metadata.id).attr("tag"));
-        }
-
-        if  ($("#mediaLink"+metadata.id).attr("tag") && $("#mediaLink"+metadata.id).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
-        }
+        metadata = shashin.checkMetadata(metadata.id);
 
         $("#infoSidebarTitle").text(metadata.fileName);
         $("#currentfilename").val(metadata.fileName)
