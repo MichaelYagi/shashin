@@ -15,8 +15,6 @@
         $("#albumdropdown"+metadataId).dropdown('hide')
     }
 
-
-
     timelineModal.populateLabel = function (metadataId) {
         const checkedBoxes = $('input[name="recognitionLabel' + metadataId + '[]"]:checked');
         let labelString = "";
@@ -136,7 +134,7 @@ $("#saveMetadata").click(function (e) {
                     }
 
                     if (metadataObj.hidden === false) {
-                        Util.populateDetailsTab(metadataObj)
+                        Util.populateDetailsInfo(metadataObj,"propTimelineModal")
                         $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
 
                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");

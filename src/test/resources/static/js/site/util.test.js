@@ -221,13 +221,13 @@ describe('#Util tests', function() {
             })
         )
 
-        Util.populateDetailsTab({})
+        Util.populateDetailsInfo({})
         expect($("#pathDetails").text()).to.be.empty
 
-        Util.populateDetailsTab({path:"test"})
+        Util.populateDetailsInfo({path:"test"})
         assert.equal($("#pathDetails").text(),"test")
 
-        Util.populateDetailsTab({year:2021,month:11,day:5,time:"00:00:00"})
+        Util.populateDetailsInfo({year:2021,month:11,day:5,time:"00:00:00"})
         assert.equal($("#manualTakenAtDetails").text(),"2021-11-5 00:00:00")
     })
 })

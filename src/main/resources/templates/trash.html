@@ -7,6 +7,8 @@
 
 <div th:replace="fragments/infomodal :: infomodal(${currentUser})"></div>
 
+<div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
+
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>

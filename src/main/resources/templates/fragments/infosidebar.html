@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="infosidebar(${currentUser})">
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="propInfoSidebar" aria-labelledby="offcanvasMenuLabel">
+    <div class="offcanvas-header">
+        <h5 class="modal-title" id="exampleSidebarLabel">Viewing <span id="infoSidebarTitle"></span><div id="propInfoSidebarThumbnail"></div></h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" id="offcanvasInfoSidebarCloseButton" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).click(function(event) {
+        const $target = $(event.target);
+        if (!$target.closest('#propInfoSidebar').length &&
+            !$target.closest('.bi-info-circle.lg-icon').length &&
+            $("#propInfoSidebar").css("visibility") === "visible")
+        {
+            $("#offcanvasInfoSidebarCloseButton").click();
+        }
+    });
+</script>
+</body>
+</html>

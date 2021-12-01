@@ -220,87 +220,97 @@ class Util {
             $("#" + id).outerHeight(true);
     }
 
-    static populateDetailsTab(metadata) {
+    static populateDetailsInfo(metadata,containerModalId) {
+        if (typeof containerModalId === "undefined" || containerModalId.length === 0) {
+            if ($("#propInfoModal").length > 0) {
+                containerModalId = "propInfoModal";
+            } else if ($("#propTimelineModal").length > 0) {
+                containerModalId = "propTimelineModal";
+            } else if ($("#propInfoSidebar").length > 0) {
+                containerModalId = "propInfoSidebar";
+            }
+        }
+
         // Clear data
-        $("#pathDetails").text("");
-        $("#typeDetails").text("");
-        $("#isoDetails").text("");
-        $("#compressionDetails").text("");
-        $("#exposureDetails").text("");
-        $("#fNumberDetails").text("");
-        $("#focalLengthDetails").text("");
-        $("#cameraDetails").text("");
-        $("#lensDetails").text("");
-        $("#qualityDetails").text("");
-        $("#addedAtDetails").text("");
-        $("#createdAtDetails").text("");
-        $("#modifiedAtDetails").text("");
-        $("#takenAtDetails").text("");
-        $("#manualTakenAtDetails").text("");
-        $("#timeZoneDetails").text("");
-        $("#keywordsDetails").text("");
-        $("#resolutionDetails").text("");
-        $("#shareUrlDetails").html("");
-        $("#linkCopyStatus").css("visibility","hidden");
+        $(".pathDetails").text("");
+        $(".typeDetails").text("");
+        $(".isoDetails").text("");
+        $(".compressionDetails").text("");
+        $(".exposureDetails").text("");
+        $(".fNumberDetails").text("");
+        $(".focalLengthDetails").text("");
+        $(".cameraDetails").text("");
+        $(".lensDetails").text("");
+        $(".qualityDetails").text("");
+        $(".addedAtDetails").text("");
+        $(".createdAtDetails").text("");
+        $(".modifiedAtDetails").text("");
+        $(".takenAtDetails").text("");
+        $(".manualTakenAtDetails").text("");
+        $(".timeZoneDetails").text("");
+        $(".keywordsDetails").text("");
+        $(".resolutionDetails").text("");
+        $(".shareUrlDetails").html("");
+        $(".linkCopyStatus").css("visibility","hidden");
 
         // Fill in details tab data
         if (metadata.path != null) {
-            $("#pathDetails").text(metadata.path);
+            $(".pathDetails").text(metadata.path);
         }
         if (metadata.keywords != null) {
-            $("#keywordsDetails").text(metadata.keywords);
+            $(".keywordsDetails").text(metadata.keywords);
         }
         if (metadata.type != null) {
-            $("#typeDetails").text(metadata.type);
+            $(".typeDetails").text(metadata.type);
         }
         if (metadata.iso != null) {
-            $("#isoDetails").text(metadata.iso);
+            $(".isoDetails").text(metadata.iso);
         }
         if (metadata.compressionType != null) {
-            $("#compressionDetails").text(metadata.compressionType);
+            $(".compressionDetails").text(metadata.compressionType);
         }
         if (metadata.exposure != null) {
-            $("#exposureDetails").text(metadata.exposure + " s");
+            $(".exposureDetails").text(metadata.exposure + " s");
         }
         if (metadata.fstopNumber != null) {
-            $("#fNumberDetails").text("f/"+metadata.fstopNumber);
+            $(".fNumberDetails").text("f/"+metadata.fstopNumber);
         }
         if (metadata.focalLength != null) {
-            $("#focalLengthDetails").text(metadata.focalLength + " mm");
+            $(".focalLengthDetails").text(metadata.focalLength + " mm");
         }
         if (metadata.camera != null) {
-            $("#cameraDetails").text(metadata.camera);
+            $(".cameraDetails").text(metadata.camera);
         }
         if (metadata.lens != null) {
-            $("#lensDetails").text(metadata.lens);
+            $(".lensDetails").text(metadata.lens);
         }
         if (metadata.quality != null) {
-            $("#qualityDetails").text(metadata.quality);
+            $(".qualityDetails").text(metadata.quality);
         }
         if (metadata.addedAt != null) {
-            $("#addedAtDetails").text(metadata.addedAt);
+            $(".addedAtDetails").text(metadata.addedAt);
         }
         if (metadata.createdAt != null) {
-            $("#createdAtDetails").text(metadata.createdAt);
+            $(".createdAtDetails").text(metadata.createdAt);
         }
         if (metadata.modifiedAt != null) {
-            $("#modifiedAtDetails").text(metadata.modifiedAt);
+            $(".modifiedAtDetails").text(metadata.modifiedAt);
         }
         if (metadata.takenAt != null) {
-            $("#takenAtDetails").text(metadata.takenAt);
+            $(".takenAtDetails").text(metadata.takenAt);
         }
         if (metadata.originalImageWidth != null && metadata.originalImageHeight != null) {
-            $("#resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
+            $(".resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
         }
         if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
             let takenDetails = metadata.year + '-' + metadata.month + '-' + metadata.day;
             if (metadata.time !== null && metadata.time !== "") {
                 takenDetails += ' ' + metadata.time;
             }
-            $("#manualTakenAtDetails").text(takenDetails);
+            $(".manualTakenAtDetails").text(takenDetails);
         }
         if (metadata.timeZone != null) {
-            $("#timeZoneDetails").text(metadata.timeZone);
+            $(".timeZoneDetails").text(metadata.timeZone);
         }
         if (metadata.thumbnailUrlOriginal != null || metadata.videoUrl != null) {
             let relativeShareLink = metadata.thumbnailUrlOriginal;
@@ -310,24 +320,17 @@ class Util {
             const getUrl = window.location;
             const baseUrl = getUrl.protocol + "//" + getUrl.host;
             const shareUrl = baseUrl + relativeShareLink;
-            $("#shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span id='copyLink' class='bi-clipboard-plus' data-clipboard-text='"+shareUrl+"'></span>&nbsp;<span id='linkCopyStatus' class='bi-check-circle' style='visibility: hidden;color:green;'></span>");
+            $(".shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span class='copyLink bi-clipboard-plus' data-clipboard-text='"+shareUrl+"'></span>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
 
-            let containerModalId = "";
-            if ($("#propInfoModal").length > 0) {
-                containerModalId = "propInfoModal";
-            } else if ($("#propTimelineModal").length > 0) {
-                containerModalId = "propTimelineModal";
-            }
-
-            const clipboard = new ClipboardJS("#copyLink",{container: document.getElementById(containerModalId)});
+            const clipboard = new ClipboardJS(".copyLink.bi-clipboard-plus",{container: document.getElementById(containerModalId)});
             clipboard.on('success', function (e) {
-                $("#linkCopyStatus").addClass('bi-check-circle').removeClass('bi-x-circle');
-                $('#linkCopyStatus').css({'visibility':'visible', 'color':'green'}).hide().fadeIn("slow");
+                $(".linkCopyStatus").addClass('bi-check-circle').removeClass('bi-x-circle');
+                $('.linkCopyStatus').css({'visibility':'visible', 'color':'green'}).hide().fadeIn("slow");
             });
 
             clipboard.on('error', function (e) {
-                $("#linkCopyStatus").addClass('bi-x-circle').removeClass('bi-check-circle');
-                $('#linkCopyStatus').css({'visibility':'visible', 'color':'red'}).hide().fadeIn("slow");
+                $(".linkCopyStatus").addClass('bi-x-circle').removeClass('bi-check-circle');
+                $('.linkCopyStatus').css({'visibility':'visible', 'color':'red'}).hide().fadeIn("slow");
             });
         }
     }

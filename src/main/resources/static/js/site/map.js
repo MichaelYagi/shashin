@@ -57,7 +57,7 @@ function showMap(mapdata,authority) {
         }
         $("#propMetadataLocation").css('z-index', 9999);
 
-        Util.populateDetailsTab(metadata);
+        Util.populateDetailsInfo(metadata);
 
         $("#propMetadataLocation").modal('show');
     }
