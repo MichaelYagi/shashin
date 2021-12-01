@@ -35,7 +35,7 @@
                     shashin.lg = null;
 
                     setTimeout(() => {
-                        shashin.setLightGallery({"selector":".mediaLink"});
+                        shashin.setLightGallery({"selector":".mediaLink",plugins:lgMetadataDetail,metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
                     }, 500);
                 }
             }, closeTimeout);
@@ -535,6 +535,8 @@
                                 }
 
                                 const mediaContent = {};
+                                mediaContent.func = shashin.openInfoSidebar;
+                                mediaContent.args = metadata;
                                 mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
                                 mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                 if (metadata.type.indexOf("video") >= 0) {
