@@ -175,7 +175,7 @@
         $("#keywords").val(metadata.keywords);
 
         $("#albumDetailRow").remove();
-        Util.populateDetailsTab(metadata);
+        Util.populateDetailsInfo(metadata,"propTimelineModal");
 
         // Open modal window
         $("#propTimelineModal").modal('show');
@@ -188,7 +188,7 @@
         let mediaContentList = [];
         $.each($(mediaElement), function() {
             const mediaContent = {};
-            mediaContent.func = shashin.openInfoModal;
+            mediaContent.func = shashin.openInfoSidebar;
             mediaContent.args = {};
             try {
                 mediaContent.args = JSON.parse($(this).attr("tag"));
@@ -405,10 +405,40 @@
             $("#propInfoModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
         }
 
-        Util.populateDetailsTab(metadata);
+        Util.populateDetailsInfo(metadata,"propInfoModal");
 
         // Open modal window
         $("#propInfoModal").modal('show');
+    }
+
+    shashin.openInfoSidebar = function(metadata) {
+        // Populate modal data
+
+        if ($("#infoModalEdit"+metadata.id).attr("tag") && $("#infoModalEdit"+metadata.id).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#infoModalEdit"+metadata.id).attr("tag"));
+        }
+
+        if  ($("#mediaLink"+metadata.id).attr("tag") && $("#mediaLink"+metadata.id).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
+        }
+
+        $("#infoSidebarTitle").text(metadata.fileName);
+        $("#currentfilename").val(metadata.fileName)
+        $("#currentlat").val(metadata.lat)
+        $("#currentlng").val(metadata.lng)
+        $("#metadataId").val(metadata.id);
+
+        if (metadata.thumbnailUrlCentered !== null) {
+            $("#propInfoSidebarThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
+        }
+
+        Util.populateDetailsInfo(metadata,"propInfoSidebar");
+
+        // Open info sidebar
+        $("#propInfoSidebar").css('z-index', 9999);
+        const infoSidebar = document.getElementById('propInfoSidebar');
+        const bsInfoSidebar = new bootstrap.Offcanvas(infoSidebar);
+        bsInfoSidebar.show()
     }
 
     shashin.addToMetadataThumbnailsList = function(thumbnail) {
@@ -994,7 +1024,7 @@
         const dateString = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
         const mediaContent = {};
 
-        mediaContent.func = shashin.openInfoModal;
+        mediaContent.func = shashin.openInfoSidebar;
         mediaContent.args = metadata;
 
         html +=
