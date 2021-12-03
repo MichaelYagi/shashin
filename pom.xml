@@ -322,6 +322,7 @@
                                 <jsSourceFile>folder.js</jsSourceFile>
                                 <jsSourceFile>recent.js</jsSourceFile>
                                 <jsSourceFile>albumlisteners.js</jsSourceFile>
+                                <jsSourceFile>dashboard.js</jsSourceFile>
                                 <jsSourceFile>test.js</jsSourceFile>
                             </jsSourceFiles>
 
