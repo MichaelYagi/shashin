@@ -87,7 +87,6 @@ class BrowseController {
 
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
-            val settings = model.getAttribute("settings") as Settings
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
 
@@ -98,7 +97,7 @@ class BrowseController {
                 model.getAttribute("queryLimit").toString().toInt()
             ).toMutableList()
 
-            if (metadataList != null && metadataList.isNotEmpty()) {
+            if (metadataList.isNotEmpty()) {
                 response["metadataList"] = metadataList
                 response["message"] = ""
                 response["favorites"] = favoritesMap
@@ -246,7 +245,7 @@ class BrowseController {
                 model.getAttribute("queryLimit").toString().toInt()
             ).toMutableList()
 
-            if (metadataList != null && metadataList.isNotEmpty()) {
+            if (metadataList.isNotEmpty()) {
                 response["metadataList"] = metadataList
                 response["message"] = ""
                 response["favorites"] = favoritesMap
