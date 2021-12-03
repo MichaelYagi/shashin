@@ -254,62 +254,102 @@ class Util {
         $(".coordinatesDetails").text("");
         $(".locationDetails").html("");
 
+        $(".pathLabel").hide();
+        $(".typeLabel").hide();
+        $(".isoLabel").hide();
+        $(".compressionLabel").hide();
+        $(".exposureLabel").hide();
+        $(".fNumberLabel").hide();
+        $(".focalLengthLabel").hide();
+        $(".cameraLabel").hide();
+        $(".lensLabel").hide();
+        $(".qualityLabel").hide();
+        $(".addedAtLabel").hide();
+        $(".createdAtLabel").hide();
+        $(".modifiedAtLabel").hide();
+        $(".takenAtLabel").hide();
+        $(".manualTakenAtLabel").hide();
+        $(".timeZoneLabel").hide();
+        $(".keywordsLabel").hide();
+        $(".resolutionLabel").hide();
+        $(".shareUrlLabel").hide();
+        $(".coordinatesLabel").hide();
+        $(".locationLabel").hide();
+
         $(".linkCopyStatus").css("visibility","hidden");
 
         // Fill in details tab data
         if (metadata.lat != null && metadata.lng != null) {
+            $(".coordinatesLabel").show();
             $(".coordinatesDetails").text(metadata.lat + ", " + metadata.lng);
 
             if (metadata.placeName != null) {
+                $(".locationLabel").show();
                 $(".locationDetails").html("<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'>" + metadata.placeName + "</a>");
             }
         }
         if (metadata.path != null) {
+            $(".pathLabel").show();
             $(".pathDetails").text(metadata.path);
         }
         if (metadata.keywords != null) {
+            $(".keywordsLabel").show();
             $(".keywordsDetails").text(metadata.keywords);
         }
         if (metadata.type != null) {
+            $(".typeLabel").show();
             $(".typeDetails").text(metadata.type);
         }
         if (metadata.iso != null) {
+            $(".isoLabel").show();
             $(".isoDetails").text(metadata.iso);
         }
         if (metadata.compressionType != null) {
+            $(".compressionLabel").show();
             $(".compressionDetails").text(metadata.compressionType);
         }
         if (metadata.exposure != null) {
+            $(".exposureLabel").show();
             $(".exposureDetails").text(metadata.exposure + " s");
         }
         if (metadata.fstopNumber != null) {
+            $(".fNumberLabel").show();
             $(".fNumberDetails").text("f/"+metadata.fstopNumber);
         }
         if (metadata.focalLength != null) {
+            $(".focalLengthLabel").show();
             $(".focalLengthDetails").text(metadata.focalLength + " mm");
         }
         if (metadata.camera != null) {
+            $(".cameraLabel").show();
             $(".cameraDetails").text(metadata.camera);
         }
         if (metadata.lens != null) {
+            $(".lensLabel").show();
             $(".lensDetails").text(metadata.lens);
         }
         if (metadata.quality != null) {
+            $(".qualityLabel").show();
             $(".qualityDetails").text(metadata.quality);
         }
         if (metadata.addedAt != null) {
+            $(".addedAtLabel").show();
             $(".addedAtDetails").text(metadata.addedAt);
         }
         if (metadata.createdAt != null) {
+            $(".createdAtLabel").show();
             $(".createdAtDetails").text(metadata.createdAt);
         }
         if (metadata.modifiedAt != null) {
+            $(".modifiedAtLabel").show();
             $(".modifiedAtDetails").text(metadata.modifiedAt);
         }
         if (metadata.takenAt != null) {
+            $(".takenAtLabel").show();
             $(".takenAtDetails").text(metadata.takenAt);
         }
         if (metadata.originalImageWidth != null && metadata.originalImageHeight != null) {
+            $(".resolutionLabel").show();
             $(".resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
         }
         if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
@@ -317,9 +357,11 @@ class Util {
             if (metadata.time !== null && metadata.time !== "") {
                 takenDetails += ' ' + metadata.time;
             }
+            $(".manualTakenAtLabel").show();
             $(".manualTakenAtDetails").text(takenDetails);
         }
         if (metadata.timeZone != null) {
+            $(".timeZoneLabel").show();
             $(".timeZoneDetails").text(metadata.timeZone);
         }
         if (metadata.thumbnailUrlOriginal != null || metadata.videoUrl != null) {
@@ -330,6 +372,7 @@ class Util {
             const getUrl = window.location;
             const baseUrl = getUrl.protocol + "//" + getUrl.host;
             const shareUrl = baseUrl + relativeShareLink;
+            $(".shareUrlLabel").show();
             $(".shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span class='copyLink bi-clipboard-plus' data-clipboard-text='"+shareUrl+"'></span>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
 
             const clipboard = new ClipboardJS(".copyLink.bi-clipboard-plus",{container: document.getElementById(containerModalId)});
