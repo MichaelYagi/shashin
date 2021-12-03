@@ -251,9 +251,19 @@ class Util {
         $(".keywordsDetails").text("");
         $(".resolutionDetails").text("");
         $(".shareUrlDetails").html("");
+        $(".coordinatesDetails").text("");
+        $(".locationDetails").html("");
+
         $(".linkCopyStatus").css("visibility","hidden");
 
         // Fill in details tab data
+        if (metadata.lat != null && metadata.lng != null) {
+            $(".coordinatesDetails").text(metadata.lat + ", " + metadata.lng);
+
+            if (metadata.placeName != null) {
+                $(".locationDetails").html("<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'>" + metadata.placeName + "</a>");
+            }
+        }
         if (metadata.path != null) {
             $(".pathDetails").text(metadata.path);
         }

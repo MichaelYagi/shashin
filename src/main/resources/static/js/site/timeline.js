@@ -538,7 +538,7 @@
                                 mediaContent.func = shashin.openInfoSidebar;
                                 mediaContent.args = metadata;
                                 mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
-                                mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
+                                //mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                 if (metadata.type.indexOf("video") >= 0) {
                                     mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
                                     mediaContent.downloadUrl = encodeURI(metadata.videoUrl)+"/download";
@@ -556,7 +556,8 @@
                                             'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
-                                        'data-sub-html="'+Util.encodeHtml(mediaContent.subHtml)+'">' +
+                                        //'data-sub-html="'+Util.encodeHtml(mediaContent.subHtml)+
+                                        '">' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
 
@@ -577,7 +578,8 @@
                                             'data-width="'+metadata.originalImageWidth+'" ';
                                     }
                                     html +=
-                                        'data-sub-html="'+Util.encodeHtml(mediaContent.subHtml)+'">' +
+                                        //'data-sub-html="'+Util.encodeHtml(mediaContent.subHtml)+
+                                        '">' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
                                 }

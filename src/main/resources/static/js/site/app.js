@@ -208,7 +208,7 @@
             try {
                 mediaContent.args = JSON.parse($(this).attr("tag"));
             } catch(e) {}
-            mediaContent.subHtml = $(this).attr("data-sub-html");
+            //mediaContent.subHtml = $(this).attr("data-sub-html");
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
                 mediaContent.downloadUrl = $(this).attr("data-src");
@@ -1038,7 +1038,7 @@
         html +=
             '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
 
-        mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
+        //mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
         if (metadata.type.includes("video")) {
             mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl)+"/download";
@@ -1046,7 +1046,7 @@
                 '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
                 '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n' +
                 '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                //'       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
         } else {
@@ -1055,7 +1055,7 @@
             html +=
                 '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
                 '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'" \n' +
-                '       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                //'       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
         }

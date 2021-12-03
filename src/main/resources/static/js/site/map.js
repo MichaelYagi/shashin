@@ -24,8 +24,8 @@ function showMap(mapdata,authority) {
 
         if (arguments.length > 0) {
             metadataId = locationArgs[0];
-            lat = locationArgs[1];
-            lng = locationArgs[2];
+            metadata.lat = locationArgs[1];
+            metadata.lng = locationArgs[2];
             modalLabel = locationArgs[3];
             metadata.path = locationArgs[4];
             metadata.compressionType = locationArgs[5];
@@ -46,14 +46,15 @@ function showMap(mapdata,authority) {
             metadata.day = locationArgs[20];
             metadata.time = locationArgs[21];
             metadata.timeZone = locationArgs[22];
+            metadata.placeName = locationArgs[23];
         }
         if (modalLabel && modalLabel.length > 0) {
             $("#editPhotoLocationModalLabel").text("for " + modalLabel);
         }
         $("#mapMetadataId").val(metadataId);
         $("#metadataId").val(metadataId);
-        if (lat && lng) {
-            $("#locationDataInput").val(lat + "," + lng);
+        if (metadata.lat && metadata.lng) {
+            $("#locationDataInput").val(metadata.lat + "," + metadata.lng);
         }
         $("#propMetadataLocation").css('z-index', 9999);
 
@@ -192,19 +193,20 @@ function showMap(mapdata,authority) {
                     featureProperties["month"],
                     featureProperties["day"],
                     featureProperties["time"],
-                    featureProperties["timeZone"]
+                    featureProperties["timeZone"],
+                    featureProperties["placeName"]
                 ]
             };
             if (featureProperties.type.includes("image")) {
                 mediaContent.src = featureProperties.thumbnailUrlOriginal
-                mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                //mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                 mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal);
             } else if (featureProperties.type.includes("video")) {
                 mediaContent.video = {
                     "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
                     "attributes": {"preload": false, "controls": true}
                 }
-                mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                //mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                 mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl)+"/download";
             }
             mediaContentList.push(mediaContent);

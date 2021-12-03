@@ -166,68 +166,68 @@ describe('#Util tests', function() {
 
     it('Populate details tab data test', function () {
         $("body").append($("<div/>", {
-                id: 'pathDetails'
+                class: 'pathDetails'
             }),
             $("<div/>", {
-                id: 'typeDetails'
+                class: 'typeDetails'
             }),
             $("<div/>", {
-                id: 'isoDetails'
+                class: 'isoDetails'
             }),
             $("<div/>", {
-                id: 'compressionDetails'
+                class: 'compressionDetails'
             }),
             $("<div/>", {
-                id: 'exposureDetails'
+                class: 'exposureDetails'
             }),
             $("<div/>", {
-                id: 'fNumberDetails'
+                class: 'fNumberDetails'
             }),
             $("<div/>", {
-                id: 'focalLengthDetails'
+                class: 'focalLengthDetails'
             }),
             $("<div/>", {
-                id: 'cameraDetails'
+                class: 'cameraDetails'
             }),
             $("<div/>", {
-                id: 'lensDetails'
+                class: 'lensDetails'
             }),
             $("<div/>", {
-                id: 'qualityDetails'
+                class: 'qualityDetails'
             }),
             $("<div/>", {
-                id: 'addedAtDetails'
+                class: 'addedAtDetails'
             }),
             $("<div/>", {
-                id: 'createdAtDetails'
+                class: 'createdAtDetails'
             }),
             $("<div/>", {
-                id: 'modifiedAtDetails'
+                class: 'modifiedAtDetails'
             }),
             $("<div/>", {
-                id: 'takenAtDetails'
+                class: 'takenAtDetails'
             }),
             $("<div/>", {
-                id: 'manualTakenAtDetails'
+                class: 'manualTakenAtDetails'
             }),
             $("<div/>", {
-                id: 'timeZoneDetails'
+                class: 'timeZoneDetails'
             }),
             $("<div/>", {
-                id: 'resolutionDetails'
+                class: 'resolutionDetails'
             }),
             $("<div/>", {
-                id: 'keywordsDetails'
+                class: 'keywordsDetails'
             })
         )
 
         Util.populateDetailsInfo({})
-        expect($("#pathDetails").text()).to.be.empty
+        expect($(".pathDetails").text()).to.be.empty
 
         Util.populateDetailsInfo({path:"test"})
-        assert.equal($("#pathDetails").text(),"test")
+        assert.equal($(".pathDetails").text(),"test")
 
         Util.populateDetailsInfo({year:2021,month:11,day:5,time:"00:00:00"})
-        assert.equal($("#manualTakenAtDetails").text(),"2021-11-5 00:00:00")
+        assert.equal($(".manualTakenAtDetails").text(),"2021-11-5 00:00:00")
     })
 })
