@@ -108,7 +108,7 @@
                                 $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                             }
                             //$("#msgBatchMetadata").html(message);
-                            shashin.clearTimelineSelection();
+                            //shashin.clearTimelineSelection();
                         }
                     });
 
@@ -122,6 +122,7 @@
                     $('#tagBatchDataInput').val('');
                     $('input:checkbox').prop('checked', false);
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
+                    shashin.clearTimelineSelection();
                 });
 
                 // Clear message on input editing
