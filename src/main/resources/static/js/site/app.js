@@ -1045,8 +1045,7 @@
             html +=
                 '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
                 '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n' +
-                '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'\n' +
-                //'       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'>\n' +
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
         } else {
@@ -1054,8 +1053,7 @@
             mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
             html +=
                 '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
-                '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'" \n' +
-                //'       data-sub-html="' + (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '') + '">\n' +
+                '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'"> \n' +
                 '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
         }
