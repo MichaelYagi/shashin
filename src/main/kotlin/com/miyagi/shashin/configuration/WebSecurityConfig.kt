@@ -90,7 +90,7 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
             .headers().frameOptions().sameOrigin()
                 .and()
             .authorizeRequests()
-                .antMatchers("/", "/features.html", "/api/**", "/share/**", "/css/**", "/js/**", "/fonts/**", "/images/**", "/users/register", "/users/login", "/users/logout", "/websocket-endpoint", "/topic/messages", "/topic/matchmessages", "/settings/matchmessage", "/settings/scanmessage","/dashboard/statmessages","/dashboard/statmessage").permitAll()
+                .antMatchers("/", "/features", "/api/**", "/share/**", "/css/**", "/js/**", "/fonts/**", "/images/**", "/users/register", "/users/login", "/users/logout", "/websocket-endpoint", "/topic/messages", "/topic/matchmessages", "/settings/matchmessage", "/settings/scanmessage","/dashboard/statmessages","/dashboard/statmessage").permitAll()
                 .antMatchers("settings/**", "settings", "settings/users", "settings/scan", "favorites", "timeline", "users/delete", "albums/add").hasRole(adminRole.toString().replace("ROLE_", ""))
                 .antMatchers("comments/**", "albums", "map/**", "search/**").hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""))
                 .anyRequest().authenticated()
