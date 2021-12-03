@@ -144,21 +144,18 @@ $("#saveBatchMetadata").click(function (e) {
                 //$("#msgBatchMetadata").html(message);
                 //$("#timelineBatchModalStatus").css("visibility","hidden");
 
-                shashin.clearTimelineSelection();
-                shashin.removeAllMetadataIdList();
-                shashin.removeAllMetadataFilenamesList();
-                shashin.removeAllMetadataThumbnailsList();
-                $("#batchMetadataIds").val("");
-                $("#batchFilenames").val("");
-                $("#dayTakenBatchData").val("");
-                $("#monthTakenBatchData").val("");
-                $("#yearTakenBatchData").val("");
-                $("#latlngBatchData").val("");
-                $("#keywordsBatchData").val("");
-                $("#albumNameInput").val("");
-                $("#tagBatchDataInput").val("");
-                $("#batchisobject")[0].checked = false;
-                $("#batchhidden")[0].checked = false;
+                // shashin.clearTimelineSelection();
+                // $("#batchMetadataIds").val("");
+                // $("#batchFilenames").val("");
+                // $("#dayTakenBatchData").val("");
+                // $("#monthTakenBatchData").val("");
+                // $("#yearTakenBatchData").val("");
+                // $("#latlngBatchData").val("");
+                // $("#keywordsBatchData").val("");
+                // $("#albumNameInput").val("");
+                // $("#tagBatchDataInput").val("");
+                // $("#batchisobject")[0].checked = false;
+                // $("#batchhidden")[0].checked = false;
             }
         });
     }
@@ -200,6 +197,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#keywordsBatchData').val('');
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
+    shashin.clearTimelineSelection();
 });
 
 // Clear message on input editing

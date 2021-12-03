@@ -57,7 +57,7 @@ $("#saveBatchMetadata").click(function (e) {
                 $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             }
             //$("#msgBatchMetadata").html(message);
-            shashin.clearTimelineSelection();
+            //shashin.clearTimelineSelection();
         }
     });
 
@@ -71,6 +71,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#tagBatchDataInput').val('');
     $('input:checkbox').prop('checked', false);
     matchModalBatchSettings.closeBatchTagPeopleDropdown();
+    shashin.clearTimelineSelection();
 });
 
 // Clear message on input editing
