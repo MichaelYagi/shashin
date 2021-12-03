@@ -107,375 +107,46 @@
     </div>
 </div>
 
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+    <script src="/js/site/dashboard.js" type="text/javascript"></script>
+</th:block>
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+    <script src="/js/site/dashboard.min.js" type="text/javascript"></script>
+</th:block>
 <script th:inline="javascript" type="text/javascript">
-    let ctx = $('#siteStatChart');
     /*<![CDATA[*/
-    const photosWithPeopleTaggedCount = /*[[${photosWithPeopleTaggedCount}]]*/ 0;
-    const favoritesCount = /*[[${favoritesCount}]]*/ 0;
-    const commentsCount = /*[[${commentsCount}]]*/ 0;
-    const albumCount = /*[[${albumCount}]]*/ 0;
+    const siteStatChartData = {};
+    siteStatChartData["photosWithPeopleTaggedCount"] = /*[[${photosWithPeopleTaggedCount}]]*/ 0;
+    siteStatChartData["favoritesCount"] = /*[[${favoritesCount}]]*/ 0;
+    siteStatChartData["commentsCount"] = /*[[${commentsCount}]]*/ 0;
+    siteStatChartData["albumCount"] = /*[[${albumCount}]]*/ 0;
+
+    const userChartData = {};
+    userChartData["activeUserCount"] = /*[[${allowedUserCount}]]*/ 0;
+    userChartData["pendingUserCount"] = /*[[${notAllowedUserCount}]]*/ 0;
+    userChartData["activeAdminCount"] = /*[[${allowedAdminCount}]]*/ 0;
+    userChartData["pendingAdminCount"] = /*[[${notAllowedAdminCount}]]*/ 0;
+    userChartData["loggedInCount"] = /*[[${loggedInCount}]]*/ 0;
+
+    const mediaChartData = {};
+    mediaChartData["photoCount"] = /*[[${photoCount}]]*/ 0;
+    mediaChartData["videoCount"] = /*[[${videoCount}]]*/ 0;
+    mediaChartData["notLocatedCount"] = /*[[${notLocatedCount}]]*/ 0;
+    mediaChartData["hiddenCount"] = /*[[${hiddenCount}]]*/ 0;
+
+    const cameraChartData = {};
+    cameraChartData["cameraCountJson"] = /*[[${cameraCountJson}]]*/ '[{"x":0,"y":""}]';
     /*]]>*/
-    const siteStatChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Photos With People Tagged','Total Favorites','Total Comments','Total Albums'],
-            datasets: [{
-                data: [photosWithPeopleTaggedCount,favoritesCount,commentsCount,albumCount],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: false
-            },
-            maintainAspectRatio: false
-        }
-    });
 
-    ctx = $('#userChart');
-    /*<![CDATA[*/
-    const activeUserCount = /*[[${allowedUserCount}]]*/ 0;
-    const pendingUserCount = /*[[${notAllowedUserCount}]]*/ 0;
-    const activeAdminCount = /*[[${allowedAdminCount}]]*/ 0;
-    const pendingAdminCount = /*[[${notAllowedAdminCount}]]*/ 0;
-    const loggedInCount = /*[[${loggedInCount}]]*/ 0;
-    /*]]>*/
-    const userChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Registered Users','Registered Admins','Pending Users','Pending Admins','Logged In'],
-            datasets: [{
-                data: [activeUserCount,activeAdminCount,pendingUserCount,pendingAdminCount,loggedInCount],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(153, 102, 255, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(153, 102, 255, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: false
-            },
-            maintainAspectRatio: false
-        }
-    });
+    const dashboard = new Dashboard();
 
-    ctx = $('#mediaChart');
-    /*<![CDATA[*/
-    const photoCount = /*[[${photoCount}]]*/ 0;
-    const videoCount = /*[[${videoCount}]]*/ 0;
-    const notLocatedCount = /*[[${notLocatedCount}]]*/ 0;
-    const hiddenCount = /*[[${hiddenCount}]]*/ 0;
-    /*]]>*/
-    const mediaChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Photos','Videos','Missing GPS Data','Removed'],
-            datasets: [{
-                data: [photoCount,videoCount,notLocatedCount,hiddenCount],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: false
-            },
-            maintainAspectRatio: false
-        }
-    });
-
-    ctx = $('#cameraChart');
-    /*<![CDATA[*/
-    const cameraCountJson = /*[[${cameraCountJson}]]*/ '[{"x":0,"y":""}]';
-    /*]]>*/
-    const cameraCounts = JSON.parse(Util.decodeHtml(cameraCountJson));
-    const cameraCountObj = JSON.parse(cameraCountJson);
-    const cameraChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            datasets: [{
-                data: cameraCounts
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            scales: {
-                y: {
-                    ticks: {
-                        // Truncate ticks
-                        callback: function(index) {
-                            let labelValue = cameraCountObj[index].y;
-                            if (labelValue.length > 9) {
-                                labelValue = labelValue.substr(0,8) + "...";
-                            }
-                            return labelValue;
-                        },
-                        maxRotation: 0,
-                        minRotation: 0
-                    }
-                },
-                x: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 1
-                    }
-                }
-            },
-            plugins: {
-                legend: false
-            },
-            maintainAspectRatio: false,
-            onClick: cameraGraphClickEvent
-        }
-    });
-
-    // Click bars
-    function cameraGraphClickEvent(event, chart) {
-        let datasetIndex = chart[0].element.$context.dataIndex;
-        if(chart[0] && datasetIndex >= 0) {
-            let label = cameraCountObj[datasetIndex].y;
-            if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                window.open("/search?searchTerm="+encodeURI(label.split(' ').join('+')), '_blank').focus();
-            }
-        }
-    }
-
-    // Click label
-    document.getElementById("cameraChart").onclick = function(evt) {
-        let point = Chart.helpers.getRelativePosition(event, cameraChart);
-        let datasetIndex = cameraChart.scales.y.getValueForPixel(point.y);
-        if (datasetIndex >= 0) {
-            let label = cameraCountObj[datasetIndex].y;
-            if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                window.open("/search?searchTerm="+encodeURI(label.split(' ').join('+')), '_blank').focus();
-            }
-        }
-    };
-
-    ctx = $('#cpuChart');
-    const cpuChart = new Chart(ctx, {
-        type: 'line',
-        labels: [],
-        data: {
-            datasets: [
-                {
-                    label: 'JVM CPU %',
-                    data: [],
-                    fill: false,
-                    borderColor: 'rgb(54, 162, 235)',
-                    tension: 0 //0.5 for curved
-                },
-                {
-                    label: 'System CPU %',
-                    data: [],
-                    fill: false,
-                    borderColor: 'rgb(255, 206, 86)',
-                    tension: 0
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 20
-                    },
-                    max: 100
-                }
-            },
-            plugins: {
-                legend: true
-            },
-            maintainAspectRatio: false
-        }
-    });
-
-    ctx = $('#memoryChart');
-    const memoryChart = new Chart(ctx, {
-        type: 'line',
-        labels: [],
-        data: {
-            datasets: [
-                {
-                    label: 'Memory Used %',
-                    data: [],
-                    fill: false,
-                    borderColor: 'rgb(54, 162, 235)',
-                    tension: 0
-                }
-            ]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        stepSize: 20
-                    },
-                    max: 100
-                }
-            },
-            plugins: {
-                legend: true
-            },
-            maintainAspectRatio: false
-        }
-    });
-
-    function addData(chart, label, data, index) {
-        if (label !== null) {
-            chart.data.labels.push(label);
-        }
-        chart.data.datasets[index].data.push(data);
-        chart.update();
-    }
-
-    function removeData(chart) {
-        chart.data.labels.shift();
-        chart.data.datasets.forEach((dataset) => {
-            dataset.data.shift();
-        });
-        chart.update();
-    }
-
-    let stompClient = null;
-    // Socket polling refresh rate
-    const refreshRateMS = 1000*5;
-    // Update chart every 10 seconds
-    const intervalMS = 1000*10;
-    // Pop values after 3 minutes
-    const maxElapsedMS = 1000*60*3;
-    let elapsedMS = 0;
-
-    connect();
-
-    function scanRefresh() {
-        sendMessage();
-        elapsedMS += refreshRateMS
-        setTimeout(scanRefresh, refreshRateMS);
-    }
-
-    function connect() {
-        const socket = new SockJS('/websocket-endpoint');
-        stompClient = Stomp.over(socket);
-        if (shashin.showDebug === false) {
-            stompClient.debug = null
-        }
-
-        shashin.printMessageToConsole("Socket Connecting");
-
-        stompClient.connect({}, function() {
-            scanRefresh();
-            shashin.printMessageToConsole( "Connected STOMP client");
-
-            this.subscribe("/topic/statmessages", function (message) {
-                let respMessageJsonString = JSON.parse(message.body).content;
-                const systemStats = JSON.parse(respMessageJsonString);
-
-                const processCpuLoadPercent = Math.ceil(systemStats["processCpuLoadPercentDouble"]*100)|0;
-                const processCpuLoadData = ~~processCpuLoadPercent;
-                shashin.printMessageToConsole("processCpuLoadData: "+processCpuLoadData);
-
-                const systemCpuLoadPercent = Math.ceil(systemStats["systemCpuLoadPercentDouble"]*100)|0;
-                const systemCpuLoadData = ~~systemCpuLoadPercent
-                shashin.printMessageToConsole("systemCpuLoadData: "+systemCpuLoadData);
-
-                const memoryUsedPercent = Math.ceil(systemStats["usedHeapMemoryGB"]/systemStats["maxHeapMemoryGB"]*100)|0;
-                const memoryUsedData = ~~memoryUsedPercent
-                shashin.printMessageToConsole("usedHeapMemoryGB: "+systemStats["usedHeapMemoryGB"]);
-                shashin.printMessageToConsole("maxHeapMemoryGB: "+systemStats["maxHeapMemoryGB"]);
-                shashin.printMessageToConsole("memoryUsedData: "+memoryUsedData);
-
-                if (elapsedMS >= maxElapsedMS && elapsedMS % intervalMS === 0) {
-                    removeData(cpuChart);
-                    removeData(memoryChart);
-                }
-                if (elapsedMS === refreshRateMS || elapsedMS % intervalMS === 0) {
-                    addData(cpuChart, systemStats["timestamp"], processCpuLoadData, 0)
-                    addData(cpuChart, null, systemCpuLoadData, 1)
-                    addData(memoryChart, systemStats["timestamp"], memoryUsedData, 0)
-                }
-                shashin.printMessageToConsole("Message:"+respMessageJsonString);
-            });
-        }, function(e) {
-            shashin.printMessageToConsole("Socket connection error: " + e.toString())
-        });
-    }
-
-    function disconnect() {
-        if (stompClient !== null) {
-            stompClient.disconnect();
-        }
-        shashin.printMessageToConsole("Disconnected");
-    }
-
-    function sendMessage() {
-        if (stompClient !== null) {
-            stompClient.send("/app/statmessage", {}, JSON.stringify({'message': "getStatMessage"}));
-        } else {
-            shashin.printMessageToConsole("Trying to send message but STOMP client is null")
-        }
-    }
+    const siteStatChart = dashboard.displaySiteStatChart(siteStatChartData);
+    const userChart = dashboard.displayUserChart(userChartData);
+    const mediaChart = dashboard.displayMediaChart(mediaChartData);
+    const cameraChart = dashboard.displayCameraChart(cameraChartData);
+    const cpuChart = dashboard.displayCpuChart();
+    const memoryChart = dashboard.displayMemoryChart();
+    dashboard.startWebSocket(cpuChart, memoryChart);
 </script>
 
 </body>
