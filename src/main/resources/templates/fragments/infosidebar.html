@@ -7,7 +7,7 @@
         <h5 class="modal-title" id="exampleSidebarLabel">Viewing <span id="infoSidebarTitle"></span><div id="propInfoSidebarThumbnail"></div></h5>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" id="offcanvasInfoSidebarCloseButton" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body">
+    <div class="offcanvas-body" style="word-wrap: break-word;">
         <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
     </div>
 </div>
