@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html  xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="head(titleDescriptor)">
-    <th:block th:with="titleDescriptor = ${#strings.toLowerCase(titleDescriptor)}">
+    <th:block th:with="titleDescriptorLower = ${#strings.toLowerCase(titleDescriptor)}">
         <meta charset="UTF-8">
         <title th:text="${@environment.getProperty('app.build.properties.name')} + (${#strings.isEmpty(titleDescriptor)} ? ': Home' : ': ' + ${titleDescriptor})"></title>
         <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
@@ -24,17 +24,17 @@
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
             <link href="/css/site/style.css" rel="stylesheet">
         </th:block>
-        <th:block th:if="${titleDescriptor == 'person' or
-        titleDescriptor == 'matches' or
-        titleDescriptor == 'timeline' or
-        titleDescriptor == 'album' or
-        titleDescriptor == 'favorites' or
-        titleDescriptor == 'map' or
-        titleDescriptor == 'search' or
-        titleDescriptor == 'share' or
-        titleDescriptor == 'trash' or
-        titleDescriptor == 'recent' or
-        titleDescriptor == 'folder'}">
+        <th:block th:if="${titleDescriptorLower == 'person' or
+        titleDescriptorLower == 'matches' or
+        titleDescriptorLower == 'timeline' or
+        titleDescriptorLower == 'album' or
+        titleDescriptorLower == 'favorites' or
+        titleDescriptorLower == 'map' or
+        titleDescriptorLower == 'search' or
+        titleDescriptorLower == 'share' or
+        titleDescriptorLower == 'trash' or
+        titleDescriptorLower == 'recent' or
+        titleDescriptorLower == 'folder'}">
             <script src="/js/lightgallery.min.js"></script>
             <script src="/js/lg-video.min.js"></script>
             <script src="/js/lg-zoom.min.js"></script>
@@ -52,7 +52,7 @@
             <link href="/css/lg-editlocation.css" rel="stylesheet">
             <link href="/css/lg-metadata-detail.css" rel="stylesheet">
         </th:block>
-        <th:block th:if="${titleDescriptor == 'timeline'}">
+        <th:block th:if="${titleDescriptorLower == 'timeline'}">
             <style>
                 #container {
                     -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -66,45 +66,45 @@
             <script src="/js/jquery.withinviewport.js"></script>
             <script src="/js/date.format.js"></script>
         </th:block>
-        <th:block th:if="${titleDescriptor == 'scan' or titleDescriptor == 'match' or titleDescriptor == 'dashboard'}">
+        <th:block th:if="${titleDescriptorLower == 'scan' or titleDescriptorLower == 'match' or titleDescriptorLower == 'dashboard'}">
             <script src="/js/stomp.min.js"></script>
             <script src="/js/sockjs.min.js"></script>
         </th:block>
-        <th:block th:if="${titleDescriptor == 'dashboard'}">
+        <th:block th:if="${titleDescriptorLower == 'dashboard'}">
             <script src="/js/chart.min.js"></script>
         </th:block>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
             <script src="/js/site/util.js"></script>
             <script src="/js/site/app.js"></script>
-            <th:block th:if="${titleDescriptor == 'album'}">
+            <th:block th:if="${titleDescriptorLower == 'album'}">
                 <script src="/js/site/album.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'timeline'}">
+            <th:block th:if="${titleDescriptorLower == 'timeline'}">
                 <script src="/js/site/timeline.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'recent'}">
+            <th:block th:if="${titleDescriptorLower == 'recent'}">
                 <script src="/js/site/recent.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'folder'}">
+            <th:block th:if="${titleDescriptorLower == 'folder'}">
                 <script src="/js/site/folder.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'favorites'}">
+            <th:block th:if="${titleDescriptorLower == 'favorites'}">
                 <script src="/js/site/favorites.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'search'}">
+            <th:block th:if="${titleDescriptorLower == 'search'}">
                 <script src="/js/site/search.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'trash'}">
+            <th:block th:if="${titleDescriptorLower == 'trash'}">
                 <script src="/js/site/trash.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'share'}">
+            <th:block th:if="${titleDescriptorLower == 'share'}">
                 <script src="/js/site/share.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'person'}">
+            <th:block th:if="${titleDescriptorLower == 'person'}">
                 <script src="/js/site/person.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'albums'}">
+            <th:block th:if="${titleDescriptorLower == 'albums'}">
                 <script src="/js/site/albumsmodallisteners.js"></script>
             </th:block>
         </th:block>
@@ -112,34 +112,34 @@
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
             <script src="/js/site/util.min.js"></script>
             <script src="/js/site/app.min.js"></script>
-            <th:block th:if="${titleDescriptor == 'album'}">
+            <th:block th:if="${titleDescriptorLower == 'album'}">
                 <script src="/js/site/album.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'timeline'}">
+            <th:block th:if="${titleDescriptorLower == 'timeline'}">
                 <script src="/js/site/timeline.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'recent'}">
+            <th:block th:if="${titleDescriptorLower == 'recent'}">
                 <script src="/js/site/recent.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'folder'}">
+            <th:block th:if="${titleDescriptorLower == 'folder'}">
                 <script src="/js/site/folder.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'favorites'}">
+            <th:block th:if="${titleDescriptorLower == 'favorites'}">
                 <script src="/js/site/favorites.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'search'}">
+            <th:block th:if="${titleDescriptorLower == 'search'}">
                 <script src="/js/site/search.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'trash'}">
+            <th:block th:if="${titleDescriptorLower == 'trash'}">
                 <script src="/js/site/trash.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'share'}">
+            <th:block th:if="${titleDescriptorLower == 'share'}">
                 <script src="/js/site/share.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'person'}">
+            <th:block th:if="${titleDescriptorLower == 'person'}">
                 <script src="/js/site/person.min.js"></script>
             </th:block>
-            <th:block th:if="${titleDescriptor == 'albums'}">
+            <th:block th:if="${titleDescriptorLower == 'albums'}">
                 <script src="/js/site/albumsmodallisteners.min.js"></script>
             </th:block>
         </th:block>
