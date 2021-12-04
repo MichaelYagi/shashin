@@ -553,11 +553,10 @@
                                             'data-lg-size="'+metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight+'-'+metadata.thumbnailSmallWidth+','+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ' +
                                             'data-responsive="'+encodeURI(metadata.thumbnailUrlSmall)+' '+metadata.thumbnailSmallWidth+'" ' +
                                             'data-thumb="'+encodeURI(metadata.thumbnailUrlSmall)+'" ' +
-                                            'data-width="'+metadata.originalImageWidth+'" ';
+                                            'data-width="'+metadata.originalImageWidth+'"';
                                     }
                                     html +=
-                                        //'data-sub-html="'+Util.encodeHtml(mediaContent.subHtml)+
-                                        '">' +
+                                        '>' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
 
@@ -575,11 +574,10 @@
                                             'data-lg-size="'+metadata.thumbnailSmallWidth+'-'+metadata.thumbnailSmallHeight+'-'+metadata.thumbnailSmallWidth+','+metadata.originalImageWidth+'-'+metadata.originalImageHeight+'" ' +
                                             'data-responsive="'+encodeURI(metadata.thumbnailUrlSmall)+' '+metadata.thumbnailSmallWidth+'" ' +
                                             'data-thumb="'+encodeURI(metadata.thumbnailUrlSmall)+'" ' +
-                                            'data-width="'+metadata.originalImageWidth+'" ';
+                                            'data-width="'+metadata.originalImageWidth+'"';
                                     }
                                     html +=
-                                        //'data-sub-html="'+Util.encodeHtml(mediaContent.subHtml)+
-                                        '">' +
+                                        '>' +
                                         '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
                                         '</a>';
                                 }
