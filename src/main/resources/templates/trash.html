@@ -20,42 +20,40 @@
             <div id="trashMessage"></div>
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
-                    <div class="row p-3">
                     <h1>Trash</h1>
+                    <div class="row p-3">
+                        <th:block th:each="metadata, iterStat: ${metadataList}">
+                            <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                                <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                    <th:block th:each="metadata, iterStat: ${metadataList}">
-                        <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
-                            <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
+                                <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;" th:onError="Util.errorImg(this,[[${metadata.title}]],209)">
 
-                            <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;" th:onError="Util.errorImg(this,[[${metadata.title}]],209)">
+                                <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},false)"></div>
 
-                            <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},false)"></div>
+                                <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
 
-                            <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
+                                <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
 
-                            <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
+                                <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
+                            </div>
 
-                            <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>
-                        </div>
+                            <script th:inline="javascript" type="text/javascript">
+                                /*<![CDATA[*/
+                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'trash');
+                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                                $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
+                                    e.preventDefault();
+                                    const metadataObj = JSON.parse($("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag"));
+                                    shashin.openInfoModal(metadataObj);
+                                });
+                                /*]]>*/
+                            </script>
 
-                        <script th:inline="javascript" type="text/javascript">
-                            /*<![CDATA[*/
-                            shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'trash');
-                            $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
-                            $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
-                                e.preventDefault();
-                                const metadataObj = JSON.parse($("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag"));
-                                shashin.openInfoModal(metadataObj);
-                            });
-                            /*]]>*/
-                        </script>
+                            <span class="appendMetadataPhotos" style="width:0;height:0;padding:0"></span>
 
-                        <span class="appendMetadataPhotos" style="width:0;height:0;padding:0"></span>
-
-                    </th:block>
+                        </th:block>
                     </div>
                 </th:block>
-
             </div>
 
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
