@@ -20,8 +20,8 @@
             <div id="favoritesMessage"></div>
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${metadataList != ''}">
+                    <h1>Favorites</h1>
                     <div class="row p-3">
-                        <h1>Favorites</h1>
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
