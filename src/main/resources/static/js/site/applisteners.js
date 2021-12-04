@@ -125,7 +125,7 @@ $("#albumAppToolsRemoveFavorites").click(function(e) {
     return false;
 });
 
-$("#albumAppToolsUntrash").click(function(e) {
+$("#albumAppToolsRestore").click(function(e) {
     e.preventDefault();
 
     let metadataIdList = [];
@@ -144,7 +144,7 @@ $("#albumAppToolsUntrash").click(function(e) {
         }
 
         $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " untrashing")}).then(function (data) {
+        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " restore")}).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {

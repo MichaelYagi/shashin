@@ -83,13 +83,13 @@ class TrashController {
                     metadataRepository.save(metadataObj.get())
                 }
 
-                resp["msg"] = "Untrashed photos"
+                resp["msg"] = "Restored photos"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
             }
         }
 
-        resp["msg"] = "Could not untrash"
+        resp["msg"] = "Could not restore"
         resp["status"] = "fail"
         return mapper.writeValueAsString(resp)
     }
