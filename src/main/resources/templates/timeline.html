@@ -102,7 +102,7 @@
                                 <img class="photo-thumbnail-image thumbnailTag_undated" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}">
                             </th:block>
                             <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
-                                <img th:class="'photo-thumbnail-image ' + ${'thumbnailTag_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}">
+                                <img th:class="'photo-thumbnail-image ' + ${'thumbnailTag_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}">
                             </th:block>
 
                             <div th:id="'tntl'+${metadata.id}"></div>
