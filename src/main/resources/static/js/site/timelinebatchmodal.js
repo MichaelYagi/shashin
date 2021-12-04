@@ -194,6 +194,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#yearTakenBatchData').val('');
     $('#latlngBatchData').val('');
     $('#tagBatchDataInput').val('');
+    $('#albumNameInput').val('');
     $('#keywordsBatchData').val('');
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
