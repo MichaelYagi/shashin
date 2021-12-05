@@ -756,7 +756,7 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             }
 
             val rotationStr = frameGrabber.getVideoMetadata("rotate")
-            if (!rotationStr.isNullOrBlank()) {
+            if (!rotationStr.isNullOrBlank() && bi != null) {
                 val rotation = rotationStr.toDouble()
                 if (rotation > 0) {
                     bi = rotateImage(bi, rotation)
