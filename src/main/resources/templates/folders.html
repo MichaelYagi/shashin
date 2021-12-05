@@ -39,13 +39,13 @@
 </div>
 
 <script type="text/javascript">
-    $(window).scroll(function () {
+    $("#container").scroll(function () {
         //set scroll position in session storage
-        sessionStorage.scrollPos = $(window).scrollTop();
+        sessionStorage.scrollPos = $("#container").scrollTop();
     });
     const init = function () {
         //get scroll position in session storage
-        $(window).scrollTop(sessionStorage.scrollPos || 0)
+        $("#container").scrollTop(sessionStorage.scrollPos || 0)
     };
     window.onload = init;
 </script>
