@@ -599,17 +599,35 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
             // Gallery thumbnails
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
-//            val scaled209: BufferedImage = scaleImageByHeight(img, 209)
-            var scaled209: BufferedImage = Thumbnails.of(img)
-                .height(209)
-                .outputQuality(1.0)
-                .asBufferedImage()
-            if (scaled209.width > scaled209.height * 2) {
-                scaled209 = Thumbnails.of(scaled209)
+
+            var scaled209: BufferedImage = if (file.extension.lowercase() == "gif") {
+                Thumbnails.of(img)
+                    .height(209)
+                    .imageType(BufferedImage.TYPE_INT_ARGB)
+                    .outputQuality(1.0)
+                    .asBufferedImage()
+            } else {
+                Thumbnails.of(img)
                     .height(209)
                     .outputQuality(1.0)
-                    .sourceRegion(Positions.CENTER, 209, 209)
                     .asBufferedImage()
+            }
+
+            if (scaled209.width > scaled209.height * 2) {
+                scaled209 = if (file.extension.lowercase() == "gif") {
+                    Thumbnails.of(img)
+                        .height(209)
+                        .imageType(BufferedImage.TYPE_INT_ARGB)
+                        .outputQuality(1.0)
+                        .sourceRegion(Positions.CENTER, 209, 209)
+                        .asBufferedImage()
+                } else {
+                    Thumbnails.of(scaled209)
+                        .height(209)
+                        .outputQuality(1.0)
+                        .sourceRegion(Positions.CENTER, 209, 209)
+                        .asBufferedImage()
+                }
             }
             if (tnFile != null) {
                 ImageIO.write(scaled209, extension, tnFile)
