@@ -109,7 +109,7 @@ $("#saveMetadata").click(function (e) {
                     // window.top.location = window.top.location
 
                     // Update tag
-                    const metadataObj = JSON.parse($("#timelineModalEdit" + metadataId).attr("tag"));
+                    const metadataObj = shashin.checkMetadata(metadataId);
                     metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
                     metadataObj.year = $("#yearTaken").val()
                     metadataObj.month = $("#monthTaken").val()

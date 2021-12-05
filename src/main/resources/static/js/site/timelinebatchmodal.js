@@ -118,7 +118,7 @@ $("#saveBatchMetadata").click(function (e) {
                                 }
                             } else if ($("#latlngBatchData").val() !== "") {
                                 const latlngArray = $("#latlngBatchData").val().split(",");
-                                const metadataTaggedObj = JSON.parse($("#timelineModalEdit" + metadataId).attr("tag"));
+                                const metadataTaggedObj = shashin.checkMetadata(metadataId);
                                 metadataTaggedObj["lat"] = $.trim(latlngArray[0]);
                                 metadataTaggedObj["lng"] = $.trim(latlngArray[1]);
                                 $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataTaggedObj));
