@@ -601,7 +601,13 @@
 
         for (const key in additionalConfigs) {
             if (key === "plugins") {
-                configs["plugins"].push(additionalConfigs[key]);
+                if ($.isArray(additionalConfigs[key])) {
+                    $.each(additionalConfigs[key] , function(index, val) {
+                        configs["plugins"].push(val);
+                    });
+                } else {
+                    configs["plugins"].push(additionalConfigs[key]);
+                }
             } else {
                 configs[key] = additionalConfigs[key];
             }

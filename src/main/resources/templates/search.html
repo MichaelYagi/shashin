@@ -79,7 +79,7 @@
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:lgMetadataDetail,metadataDetail:true},'.mediaLink');
+        let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
         function loadNextPage() {
             $("#spinner").css("display","block");

@@ -163,7 +163,7 @@
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
         shashin.setLightGalleryElement('infinite-scroll-gallery');
-        shashin.setLightGallery({"selector":".mediaLink",plugins:lgMetadataDetail,metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
+        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
 
         let topScroll = true;
         let topOfPage = true;
