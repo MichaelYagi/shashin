@@ -67,10 +67,11 @@ class MediaServiceController {
             val video = VideoAttributes()
             video.setCodec("h264")
             video.setX264Profile(X264_PROFILE.BASELINE)
+            // More the frames and higher bitrate means more quality and size,
+            // keep it low based on devices like mobile
             // Here 160 kbps video is 160000
-            video.setBitRate(160000)
-            // More the frames more quality and size, but keep it low based on devices like mobile
-            video.setFrameRate(15)
+            //video.setBitRate(160000)
+            //video.setFrameRate(15)
             val width = if (metadata.getOriginalImageWidth() == null) 209 else metadata.getOriginalImageWidth()!!
             val height = if (metadata.getOriginalImageHeight() == null) 209 else metadata.getOriginalImageHeight()!!
             video.setSize(VideoSize(width, height))
