@@ -42,7 +42,7 @@ class MediaServiceController {
         val metadataObj = metadataRepository.findById(metadataId)
         var path = metadataObj.get().getPath()!!
         val metadata = metadataObj.get()
-        
+
         if (metadata.getType() != null && (metadata.getType()!!.lowercase().contains("mp4") || metadata.getType()!!.lowercase().contains("quicktime")) &&
             (metadata.getCompressionType() == null || metadata.getCompressionType()!!.lowercase() != "h.264")) {
             logger.log(Level.INFO, "Converting video "+metadata.getPath()+" to h.264.")
@@ -71,7 +71,9 @@ class MediaServiceController {
             video.setBitRate(160000)
             // More the frames more quality and size, but keep it low based on devices like mobile
             video.setFrameRate(15)
-            video.setSize(VideoSize(300, 300))
+            val width = if (metadata.getOriginalImageWidth() == null) 209 else metadata.getOriginalImageWidth()!!
+            val height = if (metadata.getOriginalImageHeight() == null) 209 else metadata.getOriginalImageHeight()!!
+            video.setSize(VideoSize(width, height))
 
             /* Step 4. Set Encoding Attributes*/
             val attrs = EncodingAttributes()
