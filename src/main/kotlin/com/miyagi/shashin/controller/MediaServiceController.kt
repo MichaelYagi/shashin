@@ -42,9 +42,9 @@ class MediaServiceController {
         val metadataObj = metadataRepository.findById(metadataId)
         var path = metadataObj.get().getPath()!!
         val metadata = metadataObj.get()
-
-        if (metadata.getType() != null && metadata.getType()!!.lowercase().contains("mp4") &&
-            metadata.getCompressionType() != null && metadata.getCompressionType()!!.lowercase() != "h.264") {
+        
+        if (metadata.getType() != null && (metadata.getType()!!.lowercase().contains("mp4") || metadata.getType()!!.lowercase().contains("quicktime")) &&
+            (metadata.getCompressionType() == null || metadata.getCompressionType()!!.lowercase() != "h.264")) {
             logger.log(Level.INFO, "Converting video "+metadata.getPath()+" to h.264.")
             /* Step 1. Declaring source file and Target file */
             val source = File(path)
