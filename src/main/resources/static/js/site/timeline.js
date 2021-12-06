@@ -35,7 +35,7 @@
                     shashin.lg = null;
 
                     setTimeout(() => {
-                        shashin.setLightGallery({"selector":".mediaLink",plugins:lgMetadataDetail,metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
+                        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
                     }, 500);
                 }
             }, closeTimeout);
