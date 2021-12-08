@@ -18,6 +18,7 @@
         <kotlin.version>1.5.21</kotlin.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <hibernate.version>5.5.7.Final</hibernate.version>
+        <npm.executable>npm</npm.executable>
     </properties>
     <profiles>
         <profile>
@@ -33,6 +34,18 @@
             <id>prod</id>
             <properties>
                 <activatedProperties>prod</activatedProperties>
+            </properties>
+        </profile>
+        <profile>
+            <id>platform-windows</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <properties>
+                <!-- Override the executable names for Windows -->
+                <npm.executable>npm.cmd</npm.executable>
             </properties>
         </profile>
     </profiles>
@@ -229,7 +242,7 @@
 
     <build>
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
+        <testSourceDirectory>${project.basedir}/src/test</testSourceDirectory>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -333,6 +346,41 @@
                             <skipMerge>true</skipMerge>
 
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- Run mocha tests-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>exec-npm</id>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <executable>${npm.executable}</executable>
+                            <arguments>
+                                <argument>install</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>exec-npm-test</id>
+                        <phase>test</phase>
+                        <configuration>
+                            <executable>${npm.executable}</executable>
+                            <arguments>
+                                <argument>run</argument>
+                                <argument>test</argument>
+                            </arguments>
+                        </configuration>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
