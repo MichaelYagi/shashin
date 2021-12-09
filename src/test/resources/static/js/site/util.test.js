@@ -3,6 +3,7 @@ const { expect } = require('chai')
 require('../helper.js')
 
 const Util = require('../../../../../main/resources/static/js/site/util')
+const shashin = require("../../../../../main/resources/static/js/site/app");
 
 describe('#Util tests', function() {
     it('seriarlize form test', function() {
@@ -229,5 +230,13 @@ describe('#Util tests', function() {
 
         Util.populateDetailsInfo({year:2021,month:11,day:5,time:"00:00:00"})
         assert.equal($(".manualTakenAtDetails").text(),"2021-11-5 00:00:00")
+    })
+
+    it('Date index tests', function() {
+        let day = Util.getShortDay(1)
+        assert.equal(day, 'Mon')
+
+        let month = Util.getShortMonths(1)
+        assert.equal(month, 'Feb')
     })
 })
