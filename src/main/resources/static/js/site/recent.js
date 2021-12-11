@@ -34,7 +34,7 @@ class Recent {
                             const displayCurrentDate = dateFormat(metadata["addedAt"], "ddd, mmm dd, yyyy");
 
                             if (lastDateHeading !== currentDate) {
-                                html += '<section class="dateHeading" style="margin-left: -10px;" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
+                                html += '<section class="dateHeading" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
                             }
 
                             html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
