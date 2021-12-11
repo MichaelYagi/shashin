@@ -56,13 +56,23 @@
                         if (albumMetadataList.length > 0) {
                             const mediaLinkLength = $(".mediaLink").length;
                             for (const index in albumMetadataList) {
+                                let html = "";
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = albumMetadataList[index];
 
                                 const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                 const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                                let html =
+                                const dateHeadingCount = $(".dateHeading").length;
+                                const lastDateHeading = $(".dateHeading").get(dateHeadingCount - 1).id;
+                                const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
+                                const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+
+                                if (lastDateHeading !== currentDate) {
+                                    html += '<section class="dateHeading" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
+                                }
+
+                                html +=
                                     '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
                                     '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
                                     '   <img src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="Util.errorImg(this,\''+metadata.title+'\',209)">\n';
