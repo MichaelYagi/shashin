@@ -27,6 +27,16 @@ class Recent {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             const metadata = metadataList[index];
 
+
+                            const dateHeadingCount = $(".dateHeading").length;
+                            const lastDateHeading = $(".dateHeading").get(dateHeadingCount - 1).id;
+                            const currentDate = dateFormat(metadata["addedAt"], "isoDate");
+                            const displayCurrentDate = dateFormat(metadata["addedAt"], "ddd, mmm dd, yyyy");
+
+                            if (lastDateHeading !== currentDate) {
+                                html += '<section class="dateHeading" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
+                            }
+
                             html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                             html +=
                                 '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +

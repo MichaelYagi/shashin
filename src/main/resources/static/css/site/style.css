@@ -259,9 +259,13 @@ footer {
   border-radius: 5px;
 }
 
-.card{
+.card {
   overflow: hidden;
 }
-.card-text{
+.card-text {
   word-wrap: break-word;
+}
+
+.dateHeading {
+  margin: 33px 0 12px -10px;
 }

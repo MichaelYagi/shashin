@@ -26,6 +26,13 @@
                 <th:block th:if="${metadataList != ''}">
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
+
+                            <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.addedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index-1].addedAt),'yyyy-M-dd')==#dates.format(sdf.parse(metadata.addedAt),'yyyy-M-dd')}">
+                                    <section class="dateHeading" th:id="${#dates.format(sdf.parse(metadata.addedAt),'yyyy-M-dd')}"><p><strong th:text="${#dates.format(sdf.parse(metadata.addedAt), 'EEE, MMM dd, yyyy')}"></strong></p></section>
+                                </th:block>
+                            </th:block>
+
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
