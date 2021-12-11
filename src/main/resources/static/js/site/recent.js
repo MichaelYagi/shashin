@@ -28,13 +28,13 @@ class Recent {
                             const metadata = metadataList[index];
 
 
-                            const dateHeadingCount = $(".dateHeading").length;
-                            const lastDateHeading = $(".dateHeading").get(dateHeadingCount - 1).id;
+                            const dateHeadingCount = $(".dateSection").length;
+                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
                             const currentDate = dateFormat(metadata["addedAt"], "isoDate");
                             const displayCurrentDate = dateFormat(metadata["addedAt"], "ddd, mmm dd, yyyy");
 
                             if (lastDateHeading !== currentDate) {
-                                html += '<section class="dateHeading" id="'+currentDate+'"><p><span class="text-muted">Added </span><strong>' + displayCurrentDate + '</strong></p></section>\n';
+                                html += '<section class="dateSection" id="'+currentDate+'"><p><span class="text-muted">Added </span><strong>' + displayCurrentDate + '</strong></p></section>\n';
                             }
 
                             html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';

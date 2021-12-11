@@ -63,13 +63,13 @@
                                 const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                 const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                                const dateHeadingCount = $(".dateHeading").length;
-                                const lastDateHeading = $(".dateHeading").get(dateHeadingCount - 1).id;
+                                const dateHeadingCount = $(".dateSection").length;
+                                const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
                                 const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
                                 const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
                                 if (lastDateHeading !== currentDate) {
-                                    html += '<section class="dateHeading" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
+                                    html += '<section class="dateSection" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
                                 }
 
                                 html +=
