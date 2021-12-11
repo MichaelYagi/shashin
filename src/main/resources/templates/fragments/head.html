@@ -16,6 +16,7 @@
         <script src="/js/popper.min.js"></script>
         <script src="/js/clipboard.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
+        <script src="/js/date.format.js"></script>
         <link href="/css/bootstrap.min.css" rel="stylesheet">
         <link href="/css/bootstrap-icons.css" rel="stylesheet">
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
@@ -67,7 +68,6 @@
             </style>
             <script src="/js/withinviewport.js"></script>
             <script src="/js/jquery.withinviewport.js"></script>
-            <script src="/js/date.format.js"></script>
         </th:block>
         <th:block th:if="${titleDescriptorLower == 'scan' or titleDescriptorLower == 'match' or titleDescriptorLower == 'dashboard'}">
             <script src="/js/stomp.min.js"></script>
