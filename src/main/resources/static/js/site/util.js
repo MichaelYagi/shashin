@@ -231,7 +231,6 @@ class Util {
 
         // Clear data
         $(".pathDetails").text("");
-        $(".titleDetails").text("");
         $(".typeDetails").text("");
         $(".isoDetails").text("");
         $(".compressionDetails").text("");
@@ -254,7 +253,6 @@ class Util {
         $(".locationDetails").html("");
 
         $(".pathLabel").hide();
-        $(".titleLabel").hide();
         $(".typeLabel").hide();
         $(".isoLabel").hide();
         $(".compressionLabel").hide();
@@ -287,10 +285,6 @@ class Util {
                 $(".locationLabel").show();
                 $(".locationDetails").html("<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'>" + metadata.placeName + "</a>");
             }
-        }
-        if (metadata.title != null) {
-            $(".titleLabel").show();
-            $(".titleDetails").text(metadata.path);
         }
         if (metadata.path != null) {
             $(".pathLabel").show();

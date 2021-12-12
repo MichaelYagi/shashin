@@ -410,7 +410,7 @@
             metadata = JSON.parse($("#infoModalEdit"+metadata.id).attr("tag"));
         }
 
-        $("#infoModalTitle").text(metadata.fileName);
+        $("#infoModalTitle").text(metadata.title);
         $("#currentfilename").val(metadata.fileName)
         $("#currentlat").val(metadata.lat)
         $("#currentlng").val(metadata.lng)
@@ -430,7 +430,7 @@
         // Populate modal data
         metadata = shashin.checkMetadata(metadata.id);
 
-        $("#infoSidebarTitle").text(metadata.fileName);
+        $("#infoSidebarTitle").text(metadata.title);
         $("#currentfilename").val(metadata.fileName)
         $("#currentlat").val(metadata.lat)
         $("#currentlng").val(metadata.lng)
