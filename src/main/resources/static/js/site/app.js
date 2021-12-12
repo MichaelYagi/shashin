@@ -53,7 +53,7 @@
         $("#isobject")[0].checked = false;
         $("#hidden")[0].checked = false;
 
-        $("#timelineModalTitle").text(metadata.fileName);
+        $("#timelineModalTitle").text(metadata.title);
         $("#currentfilename").val(metadata.fileName)
         $("#currentlat").val(metadata.lat)
         $("#currentlng").val(metadata.lng)

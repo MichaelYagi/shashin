@@ -8,7 +8,7 @@
 
         if (metadata !== null) {
             // Clear modal data
-            $("#albumModalTitle").text(metadata.fileName)
+            $("#albumModalTitle").text(metadata.title)
             $('#propAlbumModal').find(':input').val('');
             $("#removeFromAlbum")[0].checked = false;
             $("#setCoverAlbum")[0].checked = false;
