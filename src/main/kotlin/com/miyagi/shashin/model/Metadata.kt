@@ -28,6 +28,7 @@ class Metadata {
     private var duration: String? = null
     private var type: String? = null
     private var fileName: String? = null
+    private var expectedExtension: String? = null
     private var timeZone: String? = null
     private var lat: String? = null
     private var lng: String? = null
@@ -117,6 +118,9 @@ class Metadata {
     }
     fun setFileName(fileName: String?) {
         this.fileName = fileName
+    }
+    fun setExpectedExtension(expectedExtension: String?) {
+        this.expectedExtension = expectedExtension
     }
     fun setTimeZone(timeZone: String?) {
         this.timeZone = timeZone
@@ -245,6 +249,9 @@ class Metadata {
     fun getFileName(): String? {
         return this.fileName
     }
+    fun getExpectedExtension(): String? {
+        return this.expectedExtension
+    }
     fun getTimeZone(): String? {
         return this.timeZone
     }
@@ -325,6 +332,7 @@ class Metadata {
         map["duration"] = this.duration
         map["type"] = this.type
         map["fileName"] = this.fileName
+        map["expectedExtension"] = this.expectedExtension
         map["title"] = this.title
         map["timeZone"] = this.timeZone
         map["lat"] = this.lat

@@ -249,6 +249,9 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                             "Detected MIME Type" -> {
                                 metadataObj.setType(tag.description)
                             }
+                            "Expected File Name Extension" -> {
+                                metadataObj.setExpectedExtension(tag.description)
+                            }
 //                    "File Name" -> {
 //                        metadataObj.setFileName(tag.description)
 //                        metadataObj.setTitle(tag.description)

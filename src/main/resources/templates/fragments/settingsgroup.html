@@ -6,13 +6,13 @@
     <a th:attr="class='nav-link' + ${activePage=='settings' ? ' active' : ''}" href="/settings">General</a>
   </li>
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='users' ? ' active' : ''}" href="/settings/users">Users</a>
+    <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan">Media Indexing</a>
   </li>
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan">Indexing</a>
+    <a th:attr="class='nav-link' + ${activePage=='match' ? ' active' : ''}" href="/settings/match">Face Match Indexing</a>
   </li>
   <li class="nav-item">
-    <a th:attr="class='nav-link' + ${activePage=='match' ? ' active' : ''}" href="/settings/match">Face Matching</a>
+    <a th:attr="class='nav-link' + ${activePage=='users' ? ' active' : ''}" href="/settings/users">User Management</a>
   </li>
   <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='logs' ? ' active' : ''}" href="/settings/logs">Logs</a>
