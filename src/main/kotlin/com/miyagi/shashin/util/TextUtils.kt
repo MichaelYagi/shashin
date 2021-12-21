@@ -75,11 +75,13 @@ class TextUtils {
             createdAt:String?,
             type: String?,
             camera: String?,
-            fstopNumber: Double?,
+            fStopNumber: Double?,
             iso: Int?,
             exposure: String?): UUID {
-            val uuidInput = filePath+createdAt+type+camera+fstopNumber+iso+exposure
-            return UUID.nameUUIDFromBytes(uuidInput.toByteArray())
+            val uuidInput = "$filePath-$createdAt-$type-$camera-$fStopNumber-$iso-$exposure"
+            val uuid = UUID.nameUUIDFromBytes(uuidInput.toByteArray())
+            logger.log(Level.INFO, "UUID $uuid generated from input $uuidInput")
+            return uuid
         }
 
         fun getGeoData(geocodeUrl: String,lat: String, lng: String): String? {
