@@ -3,7 +3,7 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100 overflow-hidden">
 
-<div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage})"></div>
+<div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage},'')"></div>
 
 <script type="text/javascript">
     $("#progressBarWrapper").css("visibility","visible");

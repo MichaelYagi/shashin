@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="topnav(currentUser,hasNotification,activePage)">
+<body th:fragment="topnav(currentUser,hasNotification,activePage,searchTerm)">
 
 <header class="py-2 mb-3 border-bottom shadow">
     <div class="container-fluid align-items-center d-flex">
@@ -30,7 +30,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="flex-grow-1 d-flex align-items-center">
             <form id="appSearch" class="form-control-dark w-100" action="/search" method="post">
-                <input id="appSearchInput" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+                <input id="appSearchInput" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
                 <input type="submit" style="position: absolute; left: -9999px"/>
             </form>
             <div id="timelineAppTools">
