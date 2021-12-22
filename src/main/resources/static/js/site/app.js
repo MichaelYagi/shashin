@@ -242,9 +242,9 @@
     shashin.refreshAndActivateLgListener = function (mediaContentList) {
         if (shashin.getLightGallery() !== null) {
             shashin.getLightGallery().refresh(mediaContentList);
-            shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function (e) {
-                shashin.jumpToLightGalleryIndex(e.detail.index);
-            })
+            // shashin.getLightGalleryElement().addEventListener('lgAfterSlide', function (e) {
+            //     shashin.jumpToLightGalleryIndex(e.detail.index);
+            // })
         }
     }
 
