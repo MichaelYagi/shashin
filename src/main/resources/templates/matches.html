@@ -78,9 +78,9 @@
         const lightGalleryConfigs = shashin.getLightGalleryConfigs();
         lightGalleryConfigs["selector"] = '.mediaLink';
         const lg = lightGallery($infiniteScrollGallery, lightGalleryConfigs);
-        $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
-            shashin.jumpToLightGalleryIndex(e.detail.index);
-        })
+        // $infiniteScrollGallery.addEventListener('lgAfterSlide', function(e) {
+        //     shashin.jumpToLightGalleryIndex(e.detail.index);
+        // })
 
         shashin.matchingListeners()
     });
