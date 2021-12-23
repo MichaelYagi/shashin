@@ -5,7 +5,7 @@
 #      - image: 'circleci/node:8-browsers'
 orbs:
   maven: circleci/maven@1.2.0
-  node: circleci/node:8-browsers
+  node: circleci/node@5.0.0
 version: 2.1
 workflows:
   maven_test:
