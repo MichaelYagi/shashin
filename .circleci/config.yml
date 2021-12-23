@@ -1,18 +1,10 @@
-#executors:
-#  example:
-#    docker:
-#      - image: 'cimg/openjdk:11.0'
-#      - image: 'circleci/node:8-browsers'
+version: 2.1
 orbs:
+#  maven: circleci/maven@0.0.12
   maven: circleci/maven@1.2.0
   node: circleci/node@5.0.0
-version: 2.1
+
 workflows:
   maven_test:
     jobs:
-      - maven/test #: # checkout, build, test, and upload test results
-#          executor: example
-#  js_test:
-#    jobs:
-#      - node/test:
-#          test-results-for: mocha
+      - maven/test # checkout, build, test, and upload test results
