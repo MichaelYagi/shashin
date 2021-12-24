@@ -16,20 +16,20 @@ workflows:
             - persist_to_workspace:
                 root: .
                 paths:
-                  - target/shashin-1.0.0.jar
-                  - target/Shashin-1.0.0.exe
+                  - target/shashin-${RELEASE_VERSION}.jar
+                  - target/Shashin-${RELEASE_VERSION}.exe
             - store_artifacts:
-                path: target/shashin-1.0.0.jar
-                destination: shashin-1.0.0.jar
+                path: target/shashin-${RELEASE_VERSION}.jar
+                destination: shashin-${RELEASE_VERSION}.jar
             - store_artifacts:
-                path: target/Shashin-1.0.0.exe
-                destination: Shashin-1.0.0.exe
+                path: target/Shashin-${RELEASE_VERSION}.exe
+                destination: Shashin-${RELEASE_VERSION}.exe
             - run:
                 name: Compress Artifacts
-                command: tar -cvzf shashin-1.0.0.tar shashin-1.0.0.jar Shashin-1.0.0.exe
+                command: tar -cvzf target/shashin-${RELEASE_VERSION}.tar target/shashin-${RELEASE_VERSION}.jar target/Shashin-${RELEASE_VERSION}.exe
             - store_artifacts:
-               path: shashin-1.0.0.tar
-               destination: shashin
+               path: target/shashin-${RELEASE_VERSION}.tar
+               destination: shashin-${RELEASE_VERSION}.tar
         #            - run:
         #                name: Install JFrog CLI
         #                command: curl -fL https://getcli.jfrog.io | sh
