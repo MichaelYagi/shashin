@@ -39,18 +39,18 @@ workflows:
                   mkdir -p target/test-results/junit/
                   find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} target/test-results/junit/ \;
                 when: always
-            - store_test_results:
-                path: target/test-results
-            - store_artifacts:
-                path: target/test-results/junit
+#            - store_test_results:
+#                path: target/test-results
+#            - store_artifacts:
+#                path: target/test-results/junit
             - attach_workspace:
                 at: target/test-results/mocha
-            - store_artifacts:
-                path: target/shashin-1.0.0.jar
-                destination: shashin-1.0.0.jar
-            - store_artifacts:
-                path: target/Shashin-1.0.0.exe
-                destination: Shashin-1.0.0.exe
+#            - store_artifacts:
+#                path: target/shashin-1.0.0.jar
+#                destination: shashin-1.0.0.jar
+#            - store_artifacts:
+#                path: target/Shashin-1.0.0.exe
+#                destination: Shashin-1.0.0.exe
             - run:
                 name: Compress Artifacts
                 command: tar -cvzf shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe target/test-results
