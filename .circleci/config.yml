@@ -21,8 +21,7 @@ workflows:
                 destination: Shashin-1.0.0.exe
             - cloudsmith/publish:
                 cloudsmith-repository: michael-yagi-nYM/shashin
-                package-format: maven
-                package-pom-file: pom.xml
+                package-format: jar
                 package-path: target/shashin-*.jar
 #            - cloudsmith/publish:
 #                cloudsmith-repository: michael-yagi-nYM/shashin
