@@ -19,11 +19,3 @@ workflows:
             - store_artifacts:
                 path: target/Shashin-1.0.0.exe
                 destination: Shashin-1.0.0.exe
-            - cloudsmith/publish:
-                cloudsmith-repository: michael-yagi-nYM/shashin
-                package-format: jar
-                package-path: target/shashin-*.jar
-#            - cloudsmith/publish:
-#                cloudsmith-repository: michael-yagi-nYM/shashin
-#                package-format: exe
-#                package-path: target/Shashin-*.exe
