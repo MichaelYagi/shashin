@@ -12,7 +12,6 @@ workflows:
           requires:
             - maven/test
           test-results-for: mocha
-            - package-and-store
           post-steps: # steps to run after steps defined in gradle/run
               - persist_to_workspace:
                 root: .
