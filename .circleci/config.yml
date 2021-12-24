@@ -66,6 +66,5 @@ workflows:
             - attach_workspace: # attach from another job
                 at: target/shashin-1.0.0.tar
             - artifactory/upload:
-                name: Publish tar
                 source: shashin-1.0.0.tar
                 target: https://shashin.jfrog.io/artifactory/shashin/
