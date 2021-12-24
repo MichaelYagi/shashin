@@ -1,13 +1,3 @@
-jobs:
-  publish:
-    executor: cloudsmith/default
-    steps:
-      - checkout
-      - cloudsmith/publish:
-          cloudsmith-repository: michael-yagi-nYM/shashin
-          package-format: jar
-          package-path: shashin-*.jar
-
 version: 2.1
 orbs:
   maven: circleci/maven@1.2.0
@@ -29,6 +19,11 @@ workflows:
             - store_artifacts:
                 path: target/Shashin-1.0.0.exe
                 destination: Shashin-1.0.0.exe
-  cloudsmith_publish:
-    jobs:
-      - publish
+            - publish:
+                executor: cloudsmith/default
+                steps:
+                  - checkout
+                  - cloudsmith/publish:
+                      cloudsmith-repository: michael-yagi-nYM/shashin
+                      package-format: jar
+                      package-path: shashin-*.jar
