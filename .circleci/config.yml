@@ -43,7 +43,7 @@ workflows:
                 path: target/test-results
             - store_artifacts:
                 path: target/test-results/junit
-            - store_artifacts:
+            - attach_workspace:
                 path: target/test-results/mocha
             - store_artifacts:
                 path: target/shashin-1.0.0.jar
