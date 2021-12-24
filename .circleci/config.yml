@@ -67,4 +67,4 @@ workflows:
                 at: target/shashin-1.0.0.tar
             - artifactory/upload:
                 source: target/shashin-1.0.0.tar
-                target: shashin/shashin
+                target: shashin
