@@ -9,6 +9,8 @@ workflows:
     jobs:
       - node/test:
           test-results-for: mocha
+          - store_test_results:
+            path: test-results.xml
       - maven/test: # checkout, build, test, and upload test results
           requires:
             - node/test
@@ -18,6 +20,8 @@ workflows:
                 paths:
                   - target/shashin-1.0.0.jar
                   - target/Shashin-1.0.0.exe
+            - store_test_results:
+                path: target/surefire-reports/TEST-**.xml
             - store_artifacts:
                 path: target/shashin-1.0.0.jar
                 destination: shashin-1.0.0.jar
