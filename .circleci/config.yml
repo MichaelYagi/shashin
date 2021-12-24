@@ -18,8 +18,8 @@ workflows:
                 when: always
             - store_test_results:
                 path: ~/test-results
-            - store_artifacts:
-                path: ~/test-results/mocha
+#            - store_artifacts:
+#                path: ~/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           requires:
             - node/test
@@ -40,6 +40,8 @@ workflows:
             - store_artifacts:
                 path: ~/test-results/junit
             - store_artifacts:
+                path: ~/test-results/mocha
+            - store_artifacts:
                 path: target/shashin-1.0.0.jar
                 destination: shashin-1.0.0.jar
             - store_artifacts:
@@ -47,7 +49,7 @@ workflows:
                 destination: Shashin-1.0.0.exe
             - run:
                 name: Compress Artifacts
-                command: tar -cvzf shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe
+                command: tar -cvzf shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe ~/test-results
             - store_artifacts:
                path: shashin-1.0.0.tar
                destination: shashin-1.0.0.tar
