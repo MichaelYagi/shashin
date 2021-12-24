@@ -356,15 +356,18 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <id>npm install</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>install</arguments>
-                        </configuration>
-                    </execution>
+                           <id>npm install (initialize)</id>
+                           <goals>
+                                    <goal>exec</goal>
+                           </goals>
+                           <phase>initialize</phase>
+                           <configuration>
+                                    <executable>${npm.executable}</executable>
+                                    <arguments>
+                                             <argument>install</argument>
+                                    </arguments>
+                           </configuration>
+                  </execution>
                     <execution>
                         <id>exec-npm</id>
                         <phase>process-resources</phase>
