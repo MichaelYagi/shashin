@@ -62,9 +62,9 @@ workflows:
       - artifactory/upload:
           requires:
             - maven/test
-          post-steps: # steps to run after steps
+          build-steps:
             - attach_workspace: # attach from another job
                 at: target/shashin-1.0.0.tar
-            - artifactory/upload:
-                source: target/shashin-1.0.0.tar
-                target: shashin/shashin
+          name: Publish tar
+          source: target/shashin-1.0.0.tar
+          target: shashin/shashin
