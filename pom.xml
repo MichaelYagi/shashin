@@ -362,12 +362,7 @@
                             <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <executable>npm.cmd</executable>
-                            <arguments>
-                                <argument>--loglevel</argument>
-                                <argument>error</argument>
-                                <argument>install</argument>
-                            </arguments>
+                            <arguments>install</arguments>
                         </configuration>
                     </execution>
                     <execution>
