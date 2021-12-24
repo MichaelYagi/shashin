@@ -29,4 +29,6 @@ workflows:
             - store_artifacts:
                 path: target/Shashin-1.0.0.exe
                 destination: Shashin-1.0.0.exe
-            - publish
+  cloudsmith_publish:
+    jobs:
+      - publish
