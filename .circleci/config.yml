@@ -13,5 +13,5 @@ workflows:
                   - target/shashin-1.0.0.jar
 #                  - target/Shashin-1.0.0.exe
             - store_artifacts:
-                path: .
+                path: target/shashin-1.0.0.jar
                 destination: shashin-1.0.0.jar
