@@ -12,18 +12,18 @@ workflows:
           requires:
             - maven/test
           test-results-for: mocha
-          post-steps: # steps to run after steps defined in gradle/run
-              - persist_to_workspace:
-                root: .
-                paths:
-                  - target/shashin-1.0.0.jar
-                  - target/Shashin-1.0.0.exe
-                  - store_artifacts:
-                      path: target/shashin-1.0.0.jar
-                      destination: shashin-1.0.0.jar
-                  - store_artifacts:
-                      path: target/Shashin-1.0.0.exe
-                      destination: Shashin-1.0.0.exe
+#          post-steps: # steps to run after steps defined in gradle/run
+#            - persist_to_workspace:
+#                root: .
+#                paths:
+#                  - target/shashin-1.0.0.jar
+#                  - target/Shashin-1.0.0.exe
+#            - store_artifacts:
+#                path: target/shashin-1.0.0.jar
+#                destination: shashin-1.0.0.jar
+#            - store_artifacts:
+#                path: target/Shashin-1.0.0.exe
+#                destination: Shashin-1.0.0.exe
         #            - run:
         #                name: Install JFrog CLI
         #                command: curl -fL https://getcli.jfrog.io | sh
