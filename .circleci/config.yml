@@ -24,7 +24,7 @@ workflows:
             - run:
                 name: Push to Artifactory
                 command: |
-                  ./jfrog config add <named_server_config> --artifactory-url https://shashin.jfrog.io/ --user michaeltyagi@gmail.com --apikey AKCp8kq2kFaHn5BovzP5cJFrb3Ny8kSVSdDW778KeLk3645jyVSSVrdcjgds6R8qK6SJV65ct --interactive=false
+                  ./jfrog config add shashin --artifactory-url https://shashin.jfrog.io/ --user michaeltyagi@gmail.com --apikey AKCp8kq2kFaHn5BovzP5cJFrb3Ny8kSVSdDW778KeLk3645jyVSSVrdcjgds6R8qK6SJV65ct --interactive=false
                   ./jfrog rt u *.jar shashin --build-name=shashin --build-number=$CIRCLE_BUILD_NUM
                   ./jfrog rt bce shashin $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
                   ./jfrog rt bp shashin $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
