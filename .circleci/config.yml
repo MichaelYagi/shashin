@@ -1,7 +1,6 @@
 version: 2.1
 orbs:
   maven: circleci/maven@1.2.0
-  cloudsmith: cloudsmith/cloudsmith@1.0.3
 
 workflows:
   maven_test:
