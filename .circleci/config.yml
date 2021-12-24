@@ -26,9 +26,9 @@ workflows:
                 destination: Shashin-1.0.0.exe
             - run:
                 name: Compress Artifacts
-                command: tar -cvzf target/shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe
+                command: tar -cvzf shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe
             - store_artifacts:
-               path: target/shashin-1.0.0.tar
+               path: shashin-1.0.0.tar
                destination: shashin-1.0.0.tar
         #            - run:
         #                name: Install JFrog CLI
