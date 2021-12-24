@@ -356,21 +356,6 @@
                 <version>3.0.0</version>
                 <executions>
                     <execution>
-                        <id>npm install</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>npm.cmd</executable>
-                            <arguments>
-                                <argument>--loglevel</argument>
-                                <argument>error</argument>
-                                <argument>install</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>exec-npm</id>
                         <phase>process-resources</phase>
                         <configuration>
