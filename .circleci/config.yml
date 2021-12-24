@@ -12,7 +12,7 @@ workflows:
           requires:
             - maven/test
           test-results-for: mocha
-      - package-store:
+      - package:
           requires:
             - node/test
           post-steps: # steps to run after steps defined in gradle/run
