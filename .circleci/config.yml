@@ -18,8 +18,8 @@ workflows:
                 when: always
             - store_test_results:
                 path: ~/test-results
-#            - store_artifacts:
-#                path: ~/test-results/mocha
+            - store_artifacts:
+                path: ~/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           requires:
             - node/test
@@ -39,8 +39,6 @@ workflows:
                 path: ~/test-results
             - store_artifacts:
                 path: ~/test-results/junit
-            - store_artifacts:
-                path: ~/test-results/mocha
             - store_artifacts:
                 path: target/shashin-1.0.0.jar
                 destination: shashin-1.0.0.jar
