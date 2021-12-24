@@ -8,8 +8,8 @@ workflows:
   maven_test:
     jobs:
       - node/test:
+          test-results-for: mocha
           steps:
-            - test-results-for: mocha
             - run:
                 name: Save JS test results
                 command: |
