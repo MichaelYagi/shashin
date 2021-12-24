@@ -9,6 +9,16 @@ workflows:
     jobs:
       - node/test:
           test-results-for: mocha
+          - run:
+              name: Save JS test results
+              command: |
+                mkdir -p ~/test-results/mocha/
+                find . -type f -regex ".*/test-results.xml" -exec cp {} ~/test-results/mocha/ \;
+              when: always
+          - store_test_results:
+              path: ~/test-results
+          - store_artifacts:
+              path: ~/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           requires:
             - node/test
@@ -18,10 +28,16 @@ workflows:
                 paths:
                   - target/shashin-1.0.0.jar
                   - target/Shashin-1.0.0.exe
+            - run:
+                name: Save test results
+                command: |
+                  mkdir -p ~/test-results/junit/
+                  find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+                when: always
             - store_test_results:
-                path: test-results.xml
-            - store_test_results:
-                path: target/surefire-reports/TEST-**.xml
+                path: ~/test-results
+            - store_artifacts:
+                path: ~/test-results/junit
             - store_artifacts:
                 path: target/shashin-1.0.0.jar
                 destination: shashin-1.0.0.jar
