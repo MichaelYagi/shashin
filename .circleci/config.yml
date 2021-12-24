@@ -8,7 +8,7 @@ workflows:
       - maven/test: # checkout, build, test, and upload test results
           post-steps: # steps to run after steps defined in gradle/run
             - persist_to_workspace:
-                root: /tmp/dir
+                root: workspace
                 paths:
                   - target/shashin-1.0.0.jar
                   - target/Shashin-1.0.0.exe
