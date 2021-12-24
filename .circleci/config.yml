@@ -10,7 +10,7 @@ workflows:
       - maven/test # checkout, build, test, and upload test results
       - node/test:
           test-results-for: mocha
-      post-steps: # steps to run after steps defined in gradle/run
+      - post-steps: # steps to run after steps defined in gradle/run
         - persist_to_workspace:
             root: .
             paths:
