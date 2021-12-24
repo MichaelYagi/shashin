@@ -384,9 +384,6 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
-    </build>
-</project>
             <!-- Create Windows exe -->
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
