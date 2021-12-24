@@ -8,10 +8,8 @@ workflows:
       - maven/test: # checkout, build, test, and upload test results
           post-steps: # steps to run after steps defined in gradle/run
             - store_artifacts:
-                paths:
-                  - target/shashin-1.0.0.jar
+                paths: target/shashin-1.0.0.jar
                 destination: shashin-1.0.0.jar
-            - store_artifacts:
-                paths:
-                  - target/Shashin-1.0.0.exe
-                destination: Shashin-1.0.0.exe
+#            - store_artifacts:
+#                paths: target/Shashin-1.0.0.exe
+#                destination: Shashin-1.0.0.exe
