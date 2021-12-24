@@ -59,12 +59,16 @@ workflows:
                 root: .
                 paths:
                   - target/shashin-1.0.0.tar
-      - artifactory/upload:
-          requires:
-            - maven/test
-          build-steps:
-            - attach_workspace: # attach from another job
-                at: target/shashin-1.0.0.tar
-          name: Publish tar
-          source: target/shashin-1.0.0.tar
-          target: shashin/
+            - artifactory/upload:
+                name: Publish tar
+                source: target/shashin-1.0.0.tar
+                target: shashin/
+#      - artifactory/upload:
+#          requires:
+#            - maven/test
+#          build-steps:
+#            - attach_workspace: # attach from another job
+#                at: target/shashin-1.0.0.tar
+#          name: Publish tar
+#          source: target/shashin-1.0.0.tar
+#          target: shashin/
