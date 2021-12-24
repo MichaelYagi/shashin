@@ -22,4 +22,8 @@ workflows:
             - cloudsmith/publish:
                 cloudsmith-repository: michael-yagi-nYM/shashin
                 package-format: jar
-                package-path: shashin-*.jar
+                package-path: target/shashin-*.jar
+            - cloudsmith/publish:
+                cloudsmith-repository: michael-yagi-nYM/shashin
+                package-format: exe
+                package-path: target/Shashin-*.exe
