@@ -22,7 +22,7 @@ workflows:
                 path: ~/test-results/mocha
             - persist_to_workspace:
                 root: .
-                path: ~/test-results/mocha
+                path: home/circleci/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           requires:
             - node/test
