@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   maven: circleci/maven@1.2.0
   node: circleci/node@5.0.0
+  artifactory: circleci/artifactory@1.0.0
 
 workflows:
   maven_test:
@@ -54,16 +55,7 @@ workflows:
             - run:
                 name: Compress Artifacts
                 command: tar -cvzf shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe target/test-results
-            - store_artifacts:
-               path: shashin-1.0.0.tar
-               destination: shashin-1.0.0.tar
-                - run:
-                    name: Install JFrog CLI
-                    command: curl -fL https://getcli.jfrog.io | sh
-                - run:
-                    name: Push to Artifactory
-                    command: |
-                      ./jfrog config add shashin --artifactory-url https://shashin.jfrog.io/artifactory/ --user michaeltyagi@gmail.com --apikey AKCp8kq2kFaHn5BovzP5cJFrb3Ny8kSVSdDW778KeLk3645jyVSSVrdcjgds6R8qK6SJV65ct --interactive=false
-                      ./jfrog rt u *.jar shashin --build-name=shashin --build-number=$CIRCLE_BUILD_NUM
-                      ./jfrog rt bce shashin $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
-                      ./jfrog rt bp shashin $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
+            - artifactory/upload:
+                name: Publish tar
+                source: shashin-1.0.0.tar
+                target: https://shashin.jfrog.io/artifactory/shashin/
