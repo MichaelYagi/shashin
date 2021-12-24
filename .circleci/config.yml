@@ -51,7 +51,7 @@ workflows:
                 destination: Shashin-1.0.0.exe
             - run:
                 name: Compress Artifacts
-                command: tar -cvzf shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe ~/test-results
+                command: tar -cvzf shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe target/test-results
             - store_artifacts:
                path: shashin-1.0.0.tar
                destination: shashin-1.0.0.tar
