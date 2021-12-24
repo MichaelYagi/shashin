@@ -6,7 +6,7 @@ orbs:
   artifactory: circleci/artifactory@1.0.0
 
 workflows:
-  maven_test:
+  shashin_workflow:
     jobs:
       - node/test:
           test-results-for: mocha
@@ -67,4 +67,4 @@ workflows:
                 at: target/shashin-1.0.0.tar
             - artifactory/upload:
                 source: target/shashin-1.0.0.tar
-                target: shashin
+                target: shashin/shashin
