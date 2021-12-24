@@ -20,6 +20,10 @@ workflows:
                 path: ~/test-results
             - store_artifacts:
                 path: ~/test-results/mocha
+            - persist_to_workspace:
+                root: .
+                paths:
+                  - ~/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
           requires:
             - node/test
