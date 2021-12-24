@@ -9,7 +9,7 @@ workflows:
     jobs:
       - node/test:
           test-results-for: mocha
-          steps:
+          post-steps:
             - run:
                 name: Save JS test results
                 command: |
