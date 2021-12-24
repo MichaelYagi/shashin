@@ -1,10 +1,13 @@
 version: 2.1
 orbs:
-#  maven: circleci/maven@0.0.12
   node: circleci/node@5.0.0
-  maven: circleci/maven@1.2.0
+#  maven: circleci/maven@1.2.0
 
 workflows:
-  maven_test:
+#  maven_test:
+#    jobs:
+#      - maven/test # checkout, build, test, and upload test results
+  js_test:
     jobs:
-      - maven/test # checkout, build, test, and upload test results
+      - node/test:
+          test-results-for: mocha
