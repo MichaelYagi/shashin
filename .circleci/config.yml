@@ -7,12 +7,9 @@ orbs:
 workflows:
   maven_test:
     jobs:
-      - maven/test # checkout, build, test, and upload test results
       - node/test:
-          requires:
-            - maven/test
           test-results-for: mocha
-      - package:
+      - maven/test: # checkout, build, test, and upload test results
           requires:
             - node/test
           post-steps: # steps to run after steps defined in gradle/run
