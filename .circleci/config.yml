@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   maven: circleci/maven@1.2.0
   node: circleci/node@5.0.0
-  artifactory: circleci/artifactory@1.0.0
+  artifactory-orb: jfrog/artifactory-orb@1.0.1
 
 workflows:
   maven_test:
