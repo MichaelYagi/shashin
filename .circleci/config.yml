@@ -1,11 +1,15 @@
 version: 2.1
+
 orbs:
   maven: circleci/maven@1.2.0
+  node: circleci/node@5.0.0
 
 workflows:
   maven_test:
     jobs:
-      - maven/test: # checkout, build, test, and upload test results
+      - maven/test # checkout, build, test, and upload test results
+      - node/test:
+          test-results-for: mocha
           post-steps: # steps to run after steps defined in gradle/run
             - persist_to_workspace:
                 root: .
@@ -18,13 +22,13 @@ workflows:
             - store_artifacts:
                 path: target/Shashin-1.0.0.exe
                 destination: Shashin-1.0.0.exe
-            - run:
-                name: Install JFrog CLI
-                command: curl -fL https://getcli.jfrog.io | sh
-            - run:
-                name: Push to Artifactory
-                command: |
-                  ./jfrog config add shashin --artifactory-url https://shashin.jfrog.io/ --user michaeltyagi@gmail.com --apikey AKCp8kq2kFaHn5BovzP5cJFrb3Ny8kSVSdDW778KeLk3645jyVSSVrdcjgds6R8qK6SJV65ct --interactive=false
-                  ./jfrog rt u *.jar shashin --build-name=shashin --build-number=$CIRCLE_BUILD_NUM
-                  ./jfrog rt bce shashin $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
-                  ./jfrog rt bp shashin $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
+#            - run:
+#                name: Install JFrog CLI
+#                command: curl -fL https://getcli.jfrog.io | sh
+#                  - run:
+#                      name: Push to Artifactory
+#                      command: |
+#                        ./jfrog config add shashin --artifactory-url https://shashin.jfrog.io/ --user michaeltyagi@gmail.com --apikey AKCp8kq2kFaHn5BovzP5cJFrb3Ny8kSVSdDW778KeLk3645jyVSSVrdcjgds6R8qK6SJV65ct --interactive=false
+#                        ./jfrog rt u *.jar shashin --build-name=shashin --build-number=$CIRCLE_BUILD_NUM
+#                        ./jfrog rt bce shashin $CIRCLE_BUILD_NUM  # collects all environment variables on the agent
+#                        ./jfrog rt bp shashin $CIRCLE_BUILD_NUM  # attaches ^^ to the build in artifactory
