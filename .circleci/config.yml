@@ -69,6 +69,8 @@ workflows:
           build-steps:
             - attach_workspace: # attach from another job
                 at: target/artifact/shashin-1.0.0.tar
+            - store_artifacts:
+                path: target/artifact
           name: Publish tar to Artifactory
           source: target/artifact/shashin-1.0.0.tar
-          target: asdf
+          target: shashin
