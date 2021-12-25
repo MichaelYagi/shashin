@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/MichaelYagi/shashin.svg?style=svg)](https://circleci.com/gh/MichaelYagi/shashin)
+[![MichaelYagi](https://circleci.com/gh/MichaelYagi/shashin.svg?style=svg)](https://circleci.com/gh/MichaelYagi/shashin)
 
 # Shashin
 An Image Gallery
