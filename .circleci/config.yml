@@ -71,4 +71,4 @@ workflows:
                 at: target/artifact/shashin-1.0.0.tar
           name: Publish tar to Artifactory
           source: target/artifact/shashin-1.0.0.tar
-          target: shashin
+          target: asdf
