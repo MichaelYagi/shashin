@@ -50,7 +50,7 @@ workflows:
             - attach_workspace: # attach from another job
                 at: target/test-results/mocha
             - run:
-                name: Set Version
+                name: Set Version # get version from pom.xml
                 command: |
                   echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
             - run:
