@@ -31,11 +31,6 @@ workflows:
           requires:
             - Run node tests
           post-steps: # steps to run after steps
-            - persist_to_workspace:
-                root: .
-                paths:
-                  - target/shashin-1.0.0.jar
-                  - target/Shashin-1.0.0.exe
             - run:
                 name: Save test results
                 command: |
@@ -58,7 +53,7 @@ workflows:
                 name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  tar -cvzf target/artifact/shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe target/test-results
+                  tar -cvzf target/artifact/shashin-${RELEASE_VERSION}.tar target/shashin-${RELEASE_VERSION}.jar target/Shashin-${RELEASE_VERSION}.exe target/test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
@@ -68,9 +63,9 @@ workflows:
             - Run junit tests and package to tar
           build-steps:
             - attach_workspace: # attach from another job
-                at: target/artifact/shashin-1.0.0.tar
+                at: target/artifact/shashin-${RELEASE_VERSION}.tar
             - store_artifacts:
                 path: target/artifact
           name: Publish tar to Artifactory
-          source: target/artifact/shashin-1.0.0.tar/target/artifact/shashin-1.0.0.tar
+          source: target/artifact/shashin-${RELEASE_VERSION}.tar/target/artifact/shashin-${RELEASE_VERSION}.tar
           target: shashin
