@@ -9,6 +9,7 @@ workflows:
   shashin_workflow:
     jobs:
       - node/test:
+          name: Run node tests
           test-results-for: mocha
           post-steps:
             - run:
@@ -26,6 +27,7 @@ workflows:
                 paths:
                   - target/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
+          name: Run junit tests and package to tar
           requires:
             - node/test
           post-steps: # steps to run after steps
@@ -54,17 +56,19 @@ workflows:
                 at: target/test-results/mocha
             - run:
                 name: Compress Artifacts
-                command: tar -cvzf target/shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe target/test-results
+                command: |
+                  mkdir -p target/artifact/
+                  tar -cvzf target/artifact/shashin-1.0.0.tar target/shashin-1.0.0.jar target/Shashin-1.0.0.exe target/test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
-                  - target
+                  - target/artifact
       - artifactory/upload:
           requires:
             - maven/test
           build-steps:
             - attach_workspace: # attach from another job
-                at: target/shashin-1.0.0.tar
-          name: Publish tar
-          source: target/shashin-1.0.0.tar
-          target: shashin/
+                at: target/artifact/shashin-1.0.0.tar
+          name: Publish tar to Artifactory
+          source: target/artifact/shashin-1.0.0.tar
+          target: shashin
