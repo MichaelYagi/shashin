@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/michaelyagi/shashin.svg?style=svg)](https://circleci.com/gh/michaelyagi/shashin)
+
 # Shashin
 An Image Gallery
 

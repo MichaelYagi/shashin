@@ -6,17 +6,26 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
 import javax.servlet.http.HttpServletRequest
 
 @Controller
-class IndexController {
-    @GetMapping("/features")
-    fun getFeatures(model: Model, request: HttpServletRequest): String {
-        val module = "features"
+class DocsController {
+    @RequestMapping(value = ["/docs","/docs/about"], method = [RequestMethod.GET])
+    fun getAbout(model: Model, request: HttpServletRequest): String {
+        val module = "about"
 
-        model["supportedImageTypes"] = FileUtils.allowableImageFiles().joinToString(", ", transform = { it.uppercase() })
-        model["supportedRawTypes"] = FileUtils.allowableRawImageFiles().joinToString(", ", transform = { it.uppercase() })
-        model["supportedVideoTypes"] = FileUtils.allowableVideoFiles().joinToString(", ", transform = { it.uppercase() })
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
+    }
+
+    @GetMapping("/docs/technologies")
+    fun getFeatures(model: Model, request: HttpServletRequest): String {
+        val module = "technologies"
 
         model["activePage"] = module
         model["activeSidebar"] = module

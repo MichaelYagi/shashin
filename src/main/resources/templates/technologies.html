@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/docshead :: docshead(${titleDescriptor})"></head>
+
+<body>
+
+<div class="row px-4 py-3 ml-3 mr-3" th:insert="fragments/staticheader :: staticheader()"></div>
+
+<div class="row">
+    <div class="col-2 px-4" th:insert="fragments/docssidebar :: docssidebar(${activePage})"></div>
+
+    <main class="col-10 bd-content" role="main">
+        <h2 id="tech">
+            <div>Technologies<a class="anchorjs-link " href="#tech" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <ul>
+            <li><a href="https://kotlinlang.org/">Kotlin</a>, <a href="https://jquery.com/">JQuery</a> and <a href="https://getbootstrap.com/">Bootstrap</a></li>
+            <li><a href="https://spring.io/projects/spring-boot">Spring Boot</a></li>
+            <li><a href="https://junit.org/">JUnit</a> and <a href="https://mochajs.org/">Mocha</a></li>
+            <li>Github, CircleCI</li>
+        </ul>
+    </main>
+</div>
+
+<div class="row">
+    <footer class="pt-3 mt-4 text-muted border-top">
+        <p>&copy; <span id="copyrightYear"></span> Shashin</p>
+    </footer>
+</div>
+
+<script type="text/javascript">
+    $("#copyrightYear").text("2021-" + new Date().getFullYear());
+</script>
+
+</body>
+</html>
