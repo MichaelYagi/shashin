@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="docssidebar(${activePage})">
+
+<nav class="bd-links" id="bd-docs-nav">
+    <div class="bd-toc-item">
+        <a class="bd-toc-link" href="#intro">
+            Introduction
+        </a>
+    </div>
+
+    <div th:attr="class='bd-toc-item' + ${activePage=='about' or activePage=='technologies' ? ' active' : ''}">
+        <a class="bd-toc-link" href="/docs/about">
+            About
+        </a>
+
+        <ul class="nav bd-sidenav px-4">
+            <li th:attr="class=${activePage=='technologies' ? 'active bd-sidenav-active' : ''}">
+                <a href="/docs/technologies">
+                    <small class="text-muted">Technologies</small>
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+</body>
+</html>
