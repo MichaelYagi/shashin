@@ -53,7 +53,7 @@ workflows:
                 name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  tar -cvzf target/artifact/shashin-$RELEASE_VERSION.tar target/shashin-$RELEASE_VERSION.jar target/Shashin-$RELEASE_VERSION.exe target/test-results
+                  tar -cvzf target/artifact/shashin-$RELEASE_VERSION.tar target/*.jar target/*.exe target/test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
