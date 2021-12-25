@@ -50,10 +50,14 @@ workflows:
             - attach_workspace: # attach from another job
                 at: target/test-results/mocha
             - run:
+                name: Set Version
+                command: |
+                  echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
+            - run:
                 name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  tar -cvzf target/artifact/shashin-$RELEASE_VERSION.tar target/**.jar target/**.exe target/test-results
+                  tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
