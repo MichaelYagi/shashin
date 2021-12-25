@@ -29,7 +29,7 @@ workflows:
       - maven/test: # checkout, build, test, and upload test results
           name: Run junit tests and package to tar
           requires:
-            - node/test
+            - Run node tests
           post-steps: # steps to run after steps
             - persist_to_workspace:
                 root: .
@@ -65,7 +65,7 @@ workflows:
                   - target/artifact
       - artifactory/upload:
           requires:
-            - maven/test
+            - Run junit tests and package to tar
           build-steps:
             - attach_workspace: # attach from another job
                 at: target/artifact/shashin-1.0.0.tar
