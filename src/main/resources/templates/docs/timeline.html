@@ -3,6 +3,7 @@
 <body>
 
 <section th:fragment="content">
+
     <div class="d-none d-xl-block col-xl-2 float-end">
         <ul class="section-nav">
             <li class="toc-entry toc-h2"><a href="#api-timeline">Timeline</a></li>
@@ -17,39 +18,41 @@
         </ul>
     </div>
 
-    <h2 id="api-timeline"><div>Timeline<a class="anchorjs-link " href="#api-timeline" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h2>
+    <div class="col-11 col-md-10 col-xl-9">
+        <h2 id="api-timeline"><div>Timeline<a class="anchorjs-link " href="#api-timeline" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h2>
 
-    <p>Roles: Admin</p>
+        <p>Roles: Admin</p>
 
-    <h3 id="api-timeline-taken"><div>By date taken<a class="anchorjs-link " href="#api-timeline-taken" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h3>
+        <h3 id="api-timeline-taken"><div>By date taken<a class="anchorjs-link " href="#api-timeline-taken" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h3>
 
-    <h4 id="api-timeline-taken-default"><div><span class="badge bg-success">GET</span> <code>/api/v1/timeline</code><a class="anchorjs-link " href="#api-timeline-taken-default" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h4>
+        <h4 id="api-timeline-taken-default"><div><span class="badge bg-success">GET</span> <code>/api/v1/timeline</code><a class="anchorjs-link " href="#api-timeline-taken-default" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h4>
 
-    <p>Page index default is 0.</p>
+        <p>Page index default is 0.</p>
 
-    <h4 id="api-timeline-taken-paged"><div><span class="badge bg-success">GET</span> <code>/api/v1/timeline/{page}</code><a class="anchorjs-link " href="#api-timeline-taken-paged" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h4>
+        <h4 id="api-timeline-taken-paged"><div><span class="badge bg-success">GET</span> <code>/api/v1/timeline/{page}</code><a class="anchorjs-link " href="#api-timeline-taken-paged" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h4>
 
-    <p>Get timeline data by page index number. Start index is 0.</p>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>var</th>
-                <th>type</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th>page</th>
-                <td>int</td>
-            </tr>
-        </tbody>
-    </table>
+        <p>Get timeline data by page index number. Start index is 0.</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>var</th>
+                    <th>type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>page</th>
+                    <td>int</td>
+                </tr>
+            </tbody>
+        </table>
 
-    <p>
-        <div class="alert alert-secondary">
-            <code>/api/v1/timeline/5</code>
-        </div>
-    </p>
+        <p>
+            <div class="alert alert-secondary">
+                <code>/api/v1/timeline/5</code>
+            </div>
+        </p>
+    </div>
 </section>
 </body>
 </html>
