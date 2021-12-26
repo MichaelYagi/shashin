@@ -2,27 +2,33 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="docssidebar(${activePage})">
 
-<nav class="bd-links" id="bd-docs-nav">
-<!--    <div class="bd-toc-item">-->
-<!--        <a class="bd-toc-link" href="#intro">-->
-<!--            Introduction-->
-<!--        </a>-->
-<!--    </div>-->
-
-    <div th:attr="class='bd-toc-item' + ${activePage=='about' or activePage=='technologies' ? ' active' : ''}">
-        <a class="bd-toc-link" href="/docs/about">
+<ul class="list-unstyled ps-0">
+    <!--    <li class="mb-1">-->
+    <!--        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">-->
+    <!--            Account-->
+    <!--        </button>-->
+    <!--        <div class="collapse" id="account-collapse">-->
+    <!--            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">-->
+    <!--                <li><a href="#" class="link-dark rounded">New...</a></li>-->
+    <!--                <li><a href="#" class="link-dark rounded">Profile</a></li>-->
+    <!--                <li><a href="#" class="link-dark rounded">Settings</a></li>-->
+    <!--                <li><a href="#" class="link-dark rounded">Sign out</a></li>-->
+    <!--            </ul>-->
+    <!--        </div>-->
+    <!--    </li>-->
+    <!--    <li class="border-top my-3"></li>-->
+    <li class="mb-1">
+        <button th:attr="class='btn btn-toggle align-items-center rounded' + ${activePage=='about' or activePage=='technologies' ? '' : ' collapsed'}" data-bs-toggle="collapse" data-bs-target="#about-collapse" th:aria-expanded="${activePage=='about' or activePage=='technologies' ? 'true' : 'false'}">
             About
-        </a>
-
-        <ul class="nav bd-sidenav px-4">
-            <li th:attr="class=${activePage=='technologies' ? 'active bd-sidenav-active' : ''}">
-                <a href="/docs/technologies">
-                    <small class="text-muted">Technologies</small>
-                </a>
-            </li>
-        </ul>
-    </div>
-</nav>
+        </button>
+        <div th:attr="class='collapse' + ${activePage=='about' or activePage=='technologies' ? ' show' : ''}" id="about-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                <li><a href="/docs/about" th:attr="class='link-dark rounded' + ${activePage=='about' ? ' active' : ''}">Overview</a></li>
+                <li><a href="/docs/technologies" th:attr="class='link-dark rounded' + ${activePage=='technologies' ? ' active' : ''}">Technologies</a></li>
+            </ul>
+        </div>
+    </li>
+</ul>
 
 </body>
 </html>
