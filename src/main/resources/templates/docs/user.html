@@ -1,0 +1,96 @@
+<html xmlns:th="http://www.thymeleaf.org" th:include="layouts/docs :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+
+    <div class="d-none d-xl-block col-xl-2 float-end">
+        <ul class="section-nav">
+            <li class="toc-entry toc-h2"><a href="#api-user">User</a></li>
+                <ul>
+                    <li class="toc-entry toc-h3"><a href="#api-users-login">/api/v1/users/login</a></li>
+                    <li class="toc-entry toc-h3"><a href="#api-users-logout">/api/v1/users/logout</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-11 col-md-10 col-xl-9">
+        <h2 id="api-user"><div>User<a class="anchorjs-link " href="#api-user" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h2>
+
+        <p>User management</p>
+        <p>Roles: Any</p>
+
+        <h3 id="api-users-login"><div><span class="badge bg-primary">POST</span> <code>/api/v1/users/login</code><a class="anchorjs-link " href="#api-users-login" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h3>
+
+        <p>Login with optional remember me. You must persist and use the JSESSIONID cookie value returned.</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>var</th>
+                <th>type</th>
+                <th>values</th>
+                <th>required</th>
+            </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>username</th>
+                    <td>string</td>
+                    <td></td>
+                    <td>&#10003;</td>
+                </tr>
+                <tr>
+                    <th>password</th>
+                    <td>string</td>
+                    <td></td>
+                    <td>&#10003;</td>
+                </tr>
+                <tr>
+                    <th>remember-me</th>
+                    <td>string</td>
+                    <td>on</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p><strong>Request</strong></p>
+        <p>
+            <div class="alert alert-secondary">
+                <code>/api/v1/users/login</code>
+            </div>
+
+            <div class="alert alert-secondary">
+                <code>{"username":"auser","password":"apassword","remember-me":"on"}</code>
+            </div>
+        </p>
+
+        <p><strong>Response</strong></p>
+        <p>
+            <div class="alert alert-secondary">
+                <code>{"msg":"Logged in!","status":"success","id":1,"username":"auser","sessionid": "ABC123","authority":"ROLE_ADMIN"}</code>
+            </div>
+        </p>
+
+        <h3 id="api-users-logout"><div><span class="badge bg-success">GET</span> <code>/api/v1/users/logout</code><a class="anchorjs-link " href="#api-users-logout" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h3>
+
+        <p>Log user out.</p>
+
+        <p><strong>Request</strong></p>
+        <p>
+            <div class="alert alert-secondary">
+                <code>/api/v1/users/logout</code>
+            </div>
+        </p>
+
+        <p><strong>Response</strong></p>
+        <p>
+        <div class="alert alert-secondary">
+            <code>{"msg":"Logged out!","status":"success"}</code>
+        </div>
+        </p>
+    </div>
+</section>
+</body>
+</html>

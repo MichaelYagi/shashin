@@ -289,6 +289,7 @@ class UserController {
 
                             resp["msg"] = "Logged in!"
                             resp["status"] = "success"
+                            resp["sessionid"] = session.id
                             resp["id"] = userObj.getId()
                             resp["username"] = userObj.getUsername()
                             resp["authority"] = userObj.getAuthority()
