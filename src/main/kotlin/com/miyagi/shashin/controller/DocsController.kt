@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletRequest
 class DocsController {
     @RequestMapping(value = ["/docs","/docs/about"], method = [RequestMethod.GET])
     fun getAbout(model: Model, request: HttpServletRequest): String {
-        val module = "about"
+        val module = "docs/about"
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -25,7 +25,29 @@ class DocsController {
 
     @GetMapping("/docs/technologies")
     fun getFeatures(model: Model, request: HttpServletRequest): String {
-        val module = "technologies"
+        val module = "docs/technologies"
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
+    }
+
+    @GetMapping("/docs/api/v1")
+    fun getVOneApi(model: Model, request: HttpServletRequest): String {
+        val module = "docs/api"
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
+    }
+
+    @GetMapping("/docs/api/v1/timeline")
+    fun getTimelineApi(model: Model, request: HttpServletRequest): String {
+        val module = "docs/timeline"
 
         model["activePage"] = module
         model["activeSidebar"] = module
