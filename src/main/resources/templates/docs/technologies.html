@@ -1,7 +1,14 @@
 <html xmlns:th="http://www.thymeleaf.org" th:include="layouts/docs :: page(title=${titleDescriptor},activePage=${activePage})">
 <head></head>
 <body>
+
 <section th:fragment="content">
+    <div class="d-none d-xl-block col-xl-2 float-end">
+        <ul class="section-nav">
+            <li class="toc-entry toc-h2"><a href="#tech">Technologies</a></li>
+        </ul>
+    </div>
+
     <h2 id="tech"><div>Technologies<a class="anchorjs-link " href="#tech" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h2>
 
     <ul>
