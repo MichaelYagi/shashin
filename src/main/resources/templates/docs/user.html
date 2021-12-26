@@ -21,7 +21,8 @@
         <p>User management</p>
         <p>Roles: Any</p>
 
-        <h3 id="api-users-login"><div><span class="badge bg-primary">POST</span> <code>/api/v1/users/login</code><a class="anchorjs-link " href="#api-users-login" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h3>
+        <!-- /api/v1/users/login -->
+        <p id="api-users-login" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-primary">POST</span> <code>/api/v1/users/login</code><a class="anchorjs-link " href="#api-users-login" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
 
         <p>Login with optional remember me. You must persist and use the <code>sessionid</code> response value returned in subsequent requests.</p>
         <table class="table">
@@ -55,41 +56,46 @@
             </tbody>
         </table>
 
-        <p><strong>Request</strong></p>
-        <p>
-            <div class="alert alert-secondary">
-                <code>/api/v1/users/login</code>
-            </div>
+        <div class="p-5 mb-2 bg-light border rounded-3">
+            <p><strong>Request</strong></p>
+            <p>
+                <div class="alert alert-secondary">
+                    <code>/api/v1/users/login</code>
+                </div>
 
-            <div class="alert alert-secondary">
-                <code>{"username":"auser","password":"apassword","remember-me":"on"}</code>
-            </div>
-        </p>
+                <div class="alert alert-secondary">
+                    <code>{"username":"auser","password":"apassword","remember-me":"on"}</code>
+                </div>
+            </p>
 
-        <p><strong>Response</strong></p>
-        <p>
-            <div class="alert alert-secondary">
-                <code>{"msg":"Logged in!","status":"success","id":1,"username":"auser","sessionid": "ABC123","authority":"ROLE_ADMIN"}</code>
-            </div>
-        </p>
+            <p><strong>Response</strong></p>
+            <p>
+                <div class="alert alert-secondary">
+                    <code>{"msg":"Logged in!","status":"success","id":1,"username":"auser","sessionid": "ABC123","authority":"ROLE_ADMIN"}</code>
+                </div>
+            </p>
+        </div>
 
-        <h3 id="api-users-logout"><div><span class="badge bg-success">GET</span> <code>/api/v1/users/logout</code><a class="anchorjs-link " href="#api-users-logout" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h3>
+        <!-- /api/v1/users/logout -->
+        <p id="api-users-logout" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>/api/v1/users/logout</code><a class="anchorjs-link " href="#api-users-logout" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
 
         <p>Log user out.</p>
 
-        <p><strong>Request</strong></p>
-        <p>
-            <div class="alert alert-secondary">
-                <code>/api/v1/users/logout</code>
-            </div>
-        </p>
+        <div class="p-5 mb-2 bg-light border rounded-3">
+            <p><strong>Request</strong></p>
+            <p>
+                <div class="alert alert-secondary">
+                    <code>/api/v1/users/logout</code>
+                </div>
+            </p>
 
-        <p><strong>Response</strong></p>
-        <p>
-        <div class="alert alert-secondary">
-            <code>{"msg":"Logged out!","status":"success"}</code>
+            <p><strong>Response</strong></p>
+            <p>
+                <div class="alert alert-secondary">
+                    <code>{"msg":"Logged out!","status":"success"}</code>
+                </div>
+            </p>
         </div>
-        </p>
     </div>
 </section>
 </body>
