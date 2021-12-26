@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org" th:fragment="page(title,activePage)">
+<head th:insert="fragments/docshead :: docshead(${title})"></head>
+
+<body>
+
+<div class="container-fluid flex-xl-nowrap">
+
+    <div class="row px-4 py-3 ml-3 mr-3" th:insert="fragments/staticheader :: staticheader()"></div>
+
+    <div class="row">
+        <div class="col-12 col-md-2 col-xl-1 bd-sidebar" th:insert="fragments/docssidebar :: docssidebar(${activePage})"></div>
+
+        <main class="col-12 col-md-10 col-xl-11 py-md-3 pl-md-5 bd-content" role="main">
+            <div th:replace="this :: content"></div>
+        </main>
+    </div>
+
+    <div class="row">
+        <footer class="pt-3 mt-4 text-muted border-top">
+            <p>&copy; <span id="copyrightYear"></span> Shashin</p>
+        </footer>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    $("#copyrightYear").text("2021-" + new Date().getFullYear());
+</script>
+
+</body>
+</html>

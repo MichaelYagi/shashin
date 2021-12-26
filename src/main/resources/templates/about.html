@@ -1,38 +1,19 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
-<head th:insert="fragments/docshead :: docshead(${titleDescriptor})"></head>
-
+<html xmlns:th="http://www.thymeleaf.org"
+      th:include="layouts/docs :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
 <body>
+<section th:fragment="content">
+    <h2 id="overview">
+        <div>Overview<a class="anchorjs-link " href="#overview" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+    </h2>
 
-<div class="row px-4 py-3 ml-3 mr-3" th:insert="fragments/staticheader :: staticheader()"></div>
+    <p>This project grew from a desire to self-host photos and video with a minimal and simple interface.</p>
 
-<div class="row">
-    <div class="col-2 px-4" th:insert="fragments/docssidebar :: docssidebar(${activePage})"></div>
+    <h2 id="get-involved">
+        <div>Get Involved<a class="anchorjs-link " href="#get-involved" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+    </h2>
 
-    <main class="col-10 bd-content" role="main">
-        <h2 id="overview">
-            <div>Overview<a class="anchorjs-link " href="#overview" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
-        </h2>
-
-        <p>This project grew from a desire to self-host photos and video with a minimal and simple interface.</p>
-
-        <h2 id="get-involved">
-            <div>Get Involved<a class="anchorjs-link " href="#get-involved" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
-        </h2>
-
-        <p>Report issues <a href="https://github.com/MichaelYagi/shashin/issues">here</a>!</p>
-    </main>
-</div>
-
-<div class="row">
-    <footer class="pt-3 mt-4 text-muted border-top">
-        <p>&copy; <span id="copyrightYear"></span> Shashin</p>
-    </footer>
-</div>
-
-<script type="text/javascript">
-    $("#copyrightYear").text("2021-"+new Date().getFullYear());
-</script>
-
+    <p>Report issues <a href="https://github.com/MichaelYagi/shashin/issues">here</a>!</p>
+</section>
 </body>
 </html>
