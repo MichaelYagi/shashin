@@ -59,15 +59,31 @@ class AlbumsController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/albums")
     fun getAlbums(model: Model): String {
+        val response = buildAlbums(model)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+        return model.getAttribute("activePage").toString()
+    }
+
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @RequestMapping(value = ["/api/v1/albums"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getAlbumsApi(model: Model): String {
+        return mapper.writeValueAsString(buildAlbums(model))
+    }
+
+    private fun buildAlbums(model: Model): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
         val module = "albums"
-        model["message"] = "There are no albums."
-        model["albumsList"] = ""
-        model["albumsCount"] = ""
-        model["users"] = ""
-        model["userAlbums"] = ""
-        model["userCount"] = ""
-        model["albumsCommentsMap"] = ""
-        model["notificationMap"] = ""
+        response["message"] = "There are no albums."
+        response["albumsList"] = ""
+        response["albumsCount"] = ""
+        response["userAlbums"] = ""
+        response["userCount"] = ""
+        response["albumsCommentsMap"] = ""
+        response["notificationMap"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -112,15 +128,14 @@ class AlbumsController {
                 }
 
                 if (albums.isNotEmpty()) {
-                    model["albumsList"] = albums
-                    model["albumsCommentsMap"] = albumsCommentsMap
-                    model["notificationMap"] = notificationMap
-                    model["albumsCount"] = albumsCount
+                    response["albumsList"] = albums
+                    response["albumsCommentsMap"] = albumsCommentsMap
+                    response["notificationMap"] = notificationMap
+                    response["albumsCount"] = albumsCount
                     val userCount = userRepository.count()
                     if (userCount > 1) {
-                        model["users"] = userRepository.findAll()
-                        model["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
-                        model["userCount"] = userCount
+                        response["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
+                        response["userCount"] = userCount
                         val sharedAlbumsList = ArrayList<HashMap<String, Any>>()
                         val sharedAlbums = userRepository.findUserBySharedAlbum(currentUserObj.getId())
                         for (sharedAlbum in sharedAlbums) {
@@ -131,17 +146,18 @@ class AlbumsController {
                             sharedAlbumsMap["isShared"] = sharedAlbum.getIsShared().toString().toInt()
                             sharedAlbumsList.add(sharedAlbumsMap)
                         }
-                        model["sharedAlbums"] = sharedAlbumsList
+                        response["sharedAlbums"] = sharedAlbumsList
                     }
-                    model["message"] = ""
+                    response["message"] = ""
                 }
             }
         }
 
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
+        response["activePage"] = module
+        response["activeSidebar"] = module
+        response["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return response
     }
 
     @Secured("ROLE_ADMIN")
@@ -482,18 +498,35 @@ class AlbumsController {
     @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @RequestMapping(value = ["/album/{albumId}"], method = [RequestMethod.GET])
     fun getAlbum(model: Model, @PathVariable albumId: Int): String {
-        val module = "album"
-        model["message"] = "Nothing to see here."
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        val response = buildAlbum(model,albumId,0)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+        return model.getAttribute("activePage").toString()
+    }
 
-        model["album"] = ""
-        model["albumId"] = 0
-        model["albumMetadataList"] = ""
-        model["albumPhotoCommentsMap"] = ""
-        model["notificationMap"] = ""
-        model["favorites"] = ""
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
+        return mapper.writeValueAsString(buildAlbum(model,albumId,page))
+    }
+
+    private fun buildAlbum(model: Model, albumId: Int, page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
+        val module = "album"
+        response["message"] = "Nothing to see here."
+        response["activePage"] = module
+        response["activeSidebar"] = module
+        response["titleDescriptor"] = TextUtils.capitalized(module)
+
+        response["album"] = ""
+        response["albumId"] = 0
+        response["albumMetadataList"] = ""
+        response["albumPhotoCommentsMap"] = ""
+        response["notificationMap"] = ""
+        response["favorites"] = ""
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -550,110 +583,20 @@ class AlbumsController {
                     }
                     if (albumMetadataList.count() > 0) {
                         val album = albumRepository.findById(albumId)
-                        model["favorites"] = favoritesMap
-                        model["notificationMap"] = notificationMap
-                        model["albumPhotoCommentsMapString"] = mapper.writeValueAsString(albumPhotosCommentsMap)
-                        model["albumPhotoCommentsMap"] = albumPhotosCommentsMap
-                        model["album"] = album.get()
-                        model["albumId"] = album.get().getId()
-                        model["albumMetadataList"] = albumMetadataList
-                        model["message"] = ""
+                        response["favorites"] = favoritesMap
+                        response["notificationMap"] = notificationMap
+                        response["albumPhotoCommentsMapString"] = mapper.writeValueAsString(albumPhotosCommentsMap)
+                        response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
+                        response["album"] = album.get()
+                        response["albumId"] = album.get().getId()
+                        response["albumMetadataList"] = albumMetadataList
+                        response["message"] = ""
                     }
                 }
             }
         }
 
-        return module
-    }
-
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    @RequestMapping(value = ["/album/{albumId}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
-    @ResponseBody
-    fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
-        val response = mutableMapOf<String, Any?>()
-        response["albumPhotoCommentsMap"] = ""
-        response["album"] = ""
-        response["albumMetadataList"] = ""
-        response["notificationMap"] = ""
-        response["currentUser"] = ""
-        response["message"] = ""
-        response["favorites"] = ""
-
-        if (page > 0) {
-            val favoritesMap = HashMap<String, HashMap<String, Any>>()
-            val currentUserObj = model.getAttribute("currentUser") as User?
-            if (currentUserObj != null && albumId > 0) {
-                val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
-                if (userAlbums != null) {
-                    // Get album photos
-                    val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,(page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
-                    val albumMetadataList = ArrayList<Metadata>()
-                    if (albumPhotos != null) {
-                        val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
-                        val notificationMap = HashMap<String, Boolean>()
-
-                        for (albumPhoto in albumPhotos) {
-                            if (albumPhoto != null) {
-                                val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
-                                val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
-                                albumMetadataList.add(metadata.get())
-
-                                val notificationCount = notificationRepository.countAllByMetadataIdAndUserIdAndReadIsFalse(albumPhoto.getMetadataId()!!,currentUserObj.getId())
-                                notificationMap[albumPhoto.getMetadataId()!!] = notificationCount > 0
-
-                                val favorites = favoriteRepository.findAllByMetadataId(albumPhoto.getMetadataId())
-                                if (favorites != null) {
-                                    for (favorite in favorites) {
-                                        if (favorite != null) {
-                                            favoritesMap[albumPhoto.getMetadataId().toString()] = hashMapOf(
-                                                "favorite" to (favorite.getUserId() == currentUserObj.getId()),
-                                                "count" to favoriteRepository.countAllByMetadataId(albumPhoto.getMetadataId()!!)
-                                            )
-
-                                            if (favorite.getUserId() == currentUserObj.getId()) {
-                                                break
-                                            }
-                                        }
-                                    }
-                                }
-
-                                // Get comments for this photo
-                                val albumPhotoComments = commentRepository.findCommentsByAlbumIdAndMetadataId(albumId,albumPhoto.getMetadataId()!!)
-                                for (albumPhotoComment in albumPhotoComments) {
-                                    val albumPhotoCommentMap = HashMap<String, Any>()
-                                    albumPhotoCommentMap["comment"] = albumPhotoComment.getComment().toString()
-                                    albumPhotoCommentMap["commentId"] = albumPhotoComment.getCommentId().toString().toInt()
-                                    albumPhotoCommentMap["metadataId"] = albumPhotoComment.getMetadataId().toString()
-                                    albumPhotoCommentMap["albumId"] = albumPhotoComment.getAlbumId().toString().toInt()
-                                    albumPhotoCommentMap["userId"] = albumPhotoComment.getUserId().toString().toInt()
-                                    albumPhotoCommentMap["username"] = albumPhotoComment.getUsername().toString()
-                                    albumPhotoCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumPhotoComment.getCreatedAt().toString())
-                                    albumPhotoCommentsList.add(albumPhotoCommentMap)
-                                }
-                                albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
-                            }
-                        }
-                        if (albumMetadataList.count() > 0) {
-                            val album = albumRepository.findById(albumId)
-                            response["notificationMap"] = notificationMap
-                            response["favorites"] = favoritesMap
-                            response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
-                            response["album"] = album.get()
-                            response["albumMetadataList"] = albumMetadataList
-                            response["currentUser"] = currentUserObj
-                            response["msg"] = "Results retrieved"
-                            response["status"] = "success"
-                            response["message"] = ""
-                        }
-                        return mapper.writeValueAsString(response)
-                    }
-                }
-            }
-        }
-
-        response["msg"] = "Could not get results"
-        response["status"] = "fail"
-        return mapper.writeValueAsString(response)
+        return response
     }
 
     @Secured("ROLE_ADMIN")

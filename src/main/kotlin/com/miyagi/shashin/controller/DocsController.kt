@@ -66,4 +66,15 @@ class DocsController {
 
         return module
     }
+
+    @GetMapping("/docs/api/v1/album")
+    fun getAlbumApi(model: Model, request: HttpServletRequest): String {
+        val module = "docs/album"
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
+    }
 }
