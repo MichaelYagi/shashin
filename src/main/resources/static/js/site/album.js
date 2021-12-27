@@ -442,10 +442,6 @@
 
 (function( albumModal, $, undefined ) {
     albumModal.renderAlbumCommentsModal = function (albumData,metadata,currentUser,albumPhotoCommentsMap) {
-        if (typeof albumPhotoCommentsMap === 'string') {
-            albumPhotoCommentsMap = JSON.parse(albumPhotoCommentsMap);
-        }
-
         let index;
         let html =
             '<div class="modal fade" id="propalbumphotocomment' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true">\n' +
