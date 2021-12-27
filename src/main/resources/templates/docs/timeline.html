@@ -34,34 +34,112 @@
         <p id="api-timeline-taken-paged" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>/api/v1/timeline/{page}</code><a class="anchorjs-link " href="#api-timeline-taken-paged" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
 
         <p>Get timeline data by page index number. Start index is 0.</p>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>var</th>
-                    <th>type</th>
-                    <th>values</th>
-                    <th>required</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th>page</th>
-                    <td>int</td>
-                    <td></td>
-                    <th>&#10003;</th>
-                </tr>
-            </tbody>
-        </table>
 
-        <div class="p-5 mb-2 bg-light border rounded-3">
-            <p><strong>Request</strong></p>
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#request-timeline-page" role="button" aria-expanded="false" aria-controls="request-timeline-page">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-timeline-page">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>page</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>&#10003;</td>
+                    </tr>
+                </tbody>
+            </table>
+
             <p>
                 <div class="alert alert-secondary">
                     <code>/api/v1/timeline/0</code>
                 </div>
             </p>
+        </div>
 
-            <p><strong>Response</strong></p>
+
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#response-timeline-page" role="button" aria-expanded="false" aria-controls="response-timeline-page">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-timeline-page">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>metadataList</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of Metadata</td>
+                    </tr>
+                    <tr>
+                        <td>favorites</td>
+                        <td>object</td>
+                        <td></td>
+                        <td>Array of Metadata ID: boolean</td>
+                    </tr>
+                    <tr>
+                        <td>albumList</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of album ID, album name, album cover art URL, album share URL</td>
+                    </tr>
+                    <tr>
+                        <td>recognitionLabels</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of person ID, person name</td>
+                    </tr>
+                    <tr>
+                        <td>labelPhotoMap</td>
+                        <td>object</td>
+                        <td></td>
+                        <td>Metadata ID: person string list</td>
+                    </tr>
+                    <tr>
+                        <td>mediaTypeFilter</td>
+                        <td>string</td>
+                        <td>all/video</td>
+                        <td>Return video & images or video only</td>
+                    </tr>
+                    <tr>
+                        <td>timeOffsets</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of time offsets</td>
+                    </tr>
+                    <tr>
+                        <td>msg</td>
+                        <td>string</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>string</td>
+                        <td>success/fail</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
             <p>
                 <div class="alert alert-secondary">
                     <code>

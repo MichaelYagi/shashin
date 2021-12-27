@@ -25,39 +25,43 @@
         <p id="api-users-login" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-primary">POST</span> <code>/api/v1/users/login</code><a class="anchorjs-link " href="#api-users-login" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
 
         <p>Login with optional remember me. You must persist and use the <code>sessionid</code> response value returned in subsequent requests.</p>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>var</th>
-                <th>type</th>
-                <th>values</th>
-                <th>required</th>
-            </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th>username</th>
-                    <td>string</td>
-                    <td></td>
-                    <td>&#10003;</td>
-                </tr>
-                <tr>
-                    <th>password</th>
-                    <td>string</td>
-                    <td></td>
-                    <td>&#10003;</td>
-                </tr>
-                <tr>
-                    <th>remember-me</th>
-                    <td>string</td>
-                    <td>on</td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
 
-        <div class="p-5 mb-2 bg-light border rounded-3">
-            <p><strong>Request</strong></p>
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#request-users-login" role="button" aria-expanded="false" aria-controls="request-users-login">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-users-login">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>var</th>
+                    <th>type</th>
+                    <th>values</th>
+                    <th>required</th>
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>username</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>password</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>remember-me</td>
+                        <td>string</td>
+                        <td>on</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
             <p>
                 <div class="alert alert-secondary">
                     <code>/api/v1/users/login</code>
@@ -67,8 +71,62 @@
                     <code>{"username":"auser","password":"apassword","remember-me":"on"}</code>
                 </div>
             </p>
+        </div>
 
-            <p><strong>Response</strong></p>
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#response-users-login" role="button" aria-expanded="false" aria-controls="response-users-login">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-users-login">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>msg</td>
+                        <td>string</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>string</td>
+                        <td>success/fail</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>User ID</td>
+                    </tr>
+                    <tr>
+                        <td>username</td>
+                        <td>string</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>sessionid</td>
+                        <td>string</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>authority</td>
+                        <td>string</td>
+                        <td>ROLE_ADMIN/ROLE_USER</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
             <p>
                 <div class="alert alert-secondary">
                     <code>{"msg":"Logged in!","status":"success","id":1,"username":"auser","sessionid": "ABC123","authority":"ROLE_ADMIN"}</code>
@@ -81,19 +139,53 @@
 
         <p>Log user out.</p>
 
-        <div class="p-5 mb-2 bg-light border rounded-3">
-            <p><strong>Request</strong></p>
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#request-users-logout" role="button" aria-expanded="false" aria-controls="request-users-logout">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-users-logout">
             <p>
                 <div class="alert alert-secondary">
                     <code>/api/v1/users/logout</code>
                 </div>
             </p>
+        </div>
 
-            <p><strong>Response</strong></p>
+        <p>
+            <a class="btn btn-primary" data-bs-toggle="collapse" href="#response-users-logout" role="button" aria-expanded="false" aria-controls="response-users-logout">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-users-logout">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>msg</td>
+                        <td>string</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>string</td>
+                        <td>success/fail</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
             <p>
-                <div class="alert alert-secondary">
-                    <code>{"msg":"Logged out!","status":"success"}</code>
-                </div>
+            <div class="alert alert-secondary">
+                <code>{"msg":"Logged out!","status":"success"}</code>
+            </div>
             </p>
         </div>
     </div>
