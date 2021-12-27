@@ -18,14 +18,15 @@
     <li class="border-top my-3"></li>
 
     <li class="mb-1">
-        <button th:attr="class='btn btn-toggle align-items-center rounded' + ${activePage=='docs/api' or activePage=='docs/timeline' or activePage=='docs/user' ? ' active' : ' collapsed'}" data-bs-toggle="collapse" data-bs-target="#api-collapse" th:aria-expanded="${activePage=='docs/api' or activePage=='docs/timeline' or activePage=='docs/user' ? 'true' : 'false'}">
+        <button th:attr="class='btn btn-toggle align-items-center rounded' + ${activePage=='docs/api' or activePage=='docs/timeline' or activePage=='docs/album' or activePage=='docs/user' ? ' active' : ' collapsed'}" data-bs-toggle="collapse" data-bs-target="#api-collapse" th:aria-expanded="${activePage=='docs/api' or activePage=='docs/timeline' or activePage=='docs/album' or activePage=='docs/user' ? 'true' : 'false'}">
             API
         </button>
-        <div th:attr="class='collapse' + ${activePage=='docs/api' or activePage=='docs/timeline' or activePage=='docs/user' ? ' show' : ''}" id="api-collapse">
+        <div th:attr="class='collapse' + ${activePage=='docs/api' or activePage=='docs/timeline' or activePage=='docs/album' or activePage=='docs/user' ? ' show' : ''}" id="api-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                 <li><a href="/docs/api/v1" th:attr="class='link-dark rounded' + ${activePage=='docs/api' ? ' active' : ''}">Overview</a></li>
-                <li><a href="/docs/api/v1/timeline" th:attr="class='link-dark rounded' + ${activePage=='docs/timeline' ? ' active' : ''}">Timeline</a></li>
                 <li><a href="/docs/api/v1/user" th:attr="class='link-dark rounded' + ${activePage=='docs/user' ? ' active' : ''}">User</a></li>
+                <li><a href="/docs/api/v1/timeline" th:attr="class='link-dark rounded' + ${activePage=='docs/timeline' ? ' active' : ''}">Timeline</a></li>
+                <li><a href="/docs/api/v1/album" th:attr="class='link-dark rounded' + ${activePage=='docs/album' ? ' active' : ''}">Album</a></li>
             </ul>
         </div>
     </li>
