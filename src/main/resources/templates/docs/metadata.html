@@ -1,0 +1,341 @@
+<html xmlns:th="http://www.thymeleaf.org" th:include="layouts/docs :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+
+    <div class="d-none d-xl-block col-xl-3 float-end">
+        <ul class="section-nav">
+            <li class="toc-entry toc-h2"><a href="#api-metadata">Metadata</a></li>
+                <ul>
+                    <li class="toc-entry toc-h4"><a href="#api-metadata-update">/api/v1/update/metadata/{metadataId}</a></li>
+                    <li class="toc-entry toc-h4"><a href="#api-metadata-batchupdate">/api/v1/update/metadata/batch</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-10 col-md-9 col-xl-8">
+        <h2 id="api-metadata"><div>Metadata<a class="anchorjs-link " href="#api-metadata" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h2>
+
+        <p>Image or video <a href="#" data-bs-toggle="modal" data-bs-target="#propMetadataDocs">Metadata</a>.</p>
+        <p>Roles: Admin</p>
+
+        <!-- /api/v1/update/metadata/{metadataId} -->
+        <p id="api-metadata-update" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>/api/v1/update/metadata/{metadataId}</code><a class="anchorjs-link " href="#api-metadata-update" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
+
+        <p>Update image or video metadata.</p>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-metadata-update" role="button" aria-expanded="false" aria-controls="request-metadata-update">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-metadata-update">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                        <th>required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>metadataId</td>
+                        <td>string</td>
+                        <td>UUID</td>
+                        <td>Query parameter</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>string</td>
+                        <td>UUID</td>
+                        <td>Metadata ID must match query parameter</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>title</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Metadata title.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>year</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Metadata taken year.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>month</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Metadata taken month.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>day</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Metadata taken day.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>time</td>
+                        <td>string</td>
+                        <td>hh:mm:ss</td>
+                        <td>Metadata taken time.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>offset</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Metadata offset time.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>latlng</td>
+                        <td>string</td>
+                        <td>lat, lng</td>
+                        <td>Metadata comma seperated latitude and longitude.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>keywords</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Metadata comma seperated keywords.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>tagpeople</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Metadata comma seperated strings of tagged people.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>isObject</td>
+                        <td>boolean</td>
+                        <td>true/false</td>
+                        <td>Metadata is object flag.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>hidden</td>
+                        <td>boolean</td>
+                        <td>true/false</td>
+                        <td>Metadata hidden flag.</td>
+                        <td>&#10003;</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                <div class="alert alert-secondary">
+                    <code>/api/v1/update/metadata/a9c80e5a-df23-3eb3-946d-a32b642f360e</code>
+                </div>
+
+                <div class="alert alert-secondary">
+                    <code>{"id":"a9c80e5a-df23-3eb3-946d-a32b642f360e","title":"atitle","year":"2021","month":"12","day":"10","time":"10:54:03","offset":"","latlng":"16.767027233104788, -3.002658064842075","keywords":"asdf","tagpeople":"Noah,Ryuko","albumnames":"asdf","hidden":false,"isObject":false}</code>
+                </div>
+            </p>
+        </div>
+
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-metadata-update" role="button" aria-expanded="false" aria-controls="response-metadata-update">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-metadata-update">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>msg</td>
+                        <td>string</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>string</td>
+                        <td>success/fail</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+            <div class="alert alert-secondary">
+                <code>
+                    {"msg": "Saved!","status": "success"}
+                </code>
+            </div>
+            </p>
+        </div>
+
+        <!-- /api/v1/update/metadata/batch -->
+        <p id="api-metadata-batchupdate" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>/api/v1/update/metadata/batch</code><a class="anchorjs-link " href="#api-metadata-batchupdate" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
+
+        <p>Batch update image or video metadata.</p>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-metadata-batchupdate" role="button" aria-expanded="false" aria-controls="request-metadata-batchupdate">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-metadata-batchupdate">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                        <th>required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>batchMetadataIds</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Array of metadata ID's</td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>yearTakenBatchData</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Metadata taken year.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>monthTakenBatchData</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Metadata taken month.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>dayTakenBatchData</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Metadata taken day.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>latlngBatchData</td>
+                        <td>string</td>
+                        <td>lat, lng</td>
+                        <td>Metadata comma seperated latitude and longitude.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>keywordsBatchData</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Metadata comma seperated keywords.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>albumNameInput</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Albums these images or videos belong to.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>tagBatchDataInput</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Metadata comma seperated strings of tagged people.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>batchisobject</td>
+                        <td>string</td>
+                        <td>on</td>
+                        <td>Metadata is object flag.</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>batchhidden</td>
+                        <td>string</td>
+                        <td>on</td>
+                        <td>Metadata is object flag.</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                <div class="alert alert-secondary">
+                    <code>/api/v1/update/metadata/batch</code>
+                </div>
+
+                <div class="alert alert-secondary">
+                    <code>
+                        {"batchMetadataIds":["a9c80e5a-df23-3eb3-946d-a32b642f360e","c65082c2-20a0-3f8f-b783-1acd3d08ffa5"],"dayTakenBatchData":"","monthTakenBatchData":"","yearTakenBatchData":"","latlngBatchData":"16.766945051434195, -3.0036880329918745","keywordsBatchData":"","albumNameInput":"","tagBatchDataInput":""}
+                    </code>
+                </div>
+            </p>
+        </div>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-metadata-batchupdate" role="button" aria-expanded="false" aria-controls="response-metadata-batchupdate">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-metadata-batchupdate">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>var</th>
+                    <th>type</th>
+                    <th>values</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>msg</td>
+                    <td>string</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>status</td>
+                    <td>string</td>
+                    <td>success/fail</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <p>
+            <div class="alert alert-secondary">
+                <code>
+                    {"msg": "Saved!","status": "success"}
+                </code>
+            </div>
+            </p>
+        </div>
+
+    </div>
+</section>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <body th:fragment="usersettingsmodal(user)">
 
 <div class="modal fade" th:id="'proptrashuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeltrash'+${user.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="trashModalLabel">Delete <th:block th:text="${user.username}"></th:block></h5>
@@ -52,7 +52,7 @@
 </div>
 
 <div class="modal fade" th:id="'propresetpassworduser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelresetpassword'+${user.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="resetPasswordModalLabel">Reset password for <th:block th:text="${user.username}"></th:block></h5>
@@ -115,7 +115,7 @@
 </div>
 
 <div class="modal fade" th:id="'proproleuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelroleuser'+${user.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="roleuserModalLabel">Change <th:block th:text="${user.username}"></th:block> to <th:block th:text="${user.authority == 'ROLE_ADMIN' ? 'user' : 'admin'}"></th:block></h5>
@@ -166,7 +166,7 @@
 </div>
 
 <div class="modal fade" th:id="'propisalloweduser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelalloweduser'+${user.id}" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="alloweduserModalLabel">Change <th:block th:text="${user.username}"></th:block> permission to <th:block th:text="${user.isAllowed == true ? 'not login?' : 'login?'}"></th:block></h5>

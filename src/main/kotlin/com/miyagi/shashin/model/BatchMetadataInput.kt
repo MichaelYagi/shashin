@@ -1,0 +1,15 @@
+package com.miyagi.shashin.model
+
+class BatchMetadataInput {
+    var batchMetadataIds: Array<String>? = null
+    var batchFilenames: String? = null
+    var dayTakenBatchData: Int? = null
+    var monthTakenBatchData: Int? = null
+    var yearTakenBatchData: Int? = null
+    var latlngBatchData: String? = null
+    var keywordsBatchData: String? = null
+    var tagBatchDataInput: String? = null
+    var albumNameInput: String? = null
+    var batchisobject: String? = null
+    var batchhidden: String? = null
+}
