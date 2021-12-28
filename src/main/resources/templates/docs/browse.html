@@ -1,0 +1,335 @@
+<html xmlns:th="http://www.thymeleaf.org" th:include="layouts/docs :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+
+    <div class="d-none d-xl-block col-xl-2 float-end">
+        <ul class="section-nav">
+            <li class="toc-entry"><a href="#api-browse">Browse</a></li>
+            <ul>
+                <li class="toc-entry"><a href="#api-recent">/api/v1/recent/{page}</a></li>
+                <li class="toc-entry"><a href="#api-folders">/api/v1/folders</a></li>
+                <li class="toc-entry"><a href="#api-folder">/api/v1/folder/{page}/{folder}</a></li>
+            </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-11 col-md-10 col-xl-9">
+        <h2 id="api-browse"><div>Browse<a class="anchorjs-link " href="#api-browse" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></h2>
+
+        <p>Browse by recently added or folders.</p>
+        <p>Roles: Admin</p>
+
+        <!-- /api/v1/recent/{page} -->
+        <p id="api-recent" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>/api/v1/recent/{page}</code><a class="anchorjs-link " href="#api-recent" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
+
+        <p>Get all ordered by recently added.</p>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-recent" role="button" aria-expanded="false" aria-controls="request-recent">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-recent">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>page</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>&#10003;</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                <div class="alert alert-secondary">
+                    <code>/api/v1/recent/0</code>
+                </div>
+            </p>
+        </div>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-recent" role="button" aria-expanded="false" aria-controls="response-recent">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-recent">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>metadataList</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of <a href="#" data-bs-toggle="modal" data-bs-target="#propMetadataDocs">Metadata</a></td>
+                    </tr>
+                    <tr>
+                        <td>favorites</td>
+                        <td>object</td>
+                        <td></td>
+                        <td>Array of Metadata ID: favorite count</td>
+                    </tr>
+                    <tr>
+                        <td>albumList</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of album ID, album name, album cover art URL, album share URL</td>
+                    </tr>
+                    <tr>
+                        <td>albumMap</td>
+                        <td>object</td>
+                        <td></td>
+                        <td>Metadata ID mapped to album name.</td>
+                    </tr>
+                    <tr>
+                        <td>recognitionLabels</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of person ID, person name</td>
+                    </tr>
+                    <tr>
+                        <td>labelPhotoMap</td>
+                        <td>object</td>
+                        <td></td>
+                        <td>Metadata ID: person string list</td>
+                    </tr>
+                    <tr>
+                        <td>mediaTypeFilter</td>
+                        <td>string</td>
+                        <td>all/video</td>
+                        <td>Return video & images or video only</td>
+                    </tr>
+                    <tr>
+                        <td>timeOffsets</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of time offsets</td>
+                    </tr>
+                    <tr>
+                        <td>msg</td>
+                        <td>string</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>string</td>
+                        <td>success/fail</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                <div class="alert alert-secondary">
+                    <code>
+                        {"message":"","metadataList":[{"id":"2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6","path":"C:\\Users\\Michael\\Downloads\\shashintestimages\\sample_640×426.png","title":"sample_640×426.png","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_209.png","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_209.png","thumbnailSmallWidth":314,"thumbnailSmallHeight":209,"originalImageWidth":640,"originalImageHeight":426,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_centered.png","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_centered.png","thumbnailUrlOriginal":"/api/v1/image/2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_mapmarker.png","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_mapmarker.png","folder":"/c/users/michael/downloads/shashintestimages","videoUrl":null,"duration":null,"type":"image/png","fileName":"sample_640×426.png","expectedExtension":"png","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2021,"month":12,"day":5,"time":"23:05:33","iso":null,"exposure":null,"fstopNumber":null,"focalLength":null,"camera":null,"lens":null,"quality":null,"compressionType":"Deflate","keywords":null,"hidden":false,"addedAt":"2021-12-20 21:38:11","takenAt":"2021-12-05 23:05:33","createdAt":"2021-12-05 23:05:33","modifiedAt":"2021-12-05 14:51:09","lastAccessedAt":"2021-12-18 16:50:57"}],"favorites":{"2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6":{"count":1,"favorite":true}},"albumList":[{"id":627,"name":"asdf","coverUrl":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/DSCF1253.MP4_centered.jpg","shareUrl":null,"createdAt":"2021-12-22 08:35:28","modifiedAt":"2021-12-22 08:35:28"}],"recognitionLabels":[{"id":641,"name":"Noah","createdAt":"2021-12-26 18:14:42","modifiedAt":"2021-12-26 18:14:42"},{"id":643,"name":"Ryuko","createdAt":"2021-12-26 18:14:42","modifiedAt":"2021-12-26 18:14:42"}],"labelPhotoMap":{"2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6":""},"mediaTypeFilter":"all","timeOffsets":["-12:00","-11:00","-10:00","-09:30","-09:00","-07:00","-06:00","-05:00","-04:30","-04:00","-03:00","-02:00","-01:00","±00:00","+01:00","+02:00","+03:00","+04:00","+04:30","+05:00","+05:30","+05:45","+06:00","+06:30","+07:00","+08:00","+08:45","+09:00","+09:30","+10:00","+11:00","+11:30","+12:00","+13:00","+14:00"],"albumMap":{"2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6":"asdf"},"msg":"Results","status":"success"}
+                    </code>
+                </div>
+            </p>
+        </div>
+
+        <!-- /api/v1/folders -->
+        <p id="api-folders" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>/api/v1/folders</code><a class="anchorjs-link " href="#api-folders" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
+
+        <p>Get all folders.</p>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-folders" role="button" aria-expanded="false" aria-controls="request-folders">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-folders">
+            <p>
+                <div class="alert alert-secondary">
+                    <code>api/v1/folders</code>
+                </div>
+            </p>
+        </div>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-folders" role="button" aria-expanded="false" aria-controls="response-folders">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-folders">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>foldersList</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of folder content count, thumbnail cover URL, folder path.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>
+            <div class="alert alert-secondary">
+                <code>
+                    {"message":"","foldersList":[{"count":4,"thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/insta360go2/PRO_VID_20211205_074218_00_001.mp4_centered.jpg","folder":"/c/users/michael/downloads/shashintestimages/insta360go2"},{"count":67,"thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/1-ZV1_20211127_0079.MP4_centered.jpg","folder":"/c/users/michael/downloads/shashintestimages"}],"activePage":"folders","activeSidebar":"folders","titleDescriptor":"Folders"}
+                </code>
+            </div>
+            </p>
+        </div>
+
+        <!-- /api/v1/folder/{page}/{folder} -->
+        <p id="api-folder" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>api/v1/folder/{page}/{folder}</code><a class="anchorjs-link " href="#api-folder" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
+
+        <p>Get all content of folder.</p>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-folder" role="button" aria-expanded="false" aria-controls="request-folder">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-folder">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>required</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>page</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>&#10003;</td>
+                    </tr>
+                    <tr>
+                        <td>folder</td>
+                        <td>string</td>
+                        <td>HTML escaped string</td>
+                        <td>&#10003;</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                <div class="alert alert-secondary">
+                    <code>/api/v1/folder/0/%252Fc%252Fusers%252Fmichael%252Fdownloads%252Fshashintestimages</code>
+                </div>
+            </p>
+        </div>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-folder" role="button" aria-expanded="false" aria-controls="response-folder">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-folder">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>metadataList</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of <a href="#" data-bs-toggle="modal" data-bs-target="#propMetadataDocs">Metadata</a></td>
+                    </tr>
+                    <tr>
+                        <td>favorites</td>
+                        <td>object</td>
+                        <td></td>
+                        <td>Array of Metadata ID: favorite count</td>
+                    </tr>
+                    <tr>
+                        <td>albumList</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of album ID, album name, album cover art URL, album share URL</td>
+                    </tr>
+                    <tr>
+                        <td>albumMap</td>
+                        <td>object</td>
+                        <td></td>
+                        <td>Metadata ID mapped to album name.</td>
+                    </tr>
+                    <tr>
+                        <td>recognitionLabels</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of person ID, person name</td>
+                    </tr>
+                    <tr>
+                        <td>labelPhotoMap</td>
+                        <td>object</td>
+                        <td></td>
+                        <td>Metadata ID: person string list</td>
+                    </tr>
+                    <tr>
+                        <td>mediaTypeFilter</td>
+                        <td>string</td>
+                        <td>all/video</td>
+                        <td>Return video & images or video only</td>
+                    </tr>
+                    <tr>
+                        <td>timeOffsets</td>
+                        <td>array</td>
+                        <td></td>
+                        <td>Array of time offsets</td>
+                    </tr>
+                    <tr>
+                        <td>msg</td>
+                        <td>string</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>status</td>
+                        <td>string</td>
+                        <td>success/fail</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+            <div class="alert alert-secondary">
+                <code>
+                    {"message":"","metadataList":[{"id":"2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6","path":"C:\\Users\\Michael\\Downloads\\shashintestimages\\sample_640×426.png","title":"sample_640×426.png","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_209.png","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_209.png","thumbnailSmallWidth":314,"thumbnailSmallHeight":209,"originalImageWidth":640,"originalImageHeight":426,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_centered.png","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_centered.png","thumbnailUrlOriginal":"/api/v1/image/2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_mapmarker.png","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/sample_640×426.png_mapmarker.png","folder":"/c/users/michael/downloads/shashintestimages","videoUrl":null,"duration":null,"type":"image/png","fileName":"sample_640×426.png","expectedExtension":"png","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2021,"month":12,"day":5,"time":"23:05:33","iso":null,"exposure":null,"fstopNumber":null,"focalLength":null,"camera":null,"lens":null,"quality":null,"compressionType":"Deflate","keywords":null,"hidden":false,"addedAt":"2021-12-20 21:38:11","takenAt":"2021-12-05 23:05:33","createdAt":"2021-12-05 23:05:33","modifiedAt":"2021-12-05 14:51:09","lastAccessedAt":"2021-12-18 16:50:57"}],"favorites":{"2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6":{"count":1,"favorite":true}},"albumList":[{"id":627,"name":"asdf","coverUrl":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/DSCF1253.MP4_centered.jpg","shareUrl":null,"createdAt":"2021-12-22 08:35:28","modifiedAt":"2021-12-22 08:35:28"}],"recognitionLabels":[{"id":641,"name":"Noah","createdAt":"2021-12-26 18:14:42","modifiedAt":"2021-12-26 18:14:42"},{"id":643,"name":"Ryuko","createdAt":"2021-12-26 18:14:42","modifiedAt":"2021-12-26 18:14:42"}],"labelPhotoMap":{"2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6":""},"mediaTypeFilter":"all","timeOffsets":["-12:00","-11:00","-10:00","-09:30","-09:00","-07:00","-06:00","-05:00","-04:30","-04:00","-03:00","-02:00","-01:00","±00:00","+01:00","+02:00","+03:00","+04:00","+04:30","+05:00","+05:30","+05:45","+06:00","+06:30","+07:00","+08:00","+08:45","+09:00","+09:30","+10:00","+11:00","+11:30","+12:00","+13:00","+14:00"],"albumMap":{"2c4e4ec1-c826-3f1b-9778-6c0efffb0bf6":"asdf"},"msg":"Results","status":"success"}
+                </code>
+            </div>
+            </p>
+        </div>
+
+    </div>
+</section>
+</body>
+</html>

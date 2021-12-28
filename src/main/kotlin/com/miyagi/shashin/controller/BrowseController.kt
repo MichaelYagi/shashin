@@ -64,7 +64,7 @@ class BrowseController {
         return module
     }
 
-    @RequestMapping(value = ["/recent/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/recent/{page}","/api/v1/recent/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildRecentlyAdded(model,page))
@@ -174,24 +174,41 @@ class BrowseController {
 
     @GetMapping("/folders")
     fun getFolders(model: Model): String {
+        val response = buildFolders(model)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+        return model.getAttribute("activePage").toString()
+    }
+
+    @RequestMapping(value = ["api/v1/folders"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getFoldersApi(model: Model): String {
+        return mapper.writeValueAsString(buildFolders(model))
+    }
+
+    private fun buildFolders(model: Model): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
         val module = "folders"
-        model["message"] = "There are no folders."
-        model["foldersList"] = ""
+        response["message"] = "There are no folders."
+        response["foldersList"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             val folderObj = metadataRepository.findFolders()
 
             if (folderObj != null && folderObj.count() > 0) {
-                model["foldersList"] = folderObj
-                model["message"] = ""
+                response["foldersList"] = folderObj
+                response["message"] = ""
             }
         }
 
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
+        response["activePage"] = module
+        response["activeSidebar"] = module
+        response["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return response
     }
 
     @RequestMapping(value = ["/folder/{folder}"], method = [RequestMethod.GET])
@@ -210,7 +227,7 @@ class BrowseController {
         return module
     }
 
-    @RequestMapping(value = ["/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/folder/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String): String {
         return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page))
