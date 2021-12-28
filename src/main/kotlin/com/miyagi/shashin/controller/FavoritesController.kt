@@ -51,13 +51,32 @@ class FavoritesController {
 
     @GetMapping("/favorites")
     fun getFavorites(model: Model): String {
+        val response = buildFavorites(model,0)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+        return model.getAttribute("activePage").toString()
+    }
+
+    @RequestMapping(value = ["/favorites/{page}","api/v1/favorites/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
+        return mapper.writeValueAsString(buildFavorites(model,page))
+    }
+
+    private fun buildFavorites(model: Model, page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
         val module = "favorites"
-        model["message"] = "There are no favorites."
-        model["metadataList"] = ""
+        response["activePage"] = module
+        response["activeSidebar"] = module
+        response["titleDescriptor"] = TextUtils.capitalized(module)
+        response["message"] = "There are no favorites."
+        response["metadataList"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),0, model.getAttribute("queryLimit").toString().toInt())
+            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
             if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
                 model["message"] = ""
@@ -68,49 +87,16 @@ class FavoritesController {
                     }
                 }
                 if (metadataList.count() > 0) {
-                    model["metadataList"] = metadataList
+                    response["metadataList"] = metadataList
                 }
+                response["message"] = ""
+                response["msg"] = "Results"
+                response["status"] = "success"
+                return response
             }
         }
 
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
-    }
-
-    @RequestMapping(value = ["/favorites/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
-    @ResponseBody
-    fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
-        val response = mutableMapOf<String, Any?>()
-        response["metadataList"] = ""
-
-        if (page > 0) {
-            val currentUserObj = model.getAttribute("currentUser") as User?
-            if (currentUserObj != null) {
-                val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
-                if (favoriteList != null && favoriteList.count() > 0) {
-                    val metadataList = ArrayList<Metadata>()
-                    model["message"] = ""
-                    for (favorite in favoriteList) {
-                        if (favorite != null) {
-                            val metadataObj = metadataRepository.findById(favorite.getMetadataId().toString())
-                            metadataList.add(metadataObj.get())
-                        }
-                    }
-                    if (metadataList.count() > 0) {
-                        response["metadataList"] = metadataList
-                    }
-                    response["msg"] = "Results"
-                    response["status"] = "success"
-                    return mapper.writeValueAsString(response)
-                }
-            }
-        }
-
-        resp["msg"] = "Could not get results"
-        resp["status"] = "fail"
-        return mapper.writeValueAsString(resp)
+        return response
     }
 
     @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], produces = ["application/json"])

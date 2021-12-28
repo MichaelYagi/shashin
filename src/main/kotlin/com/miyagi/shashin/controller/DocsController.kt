@@ -77,4 +77,15 @@ class DocsController {
 
         return module
     }
+
+    @GetMapping("/docs/api/v1/favorites")
+    fun getFavoritesApi(model: Model, request: HttpServletRequest): String {
+        val module = "docs/favorites"
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
+    }
 }
