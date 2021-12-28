@@ -16,12 +16,12 @@
                         <tr>
                             <th scope="col">Username</th>
                             <th scope="col">Role</th>
-                            <th scope="col">Is Allowed</th>
+                            <th scope="col">Allow</th>
                             <th scope="col">Created</th>
                             <th scope="col">Modified</th>
-                            <th scope="col">Logged in</th>
-                            <th scope="col">Delete user</th>
-
+                            <th scope="col">Logged In</th>
+                            <th scope="col">Reset Password</th>
+                            <th scope="col">Delete User</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,6 +60,11 @@
                                     </th:block>
                                 </td>
                                 <td>
+                                    <a href="#" th:id="${'resetPassword' + user.id}">
+                                        <span class="bi-arrow-clockwise overlayIcon"></span>
+                                    </a>
+                                </td>
+                                <td>
                                     <a href="#" th:id="${'trash' + user.id}">
                                         <span class="bi-trash overlayIcon"></span>
                                     </a>
@@ -72,6 +77,11 @@
                                     e.preventDefault();
 
                                     $("#proptrashuser[[${user.id}]]").modal('show');
+                                });
+                                $("#resetPassword[[${user.id}]]").click(function(e) {
+                                    e.preventDefault();
+
+                                    $("#propresetpassworduser[[${user.id}]]").modal('show');
                                 });
                                 $("#permissiontoggle[[${user.id}]]").click(function(e) {
                                     e.preventDefault();
