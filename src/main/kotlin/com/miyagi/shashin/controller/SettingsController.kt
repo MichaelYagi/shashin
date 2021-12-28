@@ -27,6 +27,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -106,6 +107,8 @@ class SettingsController {
 
     @Autowired
     private val restartService: RestartService? = null
+
+    private var bcrypt = BCryptPasswordEncoder()
 
     private var shouldStop = AtomicBoolean(false)
 
@@ -425,6 +428,35 @@ class SettingsController {
             resp["msg"] = "Success!"
             resp["status"] = "success"
             return mapper.writeValueAsString(resp)
+        }
+
+        resp["msg"] = "Could not save"
+        resp["status"] = "fail"
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/user/changepassword/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun resetPasswordUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        if (userMap.containsKey("userId") && userMap.containsKey("password")) {
+            val userIdRequest = userMap["userId"].toString().toInt()
+            val password = userMap["password"].toString()
+
+            if (password.isNotBlank() && userId == userIdRequest) {
+                val userObjOpt = userRepository?.findById(userIdRequest)
+                if (userObjOpt != null) {
+                    val userObj = userObjOpt.get()
+                    userObj.setModifiedAt(getCurrentTimestamp())
+                    userObj.setPassword(bcrypt.encode(password))
+                    userRepository?.save(userObj)
+                    resp["msg"] = "Success!"
+                    resp["status"] = "success"
+                    return mapper.writeValueAsString(resp)
+                }
+            }
         }
 
         resp["msg"] = "Could not save"

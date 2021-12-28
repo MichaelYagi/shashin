@@ -51,6 +51,69 @@
     </div>
 </div>
 
+<div class="modal fade" th:id="'propresetpassworduser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelresetpassword'+${user.id}" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetPasswordModalLabel">Reset password for <th:block th:text="${user.username}"></th:block></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" th:id="'resetPassword'+${user.id}">
+                    <input type="password" th:id="'password'+${user.id}" th:name="'password'+${user.id}" class="form-control" placeholder="Reset Password">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div th:id="'resetPasswordUserStatus'+${user.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                <button type="button" class="btn btn-primary" th:id="'resetPasswordUser'+${user.id}">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+            <script type="text/javascript">
+                /*<![CDATA[*/
+                $("#resetPasswordUser[[${user.id}]]").click(function(e) {
+                    e.preventDefault();
+
+                    $("#resetPasswordUserStatus[[${user.id}]]").css("visibility","visible");
+
+                    let userId = "[[${user.id}]]";
+
+                    let json = {userId: userId, password: $("#password[[${user.id}]]").val()}
+                    const ajaxParams = {
+                        type: "post",
+                        url: "/settings/user/changepassword/"+userId,
+                        data: JSON.stringify(json),
+                        contentType: 'application/json; charset=utf-8',
+                        retries: shashin.ajaxRetries
+                    }
+
+                    $.ajax(ajaxParams)
+                        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving user")}).then(function (data) {
+                            console.log(data)
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            let message = "Error";
+                            if (data["status"] === "success") {
+                                $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-check-circle').removeClass('spinner-grow');
+                                window.location.replace("/settings/users");
+                            } else {
+                                $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
+                            }
+                        } else {
+                            $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
+                        }
+                    });
+                });
+
+                $('#propresetpassworduser[[${user.id}]]').on('hide.bs.modal', function () {
+                    $("#resetPasswordUserStatus[[${user.id}]]").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
+                    $("#resetPasswordUserStatus[[${user.id}]]").css("visibility","hidden");
+                    $("#password[[${user.id}]]").val("");
+                });
+                /*]]>*/
+            </script>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" th:id="'proproleuser'+${user.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelroleuser'+${user.id}" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
