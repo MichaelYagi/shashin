@@ -45,6 +45,17 @@ class DocsController {
         return module
     }
 
+    @GetMapping("/docs/api/v1/metadata")
+    fun getMetadataApi(model: Model, request: HttpServletRequest): String {
+        val module = "docs/metadata"
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
+    }
+
     @GetMapping("/docs/api/v1/timeline")
     fun getTimelineApi(model: Model, request: HttpServletRequest): String {
         val module = "docs/timeline"

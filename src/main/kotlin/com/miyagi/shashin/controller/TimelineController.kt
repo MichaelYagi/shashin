@@ -474,7 +474,7 @@ class TimelineController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/timeline/update/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
@@ -830,63 +830,22 @@ class TimelineController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/timeline/update/batch"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
-//        println(requestBody)
-        val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        //println(requestBody)
+        val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
 
-        var idArray: Array<String>? = null
-        var dayTaken: Int? = null
-        var monthTaken: Int? = null
-        var yearTaken: Int? = null
-        var latlng: String? = null
-        var keywords: String? = null
-        var recognitionLabelNames: String? = null
-        var albumNames: String? = null
-        var isObject = false
-        var isHidden = false
-
-        for ((k, v) in batchMetadataMap) {
-            if (v != "") {
-                when (k) {
-                    "batchisobject" -> {
-                        if (v.toString() == "on") {
-                            isObject = true
-                        }
-                    }
-                    "batchhidden" -> {
-                        if (v.toString() == "on") {
-                            isHidden = true
-                        }
-                    }
-                    "tagBatchDataInput" -> {
-                        recognitionLabelNames = v.toString().trim()
-                    }
-                    "albumNameInput" -> {
-                        albumNames = v.toString().trim()
-                    }
-                    "batchMetadataIds" -> {
-                        idArray = mapper.readValue(v.toString(), Array<String>::class.java)
-                    }
-                    "dayTakenBatchData" -> {
-                        dayTaken = v.toString().toInt()
-                    }
-                    "monthTakenBatchData" -> {
-                        monthTaken = v.toString().toInt()
-                    }
-                    "yearTakenBatchData" -> {
-                        yearTaken = v.toString().toInt()
-                    }
-                    "latlngBatchData" -> {
-                        latlng = v.toString()
-                    }
-                    "keywordsBatchData"  -> {
-                        keywords = v.toString()
-                    }
-                }
-            }
-        }
+        val idArray: Array<String>? = batchMetadataMap.batchMetadataIds
+        val dayTaken: Int? = batchMetadataMap.dayTakenBatchData
+        val monthTaken: Int? = batchMetadataMap.monthTakenBatchData
+        val yearTaken: Int? = batchMetadataMap.yearTakenBatchData
+        var latlng: String? = batchMetadataMap.latlngBatchData
+        var keywords: String? = batchMetadataMap.keywordsBatchData
+        val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
+        val albumNames: String? = batchMetadataMap.albumNameInput
+        val isObject = batchMetadataMap.batchisobject == "on"
+        val isHidden = batchMetadataMap.batchhidden == "on"
 
         if (!idArray.isNullOrEmpty()) {
 
@@ -1046,7 +1005,7 @@ class TimelineController {
                             }
                         }
                     }
-                    if (keywords != null) {
+                    if (keywords != null && keywords.isNotBlank()) {
                         val keywordArray = keywords.toString().split(",")
                         keywords = keywordArray.joinToString { it.trim() }.trim()
                         if (keywords.last() == ',') {
