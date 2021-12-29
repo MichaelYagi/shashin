@@ -68,14 +68,18 @@ workflows:
                 root: .
                 paths:
                   - target/artifact
-      - artifactory/upload:
-          requires:
-            - Run junit tests and package to tar
+      - build:
+          name: Build step
           filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /^v.*/
+          - persist_to_workspace: # persist across jobs
+              root: .
+              paths:
+                - target/artifact
+      - artifactory/upload:
+          requires:
+            - Build step
           build-steps:
             - attach_workspace: # attach from another job
                 at: target/artifact
