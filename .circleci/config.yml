@@ -69,7 +69,6 @@ workflows:
                 paths:
                   - target/artifact
       - build:
-          name: Build step
           filters:
             tags:
               only: /^v.*/
@@ -79,7 +78,7 @@ workflows:
                 - target/artifact
       - artifactory/upload:
           requires:
-            - Build step
+            - build
           build-steps:
             - attach_workspace: # attach from another job
                 at: target/artifact
