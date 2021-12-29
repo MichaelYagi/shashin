@@ -923,15 +923,15 @@ class TimelineController {
                         }
                     }
 
-                    // Process tagged people
-                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
-                    if (recognitionLabelPhotos != null) {
-                        for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                            recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
-                        }
-                    }
-
                     if (isObject) {
+                        // Process tagged people
+                        val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                        if (recognitionLabelPhotos != null) {
+                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
+                            }
+                        }
+
                         recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
                         val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
                         var recognitionLabelObj = RecognitionLabel()
@@ -950,6 +950,14 @@ class TimelineController {
                         recognitionLabelPhotoObj.setConfidence("-0.1")
                         recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                     } else if (recognitionLabelNames != null && recognitionLabelNames.toString().trim() != "") {
+                        // Process tagged people
+                        val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                        if (recognitionLabelPhotos != null) {
+                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
+                            }
+                        }
+
                         val recognitionLabelArray = recognitionLabelNames.toString().split(",")
                         if (recognitionLabelArray.count() > 0) {
                             recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
