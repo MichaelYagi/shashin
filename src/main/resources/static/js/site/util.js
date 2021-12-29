@@ -218,6 +218,22 @@ class Util {
             $("#" + id).outerHeight(true);
     }
 
+    static getBatchData(batchObj) {
+        const jsonData = {};
+        jsonData.batchMetadataIds = batchObj.hasOwnProperty("batchMetadataIds") ? JSON.parse(batchObj["batchMetadataIds"]) : null;
+        jsonData.dayTakenBatchData = batchObj.hasOwnProperty("dayTakenBatchData") ? batchObj["dayTakenBatchData"] : null;
+        jsonData.monthTakenBatchData = batchObj.hasOwnProperty("monthTakenBatchData") ? batchObj["monthTakenBatchData"] : null;
+        jsonData.yearTakenBatchData = batchObj.hasOwnProperty("yearTakenBatchData") ? batchObj["yearTakenBatchData"] : null;
+        jsonData.latlngBatchData = batchObj.hasOwnProperty("latlngBatchData") ? batchObj["latlngBatchData"] : null;
+        jsonData.keywordsBatchData = batchObj.hasOwnProperty("keywordsBatchData") ? batchObj["keywordsBatchData"] : null;
+        jsonData.tagBatchDataInput = batchObj.hasOwnProperty("tagBatchDataInput") ? batchObj["tagBatchDataInput"] : null;
+        jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? batchObj["albumNameInput"] : null;
+        jsonData.batchisobject = batchObj.hasOwnProperty("batchisobject") ? batchObj["batchisobject"] : null;
+        jsonData.batchhidden = batchObj.hasOwnProperty("batchhidden") ? batchObj["batchhidden"] : null;
+
+        return jsonData;
+    }
+
     static populateDetailsInfo(metadata,containerModalId) {
         if (typeof containerModalId === "undefined" || containerModalId.length === 0) {
             if ($("#propInfoModal").length > 0) {
