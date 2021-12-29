@@ -43,8 +43,8 @@
                             </div>
                         </div>
 
-                        <div th:replace="fragments/albumsmodal :: albumsmodal(${album},${userAlbums},${currentUser},${userCount},${sharedAlbums},${albumsCommentsMap},${baseUrl})"></div>
-                        <div th:replace="fragments/albumsjs :: albumsjs(${album})"></div>
+                        <div th:replace="fragments/albumsmodal :: albumsmodal(${album},${userAlbums},${currentUser},${userCount},${sharedAlbums},${albumsCommentsMap},${baseUrl},${authority})"></div>
+                        <div th:replace="fragments/albumsjs :: albumsjs(${album},${authority})"></div>
                     </th:block>
                 </div>
             </th:block>
