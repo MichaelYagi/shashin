@@ -80,6 +80,45 @@
         });
     }
 
+    albumsModalListeners.setEditAlbumsListeners = function (albumId) {
+        $("#editAlbum"+albumId).click(function(e) {
+            e.preventDefault();
+
+            $("#editAlbumNameStatus"+albumId).css("visibility","visible");
+
+            const albumName = $("#albumEditName"+albumId).val();
+
+            let json = {albumId: albumId, albumName: albumName}
+            const ajaxParams = {
+                type: "post",
+                url: "/album/updatename/"+albumId,
+                data: JSON.stringify(json),
+                contentType: 'application/json; charset=utf-8',
+                retries: shashin.ajaxRetries
+            }
+
+            $.ajax(ajaxParams)
+                .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album name")}).then(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
+                    $("#albumName"+albumId).text(albumName);
+                    $("#editAlbumNameStatus"+albumId).addClass('bi-check-circle').removeClass('spinner-grow');
+                } else {
+                    $("#editAlbumNameStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                }
+            });
+        });
+
+        $('#propeditalbums'+albumId).on('hide.bs.modal', function () {
+            $("#editAlbumNameStatus"+albumId).addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
+            $("#editAlbumNameStatus"+albumId).css("visibility","hidden");
+            $("#albumEditName"+albumId).val("");
+        });
+
+        $('#propeditalbums'+albumId).on('show.bs.modal', function () {
+            $("#albumEditName"+albumId).val($("#albumName"+albumId).text());
+        });
+    }
+
     albumsModalListeners.setAlbumModalListeners = function (albumId, baseUrl) {
         if ($("#shareLink"+albumId).val() === "") {
             $("#copyLink"+albumId).prop('disabled', true);

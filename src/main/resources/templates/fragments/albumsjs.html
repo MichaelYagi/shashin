@@ -8,6 +8,12 @@
         $("#propalbums[[${album.id}]]").modal('show');
     });
 
+    $("#edit[[${album.id}]]").click(function(e) {
+        e.preventDefault();
+
+        $("#propeditalbums[[${album.id}]]").modal('show');
+    });
+
     $("#trash[[${album.id}]]").click(function(e) {
         e.preventDefault();
 

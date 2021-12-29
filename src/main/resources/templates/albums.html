@@ -21,7 +21,7 @@
                             </a>
                             <div class="card-body">
                                 <p class="card-text">
-                                    <strong th:text="${album.name}"></strong><br>
+                                    <strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong><br>
 
                                     <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;">
                                         <span th:id="'commentcount'+${album.id}"><th:block th:text="${#lists.size(albumsCommentsMap.get(album.id))}"></th:block></span>
@@ -34,6 +34,7 @@
                                         </span>
                                     </a>
                                     <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                        &nbsp;&nbsp;<a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil"></span></a>
                                         &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>
                                         &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span class="bi-share"></span></a>
                                     </th:block>
