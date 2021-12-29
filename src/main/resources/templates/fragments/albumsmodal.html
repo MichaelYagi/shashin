@@ -80,6 +80,32 @@
     </div>
 </div>
 
+<div class="modal fade" th:id="'propeditalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeledit'+${album.id}" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Edit Album<div th:id="'propeditalbums'+${album.id}"><img th:src="${#uris.escapePath(album.coverUrl)}" width="100" height="100" th:onError="Util.errorImg(this,[[${album.name}]],100)"></div></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" th:id="'editAlbumsModal'+${album.id}">
+                    <input type="text" th:id="'albumEditName'+${album.id}" th:name="'albumEditName'+${album.id}" class="form-control" placeholder="Album Name">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <div th:id="'editAlbumNameStatus'+${album.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                <button type="button" class="btn btn-primary" th:id="'editAlbum'+${album.id}">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+            <script th:inline="javascript" type="text/javascript">
+                /*<![CDATA[*/
+                albumsModalListeners.setEditAlbumsListeners(/*[[${album.id}]]*/0);
+                /*]]>*/
+            </script>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" th:id="'propcommentalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelcomment'+${album.id}" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
         <div class="modal-content">
