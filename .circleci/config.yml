@@ -68,15 +68,14 @@ workflows:
                 root: .
                 paths:
                   - target/artifact
-      - build
-        requires:
-          - Run junit tests and package to tar
-          filters:
-            tags:
-              only: /^v.*/
       - artifactory/upload:
           requires:
-            - build
+            - Run junit tests and package to tar
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.*/
           build-steps:
             - attach_workspace: # attach from another job
                 at: target/artifact
@@ -85,15 +84,3 @@ workflows:
           name: Publish tar to Artifactory
           source: target/artifact/**
           target: shashin
-
-jobs:
-  build:
-    docker:
-      - image: alpine
-    steps:
-      - attach_workspace: # attach from another job
-          at: target/artifact
-      - persist_to_workspace: # persist across jobs
-          root: .
-          paths:
-            - target/artifact
