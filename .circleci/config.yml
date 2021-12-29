@@ -72,8 +72,6 @@ workflows:
           requires:
             - Run junit tests and package to tar
           filters:
-            branches:
-              ignore: /.*/
             tags:
               only: /^v.*/
           build-steps:
