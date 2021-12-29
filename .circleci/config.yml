@@ -11,8 +11,8 @@ workflows:
       - node/test:
           name: Run node tests
           filters:
-            branches:
-              only: main
+            tags:
+              only: /.*/
           test-results-for: mocha
           post-steps:
             - run:
@@ -34,8 +34,8 @@ workflows:
           requires:
             - Run node tests
           filters:
-            branches:
-              only: main
+            tags:
+              only: /.*/
           post-steps: # steps to run after steps
             - run:
                 name: Save test results
