@@ -1,110 +1,112 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="albumsmodal(album,userAlbums,currentUser,userCount,sharedAlbums,albumsCommentsMap,baseUrl)">
+<body th:fragment="albumsmodal(album,userAlbums,currentUser,userCount,sharedAlbums,albumsCommentsMap,baseUrl,authority)">
 
-<div class="modal fade" th:id="'propalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${album.id}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Share <th:block th:text="${album.name}"></th:block><div th:id="'propalbums'+${album.id}"><img th:src="${#uris.escapePath(album.coverUrl)}" width="100" height="100" th:onError="Util.errorImg(this,[[${album.name}]],100)"></div></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form th:id="'saveData'+${album.id}">
-                    <input type="hidden" name="id" th:value="${album.id}">
-                    <strong>Share with other people</strong><br>
-                    <div class="input-group">
-                        <input type="text" placeholder="Share Link" th:id="'shareLink'+${album.id}" th:name="'shareLink'+${album.id}" class="form-control" th:value="${album.shareUrl != null ? album.shareUrl : ''}" disabled>
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" th:id="'generateLink'+${album.id}" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate link"><span class="bi-arrow-clockwise"></span></button>
-                            <button class="btn btn-outline-secondary" th:id="'clearLink'+${album.id}" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Clear link"><span class="bi-x"></span></button>
-                            <button class="btn btn-outline-secondary" th:id="'copyLink'+${album.id}" type="button"data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link" th:data-clipboard-text="${album.shareUrl != null ? baseUrl + 'share/' + album.shareUrl + '/album/' + album.id : ''}"><span class="bi-clipboard-plus"></span></button>
+<th:block th:if="${authority == 'ROLE_ADMIN'}">
+    <div class="modal fade" th:id="'propsharealbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'label'+${album.id}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Share <th:block th:text="${album.name}"></th:block><div th:id="'propsharelinkalbums'+${album.id}"><img th:src="${#uris.escapePath(album.coverUrl)}" width="100" height="100" th:onError="Util.errorImg(this,[[${album.name}]],100)"></div></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:id="'saveData'+${album.id}">
+                        <input type="hidden" name="id" th:value="${album.id}">
+                        <strong>Share with other people</strong><br>
+                        <div class="input-group">
+                            <input type="text" placeholder="Share Link" th:id="'shareLink'+${album.id}" th:name="'shareLink'+${album.id}" class="form-control" th:value="${album.shareUrl != null ? album.shareUrl : ''}" disabled>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" th:id="'generateLink'+${album.id}" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate link"><span class="bi-arrow-clockwise"></span></button>
+                                <button class="btn btn-outline-secondary" th:id="'clearLink'+${album.id}" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Clear link"><span class="bi-x"></span></button>
+                                <button class="btn btn-outline-secondary" th:id="'copyLink'+${album.id}" type="button"data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link" th:data-clipboard-text="${album.shareUrl != null ? baseUrl + 'share/' + album.shareUrl + '/album/' + album.id : ''}"><span class="bi-clipboard-plus"></span></button>
+                            </div>
                         </div>
-                    </div>
-                    <div th:id="'fullShareLinkContainer'+${album.id}" class="card" th:style="${album.shareUrl == null ? 'display: none;' : ''}"><div th:id="'fullShareLink'+${album.id}" class="card-body"><a target="_blank" th:href="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}" th:text="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}"></a></div></div>
-                    <br>
-                    <th:block th:if="${sharedAlbums !=''}">
-                        <strong>Share with other users</strong><br>
-                        <th:block th:each="sharedAlbumsMap: ${sharedAlbums}">
-                            <th:block th:if="${album.id == sharedAlbumsMap.get('albumId')}">
-                                <div class="col-auto form-check">
-                                    <th:block th:if="${sharedAlbumsMap.get('isShared') == 1}">
-                                        <input type="checkbox" class="form-check-input" th:id="'id-'+${sharedAlbumsMap.get('userId')}+'-'+${sharedAlbumsMap.get('albumId')}" th:name="'userShare'+${sharedAlbumsMap.get('albumId')}" checked>
-                                    </th:block>
-                                    <th:block th:if="${sharedAlbumsMap.get('isShared')} == 0">
-                                        <input type="checkbox" class="form-check-input" th:id="'id-'+${sharedAlbumsMap.get('userId')}+'-'+${sharedAlbumsMap.get('albumId')}" th:name="'userShare'+${sharedAlbumsMap.get('albumId')}">
-                                    </th:block>
-                                    <label class="form-check-label" th:text="${sharedAlbumsMap.get('username')}"></label>
-                                </div>
+                        <div th:id="'fullShareLinkContainer'+${album.id}" class="card" th:style="${album.shareUrl == null ? 'display: none;' : ''}"><div th:id="'fullShareLink'+${album.id}" class="card-body"><a target="_blank" th:href="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}" th:text="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}"></a></div></div>
+                        <br>
+                        <th:block th:if="${sharedAlbums !=''}">
+                            <strong>Share with other users</strong><br>
+                            <th:block th:each="sharedAlbumsMap: ${sharedAlbums}">
+                                <th:block th:if="${album.id == sharedAlbumsMap.get('albumId')}">
+                                    <div class="col-auto form-check">
+                                        <th:block th:if="${sharedAlbumsMap.get('isShared') == 1}">
+                                            <input type="checkbox" class="form-check-input" th:id="'id-'+${sharedAlbumsMap.get('userId')}+'-'+${sharedAlbumsMap.get('albumId')}" th:name="'userShare'+${sharedAlbumsMap.get('albumId')}" checked>
+                                        </th:block>
+                                        <th:block th:if="${sharedAlbumsMap.get('isShared')} == 0">
+                                            <input type="checkbox" class="form-check-input" th:id="'id-'+${sharedAlbumsMap.get('userId')}+'-'+${sharedAlbumsMap.get('albumId')}" th:name="'userShare'+${sharedAlbumsMap.get('albumId')}">
+                                        </th:block>
+                                        <label class="form-check-label" th:text="${sharedAlbumsMap.get('username')}"></label>
+                                    </div>
+                                </th:block>
                             </th:block>
                         </th:block>
-                    </th:block>
-                </form>
-                <br>
-                <div class="col-sm">
-                    <span th:id="'msg'+${album.id}"></span>
+                    </form>
+                    <br>
+                    <div class="col-sm">
+                        <span th:id="'msg'+${album.id}"></span>
+                    </div>
                 </div>
+                <div class="modal-footer">
+                    <div th:id="'albumsModalStatus'+${album.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                    <button type="button" class="btn btn-primary" th:id="'saveUserShare'+${album.id}">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <script th:inline="javascript" type="text/javascript">
+                    /*<![CDATA[*/
+                    albumsModalListeners.setAlbumModalListeners(/*[[${album.id}]]*/ 0, /*[[${baseUrl}]]*/ '');
+                    /*]]>*/
+                </script>
             </div>
-            <div class="modal-footer">
-                <div th:id="'albumsModalStatus'+${album.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
-                <button type="button" class="btn btn-primary" th:id="'saveUserShare'+${album.id}">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-            <script th:inline="javascript" type="text/javascript">
-                /*<![CDATA[*/
-                albumsModalListeners.setAlbumModalListeners(/*[[${album.id}]]*/ 0, /*[[${baseUrl}]]*/ '');
-                /*]]>*/
-            </script>
         </div>
     </div>
-</div>
 
-<div class="modal fade" th:id="'proptrashalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeltrash'+${album.id}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="trashModalLabel">Delete <th:block th:text="${album.name}"></th:block><div th:id="'proptrashalbums'+${album.id}"><img th:src="${#uris.escapePath(album.coverUrl)}" width="100" height="100" th:onError="Util.errorImg(this,[[${album.name}]],100)"></div></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" th:id="'proptrashalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeltrash'+${album.id}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="trashModalLabel">Delete <th:block th:text="${album.name}"></th:block><div th:id="'proptrashalbums'+${album.id}"><img th:src="${#uris.escapePath(album.coverUrl)}" width="100" height="100" th:onError="Util.errorImg(this,[[${album.name}]],100)"></div></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">Are you sure you want to delete this album?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" th:id="'deleteAlbum'+${album.id}">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <script th:inline="javascript" type="text/javascript">
+                    /*<![CDATA[*/
+                    albumsModalListeners.setDeleteAlbumsListeners(/*[[${album.id}]]*/ 0);
+                    /*]]>*/
+                </script>
             </div>
-            <div class="modal-body">Are you sure you want to delete this album?</div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" th:id="'deleteAlbum'+${album.id}">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-            <script th:inline="javascript" type="text/javascript">
-                /*<![CDATA[*/
-                albumsModalListeners.setDeleteAlbumsListeners(/*[[${album.id}]]*/ 0);
-                /*]]>*/
-            </script>
         </div>
     </div>
-</div>
 
-<div class="modal fade" th:id="'propeditalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeledit'+${album.id}" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Edit Album<div th:id="'propeditalbums'+${album.id}"><img th:src="${#uris.escapePath(album.coverUrl)}" width="100" height="100" th:onError="Util.errorImg(this,[[${album.name}]],100)"></div></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade" th:id="'propeditalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labeledit'+${album.id}" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Album<div th:id="'propeditalbums'+${album.id}"><img th:src="${#uris.escapePath(album.coverUrl)}" width="100" height="100" th:onError="Util.errorImg(this,[[${album.name}]],100)"></div></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" th:id="'editAlbumsModal'+${album.id}">
+                        <input type="text" th:id="'albumEditName'+${album.id}" th:name="'albumEditName'+${album.id}" class="form-control" placeholder="Album Name">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div th:id="'editAlbumNameStatus'+${album.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                    <button type="button" class="btn btn-primary" th:id="'editAlbum'+${album.id}">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <script th:inline="javascript" type="text/javascript">
+                    /*<![CDATA[*/
+                    albumsModalListeners.setEditAlbumsListeners(/*[[${album.id}]]*/0);
+                    /*]]>*/
+                </script>
             </div>
-            <div class="modal-body">
-                <form method="post" th:id="'editAlbumsModal'+${album.id}">
-                    <input type="text" th:id="'albumEditName'+${album.id}" th:name="'albumEditName'+${album.id}" class="form-control" placeholder="Album Name">
-                </form>
-            </div>
-            <div class="modal-footer">
-                <div th:id="'editAlbumNameStatus'+${album.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
-                <button type="button" class="btn btn-primary" th:id="'editAlbum'+${album.id}">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            </div>
-            <script th:inline="javascript" type="text/javascript">
-                /*<![CDATA[*/
-                albumsModalListeners.setEditAlbumsListeners(/*[[${album.id}]]*/0);
-                /*]]>*/
-            </script>
         </div>
     </div>
-</div>
+</th:block>
 
 <div class="modal fade" th:id="'propcommentalbums'+${album.id}" tabindex="-1" role="dialog" th:aria-labelledby="'labelcomment'+${album.id}" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">

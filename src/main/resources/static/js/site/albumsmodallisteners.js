@@ -134,7 +134,7 @@
             albumsModalSettings.updateShareLink(baseUrl, albumId, "generate");
         });
 
-        $("#propalbums"+albumId).on('hide.bs.modal', function () {
+        $("#propsharealbums"+albumId).on('hide.bs.modal', function () {
             $("#albumsModalStatus"+albumId).attr("class","spinner-grow me-auto");
             $("#albumsModalStatus"+albumId).css("visibility","hidden");
             $("#msg"+albumId).html("");
@@ -146,7 +146,7 @@
             const shareLink = $("#copyLink"+albumId).attr("data-clipboard-text");
 
             if (shareLink !== null && shareLink !== "") {
-                const clipboard = new ClipboardJS("#copyLink" + albumId,{container: document.getElementById("propalbums"+albumId)});
+                const clipboard = new ClipboardJS("#copyLink" + albumId,{container: document.getElementById("propsharealbums"+albumId)});
 
                 clipboard.on('success', function (e) {
                     $("#msg" + albumId).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
@@ -197,7 +197,7 @@
                     //$("#albumsMessage").html(message);
                 }
 
-                //$("#propalbums"+albumId).modal('hide');
+                //$("#propsharealbums"+albumId).modal('hide');
             });
         });
     }

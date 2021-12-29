@@ -8,7 +8,7 @@
             relativeShareLink = albumsModalSettings.makeShareLinkId(8, 11);
             $("#shareLink"+albumId).val(relativeShareLink);
         }
-        if ($("#shareLink"+albumId).val() !== "") {
+        if ($("#shareLink"+albumId).val() !== "" && action !== "clear") {
             $("#copyLink"+albumId).prop('disabled', false);
         } else {
             $("#copyLink"+albumId).prop('disabled', true);
