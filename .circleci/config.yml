@@ -72,10 +72,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-          - persist_to_workspace: # persist across jobs
-              root: .
-              paths:
-                - target/artifact
       - artifactory/upload:
           requires:
             - build
