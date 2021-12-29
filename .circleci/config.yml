@@ -74,8 +74,6 @@ workflows:
           filters:
             tags:
               only: /^v.*/
-            branches:
-              only: main
           build-steps:
             - attach_workspace: # attach from another job
                 at: target/artifact
