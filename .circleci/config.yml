@@ -10,6 +10,9 @@ workflows:
     jobs:
       - node/test:
           name: Run node tests
+          filters:
+            branches:
+              only: main
           test-results-for: mocha
           post-steps:
             - run:
@@ -30,6 +33,9 @@ workflows:
           name: Run junit tests and package to tar
           requires:
             - Run node tests
+          filters:
+            branches:
+              only: main
           post-steps: # steps to run after steps
             - run:
                 name: Save test results
@@ -69,7 +75,7 @@ workflows:
             tags:
               only: /^v.*/
             branches:
-              ignore: /.*/
+              only: main
           build-steps:
             - attach_workspace: # attach from another job
                 at: target/artifact
