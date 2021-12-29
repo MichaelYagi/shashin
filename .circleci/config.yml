@@ -68,7 +68,7 @@ workflows:
                 root: .
                 paths:
                   - target/artifact
-      - deploy:
+      - deploy_prod:
           requires:
             - Run junit tests and package to tar
           filters:
