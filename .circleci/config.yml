@@ -10,7 +10,7 @@ workflows:
     jobs:
       - node/test:
           name: Run node tests
-          filters:
+          filters: # job runs for all branches and all tags
             tags:
               only: /.*/
           test-results-for: mocha
@@ -33,7 +33,7 @@ workflows:
           name: Run junit tests and package to tar
           requires:
             - Run node tests
-          filters:
+          filters: # job runs for all branches and all tags
             tags:
               only: /.*/
           post-steps: # steps to run after steps
@@ -71,7 +71,7 @@ workflows:
       - artifactory/upload:
           requires:
             - Run junit tests and package to tar
-          filters:
+          filters: # job runs for no branches and only for tags starting with 'v'
             tags:
               only: /^v.*/
             branches:
