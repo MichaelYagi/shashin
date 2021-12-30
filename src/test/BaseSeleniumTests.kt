@@ -11,14 +11,12 @@ import java.net.URL
 
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
+    private val os = System.getProperty("os.name")
 
     @BeforeEach
     open fun setUp() {
         val driverFile: String = findFile()!!
         val capabilities = DesiredCapabilities.chrome()
-        val service = ChromeDriverService.Builder()
-            .usingDriverExecutable(File(driverFile))
-            .build()
         val options = ChromeOptions()
         options.addArguments("--no-sandbox") // Bypass OS security model, MUST BE THE VERY FIRST OPTION
         options.addArguments("--headless")
@@ -29,11 +27,32 @@ abstract class BaseSeleniumTests {
         options.addArguments("--disable-gpu") // applicable to windows os only
         options.addArguments("--disable-dev-shm-usage") // overcome limited resource problems
         options.merge(capabilities)
-        driver = ChromeDriver(service, options)
+
+        when {
+            os.contains("windows", ignoreCase = true) -> {
+                val service = ChromeDriverService.Builder()
+                    .usingDriverExecutable(File(driverFile))
+                    .build()
+                driver = ChromeDriver(service, options)
+            }
+            os.contains("mac", ignoreCase = true) -> {
+                System.setProperty("webdriver.chrome.driver", "/test/resources/chromedriver_mac64");
+                driver = ChromeDriver(options)
+            }
+            os.contains("linux", ignoreCase = true) -> {
+                System.setProperty("webdriver.chrome.driver", "/test/resources/chromedriver_linux");
+                driver = ChromeDriver(options)
+            }
+            else -> {
+                System.setProperty("webdriver.chrome.driver", "/test/resources/chromedriver_linux");
+                driver = ChromeDriver(options)
+            }
+        }
+
+
     }
 
     private fun findFile(): String? {
-        val os = System.getProperty("os.name")
         val classLoader = javaClass.classLoader
 
         val chromeDriver = when {
