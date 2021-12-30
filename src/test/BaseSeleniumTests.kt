@@ -15,7 +15,7 @@ abstract class BaseSeleniumTests {
 
     @BeforeEach
     open fun setUp() {
-        val driverFile: String = findFile()!!
+        val driverFileStr: String = findFile()!!
         val capabilities = DesiredCapabilities.chrome()
         val options = ChromeOptions()
         options.addArguments("--no-sandbox") // Bypass OS security model, MUST BE THE VERY FIRST OPTION
@@ -28,23 +28,27 @@ abstract class BaseSeleniumTests {
         options.addArguments("--disable-dev-shm-usage") // overcome limited resource problems
         options.merge(capabilities)
 
+        val driverFile = File(driverFileStr)
+        if (!driverFile.canExecute()) {
+            driverFile.setExecutable(true)
+        }
         when {
             os.contains("windows", ignoreCase = true) -> {
                 val service = ChromeDriverService.Builder()
-                    .usingDriverExecutable(File(driverFile))
+                    .usingDriverExecutable(driverFile)
                     .build()
                 driver = ChromeDriver(service, options)
             }
             os.contains("mac", ignoreCase = true) -> {
-                System.setProperty("webdriver.chrome.driver", driverFile);
+                System.setProperty("webdriver.chrome.driver", driverFile.absolutePath);
                 driver = ChromeDriver(options)
             }
             os.contains("linux", ignoreCase = true) -> {
-                System.setProperty("webdriver.chrome.driver", driverFile);
+                System.setProperty("webdriver.chrome.driver", driverFile.absolutePath);
                 driver = ChromeDriver(options)
             }
             else -> {
-                System.setProperty("webdriver.chrome.driver", driverFile);
+                System.setProperty("webdriver.chrome.driver", driverFile.absolutePath);
                 driver = ChromeDriver(options)
             }
         }
