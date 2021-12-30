@@ -64,12 +64,12 @@ workflows:
                 command: |
                   mkdir -p target/artifact/
                   tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
-            - store_artifacts:
-                path: target/artifact
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
                   - target/artifact
+            - store_artifacts:
+                path: target/artifact
       - artifactory/upload:
           requires:
             - Run junit tests, package to tar and store artifacts
