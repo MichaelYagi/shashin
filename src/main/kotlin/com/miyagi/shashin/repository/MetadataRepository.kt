@@ -16,6 +16,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findTimelineAll(): MutableIterable<Metadata>
 
+   @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findAllByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
    fun findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc(): Metadata?
 
    @Query("SELECT * FROM metadata WHERE hidden = false AND type LIKE %:type% ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT 1", nativeQuery = true)
