@@ -16,6 +16,8 @@ abstract class BaseSeleniumTests {
     @BeforeEach
     open fun setUp() {
         val driverFileStr: String = findFile()!!
+//        println(os)
+//        println(driverFileStr)
         val capabilities = DesiredCapabilities.chrome()
         val options = ChromeOptions()
         options.addArguments("--no-sandbox") // Bypass OS security model, MUST BE THE VERY FIRST OPTION
@@ -52,8 +54,6 @@ abstract class BaseSeleniumTests {
                 driver = ChromeDriver(options)
             }
         }
-
-
     }
 
     private fun findFile(): String? {

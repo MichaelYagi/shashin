@@ -136,7 +136,7 @@ class TimelineController {
         return module
     }
 
-    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}","/api/v1/timeline/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedTimeline(model: Model, @PathVariable page: Int,@PathVariable mediaType: String): String {
         return mapper.writeValueAsString(buildTimelineData(model,mediaType,page,false))
@@ -193,26 +193,26 @@ class TimelineController {
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
 
-//            val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
-//                metadataRepository.findAllByOffsetAndLimit(
-//                    pageValue,
-//                    model.getAttribute("queryLimit").toString().toInt()
-//                ).toMutableList()
-//            } else {
-//                metadataRepository.findAllByTypeOffsetAndLimit(
-//                    mediaTypeFilter,
-//                    pageValue,
-//                    model.getAttribute("queryLimit").toString().toInt()
-//                ).toMutableList()
-//            }
-
             val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
-                metadataRepository.findTimelineAll().toMutableList()
+                metadataRepository.findAllByOffsetAndLimit(
+                    pageValue,
+                    model.getAttribute("queryLimit").toString().toInt()
+                ).toMutableList()
             } else {
-                metadataRepository.findTimelineAllByType(
-                    mediaTypeFilter
+                metadataRepository.findAllByTypeOffsetAndLimit(
+                    mediaTypeFilter,
+                    pageValue,
+                    model.getAttribute("queryLimit").toString().toInt()
                 ).toMutableList()
             }
+
+//            val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+//                metadataRepository.findTimelineAll().toMutableList()
+//            } else {
+//                metadataRepository.findTimelineAllByType(
+//                    mediaTypeFilter
+//                ).toMutableList()
+//            }
             response["metadataList"] = metadataList
 
             if (metadataList.isNotEmpty()) {
