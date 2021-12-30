@@ -30,7 +30,7 @@ workflows:
                 paths:
                   - target/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
-          name: Run junit tests and package to tar
+          name: Run junit tests, package to tar and store artifacts
           requires:
             - Run node tests
           filters: # job runs for all branches and all tags
@@ -64,13 +64,15 @@ workflows:
                 command: |
                   mkdir -p target/artifact/
                   tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
+            - store_artifacts:
+                path: target/artifact
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
                   - target/artifact
       - artifactory/upload:
           requires:
-            - Run junit tests and package to tar
+            - Run junit tests, package to tar and store artifacts
           filters: # job runs for no branches and only for tags starting with 'v'
             tags:
               only: /^v.*/
