@@ -36,15 +36,15 @@ abstract class BaseSeleniumTests {
                 driver = ChromeDriver(service, options)
             }
             os.contains("mac", ignoreCase = true) -> {
-                System.setProperty("webdriver.chrome.driver", File(driverFile).absolutePath);
+                System.setProperty("webdriver.chrome.driver", driverFile);
                 driver = ChromeDriver(options)
             }
             os.contains("linux", ignoreCase = true) -> {
-                System.setProperty("webdriver.chrome.driver", File(driverFile).absolutePath);
+                System.setProperty("webdriver.chrome.driver", driverFile);
                 driver = ChromeDriver(options)
             }
             else -> {
-                System.setProperty("webdriver.chrome.driver", File(driverFile).absolutePath);
+                System.setProperty("webdriver.chrome.driver", driverFile);
                 driver = ChromeDriver(options)
             }
         }
