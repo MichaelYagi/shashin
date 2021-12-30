@@ -20,7 +20,7 @@ class IndexPageTest {
     fun welcomePageShouldReturnDefaultMessage() {
         Assertions.assertThat(
             this.restTemplate?.getForObject(
-                "http://localhost:" + port.toString(),
+                "http://localhost:$port",
                 String::class.java
             )
         ).contains("Welcome to Shashin")
