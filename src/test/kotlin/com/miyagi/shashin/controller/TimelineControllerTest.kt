@@ -3,14 +3,14 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import org.hamcrest.CoreMatchers.containsString
-import org.junit.Before
-import org.junit.Test
-import org.junit.runner.RunWith
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
-import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
@@ -20,10 +20,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.context.WebApplicationContext
 
-@RunWith(SpringRunner::class)
+
 @SpringBootTest
 @Transactional
 class TimelineControllerTest {
+
+    private var userId: Int? = null
 
     private var mockMvc: MockMvc? = null
 
@@ -33,18 +35,28 @@ class TimelineControllerTest {
     @Autowired
     private val userRepository: UserRepository? = null
 
-    @Before
+    private var bcrypt = BCryptPasswordEncoder()
+
+    @BeforeEach
     fun setup() {
         val userObj = User()
         userObj.setUsername("test")
-        userObj.setPassword("test")
-        userObj.setAuthority("test")
+        val encodedPassword: String = bcrypt.encode("test")
+        userObj.setPassword(encodedPassword)
+        userObj.setAuthority("ROLE_ADMIN")
+        userObj.setIsAllowed(true)
         userRepository?.save(userObj)
+        userId = userObj.getId()
 
         mockMvc = MockMvcBuilders
             .webAppContextSetup(context!!)
             .apply<DefaultMockMvcBuilder>(springSecurity())
             .build()
+    }
+
+    @AfterEach
+    fun tearDown() {
+        userId?.let { userRepository?.deleteById(it) }
     }
 
     @Test
