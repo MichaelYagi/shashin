@@ -25,8 +25,8 @@ import org.springframework.web.context.WebApplicationContext
 @Transactional
 class TimelineControllerTest {
 
+    private var adminId: Int? = null
     private var userId: Int? = null
-
     private var mockMvc: MockMvc? = null
 
     @Autowired
@@ -39,11 +39,20 @@ class TimelineControllerTest {
 
     @BeforeEach
     fun setup() {
+        val adminObj = User()
+        adminObj.setUsername("testadmin")
+        var encodedPassword: String = bcrypt.encode("testadmin")
+        adminObj.setPassword(encodedPassword)
+        adminObj.setAuthority("ROLE_ADMIN")
+        adminObj.setIsAllowed(true)
+        userRepository?.save(adminObj)
+        adminId = adminObj.getId()
+
         val userObj = User()
-        userObj.setUsername("test")
-        val encodedPassword: String = bcrypt.encode("test")
+        userObj.setUsername("testuser")
+        encodedPassword = bcrypt.encode("testuser")
         userObj.setPassword(encodedPassword)
-        userObj.setAuthority("ROLE_ADMIN")
+        userObj.setAuthority("ROLE_USER")
         userObj.setIsAllowed(true)
         userRepository?.save(userObj)
         userId = userObj.getId()
@@ -56,6 +65,7 @@ class TimelineControllerTest {
 
     @AfterEach
     fun tearDown() {
+        adminId?.let { userRepository?.deleteById(it) }
         userId?.let { userRepository?.deleteById(it) }
     }
 
@@ -68,9 +78,17 @@ class TimelineControllerTest {
     }
 
     @Test
-    @WithMockUser(username = "test", roles = ["ADMIN"])
+    @WithMockUser(username = "testuser", roles = ["USER"])
     @Throws(Exception::class)
-    fun shouldReturn200WhenSendingRequestToControllerWithRoleUser() {
+    fun shouldReturn403WhenSendingRequestToControllerWithRoleUser() {
+        mockMvc!!.perform(get("/timeline"))
+            .andExpect(status().is4xxClientError)
+    }
+
+    @Test
+    @WithMockUser(username = "testadmin", roles = ["ADMIN"])
+    @Throws(Exception::class)
+    fun shouldReturn200WhenSendingRequestToControllerWithRoleAdmin() {
         val response = mockMvc!!.perform(get("/timeline"))
         response
             .andExpect(status().isOk)
