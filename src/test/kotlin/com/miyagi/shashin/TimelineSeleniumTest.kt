@@ -130,10 +130,12 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
         Assertions.assertTrue(isUUID(metadataId))
 
+        // Check image src
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
 //        println(this.driver?.pageSource)
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
         val imageSrc = imageEl.getAttribute("src")
+        
         Assertions.assertTrue(imageSrc.contains("testscreen.jpg"))
     }
 
