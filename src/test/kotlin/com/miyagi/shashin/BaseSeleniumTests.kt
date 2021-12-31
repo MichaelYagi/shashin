@@ -23,6 +23,7 @@ abstract class BaseSeleniumTests {
         val capabilities = DesiredCapabilities.chrome()
         val options = ChromeOptions()
         options.addArguments("--no-sandbox") // Bypass OS security model, MUST BE THE VERY FIRST OPTION
+        options.addArguments("--disable-setuid-sandbox")
         options.addArguments("--headless")
 //        options.setExperimentalOption("useAutomationExtension", false)
         options.addArguments("start-maximized") // open Browser in maximized mode
