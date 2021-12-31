@@ -69,27 +69,27 @@ class TimelineControllerTest {
     @Test
     @WithMockUser(username = "invaliduser", roles = ["ADMIN"])
     @Throws(Exception::class)
-    fun shouldReturn302WhenSendingRequestToControllerWithInvalidRoleUser() {
-        mockMvc!!.perform(get("/timeline"))
+    fun shouldReturn302WhenSendingRequestToTimelineApiWithRoleUser() {
+        mockMvc!!.perform(get("/api/v1/timeline/0"))
             .andExpect(status().is3xxRedirection)
     }
 
     @Test
     @WithMockUser(username = "testuser", roles = ["USER"])
     @Throws(Exception::class)
-    fun shouldReturn403WhenSendingRequestToControllerWithRoleUser() {
-        mockMvc!!.perform(get("/timeline"))
+    fun shouldReturn403WhenSendingRequestToTimelineApiWithRoleUser() {
+        mockMvc!!.perform(get("/api/v1/timeline/0"))
             .andExpect(status().is4xxClientError)
     }
 
     @Test
     @WithMockUser(username = "testadmin", roles = ["ADMIN"])
     @Throws(Exception::class)
-    fun shouldReturn200WhenSendingRequestToControllerWithRoleAdmin() {
-        val response = mockMvc!!.perform(get("/timeline"))
+    fun shouldReturnSuccessWhenSendingRequestToTimelineApiWithRoleAdmin() {
+        val response = mockMvc!!.perform(get("/api/v1/timeline/0"))
+        //println(response.andReturn().response.contentAsString)
         response
             .andExpect(status().isOk)
-            .andExpect(content().string(containsString("Timeline")))
-        //println(response.andReturn().response.contentAsString)
+            .andExpect(content().string(containsString("success")))
     }
 }

@@ -1,6 +1,5 @@
 package com.miyagi.shashin
 
-import com.miyagi.shashin.BaseSeleniumTests
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import org.junit.jupiter.api.AfterEach
@@ -8,11 +7,11 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
-import org.openqa.selenium.WebElement
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
@@ -70,9 +69,19 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
     }
 
     @Test
-    fun getIndexPage() {
-        this.driver?.get("http://localhost:$port")
-        val element: WebElement? = this.driver?.findElement(By.id("copyrightYear"))
-        Assertions.assertNotNull(element)
+    @WithMockUser(username = "testadmin", roles = ["ADMIN"])
+    @Throws(Exception::class)
+    fun shouldLoginToTimelineWithRoleAdmin() {
+        this.driver?.get("http://localhost:$port/users/login")
+        //println(this.driver?.pageSource)
+        val username = this.driver!!.findElement(By.id("username"))
+        val password = this.driver!!.findElement(By.id("password"))
+        val login = this.driver!!.findElement(By.tagName("button"))
+        username.sendKeys("testadmin")
+        password.sendKeys("testadmin")
+        login.click()
+        val actualUrl = "http://localhost:$port/timeline"
+        val expectedUrl = this.driver!!.currentUrl
+        Assertions.assertEquals(expectedUrl, actualUrl)
     }
 }

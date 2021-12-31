@@ -49,6 +49,7 @@ abstract class BaseSeleniumTests {
                 driver = ChromeDriver(options)
             }
             os.contains("linux", ignoreCase = true) -> {
+                // CircleCI default location
                 System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
                 driver = ChromeDriver(options)
             }
