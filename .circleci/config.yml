@@ -44,13 +44,11 @@ workflows:
                   sudo apt-get install libgconf-2-4 libnss3 libxss1 lsb-release
                   sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
                   curl -L -o google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-#            - run:
-#                name: Download Selenium
-#                command: curl -O http://selenium-release.storage.googleapis.com/3.5/selenium-server-standalone-3.5.3.jar
-#            - run:
-#                name: Start Selenium
-#                command: java -jar selenium-server-standalone-3.5.3.jar -log target/test-results/selenium/selenium.log
-#                background: true
+            - run:
+                name: Install driver
+                command: |
+                  sudo dpkg -i google-chrome.deb
+                  sudo sed -i 's|HERE/chrome"|HERE/chrome" --no-sandbox|g' /opt/google/chrome/google-chrome
           post-steps: # steps to run after steps
             - run: mkdir -p target/test-results/selenium/
             - run:
