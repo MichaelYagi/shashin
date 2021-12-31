@@ -135,7 +135,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 //        println(this.driver?.pageSource)
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
         val imageSrc = imageEl.getAttribute("src")
-        
+
         Assertions.assertTrue(imageSrc.contains("testscreen.jpg"))
     }
 
