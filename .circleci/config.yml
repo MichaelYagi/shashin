@@ -43,6 +43,7 @@ workflows:
                   sudo apt-get update
                   sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
                   sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
+#                  curl -L -o google-chrome.deb https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           post-steps: # steps to run after steps
             - run: mkdir -p target/test-results/selenium/
             - run:
