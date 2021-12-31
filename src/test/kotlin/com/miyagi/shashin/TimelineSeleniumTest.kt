@@ -1,12 +1,19 @@
 package com.miyagi.shashin
 
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.MediaDirectoryRepository
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
+import org.openqa.selenium.WebDriver
+import org.openqa.selenium.remote.ErrorCodes.TIMEOUT
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
@@ -18,6 +25,10 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
 import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
+import java.io.File
+import java.net.URL
+import java.util.*
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -35,6 +46,12 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
     @Autowired
     private val userRepository: UserRepository? = null
+
+    @Autowired
+    private val mediaDirectoryRepository: MediaDirectoryRepository? = null
+
+    @Autowired
+    private val metadataRepository: MetadataRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -62,18 +79,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
             .webAppContextSetup(context!!)
             .apply<DefaultMockMvcBuilder>(springSecurity())
             .build()
-    }
 
-    @AfterEach
-    fun teardown() {
-        adminId?.let { userRepository?.deleteById(it) }
-        userId?.let { userRepository?.deleteById(it) }
-    }
-
-    @Test
-    @WithMockUser(username = "testadmin", roles = ["ADMIN"])
-    @Throws(Exception::class)
-    fun shouldLoginToTimelineWithRoleAdmin() {
         this.driver?.get("http://localhost:$port/users/login")
         //println(this.driver?.pageSource)
         val username = this.driver!!.findElement(By.id("username"))
@@ -82,10 +88,64 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         username.sendKeys("testadmin")
         password.sendKeys("testadmin")
         login.click()
-        val actualUrl = "http://localhost:$port/timeline"
-        val expectedUrl = this.driver!!.currentUrl
-        //println(this.driver?.pageSource)
+    }
 
-        Assertions.assertEquals(expectedUrl, actualUrl)
+    @AfterEach
+    fun teardown() {
+        userRepository?.deleteAll()
+        metadataRepository?.deleteAll()
+        mediaDirectoryRepository?.deleteAll()
+    }
+
+    @Test
+    @WithMockUser(username = "testadmin", roles = ["ADMIN"])
+    @Throws(Exception::class)
+    fun shouldUploadPhotoAndViewInTimeline() {
+        this.driver!!.get("http://localhost:$port/settings");
+
+        // Get test image data and populate in settings
+        val classLoader = javaClass.classLoader
+        val testImageUrl: URL = classLoader.getResource("testscreen.jpg")
+        val testImageFile = File(testImageUrl.file)
+        val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
+        mediaDirTextArea.sendKeys(testImageFile.parent)
+
+        val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
+        saveSettings.click()
+
+        // Scan new image
+        this.driver!!.get("http://localhost:$port/settings/scan");
+        val scanPhotos = this.driver!!.findElement(By.id("scanPhotos"))
+        scanPhotos.click()
+
+        val wait = WebDriverWait(this.driver, 30)
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Scan Complete')]")))
+
+        // Check if UUID present
+        this.driver!!.get("http://localhost:$port/timeline")
+        val parentEl = this.driver!!.findElement(By.id("row2021-12-31"))
+        val childEl = parentEl.findElement(By.xpath("./div[1]"))
+        val imageId = childEl.getAttribute("id")
+        val metadataId = imageId.substringAfter("photoThumbnailContainer")
+
+        Assertions.assertTrue(isUUID(metadataId))
+
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
+//        println(this.driver?.pageSource)
+        val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
+        val imageSrc = imageEl.getAttribute("src")
+        Assertions.assertTrue(imageSrc.contains("testscreen.jpg"))
+    }
+
+    private fun isUUID(someUUID: String): Boolean {
+        val isUuid = try {
+            val uuid = UUID.fromString(someUUID)
+            true
+        } catch (exception: IllegalArgumentException) {
+            //handle the case where string is not valid UUID
+            false
+        }
+
+        return isUuid
     }
 }
