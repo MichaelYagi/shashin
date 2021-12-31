@@ -4,6 +4,7 @@ orbs:
   maven: circleci/maven@1.2.0
   node: circleci/node@5.0.0
   artifactory: circleci/artifactory@1.0.0
+  browser-tools: circleci/browser-tools@1.2.3
 
 workflows:
   shashin_workflow:
@@ -36,19 +37,13 @@ workflows:
           filters: # job runs for all branches and all tags
             tags:
               only: /.*/
-          pre-steps:
-            - run:
-                name: Download Chromedriver latest version - stable
-                command: |
-                  sudo apt-get update
-                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
-                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
-                  curl -L -o google-chrome.deb https://mirror.cs.uchicago.edu/google-chrome/pool/main/g/google-chrome-stable/google-chrome-stable_96.0.4664.45-1_amd64.deb
-            - run:
-                name: Install driver
-                command: |
-                  sudo dpkg -i google-chrome.deb
-                  sudo sed -i 's|HERE/chrome"|HERE/chrome" --no-sandbox|g' /opt/google/chrome/google-chrome
+#          pre-steps:
+#            - run:
+#                name: Download Chromedrivers
+#                command: |
+#                  sudo apt-get update
+#                  sudo apt-get install libgbm1 libgconf-2-4 libnss3 libxss1 lsb-release
+#                  sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
           post-steps: # steps to run after steps
             - run: mkdir -p target/test-results/selenium/
             - run:
