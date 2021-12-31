@@ -41,7 +41,7 @@ workflows:
                 name: Download Chromedriver latest version - stable
                 command: |
                   sudo apt-get update
-                  sudo apt-get install libgconf2-4 libnss3-1d libxss1 lsb-release
+                  sudo apt-get install libgconf2 libnss3 libxss1 lsb-release
                   sudo apt-get install libappindicator3-1 libasound2 fonts-liberation xdg-utils
             - run:
                 name: Download Selenium
