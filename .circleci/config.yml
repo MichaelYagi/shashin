@@ -53,11 +53,10 @@ workflows:
                   whereis chromedriver
                 name: Check install
           post-steps: # steps to run after steps
-            - run: mkdir -p target/test-results/selenium/
             - run:
                 name: Save test results
                 command: |
-                  mkdir -p target/test-results/junit/
+                  mkdir -p target/test-results/junit-selenium/
                   find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} target/test-results/junit/ \;
                 when: always
 #            - store_test_results:
