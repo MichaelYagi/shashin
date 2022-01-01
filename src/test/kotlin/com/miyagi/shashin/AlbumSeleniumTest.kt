@@ -88,6 +88,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
         // Scan new image
         this.driver!!.get("http://localhost:$port/settings/scan");
