@@ -122,6 +122,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("timelineModalTitle")))
 
+        //Save album in timeline
         val albumNamesInput = this.driver!!.findElement(By.id("albumnames"))
         albumNamesInput.sendKeys("testalbum")
         val saveMetadataButton = this.driver!!.findElement(By.id("saveMetadata"))
@@ -131,6 +132,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         this.driver!!.get("http://localhost:$port/albums")
 
+        //Share album with testuser
         val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
         var albumIdentifier = albumLink.getAttribute("id")
@@ -146,9 +148,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val saveUserShare = this.driver!!.findElement(By.id("saveUserShare$albumId"))
         saveUserShare.click()
 
-
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus$albumId")))
 
+        //Login as testuser
         this.driver!!.get("http://localhost:$port/users/logout")
         this.driver?.get("http://localhost:$port/users/login")
         username = this.driver!!.findElement(By.id("username"))
