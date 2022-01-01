@@ -132,9 +132,11 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/albums")
 
         //Share album with testuser
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@class=\"card\"][1]")))
+
         val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
         val albumLink = albumCard.findElement(By.xpath("./a[1]"))
-        var albumIdentifier = albumLink.getAttribute("id")
+        val albumIdentifier = albumLink.getAttribute("id")
         albumId = albumIdentifier.substringAfter("album").toInt()
 
         val shareLink = this.driver!!.findElement(By.id("share$albumId"))
