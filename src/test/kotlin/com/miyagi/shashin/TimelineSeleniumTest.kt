@@ -106,6 +106,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
+        println(this.driver?.pageSource)
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfAllElements(scrollContainer.findElement(By.xpath("./span[1]"))))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
