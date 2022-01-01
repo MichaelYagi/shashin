@@ -1,17 +1,13 @@
 package com.miyagi.shashin
 
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.MediaDirectoryRepository
-import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.repository.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.remote.ErrorCodes.TIMEOUT
+import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.test.context.support.WithMockUser
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
+import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.setup.DefaultMockMvcBuilder
@@ -28,14 +24,16 @@ import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.net.URL
 import java.util.*
+import javax.transaction.Transactional
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class TimelineSeleniumTest: BaseSeleniumTests() {
+class AlbumSeleniumTest: BaseSeleniumTests() {
 
     private var adminId: Int? = null
     private var userId: Int? = null
+    private var albumId: Int? = null
     private var mockMvc: MockMvc? = null
 
     @LocalServerPort
@@ -46,12 +44,6 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
     @Autowired
     private val userRepository: UserRepository? = null
-
-    @Autowired
-    private val mediaDirectoryRepository: MediaDirectoryRepository? = null
-
-    @Autowired
-    private val metadataRepository: MetadataRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -77,23 +69,17 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
         mockMvc = MockMvcBuilders
             .webAppContextSetup(context!!)
-            .apply<DefaultMockMvcBuilder>(springSecurity())
+            .apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
             .build()
 
         this.driver?.get("http://localhost:$port/users/login")
         //println(this.driver?.pageSource)
-        val username = this.driver!!.findElement(By.id("username"))
-        val password = this.driver!!.findElement(By.id("password"))
-        val login = this.driver!!.findElement(By.tagName("button"))
+        var username = this.driver!!.findElement(By.id("username"))
+        var password = this.driver!!.findElement(By.id("password"))
+        var login = this.driver!!.findElement(By.tagName("button"))
         username.sendKeys("testadmin")
         password.sendKeys("testadmin")
         login.click()
-    }
-
-    @Test
-    @Throws(Exception::class)
-    fun shouldUploadPhotoAndViewInTimeline() {
-        Assertions.assertEquals("http://localhost:$port/timeline", this.driver!!.currentUrl)
 
         this.driver!!.get("http://localhost:$port/settings");
 
@@ -122,26 +108,67 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val imageId = childEl.getAttribute("id")
         val metadataId = imageId.substringAfter("photoThumbnailContainer")
 
-        Assertions.assertTrue(isUUID(metadataId))
-
         // Check image src
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
 //        println(this.driver?.pageSource)
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
-        val imageSrc = imageEl.getAttribute("src")
 
-        Assertions.assertTrue(imageSrc.contains("testscreen.jpg"))
+        //Creating object of an Actions class
+        val action = Actions(this.driver)
+        //Performing the mouse hover action on the target element.
+        action.moveToElement(imageEl).perform()
+        val timelineModalEdit = this.driver!!.findElement(By.id("timelineModalEdit$metadataId"))
+        timelineModalEdit.click()
+
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("timelineModalTitle")))
+
+        val albumNamesInput = this.driver!!.findElement(By.id("albumnames"))
+        albumNamesInput.sendKeys("testalbum")
+        val saveMetadataButton = this.driver!!.findElement(By.id("saveMetadata"))
+        saveMetadataButton.click()
+
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("timelineModalStatus")))
+
+        this.driver!!.get("http://localhost:$port/albums")
+
+        val albumCard = this.driver!!.findElement(By.xpath("//div[@class=\"card\"][1]"))
+        val albumLink = albumCard.findElement(By.xpath("./a[1]"))
+        var albumIdentifier = albumLink.getAttribute("id")
+        albumId = albumIdentifier.substringAfter("album").toInt()
+
+        val shareLink = this.driver!!.findElement(By.id("share$albumId"))
+        shareLink.click()
+
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("id-$userId-$albumId")))
+        val userShareCheckbox = this.driver!!.findElement(By.id("id-$userId-$albumId"))
+        userShareCheckbox.click()
+
+        val saveUserShare = this.driver!!.findElement(By.id("saveUserShare$albumId"))
+        saveUserShare.click()
+
+
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus$albumId")))
+
+        this.driver!!.get("http://localhost:$port/users/logout")
+        this.driver?.get("http://localhost:$port/users/login")
+        username = this.driver!!.findElement(By.id("username"))
+        password = this.driver!!.findElement(By.id("password"))
+        login = this.driver!!.findElement(By.tagName("button"))
+        username.sendKeys("testuser")
+        password.sendKeys("testuser")
+        login.click()
     }
 
-    private fun isUUID(someUUID: String): Boolean {
-        val isUuid = try {
-            val uuid = UUID.fromString(someUUID)
-            true
-        } catch (exception: IllegalArgumentException) {
-            //handle the case where string is not valid UUID
-            false
-        }
+    @Test
+    @Throws(Exception::class)
+    fun shouldViewInAlbumAsUser() {
+        Assertions.assertEquals("http://localhost:$port/albums", this.driver!!.currentUrl)
 
-        return isUuid
+        val albumLink = this.driver!!.findElement(By.id("album$albumId"))
+        albumLink.click()
+
+        val albumNameHeading = this.driver!!.findElement(By.id("albumNameHeading"))
+
+        Assertions.assertEquals("testalbum", albumNameHeading.text)
     }
 }

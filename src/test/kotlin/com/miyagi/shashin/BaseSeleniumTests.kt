@@ -1,5 +1,6 @@
 package com.miyagi.shashin
 
+import com.miyagi.shashin.repository.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.openqa.selenium.WebDriver
@@ -7,16 +8,77 @@ import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeDriverService
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.remote.DesiredCapabilities
+import org.springframework.beans.factory.annotation.Autowired
 import java.io.File
 import java.net.URL
+import javax.transaction.Transactional
 
 
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
     private val os = System.getProperty("os.name")
 
+    @Autowired
+    private val userRepository: UserRepository? = null
+
+    @Autowired
+    private val metadataRepository: MetadataRepository? = null
+
+    @Autowired
+    private val mediaDirRepository: MediaDirectoryRepository? = null
+
+    @Autowired
+    private val userAlbumRepository: UserAlbumRepository? = null
+
+    @Autowired
+    private val favoriteRepository: FavoriteRepository? = null
+
+    @Autowired
+    private val commentRepository: CommentRepository? = null
+
+    @Autowired
+    private val albumPhotoCommentRepository: AlbumPhotoCommentRepository? = null
+
+    @Autowired
+    private val albumCommentRepository: AlbumCommentRepository? = null
+
+    @Autowired
+    private val albumRepository: AlbumRepository? = null
+
+    @Autowired
+    private val albumPhotoRepository: AlbumPhotoRepository? = null
+
+    @Autowired
+    private val notificationRepository: NotificationRepository? = null
+
+    @Autowired
+    private val recognitionLabelRepository: RecognitionLabelRepository? = null
+
+    @Autowired
+    private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
+    @Autowired
+    private val settingsRepository: SettingsRepository? = null
+
+
+    @Transactional
     @BeforeEach
     open fun setUp() {
+        userRepository?.deleteAll()
+        metadataRepository?.deleteAll()
+        mediaDirRepository?.deleteAll()
+        userAlbumRepository?.deleteAll()
+        favoriteRepository?.deleteAll()
+        commentRepository?.deleteAll()
+        albumPhotoCommentRepository?.deleteAll()
+        albumCommentRepository?.deleteAll()
+        albumRepository?.deleteAll()
+        albumPhotoRepository?.deleteAll()
+        notificationRepository?.deleteAll()
+        recognitionLabelRepository?.deleteAll()
+        recognitionLabelPhotoRepository?.deleteAll()
+        settingsRepository?.deleteAll()
+
         val driverFileStr: String = findFile()!!
 //        println(os)
 //        println(driverFileStr)
@@ -73,8 +135,24 @@ abstract class BaseSeleniumTests {
         return url.file
     }
 
+    @Transactional
     @AfterEach
     open fun tearDown() {
+        userRepository?.deleteAll()
+        metadataRepository?.deleteAll()
+        mediaDirRepository?.deleteAll()
+        userAlbumRepository?.deleteAll()
+        favoriteRepository?.deleteAll()
+        commentRepository?.deleteAll()
+        albumPhotoCommentRepository?.deleteAll()
+        albumCommentRepository?.deleteAll()
+        albumRepository?.deleteAll()
+        albumPhotoRepository?.deleteAll()
+        notificationRepository?.deleteAll()
+        recognitionLabelRepository?.deleteAll()
+        recognitionLabelPhotoRepository?.deleteAll()
+        settingsRepository?.deleteAll()
+
         if (driver != null) {
             driver!!.quit()
         }
