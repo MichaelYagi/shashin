@@ -77,7 +77,16 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         password.sendKeys("testadmin")
         login.click()
 
-        this.driver!!.get("http://localhost:$port/settings");
+        this.driver!!.get("http://localhost:$port/settings")
+
+        // Delete and start fresh
+        val deleteContent = this.driver!!.findElement(By.id("deleteContent"))
+        deleteContent.click()
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("deleteAllContent")))
+        val deleteAllContent = this.driver!!.findElement(By.id("deleteAllContent"))
+        deleteAllContent.click()
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Success!')]")))
+        this.driver!!.get("http://localhost:$port/settings")
 
         // Get test image data and populate in settings
         val classLoader = javaClass.classLoader
