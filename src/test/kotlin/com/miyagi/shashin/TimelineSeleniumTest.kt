@@ -4,21 +4,16 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.MediaDirectoryRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
-import org.openqa.selenium.JavascriptExecutor
-import org.openqa.selenium.WebDriver
-import org.openqa.selenium.remote.ErrorCodes.TIMEOUT
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -47,11 +42,6 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
     @Autowired
     private val userRepository: UserRepository? = null
 
-    @Autowired
-    private val mediaDirectoryRepository: MediaDirectoryRepository? = null
-
-    @Autowired
-    private val metadataRepository: MetadataRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -117,7 +107,10 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
-        val parentEl = this.driver!!.findElement(By.id("row2021-12-31"))
+        val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
+        val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
+        val dateId = spanContainerEl.getAttribute("id").substringAfter("container_")
+        val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
         val imageId = childEl.getAttribute("id")
         val metadataId = imageId.substringAfter("photoThumbnailContainer")

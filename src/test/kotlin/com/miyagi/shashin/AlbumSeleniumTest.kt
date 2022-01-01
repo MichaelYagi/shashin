@@ -2,7 +2,6 @@ package com.miyagi.shashin
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -14,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.test.context.support.WithMockUser
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MockMvc
@@ -23,8 +21,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.net.URL
-import java.util.*
-import javax.transaction.Transactional
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -103,7 +99,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
-        val parentEl = this.driver!!.findElement(By.id("row2021-12-31"))
+        val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
+        val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
+        val dateId = spanContainerEl.getAttribute("id").substringAfter("container_")
+        val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
         val imageId = childEl.getAttribute("id")
         val metadataId = imageId.substringAfter("photoThumbnailContainer")
