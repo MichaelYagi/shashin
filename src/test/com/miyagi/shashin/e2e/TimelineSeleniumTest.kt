@@ -3,7 +3,6 @@ package com.miyagi.shashin.e2e
 //import com.miyagi.shashin.model.User
 //import com.miyagi.shashin.repository.MetadataRepository
 //import com.miyagi.shashin.repository.UserRepository
-//import org.junit.jupiter.api.AfterEach
 //import org.junit.jupiter.api.Assertions
 //import org.junit.jupiter.api.BeforeEach
 //import org.junit.jupiter.api.Test
@@ -82,21 +81,6 @@ package com.miyagi.shashin.e2e
 //        username.sendKeys("testadmin")
 //        password.sendKeys("testadmin")
 //        login.click()
-//    }
-//
-//    @AfterEach
-//    fun teardown() {
-//        // Delete metadata
-//        val metadataObj = metadataRepository?.findById(metadataId!!)
-//        val thumbnailPathSmall = metadataObj?.get()?.getThumbnailPathSmall()
-//        val thumbnailDir = File(thumbnailPathSmall!!).parent
-//        val metadataDir = thumbnailDir.replace("thumbnails","metadata")
-//        val thumbnailDirFile = File(thumbnailDir)
-//        val metadataDirFile = File(metadataDir)
-////        println(thumbnailDirFile.absolutePath)
-////        println(metadataDirFile.absolutePath)
-//        thumbnailDirFile.deleteRecursively()
-//        metadataDirFile.deleteRecursively()
 //    }
 //
 //    @Test

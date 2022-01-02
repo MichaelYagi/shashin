@@ -2,7 +2,6 @@ package com.miyagi.shashin.e2e
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
-import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -175,21 +174,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         username.sendKeys("testuser")
         password.sendKeys("testuser")
         login.click()
-    }
-
-    @AfterEach
-    fun teardown() {
-        // Delete metadata
-        val metadataObj = metadataRepository?.findById(metadataId!!)
-        val thumbnailPathSmall = metadataObj?.get()?.getThumbnailPathSmall()
-        val thumbnailDir = File(thumbnailPathSmall!!).parent
-        val metadataDir = thumbnailDir.replace("thumbnails","metadata")
-        val thumbnailDirFile = File(thumbnailDir)
-        val metadataDirFile = File(metadataDir)
-//        println(thumbnailDirFile.absolutePath)
-//        println(metadataDirFile.absolutePath)
-        thumbnailDirFile.deleteRecursively()
-        metadataDirFile.deleteRecursively()
     }
 
     @Test

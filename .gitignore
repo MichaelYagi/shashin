@@ -37,6 +37,9 @@ build/
 
 ### Other ###
 /sidecar/
+/sidecar_dev/
+/sidecar_test/
+/sidecar/
 /logs/
 /node_modules/
 /jdk-11.0.12/
