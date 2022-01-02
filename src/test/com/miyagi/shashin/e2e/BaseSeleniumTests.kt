@@ -9,6 +9,7 @@ import org.openqa.selenium.chrome.ChromeDriverService
 import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.remote.DesiredCapabilities
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.FileSystemResource
 import java.io.File
 import java.net.URL
 import javax.transaction.Transactional
@@ -148,5 +149,11 @@ abstract class BaseSeleniumTests {
         recognitionLabelRepository?.deleteAll()
         recognitionLabelPhotoRepository?.deleteAll()
         settingsRepository?.deleteAll()
+
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = File("$rootPath/sidecar_test")
+        if (sidecarDir.exists()) {
+            sidecarDir.deleteRecursively()
+        }
     }
 }
