@@ -1,4 +1,4 @@
-package com.miyagi.shashin
+package com.miyagi.shashin.e2e
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*

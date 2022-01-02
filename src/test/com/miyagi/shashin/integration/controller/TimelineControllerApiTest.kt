@@ -22,7 +22,7 @@ import org.springframework.web.context.WebApplicationContext
 
 @SpringBootTest
 @ActiveProfiles("test")
-class TimelineControllerTest {
+class TimelineControllerApiTest {
 
     private var adminId: Int? = null
     private var userId: Int? = null
