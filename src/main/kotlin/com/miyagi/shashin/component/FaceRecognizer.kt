@@ -57,6 +57,8 @@ class FaceRecognizer() {
     private val graph: Graph = Graph()
     private val fullFaceFeaturesList = ArrayList<FullFaceFeatures>()
     private var distanceThreshold: Double = 0.6
+    private var haarcascadeFrontalfaceAlt = ""
+    private var haarcascadeFrontalfaceDefault = ""
 
     internal constructor(testImages: MutableIterable<Metadata>, trainingData: MutableIterable<TrainingData>, recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository?, recognitionLabelRepository: RecognitionLabelRepository?, notificationRepository: NotificationRepository?, userRepository: UserRepository?, adminRole: String?, distanceThreshold: Double) : this() {
         this.trainingData = trainingData
@@ -77,16 +79,14 @@ class FaceRecognizer() {
         val fileListing: MutableList<File> = mutableListOf()
 
         var cascadeFileStream = classLoader.getResourceAsStream(this.cascadeDir+"/haarcascade_frontalface_alt.xml")
-        var tempFilePath = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_alt.xml"
-        var tempFile = File(tempFilePath)
-        copyInputStreamToFile(cascadeFileStream!!,tempFile)
-        fileListing.add(tempFile)
+        haarcascadeFrontalfaceAlt = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_alt.xml"
+        copyInputStreamToFile(cascadeFileStream!!,File(haarcascadeFrontalfaceAlt))
+        fileListing.add(File(haarcascadeFrontalfaceAlt))
 
         cascadeFileStream = classLoader.getResourceAsStream(this.cascadeDir+"/haarcascade_frontalface_alt2.xml")
-        tempFilePath = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_default.xml"
-        tempFile = File(tempFilePath)
-        copyInputStreamToFile(cascadeFileStream!!,tempFile)
-        fileListing.add(tempFile)
+        haarcascadeFrontalfaceDefault = System.getProperty("java.io.tmpdir")+"/haarcascade_frontalface_default.xml"
+        copyInputStreamToFile(cascadeFileStream!!,File(haarcascadeFrontalfaceDefault))
+        fileListing.add(File(haarcascadeFrontalfaceDefault))
 
         for (child in fileListing) {
             logger.log(Level.INFO, "Cascade file loaded: " + child.name)
@@ -387,6 +387,23 @@ class FaceRecognizer() {
                     }
                 }
                 matchMap.clear()
+            }
+
+            val tempImageFile = File(System.getProperty("java.io.tmpdir")+"/temp.jpg")
+            if (tempImageFile.exists()) {
+                tempImageFile.delete()
+            }
+            if (haarcascadeFrontalfaceAlt.isNotBlank()) {
+                val haarcascadeFrontalfaceAltFile = File(haarcascadeFrontalfaceAlt)
+                if (haarcascadeFrontalfaceAltFile.exists()) {
+                    haarcascadeFrontalfaceAltFile.delete()
+                }
+            }
+            if (haarcascadeFrontalfaceDefault.isNotBlank()) {
+                val haarcascadeFrontalfaceDefaultFile = File(haarcascadeFrontalfaceDefault)
+                if (haarcascadeFrontalfaceDefaultFile.exists()) {
+                    haarcascadeFrontalfaceDefaultFile.delete()
+                }
             }
 
             val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
