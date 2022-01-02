@@ -2,6 +2,7 @@ package com.miyagi.shashin
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -27,6 +28,7 @@ import java.net.URL
 @ActiveProfiles("test")
 class AlbumSeleniumTest: BaseSeleniumTests() {
 
+    private var metadataId: String? = null
     private var adminId: Int? = null
     private var userId: Int? = null
     private var albumId: Int? = null
@@ -40,6 +42,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
     @Autowired
     private val userRepository: UserRepository? = null
+
+    @Autowired
+    private val metadataRepository: MetadataRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -80,13 +85,13 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.driver!!.get("http://localhost:$port/settings")
 
         // Delete and start fresh
-        val deleteContent = this.driver!!.findElement(By.id("deleteContent"))
-        deleteContent.click()
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("deleteAllContent")))
-        val deleteAllContent = this.driver!!.findElement(By.id("deleteAllContent"))
-        deleteAllContent.click()
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Success!')]")))
-        this.driver!!.get("http://localhost:$port/settings")
+//        val deleteContent = this.driver!!.findElement(By.id("deleteContent"))
+//        deleteContent.click()
+//        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("deleteAllContent")))
+//        val deleteAllContent = this.driver!!.findElement(By.id("deleteAllContent"))
+//        deleteAllContent.click()
+//        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Success!')]")))
+//        this.driver!!.get("http://localhost:$port/settings")
 
         // Get test image data and populate in settings
         val classLoader = javaClass.classLoader
@@ -115,7 +120,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val parentEl = this.driver!!.findElement(By.id("row$dateId"))
         val childEl = parentEl.findElement(By.xpath("./div[1]"))
         val imageId = childEl.getAttribute("id")
-        val metadataId = imageId.substringAfter("photoThumbnailContainer")
+        metadataId = imageId.substringAfter("photoThumbnailContainer")
 
         // Check image src
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
@@ -170,6 +175,21 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         username.sendKeys("testuser")
         password.sendKeys("testuser")
         login.click()
+    }
+
+    @AfterEach
+    fun teardown() {
+        // Delete metadata
+        val metadataObj = metadataRepository?.findById(metadataId!!)
+        val thumbnailPathSmall = metadataObj?.get()?.getThumbnailPathSmall()
+        val thumbnailDir = File(thumbnailPathSmall!!).parent
+        val metadataDir = thumbnailDir.replace("thumbnails","metadata")
+        val thumbnailDirFile = File(thumbnailDir)
+        val metadataDirFile = File(metadataDir)
+//        println(thumbnailDirFile.absolutePath)
+//        println(metadataDirFile.absolutePath)
+        thumbnailDirFile.deleteRecursively()
+        metadataDirFile.deleteRecursively()
     }
 
     @Test

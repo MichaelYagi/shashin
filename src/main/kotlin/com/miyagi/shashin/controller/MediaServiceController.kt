@@ -97,6 +97,10 @@ class MediaServiceController {
                 logger.log(Level.SEVERE, "Could not convert video "+metadata.getPath()+" to h.264: "+e.message)
 
             }
+
+            if (target.exists()) {
+                target.delete()
+            }
         }
         return FileSystemResource(path)
     }
