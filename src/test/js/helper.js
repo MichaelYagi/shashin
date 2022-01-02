@@ -9,7 +9,7 @@ global.document = dom.window.document
 global.URL.createObjectURL = function() {}
 global.Image = dom.window.Image
 global.Blob = Blob
-global.$ = global.jQuery = require('../../../../main/resources/static/js/jquery-3.5.1.min')
+global.$ = global.jQuery = require('../../main/resources/static/js/jquery-3.5.1.min')
 Object.keys( global.window ).forEach(( property ) => {
     if ( typeof global[ property ] === "undefined" ) {
         global[ property ] = global.window[ property ]

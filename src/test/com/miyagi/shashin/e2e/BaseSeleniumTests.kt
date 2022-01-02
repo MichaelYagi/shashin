@@ -1,4 +1,4 @@
-package com.miyagi.shashin
+package com.miyagi.shashin.e2e
 
 import com.miyagi.shashin.repository.*
 import org.junit.jupiter.api.AfterEach
@@ -64,20 +64,7 @@ abstract class BaseSeleniumTests {
     @Transactional
     @BeforeEach
     open fun setUp() {
-        userRepository?.deleteAll()
-        metadataRepository?.deleteAll()
-        mediaDirRepository?.deleteAll()
-        userAlbumRepository?.deleteAll()
-        favoriteRepository?.deleteAll()
-        commentRepository?.deleteAll()
-        albumPhotoCommentRepository?.deleteAll()
-        albumCommentRepository?.deleteAll()
-        albumRepository?.deleteAll()
-        albumPhotoRepository?.deleteAll()
-        notificationRepository?.deleteAll()
-        recognitionLabelRepository?.deleteAll()
-        recognitionLabelPhotoRepository?.deleteAll()
-        settingsRepository?.deleteAll()
+        deleteRecords()
 
         val driverFileStr: String = findFile()!!
 //        println(os)
@@ -135,9 +122,18 @@ abstract class BaseSeleniumTests {
         return url.file
     }
 
-    @Transactional
+
     @AfterEach
     open fun tearDown() {
+        deleteRecords()
+
+        if (driver != null) {
+            driver!!.quit()
+        }
+    }
+
+    @Transactional
+    open fun deleteRecords() {
         userRepository?.deleteAll()
         metadataRepository?.deleteAll()
         mediaDirRepository?.deleteAll()
@@ -152,9 +148,5 @@ abstract class BaseSeleniumTests {
         recognitionLabelRepository?.deleteAll()
         recognitionLabelPhotoRepository?.deleteAll()
         settingsRepository?.deleteAll()
-
-        if (driver != null) {
-            driver!!.quit()
-        }
     }
 }

@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "test": "nyc mocha 'src/test/resources/**/*.js' --timeout 60000 --recursive --exit"
+    "test": "nyc mocha 'src/test/**/*.js' --timeout 60000 --recursive --exit"
   },
   "devDependencies": {
     "chai": "^4.3.4",

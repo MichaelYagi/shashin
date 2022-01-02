@@ -1,6 +1,6 @@
 require("../helper.js")
 
-const sum = require('../../../../../main/resources/static/js/site/test')
+const sum = require('../../../main/resources/static/js/site/test')
 const expect = require('chai').expect
 
 describe('#sum()', function() {
