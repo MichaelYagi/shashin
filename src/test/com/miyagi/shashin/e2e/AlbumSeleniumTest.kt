@@ -103,7 +103,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<30000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Photos scanned.")
@@ -141,7 +141,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         startTime = System.currentTimeMillis()
         var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("timelineModalStatus")),"bi-check-circle")
-        while (!elementHasClass || (System.currentTimeMillis()-startTime)<30000) {
+        while (!elementHasClass || (System.currentTimeMillis()-startTime)<1000) {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("timelineModalStatus")),"bi-check-circle")
         }
 
@@ -170,6 +170,24 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
     @Test
     @Throws(Exception::class)
+    fun shouldViewInAlbumAsAdmin() {
+        this.driver!!.get("http://localhost:$port/albums")
+
+        var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
+        Assertions.assertTrue(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("trash$albumId")).isNotEmpty()
+        Assertions.assertTrue(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("edit$albumId")).isNotEmpty()
+        Assertions.assertTrue(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("comment$albumId")).isNotEmpty()
+        Assertions.assertTrue(isPresent)
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun shouldViewInAlbumAsUser() {
         //Login as testuser
         this.driver!!.get("http://localhost:$port/users/logout")
@@ -182,6 +200,18 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         login.click()
 
         Assertions.assertEquals("http://localhost:$port/albums", this.driver!!.currentUrl)
+
+        var isPresent = this.driver!!.findElements(By.id("share$albumId")).isNotEmpty()
+        Assertions.assertFalse(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("trash$albumId")).isNotEmpty()
+        Assertions.assertFalse(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("edit$albumId")).isNotEmpty()
+        Assertions.assertFalse(isPresent)
+
+        isPresent = this.driver!!.findElements(By.id("comment$albumId")).isNotEmpty()
+        Assertions.assertTrue(isPresent)
 
         val albumLink = this.driver!!.findElement(By.id("album$albumId"))
         albumLink.click()

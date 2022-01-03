@@ -110,7 +110,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         val startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<30000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         this.logger.log(Level.INFO, "TimelineSeleniumTest - Photos scanned.")
