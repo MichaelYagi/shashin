@@ -1,7 +1,7 @@
 package com.miyagi.shashin.e2e
 
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.repository.UserRepository
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -103,7 +103,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
-        val startTime = System.currentTimeMillis()
+        var startTime = System.currentTimeMillis()
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<30000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
@@ -140,8 +140,11 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val saveMetadataButton = this.driver!!.findElement(By.id("saveMetadata"))
         saveMetadataButton.click()
 
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("timelineModalStatus")))
-        this.driver!!.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS)
+        startTime = System.currentTimeMillis()
+        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("timelineModalStatus")),"bi-check-circle")
+        while (!elementHasClass || (System.currentTimeMillis()-startTime)<30000) {
+            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("timelineModalStatus")),"bi-check-circle")
+        }
 
         this.driver!!.get("http://localhost:$port/albums")
 
@@ -187,5 +190,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val albumNameHeading = this.driver!!.findElement(By.id("albumNameHeading"))
 
         Assertions.assertEquals("testalbum", albumNameHeading.text)
+    }
+
+    private fun elementHasClass(element: WebElement, active: String?): Boolean {
+        return element.getAttribute("class").contains(active!!)
     }
 }
