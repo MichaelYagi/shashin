@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -21,6 +22,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.net.URL
+import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -41,9 +44,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
     @Autowired
     private val userRepository: UserRepository? = null
-
-    @Autowired
-    private val metadataRepository: MetadataRepository? = null
 
     private var bcrypt = BCryptPasswordEncoder()
 
@@ -83,36 +83,35 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         this.driver!!.get("http://localhost:$port/settings")
 
-        // Delete and start fresh
-//        val deleteContent = this.driver!!.findElement(By.id("deleteContent"))
-//        deleteContent.click()
-//        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("deleteAllContent")))
-//        val deleteAllContent = this.driver!!.findElement(By.id("deleteAllContent"))
-//        deleteAllContent.click()
-//        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Success!')]")))
-//        this.driver!!.get("http://localhost:$port/settings")
-
         // Get test image data and populate in settings
         val classLoader = javaClass.classLoader
         val testImageUrl: URL = classLoader.getResource("testscreen.jpg")
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
+        this.logger.log(Level.INFO, "AlbumSeleniumTest - Media Directory ${testImageFile.parent} saved.")
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
         // Scan new image
-        this.driver!!.get("http://localhost:$port/settings/scan");
+        this.driver!!.get("http://localhost:$port/settings/scan")
+        val scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         val scanPhotos = this.driver!!.findElement(By.id("scanPhotos"))
         scanPhotos.click()
 
-        val wait = WebDriverWait(this.driver, 30)
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Scan Complete')]")))
+        // Indicates scanning something
+        var scanBeforeAfter: WebElement? = null
+        val startTime = System.currentTimeMillis()
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<30000) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+        this.logger.log(Level.INFO, "AlbumSeleniumTest - Photos scanned.")
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
+        this.logger.log(Level.INFO, "AlbumSeleniumTest - Redirected to timeline.")
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
         val dateId = spanContainerEl.getAttribute("id").substringAfter("container_")
@@ -142,6 +141,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         saveMetadataButton.click()
 
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("timelineModalStatus")))
+        this.driver!!.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS)
 
         this.driver!!.get("http://localhost:$port/albums")
 
