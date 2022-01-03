@@ -186,8 +186,73 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         Assertions.assertTrue(isPresent)
 
         // Test change album name
-        // Test album name change
+        val editAlbumEl = this.driver!!.findElement(By.id("edit$albumId"))
+        var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        editAlbumEl.click()
+        var startTime = System.currentTimeMillis()
+        var scanBeforeAfter: WebElement? = null
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+
+        val albumEditName = this.driver!!.findElement(By.id("albumEditName$albumId"))
+        albumEditName.clear()
+        albumEditName.sendKeys("Album name update")
+        startTime = System.currentTimeMillis()
+        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus$albumId")),"bi-check-circle")
+        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum$albumId"))
+        albumEditNameButton.click()
+        while (!elementHasClass || (System.currentTimeMillis()-startTime)<1000) {
+            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus$albumId")),"bi-check-circle")
+        }
+        this.driver?.get("http://localhost:$port/albums")
+        val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
+        Assertions.assertEquals("Album name update",albumNameEl.text)
+
+        // Test share album
+        val shareAlbumEl = this.driver!!.findElement(By.id("share$albumId"))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        shareAlbumEl.click()
+        startTime = System.currentTimeMillis()
+        scanBeforeAfter = null
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+
+        val generateShareAlbumEl = this.driver!!.findElement(By.id("generateLink$albumId"))
+        startTime = System.currentTimeMillis()
+        elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus$albumId")),"bi-check-circle")
+        generateShareAlbumEl.click()
+        while (!elementHasClass || (System.currentTimeMillis()-startTime)<1000) {
+            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus$albumId")),"bi-check-circle")
+        }
+
+        val fullShareLink = this.driver!!.findElement(By.id("fullShareLink$albumId"))
+        val linkEl = fullShareLink.findElement(By.xpath("./a[1]"))
+        this.driver?.get(linkEl.text)
+
+        val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
+        val titleHeader = scrollContainer.findElement(By.xpath("./h1[1]"))
+        Assertions.assertEquals("Album name update",titleHeader.text)
+
         // Test delete album
+        this.driver?.get("http://localhost:$port/albums")
+
+        val deleteAlbumEl = this.driver!!.findElement(By.id("trash$albumId"))
+        deleteAlbumEl.click()
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Delete')]")))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+
+        val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum$albumId"))
+        deleteAlbumButton.click()
+        startTime = System.currentTimeMillis()
+        scanBeforeAfter = null
+        while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+
+        val msgEl = this.driver!!.findElement(By.id("msg"))
+        Assertions.assertEquals("There are no albums.",msgEl.text)
     }
 
     @Test
@@ -244,16 +309,44 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         postCommentEl.click()
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
 
-        // Check comment and delete
+        // Check comment
         val commentList = this.driver!!.findElement(By.id("commentList$albumId"))
         val commentEl = commentList.findElement(By.xpath("./li[1]"))
         val commentId = commentEl.getAttribute("id").substringAfter("comment")
-        Assertions.assertTrue(this.driver!!.findElements(By.id("comment$commentId")).isNotEmpty())
 
+        Assertions.assertTrue(this.driver!!.findElement(By.id("comment$commentId")).text.contains("Test comment"))
+
+        // Update comment
+        val editCommentEl = this.driver!!.findElement(By.id("editcomment$commentId"))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        editCommentEl.click()
+        startTime = System.currentTimeMillis()
+        scanBeforeAfter = null
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+        val editCommentTextArea = this.driver!!.findElement(By.id("commenttext$commentId"))
+        editCommentTextArea.click()
+        editCommentTextArea.sendKeys("Test update")
+
+        val updateComment = this.driver!!.findElement(By.id("updateCommentAlbum$albumId"))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        updateComment.click()
+
+        scanBeforeAfter = null
+        startTime = System.currentTimeMillis()
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+
+        Assertions.assertTrue(this.driver!!.findElement(By.id("comment$commentId")).text.contains("Test update"))
+
+        // Delete comment
         val deleteCommentEl = this.driver!!.findElement(By.id("deletecomment$commentId"))
         scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         deleteCommentEl.click()
         startTime = System.currentTimeMillis()
+        scanBeforeAfter = null
         while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
