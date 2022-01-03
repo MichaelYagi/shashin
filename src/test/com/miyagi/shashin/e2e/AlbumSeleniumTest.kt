@@ -73,9 +73,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         this.driver?.get("http://localhost:$port/users/login")
         //println(this.driver?.pageSource)
-        var username = this.driver!!.findElement(By.id("username"))
-        var password = this.driver!!.findElement(By.id("password"))
-        var login = this.driver!!.findElement(By.tagName("button"))
+        val username = this.driver!!.findElement(By.id("username"))
+        val password = this.driver!!.findElement(By.id("password"))
+        val login = this.driver!!.findElement(By.tagName("button"))
         username.sendKeys("testadmin")
         password.sendKeys("testadmin")
         login.click()
@@ -84,7 +84,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Get test image data and populate in settings
         val classLoader = javaClass.classLoader
-        val testImageUrl: URL = classLoader.getResource("testscreen.jpg")
+        val testImageUrl: URL = classLoader.getResource("testscreen.jpg")!!
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
@@ -166,21 +166,21 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         saveUserShare.click()
 
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus$albumId")))
-
-        //Login as testuser
-        this.driver!!.get("http://localhost:$port/users/logout")
-        this.driver?.get("http://localhost:$port/users/login")
-        username = this.driver!!.findElement(By.id("username"))
-        password = this.driver!!.findElement(By.id("password"))
-        login = this.driver!!.findElement(By.tagName("button"))
-        username.sendKeys("testuser")
-        password.sendKeys("testuser")
-        login.click()
     }
 
     @Test
     @Throws(Exception::class)
     fun shouldViewInAlbumAsUser() {
+        //Login as testuser
+        this.driver!!.get("http://localhost:$port/users/logout")
+        this.driver?.get("http://localhost:$port/users/login")
+        val username = this.driver!!.findElement(By.id("username"))
+        val password = this.driver!!.findElement(By.id("password"))
+        val login = this.driver!!.findElement(By.tagName("button"))
+        username.sendKeys("testuser")
+        password.sendKeys("testuser")
+        login.click()
+
         Assertions.assertEquals("http://localhost:$port/albums", this.driver!!.currentUrl)
 
         val albumLink = this.driver!!.findElement(By.id("album$albumId"))
