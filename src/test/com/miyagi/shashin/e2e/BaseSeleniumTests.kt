@@ -12,11 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.FileSystemResource
 import java.io.File
 import java.net.URL
+import java.util.logging.Logger
 import javax.transaction.Transactional
 
 
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
+    protected var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
     private val os = System.getProperty("os.name")
 
     @Autowired
@@ -153,7 +155,17 @@ abstract class BaseSeleniumTests {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = File("$rootPath/sidecar_test")
         if (sidecarDir.exists()) {
-            sidecarDir.deleteRecursively()
+            //sidecarDir.deleteRecursively()
+            purgeDirectory(sidecarDir)
+        }
+    }
+
+    private fun purgeDirectory(dir: File) {
+        for (file in dir.listFiles()!!) {
+            if (file.isDirectory) {
+                purgeDirectory(file)
+            }
+            file.delete()
         }
     }
 }
