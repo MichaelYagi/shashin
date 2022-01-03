@@ -184,11 +184,15 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         isPresent = this.driver!!.findElements(By.id("comment$albumId")).isNotEmpty()
         Assertions.assertTrue(isPresent)
+
+        // Test change album name
+        // Test album name change
+        // Test delete album
     }
 
     @Test
     @Throws(Exception::class)
-    fun shouldViewInAlbumAsUser() {
+    fun shouldViewInAlbumAndCommentAsUser() {
         //Login as testuser
         this.driver!!.get("http://localhost:$port/users/logout")
         this.driver?.get("http://localhost:$port/users/login")
@@ -210,9 +214,53 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         isPresent = this.driver!!.findElements(By.id("edit$albumId")).isNotEmpty()
         Assertions.assertFalse(isPresent)
 
-        isPresent = this.driver!!.findElements(By.id("comment$albumId")).isNotEmpty()
+        val postCommentElement = this.driver!!.findElements(By.id("comment$albumId"))
+        isPresent = postCommentElement.isNotEmpty()
         Assertions.assertTrue(isPresent)
 
+        // Post comment on albums view
+        postCommentElement[0].click()
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
+        var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        val commentTextArea = this.driver!!.findElement(By.id("commentText$albumId"))
+        commentTextArea.click()
+        commentTextArea.sendKeys("Test comment")
+
+        val saveComment = this.driver!!.findElement(By.id("saveCommentAlbum$albumId"))
+        saveComment.click()
+
+        var scanBeforeAfter: WebElement? = null
+        var startTime = System.currentTimeMillis()
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+
+        this.driver?.get("http://localhost:$port/albums")
+        val commentCountEl = this.driver!!.findElement(By.id("commentcount$albumId"))
+        val commentCountStr = commentCountEl.text
+        Assertions.assertEquals(1,commentCountStr.toInt())
+
+        val postCommentEl = this.driver!!.findElement(By.id("comment$albumId"))
+        postCommentEl.click()
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
+
+        // Check comment and delete
+        val commentList = this.driver!!.findElement(By.id("commentList$albumId"))
+        val commentEl = commentList.findElement(By.xpath("./li[1]"))
+        val commentId = commentEl.getAttribute("id").substringAfter("comment")
+        Assertions.assertTrue(this.driver!!.findElements(By.id("comment$commentId")).isNotEmpty())
+
+        val deleteCommentEl = this.driver!!.findElement(By.id("deletecomment$commentId"))
+        scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
+        deleteCommentEl.click()
+        startTime = System.currentTimeMillis()
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+            scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
+        }
+
+        Assertions.assertFalse(this.driver!!.findElements(By.id("comment$commentId")).isNotEmpty())
+
+        this.driver?.get("http://localhost:$port/albums")
         val albumLink = this.driver!!.findElement(By.id("album$albumId"))
         albumLink.click()
 

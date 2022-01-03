@@ -35,8 +35,8 @@
                                     </a>
                                     <th:block th:if="${authority == 'ROLE_ADMIN'}">
                                         &nbsp;&nbsp;<a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil"></span></a>
-                                        &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>
                                         &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span class="bi-share"></span></a>
+                                        &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>
                                     </th:block>
                                 </p>
                                 <p class="card-text"><small class="text-muted" th:text="${albumsCount[iterStat.index] + ' items'}"></small></p>
