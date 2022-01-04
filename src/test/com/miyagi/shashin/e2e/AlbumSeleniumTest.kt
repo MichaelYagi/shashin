@@ -103,7 +103,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<2000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Photos scanned.")
