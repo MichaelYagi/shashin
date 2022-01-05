@@ -21,7 +21,7 @@
                     </th:block>
                     <div class="row">
                         <div class="col-12">
-                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected"></span></strong></label>
+                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></strong></label>
                             <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
                         </div>
                     </div>
@@ -70,7 +70,7 @@
                     <hr>
                     <div class="alert alert-danger" role="alert">
                         <h4 class="alert-heading">Delete Content</h4>
-                        <p><span class="exclamation-triangle-fill"></span>Warning! This will wipe all media content! (Media directories will not be touched)</p>
+                        <p><span class="exclamation-triangle-fill"></span>Warning! This will wipe all media content! (Media directories will be not be reset)</p>
                         <a href="#" class="btn btn-danger" id="deleteContent">Delete</a>
                     </div>
                 </form>
