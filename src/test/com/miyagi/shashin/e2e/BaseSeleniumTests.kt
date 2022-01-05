@@ -1,6 +1,8 @@
 package com.miyagi.shashin.e2e
 
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.TextUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.openqa.selenium.WebDriver

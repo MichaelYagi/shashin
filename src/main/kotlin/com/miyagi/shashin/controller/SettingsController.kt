@@ -240,6 +240,7 @@ class SettingsController {
         @RequestParam("trainingDataLimit") trainingDataLimit: Int,
         @RequestParam("notificationLimit") notificationLimit: Int,
         @RequestParam("changePort") port: String,
+        @RequestParam("scanAutomatically") scanAutomatically: String?,
     ): String {
         var resetServer = false
         var mediaDirs: List<String>? = null
@@ -256,7 +257,7 @@ class SettingsController {
 
             val allMediaDirs = mediaDirRepository?.findAll()
             val allMediaDirList: List<String>? = allMediaDirs?.map { it?.getDirectory()!! }
-            if (!mediaDirs.containsAll(allMediaDirList!!) || !allMediaDirList.containsAll(mediaDirs)) {
+            if (scanAutomatically == "on" && (!mediaDirs.containsAll(allMediaDirList!!) || !allMediaDirList.containsAll(mediaDirs))) {
                 resetServer = true
             }
 
@@ -306,6 +307,12 @@ class SettingsController {
             settings.setPort(port)
             resetServer = true
         }
+        if (scanAutomatically == "on") {
+            settings?.setScanAutomatically(true)
+        } else {
+            settings?.setScanAutomatically(false)
+        }
+
         if (settings != null) {
             settingsRepository?.save(settings)
             model["settings"] = settings

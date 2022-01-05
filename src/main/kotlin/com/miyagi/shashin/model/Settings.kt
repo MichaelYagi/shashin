@@ -23,6 +23,8 @@ class Settings {
     private var notificationLimit: Int? = null
     @NotBlank
     private var port: String? = null
+    @NotBlank
+    private var scanAutomatically: Boolean? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -80,6 +82,14 @@ class Settings {
         this.port = port
     }
 
+    fun getScanAutomatically(): Boolean? {
+        return this.scanAutomatically
+    }
+
+    fun setScanAutomatically(scanAutomatically: Boolean?) {
+        this.scanAutomatically = scanAutomatically
+    }
+
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -105,6 +115,7 @@ class Settings {
         map["trainingDataLimit"] = this.trainingDataLimit
         map["notificationLimit"] = this.notificationLimit
         map["port"] = this.port
+        map["scanAutomatically"] = this.scanAutomatically
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

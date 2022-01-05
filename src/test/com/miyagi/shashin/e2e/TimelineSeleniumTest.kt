@@ -95,6 +95,10 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
+        val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
+        if (scanAutomatically.isSelected) {
+            scanAutomatically.click()
+        }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()

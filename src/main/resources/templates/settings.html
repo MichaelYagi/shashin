@@ -26,34 +26,40 @@
                         </div>
                     </div>
                     <th:block th:if="${settings != ''}">
-                    <div class="row">
-                        <div class="col-4">
-                            <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.6)</strong></label>
-                            <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.6)</strong></label>
+                                <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
+                            </div>
+                            <div class="col-4">
+                                <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit (Default 20)</strong></label>
+                                <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
+                            </div>
+                            <div class="col-4">
+                                <label for="notificationLimit" class="form-label"><strong>Notification Limit (Default 20)</strong></label>
+                                <input class="form-control" id="notificationLimit" name="notificationLimit" th:value="${settings.notificationLimit}">
+                            </div>
                         </div>
-                        <div class="col-4">
-                            <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit (Default 20)</strong></label>
-                            <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
+                        <div class="row">
+                            <div class="col-4">
+                                <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit (Default 50)</strong></label>
+                                <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
+                            </div>
+                            <div class="col-4">
+                                <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit (Default 100)</strong></label>
+                                <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
+                            </div>
+                            <div class="col-4">
+                                <label for="changePort" class="form-label"><strong>Change Port <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected"></span></strong></label>
+                                <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
+                            </div>
                         </div>
-                        <div class="col-4">
-                            <label for="notificationLimit" class="form-label"><strong>Notification Limit (Default 20)</strong></label>
-                            <input class="form-control" id="notificationLimit" name="notificationLimit" th:value="${settings.notificationLimit}">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="scanAutomatically" name="scanAutomatically" th:checked="${settings.scanAutomatically}">
+                            <label class="form-check-label" for="scanAutomatically">
+                                <strong>Automatic Media Indexing</strong>
+                            </label>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit (Default 50)</strong></label>
-                            <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
-                        </div>
-                        <div class="col-4">
-                            <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit (Default 100)</strong></label>
-                            <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
-                        </div>
-                        <div class="col-4">
-                            <label for="changePort" class="form-label"><strong>Change Port <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected"></span></strong></label>
-                            <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
-                        </div>
-                    </div>
                     </th:block>
                     <br>
                     <div class="row">
