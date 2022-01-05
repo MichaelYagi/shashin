@@ -254,6 +254,12 @@ class SettingsController {
         var dirDneString = ""
         if (mediaDirs != null && mediaDirs.isNotEmpty()) {
 
+            val allMediaDirs = mediaDirRepository?.findAll()
+            val allMediaDirList: List<String>? = allMediaDirs?.map { it?.getDirectory()!! }
+            if (!mediaDirs.containsAll(allMediaDirList!!) || !allMediaDirList.containsAll(mediaDirs)) {
+                resetServer = true
+            }
+
             mediaDirRepository?.deleteAll()
             for (mediaDir in mediaDirs) {
                 var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
