@@ -3,6 +3,7 @@ package com.miyagi.shashin.configuration
 import com.miyagi.shashin.component.ShashinFileChangeListener
 import com.miyagi.shashin.controller.SettingsController
 import com.miyagi.shashin.repository.MediaDirectoryRepository
+import com.miyagi.shashin.repository.SettingsRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.devtools.filewatch.FileSystemWatcher
 import org.springframework.context.annotation.Bean
@@ -19,22 +20,38 @@ class FileWatcherConfig {
     private lateinit var mediaDirRepository: MediaDirectoryRepository
 
     @Autowired
+    private lateinit var settingsRepository: SettingsRepository
+
+    @Autowired
     private lateinit var settingsController: SettingsController
+
+    private var allowAutomaticScan = false
 
     @Bean
     fun fileSystemWatcher(): FileSystemWatcher {
-        val mediaDirectories = mediaDirRepository.findAll()
-        val fileSystemWatcher = FileSystemWatcher()
-        for (mediaDir in mediaDirectories) {
-            if (mediaDir != null) {
-                val path: Path = Paths.get(mediaDir.getDirectory()!!)
-                if (Files.exists(path)) {
-                    fileSystemWatcher.addSourceDirectory(File(mediaDir.getDirectory()!!))
-                }
+
+        val settingsCount = settingsRepository.count()
+        if (settingsCount > 0) {
+            val settings = settingsRepository.findFirstByOrderByIdAsc()
+            if (settings != null && settings.getScanAutomatically() == true) {
+                allowAutomaticScan = true
             }
         }
-        fileSystemWatcher.addListener(ShashinFileChangeListener(settingsController))
-        fileSystemWatcher.start()
+
+        val mediaDirectories = mediaDirRepository.findAll()
+        val fileSystemWatcher = FileSystemWatcher()
+        if (allowAutomaticScan) {
+            for (mediaDir in mediaDirectories) {
+                if (mediaDir != null) {
+                    val path: Path = Paths.get(mediaDir.getDirectory()!!)
+                    if (Files.exists(path)) {
+                        fileSystemWatcher.addSourceDirectory(File(mediaDir.getDirectory()!!))
+                    }
+                }
+            }
+            fileSystemWatcher.addListener(ShashinFileChangeListener(settingsController))
+            fileSystemWatcher.start()
+        }
         return fileSystemWatcher
     }
 

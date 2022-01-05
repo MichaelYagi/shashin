@@ -81,6 +81,7 @@ class BaseController {
             settingsObj.setTrainingDataLimit(100)
             settingsObj.setNotificationLimit(20)
             settingsObj.setPort("6624")
+            settingsObj.setScanAutomatically(true)
             settingsObj.setRecognitionConfidenceThreshold("0.6")
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())

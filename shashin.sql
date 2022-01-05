@@ -80,6 +80,7 @@ CREATE TABLE `settings` (
     `queryLimit` INTEGER NOT NULL DEFAULT 20,
     `notificationLimit` INTEGER NOT NULL DEFAULT 20,
     `port` VARCHAR(10) NOT NULL DEFAULT '6624',
+    `scanAutomatically` BOOLEAN DEFAULT TRUE,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL
 );

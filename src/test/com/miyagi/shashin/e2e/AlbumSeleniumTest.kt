@@ -88,7 +88,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val testImageFile = File(testImageUrl.file)
         val mediaDirTextArea = this.driver!!.findElement(By.id("mediaDirTextArea"))
         mediaDirTextArea.sendKeys(testImageFile.parent)
-        this.logger.log(Level.INFO, "AlbumSeleniumTest - Media Directory ${testImageFile.parent} saved.")
+        val scanAutomatically = this.driver!!.findElement(By.id("scanAutomatically"))
+        if (scanAutomatically.isSelected) {
+            scanAutomatically.click()
+        }
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
