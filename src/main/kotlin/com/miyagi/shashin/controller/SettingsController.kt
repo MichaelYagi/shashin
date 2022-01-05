@@ -632,10 +632,7 @@ class SettingsController {
         @RequestParam reindexFiles: Boolean
     ): String {
         resp["msg"] = "Nothing to see here"
-
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
-
+        
         alreadyScannedFilepaths.clear()
 
         if (deleteThread) {
@@ -663,7 +660,7 @@ class SettingsController {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
         var threadFileContent = FileUtils.readThreadFile("shashinscan")
-        var msg = ""
+        var msg: String
 
         if ((shouldStop.get() && (!FileUtils.checkThreadFileAlive("shashinscan") || (threadFileContent != null && threadFileContent == "Scan Cancelled") || (threadFileContent != null && threadFileContent == "Scan Complete"))) || (!shouldStop.get() && !FileUtils.checkThreadFileAlive("shashinscan"))) {
             shouldStop.set(false)
@@ -831,9 +828,10 @@ class SettingsController {
             } else {
                 return lmsg
             }
-        } else {
-            msg = "No directories configured"
         }
+//        else {
+//            msg = "No directories configured"
+//        }
         msg = "Start Scan"
 
         return msg
