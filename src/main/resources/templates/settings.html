@@ -21,7 +21,7 @@
                     </th:block>
                     <div class="row">
                         <div class="col-12">
-                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated)</strong></label>
+                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected"></span></strong></label>
                             <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                             <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
                         </div>
                         <div class="col-4">
-                            <label for="changePort" class="form-label"><strong>Change Port <span style="color: red;">(Restarts App)</span></strong></label>
+                            <label for="changePort" class="form-label"><strong>Change Port <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected"></span></strong></label>
                             <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
                         </div>
                     </div>
