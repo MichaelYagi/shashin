@@ -39,7 +39,12 @@
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
-                    if (data.hasOwnProperty("album") && data.hasOwnProperty("albumMetadataList") && data.hasOwnProperty("albumPhotoCommentsMap") && data.hasOwnProperty("currentUser") && data.hasOwnProperty("notificationMap")) {
+                    if (data.hasOwnProperty("album") &&
+                        data.hasOwnProperty("albumMetadataList") &&
+                        data.hasOwnProperty("albumPhotoCommentsMap") &&
+                        data.hasOwnProperty("currentUser") &&
+                        data.hasOwnProperty("notificationMap")
+                    ) {
                         const albumData = data["album"] === "" ? null : data["album"];
                         const albumMetadataList = data["albumMetadataList"] === "" ? null : data["albumMetadataList"];
                         const albumPhotoCommentsMap = data["albumPhotoCommentsMap"] === "" ? null : data["albumPhotoCommentsMap"];
