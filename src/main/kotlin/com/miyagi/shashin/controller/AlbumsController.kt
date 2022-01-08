@@ -153,6 +153,8 @@ class AlbumsController {
             }
         }
 
+        response["msg"] = "Success!"
+        response["status"] = "success"
         response["activePage"] = module
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)
@@ -525,12 +527,16 @@ class AlbumsController {
         response["albumId"] = 0
         response["albumMetadataList"] = ""
         response["albumPhotoCommentsMap"] = ""
+        response["currentUser"] = ""
         response["notificationMap"] = ""
         response["favorites"] = ""
+        response["msg"] = "No results"
+        response["status"] = "success"
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
+            currentUserObj.setPassword(null)
             val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             if (userAlbums != null) {
                 // Get album photos
@@ -588,7 +594,10 @@ class AlbumsController {
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         response["album"] = album.get()
                         response["albumId"] = album.get().getId()
+                        response["currentUser"] = currentUserObj
                         response["albumMetadataList"] = albumMetadataList
+                        response["msg"] = "Results retrieved"
+                        response["status"] = "success"
                         response["message"] = ""
                     }
                 }
