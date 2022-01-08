@@ -536,7 +536,6 @@ class AlbumsController {
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
-            currentUserObj.setPassword(null)
             val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             if (userAlbums != null) {
                 // Get album photos
@@ -594,6 +593,7 @@ class AlbumsController {
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         response["album"] = album.get()
                         response["albumId"] = album.get().getId()
+                        currentUserObj.setPassword("")
                         response["currentUser"] = currentUserObj
                         response["albumMetadataList"] = albumMetadataList
                         response["msg"] = "Results retrieved"
