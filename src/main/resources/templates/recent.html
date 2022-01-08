@@ -29,7 +29,7 @@
 
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                 <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.addedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index-1].addedAt),'yyyy-M-dd')==#dates.format(sdf.parse(metadata.addedAt),'yyyy-M-dd')}">
-                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.addedAt),'yyyy-M-dd')}"><p><span class="text-muted">Added </span><strong th:text="${#dates.format(sdf.parse(metadata.addedAt), 'EEE, MMM dd, yyyy')}"></strong></p></section>
+                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.addedAt),'yyyy-M-dd')}"><p><span class="text-muted">Added </span><strong th:text="${#dates.format(sdf.parse(metadata.addedAt), 'EEE, MMM d, yyyy')}"></strong></p></section>
                                 </th:block>
                             </th:block>
 

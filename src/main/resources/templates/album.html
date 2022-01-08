@@ -38,7 +38,7 @@
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and albumMetadataList[iterStat.index-1].year==metadata.year and albumMetadataList[iterStat.index-1].month==metadata.month and albumMetadataList[iterStat.index-1].day==metadata.day}">
                                 <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
                                     <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                        <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM dd, yyyy')}"></strong></p></section>
+                                        <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM d, yyyy')}"></strong></p></section>
                                     </th:block>
                                 </th:block>
                             </th:block>
