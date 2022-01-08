@@ -531,7 +531,7 @@ class AlbumsController {
         response["notificationMap"] = ""
         response["favorites"] = ""
         response["msg"] = "No results"
-        response["status"] = "success"
+        response["status"] = "noop"
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -539,7 +539,7 @@ class AlbumsController {
             val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             if (userAlbums != null) {
                 // Get album photos
-                val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,page, model.getAttribute("queryLimit").toString().toInt())
+                val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,page*model.getAttribute("queryLimit").toString().toInt(),model.getAttribute("queryLimit").toString().toInt())
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()

@@ -21,14 +21,14 @@ class TextUtils {
 
         fun formatToLongDate(oldDate: String): String {
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val newSdf = SimpleDateFormat("EEE, MMM dd, yyyy")
+            val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
             val temp = sdf.parse(oldDate)
             return newSdf.format(temp)
         }
 
         fun formatToLongDateWithTime(oldDate: String): String {
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val newSdf = SimpleDateFormat("EEE, MMM dd, yyyy  'at' h:mm aa")
+            val newSdf = SimpleDateFormat("EEE, MMM d, yyyy  'at' h:mm aa")
             val temp = sdf.parse(oldDate)
             return newSdf.format(temp)
         }
