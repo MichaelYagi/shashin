@@ -893,15 +893,24 @@ class SettingsController {
                 if (shouldStop.get()) {
                     lmsg = "Scan cancellation in progress"
                 }
-                if (threadFileContent != null) {
-                    return lmsg + ": " + threadFileContent.replace("\\", "/")
+
+                return if (threadFileContent != null) {
+                    lmsg + ": " + threadFileContent.replace("\\", "/")
                 } else {
-                    return lmsg
+                    lmsg
                 }
             } else {
+                logger.log(
+                    Level.INFO,
+                    "Directory not found"
+                )
                 return "Directory not found"
             }
         } else {
+            logger.log(
+                Level.INFO,
+                "No directories configured"
+            )
             return "No directories configured"
         }
 //        msg = "Start Scan"
