@@ -35,6 +35,10 @@ class User {
         this.loggedIn = false
     }
 
+    fun setId(id: Int) {
+        this.id = id
+    }
+
     fun getId(): Int {
         return this.id
     }
