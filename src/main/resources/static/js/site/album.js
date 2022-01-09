@@ -36,6 +36,7 @@
         return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album")})
         .then(function (data) {
+            let deferred = new $.Deferred();
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
@@ -151,7 +152,8 @@
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none")
             }
 
-            return mediaContentList;
+            deferred.resolve(mediaContentList);
+            return deferred.promise();
         });
     }
 

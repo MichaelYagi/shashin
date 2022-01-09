@@ -11,6 +11,7 @@ class Recent {
         return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating recently added")})
         .then(function (data) {
+            let deferred = new $.Deferred();
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
                 const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
@@ -86,7 +87,8 @@ class Recent {
 
             $("#spinner").css("display","none");
 
-            return mediaContentList;
+            deferred.resolve(mediaContentList);
+            return deferred.promise();
         });
     }
 }
