@@ -37,7 +37,7 @@ class Recent {
                         const dateHeadingCount = $(".dateSection").length;
                         const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
                         const currentDate = dateFormat(metadata["addedAt"], "isoDate");
-                        const displayCurrentDate = dateFormat(metadata["addedAt"], "ddd, mmm dd, yyyy");
+                        const displayCurrentDate = dateFormat(metadata["addedAt"], "ddd, mmm d, yyyy");
 
                         if (lastDateHeading !== currentDate) {
                             html += '<section class="dateSection" id="'+currentDate+'"><p><span class="text-muted">Added </span><strong>' + displayCurrentDate + '</strong></p></section>\n';
