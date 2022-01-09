@@ -4,7 +4,7 @@ class Recent {
             type: 'get',
             url: "/recent/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:true,
+            async:false,
             retries: shashin.ajaxRetries
         }
 
