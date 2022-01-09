@@ -157,23 +157,35 @@
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
         function loadNextPage() {
-            const currentPage = parseInt($("#currentPage").val());
-            const nextPage = currentPage + 1;
-            /*<![CDATA[*/
-            const activePage = /*[[${activePage}]]*/ 'album';
-            /*]]>*/
+            if (albumSettings.rendering === false) {
+                const currentPage = parseInt($("#currentPage").val());
+                const nextPage = currentPage + 1;
+                /*<![CDATA[*/
+                const activePage = /*[[${activePage}]]*/ 'album';
+                /*]]>*/
 
-            if (albumId > 0) {
                 albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
-                    mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
+                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
                 });
-            }
 
-            $("#currentPage").val(nextPage);
+                $("#currentPage").val(nextPage);
+            }
         }
 
         /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',albumId > 0);
+        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',albumId > 0 && albumSettings.rendering === false, function () {
+            const refreshIntervalId = window.setInterval(function () {
+                if ($(".appendAlbumPhotos").last().text() === "EOL" || /*[[${albumMetadataList}]]*/ '[]' === '' || /*[[${albumMetadataList}]]*/ '[]' === '[]') {
+                    albumSettings.rendering = false;
+                    clearInterval(refreshIntervalId);
+                } else if (albumSettings.rendering === false && (Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(".appendAlbumPhotos").last().text() !== "EOL") {
+                    clearInterval(refreshIntervalId);
+                    loadNextPage();
+                } else if (albumSettings.rendering === false && !(Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(".appendAlbumPhotos").last().text() !== "EOL") {
+                    clearInterval(refreshIntervalId);
+                }
+            }, 200);
+        });
         /*]]>*/
 
         $('[data-bs-toggle="tooltip"]').tooltip();

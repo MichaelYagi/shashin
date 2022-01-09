@@ -1,4 +1,6 @@
 (function( albumSettings, $, undefined ) {
+    albumSettings.rendering = false;
+
     albumSettings.openAlbumModal = function (e,metadataId) {
         e.preventDefault();
         let metadata = null;
@@ -25,11 +27,13 @@
     }
 
     albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
+        albumSettings.rendering = true;
+
         const ajaxParams = {
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:false,
+            async: true,
             retries: shashin.ajaxRetries
         }
 
@@ -124,7 +128,9 @@
                                     '<span id="albummodal' + metadata.id + '" style="width:0;height:0;padding:0"></span>\n';
 
                                 // Append HTML
-                                $(html).insertBefore($(".appendAlbumPhotos").last())
+                                $(html).insertBefore($(".appendAlbumPhotos").last()).ready(function () {
+                                    albumSettings.rendering = false;
+                                });
 
                                 // Call JS and modal
                                 $("#albumModalEdit"+metadata.id).attr("tag", JSON.stringify(metadata));
