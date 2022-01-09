@@ -24,19 +24,17 @@
         }
     }
 
-    albumSettings.updateAlbum = async function(albumId,nextPage,activePage) {
+    albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:true,
+            async:false,
             retries: shashin.ajaxRetries
         }
 
-        return await $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album")})
-        .then(function (data) {
-            let deferred = new $.Deferred();
+        const promise = $.ajax(ajaxParams)
+        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
@@ -152,8 +150,11 @@
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none")
             }
 
-            deferred.resolve(mediaContentList);
-            return deferred.promise();
+            return mediaContentList;
+        });
+
+        return promise.done(function(data) {
+            return data;
         });
     }
 
