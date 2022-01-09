@@ -267,14 +267,16 @@
         $("#container").on('scroll', function() {
             if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
                 if (conditionOnNext === true) {
-                    func();
+                    const nextPage = func();
+                    shashin.printMessageToConsole(nextPage);
                 }
             }
         })
         $("main").on('scroll', function() {
             if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
                 if (conditionOnNext === true) {
-                    func();
+                    const nextPage = func();
+                    shashin.printMessageToConsole(nextPage);
                 }
             }
         })

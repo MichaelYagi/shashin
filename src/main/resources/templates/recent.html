@@ -129,7 +129,7 @@
 
         let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
-        function loadNextPage() {
+        async function loadNextPage() {
             $("#spinner").css("display", "block");
             const currentPage = parseInt($("#currentPage").val());
             const nextPage = currentPage + 1;
@@ -139,6 +139,8 @@
             const additionalMediaContentList = Recent.updateRecent(nextPage, activePage);
             mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
             $("#currentPage").val(nextPage);
+
+            return nextPage;
         }
 
         /*<![CDATA[*/
