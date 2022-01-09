@@ -1,10 +1,15 @@
 class Recent {
-    static updateRecent(nextPage,activePage) {
+
+    constructor() {
+        this.rendering = false;
+    }
+
+    updateRecent(nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/recent/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:false,
+            async: true,
             retries: shashin.ajaxRetries
         }
 
@@ -63,7 +68,9 @@ class Recent {
                         mediaContentList.push(centeredObj.mediaContent);
 
                         html += '</div>\n<span class="appendRecentPhotos" style="width:0;height:0;padding:0"></span>\n';
-                        $(html).insertAfter($(".appendRecentPhotos").last())
+                        $(html).insertAfter($(".appendRecentPhotos").last()).ready(function () {
+                            this.rendering = false;
+                        });
 
                         $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
                         $("#timelineModalEdit"+metadata.id).click(function(e) {
