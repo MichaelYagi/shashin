@@ -29,7 +29,7 @@
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:true,
+            async:false,
             retries: shashin.ajaxRetries
         }
 
