@@ -33,8 +33,9 @@
             retries: shashin.ajaxRetries
         }
 
-        const promise = $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album")}).then(function (data) {
+        return await $.ajax(ajaxParams)
+        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album")})
+        .then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
@@ -151,10 +152,6 @@
             }
 
             return mediaContentList;
-        });
-
-        return promise.done(function(data) {
-            return data;
         });
     }
 
