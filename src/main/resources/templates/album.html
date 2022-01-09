@@ -164,8 +164,9 @@
             /*]]>*/
 
             if (albumId > 0) {
-                const additionalMediaContentList = albumSettings.updateAlbum(albumId, nextPage, activePage);
-                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
+                albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
+                    mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
+                });
             }
 
             $("#currentPage").val(nextPage);
