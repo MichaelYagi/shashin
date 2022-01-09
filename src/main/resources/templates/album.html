@@ -156,7 +156,7 @@
 
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
-        async function loadNextPage() {
+        function loadNextPage() {
             const currentPage = parseInt($("#currentPage").val());
             const nextPage = currentPage + 1;
             /*<![CDATA[*/
@@ -169,8 +169,6 @@
             }
 
             $("#currentPage").val(nextPage);
-
-            return nextPage;
         }
 
         /*<![CDATA[*/
