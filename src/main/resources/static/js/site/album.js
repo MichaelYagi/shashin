@@ -24,16 +24,16 @@
         }
     }
 
-    albumSettings.updateAlbum = async function(albumId,nextPage,activePage) {
+    albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
             contentType: 'application/json; charset=utf-8',
-            async:true,
+            async:false,
             retries: shashin.ajaxRetries
         }
 
-        return await $.ajax(ajaxParams)
+        const promise = $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -123,23 +123,19 @@
                                     '<span id="albummodal' + metadata.id + '" style="width:0;height:0;padding:0"></span>\n';
 
                                 // Append HTML
-                                $(html).insertBefore($(".appendAlbumPhotos").last()).ready(function(){
-                                    // Call JS and modal
-                                    $("#albumModalEdit"+metadata.id).attr("tag", JSON.stringify(metadata));
-                                    shashin.setPhotoOverlays(metadata, activePage);
-                                    albumModal.renderAlbumCommentsModal(albumData, metadata, currentUser, albumPhotoCommentsMap);
-                                    albumSettings.activateAlbumListeners(metadata, albumData);
-                                    $("#mediaLink"+metadata.id).attr("tag",JSON.stringify(metadata));
-                                    $("#infoModalEdit"+metadata.id).click(function(e) {
-                                        e.preventDefault();
-                                        const metadataObj = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
-                                        shashin.openInfoModal(metadataObj);
-                                    });
+                                $(html).insertBefore($(".appendAlbumPhotos").last())
 
-                                    return mediaContentList;
+                                // Call JS and modal
+                                $("#albumModalEdit"+metadata.id).attr("tag", JSON.stringify(metadata));
+                                shashin.setPhotoOverlays(metadata, activePage);
+                                albumModal.renderAlbumCommentsModal(albumData, metadata, currentUser, albumPhotoCommentsMap);
+                                albumSettings.activateAlbumListeners(metadata, albumData);
+                                $("#mediaLink"+metadata.id).attr("tag",JSON.stringify(metadata));
+                                $("#infoModalEdit"+metadata.id).click(function(e) {
+                                    e.preventDefault();
+                                    const metadataObj = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
+                                    shashin.openInfoModal(metadataObj);
                                 });
-
-
                             }
                         } else {
                             $(".appendAlbumPhotos").last().text("EOL").css("display","none")
@@ -154,12 +150,12 @@
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none")
             }
 
-            // return mediaContentList;
+            return mediaContentList;
         });
 
-        // return promise.done(function(data) {
-        //     return data;
-        // });
+        return promise.done(function(data) {
+            return data;
+        });
     }
 
     albumSettings.activateAlbumListeners = function(metadata,album) {
