@@ -1,5 +1,5 @@
 class Recent {
-    static updateRecent(nextPage,activePage) {
+    static async updateRecent(nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/recent/"+nextPage,

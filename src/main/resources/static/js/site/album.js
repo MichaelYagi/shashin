@@ -24,7 +24,7 @@
         }
     }
 
-    albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
+    albumSettings.updateAlbum = async function(albumId,nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/album/"+albumId+"/page/"+nextPage,
