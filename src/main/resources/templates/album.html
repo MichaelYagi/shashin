@@ -156,8 +156,7 @@
 
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
-        async function loadNextPage() {
-            let deferred = new $.Deferred();
+        function loadNextPage() {
             const currentPage = parseInt($("#currentPage").val());
             const nextPage = currentPage + 1;
             /*<![CDATA[*/
@@ -165,14 +164,12 @@
             /*]]>*/
 
             if (albumId > 0) {
-                const additionalMediaContentList = albumSettings.updateAlbum(albumId, nextPage, activePage);
-                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
+                albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
+                    mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
+                });
             }
 
             $("#currentPage").val(nextPage);
-
-            deferred.resolve(nextPage);
-            return deferred.promise();
         }
 
         /*<![CDATA[*/
