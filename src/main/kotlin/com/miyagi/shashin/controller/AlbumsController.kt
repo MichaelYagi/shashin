@@ -14,8 +14,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.*
 import javax.transaction.Transactional
 
@@ -593,8 +591,11 @@ class AlbumsController {
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         response["album"] = album.get()
                         response["albumId"] = album.get().getId()
-                        currentUserObj.setPassword("")
-                        response["currentUser"] = currentUserObj
+                        val userCopy = User()
+                        userCopy.setUsername(currentUserObj.getUsername())
+                        userCopy.setAuthority(currentUserObj.getAuthority())
+                        userCopy.setId(currentUserObj.getId())
+                        response["currentUser"] = userCopy
                         response["albumMetadataList"] = albumMetadataList
                         response["msg"] = "Results retrieved"
                         response["status"] = "success"
