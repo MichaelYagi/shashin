@@ -27,7 +27,7 @@
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                                <img th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" th:onError="Util.errorImg(this,[[${metadata.title}]],209)">
+                                <img loading="lazy" th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" th:onError="Util.errorImg(this,[[${metadata.title}]],209)">
 
                                 <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},false)"></div>
 

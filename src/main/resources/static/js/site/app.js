@@ -60,7 +60,7 @@
         $("#metadataId").val(metadata.id);
 
         if (metadata.thumbnailUrlCentered !== null) {
-            $("#propTimelineModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
+            $("#propTimelineModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
         }
 
         if (metadata.title !== null) {
@@ -426,7 +426,7 @@
         $("#metadataId").val(metadata.id);
 
         if (metadata.thumbnailUrlCentered !== null) {
-            $("#propInfoModalThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
+            $("#propInfoModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
         }
 
         Util.populateDetailsInfo(metadata,"propInfoModal");
@@ -446,7 +446,7 @@
         $("#metadataId").val(metadata.id);
 
         if (metadata.thumbnailUrlCentered !== null) {
-            $("#propInfoSidebarThumbnail").html('<img src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
+            $("#propInfoSidebarThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
         }
 
         Util.populateDetailsInfo(metadata,"propInfoSidebar");
@@ -1125,7 +1125,7 @@
             $('.bi-circle-fill').each(function(i, obj) {
                 const metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                thumbnailList += '<img src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="Util.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\',75)">';
+                thumbnailList += '<img loading="lazy" src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="Util.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\',75)">';
             });
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
