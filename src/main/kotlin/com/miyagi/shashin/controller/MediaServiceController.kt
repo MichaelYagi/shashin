@@ -1,10 +1,12 @@
 package com.miyagi.shashin.controller
 
-import com.miyagi.shashin.ShashinApplication
 import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.util.FileUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,9 +20,8 @@ import ws.schild.jave.encode.VideoAttributes
 import ws.schild.jave.encode.enums.X264_PROFILE
 import ws.schild.jave.info.VideoSize
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStream
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.logging.Level
@@ -38,7 +39,8 @@ class MediaServiceController {
 
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
-    fun getVideo(response: HttpServletResponse?, @PathVariable metadataId: String): FileSystemResource? {
+    @Throws(java.io.IOException::class)
+    fun getVideo(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         val metadataCount = metadataRepository.countMetadataById(metadataId)
         if (metadataCount > 0) {
             val metadataObj = metadataRepository.findById(metadataId)
@@ -110,14 +112,25 @@ class MediaServiceController {
 //                    target.delete()
 //                }
             }
-            return FileSystemResource(path)
+
+            val resource = FileSystemResource(path)
+            val headers = HttpHeaders()
+            headers.contentLength = resource.contentLength()
+            if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
+                val typeList = metadataObj.get().getType()!!.split("/")
+                if (typeList.count() == 2) {
+                    headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
+                }
+            }
+            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            return null
+            throw IOException("File Not Found")
         }
     }
 
     @RequestMapping(value = ["/api/v1/video/{metadataId}/download"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
+    @Throws(java.io.IOException::class)
     fun getVideoDownload(response: HttpServletResponse?, @PathVariable metadataId: String): FileSystemResource? {
         val metadataCount = metadataRepository.countMetadataById(metadataId)
         return if (metadataCount > 0) {
@@ -125,33 +138,30 @@ class MediaServiceController {
             val path = metadataObj.get().getPath()!!
             FileSystemResource(path)
         } else {
-            null
+            throw IOException("File Not Found");
         }
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
-    fun getImage(response: HttpServletResponse?, @PathVariable metadataId: String): FileSystemResource? {
+    @Throws(java.io.IOException::class)
+    fun getImage(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
         val metadataCount = metadataRepository.countMetadataById(metadataId)
         return if (metadataCount > 0) {
             val metadataObj = metadataRepository.findById(metadataId)
             val path = metadataObj.get().getPath()!!
-            FileSystemResource(path)
+            val resource = FileSystemResource(path)
+            val headers = HttpHeaders()
+            headers.contentLength = resource.contentLength()
+            if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
+                val typeList = metadataObj.get().getType()!!.split("/")
+                if (typeList.count() == 2) {
+                    headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
+                }
+            }
+            ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            null
-        }
-    }
-
-    @RequestMapping(value = ["/api/v1/audio/{metadataId}"], method = [RequestMethod.GET], produces = ["audio/3gpp","audio/aac","audio/flac","audio/mpeg","audio/mp3","audio/mp4","audio/ogg","audio/wav","audio/webm"])
-    @ResponseBody
-    fun getAudio(response: HttpServletResponse?, @PathVariable metadataId: String): FileSystemResource? {
-        val metadataCount = metadataRepository.countMetadataById(metadataId)
-        return if (metadataCount > 0) {
-            val metadataObj = metadataRepository.findById(metadataId)
-            val path = metadataObj.get().getPath()!!
-            FileSystemResource(path)
-        } else {
-            null
+            throw IOException("File Not Found")
         }
     }
 }
