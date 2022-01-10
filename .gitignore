@@ -3,6 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+node/
 
 ### STS ###
 .apt_generated
@@ -39,7 +40,8 @@ build/
 /sidecar/
 /sidecar_dev/
 /sidecar_test/
-/sidecar/
 /logs/
 /node_modules/
 /jdk-11.0.12/
+.nyc_output
+.mvn/
