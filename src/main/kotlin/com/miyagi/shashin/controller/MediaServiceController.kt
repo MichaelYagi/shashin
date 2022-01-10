@@ -106,9 +106,9 @@ class MediaServiceController {
 
                 }
 
-                if (target.exists()) {
-                    target.delete()
-                }
+//                if (target.exists()) {
+//                    target.delete()
+//                }
             }
             return FileSystemResource(path)
         } else {
