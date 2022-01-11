@@ -167,6 +167,7 @@
 
         let topScroll = true;
         let topOfPage = true;
+        let scrollTimer;
 
         /*<![CDATA[*/
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
@@ -193,6 +194,11 @@
                 topScroll = true;
             }
 
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(function() {
+                $(window).trigger("scrollStop");
+            }, 250);
+
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false) {
                 document.getElementById("container").scrollBy({top: 1});
@@ -217,6 +223,12 @@
         };
         $("#container").on('scroll', scrollHandler);
         //$("main").on('scroll', scrollHandler);
+
+        timelineSettings.reinitLightGalleryInstance();
+
+        $(window).bind("scrollStop", function() {
+            timelineSettings.reinitLightGalleryInstance();
+        });
     });
 </script>
 </body>
