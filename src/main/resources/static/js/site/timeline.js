@@ -605,9 +605,7 @@
                                         mediaContent.width = metadata.originalImageWidth;
                                     }
                                     if ($("#mediaLink" + metadata.id).length === 0) {
-                                        $("#tncentered" + metadata.id).append(html).ready(function () {
-                                            timelineSettings.reinitLightGalleryInstance();
-                                        });
+                                        $("#tncentered" + metadata.id).append(html);
                                     }
 
                                     const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
