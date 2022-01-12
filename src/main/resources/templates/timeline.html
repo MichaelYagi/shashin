@@ -181,6 +181,11 @@
             timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
             timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
+
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(function() {
+                $(window).trigger("scrollStop");
+            }, 1000);
         } else {
             timelineSettings.enableScrollSpy = false;
         }
@@ -223,8 +228,6 @@
         };
         $("#container").on('scroll', scrollHandler);
         //$("main").on('scroll', scrollHandler);
-
-        timelineSettings.reinitLightGalleryInstance();
 
         $(window).bind("scrollStop", function() {
             timelineSettings.reinitLightGalleryInstance();
