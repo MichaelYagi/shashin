@@ -181,12 +181,16 @@
             timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
             timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
-            $(window).trigger("scrollStop");
+            timelineSettings.reinitLightGalleryInstance();
         } else {
             timelineSettings.enableScrollSpy = false;
         }
 
         $('[data-bs-toggle="tooltip"]').tooltip();
+
+        $(window).bind("scrollStop", function() {
+            timelineSettings.reinitLightGalleryInstance();
+        });
 
         const scrollHandler = function (e) {
             let st = $(e.target).scrollTop();
@@ -224,10 +228,6 @@
         };
         $("#container").on('scroll', scrollHandler);
         //$("main").on('scroll', scrollHandler);
-
-        $(window).bind("scrollStop", function() {
-            timelineSettings.reinitLightGalleryInstance();
-        });
     });
 </script>
 </body>
