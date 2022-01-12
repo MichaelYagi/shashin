@@ -199,11 +199,6 @@
                 topScroll = true;
             }
 
-            clearTimeout(scrollTimer);
-            scrollTimer = setTimeout(function() {
-                $(window).trigger("scrollStop");
-            }, 2000);
-
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false) {
                 document.getElementById("container").scrollBy({top: 1});
@@ -224,6 +219,12 @@
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+
+                $(".bi-play-circle").css("visibility", "hidden");
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(function() {
+                    $(window).trigger("scrollStop");
+                }, 2000);
             }
         };
         $("#container").on('scroll', scrollHandler);
