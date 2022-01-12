@@ -202,7 +202,7 @@
             clearTimeout(scrollTimer);
             scrollTimer = setTimeout(function() {
                 $(window).trigger("scrollStop");
-            }, 1000);
+            }, 2000);
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false) {
