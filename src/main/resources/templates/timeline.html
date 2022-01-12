@@ -221,6 +221,7 @@
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
 
                 $(".bi-play-circle").css("visibility", "hidden");
+                $(".mediaLink").unbind('click');
                 clearTimeout(scrollTimer);
                 scrollTimer = setTimeout(function() {
                     $(window).trigger("scrollStop");
