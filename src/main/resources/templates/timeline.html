@@ -181,11 +181,7 @@
             timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
             timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
-
-            clearTimeout(scrollTimer);
-            scrollTimer = setTimeout(function() {
-                $(window).trigger("scrollStop");
-            }, 1000);
+            $(window).trigger("scrollStop");
         } else {
             timelineSettings.enableScrollSpy = false;
         }
