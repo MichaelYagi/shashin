@@ -36,6 +36,7 @@
 
                     setTimeout(() => {
                         shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
+                        $(".bi-play-circle").css("visibility", "visible");
                     }, 500);
                 }
             }, closeTimeout);
