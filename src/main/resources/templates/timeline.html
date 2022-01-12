@@ -224,7 +224,7 @@
                 clearTimeout(scrollTimer);
                 scrollTimer = setTimeout(function() {
                     $(window).trigger("scrollStop");
-                }, 250);
+                }, 1000);
             }
         };
         $("#container").on('scroll', scrollHandler);
