@@ -487,7 +487,7 @@
 
                                 let batchHtml =
                                     '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
-                                    '<div class="input-group-append">\n' +
+                                    '<div class="input-group-append dropup">\n' +
                                     '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineBatchModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                                     '   <div class="dropdown-menu" id="albumNameList">\n';
 
