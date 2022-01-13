@@ -518,135 +518,138 @@
                             for (const index in metadataList) {
                                 const metadata = metadataList[index];
 
-                                let dateReformatted = "";
-                                if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-                                    const dateObj = new Date(metadata.year, metadata.month - 1, metadata.day);
-                                    dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
-                                }
+                                if ($("#image" + metadata.id).withinviewport()) {
 
-                                if ($("#tnbr" + metadata.id + ".thumbnail-br").length === 0) {
-                                    $("#tnbr" + metadata.id).addClass("thumbnail-br");
-                                }
-                                let html = '<a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
-                                    '       <span class="overlayIconBackground">\n' +
-                                    '           <span id="briconcount' + metadata.id + '"></span> <span id="bricon' + metadata.id + '" class="overlayIcon"></span>\n' +
-                                    '       </span>\n' +
-                                    '   </a>';
-                                if ($("#favorite" + metadata.id).length === 0) {
-                                    $("#tnbr" + metadata.id).append(html);
-                                    const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                    const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
-                                    $("#bricon" + metadata.id).addClass(favoriteIcon);
-                                    $("#briconcount" + metadata.id).text(favoriteCount);
-                                }
+                                    let dateReformatted = "";
+                                    if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
+                                        const dateObj = new Date(metadata.year, metadata.month - 1, metadata.day);
+                                        dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
+                                    }
 
-                                if ($("#image" + metadata.id).length === 1) {
-                                    $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall));
-                                    $("#image" + metadata.id).css("background-color", "lightgray");
-                                    $("#image" + metadata.id).attr("onError", "Util.errorImg(this,\'" + metadata.title + "\',209)");
-                                }
+                                    if ($("#tnbr" + metadata.id + ".thumbnail-br").length === 0) {
+                                        $("#tnbr" + metadata.id).addClass("thumbnail-br");
+                                    }
+                                    let html = '<a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
+                                        '       <span class="overlayIconBackground">\n' +
+                                        '           <span id="briconcount' + metadata.id + '"></span> <span id="bricon' + metadata.id + '" class="overlayIcon"></span>\n' +
+                                        '       </span>\n' +
+                                        '   </a>';
+                                    if ($("#favorite" + metadata.id).length === 0) {
+                                        $("#tnbr" + metadata.id).append(html);
+                                        const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                                        const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                                        $("#bricon" + metadata.id).addClass(favoriteIcon);
+                                        $("#briconcount" + metadata.id).text(favoriteCount);
+                                    }
 
-                                if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {
-                                    $("#tnbl" + metadata.id).addClass("thumbnail-bl");
-                                }
+                                    if ($("#image" + metadata.id).length === 1) {
+                                        $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall));
+                                        $("#image" + metadata.id).css("background-color", "lightgray");
+                                        $("#image" + metadata.id).attr("onError", "Util.errorImg(this,\'" + metadata.title + "\',209)");
+                                    }
 
-                                if ($("#tncentered" + metadata.id + ".thumbnail-centered").length === 0) {
-                                    $("#tncentered" + metadata.id).addClass("thumbnail-centered");
-                                }
+                                    if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {
+                                        $("#tnbl" + metadata.id).addClass("thumbnail-bl");
+                                    }
 
-                                const mediaContent = {};
-                                mediaContent.func = shashin.openInfoSidebar;
-                                mediaContent.args = metadata;
-                                mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
-                                //mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
-                                if (metadata.type.indexOf("video") >= 0) {
-                                    mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
-                                    mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
-                                    html =
-                                        '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
-                                        'data-download-url="' + encodeURI(metadata.videoUrl) + '/download" ' +
-                                        'data-metadataid="' + metadata.id + '" ' +
-                                        'data-video="' + Util.encodeHtml(mediaContent.video) + '" ';
-                                    if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
-                                        metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
+                                    if ($("#tncentered" + metadata.id + ".thumbnail-centered").length === 0) {
+                                        $("#tncentered" + metadata.id).addClass("thumbnail-centered");
+                                    }
+
+                                    const mediaContent = {};
+                                    mediaContent.func = shashin.openInfoSidebar;
+                                    mediaContent.args = metadata;
+                                    mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
+                                    //mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
+                                    if (metadata.type.indexOf("video") >= 0) {
+                                        mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
+                                        mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
+                                        html =
+                                            '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
+                                            'data-download-url="' + encodeURI(metadata.videoUrl) + '/download" ' +
+                                            'data-metadataid="' + metadata.id + '" ' +
+                                            'data-video="' + Util.encodeHtml(mediaContent.video) + '" ';
+                                        if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
+                                            metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
+                                            html +=
+                                                'data-lg-size="' + metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight + '-' + metadata.thumbnailSmallWidth + ',' + metadata.originalImageWidth + '-' + metadata.originalImageHeight + '" ' +
+                                                'data-responsive="' + encodeURI(metadata.thumbnailUrlSmall) + ' ' + metadata.thumbnailSmallWidth + '" ' +
+                                                'data-thumb="' + encodeURI(metadata.thumbnailUrlSmall) + '" ' +
+                                                'data-width="' + metadata.originalImageWidth + '"';
+                                        }
                                         html +=
-                                            'data-lg-size="' + metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight + '-' + metadata.thumbnailSmallWidth + ',' + metadata.originalImageWidth + '-' + metadata.originalImageHeight + '" ' +
-                                            'data-responsive="' + encodeURI(metadata.thumbnailUrlSmall) + ' ' + metadata.thumbnailSmallWidth + '" ' +
-                                            'data-thumb="' + encodeURI(metadata.thumbnailUrlSmall) + '" ' +
-                                            'data-width="' + metadata.originalImageWidth + '"';
-                                    }
-                                    html +=
-                                        '>' +
-                                        '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
-                                        '</a>';
+                                            '>' +
+                                            '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
+                                            '</a>';
 
-                                } else {
-                                    mediaContent.src = metadata.thumbnailUrlOriginal;
-                                    mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
-                                    html =
-                                        '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
-                                        'data-download-url="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ' +
-                                        'data-metadataid="' + metadata.id + '" ' +
-                                        'data-src="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ';
-                                    if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
-                                        metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
+                                    } else {
+                                        mediaContent.src = metadata.thumbnailUrlOriginal;
+                                        mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
+                                        html =
+                                            '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
+                                            'data-download-url="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ' +
+                                            'data-metadataid="' + metadata.id + '" ' +
+                                            'data-src="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ';
+                                        if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
+                                            metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
+                                            html +=
+                                                'data-lg-size="' + metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight + '-' + metadata.thumbnailSmallWidth + ',' + metadata.originalImageWidth + '-' + metadata.originalImageHeight + '" ' +
+                                                'data-responsive="' + encodeURI(metadata.thumbnailUrlSmall) + ' ' + metadata.thumbnailSmallWidth + '" ' +
+                                                'data-thumb="' + encodeURI(metadata.thumbnailUrlSmall) + '" ' +
+                                                'data-width="' + metadata.originalImageWidth + '"';
+                                        }
                                         html +=
-                                            'data-lg-size="' + metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight + '-' + metadata.thumbnailSmallWidth + ',' + metadata.originalImageWidth + '-' + metadata.originalImageHeight + '" ' +
-                                            'data-responsive="' + encodeURI(metadata.thumbnailUrlSmall) + ' ' + metadata.thumbnailSmallWidth + '" ' +
-                                            'data-thumb="' + encodeURI(metadata.thumbnailUrlSmall) + '" ' +
-                                            'data-width="' + metadata.originalImageWidth + '"';
+                                            '>' +
+                                            '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
+                                            '</a>';
                                     }
-                                    html +=
-                                        '>' +
-                                        '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
-                                        '</a>';
-                                }
-                                if (metadata.originalImageWidth !== null) {
-                                    mediaContent.width = metadata.originalImageWidth;
-                                }
-                                if ($("#mediaLink" + metadata.id).length === 0) {
-                                    $("#tncentered" + metadata.id).append(html);
-                                }
-
-                                const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
-                                html = '<a href="#" id="timelineModalEdit' + metadata.id + '" data-bs-target="#propTimelinModal"><span class="' + editIcon + '" style="font-size: 1rem;color: lightgray;"></span></a>';
-                                if ($("#timelineModalEdit" + metadata.id).length === 0) {
-                                    $("#tnbl" + metadata.id).append(html);
-                                    $("#timelineModalEdit" + metadata.id).attr("tag", JSON.stringify(metadata));
-                                    $("#timelineModalEdit" + metadata.id).click(function (e) {
-                                        e.preventDefault();
-
-                                        const metadataObj = JSON.parse($(this).attr("tag"));
-                                        shashin.openEditMetadataModal(metadataObj, recognitionLabels, labelPhotoMap[metadataObj.id], albumList, albumMap[metadataObj.id]);
-                                    });
-                                }
-
-                                html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
-                                if ($("#select" + metadata.id).length === 0) {
-                                    $("#tntl" + metadata.id).append(html);
-                                }
-                                if ($("#tntl" + metadata.id + ".thumbnail-tl").length === 0) {
-                                    $("#tntl" + metadata.id).addClass("thumbnail-tl");
-                                    shashin.setPhotoOverlays(metadata, "timeline")
-                                    timelineSettings.activateMetadataListeners(metadata);
-                                }
-
-                                if (metadata.type.indexOf("video") >= 0) {
-                                    const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                    html = '<span class="overlayIconBackground">' + duration + '&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>';
-                                    if ($("#video" + metadata.id).length === 0) {
-                                        $("#tntr" + metadata.id).append(html);
+                                    if (metadata.originalImageWidth !== null) {
+                                        mediaContent.width = metadata.originalImageWidth;
                                     }
-                                    if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                                        $("#tntr" + metadata.id).addClass("thumbnail-tr");
+                                    if ($("#mediaLink" + metadata.id).length === 0) {
+                                        $("#tncentered" + metadata.id).append(html);
                                     }
-                                } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
-                                    html = '<span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>';
-                                    if ($("#panorama" + metadata.id).length === 0) {
-                                        $("#tntr" + metadata.id).append(html);
+
+                                    const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
+                                    html = '<a href="#" id="timelineModalEdit' + metadata.id + '" data-bs-target="#propTimelinModal"><span class="' + editIcon + '" style="font-size: 1rem;color: lightgray;"></span></a>';
+                                    if ($("#timelineModalEdit" + metadata.id).length === 0) {
+                                        $("#tnbl" + metadata.id).append(html);
+                                        $("#timelineModalEdit" + metadata.id).attr("tag", JSON.stringify(metadata));
+                                        $("#timelineModalEdit" + metadata.id).click(function (e) {
+                                            e.preventDefault();
+
+                                            const metadataObj = JSON.parse($(this).attr("tag"));
+                                            shashin.openEditMetadataModal(metadataObj, recognitionLabels, labelPhotoMap[metadataObj.id], albumList, albumMap[metadataObj.id]);
+                                        });
                                     }
-                                    if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                                        $("#tntr" + metadata.id).addClass("thumbnail-tr");
+
+                                    html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
+                                    if ($("#select" + metadata.id).length === 0) {
+                                        $("#tntl" + metadata.id).append(html);
+                                    }
+                                    if ($("#tntl" + metadata.id + ".thumbnail-tl").length === 0) {
+                                        $("#tntl" + metadata.id).addClass("thumbnail-tl");
+                                        shashin.setPhotoOverlays(metadata, "timeline")
+                                        timelineSettings.activateMetadataListeners(metadata);
+                                    }
+
+                                    if (metadata.type.indexOf("video") >= 0) {
+                                        const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
+                                        html = '<span class="overlayIconBackground">' + duration + '&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>';
+                                        if ($("#video" + metadata.id).length === 0) {
+                                            $("#tntr" + metadata.id).append(html);
+                                        }
+                                        if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                                            $("#tntr" + metadata.id).addClass("thumbnail-tr");
+                                        }
+                                    } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
+                                        html = '<span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>';
+                                        if ($("#panorama" + metadata.id).length === 0) {
+                                            $("#tntr" + metadata.id).append(html);
+                                        }
+                                        if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                                            $("#tntr" + metadata.id).addClass("thumbnail-tr");
+                                        }
                                     }
                                 }
                             }
