@@ -65,6 +65,7 @@
 
                         if (albumMetadataList.length > 0) {
                             const mediaLinkLength = $(".mediaLink").length;
+
                             for (const index in albumMetadataList) {
                                 let html = "";
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));

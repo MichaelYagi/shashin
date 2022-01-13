@@ -16,6 +16,9 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentlat" name="currentlat">
             <input type="hidden" id="currentlng" name="currentlng">
+            <input type="hidden" id="currentyear" name="currentyear">
+            <input type="hidden" id="currentmonth" name="currentmonth">
+            <input type="hidden" id="currentday" name="currentday">
             <input type="hidden" id="currentfilename" name="currentfilename">
             <input type="hidden" id="currentPage" name="currentPage" value="0">
 
@@ -24,6 +27,15 @@
                     <h1 th:text="'Results for \''+${searchTerm}+'\''"></h1>
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${metadataSearchList}">
+
+                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataSearchList[iterStat.index-1].year==metadata.year and metadataSearchList[iterStat.index-1].month==metadata.month and metadataSearchList[iterStat.index-1].day==metadata.day}">
+                                <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                    <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                        <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM d, yyyy')}"></strong></p></section>
+                                    </th:block>
+                                </th:block>
+                            </th:block>
+                            
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
@@ -81,6 +93,8 @@
 
         let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
+        const searchInstance = new Search();
+
         function loadNextPage() {
             $("#spinner").css("display","block");
             const currentPage = parseInt($("#currentPage").val());
@@ -89,14 +103,26 @@
             const activePage = /*[[${activePage}]]*/ 'search';
             const searchTerm = /*[[${searchTerm}]]*/ '';
             /*]]>*/
-            Search.updateSearch(nextPage,searchTerm,activePage).then(function(additionalMediaContentList) {
+            searchInstance.updateSearch(nextPage,searchTerm,activePage).then(function(additionalMediaContentList) {
                 mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);
         }
 
         /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendSearchPhotos", /*[[${metadataSearchList}]]*/ '[]',true);
+        shashin.pageLoader(loadNextPage, ".appendSearchPhotos", /*[[${metadataSearchList}]]*/ '[]',true, function () {
+            const refreshIntervalId = window.setInterval(function () {
+                if ($(".appendSearchPhotos").last().text() === "EOL" || /*[[${metadataSearchList}]]*/ '[]' === '' || /*[[${metadataSearchList}]]*/ '[]' === '[]') {
+                    searchInstance.rendering = false;
+                    clearInterval(refreshIntervalId);
+                } else if (searchInstance.rendering === false && (Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(".appendSearchPhotos").last().text() !== "EOL") {
+                    clearInterval(refreshIntervalId);
+                    loadNextPage();
+                } else if (searchInstance.rendering === false && !(Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(".appendSearchPhotos").last().text() !== "EOL") {
+                    clearInterval(refreshIntervalId);
+                }
+            }, 200);
+        });
         /*]]>*/
 
         $('[data-bs-toggle="tooltip"]').tooltip();

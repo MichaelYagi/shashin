@@ -14,8 +14,13 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
-            <input type="hidden" id="currentPage" name="currentPage" value="0">
+            <input type="hidden" id="currentlat" name="currentlat">
+            <input type="hidden" id="currentlng" name="currentlng">
+            <input type="hidden" id="currentyear" name="currentyear">
+            <input type="hidden" id="currentmonth" name="currentmonth">
+            <input type="hidden" id="currentday" name="currentday">
             <input type="hidden" id="currentfilename" name="currentfilename">
+            <input type="hidden" id="currentPage" name="currentPage" value="0">
 
             <div id="favoritesMessage"></div>
             <div id="infinite-scroll-gallery">
@@ -23,6 +28,15 @@
                     <h1>Favorites</h1>
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
+
+                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
+                                <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                    <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                        <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM d, yyyy')}"></strong></p></section>
+                                    </th:block>
+                                </th:block>
+                            </th:block>
+                            
                             <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
@@ -72,20 +86,34 @@
     $(document).ready(function() {
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
+        const favoritesInstance = new Favorites();
+
         function loadNextPage() {
             const currentPage = parseInt($("#currentPage").val());
             const nextPage = currentPage + 1;
             /*<![CDATA[*/
             const activePage = /*[[${activePage}]]*/ 'favorites';
             /*]]>*/
-            Favorites.updateFavorites(nextPage,activePage).then(function(additionalMediaContentList) {
+            favoritesInstance.updateFavorites(nextPage,activePage).then(function(additionalMediaContentList) {
                 mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
             });
             $("#currentPage").val(nextPage);
         }
 
         /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendMetadataPhotos", /*[[${metadataList}]]*/ '[]',true);
+        shashin.pageLoader(loadNextPage, ".appendMetadataPhotos", /*[[${metadataList}]]*/ '[]',true, function () {
+            const refreshIntervalId = window.setInterval(function () {
+                if ($(".appendMetadataPhotos").last().text() === "EOL" || /*[[${metadataList}]]*/ '[]' === '' || /*[[${metadataList}]]*/ '[]' === '[]') {
+                    favoritesInstance.rendering = false;
+                    clearInterval(refreshIntervalId);
+                } else if (favoritesInstance.rendering === false && (Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(".appendMetadataPhotos").last().text() !== "EOL") {
+                    clearInterval(refreshIntervalId);
+                    loadNextPage();
+                } else if (favoritesInstance.rendering === false && !(Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(".appendMetadataPhotos").last().text() !== "EOL") {
+                    clearInterval(refreshIntervalId);
+                }
+            }, 200);
+        });
         /*]]>*/
 
         $('[data-bs-toggle="tooltip"]').tooltip();
