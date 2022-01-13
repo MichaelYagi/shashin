@@ -5,6 +5,8 @@ class Favorites {
     }
 
     updateFavorites(nextPage,activePage) {
+        this.rendering = true;
+
         const ajaxParams = {
             type: 'get',
             url: "/favorites/" + nextPage,
@@ -77,15 +79,18 @@ class Favorites {
                             }
                         } else {
                             $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                            this.rendering = false;
                         }
                     }
                 } else {
                     $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                    this.rendering = false;
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
                 $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                this.rendering = false;
             }
 
             return mediaContentList;

@@ -5,6 +5,8 @@ class Search {
     }
 
     updateSearch(nextPage,searchTerm,activePage) {
+        this.rendering = true;
+
         const ajaxParams = {
             type: 'get',
             url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
@@ -69,9 +71,11 @@ class Search {
                     }
                 } else {
                     $(".appendSearchPhotos").last().text("EOL").css("display","none")
+                    this.rendering = false;
                 }
             } else {
                 $(".appendSearchPhotos").last().text("EOL").css("display","none")
+                this.rendering = false;
             }
 
             $("#spinner").css("display","none");

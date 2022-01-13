@@ -248,6 +248,19 @@
         }
     }
 
+    shashin.checkRender = function (func, appendClass, list, renderConditionVar) {
+        const refreshIntervalId = window.setInterval(function () {
+            if ($(appendClass).last().text() === "EOL" || list === '' || list === '[]') {
+                clearInterval(refreshIntervalId);
+            } else if (renderConditionVar === false && (Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(appendClass).last().text() !== "EOL") {
+                clearInterval(refreshIntervalId);
+                func();
+            } else if (renderConditionVar === false && !(Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(appendClass).last().text() !== "EOL") {
+                clearInterval(refreshIntervalId);
+            }
+        }, 200);
+    }
+
     shashin.pageLoader = function(func, appendClass, list, conditionOnNext, callback) {
         const refreshIntervalId = window.setInterval(function () {
             if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
