@@ -5,6 +5,8 @@ class Recent {
     }
 
     updateRecent(nextPage,activePage) {
+        this.rendering = true;
+
         const ajaxParams = {
             type: 'get',
             url: "/recent/"+nextPage,
@@ -85,10 +87,12 @@ class Recent {
                         html = "";
                     }
                 } else {
-                    $(".appendRecentPhotos").last().text("EOL").css("display","none")
+                    $(".appendRecentPhotos").last().text("EOL").css("display","none");
+                    this.rendering = false;
                 }
             } else {
-                $(".appendRecentPhotos").last().text("EOL").css("display","none")
+                $(".appendRecentPhotos").last().text("EOL").css("display","none");
+                this.rendering = false;
             }
 
             $("#spinner").css("display","none");

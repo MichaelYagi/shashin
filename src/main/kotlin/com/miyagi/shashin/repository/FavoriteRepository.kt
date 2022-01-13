@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository
 @Repository
 interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     fun findByMetadataIdAndUserId(metdataId: String?, userId: Int?): Favorite?
-    @Query("SELECT * FROM favorite WHERE user_id = :userId LIMIT :offset, :limit", nativeQuery = true)
+    @Query("SELECT f.* FROM favorite f INNER JOIN metadata m on m.id = f.metadata_id WHERE f.user_id = :userId ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit ", nativeQuery = true)
     fun findAllByUserIdAndOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Favorite?>?
     fun findAllByUserId(userId: Int?): MutableIterable<Favorite?>?
     fun findAllByMetadataIdAndUserId(metadataId: String?, userId: Int?): MutableIterable<Favorite?>?

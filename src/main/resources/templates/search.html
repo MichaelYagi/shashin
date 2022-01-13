@@ -111,17 +111,7 @@
 
         /*<![CDATA[*/
         shashin.pageLoader(loadNextPage, ".appendSearchPhotos", /*[[${metadataSearchList}]]*/ '[]',true, function () {
-            const refreshIntervalId = window.setInterval(function () {
-                if ($(".appendSearchPhotos").last().text() === "EOL" || /*[[${metadataSearchList}]]*/ '[]' === '' || /*[[${metadataSearchList}]]*/ '[]' === '[]') {
-                    searchInstance.rendering = false;
-                    clearInterval(refreshIntervalId);
-                } else if (searchInstance.rendering === false && (Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(".appendSearchPhotos").last().text() !== "EOL") {
-                    clearInterval(refreshIntervalId);
-                    loadNextPage();
-                } else if (searchInstance.rendering === false && !(Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(".appendSearchPhotos").last().text() !== "EOL") {
-                    clearInterval(refreshIntervalId);
-                }
-            }, 200);
+            shashin.checkRender(loadNextPage, ".appendSearchPhotos", /*[[${metadataSearchList}]]*/ '[]', searchInstance.rendering);
         });
         /*]]>*/
 

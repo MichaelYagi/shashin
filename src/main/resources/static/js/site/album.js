@@ -146,16 +146,19 @@
                                 });
                             }
                         } else {
-                            $(".appendAlbumPhotos").last().text("EOL").css("display","none")
+                            $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                            albumSettings.rendering = false;
                         }
                     }
                 } else {
-                    $(".appendAlbumPhotos").last().text("EOL").css("display","none")
+                    $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                    albumSettings.rendering = false;
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
-                $(".appendAlbumPhotos").last().text("EOL").css("display","none")
+                $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                albumSettings.rendering = false;
             }
 
             return mediaContentList;
