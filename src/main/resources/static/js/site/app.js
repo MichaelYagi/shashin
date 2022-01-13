@@ -112,7 +112,7 @@
             $("#recognitionLabelInput").remove();
         }
         if (recognitionLabels !== null && recognitionLabels.length > 0) {
-            let html = '<div class="input-group-append dropup" id="recognitionLabelInput">\n' +
+            let html = '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
                 '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                 '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
 
@@ -155,7 +155,7 @@
         }
         if (allAlbumList !== null && allAlbumList.length > 0) {
             let html =
-                '<div class="input-group-append dropup" id="albumListInput">\n' +
+                '<div class="input-group-append dropdown" id="albumListInput">\n' +
                 '   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleAlbumDropdown(\'' + metadata.id + '\');" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                 '   <div class="dropdown-menu" id="albumsList">\n';
 
