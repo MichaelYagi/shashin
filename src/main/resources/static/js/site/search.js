@@ -1,5 +1,10 @@
 class Search {
-    static updateSearch(nextPage,searchTerm,activePage) {
+
+    constructor() {
+        this.rendering = false;
+    }
+
+    updateSearch(nextPage,searchTerm,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
@@ -8,7 +13,7 @@ class Search {
             retries: shashin.ajaxRetries
         }
 
-        const promise = $.ajax(ajaxParams)
+        return $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating search")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
@@ -21,6 +26,15 @@ class Search {
                     for (const index in metadataList) {
                         const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                         const metadata = metadataList[index];
+
+                        const dateHeadingCount = $(".dateSection").length;
+                        const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                        const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
+                        const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+
+                        if (lastDateHeading !== currentDate) {
+                            html += '<section class="dateSection" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
+                        }
 
                         html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                         html +=
@@ -38,7 +52,9 @@ class Search {
                         mediaContentList.push(centeredObj.mediaContent);
 
                         html += '</div>\n<span class="appendSearchPhotos" style="width:0;height:0;padding:0"></span>\n';
-                        $(html).insertAfter($(".appendSearchPhotos").last())
+                        $(html).insertAfter($(".appendSearchPhotos").last()).ready(function () {
+                            this.rendering = false;
+                        });
 
                         shashin.setPhotoOverlays(metadata, activePage);
                         Util.activateMetadataListeners(metadata);
@@ -61,10 +77,6 @@ class Search {
             $("#spinner").css("display","none");
 
             return mediaContentList;
-        });
-
-        return promise.done(function(data) {
-            return data;
         });
     }
 }

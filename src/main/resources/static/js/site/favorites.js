@@ -1,5 +1,10 @@
 class Favorites {
-    static updateFavorites(nextPage,activePage) {
+
+    constructor() {
+        this.rendering = false;
+    }
+
+    updateFavorites(nextPage,activePage) {
         const ajaxParams = {
             type: 'get',
             url: "/favorites/" + nextPage,
@@ -9,7 +14,7 @@ class Favorites {
         }
 
         // Get paged results
-        const promise = $.ajax(ajaxParams)
+        return $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating favorites")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -27,6 +32,15 @@ class Favorites {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = metadataList[index];
 
+                                const dateHeadingCount = $(".dateSection").length;
+                                const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                                const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
+                                const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+
+                                if (lastDateHeading !== currentDate) {
+                                    html += '<section class="dateSection" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
+                                }
+
                                 html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
                                     '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
                                     '   <img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="Util.errorImg(this,\'' + metadata.title + '\',209)">\n';
@@ -42,7 +56,9 @@ class Favorites {
                                 html += centeredObj.html;
                                 mediaContentList.push(centeredObj.mediaContent);
 
-                                $(html).insertBefore($(".appendMetadataPhotos").last())
+                                $(html).insertBefore($(".appendMetadataPhotos").last()).ready(function () {
+                                    this.rendering = false;
+                                });
 
                                 shashin.setPhotoOverlays(metadata, activePage);
 
@@ -73,10 +89,6 @@ class Favorites {
             }
 
             return mediaContentList;
-        });
-
-        return promise.done(function(data) {
-            return data;
         });
     }
 }
