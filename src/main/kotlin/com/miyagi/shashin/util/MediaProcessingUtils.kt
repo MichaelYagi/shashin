@@ -297,7 +297,11 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                     val latDegree = latArray[0].dropLast(1).toDouble()
                                     val latMinute = latArray[1].dropLast(1).toDouble()
                                     val latSeconds = latArray[2].dropLast(1).toDouble()
-                                    val latTotalSeconds = (((latMinute * 60) + latSeconds) / 3600)
+                                    var denominator = 3600
+                                    if (latMinute == 0.0) {
+                                        denominator = 36
+                                    }
+                                    val latTotalSeconds = (((latMinute * 60) + latSeconds) / denominator)
                                     latDecimal = latDegree.toString().dropLast(1) + latTotalSeconds.toString().drop(2)
                                 }
                                 lat = latDecimal
@@ -318,7 +322,11 @@ class MediaProcessingUtils(private var apiVersion: String?, private var geocodeU
                                     val lngDegree = lngArray[0].dropLast(1).toDouble()
                                     val lngMinute = lngArray[1].dropLast(1).toDouble()
                                     val lngSeconds = lngArray[2].dropLast(1).toDouble()
-                                    val lngTotalSeconds = (((lngMinute * 60) + lngSeconds) / 3600)
+                                    var denominator = 3600
+                                    if (lngMinute == 0.0) {
+                                        denominator = 36
+                                    }
+                                    val lngTotalSeconds = (((lngMinute * 60) + lngSeconds) / denominator)
                                     lngDecimal = lngDegree.toString().dropLast(1) + lngTotalSeconds.toString().drop(2)
                                 }
                                 lng = lngDecimal
