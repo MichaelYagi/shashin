@@ -432,7 +432,7 @@ function showMap(mapdata,authority) {
         metadataIdList.push($("#mapMetadataId").val());
 
         const data = {
-            "batchMetadataIds": JSON.stringify(metadataIdList),
+            "batchMetadataIds": metadataIdList,
             "latlngBatchData": $("#locationDataInput").val()
         };
 
