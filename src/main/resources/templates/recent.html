@@ -132,18 +132,16 @@
         const recentInstance = new Recent();
 
         function loadNextPage() {
-            if (recentInstance.rendering === false) {
-                $("#spinner").css("display", "block");
-                const currentPage = parseInt($("#currentPage").val());
-                const nextPage = currentPage + 1;
-                /*<![CDATA[*/
-                const activePage = /*[[${activePage}]]*/ 'recent';
-                /*]]>*/
-                recentInstance.updateRecent(nextPage, activePage).then(function (additionalMediaContentList) {
-                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
-                });
-                $("#currentPage").val(nextPage);
-            }
+            $("#spinner").css("display", "block");
+            const currentPage = parseInt($("#currentPage").val());
+            const nextPage = currentPage + 1;
+            /*<![CDATA[*/
+            const activePage = /*[[${activePage}]]*/ 'recent';
+            /*]]>*/
+            recentInstance.updateRecent(nextPage, activePage).then(function (additionalMediaContentList) {
+                mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+            });
+            $("#currentPage").val(nextPage);
         }
 
         /*<![CDATA[*/
