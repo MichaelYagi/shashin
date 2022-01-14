@@ -405,6 +405,7 @@ function showMap(mapdata,authority) {
 
     $('#propMetadataLocation').on('hide.bs.modal', function () {
         $("#locationMapResponseMsg").html("");
+        $("#saveMetadata").prop('disabled', false);
         $("#metadataLocationModalStatus").attr("class","spinner-grow me-auto");
         $("#metadataLocationModalStatus").css("visibility","hidden");
         $(this).find(':input').val('');
