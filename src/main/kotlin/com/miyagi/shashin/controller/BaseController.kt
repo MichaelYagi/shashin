@@ -140,7 +140,7 @@ class BaseController {
             cookie.isHttpOnly = true
             cookie.maxAge = 0
             response.addCookie(cookie)
-            logger.log(Level.WARNING, "Error getting authority: " + e.message)
+            logger.log(Level.INFO, "Not logged in.")
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
 
