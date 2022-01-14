@@ -19,7 +19,9 @@
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description) {
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
-        if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
+        if (xhr.status === 403) {
+            $(location).prop('href', '/users/login');
+        } else if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
             $.ajax(ajaxParams).fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, description)});
         }
     }
