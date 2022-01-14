@@ -38,6 +38,9 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
     @Autowired
     private val authSuccessHandler: AuthSuccessHandler? = null
 
+    @Value("\${app.api.version}")
+    private val apiVersion: String? = null
+
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
@@ -107,7 +110,7 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
             .csrf().disable()
 
         http.exceptionHandling()
-            .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login"))
+            .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login", apiVersion))
 
         http.sessionManagement()
             .maximumSessions(100)
