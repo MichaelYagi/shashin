@@ -1,5 +1,6 @@
 package com.miyagi.shashin.configuration
 
+import com.miyagi.shashin.component.AjaxAwareAuthenticationEntryPoint
 import com.miyagi.shashin.component.AuthFailureHandler
 import com.miyagi.shashin.component.AuthSuccessHandler
 import org.springframework.beans.factory.annotation.Autowired
@@ -105,11 +106,14 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
                 .and()
             .csrf().disable()
 
+        http.exceptionHandling()
+            .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login"))
+
         http.sessionManagement()
             .maximumSessions(100)
             .maxSessionsPreventsLogin(false)
             .expiredUrl("/users/login")
-            .sessionRegistry(sessionRegistry());
+            .sessionRegistry(sessionRegistry())
     }
 
     @Bean
