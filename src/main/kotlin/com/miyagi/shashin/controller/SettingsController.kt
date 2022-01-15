@@ -11,7 +11,8 @@ import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.MediaProcessingUtils
+import com.miyagi.shashin.util.ImageProcessing
+import com.miyagi.shashin.util.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
@@ -44,8 +45,6 @@ import java.io.FileWriter
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -952,17 +951,19 @@ class SettingsController {
                 if (file.isFile && !alreadyScannedFilepaths.contains(file.path)) {
                     if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
 
-                        val mediaProcessingUtils = MediaProcessingUtils(apiVersion,geocodeUrl)
+                        //val mediaProcessingUtils = MediaProcessing(apiVersion,geocodeUrl)
                         var metadataObj: Metadata? = Metadata()
 
                         if (!shouldStop.get() && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
-                            metadataObj = mediaProcessingUtils.populateMetadata(file, sidecarDir, metadataObj)
+                            val metadataProcessing = MetadataProcessing(apiVersion!!, file, sidecarDir, metadataObj!!, geocodeUrl!!)
+                            metadataObj = metadataProcessing.populateMetadata()
                             if (metadataObj != null && metadataObj.getId().isNotEmpty()) {
                                 // Check for entry
                                 val metadataCount = metadataRepository?.countMetadataById(metadataObj.getId())
 
                                 if (metadataCount == 0) {
-                                    metadataObj = mediaProcessingUtils.createThumbnails(file, sidecarDir, metadataObj)
+                                    val imageProcessing = ImageProcessing(apiVersion, file, sidecarDir, metadataObj)
+                                    metadataObj = imageProcessing.createThumbnails()
                                     if (metadataObj != null) {
                                         metadataObj.setHidden(false)
 
