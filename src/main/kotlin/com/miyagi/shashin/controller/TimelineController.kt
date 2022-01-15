@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.util.MediaProcessingUtils
+import com.miyagi.shashin.util.MetadataProcessing
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.timeOffsets
@@ -21,7 +21,6 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
-import javax.servlet.http.HttpServletRequest
 import javax.transaction.Transactional
 import kotlin.collections.HashMap
 
@@ -453,13 +452,13 @@ class TimelineController {
             // Update DB
             metadataRepository.save(metadataObj.get())
             // Update MD file
-            val mediaProcessingUtils = MediaProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+            //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
             val originalImagePath = metadataObj.get().getPath()
             var rootDir: String? = null
             val rootMediaDirs = mediaDirRepository.findAll()
             for (rootmediaDir in rootMediaDirs) {
                 if (originalImagePath != null && rootmediaDir != null) {
-                    if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                    if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
                         rootDir = rootmediaDir.getDirectory()
                         break
                     }
@@ -467,7 +466,7 @@ class TimelineController {
             }
 
             if (rootDir != null) {
-                mediaProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
+                MetadataProcessing.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
             }
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -737,13 +736,13 @@ class TimelineController {
             // Update DB
             metadataRepository.save(metadataObj.get())
             // Update MD file
-            val mediaProcessingUtils = MediaProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+            //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
             val originalImagePath = metadataObj.get().getPath()
             var rootDir: String? = null
             val rootMediaDirs = mediaDirRepository.findAll()
             for (rootmediaDir in rootMediaDirs) {
                 if (originalImagePath != null && rootmediaDir != null) {
-                    if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                    if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
                         rootDir = rootmediaDir.getDirectory()
                         break
                     }
@@ -751,7 +750,7 @@ class TimelineController {
             }
 
             if (rootDir != null) {
-                mediaProcessingUtils.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
+                MetadataProcessing.saveMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
             }
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -807,21 +806,21 @@ class TimelineController {
                 metadataRepository.saveAll(metadataList)
 
                 // Update MD file
-                val mediaProcessingUtils = MediaProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+                //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
                 for (metadata in metadataList) {
                     val originalImagePath = metadata.getPath()
                     var rootDir: String? = null
                     val rootMediaDirs = mediaDirRepository.findAll()
                     for (rootmediaDir in rootMediaDirs) {
                         if (originalImagePath != null && rootmediaDir != null) {
-                            if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                            if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
                                 rootDir = rootmediaDir.getDirectory()
                                 break
                             }
                         }
                     }
                     if (rootDir != null) {
-                        mediaProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
+                        MetadataProcessing.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
                     }
                 }
                 resp["msg"] = "Saved!"
@@ -1044,21 +1043,22 @@ class TimelineController {
                 metadataRepository.saveAll(metadataList)
 
                 // Update MD file
-                val mediaProcessingUtils = MediaProcessingUtils(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
+                //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
                 for (metadata in metadataList) {
                     val originalImagePath = metadata.getPath()
                     var rootDir: String? = null
                     val rootMediaDirs = mediaDirRepository.findAll()
                     for (rootmediaDir in rootMediaDirs) {
                         if (originalImagePath != null && rootmediaDir != null) {
-                            if (originalImagePath.replace('\\', '/').contains(rootmediaDir.getDirectory().toString())) {
+                            if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
                                 rootDir = rootmediaDir.getDirectory()
                                 break
                             }
                         }
                     }
+
                     if (rootDir != null) {
-                        mediaProcessingUtils.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
+                        MetadataProcessing.saveMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
                     }
                 }
                 resp["msg"] = "Saved!"
