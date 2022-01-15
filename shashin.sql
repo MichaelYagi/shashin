@@ -160,7 +160,8 @@ CREATE TABLE `comment` (
     `comment` VARCHAR,
     `userId` INT,
     `createdAt` DATETIME DEFAULT NULL,
-    `modifiedAt` DATETIME DEFAULT NULL
+    `modifiedAt` DATETIME DEFAULT NULL,
+    FOREIGN KEY (`userId`) REFERENCES user(`id`)
 );
 
 DROP TABLE IF EXISTS `albumcomment`;
@@ -201,7 +202,11 @@ CREATE TABLE `notification` (
     `message` VARCHAR,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL,
-    FOREIGN KEY (`userId`) REFERENCES user(`id`)
+    FOREIGN KEY (`userId`) REFERENCES user(`id`),
+    FOREIGN KEY (`albumId`) REFERENCES album(`id`),
+    FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`),
+    FOREIGN KEY (`commentId`) REFERENCES comment(`id`),
+    FOREIGN KEY (`favoriteId`) REFERENCES favorite(`id`)
 );
 
 INSERT INTO `hibernate_sequence` VALUES (362);
