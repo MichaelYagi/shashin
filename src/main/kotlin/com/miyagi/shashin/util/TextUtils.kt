@@ -19,6 +19,17 @@ class TextUtils {
 
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
 
+        fun isNumber(input: String): Boolean {
+            val integerChars = '0'..'9'
+            var dotOccurred = 0
+            return input.all { it in integerChars || it == '.' && dotOccurred++ < 1 }
+        }
+
+        fun isInteger(input: String) = input.all {
+            val integerChars = '0'..'9'
+            it in integerChars
+        }
+
         fun formatToLongDate(oldDate: String): String {
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
             val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")

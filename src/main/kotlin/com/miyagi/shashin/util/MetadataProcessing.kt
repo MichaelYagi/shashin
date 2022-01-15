@@ -8,7 +8,6 @@ import com.miyagi.shashin.model.Metadata
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.core.io.FileSystemResource
 import java.io.File
-import java.lang.Double
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
 import java.text.SimpleDateFormat
@@ -133,14 +132,8 @@ class MetadataProcessing() {
                             "Orientation" -> {
                                 if (tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) {
                                     val digit = tag.description.filter { it.isDigit() }
-                                    var numeric = true
 
-                                    try {
-                                        Double.parseDouble(digit)
-                                    } catch (e: NumberFormatException) {
-                                        numeric = false
-                                    }
-                                    if (numeric) {
+                                    if (TextUtils.isInteger(digit)) {
                                         rotation = digit.toInt()
                                     }
                                 }
