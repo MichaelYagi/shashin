@@ -14,7 +14,6 @@ import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
 import java.io.File
 import java.io.IOException
-import java.lang.Double
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -38,14 +37,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         "Orientation" -> {
                             if (tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) {
                                 val digit = tag.description.filter { it.isDigit() }
-                                var numeric = true
 
-                                try {
-                                    Double.parseDouble(digit)
-                                } catch (e: NumberFormatException) {
-                                    numeric = false
-                                }
-                                if (numeric) {
+                                if (TextUtils.isInteger(digit)) {
                                     rotation = digit.toInt()
                                 }
                             }

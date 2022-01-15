@@ -23,11 +23,9 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.lang.Double.parseDouble
 import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.text.DecimalFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.logging.Level
