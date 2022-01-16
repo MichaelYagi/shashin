@@ -14,3 +14,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed editing lat/lng on map photo view
 - Fixed processing lat/lng
 - Improved API response for unauthorized requests
+- Fixed map icon flickering
