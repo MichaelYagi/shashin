@@ -63,21 +63,6 @@ function showMap(mapdata,authority) {
         $("#propMetadataLocation").modal('show');
     }
 
-    function createMapStyle(feature) {
-        const mapMarkerUrl = feature.get('mapMarkerUrl');
-
-        return new ol.style.Style({
-            geometry: feature.getGeometry(),
-            image: new ol.style.Icon(({
-                anchor: [0.5, 46],
-                anchorXUnits: 'fraction',
-                anchorYUnits: 'pixels',
-                opacity: 1.0,
-                src: encodeURI(mapMarkerUrl)
-            }))
-        });
-    }
-
     let maxFeatureCount;
     let vector = null;
     const calculateClusterInfo = function (resolution) {
@@ -124,10 +109,12 @@ function showMap(mapdata,authority) {
             calculateClusterInfo(resolution);
             currentResolution = resolution;
         }
-        let style;
-        const size = feature.get('features').length;
+
+        const features = feature.get('features');
+        const size = features.length;
+
         if (size > 1) {
-            style = new ol.style.Style({
+            return new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: feature.get('radius'),
                     fill: new ol.style.Fill({
@@ -142,10 +129,9 @@ function showMap(mapdata,authority) {
                 }),
             });
         } else {
-            const originalFeature = feature.get('features')[0];
-            style = createMapStyle(originalFeature);
+            const originalFeature = features[0];
+            return originalFeature.get('mapMarkerIcon');
         }
-        return style;
     }
 
     function selectStyleFunction(feature) {
@@ -160,13 +146,12 @@ function showMap(mapdata,authority) {
         ];
         const originalFeatures = feature.get('features');
         let originalFeature = originalFeatures[originalFeatures.length - 1];
-        styles.push(createMapStyle(originalFeature));
+        styles.push(originalFeature.getProperties()["mapMarkerIcon"]);
 
         // Show gallery for each cluster
         const mediaContentList = [];
         for (let i = originalFeatures.length - 1; i >= 0; --i) {
             const featureProperties = originalFeatures[i].getProperties();
-            let dateString = Util.getDateString(featureProperties["year"], featureProperties["month"], featureProperties["day"]);
 
             const mediaContent = {
                 func: editLocation,
@@ -206,7 +191,6 @@ function showMap(mapdata,authority) {
                     "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
                     "attributes": {"preload": false, "controls": true}
                 }
-                //mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
                 mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl)+"/download";
             }
             mediaContentList.push(mediaContent);
@@ -325,6 +309,17 @@ function showMap(mapdata,authority) {
         if (data["lat"] !== null && data["lng"] !== null &&
             data["lat"] !== "" && data["lng"] !== "") {
 
+            const mapMarkerIcon = new ol.style.Style({
+                //geometry: feature.getGeometry(),
+                image: new ol.style.Icon(({
+                    anchor: [0.5, 46],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    opacity: 1.0,
+                    src: data["mapMarkerUrl"]
+                }))
+            });
+
             const iconFeature = new ol.Feature({
                 geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
                 fileName: data["fileName"],
@@ -332,6 +327,7 @@ function showMap(mapdata,authority) {
                 thumbnailUrlSmall: data["thumbnailUrlSmall"],
                 thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
                 mapMarkerUrl: data["mapMarkerUrl"],
+                mapMarkerIcon: mapMarkerIcon,
                 videoUrl: data["videoUrl"],
                 year: data["year"],
                 month: data["month"],
@@ -356,16 +352,8 @@ function showMap(mapdata,authority) {
                 time: data["time"],
                 timeZone: data["timeZone"]
             });
-            const iconStyle = new ol.style.Style({
-                image: new ol.style.Icon(({
-                    anchor: [0.5, 46],
-                    anchorXUnits: 'fraction',
-                    anchorYUnits: 'pixels',
-                    opacity: 1.0,
-                    src: data["mapMarkerUrl"]
-                }))
-            });
-            iconFeature.setStyle(iconStyle);
+
+            iconFeature.setStyle(data["mapMarkerIcon"]);
             iconFeatures.push(iconFeature);
         }
 
@@ -450,7 +438,6 @@ function showMap(mapdata,authority) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     $("#metadataLocationModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
 
                     const latlng = $("#locationDataInput").val();
@@ -462,12 +449,9 @@ function showMap(mapdata,authority) {
 
                     window.top.location = window.location.href.split("?")[0];
                 } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
-                //$("#locationMapResponseMsg").html(message);
             }
-            //$("#metadataLocationModalStatus").css("visibility", "hidden");
         });
 
     });
