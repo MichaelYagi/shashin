@@ -316,7 +316,7 @@ function showMap(mapdata,authority) {
                     anchorXUnits: 'fraction',
                     anchorYUnits: 'pixels',
                     opacity: 1.0,
-                    src: data["mapMarkerUrl"]
+                    src: encodeURI(data["mapMarkerUrl"])
                 }))
             });
 
