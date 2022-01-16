@@ -71,9 +71,9 @@ class TimelineControllerApiTest {
     @Test
     @WithMockUser(username = "invaliduser", roles = ["ADMIN"])
     @Throws(Exception::class)
-    fun shouldReturn302WhenSendingRequestToTimelineApiWithRoleUser() {
+    fun shouldReturn401WhenSendingRequestToTimelineApiWithRoleUser() {
         mockMvc!!.perform(get("/api/v1/timeline/0"))
-            .andExpect(status().is3xxRedirection)
+            .andExpect(status().is4xxClientError)
     }
 
     @Test
