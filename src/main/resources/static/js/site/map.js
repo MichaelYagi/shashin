@@ -1,4 +1,4 @@
-function showMap(mapdata,authority) {
+async function showMap(mapdata,authority) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
 
