@@ -510,7 +510,7 @@ class MetadataProcessing() {
     }
 
     companion object {
-        fun saveMetadata(metadataObj: Metadata?, _sidecarDir: String) {
+        fun updateSidecarMetadata(metadataObj: Metadata?, _sidecarDir: String) {
             if (metadataObj != null) {
                 // Update MD file
                 val rootPath = FileSystemResource("").file.absolutePath
