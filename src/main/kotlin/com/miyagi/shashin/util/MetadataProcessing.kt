@@ -35,7 +35,7 @@ class MetadataProcessing() {
         this.geocodeUrl = geocodeUrl
     }
 
-    fun populateMetadata(): Metadata? {
+    fun populateMetadata(): Metadata {
         this.metadataObj.setPath(file.path)
         this.metadataObj.setFileName(file.name)
         this.metadataObj.setTitle(file.name)
@@ -422,7 +422,7 @@ class MetadataProcessing() {
             }
 
             if (!lat.isNullOrBlank() && !lng.isNullOrBlank()) {
-                val geoDataJson = TextUtils.getGeoData(geocodeUrl!!, lat, lng)
+                val geoDataJson = TextUtils.getGeoData(geocodeUrl, lat, lng)
 
                 val buildPlace = TextUtils.getPlaceNameFromJson(geoDataJson)
                 if (buildPlace.isNotBlank()) {
