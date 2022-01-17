@@ -6,7 +6,6 @@ import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
-import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
@@ -29,9 +28,6 @@ class SearchController {
 
     @Autowired
     private val searchHistoryRepository: SearchHistoryRepository? = null
-
-    @Autowired
-    private val settingsRepository: SettingsRepository? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -107,9 +103,8 @@ class SearchController {
                         searchHistoryRepository?.save(searchHistory)
                     }
 
-                    val settingsObj = settingsRepository?.findFirstByOrderByIdAsc()
-                    val searchHistoryLimit = if (settingsObj != null) settingsObj.getSearchHistoryLimit() else 15
-                    if (searchHistoryCount != null && searchHistoryCount > searchHistoryLimit!!) {
+                    val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
+                    if (searchHistoryCount != null && searchHistoryCount > searchHistoryLimit) {
                         val searchHistory = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)
                         if (searchHistory != null && searchHistory.count() > 0) {
                             searchHistoryRepository?.deleteById(searchHistory.last().getId())
@@ -142,10 +137,9 @@ class SearchController {
             response["msg"] = "Success!"
             response["status"] = "success"
 
-            val settingsObj = settingsRepository?.findFirstByOrderByIdAsc()
-            val searchHistoryLimit = if (settingsObj != null) settingsObj.getSearchHistoryLimit() else 15
+            val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
             val searchHistoryList =
-                searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit!!)
+                searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit)
             if (searchHistoryList != null) {
                 response["searchHistoryList"] = searchHistoryList
             }

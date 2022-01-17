@@ -65,11 +65,14 @@ class BaseController {
         model["settings"] = ""
 
         var queryLimit = 20
+        var searchHistoryLimit = 15
+
         val settingsCount = settingsRepository?.count()
         if (settingsCount != null && settingsCount > 0) {
             val settings = settingsRepository?.findFirstByOrderByIdAsc()
             if (settings != null) {
                 queryLimit = settings.getQueryLimit()!!
+                searchHistoryLimit = settings.getSearchHistoryLimit()!!
             }
             if (settings != null) {
                 model["settings"] = settings
@@ -90,6 +93,7 @@ class BaseController {
 
             model["settings"] = settingsObj
         }
+        model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
         model["apiVersion"] = apiVersion
         model["relativeSidecarDir"] = relativeSidecarDir
