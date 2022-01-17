@@ -15,3 +15,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed processing lat/lng
 - Improved API response for unauthorized requests
 - Fixed map icon flickering
+- Added search auto-complete with search history for last 15 unique terms
