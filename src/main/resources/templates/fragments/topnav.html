@@ -30,8 +30,43 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="flex-grow-1 d-flex align-items-center">
             <form id="appSearch" class="form-control-dark w-100" action="/search" method="post">
-                <input id="appSearchInput" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
+                <input id="appSearchInput" list="appSearchList" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
+                <datalist id="appSearchList"></datalist>
                 <input type="submit" style="position: absolute; left: -9999px"/>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                        const ajaxParams = {
+                            type: "get",
+                            url: "/api/v1/search/history",
+                            contentType: 'application/json; charset=utf-8',
+                            retries: shashin.ajaxRetries
+                        }
+
+                        $.ajax(ajaxParams)
+                            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting search history")}).then(function (data) {
+                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                                if (data["status"] === "success") {
+                                    if (data.hasOwnProperty("searchHistoryList")) {
+                                        const searchHistoryList = data["searchHistoryList"] === "" ? [] : data["searchHistoryList"];
+
+                                        if (searchHistoryList.length > 0) {
+                                            for (const index in searchHistoryList) {
+                                                const searchHistoryObj = searchHistoryList[index];
+
+                                                $("#appSearchList").append($('<option>', {
+                                                    value: searchHistoryObj.term,
+                                                    text : searchHistoryObj.term
+                                                }));
+                                            }
+
+                                            //$('#appSearchInput').autocomplete();
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+                </script>
             </form>
             <div id="timelineAppTools">
                 <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span class="bi-pencil" style="font-size: 1.5rem;color: dimgrey;"></span></a>&nbsp;&nbsp;

@@ -209,4 +209,14 @@ CREATE TABLE `notification` (
     FOREIGN KEY (`favoriteId`) REFERENCES favorite(`id`)
 );
 
+DROP TABLE IF EXISTS `searchhistory`;
+CREATE TABLE `searchhistory` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `term` VARCHAR(150) NOT NULL,
+    `userId` INT,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL,
+    FOREIGN KEY (`userId`) REFERENCES user(`id`)
+);
+
 INSERT INTO `hibernate_sequence` VALUES (362);

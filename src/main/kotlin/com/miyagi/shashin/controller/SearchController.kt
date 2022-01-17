@@ -2,7 +2,9 @@ package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +25,9 @@ class SearchController {
 
     @Autowired
     private val searchRepository: SearchRepository? = null
+
+    @Autowired
+    private val searchHistoryRepository: SearchHistoryRepository? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -83,6 +88,30 @@ class SearchController {
         model["searchTerm"] = ""
         if (formData.containsKey("appSearchInput")) {
             val searchTerm: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null) {
+                val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), searchTerm.lowercase())
+                if (searchTerm.isNotBlank()) {
+                    val searchHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId())
+                    if (searchTermCount == 0) {
+                        val searchHistory = SearchHistory()
+                        searchHistory.setTerm(searchTerm)
+                        searchHistory.setUserId(currentUserObj.getId())
+                        searchHistory.setCreatedAt(TextUtils.getCurrentTimestamp())
+                        searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
+                        searchHistoryRepository?.save(searchHistory)
+                    }
+
+                    if (searchHistoryCount != null && searchHistoryCount > 15) {
+                        val searchHistory = searchHistoryRepository?.findTopNByUserIdOrderByIdDesc(currentUserObj.getId(), 1)
+                        if (searchHistory != null && searchHistory.count() > 0) {
+                            searchHistoryRepository?.deleteById(searchHistory.last().getId())
+                        }
+                    }
+                }
+            }
+
             redirectAttributes.addAttribute("searchTerm", searchTerm)
         }
 
@@ -92,5 +121,26 @@ class SearchController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return "redirect:/"+module
+    }
+
+    @RequestMapping(value = ["/api/v1/search/history"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getSearchHistory(model: Model, request: HttpServletRequest): String {
+        val response = mutableMapOf<String, Any?>()
+        response["searchHistoryList"] = ""
+        response["msg"] = "Not authorized"
+        response["status"] = "fail"
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            response["msg"] = "Success!"
+            response["status"] = "success"
+            val searchHistoryList =
+                searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), 15)
+            if (searchHistoryList != null) {
+                response["searchHistoryList"] = searchHistoryList
+            }
+        }
+        return mapper.writeValueAsString(response)
     }
 }
