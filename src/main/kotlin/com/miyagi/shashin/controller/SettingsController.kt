@@ -238,6 +238,7 @@ class SettingsController {
         @RequestParam("matchScanLimit") matchScanLimit: Int,
         @RequestParam("trainingDataLimit") trainingDataLimit: Int,
         @RequestParam("notificationLimit") notificationLimit: Int,
+        @RequestParam("searchHistoryLimit") searchHistoryLimit: Int,
         @RequestParam("changePort") port: String,
         @RequestParam("scanAutomatically") scanAutomatically: String?,
     ): String {
@@ -301,6 +302,9 @@ class SettingsController {
         }
         if (trainingDataLimit > 0) {
             settings?.setTrainingDataLimit(trainingDataLimit)
+        }
+        if (searchHistoryLimit > 0) {
+            settings?.setSearchHistoryLimit(searchHistoryLimit)
         }
         if (settings != null && port.isNotEmpty() && port != settings.getPort()) {
             settings.setPort(port)
