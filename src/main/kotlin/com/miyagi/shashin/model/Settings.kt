@@ -22,6 +22,8 @@ class Settings {
     @NotBlank
     private var notificationLimit: Int? = null
     @NotBlank
+    private var searchHistoryLimit: Int? = null
+    @NotBlank
     private var port: String? = null
     @NotBlank
     private var scanAutomatically: Boolean? = null
@@ -64,6 +66,14 @@ class Settings {
 
     fun setNotificationLimit(notificationLimit: Int?) {
         this.notificationLimit = notificationLimit
+    }
+
+    fun getSearchHistoryLimit(): Int? {
+        return this.searchHistoryLimit
+    }
+
+    fun setSearchHistoryLimit(searchHistoryLimit: Int?) {
+        this.searchHistoryLimit = searchHistoryLimit
     }
 
     fun getQueryLimit(): Int? {
@@ -114,6 +124,7 @@ class Settings {
         map["matchScanLimit"] = this.matchScanLimit
         map["trainingDataLimit"] = this.trainingDataLimit
         map["notificationLimit"] = this.notificationLimit
+        map["searchHistoryLimit"] = this.searchHistoryLimit
         map["port"] = this.port
         map["scanAutomatically"] = this.scanAutomatically
         val mapper = ObjectMapper()

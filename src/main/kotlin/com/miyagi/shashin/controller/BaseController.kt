@@ -80,6 +80,7 @@ class BaseController {
             settingsObj.setMatchScanLimit(50)
             settingsObj.setTrainingDataLimit(100)
             settingsObj.setNotificationLimit(20)
+            settingsObj.setSearchHistoryLimit(15)
             settingsObj.setPort("6624")
             settingsObj.setScanAutomatically(true)
             settingsObj.setRecognitionConfidenceThreshold("0.6")

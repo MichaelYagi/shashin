@@ -79,6 +79,7 @@ CREATE TABLE `settings` (
     `matchScanLimit` INTEGER NOT NULL DEFAULT 50,
     `queryLimit` INTEGER NOT NULL DEFAULT 20,
     `notificationLimit` INTEGER NOT NULL DEFAULT 20,
+    `searchHistoryLimit` INTEGER NOT NULL DEFAULT 15,
     `port` VARCHAR(10) NOT NULL DEFAULT '6624',
     `scanAutomatically` BOOLEAN DEFAULT TRUE,
     `createdAt` DATETIME DEFAULT NULL,
