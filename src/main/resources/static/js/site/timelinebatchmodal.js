@@ -100,31 +100,58 @@ $("#saveBatchMetadata").click(function (e) {
                         if ($("#photoThumbnailContainer" + metadataId).length > 0) {
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
-                            if ($("#batchhidden").is(':checked')) {
-                                // Get parent Id
-                                const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
-                                const headingId = rowId.replace("row", "");
-                                const elToRemove = $("#photoThumbnailContainer" + metadataId);
+                            // Update tag
+                            let takenDateUpdated = false;
+                            const metadataObj = shashin.checkMetadata(metadataId);
 
-                                // Count children
-                                const currentNumChildren = elToRemove.siblings("div").length;
-
-                                // Remove metadata
-                                elToRemove.remove();
-
-                                if (currentNumChildren === 0) {
-                                    // Remove header
-                                    $("#br" + headingId).remove();
-                                    $("#" + headingId).remove();
-                                    $("#row" + headingId).remove();
+                            if (($("#yearTakenBatchData").val().trim() !== "" && parseInt(metadataObj.year) !== parseInt($("#yearTakenBatchData").val())) ||
+                                ($("#monthTakenBatchData").val().trim() !== "" && parseInt(metadataObj.month) !== parseInt($("#monthTakenBatchData").val())) ||
+                                ($("#dayTakenBatchData").val().trim() !== "" && parseInt(metadataObj.day) !== parseInt($("#dayTakenBatchData").val())))
+                            {
+                                takenDateUpdated = true;
+                                if ($("#yearTakenBatchData").val().trim() !== "") {
+                                    metadataObj.year = $("#yearTakenBatchData").val()
                                 }
-                            } else if ($("#latlngBatchData").val() !== "") {
+                                if ($("#monthTakenBatchData").val().trim() !== "") {
+                                    metadataObj.month = $("#monthTakenBatchData").val()
+                                }
+                                if ($("#dayTakenBatchData").val().trim() !== "") {
+                                    metadataObj.day = $("#dayTakenBatchData").val()
+                                }
+                            }
+
+                            if ($("#latlngBatchData").val().trim() !== "") {
                                 const latlngArray = $("#latlngBatchData").val().split(",");
-                                const metadataTaggedObj = shashin.checkMetadata(metadataId);
-                                metadataTaggedObj["lat"] = $.trim(latlngArray[0]);
-                                metadataTaggedObj["lng"] = $.trim(latlngArray[1]);
-                                $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataTaggedObj));
-                                $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                                metadataObj.lat = $.trim(latlngArray[0])
+                                metadataObj.lng = $.trim(latlngArray[1])
+                                if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
+                                    $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
+                                }
+                            }
+                            if ($("#keywordsBatchData").val().trim() !== "") {
+                                metadataObj.keywords = $("#keywordsBatchData").val()
+                            }
+                            if ($("#tagBatchDataInput").val().trim() !== "") {
+                                metadataObj.tagpeople = $("#tagBatchDataInput").val()
+                            }
+                            if ($("#albumNameInput").val().trim() !== "") {
+                                metadataObj.albumlist = $("#albumNameInput").val()
+                            }
+                            metadataObj.hidden = $("#batchhidden").prop("checked")
+
+                            if (metadataObj.hidden === false) {
+                                Util.populateDetailsInfo(metadataObj,"propTimelineModal")
+                                $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
+
+                                if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
+                                    $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                                }
+
+                                if (takenDateUpdated === true) {
+                                    removeThumbnail(metadataId);
+                                }
+                            } else {
+                                removeThumbnail(metadataId);
                             }
                         }
                     }
@@ -160,6 +187,22 @@ $("#saveBatchMetadata").click(function (e) {
                 // $("#batchhidden")[0].checked = false;
             }
         });
+    }
+
+    function removeThumbnail(metadataId) {
+        const targetElement = $("#photoThumbnailContainer" + metadataId);
+        const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
+        const headingId = rowId.replace("row", "");
+
+        // Count children
+        const currentNumChildren = targetElement.siblings("div").length;
+
+        // Remove metadata
+        targetElement.remove();
+
+        if (currentNumChildren === 0) {
+            Util.removeDateGallery(headingId);
+        }
     }
 
     return false;

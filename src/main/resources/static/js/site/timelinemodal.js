@@ -109,7 +109,14 @@ $("#saveMetadata").click(function (e) {
                     // window.top.location = window.top.location
 
                     // Update tag
+                    let takenDateUpdated = false;
                     const metadataObj = shashin.checkMetadata(metadataId);
+                    if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
+                        parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
+                        parseInt(metadataObj.day) !== parseInt($("#dayTaken").val()))
+                    {
+                        takenDateUpdated = true;
+                    }
                     metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
                     metadataObj.year = $("#yearTaken").val()
                     metadataObj.month = $("#monthTaken").val()
@@ -141,20 +148,12 @@ $("#saveMetadata").click(function (e) {
                         if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                         }
-                    } else {
-                        const targetElement = $("#photoThumbnailContainer" + metadataId);
 
-                        // Count children
-                        const currentNumChildren = targetElement.siblings("div").length;
-
-                        // Remove metadata
-                        targetElement.remove();
-
-                        if (currentNumChildren === 0) {
-                            const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
-                            const headingId = rowId.replace("row", "");
-                            Util.removeDateGallery(headingId);
+                        if (takenDateUpdated === true) {
+                            removeThumbnail(metadataId);
                         }
+                    } else {
+                        removeThumbnail(metadataId);
                     }
 
                     $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
@@ -166,6 +165,22 @@ $("#saveMetadata").click(function (e) {
             }
             //$("#timelineModalStatus").css("visibility","hidden");
         });
+    }
+
+    function removeThumbnail(metadataId) {
+        const targetElement = $("#photoThumbnailContainer" + metadataId);
+        const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
+        const headingId = rowId.replace("row", "");
+
+        // Count children
+        const currentNumChildren = targetElement.siblings("div").length;
+
+        // Remove metadata
+        targetElement.remove();
+
+        if (currentNumChildren === 0) {
+            Util.removeDateGallery(headingId);
+        }
     }
 });
 
