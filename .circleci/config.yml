@@ -84,7 +84,7 @@ workflows:
                 name: Move Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  mv target/**.jar target/artifact/**.jar
+                  mv target/**.jar target/artifact/shashin-$VERSION.jar
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
