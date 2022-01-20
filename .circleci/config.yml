@@ -75,16 +75,16 @@ workflows:
                 name: Set Version # get version from pom.xml
                 command: |
                   echo 'export VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)' >> $BASH_ENV
-#            - run:
-#                name: Compress Artifacts
-#                command: |
-#                  mkdir -p target/artifact/
-#                  tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
             - run:
-                name: Move Artifacts
+                name: Compress Artifacts
                 command: |
                   mkdir -p target/artifact/
-                  mv target/**.jar target/artifact/shashin-$VERSION.jar
+                  tar -cvzf target/artifact/shashin-$VERSION.tar target/**.jar target/**.exe target/test-results
+#            - run:
+#                name: Move Artifacts
+#                command: |
+#                  mkdir -p target/artifact/
+#                  mv target/**.jar target/artifact/shashin-$VERSION.jar
             - persist_to_workspace: # persist across jobs
                 root: .
                 paths:
