@@ -1,11 +1,13 @@
 package com.miyagi.shashin.component
 
-import com.miyagi.shashin.controller.SettingsController
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
@@ -15,14 +17,19 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.stereotype.Component
 import java.io.IOException
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
+
 
 @Component
 class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
@@ -33,6 +40,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     @Value("\${app.role.user}")
     private var userRole: String? = null
+
+    @Value("\${app.build.properties.version}")
+    private val appVersion: String? = null
 
     @Autowired
     var userRepository: UserRepository? = null
@@ -82,12 +92,51 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 if (isAllowed) {
                     notifyLogin(user)
                     if (currentAuthority == adminRole) {
+                        checkLatestAppVersion(user!!)
+
                         redirectStrategy.sendRedirect(request, response, "/timeline")
                     } else {
                         redirectStrategy.sendRedirect(request, response, "/albums")
                     }
                 }
             }
+        }
+    }
+
+    private fun checkLatestAppVersion(user: User) {
+        // Check app version
+        val client = HttpClient.newBuilder().build()
+        val httpRequest = HttpRequest.newBuilder()
+            .uri(URI.create("https://shashin.jfrog.io/artifactory/api/search/aql"))
+            .POST(HttpRequest.BodyPublishers.ofString("items.find({\"repo\":\"shashin\"})"))
+            .header("Content-Type", "text/plain")
+            .header("X-JFrog-Art-Api", "AKCp8kq2kFaHn5BovzP5cJFrb3Ny8kSVSdDW778KeLk3645jyVSSVrdcjgds6R8qK6SJV65ct")
+            .build()
+
+        val httpResponse = client.send(httpRequest, HttpResponse.BodyHandlers.ofString())
+        val jsonResult = httpResponse.body()
+        val mapper = ObjectMapper()
+        val jsonObj = mapper.readTree(jsonResult)
+        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+        val resultList = resultMap["results"] as ArrayList<Map<String, Any>>
+
+        var lastMinVersion = DefaultArtifactVersion(appVersion)
+        var latestVersion = appVersion
+        for (result in resultList) {
+            val propName = result["name"].toString()
+            if (propName.startsWith("shashin-") && propName.endsWith(".tar")) {
+                var parsedVersion = propName.substringAfter("shashin-")
+                parsedVersion = parsedVersion.substringBefore(".tar")
+                val checkedVersion = DefaultArtifactVersion(parsedVersion)
+                if (checkedVersion > lastMinVersion) {
+                    lastMinVersion = checkedVersion
+                    latestVersion = parsedVersion
+                }
+            }
+        }
+        
+        if (latestVersion!!.isNotBlank() && appVersion!!.isNotBlank() && latestVersion != appVersion) {
+            notifyLatestVersion(user, latestVersion)
         }
     }
 
@@ -120,4 +169,24 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             }
         }
     }
+
+    private fun notifyLatestVersion(currentUserObj: User?, version: String) {
+        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
+        if (admins != null && currentUserObj != null) {
+            val notificationObjList = mutableListOf<Notification>()
+            for (admin in admins) {
+                val notificationObj = Notification()
+                notificationObj.setUserId(admin.getId())
+                notificationObj.setCreatedAt(getCurrentTimestamp())
+                notificationObj.setModifiedAt(getCurrentTimestamp())
+                notificationObj.setRead(false)
+                notificationObj.setMessage("Server update for Shashin version $version is available.")
+                notificationObjList.add(notificationObj)
+            }
+            if (notificationObjList.isNotEmpty()) {
+                notificationRepository?.saveAll(notificationObjList)
+            }
+        }
+    }
+
 }
