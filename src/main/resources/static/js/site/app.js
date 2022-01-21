@@ -84,8 +84,8 @@
         if (metadata.year !== null) {
             $("#yearTaken").val(metadata.year);
         }
-        if (metadata.hidden !== null && metadata.hidden === true) {
-            $("#offsetTaken").prop('checked', true);
+        if (metadata.timeZone !== null) {
+            $("#offsetTaken option[value='"+metadata.timeZone+"']").attr('selected','selected');
         }
 
         const latlngValue = (metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
