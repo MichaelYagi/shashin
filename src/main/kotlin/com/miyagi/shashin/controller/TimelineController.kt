@@ -86,6 +86,7 @@ class TimelineController {
             model[k] = v!!
         }
 
+        model["timeOffsets"] = timeOffsets()
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -165,7 +166,6 @@ class TimelineController {
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = mediaTypeFilter
-        response["timeOffsets"] = timeOffsets()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -303,7 +303,6 @@ class TimelineController {
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = mediaTypeFilter
-        response["timeOffsets"] = timeOffsets()
         response["albumMap"] = mutableMapOf<String, String>()
 
         response["msg"] = "Could not get results"

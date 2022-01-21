@@ -58,6 +58,7 @@ class BrowseController {
             model[k] = v!!
         }
 
+        model["timeOffsets"] = TextUtils.timeOffsets()
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -79,7 +80,6 @@ class BrowseController {
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = "all"
-        response["timeOffsets"] = TextUtils.timeOffsets()
         response["albumMap"] = mutableMapOf<String, String>()
 
         response["msg"] = "Could not get results"
@@ -242,7 +242,6 @@ class BrowseController {
         response["recognitionLabels"] = ""
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = "all"
-        response["timeOffsets"] = TextUtils.timeOffsets()
         response["albumMap"] = mutableMapOf<String, String>()
         response["folder"] = folder
 

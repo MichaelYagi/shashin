@@ -6,13 +6,14 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Initial release
+- Added search auto-complete with search history for configurable number of unique terms
 
 ### Changed
+- Improved API response for unauthorized requests
 
 ### Fixed
 
 - Fixed editing lat/lng on map photo view
 - Fixed processing lat/lng
-- Improved API response for unauthorized requests
 - Fixed map icon flickering
-- Added search auto-complete with search history for configurable number of unique terms
+- Fixed timezone offset list and selection
