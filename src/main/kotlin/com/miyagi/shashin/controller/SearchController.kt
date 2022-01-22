@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.SearchHistory
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.TextUtils
@@ -28,6 +29,9 @@ class SearchController {
 
     @Autowired
     private val searchHistoryRepository: SearchHistoryRepository? = null
+
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -57,7 +61,11 @@ class SearchController {
     @RequestMapping(value = ["/search/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSearch(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
-        val searchTerm = request.getParameter("searchTerm").toString()
+        val hasSearchTerm = request.parameterMap.containsKey("searchTerm")
+        var searchTerm = ""
+        if (hasSearchTerm) {
+            searchTerm = request.getParameter("searchTerm").toString()
+        }
         return mapper.writeValueAsString(buildSearchData(model,searchTerm,page))
     }
 
@@ -65,6 +73,7 @@ class SearchController {
         val response = mutableMapOf<String, Any?>()
         response["searchTerm"] = ""
         response["metadataSearchList"] = ""
+        response["keywordMap"] = mutableMapOf<String, String>()
 
         if (!searchTerm.isNullOrBlank()) {
             response["searchTerm"] = searchTerm
@@ -80,6 +89,12 @@ class SearchController {
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 }
             }
+            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+            val keywordMap = mutableMapOf<String, String>()
+            for (keywordGroup in keywordList) {
+                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+            }
+            model["keywordMap"] = keywordMap
         }
 
         response["status"] = "success"

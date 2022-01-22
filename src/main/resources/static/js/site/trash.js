@@ -17,6 +17,7 @@ class Trash {
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("metadataList")) {
                         const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                        const keywordMap = data["keywordMap"] === "" ? {} : data["keywordMap"];
                         let html = "";
 
                         if (metadataList.length > 0) {
@@ -51,7 +52,7 @@ class Trash {
                                 $("#infoModalEdit"+metadata.id).click(function(e) {
                                     e.preventDefault();
                                     const metadataObj = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
-                                    shashin.openInfoModal(metadataObj);
+                                    shashin.openInfoModal(metadataObj, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "");
                                 });
 
                                 $("#image" + metadata.id).on('load', function () {
