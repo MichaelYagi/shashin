@@ -1202,17 +1202,35 @@
                 $("#editPhotosNamesModalLabel").html(thumbnailList);
             }
 
+            const keywordAvailableList = $("#keywordsBatchString").val().split(",");
             $("#keywordsBatchData").autocomplete({
                 minLength: 0,
                 source: function (request, response) {
+                    const inputValues = request.term.split(",");
+                    $.each(inputValues, function(index, keywordItem) {
+                        // do something with `item` (or `this` is also `item` if you like)
+                        const keywordIndex = keywordAvailableList.indexOf(keywordItem.trim());
+                        if (keywordIndex !== -1) {
+                            keywordAvailableList.splice(keywordIndex, 1);
+                        }
+                    });
+
                     // delegate back to autocomplete, but extract the last term
-                    response($.ui.autocomplete.filter($("#keywordsBatchString").val().split(","), shashin.autocompleteExtractLast(request.term)));
+                    response($.ui.autocomplete.filter(keywordAvailableList, shashin.autocompleteExtractLast(request.term)));
                 },
                 focus: function () {
                     // prevent value inserted on focus
                     return false;
                 },
                 select: function (event, ui) {
+                    const inputValues = this.value.split(",");
+                    $.each(inputValues, function(index, keywordItem) {
+                        // do something with `item` (or `this` is also `item` if you like)
+                        const keywordIndex = keywordAvailableList.indexOf(keywordItem.trim());
+                        if (keywordIndex !== -1) {
+                            keywordAvailableList.splice(keywordIndex, 1);
+                        }
+                    });
                     const terms = shashin.autocompleteSplit(this.value);
                     // remove the current input
                     terms.pop();
