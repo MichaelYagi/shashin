@@ -14,6 +14,7 @@
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/matchesmodal :: matchesmodal(${recognitionLabels})"></div>
+            <input type="hidden" id="activePage" th:value="${activePage}">
 
             <div id="infinite-scroll-gallery">
             <th:block th:if="${lowMatchResults != ''}">

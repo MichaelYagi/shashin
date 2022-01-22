@@ -16,6 +16,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <input type="hidden" id="currentfilename" name="currentfilename">
+            <input type="hidden" id="activePage" th:value="${activePage}">
 
             <div id="trashMessage"></div>
             <div id="infinite-scroll-gallery">

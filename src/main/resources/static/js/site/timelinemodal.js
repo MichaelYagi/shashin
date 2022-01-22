@@ -154,7 +154,7 @@ $("#saveMetadata").click(function (e) {
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                         }
 
-                        if (takenDateUpdated === true) {
+                        if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() === "timeline") || $("#activePage").length === 0) {
                             shashin.removeThumbnail(metadataId);
                         }
                     } else {
