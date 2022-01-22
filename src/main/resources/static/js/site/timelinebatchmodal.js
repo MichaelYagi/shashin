@@ -100,7 +100,7 @@ $("#saveBatchMetadata").click(function (e) {
                     for (const index in metadataIds) {
                         const metadataId = metadataIds[index];
 
-                        if ($("#photoThumbnailContainer" + metadataId).length > 0) {
+                        if ($("#image" + metadataId).length > 0) {
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
                             // Update tag
@@ -146,6 +146,7 @@ $("#saveBatchMetadata").click(function (e) {
                             if (metadataObj.hidden === false) {
                                 Util.populateDetailsInfo(metadataObj,"propTimelineModal")
                                 $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
+                                $("#mediaLink" + metadataId).attr("tag", JSON.stringify(metadataObj))
 
                                 if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
                                     $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
