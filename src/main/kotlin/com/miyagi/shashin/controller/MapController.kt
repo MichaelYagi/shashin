@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,11 +16,15 @@ class MapController {
     @Autowired
     private val metadataRepository: MetadataRepository? = null
 
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
+
     @GetMapping("/map")
     fun getMap(model: Model): String {
         val module = "map"
         model["message"] = ""
         model["mapdata"] = ""
+        model["keywordMap"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -30,6 +35,12 @@ class MapController {
             } else {
                 model["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserId(currentUserObj.getId())
             }
+            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+            val keywordMap = mutableMapOf<String, String>()
+            for (keywordGroup in keywordList) {
+                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+            }
+            model["keywordMap"] = keywordMap
         }
 
         model["activePage"] = module

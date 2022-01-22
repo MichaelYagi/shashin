@@ -1,4 +1,4 @@
-async function showMap(mapdata,authority) {
+async function showMap(mapdata,keywordMap,authority) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
 
@@ -46,6 +46,7 @@ async function showMap(mapdata,authority) {
             metadata.time = locationArgs[20];
             metadata.timeZone = locationArgs[21];
             metadata.placeName = locationArgs[22];
+            metadata.keywords = locationArgs[23];
         }
         if (modalLabel && modalLabel.length > 0) {
             $("#editPhotoLocationModalLabel").text("for " + modalLabel);
@@ -177,7 +178,8 @@ async function showMap(mapdata,authority) {
                     featureProperties["day"],
                     featureProperties["time"],
                     featureProperties["timeZone"],
-                    featureProperties["placeName"]
+                    featureProperties["placeName"],
+                    featureProperties["keywords"],
                 ]
             };
             if (featureProperties.type.includes("image")) {
@@ -307,6 +309,8 @@ async function showMap(mapdata,authority) {
         if (data["lat"] !== null && data["lng"] !== null &&
             data["lat"] !== "" && data["lng"] !== "") {
 
+            const keywords = keywordMap.hasOwnProperty(data["id"]) ? keywordMap[data["id"]] : "";
+
             const mapMarkerIcon = new ol.style.Style({
                 //geometry: feature.getGeometry(),
                 image: new ol.style.Icon(({
@@ -347,7 +351,8 @@ async function showMap(mapdata,authority) {
                 modifiedAt: data["modifiedAt"],
                 takenAt: data["takenAt"],
                 time: data["time"],
-                timeZone: data["timeZone"]
+                timeZone: data["timeZone"],
+                keywords: keywords
             });
 
             iconFeature.setStyle(data["mapMarkerIcon"]);

@@ -82,6 +82,7 @@
             $("#keywords").val(metadata.keywords);
         } else {
             $("#keywords").val(keywordList);
+            metadata.keywords = keywordList
         }
 
         if (metadata.day !== null) {
@@ -97,7 +98,7 @@
             $("#offsetTaken option[value='"+metadata.timeZone+"']").attr('selected','selected');
         }
 
-        const latlngValue = (metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
+        const latlngValue = (metadata.hasOwnProperty("lat") || metadata.hasOwnProperty("lng") || metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
         $("#latlng").val(latlngValue);
 
         const taggedPeopleArray = taggedPeopleList.split(",");
