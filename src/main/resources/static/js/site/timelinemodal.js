@@ -107,6 +107,7 @@ $("#saveMetadata").click(function (e) {
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
                         $("#keywordsString").val(data["keywords"]);
+                        $("#keywordsBatchString").val(data["keywords"]);
                     }
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     // window.top.location = window.top.location
