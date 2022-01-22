@@ -153,10 +153,10 @@ $("#saveBatchMetadata").click(function (e) {
                                 }
 
                                 if (takenDateUpdated === true) {
-                                    removeThumbnail(metadataId);
+                                    shashin.removeThumbnail(metadataId);
                                 }
                             } else {
-                                removeThumbnail(metadataId);
+                                shashin.removeThumbnail(metadataId);
                             }
                         }
                     }
@@ -192,22 +192,6 @@ $("#saveBatchMetadata").click(function (e) {
                 // $("#batchhidden")[0].checked = false;
             }
         });
-    }
-
-    function removeThumbnail(metadataId) {
-        const targetElement = $("#photoThumbnailContainer" + metadataId);
-        const rowId = $("#photoThumbnailContainer" + metadataId).parent().attr("id");
-        const headingId = rowId.replace("row", "");
-
-        // Count children
-        const currentNumChildren = targetElement.siblings("div").length;
-
-        // Remove metadata
-        targetElement.remove();
-
-        if (currentNumChildren === 0) {
-            Util.removeDateGallery(headingId);
-        }
     }
 
     return false;

@@ -496,13 +496,8 @@
         }
     }
 
-    shashin.openInfoModal = function(metadata, keywordList) {
+    shashin.openInfoModal = function(metadata) {
         // Populate modal data
-        if (typeof keywordList === "undefined") {
-            keywordList = "";
-        }
-        metadata.keywords = keywordList;
-
         if ($("#infoModalEdit"+metadata.id).attr("tag") && $("#infoModalEdit"+metadata.id).attr("tag").trim() !== "") {
             metadata = JSON.parse($("#infoModalEdit"+metadata.id).attr("tag"));
         }
@@ -1244,9 +1239,28 @@
         }
     }
 
+    shashin.removeThumbnail = function(metadataId) {
+        const targetElement = $("#photoThumbnailContainer" + metadataId);
+
+        const rowId = targetElement.parent().attr("id");
+        const sectionId = $(targetElement.siblings("section")[0]).attr("id")
+        const headingId = typeof rowId !== "undefined" ? rowId.replace("row", "") : sectionId;
+
+        // Count children
+        const currentNumChildren = targetElement.siblings("div").length;
+
+        // Remove metadata
+        targetElement.remove();
+
+        if (currentNumChildren === 0 && headingId && headingId.length > 0) {
+            Util.removeDateGallery(headingId);
+        }
+    }
+
     shashin.autocompleteSplit = function(val) {
         return val.split(/,\s*/);
     }
+
     shashin.autocompleteExtractLast = function(term) {
         return shashin.autocompleteSplit(term).pop();
     }

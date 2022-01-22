@@ -27,7 +27,7 @@ class Trash {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = metadataList[index];
 
-                                html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
+                                html += '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
                                     '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
                                     '   <img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="Util.errorImg(this,\''+metadata.title+'\',209)">\n';
 
@@ -52,7 +52,7 @@ class Trash {
                                 $("#infoModalEdit"+metadata.id).click(function(e) {
                                     e.preventDefault();
                                     const metadataObj = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
-                                    shashin.openInfoModal(metadataObj, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "");
+                                    shashin.openInfoModal(metadataObj);
                                 });
 
                                 $("#image" + metadata.id).on('load', function () {
