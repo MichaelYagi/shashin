@@ -11,6 +11,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')"
                  class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentPage" name="currentPage" value="0">
+            <input type="hidden" id="activePage" th:value="${activePage}">
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${albumMetadataList != ''}">
                     <h1 th:text="${album.name}"></h1>
