@@ -78,10 +78,11 @@
     $(document).ready(function () {
         /*<![CDATA[*/
         const mapdata = /*[[${mapdata}]]*/ [];
+        const keywordMap = /*[[${keywordMap}]]*/ {};
         const authority = /*[[${authority}]]*/ 'user';
         /*]]>*/
-
-        showMap(mapdata,authority);
+console.log(keywordMap)
+        showMap(mapdata,keywordMap,authority);
     });
 </script>
 </body>

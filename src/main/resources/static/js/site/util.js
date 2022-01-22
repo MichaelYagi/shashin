@@ -262,6 +262,7 @@ class Util {
         $(".takenAtDetails").text("");
         $(".manualTakenAtDetails").text("");
         $(".timeZoneDetails").text("");
+        $(".keywordsDetails").text("");
         $(".resolutionDetails").text("");
         $(".shareUrlDetails").html("");
         $(".coordinatesDetails").text("");
@@ -283,6 +284,7 @@ class Util {
         $(".takenAtLabel").hide();
         $(".manualTakenAtLabel").hide();
         $(".timeZoneLabel").hide();
+        $(".keywordsLabel").hide();
         $(".resolutionLabel").hide();
         $(".shareUrlLabel").hide();
         $(".coordinatesLabel").hide();
@@ -291,7 +293,7 @@ class Util {
         $(".linkCopyStatus").css("visibility","hidden");
 
         // Fill in details tab data
-        if (metadata.lat != null && metadata.lng != null) {
+        if (metadata.lat != null && metadata.lng != null && metadata.lat !== "" && metadata.lng !== "") {
             $(".coordinatesLabel").show();
             $(".coordinatesDetails").text(metadata.lat + ", " + metadata.lng);
 
@@ -303,6 +305,10 @@ class Util {
         if (metadata.path != null) {
             $(".pathLabel").show();
             $(".pathDetails").text(metadata.path);
+        }
+        if (metadata.keywords != null) {
+            $(".keywordsLabel").show();
+            $(".keywordsDetails").text(metadata.keywords);
         }
         if (metadata.type != null) {
             $(".typeLabel").show();
