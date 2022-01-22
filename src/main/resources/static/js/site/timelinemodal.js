@@ -147,6 +147,7 @@ $("#saveMetadata").click(function (e) {
                     if (metadataObj.hidden === false) {
                         Util.populateDetailsInfo(metadataObj,"propTimelineModal")
                         $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
+                        $("#mediaLink" + metadataId).attr("tag", JSON.stringify(metadataObj))
 
                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
                         if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
