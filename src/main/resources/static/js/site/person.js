@@ -56,7 +56,7 @@ class Person {
 
                                 shashin.setPhotoOverlays(metadata, activePage);
                                 personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
-                                $("#mediaLink" + metadata.id).attr("tag", JSON.stringify(metadata));
+                                $("#mediaLink" + metadata.id).attr("tag", JSON.stringify(Util.addKeywordToMetadata(metadata, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "")));
                                 $("#infoModalEdit" + metadata.id).click(function (e) {
                                     e.preventDefault();
                                     const metadataObj = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));

@@ -85,7 +85,7 @@
 
                             <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
-                                $("#albumModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag", Util.decodeHtml(JSON.stringify(/*[[${metadata}]]*/{})));
+                                $("#albumModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag", Util.decodeHtml(JSON.stringify(Util.addKeywordToMetadata(/*[[${metadata}]]*/{},/*[[${keywordMap.get(metadata.id)}]]*/""))));
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
                                 albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${currentUser}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{})
                                 albumSettings.activateAlbumListeners(/*[[${metadata}]]*/{},/*[[${album}]]*/{})

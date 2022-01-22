@@ -55,7 +55,7 @@
                             <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'favorites');
-                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(/*[[${metadata}]]*/{}));
+                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(Util.addKeywordToMetadata(/*[[${metadata}]]*/{},/*[[${keywordMap.get(metadata.id)}]]*/"")));
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
                                     e.preventDefault();
                                     const metadataObj = JSON.parse($("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag"));

@@ -75,7 +75,7 @@ class Recent {
                             this.rendering = false;
                         });
 
-                        $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                        $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(Util.addKeywordToMetadata(metadata, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "")));
                         $("#timelineModalEdit"+metadata.id).click(function(e) {
                             e.preventDefault();
 
