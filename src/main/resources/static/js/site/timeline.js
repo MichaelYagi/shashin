@@ -558,6 +558,8 @@
                                         $("#tncentered" + metadata.id).addClass("thumbnail-centered");
                                     }
 
+                                    metadata.keywords = keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "";
+
                                     const mediaContent = {};
                                     mediaContent.func = shashin.openInfoSidebar;
                                     mediaContent.args = metadata;

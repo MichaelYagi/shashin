@@ -61,7 +61,7 @@ class Search {
 
                         shashin.setPhotoOverlays(metadata, activePage);
                         Util.activateMetadataListeners(metadata);
-                        $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                        $("#infoModalEdit"+metadata.id).attr("tag",JSON.stringify(Util.addKeywordToMetadata(metadata, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "")));
                         $("#infoModalEdit"+metadata.id).click(function(e) {
                             e.preventDefault();
                             const metadataObj = JSON.parse($(this).attr("tag"));

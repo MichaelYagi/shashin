@@ -197,6 +197,13 @@ class Util {
         }
     }
 
+    static addKeywordToMetadata(metadata, keywords) {
+        if (metadata && metadata.hasOwnProperty("id")) {
+            metadata["keywords"] = keywords;
+        }
+        return metadata;
+    }
+
     static removeDateGallery(id) {
         $("#br"+id).remove();
         $("#row"+id).remove();

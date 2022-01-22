@@ -55,7 +55,7 @@ class Folder {
                             html += '</div>\n<span class="appendFolderPhotos" style="width:0;height:0;padding:0"></span>\n';
                             $(html).insertAfter($(".appendFolderPhotos").last())
 
-                            $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(metadata));
+                            $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(Util.addKeywordToMetadata(metadata, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "")));
                             $("#timelineModalEdit"+metadata.id).click(function(e) {
                                 e.preventDefault();
 
