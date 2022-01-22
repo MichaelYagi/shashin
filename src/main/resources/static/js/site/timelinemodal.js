@@ -105,6 +105,9 @@ $("#saveMetadata").click(function (e) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
+                    if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
+                        $("#keywordsString").val(data["keywords"]);
+                    }
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     // window.top.location = window.top.location
 
@@ -123,13 +126,13 @@ $("#saveMetadata").click(function (e) {
                     metadataObj.day = $("#dayTaken").val()
                     metadataObj.time = $("#timeTaken").val()
                     metadataObj.timeZone = $("#offsetTaken").val()
+                    metadataObj.keywords = $("#keywords").val()
                     const latlngArray = $("#latlng").val().split(",");
                     metadataObj.lat = $.trim(latlngArray[0])
                     metadataObj.lng = $.trim(latlngArray[1])
                     if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
                         $("#latlng").val(metadataObj.lat+","+metadataObj.lng)
                     }
-                    metadataObj.keywords = $("#keywords").val()
                     metadataObj.tagpeople = $("#tagpeople").val()
                     metadataObj.albumlist = $("#albumnames").val()
                     metadataObj.hidden = $("#hidden").prop("checked")

@@ -30,8 +30,7 @@
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="flex-grow-1 d-flex align-items-center">
             <form id="appSearch" class="form-control-dark w-100" action="/search" method="post">
-                <input id="appSearchInput" list="appSearchList" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
-                <datalist id="appSearchList"></datalist>
+                <input id="appSearchInput" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
                 <input type="submit" style="position: absolute; left: -9999px"/>
                 <script type="text/javascript">
                     $(document).ready(function () {
@@ -50,16 +49,40 @@
                                         const searchHistoryList = data["searchHistoryList"] === "" ? [] : data["searchHistoryList"];
 
                                         if (searchHistoryList.length > 0) {
+                                            let searchHistoryData = [];
                                             for (const index in searchHistoryList) {
                                                 const searchHistoryObj = searchHistoryList[index];
-
-                                                $("#appSearchList").append($('<option>', {
-                                                    value: searchHistoryObj.term,
-                                                    text : searchHistoryObj.term
-                                                }));
+                                                searchHistoryData.push(searchHistoryObj.term)
                                             }
 
-                                            $('#appSearchInput').autocomplete();
+                                            $("#appSearchInput").autocomplete({
+                                                minLength: 0,
+                                                source: function (request, response) {
+                                                    // delegate back to autocomplete, but extract the last term
+                                                    response(
+                                                        $.ui.autocomplete.filter(
+                                                            searchHistoryData,
+                                                            shashin.autocompleteExtractLast(request.term)
+                                                        )
+                                                    )
+                                                },
+                                                focus: function () {
+                                                    // prevent value inserted on focus
+                                                    return false;
+                                                },
+                                                select: function (event, ui) {
+                                                    const terms = shashin.autocompleteSplit(this.value);
+                                                    // remove the current input
+                                                    terms.pop();
+                                                    // add the selected item
+                                                    terms.push(ui.item.value);
+                                                    // add placeholder to get the comma-and-space at the end
+                                                    terms.push("");
+                                                    this.value = terms.join(",");
+                                                    this.value = this.value.replace(/,\s*$/, "");
+                                                    return false;
+                                                }
+                                            });
                                         }
                                     }
                                 }

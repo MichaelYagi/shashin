@@ -440,12 +440,14 @@
                         data.hasOwnProperty("favorites") &&
                         data.hasOwnProperty("albumList") &&
                         data.hasOwnProperty("recognitionLabels") &&
-                        data.hasOwnProperty("labelPhotoMap")
+                        data.hasOwnProperty("labelPhotoMap") &&
+                        data.hasOwnProperty("keywordMap")
                     ) {
                         const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
                         const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
                         const recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
                         const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
+                        const keywordMap = data["keywordMap"] === "" ? null : data["keywordMap"];
                         const albumMap = data["albumMap"] === "" ? null : data["albumMap"];
                         const albumList = data["albumList"] === "" ? null : data["albumList"];
 
@@ -619,7 +621,7 @@
                                             e.preventDefault();
 
                                             const metadataObj = JSON.parse($(this).attr("tag"));
-                                            shashin.openEditMetadataModal(metadataObj, recognitionLabels, labelPhotoMap[metadataObj.id], albumList, albumMap[metadataObj.id]);
+                                            shashin.openEditMetadataModal(metadataObj, recognitionLabels, labelPhotoMap[metadataObj.id], albumList, albumMap[metadataObj.id], keywordMap[metadataObj.id]);
                                         });
                                     }
 

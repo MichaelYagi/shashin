@@ -41,7 +41,6 @@ CREATE TABLE `metadata` (
     `fstopNumber` REAL(10) DEFAULT NULL,
     `focalLength` REAL(10) DEFAULT NULL,
     `compressionType` VARCHAR(255) DEFAULT NULL,
-    `keywords` VARCHAR(500) DEFAULT NULL,
     `hidden` BOOLEAN NOT NULL DEFAULT FALSE,
     `addedAt` DATETIME DEFAULT NULL,
     `takenAt` DATETIME DEFAULT NULL,
@@ -49,6 +48,41 @@ CREATE TABLE `metadata` (
     `modifiedAt` DATETIME DEFAULT NULL,
     `lastAccessedAt` DATETIME DEFAULT NULL,
     PRIMARY KEY (`id`)
+);
+
+DROP TABLE IF EXISTS `settings`;
+CREATE TABLE `settings` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `recognitionConfidenceThreshold` VARCHAR(36) NOT NULL DEFAULT '0.6',
+    `traininDataLimit` INTEGER NOT NULL DEFAULT 100,
+    `matchScanLimit` INTEGER NOT NULL DEFAULT 50,
+    `queryLimit` INTEGER NOT NULL DEFAULT 20,
+    `notificationLimit` INTEGER NOT NULL DEFAULT 20,
+    `searchHistoryLimit` INTEGER NOT NULL DEFAULT 15,
+    `port` VARCHAR(10) NOT NULL DEFAULT '6624',
+    `scanAutomatically` BOOLEAN DEFAULT TRUE,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL
+);
+
+DROP TABLE IF EXISTS `keyword`;
+CREATE TABLE `keyword` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `keyword` VARCHAR(100) NOT NULL UNIQUE,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL
+);
+
+DROP TABLE IF EXISTS `keywordphoto`;
+CREATE TABLE `keywordphoto` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `metadataId` VARCHAR(36),
+    `keywordId` INTEGER,
+    `createdAt` DATETIME DEFAULT NULL,
+    `modifiedAt` DATETIME DEFAULT NULL,
+    UNIQUE(`metadataId`,`keywordId`) ON CONFLICT IGNORE,
+    FOREIGN KEY (`keywordId`) REFERENCES keyword(`id`),
+    FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`)
 );
 
 DROP TABLE IF EXISTS `recognitionlabel`;
@@ -70,24 +104,6 @@ CREATE TABLE `recognitionlabelphoto` (
     FOREIGN KEY (`recognitionLabelId`) REFERENCES recognitionlabel(`id`),
     FOREIGN KEY (`metadataId`) REFERENCES metadata(`id`)
 );
-
-DROP TABLE IF EXISTS `settings`;
-CREATE TABLE `settings` (
-    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `recognitionConfidenceThreshold` VARCHAR(36) NOT NULL DEFAULT '0.6',
-    `traininDataLimit` INTEGER NOT NULL DEFAULT 100,
-    `matchScanLimit` INTEGER NOT NULL DEFAULT 50,
-    `queryLimit` INTEGER NOT NULL DEFAULT 20,
-    `notificationLimit` INTEGER NOT NULL DEFAULT 20,
-    `searchHistoryLimit` INTEGER NOT NULL DEFAULT 15,
-    `port` VARCHAR(10) NOT NULL DEFAULT '6624',
-    `scanAutomatically` BOOLEAN DEFAULT TRUE,
-    `createdAt` DATETIME DEFAULT NULL,
-    `modifiedAt` DATETIME DEFAULT NULL
-);
--- INSERT INTO settings
---     (recognition_confidence_threshold,training_data_limit,match_scan_limit,query_limit,notification_limit,port)
---     VALUES ('0.6',100,10,20,20,'6624');
 
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (

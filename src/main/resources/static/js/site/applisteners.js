@@ -16,6 +16,30 @@ $("#appToolsBatchEdit").click(function(e) {
     if (thumbnailList !== "") {
         $("#editPhotosNamesModalLabel").html(thumbnailList);
     }
+    $("#keywordsBatchData").autocomplete({
+        minLength: 0,
+        source: function (request, response) {
+            // delegate back to autocomplete, but extract the last term
+            response($.ui.autocomplete.filter($("#keywordsBatchString").val().split(","), shashin.autocompleteExtractLast(request.term)));
+        },
+        focus: function () {
+            // prevent value inserted on focus
+            return false;
+        },
+        select: function (event, ui) {
+            const terms = shashin.autocompleteSplit(this.value);
+            // remove the current input
+            terms.pop();
+            // add the selected item
+            terms.push(ui.item.value);
+            // add placeholder to get the comma-and-space at the end
+            terms.push("");
+            this.value = terms.join(",");
+            this.value = this.value.replace(/,\s*$/, "");
+            return false;
+        }
+    });
+    $("#keywordsBatchData").autocomplete( "option", "appendTo", "#saveBatchData" );
     $("#propBatchMetadata").modal('show');
 });
 
