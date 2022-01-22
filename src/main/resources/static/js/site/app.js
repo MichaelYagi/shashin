@@ -208,7 +208,12 @@
         $("#propTimelineModal").modal('show');
     }
 
-    shashin.createAutocomplete = function(inputEl, source, commaDelimited) {
+    shashin.createAutocomplete = function(inputEl, source, commaDelimited, resultLimit) {
+
+        if (typeof resultLimit === "undefined") {
+            resultLimit = 10;
+        }
+
         $(inputEl).autocomplete({
             minLength: 0,
             source: function (request, response) {
@@ -226,7 +231,7 @@
                     $.ui.autocomplete.filter(
                         source,
                         shashin.autocompleteExtractLast(request.term)
-                    ).slice(0, 10) // Only show 10 results
+                    ).slice(0, resultLimit) // Only show 10 results
                 )
             },
             focus: function () {
