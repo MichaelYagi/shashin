@@ -32,7 +32,7 @@
             <form id="appSearch" class="form-control-dark w-100" action="/search" method="post">
                 <input id="appSearchInput" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
                 <input type="submit" style="position: absolute; left: -9999px"/>
-                <script type="text/javascript">
+                <script th:inline="javascript" type="text/javascript">
                     $(document).ready(function () {
                         const ajaxParams = {
                             type: "get",
@@ -55,7 +55,9 @@
                                                 searchHistoryData.push(searchHistoryObj.term)
                                             }
 
-                                            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false);
+                                            /*<![CDATA[*/
+                                            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, /*[[${searchHistoryLimit}]]*/15);
+                                            /*]]>*/
                                         }
                                     }
                                 }
