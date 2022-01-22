@@ -7,10 +7,7 @@ import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.FavoriteRepository
-import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.NotificationRepository
-import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,6 +43,9 @@ class FavoritesController {
     @Autowired
     private lateinit var userRepository: UserRepository
 
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -73,6 +73,7 @@ class FavoritesController {
         response["titleDescriptor"] = TextUtils.capitalized(module)
         response["message"] = "There are no favorites."
         response["metadataList"] = ""
+        response["keywordMap"] = mutableMapOf<String, String>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -89,6 +90,12 @@ class FavoritesController {
                 if (metadataList.count() > 0) {
                     response["metadataList"] = metadataList
                 }
+                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                val keywordMap = mutableMapOf<String, String>()
+                for (keywordGroup in keywordList) {
+                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                }
+                response["keywordMap"] = keywordMap
                 response["message"] = ""
                 response["msg"] = "Results"
                 response["status"] = "success"

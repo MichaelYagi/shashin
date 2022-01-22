@@ -496,17 +496,21 @@
         }
     }
 
-    shashin.openInfoModal = function(metadata) {
+    shashin.openInfoModal = function(metadata, keywordList) {
         // Populate modal data
+        if (typeof keywordList === "undefined") {
+            keywordList = "";
+        }
+        metadata.keywords = keywordList;
 
         if ($("#infoModalEdit"+metadata.id).attr("tag") && $("#infoModalEdit"+metadata.id).attr("tag").trim() !== "") {
             metadata = JSON.parse($("#infoModalEdit"+metadata.id).attr("tag"));
         }
 
         $("#infoModalTitle").text(metadata.title);
-        $("#currentfilename").val(metadata.fileName)
-        $("#currentlat").val(metadata.lat)
-        $("#currentlng").val(metadata.lng)
+        $("#currentfilename").val(metadata.fileName);
+        $("#currentlat").val(metadata.lat);
+        $("#currentlng").val(metadata.lng);
         $("#metadataId").val(metadata.id);
 
         if (metadata.thumbnailUrlCentered !== null) {

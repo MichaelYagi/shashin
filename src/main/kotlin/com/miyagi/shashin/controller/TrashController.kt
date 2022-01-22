@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,6 +27,9 @@ class TrashController {
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
 
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
 
@@ -34,10 +38,17 @@ class TrashController {
         val module = "trash"
         model["message"] = "There are nothing trashed."
         model["metadataList"] = ""
+        model["keywordMap"] = mutableMapOf<String, String>()
 
         val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())
         if (trashList.count() > 0) {
             model["metadataList"] = trashList
+            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+            val keywordMap = mutableMapOf<String, String>()
+            for (keywordGroup in keywordList) {
+                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+            }
+            model["keywordMap"] = keywordMap
             model["message"] = ""
         }
 
@@ -52,11 +63,18 @@ class TrashController {
     fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
         val response = mutableMapOf<String, Any?>()
         response["metadataList"] = ""
+        response["keywordMap"] = mutableMapOf<String, String>()
 
         if (page > 0) {
             val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit((page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
             if (trashList.count() > 0) {
                 response["metadataList"] = trashList
+                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                val keywordMap = mutableMapOf<String, String>()
+                for (keywordGroup in keywordList) {
+                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                }
+                response["keywordMap"] = keywordMap
                 response["msg"] = ""
                 response["status"] = "success"
                 return mapper.writeValueAsString(response)

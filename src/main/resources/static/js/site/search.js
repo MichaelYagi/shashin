@@ -20,6 +20,7 @@ class Search {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
                 const metadataList = data["metadataSearchList"] === "" ? null : data["metadataSearchList"];
+                const keywordMap = data["keywordMap"] === "" ? {} : data["keywordMap"];
 
                 if (metadataList !== null && metadataList.length > 0) {
                     let html = "";
@@ -64,7 +65,7 @@ class Search {
                         $("#infoModalEdit"+metadata.id).click(function(e) {
                             e.preventDefault();
                             const metadataObj = JSON.parse($(this).attr("tag"));
-                            shashin.openInfoModal(metadataObj);
+                            shashin.openInfoModal(metadataObj, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "");
                         });
 
                         html = "";

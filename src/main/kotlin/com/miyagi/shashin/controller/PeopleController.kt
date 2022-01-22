@@ -54,6 +54,9 @@ class PeopleController {
     @Autowired
     private var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
 
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
+
     @Value("\${app.role.admin}")
     private lateinit var adminRole: String
 
@@ -167,6 +170,7 @@ class PeopleController {
         model["lowMatchResults"] = ""
         model["recognitionLabels"] = ""
         model["labelPhotoMap"] = ""
+        model["keywordMap"] = mutableMapOf<String, String>()
         val counts = HashMap<String,Int>()
         counts["person"] = 0
         counts["matches"] = 0
@@ -222,6 +226,13 @@ class PeopleController {
                 labelPhotoMap[metadata.getId()] = labelString
             }
             model["labelPhotoMap"] = labelPhotoMap
+
+            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+            val keywordMap = mutableMapOf<String, String>()
+            for (keywordGroup in keywordList) {
+                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+            }
+            model["keywordMap"] = keywordMap
         }
 
         model["counts"] = counts
@@ -303,6 +314,7 @@ class PeopleController {
         response["personInfo"] = ""
         response["recognitionLabels"] = ""
         response["parameter"] = personId
+        response["keywordMap"] = mutableMapOf<String, String>()
         val counts = HashMap<String,Int>()
         counts["person"] = 0
         counts["matches"] = 0
@@ -377,6 +389,12 @@ class PeopleController {
                 }
                 response["labelPhotoMap"] = labelPhotoMap
                 response["metadataList"] = metadataList
+                val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                val keywordMap = mutableMapOf<String, String>()
+                for (keywordGroup in keywordList) {
+                    keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                }
+                response["keywordMap"] = keywordMap
             }
 
             response["counts"] = counts

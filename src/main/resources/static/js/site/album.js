@@ -56,6 +56,7 @@
                         const currentUser = data["currentUser"] === "" ? null : data["currentUser"];
                         const notificationMap = data["notificationMap"] === "" ? null : data["notificationMap"];
                         const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
+                        const keywordMap = data["keywordMap"] === "" ? {} : data["keywordMap"];
 
                         shashin.printMessageToConsole(albumData);
                         shashin.printMessageToConsole(albumMetadataList);
@@ -142,7 +143,7 @@
                                 $("#infoModalEdit"+metadata.id).click(function(e) {
                                     e.preventDefault();
                                     const metadataObj = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
-                                    shashin.openInfoModal(metadataObj);
+                                    shashin.openInfoModal(metadataObj, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "");
                                 });
                             }
                         } else {

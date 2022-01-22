@@ -51,6 +51,9 @@ class AlbumsController {
     @Autowired
     private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
 
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
@@ -130,6 +133,7 @@ class AlbumsController {
                     response["albumsCommentsMap"] = albumsCommentsMap
                     response["notificationMap"] = notificationMap
                     response["albumsCount"] = albumsCount
+
                     val userCount = userRepository.count()
                     if (userCount > 1) {
                         response["userAlbums"] = userAlbumRepository.findAllByOrderByUserIdAsc()!!
@@ -530,6 +534,7 @@ class AlbumsController {
         response["favorites"] = ""
         response["msg"] = "No results"
         response["status"] = "noop"
+        response["keywordMap"] = mutableMapOf<String, String>()
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -591,6 +596,12 @@ class AlbumsController {
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         response["album"] = album.get()
                         response["albumId"] = album.get().getId()
+                        val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
+                        val keywordMap = mutableMapOf<String, String>()
+                        for (keywordGroup in keywordList) {
+                            keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
+                        }
+                        response["keywordMap"] = keywordMap
                         val userCopy = User()
                         userCopy.setUsername(currentUserObj.getUsername())
                         userCopy.setAuthority(currentUserObj.getAuthority())
