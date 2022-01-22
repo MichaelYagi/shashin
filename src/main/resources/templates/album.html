@@ -43,7 +43,7 @@
                                 </th:block>
                             </th:block>
 
-                            <div class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
+                            <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
                                 <img loading="lazy" th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" th:id="'image'+${metadata.id}" th:width="${metadata.thumbnailSmallWidth}" th:height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;" th:onError="Util.errorImg(this,[[${metadata.title}]],209)">
@@ -92,7 +92,7 @@
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
                                     e.preventDefault();
                                     const metadataObj = JSON.parse($("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag"));
-                                    shashin.openInfoModal(metadataObj, /*[[${keywordMap.get(metadata.id)}]]*/ "");
+                                    shashin.openInfoModal(metadataObj);
                                 });
                                 /*]]>*/
                             </script>

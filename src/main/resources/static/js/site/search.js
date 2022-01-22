@@ -39,7 +39,7 @@ class Search {
                             html += '<section class="dateSection" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
                         }
 
-                        html += '<div class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
+                        html += '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                         html +=
                             '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
                             '   <img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="Util.errorImg(this,\''+metadata.title+'\',209)">\n' +
@@ -65,7 +65,7 @@ class Search {
                         $("#infoModalEdit"+metadata.id).click(function(e) {
                             e.preventDefault();
                             const metadataObj = JSON.parse($(this).attr("tag"));
-                            shashin.openInfoModal(metadataObj, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "");
+                            shashin.openInfoModal(metadataObj);
                         });
 
                         html = "";

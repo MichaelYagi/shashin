@@ -18,3 +18,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed processing lat/lng
 - Fixed map icon flickering
 - Fixed timezone offset list and selection
+- Fixed thumbnail removal for non-timeline views
