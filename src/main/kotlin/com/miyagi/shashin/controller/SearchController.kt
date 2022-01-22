@@ -35,7 +35,11 @@ class SearchController {
     @GetMapping("/search")
     fun getSearch(model: Model, request: HttpServletRequest): String {
         val module = "search"
-        val searchTerm = request.getParameter("searchTerm").toString()
+        val hasSearchTerm = request.parameterMap.containsKey("searchTerm")
+        var searchTerm = ""
+        if (hasSearchTerm) {
+            searchTerm = request.getParameter("searchTerm").toString()
+        }
         val response = buildSearchData(model,searchTerm,0)
 
         model["searchTerm"] = response["searchTerm"]!!
