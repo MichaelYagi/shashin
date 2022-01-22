@@ -4,8 +4,8 @@
     albumSettings.openAlbumModal = function (e,metadataId) {
         e.preventDefault();
         let metadata = null;
-        if ($("#albumModalEdit"+metadataId).attr("tag") && $("#albumModalEdit"+metadataId).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#albumModalEdit"+metadataId).attr("tag"));
+        if ($("#mediaLink"+metadataId).attr("tag") && $("#mediaLink"+metadataId).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#mediaLink"+metadataId).attr("tag"));
         }
 
         if (metadata !== null) {
@@ -135,7 +135,6 @@
                                 });
 
                                 // Call JS and modal
-                                $("#albumModalEdit"+metadata.id).attr("tag", JSON.stringify(metadata));
                                 shashin.setPhotoOverlays(metadata, activePage);
                                 albumModal.renderAlbumCommentsModal(albumData, metadata, currentUser, albumPhotoCommentsMap);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
