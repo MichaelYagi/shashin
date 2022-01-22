@@ -92,7 +92,9 @@ $("#saveBatchMetadata").click(function (e) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
-
+                    if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
+                        $("#keywordsBatchString").val(data["keywords"]);
+                    }
                     const metadataIds = JSON.parse($("#batchMetadataIds").val());
                     for (const index in metadataIds) {
                         const metadataId = metadataIds[index];
@@ -120,6 +122,10 @@ $("#saveBatchMetadata").click(function (e) {
                                 }
                             }
 
+                            if ($("#keywordsBatchData").val().trim() !== "") {
+                                metadataObj.keywords = $("#keywordsBatchData").val()
+                            }
+
                             if ($("#latlngBatchData").val().trim() !== "") {
                                 const latlngArray = $("#latlngBatchData").val().split(",");
                                 metadataObj.lat = $.trim(latlngArray[0])
@@ -127,9 +133,6 @@ $("#saveBatchMetadata").click(function (e) {
                                 if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
                                     $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
                                 }
-                            }
-                            if ($("#keywordsBatchData").val().trim() !== "") {
-                                metadataObj.keywords = $("#keywordsBatchData").val()
                             }
                             if ($("#tagBatchDataInput").val().trim() !== "") {
                                 metadataObj.tagpeople = $("#tagBatchDataInput").val()

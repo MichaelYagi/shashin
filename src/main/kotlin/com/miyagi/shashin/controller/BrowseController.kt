@@ -37,6 +37,9 @@ class BrowseController {
     private lateinit var favoriteRepository: FavoriteRepository
 
     @Autowired
+    private lateinit var keywordRepository: KeywordRepository
+
+    @Autowired
     private var recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
@@ -81,6 +84,7 @@ class BrowseController {
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = "all"
         response["albumMap"] = mutableMapOf<String, String>()
+        response["keywordMap"] = mutableMapOf<String, String>()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -109,6 +113,7 @@ class BrowseController {
 
                 val labelPhotoMap = mutableMapOf<String, String>()
                 val albumMap = mutableMapOf<String, String>()
+                val keywordMap = mutableMapOf<String, String>()
 
                 for (metadata in metadataList) {
                     val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
@@ -153,9 +158,20 @@ class BrowseController {
                         }
                         albumMap[metadata.getId()] = albumMetadataList
                     }
+
+                    val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+                    var keywordMetadataList = ""
+                    for (keyword in keywords) {
+                        keywordMetadataList += keyword.getKeyword()+","
+                    }
+                    if (keywordMetadataList.isNotEmpty()) {
+                        keywordMetadataList = keywordMetadataList.dropLast(1)
+                    }
+                    keywordMap[metadata.getId()] = keywordMetadataList
                 }
                 response["labelPhotoMap"] = labelPhotoMap
                 response["albumMap"] = albumMap
+                response["keywordMap"] = keywordMap
 
                 val albumList = albumRepository.findAll()
                 if (albumList.count() > 0) {
@@ -243,6 +259,7 @@ class BrowseController {
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = "all"
         response["albumMap"] = mutableMapOf<String, String>()
+        response["keywordMap"] = mutableMapOf<String, String>()
         response["folder"] = folder
 
         response["msg"] = "Could not get results"
@@ -273,6 +290,7 @@ class BrowseController {
 
                 val labelPhotoMap = mutableMapOf<String, String>()
                 val albumMap = mutableMapOf<String, String>()
+                val keywordMap = mutableMapOf<String, String>()
 
                 for (metadata in metadataList) {
                     val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
@@ -317,9 +335,20 @@ class BrowseController {
                         }
                         albumMap[metadata.getId()] = albumMetadataList
                     }
+
+                    val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+                    var keywordMetadataList = ""
+                    for (keyword in keywords) {
+                        keywordMetadataList += keyword.getKeyword()+","
+                    }
+                    if (keywordMetadataList.isNotEmpty()) {
+                        keywordMetadataList = keywordMetadataList.dropLast(1)
+                    }
+                    keywordMap[metadata.getId()] = keywordMetadataList
                 }
                 response["labelPhotoMap"] = labelPhotoMap
                 response["albumMap"] = albumMap
+                response["keywordMap"] = keywordMap
 
                 val albumList = albumRepository.findAll()
                 if (albumList.count() > 0) {

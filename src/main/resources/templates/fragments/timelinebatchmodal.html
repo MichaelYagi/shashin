@@ -8,7 +8,7 @@
                 <h5 class="modal-title" id="editPhotosModalLabel">Edit Photos<br><span id="editPhotosNamesModalLabel"></span></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body ui-front">
                 <p class="text-muted">Empty fields will be ignored</p>
                 <form id="saveBatchData">
                     <input type="hidden" id="batchMetadataIds" name="batchMetadataIds" value="">
@@ -36,6 +36,7 @@
                         <div class="col-sm">
                             <label for="keywordsBatchData" class="col-form-label">Keywords (comma separated)</label>
                             <input type="text" class="form-control" id="keywordsBatchData" name="keywordsBatchData" value="">
+                            <input type="hidden" id="keywordsBatchString" th:value="${keywords}">
                         </div>
                     </div>
                     <div class="form-group row">

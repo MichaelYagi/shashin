@@ -18,6 +18,7 @@ class Folder {
                     const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
                     const albumMap = data["albumMap"] === "" ? null : data["albumMap"];
                     const albumList = data["albumList"] === "" ? null : data["albumList"];
+                    const keywordMap = data["keywordMap"] === "" ? null : data["keywordMap"];
 
                     if (metadataList !== null && metadataList.length > 0) {
                         let html = "";
@@ -58,7 +59,7 @@ class Folder {
                             $("#timelineModalEdit"+metadata.id).click(function(e) {
                                 e.preventDefault();
 
-                                shashin.openEditMetadataModal(metadata,recognitionLabels,labelPhotoMap[metadata.id],albumList,albumMap[metadata.id]);
+                                shashin.openEditMetadataModal(metadata,recognitionLabels,labelPhotoMap[metadata.id],albumList,albumMap[metadata.id],keywordMap[metadata.id]);
                             });
 
                             shashin.setPhotoOverlays(metadata, activePage);

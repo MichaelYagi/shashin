@@ -45,7 +45,6 @@ class Metadata {
     private var lens: String? = null
     private var quality: String? = null
     private var compressionType: String? = null
-    private var keywords: String? = null
     private var hidden: Boolean? = null
     private var addedAt: String? = null
     private var takenAt: String? = null
@@ -169,9 +168,6 @@ class Metadata {
     }
     fun setCompressionType(compressionType: String?) {
         this.compressionType = compressionType
-    }
-    fun setKeywords(keywords: String?) {
-        this.keywords = keywords
     }
     fun setHidden(hidden: Boolean?) {
         this.hidden = hidden
@@ -300,9 +296,6 @@ class Metadata {
     fun getCompressionType(): String? {
         return this.compressionType
     }
-    fun getKeywords(): String? {
-        return this.keywords
-    }
     fun getHidden(): Boolean? {
         return this.hidden
     }
@@ -350,7 +343,6 @@ class Metadata {
         map["lens"] = this.lens
         map["quality"] = this.quality
         map["compressionType"] = this.compressionType
-        map["keywords"] = this.keywords
         map["hidden"] = this.hidden
         map["takenAt"] = this.takenAt
         map["addedAt"] = this.addedAt

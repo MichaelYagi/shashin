@@ -56,6 +56,12 @@ class TimelineController {
     private lateinit var albumCommentRepository: AlbumCommentRepository
 
     @Autowired
+    private lateinit var keywordRepository: KeywordRepository
+
+    @Autowired
+    private lateinit var keywordPhotoRepository: KeywordPhotoRepository
+
+    @Autowired
     private var recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
@@ -87,6 +93,9 @@ class TimelineController {
         }
 
         model["timeOffsets"] = timeOffsets()
+        val keywordList = keywordRepository.findAll().map { it?.getKeyword() }
+        val keywords = keywordList.joinToString(",")
+        model["keywords"] = keywords
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -304,6 +313,7 @@ class TimelineController {
         response["labelPhotoMap"] = mutableMapOf<String, String>()
         response["mediaTypeFilter"] = mediaTypeFilter
         response["albumMap"] = mutableMapOf<String, String>()
+        response["keywordMap"] = mutableMapOf<String, String>()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -347,6 +357,7 @@ class TimelineController {
 
                         val labelPhotoMap = mutableMapOf<String, String>()
                         val albumMap = mutableMapOf<String, String>()
+                        val keywordMap = mutableMapOf<String, String>()
 
                         for (metadata in metadataList) {
                             val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
@@ -391,9 +402,20 @@ class TimelineController {
                                 }
                                 albumMap[metadata.getId()] = albumMetadataList
                             }
+
+                            val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+                            var keywordMetadataList = ""
+                            for (keyword in keywords) {
+                                keywordMetadataList += keyword.getKeyword()+","
+                            }
+                            if (keywordMetadataList.isNotEmpty()) {
+                                keywordMetadataList = keywordMetadataList.dropLast(1)
+                            }
+                            keywordMap[metadata.getId()] = keywordMetadataList
                         }
                         response["labelPhotoMap"] = labelPhotoMap
                         response["albumMap"] = albumMap
+                        response["keywordMap"] = keywordMap
 
                         val albumList = albumRepository.findAll()
                         if (albumList.count() > 0) {
@@ -696,16 +718,38 @@ class TimelineController {
             } else {
                 metadataObj.get().setTimeZone(metadataMap["offset"].toString())
             }
-            if (metadataMap["keywords"].toString() == "") {
-                metadataObj.get().setKeywords(null)
-            } else {
-                val keywordArray = metadataMap["keywords"].toString().split(",")
-                var keywords = keywordArray.joinToString { it.trim() }.trim()
+
+            keywordPhotoRepository.deleteAllByMetadataId(metadataId)
+            if (metadataMap["keywords"].toString().isNotBlank()) {
+                var keywords = metadataMap["keywords"].toString().trim()
                 if (keywords.last() == ',') {
                     keywords = keywords.dropLast(1)
                 }
-                metadataObj.get().setKeywords(keywords)
+                val keywordList = keywords.split(",").map { it.trim() }
+
+                for (keywordTerm in keywordList) {
+                    val keyword = keywordTerm.lowercase()
+
+                    val keywordCount = keywordRepository.countByKeywordIgnoreCase(keyword)
+                    var keywordObj = Keyword()
+                    if (keywordCount == 0) {
+                        keywordObj.setKeyword(keywordTerm)
+                        keywordObj.setCreatedAt(getCurrentTimestamp())
+                        keywordObj.setModifiedAt(getCurrentTimestamp())
+                        keywordRepository.save(keywordObj)
+                    } else {
+                        keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
+                    }
+
+                    val keywordPhotoObj = KeywordPhoto()
+                    keywordPhotoObj.setKeywordId(keywordObj.getId())
+                    keywordPhotoObj.setMetadataId(metadataId)
+                    keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
+                    keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
+                    keywordPhotoRepository.save(keywordPhotoObj)
+                }
             }
+
             if (metadataMap["latlng"].toString() == "") {
                 metadataObj.get().setLat(null)
                 metadataObj.get().setLng(null)
@@ -751,6 +795,10 @@ class TimelineController {
             if (rootDir != null) {
                 MetadataProcessing.updateSidecarMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
             }
+
+            val keywordList = keywordRepository.findAll().map { it?.getKeyword() }
+            val keywords = keywordList.joinToString(",")
+            resp["keywords"] = keywords
             resp["msg"] = "Saved!"
             resp["status"] = "success"
             return mapper.writeValueAsString(resp)
@@ -1024,13 +1072,35 @@ class TimelineController {
                         }
                     }
                     if (keywords != null && keywords.isNotBlank()) {
-                        val keywordArray = keywords.toString().split(",")
-                        keywords = keywordArray.joinToString { it.trim() }.trim()
+                        keywords = keywords.toString().trim()
                         if (keywords.last() == ',') {
                             keywords = keywords.dropLast(1)
                         }
-                        metadata.setKeywords(keywords)
+                        val keywordList = keywords.split(",").map { it.trim() }
 
+                        keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
+
+                        for (keywordTerm in keywordList) {
+                            val keyword = keywordTerm.lowercase()
+
+                            val keywordCount = keywordRepository.countByKeywordIgnoreCase(keyword)
+                            var keywordObj = Keyword()
+                            if (keywordCount == 0) {
+                                keywordObj.setKeyword(keywordTerm)
+                                keywordObj.setCreatedAt(getCurrentTimestamp())
+                                keywordObj.setModifiedAt(getCurrentTimestamp())
+                                keywordRepository.save(keywordObj)
+                            } else {
+                                keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
+                            }
+
+                            val keywordPhotoObj = KeywordPhoto()
+                            keywordPhotoObj.setKeywordId(keywordObj.getId())
+                            keywordPhotoObj.setMetadataId(metadata.getId())
+                            keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
+                            keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
+                            keywordPhotoRepository.save(keywordPhotoObj)
+                        }
                     }
                 }
 
@@ -1060,6 +1130,10 @@ class TimelineController {
                         MetadataProcessing.updateSidecarMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
                     }
                 }
+
+                val keywordList = keywordRepository.findAll().map { it?.getKeyword() }
+                val keywordListString = keywordList.joinToString(",")
+                resp["keywords"] = keywordListString
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)

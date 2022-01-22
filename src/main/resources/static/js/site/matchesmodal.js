@@ -49,6 +49,9 @@ $("#saveBatchMetadata").click(function (e) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
+                if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
+                    $("#keywordsBatchString").val(data["keywords"]);
+                }
                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                 // window.top.location = window.top.location
 

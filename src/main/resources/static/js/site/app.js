@@ -44,10 +44,11 @@
         return metadata;
     }
 
-    shashin.openEditMetadataModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList) {
+    shashin.openEditMetadataModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList,keywordList) {
         let index;
 
         metadata = shashin.checkMetadata(metadata.id);
+        const keywordsAvailable = $('#keywordsString').val();
 
         // Clear modal data
         $('#propTimelineModal').find(':input').val('');
@@ -60,6 +61,7 @@
         $("#currentlat").val(metadata.lat)
         $("#currentlng").val(metadata.lng)
         $("#metadataId").val(metadata.id);
+        $("#keywordsString").val(keywordsAvailable);
 
         if (metadata.thumbnailUrlCentered !== null) {
             $("#propTimelineModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
@@ -75,6 +77,13 @@
         if (metadata.time !== null) {
             $("#timeTaken").val(metadata.time);
         }
+
+        if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null) {
+            $("#keywords").val(metadata.keywords);
+        } else {
+            $("#keywords").val(keywordList);
+        }
+
         if (metadata.day !== null) {
             $("#dayTaken").val(metadata.day);
         }
@@ -189,10 +198,55 @@
             $("#hidden")[0].checked = true;
         }
 
-        $("#keywords").val(metadata.keywords);
-
         $("#albumDetailRow").remove();
         Util.populateDetailsInfo(metadata,"propTimelineModal");
+
+        const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function(v){return v!==''});
+        $("#keywords").autocomplete({
+            minLength: 0,
+            source: function (request, response) {
+                // delegate back to autocomplete, but extract the last term
+                const inputValues = request.term.split(",");
+                $.each(inputValues, function(index, keywordItem) {
+                    // do something with `item` (or `this` is also `item` if you like)
+                    const keywordIndex = keywordAvailableList.indexOf(keywordItem.trim());
+                    if (keywordIndex !== -1) {
+                        keywordAvailableList.splice(keywordIndex, 1);
+                    }
+                });
+
+                response(
+                    $.ui.autocomplete.filter(
+                        keywordAvailableList,
+                        shashin.autocompleteExtractLast(request.term)
+                    )
+                )
+            },
+            focus: function () {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function (event, ui) {
+                const inputValues = this.value.split(",");
+                $.each(inputValues, function(index, keywordItem) {
+                    // do something with `item` (or `this` is also `item` if you like)
+                    const keywordIndex = keywordAvailableList.indexOf(keywordItem.trim());
+                    if (keywordIndex !== -1) {
+                        keywordAvailableList.splice(keywordIndex, 1);
+                    }
+                });
+                const terms = shashin.autocompleteSplit(this.value);
+                // remove the current input
+                terms.pop();
+                // add the selected item
+                terms.push(ui.item.value);
+                // add placeholder to get the comma-and-space at the end
+                terms.push("");
+                this.value = terms.join(",");
+                this.value = this.value.replace(/,\s*$/, "");
+                return false;
+            }
+        });
 
         // Open modal window
         $("#propTimelineModal").modal('show');
@@ -1147,6 +1201,31 @@
             if (thumbnailList !== "") {
                 $("#editPhotosNamesModalLabel").html(thumbnailList);
             }
+
+            $("#keywordsBatchData").autocomplete({
+                minLength: 0,
+                source: function (request, response) {
+                    // delegate back to autocomplete, but extract the last term
+                    response($.ui.autocomplete.filter($("#keywordsBatchString").val().split(","), shashin.autocompleteExtractLast(request.term)));
+                },
+                focus: function () {
+                    // prevent value inserted on focus
+                    return false;
+                },
+                select: function (event, ui) {
+                    const terms = shashin.autocompleteSplit(this.value);
+                    // remove the current input
+                    terms.pop();
+                    // add the selected item
+                    terms.push(ui.item.value);
+                    // add placeholder to get the comma-and-space at the end
+                    terms.push("");
+                    this.value = terms.join(",");
+                    this.value = this.value.replace(/,\s*$/, "");
+                    return false;
+                }
+            });
+
             $("#propBatchMetadata").modal('show');
         });
     }
@@ -1165,6 +1244,13 @@
         if (shashin.showDebug === true) {
             console.log(msg);
         }
+    }
+
+    shashin.autocompleteSplit = function(val) {
+        return val.split(/,\s*/);
+    }
+    shashin.autocompleteExtractLast = function(term) {
+        return shashin.autocompleteSplit(term).pop();
     }
 }( window.shashin = window.shashin || {}, jQuery ));
 
