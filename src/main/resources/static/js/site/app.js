@@ -202,24 +202,31 @@
         Util.populateDetailsInfo(metadata,"propTimelineModal");
 
         const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function(v){return v!==''});
-        $("#keywords").autocomplete({
+        shashin.createAutocomplete("#keywords", keywordAvailableList, true);
+
+        // Open modal window
+        $("#propTimelineModal").modal('show');
+    }
+
+    shashin.createAutocomplete = function(inputEl, source, commaDelimited) {
+        $(inputEl).autocomplete({
             minLength: 0,
             source: function (request, response) {
                 // delegate back to autocomplete, but extract the last term
                 const inputValues = request.term.split(",");
                 $.each(inputValues, function(index, keywordItem) {
                     // do something with `item` (or `this` is also `item` if you like)
-                    const keywordIndex = keywordAvailableList.indexOf(keywordItem.trim());
+                    const keywordIndex = source.indexOf(keywordItem.trim());
                     if (keywordIndex !== -1) {
-                        keywordAvailableList.splice(keywordIndex, 1);
+                        source.splice(keywordIndex, 1);
                     }
                 });
 
                 response(
                     $.ui.autocomplete.filter(
-                        keywordAvailableList,
+                        source,
                         shashin.autocompleteExtractLast(request.term)
-                    )
+                    ).slice(0, 10) // Only show 10 results
                 )
             },
             focus: function () {
@@ -230,9 +237,9 @@
                 const inputValues = this.value.split(",");
                 $.each(inputValues, function(index, keywordItem) {
                     // do something with `item` (or `this` is also `item` if you like)
-                    const keywordIndex = keywordAvailableList.indexOf(keywordItem.trim());
+                    const keywordIndex = source.indexOf(keywordItem.trim());
                     if (keywordIndex !== -1) {
-                        keywordAvailableList.splice(keywordIndex, 1);
+                        source.splice(keywordIndex, 1);
                     }
                 });
                 const terms = shashin.autocompleteSplit(this.value);
@@ -240,16 +247,18 @@
                 terms.pop();
                 // add the selected item
                 terms.push(ui.item.value);
-                // add placeholder to get the comma-and-space at the end
-                terms.push("");
-                this.value = terms.join(",");
-                this.value = this.value.replace(/,\s*$/, "");
+
+                if (true === commaDelimited) {
+                    // add placeholder to get the comma-and-space at the end
+                    terms.push("");
+                    this.value = terms.join(",");
+                    this.value = this.value.replace(/,\s*$/, "");
+                } else {
+                    this.value = terms;
+                }
                 return false;
             }
         });
-
-        // Open modal window
-        $("#propTimelineModal").modal('show');
     }
 
     shashin.initLightGallery = function(lgElement,additionalLgConfigs,mediaElement) {
@@ -1203,46 +1212,7 @@
             }
 
             const keywordAvailableList = $("#keywordsBatchString").val().split(",");
-            $("#keywordsBatchData").autocomplete({
-                minLength: 0,
-                source: function (request, response) {
-                    const inputValues = request.term.split(",");
-                    $.each(inputValues, function(index, keywordItem) {
-                        // do something with `item` (or `this` is also `item` if you like)
-                        const keywordIndex = keywordAvailableList.indexOf(keywordItem.trim());
-                        if (keywordIndex !== -1) {
-                            keywordAvailableList.splice(keywordIndex, 1);
-                        }
-                    });
-
-                    // delegate back to autocomplete, but extract the last term
-                    response($.ui.autocomplete.filter(keywordAvailableList, shashin.autocompleteExtractLast(request.term)));
-                },
-                focus: function () {
-                    // prevent value inserted on focus
-                    return false;
-                },
-                select: function (event, ui) {
-                    const inputValues = this.value.split(",");
-                    $.each(inputValues, function(index, keywordItem) {
-                        // do something with `item` (or `this` is also `item` if you like)
-                        const keywordIndex = keywordAvailableList.indexOf(keywordItem.trim());
-                        if (keywordIndex !== -1) {
-                            keywordAvailableList.splice(keywordIndex, 1);
-                        }
-                    });
-                    const terms = shashin.autocompleteSplit(this.value);
-                    // remove the current input
-                    terms.pop();
-                    // add the selected item
-                    terms.push(ui.item.value);
-                    // add placeholder to get the comma-and-space at the end
-                    terms.push("");
-                    this.value = terms.join(",");
-                    this.value = this.value.replace(/,\s*$/, "");
-                    return false;
-                }
-            });
+            shashin.createAutocomplete("#keywordsBatchData", keywordAvailableList, true);
 
             $("#propBatchMetadata").modal('show');
         });
