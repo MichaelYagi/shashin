@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Improved API response for unauthorized requests
 - Added keyword table and removed keyword field from metadata
+- Updated site CSS to make JQuery UI align with bootstrap UX
 
 ### Fixed
 
