@@ -16,8 +16,8 @@ class Trash {
                 let message = "Error";
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("metadataList")) {
-                        const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
-                        const keywordMap = data["keywordMap"] === "" ? {} : data["keywordMap"];
+                        const metadataList = data["metadataList"];
+                        const keywordMap = data["keywordMap"];
                         let html = "";
 
                         if (metadataList.length > 0) {

@@ -3,7 +3,7 @@
 <body th:fragment="detailsinfo(${currentUser})">
 
 <br>
-<th:block th:if="${currentUser != '' and currentUser.authority == 'ROLE_ADMIN'}">
+<th:block th:if="${currentUser.authority == 'ROLE_ADMIN'}">
     <div class="row"><span class="shareUrlDetails"></span></div>
 </th:block>
 <div class="row"><strong class="pathLabel">File name:&nbsp;</strong><span class="pathDetails"></span></div>

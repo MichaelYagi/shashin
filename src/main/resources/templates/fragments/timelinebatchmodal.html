@@ -56,7 +56,7 @@
                             <div class="input-group" id="batchLabelIds">
                                 <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
 
-                                <th:block th:if="${recognitionLabels != ''}">
+                                <th:block th:if="${#lists.size(recognitionLabels)} > 0">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu" id="peopleNameList">

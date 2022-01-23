@@ -18,7 +18,7 @@
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" id="offcanvasTocCloseButton" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body" id="offcanvasTocBody">
-                <th:block th:if="${metadataDates != ''}">
+                <th:block th:if="${not #lists.isEmpty(metadataDates)}">
                     <th:block th:each="metadata, iterStat: ${metadataDates}">
                         <th:block th:if="${metadata.year == null or metadata.month == null or metadata.day == null}">
                             <a id="offcanvas_undated" class="list-group-item list-group-item-action" th:onclick="return timelineSettings.jumpFromTimelineToc(event,'undated',[[${mediaTypeFilter}]]);" href="#undated">Undated</a>
@@ -35,7 +35,7 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
 
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
-            <th:block th:if="${metadataList != ''}">
+            <th:block th:if="${not #lists.isEmpty(metadataList)}">
                 <script type="text/javascript">
                     $("#progressBarWrapper").css("visibility","visible");
                     const totalSize = [[${#lists.size(metadataList)}]];
@@ -60,7 +60,7 @@
             <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
 
             <div id="infinite-scroll-gallery">
-                <th:block th:if="${metadataList != ''}">
+                <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="dateContainer" id="container_undated">
                         <br id="brundated">

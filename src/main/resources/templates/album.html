@@ -28,7 +28,7 @@
 
             <div id="albumMessage"></div>
 
-            <th:block th:if="${album != '' and albumMetadataList != ''}">
+            <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
                 <span id="albumNameHeader"><h1 id="albumNameHeading" th:text="${album.name}"></h1></span>
 
                 <div id="infinite-scroll-gallery">
@@ -101,6 +101,9 @@
                         </th:block>
                     </div>
                 </div>
+            </th:block>
+            <th:block th:if="${#lists.isEmpty(albumMetadataList)}">
+                <span class="appendAlbumPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
             </th:block>
 
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>

@@ -46,7 +46,7 @@
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data["status"] === "success") {
                                     if (data.hasOwnProperty("searchHistoryList")) {
-                                        const searchHistoryList = data["searchHistoryList"] === "" ? [] : data["searchHistoryList"];
+                                        const searchHistoryList = data["searchHistoryList"];
 
                                         if (searchHistoryList.length > 0) {
                                             let searchHistoryData = [];
@@ -106,7 +106,7 @@
                 <span class="caret"></span>
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
-                <h6 class="dropdown-header" th:text="${currentUser != '' ? currentUser.username : ''}"></h6>
+                <h6 class="dropdown-header" th:text="${currentUser.username}"></h6>
                 <a class="dropdown-item" href="/users/update">Change password</a>
                 <a class="dropdown-item" href="/users/logout">Sign out</a>
             </div>

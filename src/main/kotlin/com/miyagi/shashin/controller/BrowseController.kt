@@ -1,10 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Album
-import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.Settings
-import com.miyagi.shashin.model.User
+import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -80,14 +77,14 @@ class BrowseController {
     private fun buildRecentlyAdded(model: Model, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["message"] = "There are no photos. Please setup directories in Settings and scan ."
-        response["metadataList"] = ""
-        response["favorites"] = ""
-        response["albumList"] = ""
-        response["recognitionLabels"] = ""
-        response["labelPhotoMap"] = mutableMapOf<String, String>()
+        response["metadataList"] = mutableListOf<Metadata>()
+        response["favorites"] = mutableMapOf<String, Any>()
+        response["albumList"] = mutableListOf<Album>()
+        response["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = "all"
-        response["albumMap"] = mutableMapOf<String, String>()
-        response["keywordMap"] = mutableMapOf<String, String>()
+        response["albumMap"] = mutableMapOf<String, Any>()
+        response["keywordMap"] = mutableMapOf<String, Any>()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -146,8 +143,8 @@ class BrowseController {
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
+                        labelPhotoMap[metadata.getId()] = labelString
                     }
-                    labelPhotoMap[metadata.getId()] = labelString
 
                     val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
                     if (albumPhotos != null) {
@@ -158,8 +155,8 @@ class BrowseController {
                         }
                         if (albumMetadataList.isNotEmpty()) {
                             albumMetadataList = albumMetadataList.dropLast(1)
+                            albumMap[metadata.getId()] = albumMetadataList
                         }
-                        albumMap[metadata.getId()] = albumMetadataList
                     }
 
                     val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
@@ -169,8 +166,8 @@ class BrowseController {
                     }
                     if (keywordMetadataList.isNotEmpty()) {
                         keywordMetadataList = keywordMetadataList.dropLast(1)
+                        keywordMap[metadata.getId()] = keywordMetadataList
                     }
-                    keywordMap[metadata.getId()] = keywordMetadataList
                 }
                 response["labelPhotoMap"] = labelPhotoMap
                 response["albumMap"] = albumMap
@@ -211,7 +208,7 @@ class BrowseController {
 
         val module = "folders"
         response["message"] = "There are no folders."
-        response["foldersList"] = ""
+        response["foldersList"] = mutableListOf<Folder>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -258,14 +255,14 @@ class BrowseController {
     private fun buildFolder(model: Model, folder: String, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["message"] = "There are no photos.."
-        response["metadataList"] = ""
-        response["favorites"] = ""
-        response["albumList"] = ""
-        response["recognitionLabels"] = ""
-        response["labelPhotoMap"] = mutableMapOf<String, String>()
+        response["metadataList"] = mutableListOf<Metadata>()
+        response["favorites"] = mutableMapOf<String, Any>()
+        response["albumList"] = mutableListOf<Album>()
+        response["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = "all"
-        response["albumMap"] = mutableMapOf<String, String>()
-        response["keywordMap"] = mutableMapOf<String, String>()
+        response["albumMap"] = mutableMapOf<String, Any>()
+        response["keywordMap"] = mutableMapOf<String, Any>()
         response["folder"] = folder
 
         response["msg"] = "Could not get results"
@@ -326,8 +323,8 @@ class BrowseController {
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
+                        labelPhotoMap[metadata.getId()] = labelString
                     }
-                    labelPhotoMap[metadata.getId()] = labelString
 
                     val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
                     if (albumPhotos != null) {
@@ -338,8 +335,8 @@ class BrowseController {
                         }
                         if (albumMetadataList.isNotEmpty()) {
                             albumMetadataList = albumMetadataList.dropLast(1)
+                            albumMap[metadata.getId()] = albumMetadataList
                         }
-                        albumMap[metadata.getId()] = albumMetadataList
                     }
 
                     val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())

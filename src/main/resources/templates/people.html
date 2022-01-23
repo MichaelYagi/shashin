@@ -12,7 +12,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <div id="albumsMessage"></div>
 
-            <th:block th:if="${peopleList != ''}">
+            <th:block th:if="${not #lists.isEmpty(peopleList)}">
                 <div class="row p-3">
                     <th:block th:each="person, iterStat: ${peopleList}">
                         <div class="card" style="width:auto;padding-top:10px;">

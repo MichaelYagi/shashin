@@ -8,6 +8,7 @@ import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.MediaDirectory
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.FileUtils
@@ -103,6 +104,12 @@ class SettingsController {
 
     @Autowired
     private val recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository? = null
+
+    @Autowired
+    private val keywordRepository: KeywordRepository? = null
+
+    @Autowired
+    private val keywordPhotoRepository: KeywordPhotoRepository? = null
 
     @Autowired
     private val settingsRepository: SettingsRepository? = null
@@ -338,7 +345,6 @@ class SettingsController {
 
         val module = "settings"
         model["message"] = ""
-        model["mediaDirList"] = ""
         model["mediaDirList"] = mediaDirList.trim()
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -352,7 +358,7 @@ class SettingsController {
     @GetMapping("/settings/users")
     fun getUsers(model: Model): String {
         val module = "users"
-        model["users"] = ""
+        model["users"] = mutableListOf<User>()
 
         val sort = Sort.by(
             Sort.Order.asc("username")
@@ -390,6 +396,8 @@ class SettingsController {
                 recognitionLabelPhotoRepository?.deleteAll()
                 recognitionLabelRepository?.deleteAll()
                 userAlbumRepository?.deleteAll()
+                keywordRepository?.deleteAll()
+                keywordPhotoRepository?.deleteAll()
 
                 // Clean up thread files
                 FileUtils.deleteThreadFiles("shashinscan")
@@ -553,7 +561,7 @@ class SettingsController {
         }
         val module = "logs"
         model["message"] = "No log file present"
-        model["logList"] = ""
+        model["logList"] = mutableListOf<String>()
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

@@ -12,7 +12,7 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <div id="foldersMessage"></div>
 
-            <th:block th:if="${foldersList != ''}">
+            <th:block th:if="${not #lists.isEmpty(foldersList)}">
                 <div class="row p-3">
                     <th:block th:each="folder, iterStat: ${foldersList}">
                         <div class="card" style="width:235px;padding-top:10px;">

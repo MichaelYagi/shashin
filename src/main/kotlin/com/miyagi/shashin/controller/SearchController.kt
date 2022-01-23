@@ -72,7 +72,7 @@ class SearchController {
     private fun buildSearchData(model: Model,searchTerm: String?, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["searchTerm"] = ""
-        response["metadataSearchList"] = ""
+        response["metadataSearchList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
 
         if (!searchTerm.isNullOrBlank()) {
@@ -147,7 +147,7 @@ class SearchController {
     @ResponseBody
     fun getSearchHistory(model: Model, request: HttpServletRequest): String {
         val response = mutableMapOf<String, Any?>()
-        response["searchHistoryList"] = ""
+        response["searchHistoryList"] = mutableListOf<SearchHistory>()
         response["msg"] = "Not authorized"
         response["status"] = "fail"
 

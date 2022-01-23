@@ -37,7 +37,7 @@ class TrashController {
     fun getFavorites(model: Model): String {
         val module = "trash"
         model["message"] = "There are nothing trashed."
-        model["metadataList"] = ""
+        model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
 
         val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(0, model.getAttribute("queryLimit").toString().toInt())
@@ -62,7 +62,7 @@ class TrashController {
     @ResponseBody
     fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
         val response = mutableMapOf<String, Any?>()
-        response["metadataList"] = ""
+        response["metadataList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
 
         if (page > 0) {

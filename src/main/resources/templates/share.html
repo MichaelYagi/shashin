@@ -13,7 +13,7 @@
             <input type="hidden" id="currentPage" name="currentPage" value="0">
             <input type="hidden" id="activePage" th:value="${activePage}">
             <div id="infinite-scroll-gallery">
-                <th:block th:if="${albumMetadataList != ''}">
+                <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
                     <h1 th:text="${album.name}"></h1>
                     <span id="albumId" style="display: none" th:text="${album.id}"></span>
 
@@ -40,7 +40,9 @@
                     </div>
 
                 </th:block>
-
+                <th:block th:if="${#lists.isEmpty(albumMetadataList)}">
+                    <span class="appendAlbumPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
+                </th:block>
             </div>
 
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>

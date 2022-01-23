@@ -20,3 +20,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed map icon flickering
 - Fixed timezone offset list and selection
 - Fixed thumbnail removal for non-timeline views
+- Fixed API data structure of values returned

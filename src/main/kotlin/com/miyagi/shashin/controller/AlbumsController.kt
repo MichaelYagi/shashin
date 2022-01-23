@@ -79,12 +79,12 @@ class AlbumsController {
 
         val module = "albums"
         response["message"] = "There are no albums."
-        response["albumsList"] = ""
-        response["albumsCount"] = ""
-        response["userAlbums"] = ""
-        response["userCount"] = ""
-        response["albumsCommentsMap"] = ""
-        response["notificationMap"] = ""
+        response["albumsList"] =  mutableListOf<Album>()
+        response["albumsCount"] = mutableListOf<Int>()
+        response["userAlbums"] = mutableListOf<UserAlbum>()
+        response["userCount"] = 0
+        response["albumsCommentsMap"] = mutableMapOf<Int, ArrayList<HashMap<String, Any>>>()
+        response["notificationMap"] = mutableMapOf<Int, Boolean>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -418,7 +418,7 @@ class AlbumsController {
         val tempAlbum = Album()
         tempAlbum.setId(0)
         response["album"] = tempAlbum
-        response["albumMetadataList"] = ""
+        response["albumMetadataList"] = mutableListOf<Metadata>()
         response["shareLink"] = ""
         response["msg"] = "No results"
         response["status"] = "fail"
@@ -525,13 +525,13 @@ class AlbumsController {
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)
 
-        response["album"] = ""
+        response["album"] = Album()
         response["albumId"] = 0
-        response["albumMetadataList"] = ""
-        response["albumPhotoCommentsMap"] = ""
-        response["currentUser"] = ""
-        response["notificationMap"] = ""
-        response["favorites"] = ""
+        response["albumMetadataList"] = mutableListOf<Metadata>()
+        response["albumPhotoCommentsMap"] = mutableMapOf<String, ArrayList<HashMap<String, Any>>>()
+        response["currentUser"] = User()
+        response["notificationMap"] = mutableMapOf<String, Boolean>()
+        response["favorites"] = mutableMapOf<String, String>()
         response["msg"] = "No results"
         response["status"] = "noop"
         response["keywordMap"] = mutableMapOf<String, String>()

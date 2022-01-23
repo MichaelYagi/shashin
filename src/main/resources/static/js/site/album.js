@@ -50,13 +50,13 @@
                         data.hasOwnProperty("currentUser") &&
                         data.hasOwnProperty("notificationMap")
                     ) {
-                        const albumData = data["album"] === "" ? null : data["album"];
-                        const albumMetadataList = data["albumMetadataList"] === "" ? null : data["albumMetadataList"];
-                        const albumPhotoCommentsMap = data["albumPhotoCommentsMap"] === "" ? null : data["albumPhotoCommentsMap"];
-                        const currentUser = data["currentUser"] === "" ? null : data["currentUser"];
-                        const notificationMap = data["notificationMap"] === "" ? null : data["notificationMap"];
-                        const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
-                        const keywordMap = data["keywordMap"] === "" ? {} : data["keywordMap"];
+                        const albumData = data["album"];
+                        const albumMetadataList = data["albumMetadataList"];
+                        const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
+                        const currentUser = data["currentUser"];
+                        const notificationMap = data["notificationMap"];
+                        const favoritesMap = data["favorites"];
+                        const keywordMap = data["keywordMap"];
 
                         shashin.printMessageToConsole(albumData);
                         shashin.printMessageToConsole(albumMetadataList);

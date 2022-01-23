@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
@@ -62,7 +63,7 @@ class BaseController {
     fun addAttributes(model: Model, response: HttpServletResponse) {
         model["userRole"] = userRole
         model["adminRole"] = adminRole
-        model["settings"] = ""
+        model["settings"] = Settings()
 
         var queryLimit = 20
         var searchHistoryLimit = 15
@@ -104,7 +105,7 @@ class BaseController {
         }
         model["parameter"] = ""
         model["hasNotifications"] = false
-        model["currentUser"] = ""
+        model["currentUser"] = User()
 
         model["authority"] = ""
         model["username"] = ""
@@ -139,7 +140,7 @@ class BaseController {
                 model["currentUser"] = currentUser
             }
         } catch(e: Exception) {
-            model["currentUser"] = ""
+            model["currentUser"] = User()
             val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
             cookie.path = "/"
             cookie.isHttpOnly = true

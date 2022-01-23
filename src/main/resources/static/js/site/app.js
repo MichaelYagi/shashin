@@ -101,19 +101,23 @@
         const latlngValue = (metadata.hasOwnProperty("lat") || metadata.hasOwnProperty("lng") || metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
         $("#latlng").val(latlngValue);
 
-        const taggedPeopleArray = taggedPeopleList.split(",");
-        let isObject = false;
         let taggedPeopleString = "";
-        for (index in taggedPeopleArray) {
-            const person = taggedPeopleArray[index];
-            if (person === "object") {
-                isObject = true;
-            } else {
-                taggedPeopleString += person + ",";
+        let taggedPeopleArray =[];
+        let isObject = false;
+        if (taggedPeopleList) {
+            taggedPeopleArray = taggedPeopleList.split(",");
+
+            for (index in taggedPeopleArray) {
+                const person = taggedPeopleArray[index];
+                if (person === "object") {
+                    isObject = true;
+                } else {
+                    taggedPeopleString += person + ",";
+                }
             }
+            taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
+            taggedPeopleString = taggedPeopleString.trim();
         }
-        taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
-        taggedPeopleString = taggedPeopleString.trim();
         if (taggedPeopleString !== "") {
             $("#tagpeople").val(taggedPeopleString);
         } else if (metadata.tagpeople !== null) {
@@ -148,14 +152,19 @@
             $(html).insertAfter($("#labelIdData"))
         }
 
-        const albumListArray = albumList.split(",");
         let albumListString = "";
-        for (index in albumListArray) {
-            const album = albumListArray[index];
-            albumListString += album + ",";
+        let albumListArray = [];
+        if (albumList) {
+            albumListArray = albumList.split(",");
+
+            for (index in albumListArray) {
+                const album = albumListArray[index];
+                albumListString += album + ",";
+            }
+
+            albumListString = albumListString.replace(/,\s*$/, "");
+            albumListString = albumListString.trim();
         }
-        albumListString = albumListString.replace(/,\s*$/, "");
-        albumListString = albumListString.trim();
         if (albumListString !== "") {
             $("#albumnames").val(albumListString);
         } else if (metadata.albumlist !== null) {
@@ -165,6 +174,7 @@
         if ($("#albumListInput").length > 0) {
             $("#albumListInput").remove();
         }
+
         if (allAlbumList !== null && allAlbumList.length > 0) {
             let html =
                 '<div class="input-group-append dropdown" id="albumListInput">\n' +

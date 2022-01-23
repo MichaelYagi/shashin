@@ -17,7 +17,7 @@
             <input type="hidden" id="activePage" th:value="${activePage}">
 
             <div id="infinite-scroll-gallery">
-            <th:block th:if="${lowMatchResults != ''}">
+            <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">
                 <h1 th:text="${personInfo.name}"></h1>
                 <div class="row p-3">
                     <th:block th:each="metadata, iterStat: ${lowMatchResults}">

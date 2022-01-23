@@ -25,7 +25,7 @@
                             <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
                         </div>
                     </div>
-                    <th:block th:if="${settings != ''}">
+                    <th:block th:if="${settings != null}">
                         <div class="row">
                             <div class="col-4">
                                 <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.6)</strong></label>
