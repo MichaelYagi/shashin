@@ -167,9 +167,9 @@ class PeopleController {
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
         model["message"] = "There are no photos."
-        model["lowMatchResults"] = ""
-        model["recognitionLabels"] = ""
-        model["labelPhotoMap"] = ""
+        model["lowMatchResults"] = mutableListOf<Metadata>()
+        model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        model["labelPhotoMap"] = mutableMapOf<String, Any>()
         model["keywordMap"] = mutableMapOf<String, String>()
         val counts = HashMap<String,Int>()
         counts["person"] = 0
@@ -222,8 +222,8 @@ class PeopleController {
                 }
                 if (labelString.isNotBlank()) {
                     labelString = labelString.dropLast(1)
+                    labelPhotoMap[metadata.getId()] = labelString
                 }
-                labelPhotoMap[metadata.getId()] = labelString
             }
             model["labelPhotoMap"] = labelPhotoMap
 
@@ -247,7 +247,7 @@ class PeopleController {
     fun getPeople(model: Model): String {
         val module = "people"
         model["message"] = "There are no people tagged."
-        model["peopleList"] = ""
+        model["peopleList"] = mutableListOf<MetadataPeople>()
         val counts = HashMap<Int,Int>()
         model["counts"] = counts
 
@@ -309,12 +309,12 @@ class PeopleController {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos."
-        response["metadataList"] = ""
-        response["labelPhotoMap"] = ""
-        response["personInfo"] = ""
-        response["recognitionLabels"] = ""
+        response["metadataList"] = mutableListOf<Metadata>()
+        response["labelPhotoMap"] = mutableMapOf<String, Any>()
+        response["personInfo"] = RecognitionLabel()
+        response["recognitionLabels"] = mutableListOf<RecognitionLabel>()
         response["parameter"] = personId
-        response["keywordMap"] = mutableMapOf<String, String>()
+        response["keywordMap"] = mutableMapOf<String, Any>()
         val counts = HashMap<String,Int>()
         counts["person"] = 0
         counts["matches"] = 0
@@ -382,10 +382,10 @@ class PeopleController {
                     }
                     if (labelString.isNotBlank()) {
                         labelString = labelString.dropLast(1)
+                        nameTaggedMap["labels"] = labelString
+                        nameTaggedMap["isTagged"] = isAutoTagged
+                        labelPhotoMap[metadata.getId()] = nameTaggedMap
                     }
-                    nameTaggedMap["labels"] = labelString
-                    nameTaggedMap["isTagged"] = isAutoTagged
-                    labelPhotoMap[metadata.getId()] = nameTaggedMap
                 }
                 response["labelPhotoMap"] = labelPhotoMap
                 response["metadataList"] = metadataList

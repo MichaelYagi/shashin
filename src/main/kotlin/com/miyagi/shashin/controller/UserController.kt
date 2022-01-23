@@ -73,7 +73,7 @@ class UserController {
     @GetMapping("/users/update")
     fun getUpdateUser(model: Model): String {
         model["message"] = ""
-        model["user"] = ""
+        model["user"] = User()
         model["message"] = ""
         model["alertClass"] = ""
 

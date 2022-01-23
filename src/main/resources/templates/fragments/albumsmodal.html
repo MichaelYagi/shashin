@@ -119,7 +119,7 @@
             <div class="modal-body">
                 <input type="hidden" th:id="'currentCommentId'+${album.id}" th:name="'currentCommentId'+${album.id}">
                 <ul class="list-group" th:id="'commentList'+${album.id}">
-                    <th:block th:if="${albumCommentsMap != ''}" th:each="comments: ${albumsCommentsMap.get(album.id)}">
+                    <th:block th:if="${albumsCommentsMap.containsKey(album.id)}" th:each="comments: ${albumsCommentsMap.get(album.id)}">
                         <th:block th:if="${comments.get('albumId') == album.id}">
                             <li th:id="'comment'+${comments.get('commentId')}" th:class="'list-group-item'+${comments.get('userId') == currentUser.id ? ' list-group-item-secondary' : ''}">
                                 <span th:id="'commentcontainer'+${comments.get('commentId')}">

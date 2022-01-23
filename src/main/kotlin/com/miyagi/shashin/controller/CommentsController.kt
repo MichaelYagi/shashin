@@ -132,7 +132,7 @@ class CommentsController {
         resp["commentCount"] = 0
         resp["msg"] = "Could not save to comment"
         resp["status"] = "fail"
-        resp["commentId"] = ""
+        resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
 
@@ -211,7 +211,7 @@ class CommentsController {
 
         resp["msg"] = "Could not save to comment"
         resp["status"] = "fail"
-        resp["commentId"] = ""
+        resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
 
@@ -243,7 +243,7 @@ class CommentsController {
 
         resp["msg"] = "Could not update comment"
         resp["status"] = "fail"
-        resp["commentId"] = ""
+        resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
 
@@ -273,7 +273,7 @@ class CommentsController {
 
         resp["msg"] = "Could not delete comment"
         resp["status"] = "fail"
-        resp["commentId"] = ""
+        resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
 
@@ -307,7 +307,7 @@ class CommentsController {
         resp["commentCount"] = 0
         resp["msg"] = "Could not delete comment"
         resp["status"] = "fail"
-        resp["commentId"] = ""
+        resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
 }

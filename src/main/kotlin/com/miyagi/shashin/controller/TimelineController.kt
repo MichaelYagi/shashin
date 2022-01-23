@@ -169,12 +169,13 @@ class TimelineController {
             mediaType = mediaTypeFilter
         }
         response["message"] = "There are no "+mediaType+"s. Please setup directories in Settings and scan."
-        response["metadataList"] = ""
-        response["favorites"] = ""
-        response["albumList"] = ""
-        response["recognitionLabels"] = ""
-        response["labelPhotoMap"] = mutableMapOf<String, String>()
+        response["metadataList"] = mutableListOf<Metadata>()
+        response["favorites"] = mutableMapOf<String, Any>()
+        response["albumList"] = mutableListOf<Album>()
+        response["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
+        response["keywordMap"] = mutableMapOf<String, Any>()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -230,6 +231,7 @@ class TimelineController {
                     response["favorites"] = favoritesMap
 
                     val labelPhotoMap = mutableMapOf<String, String>()
+                    val keywordMap = mutableMapOf<String, String>()
                     for (metadata in metadataList) {
                         val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                         var labelString = ""
@@ -243,10 +245,22 @@ class TimelineController {
                         }
                         if (labelString.isNotBlank()) {
                             labelString = labelString.dropLast(1)
+                            labelPhotoMap[metadata.getId()] = labelString
                         }
-                        labelPhotoMap[metadata.getId()] = labelString
+
+                        val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
+                        var keywordMetadataList = ""
+                        for (keyword in keywords) {
+                            keywordMetadataList += keyword.getKeyword()+","
+                        }
+
+                        if (keywordMetadataList.isNotEmpty()) {
+                            keywordMetadataList = keywordMetadataList.dropLast(1)
+                            keywordMap[metadata.getId()] = keywordMetadataList
+                        }
                     }
                     response["labelPhotoMap"] = labelPhotoMap
+                    response["keywordMap"] = keywordMap
                 }
 
                 val albumList = albumRepository.findAll()
@@ -285,7 +299,7 @@ class TimelineController {
     private fun getMetadataDates(mediaType: String): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
-        response["metadataDates"] = ""
+        response["metadataDates"] = mutableListOf<MetadataDate>()
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
         } else {
@@ -306,14 +320,14 @@ class TimelineController {
             mediaType = mediaTypeFilter
         }
         response["message"] = "There are no "+mediaType+"s. Please setup directories in Settings and scan."
-        response["metadataList"] = ""
-        response["favorites"] = ""
-        response["albumList"] = ""
-        response["recognitionLabels"] = ""
-        response["labelPhotoMap"] = mutableMapOf<String, String>()
+        response["metadataList"] = mutableListOf<Metadata>()
+        response["favorites"] = mutableMapOf<String, Any>()
+        response["albumList"] = mutableListOf<Album>()
+        response["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
-        response["albumMap"] = mutableMapOf<String, String>()
-        response["keywordMap"] = mutableMapOf<String, String>()
+        response["albumMap"] = mutableMapOf<String, Any>()
+        response["keywordMap"] = mutableMapOf<String, Any>()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -387,8 +401,8 @@ class TimelineController {
                             }
                             if (labelString.isNotBlank()) {
                                 labelString = labelString.dropLast(1)
+                                labelPhotoMap[metadata.getId()] = labelString
                             }
-                            labelPhotoMap[metadata.getId()] = labelString
 
                             val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
                             if (albumPhotos != null) {
@@ -399,8 +413,8 @@ class TimelineController {
                                 }
                                 if (albumMetadataList.isNotEmpty()) {
                                     albumMetadataList = albumMetadataList.dropLast(1)
+                                    albumMap[metadata.getId()] = albumMetadataList
                                 }
-                                albumMap[metadata.getId()] = albumMetadataList
                             }
 
                             val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
@@ -408,10 +422,11 @@ class TimelineController {
                             for (keyword in keywords) {
                                 keywordMetadataList += keyword.getKeyword()+","
                             }
+
                             if (keywordMetadataList.isNotEmpty()) {
                                 keywordMetadataList = keywordMetadataList.dropLast(1)
+                                keywordMap[metadata.getId()] = keywordMetadataList
                             }
-                            keywordMap[metadata.getId()] = keywordMetadataList
                         }
                         response["labelPhotoMap"] = labelPhotoMap
                         response["albumMap"] = albumMap
@@ -1201,7 +1216,7 @@ class TimelineController {
                 val year = takenDateArray[0].toInt()
                 val month = takenDateArray[1].toInt()
                 val day = takenDateArray[2].toInt()
-                val time = dateArray[1].toString()
+                val time = dateArray[1]
                 metadataObj.setYear(year)
                 metadataObj.setMonth(month)
                 metadataObj.setDay(day)
@@ -1211,7 +1226,7 @@ class TimelineController {
                 resp["year"] = year.toString()
                 resp["month"] = month.toString()
                 resp["day"] = day.toString()
-                resp["time"] = time.toString()
+                resp["time"] = time
 
                 resp["msg"] = "Saved"
                 resp["status"] = "success"

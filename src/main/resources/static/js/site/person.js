@@ -16,11 +16,11 @@ class Person {
                 let message = "Error";
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("metadataList")) {
-                        const metadataList = data["metadataList"] === "" ? [] : data["metadataList"];
-                        const recognitionLabels = data["recognitionLabels"] === "" ? "" : data["recognitionLabels"];
-                        const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
-                        const currentUser = data["currentUser"] === "" ? null : data["currentUser"];
-                        const keywordMap = data["keywordMap"] === "" ? {} : data["keywordMap"];
+                        const metadataList = data["metadataList"];
+                        const recognitionLabels = data["recognitionLabels"];
+                        const labelPhotoMap = data["labelPhotoMap"];
+                        const currentUser = data["currentUser"];
+                        const keywordMap = data["keywordMap"];
 
                         let html = "";
 

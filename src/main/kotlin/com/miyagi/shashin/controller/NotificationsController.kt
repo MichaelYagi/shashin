@@ -31,7 +31,7 @@ class NotificationsController {
     fun getNotifications(model: Model): String {
         val module = "notifications"
         model["message"] = "There are no notifications."
-        model["notificationList"] = ""
+        model["notificationList"] = mutableListOf<Notification>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {

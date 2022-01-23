@@ -313,7 +313,7 @@ class Util {
             $(".pathLabel").show();
             $(".pathDetails").text(metadata.path);
         }
-        if (metadata.keywords != null) {
+        if (metadata.keywords != null && metadata.keywords !== '') {
             $(".keywordsLabel").show();
             $(".keywordsDetails").text(metadata.keywords);
         }

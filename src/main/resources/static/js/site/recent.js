@@ -20,13 +20,12 @@ class Recent {
         .then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
-                const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
-                const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
-                const recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
-                const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
-                const albumMap = data["albumMap"] === "" ? null : data["albumMap"];
-                const albumList = data["albumList"] === "" ? null : data["albumList"];
-                const keywordMap = data["keywordMap"] === "" ? null : data["keywordMap"];
+                const metadataList = data["metadataList"];
+                const recognitionLabels = data["recognitionLabels"];
+                const labelPhotoMap = data["labelPhotoMap"];
+                const albumMap = data["albumMap"];
+                const albumList = data["albumList"];
+                const keywordMap = data["keywordMap"];
 
                 if (metadataList !== null && metadataList.length > 0) {
                     let html = "";

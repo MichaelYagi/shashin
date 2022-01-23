@@ -24,7 +24,7 @@
             <input type="hidden" id="activePage" th:value="${activePage}">
 
             <div id="scroll-gallery">
-                <th:block th:if="${searchTerm != '' and metadataSearchList != ''}">
+                <th:block th:if="${searchTerm != '' and not #lists.isEmpty(metadataSearchList)}">
                     <h1 th:text="'Results for \''+${searchTerm}+'\''"></h1>
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${metadataSearchList}">
@@ -67,11 +67,9 @@
 
                         </th:block>
                     </div>
-
-                    <th:block th:if="${#lists.size(metadataSearchList) == 0}">
-                        <span class="appendSearchPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
-                    </th:block>
-
+                </th:block>
+                <th:block th:if="${#lists.isEmpty(metadataSearchList)}">
+                    <span class="appendSearchPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
                 </th:block>
             </div>
 

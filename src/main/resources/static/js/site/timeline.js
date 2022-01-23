@@ -443,13 +443,13 @@
                         data.hasOwnProperty("labelPhotoMap") &&
                         data.hasOwnProperty("keywordMap")
                     ) {
-                        const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
-                        const favoritesMap = data["favorites"] === "" ? null : data["favorites"];
-                        const recognitionLabels = data["recognitionLabels"] === "" ? null : data["recognitionLabels"];
-                        const labelPhotoMap = data["labelPhotoMap"] === "" ? null : data["labelPhotoMap"];
-                        const keywordMap = data["keywordMap"] === "" ? null : data["keywordMap"];
-                        const albumMap = data["albumMap"] === "" ? null : data["albumMap"];
-                        const albumList = data["albumList"] === "" ? null : data["albumList"];
+                        const metadataList = data["metadataList"];
+                        const favoritesMap = data["favorites"];
+                        const recognitionLabels = data["recognitionLabels"];
+                        const labelPhotoMap = data["labelPhotoMap"];
+                        const keywordMap = data["keywordMap"];
+                        const albumMap = data["albumMap"];
+                        const albumList = data["albumList"];
 
                         if (metadataList.length > 0) {
 
@@ -684,7 +684,7 @@
                     let message = "Error";
                     if (data["status"] === "success") {
                         if (data.hasOwnProperty("metadataList")) {
-                            const metadataList = data["metadataList"] === "" ? null : data["metadataList"];
+                            const metadataList = data["metadataList"];
 
                             if (metadataList.length > 0) {
                                 let html = "";

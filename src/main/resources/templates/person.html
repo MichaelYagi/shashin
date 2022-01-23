@@ -21,7 +21,7 @@
                 <input type="hidden" id="currentPage" name="currentPage" value="0">
                 <input type="hidden" id="activePage" th:value="${activePage}">
 
-                <th:block th:if="${metadataList != ''}">
+                <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <div th:replace="fragments/personmodal :: personmodal()"></div>
 
                     <h1 th:text="${personInfo.name}"></h1>
@@ -72,6 +72,9 @@
                             <span class="appendPersonPhotos" style="width:0;height:0;padding:0"></span>
                         </th:block>
                     </div>
+                </th:block>
+                <th:block th:if="${#lists.isEmpty(metadataList)}">
+                    <span class="appendPersonPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
                 </th:block>
             </div>
 

@@ -24,7 +24,7 @@ class ShareAlbum {
                 let message = "Error";
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("albumMetadataList")) {
-                        const albumMetadataList = data["albumMetadataList"] === "" ? [] : data["albumMetadataList"];
+                        const albumMetadataList = data["albumMetadataList"];
                         const mediaLinkLength = $(".mediaLink").length;
 
                         for (const index in albumMetadataList) {

@@ -72,7 +72,7 @@ class FavoritesController {
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)
         response["message"] = "There are no favorites."
-        response["metadataList"] = ""
+        response["metadataList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?

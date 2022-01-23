@@ -11,7 +11,7 @@
         <main role="main" class="col overflow-auto h-100 table-responsive">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <table class="table">
-                <th:block th:if="${users != ''}">
+                <th:block th:if="${not #lists.isEmpty(users)}">
                     <thead>
                         <tr>
                             <th scope="col">Username</th>

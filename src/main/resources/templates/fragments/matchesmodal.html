@@ -24,7 +24,7 @@
                                        onfocus="return matchModalBatchSettings.closeBatchTagPeopleDropdown();"
                                        aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
 
-                                <th:block th:if="${recognitionLabels != ''}">
+                                <th:block th:if="${not #lists.isEmpty(recognitionLabels)}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary dropdown-toggle"
                                                 onclick="return matchModalBatchSettings.toggleBatchTagPeopleDropdown();"

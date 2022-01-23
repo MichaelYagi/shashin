@@ -19,8 +19,8 @@ class Search {
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating search")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
-                const metadataList = data["metadataSearchList"] === "" ? null : data["metadataSearchList"];
-                const keywordMap = data["keywordMap"] === "" ? {} : data["keywordMap"];
+                const metadataList = data["metadataSearchList"];
+                const keywordMap = data["keywordMap"];
 
                 if (metadataList !== null && metadataList.length > 0) {
                     let html = "";

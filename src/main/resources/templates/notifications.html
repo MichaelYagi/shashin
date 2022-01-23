@@ -11,7 +11,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
 
-            <th:block th:if="${notificationList != ''}">
+            <th:block th:if="${not #lists.isEmpty(notificationList)}">
                 <h1>Notifications</h1>
                 <small class="text-muted">Click/Shift-Click rows to mark read</small>
 

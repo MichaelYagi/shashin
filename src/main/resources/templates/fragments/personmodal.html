@@ -20,7 +20,7 @@
                             <div class="input-group">
                                 <input type="text" class="form-control" onfocus="return personModalBatchSettings.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
 
-                                <th:block th:if="${recognitionLabels != ''}">
+                                <th:block th:if="${not #lists.isEmpty(recognitionLabels)}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary dropdown-toggle" onclick="return personModalBatchSettings.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu" id="peopleNameList">

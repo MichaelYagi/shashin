@@ -24,7 +24,7 @@
             <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
 
             <div id="scroll-gallery">
-                <th:block th:if="${metadataList != ''}">
+                <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
@@ -73,11 +73,9 @@
 
                         </th:block>
                     </div>
-
-                    <th:block th:if="${#lists.size(metadataList) == 0}">
-                        <span class="appendRecentPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
-                    </th:block>
-
+                </th:block>
+                <th:block th:if="${#lists.isEmpty(metadataList)}">
+                    <span class="appendRecentPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
                 </th:block>
             </div>
 

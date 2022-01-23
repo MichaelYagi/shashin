@@ -23,8 +23,8 @@ class MapController {
     fun getMap(model: Model): String {
         val module = "map"
         model["message"] = ""
-        model["mapdata"] = ""
-        model["keywordMap"] = ""
+        model["mapdata"] = mutableListOf<Metadata>()
+        model["keywordMap"] = mutableMapOf<String, String>()
 
         val currentUserObj = model.getAttribute("currentUser") as User?
 
