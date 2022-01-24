@@ -45,16 +45,7 @@ class DashboardController {
     private lateinit var metadataRepository: MetadataRepository
 
     @Autowired
-    private lateinit var mediaDirRepository: MediaDirectoryRepository
-
-    @Autowired
     private lateinit var albumRepository: AlbumRepository
-
-    @Autowired
-    private lateinit var albumPhotoRepository: AlbumPhotoRepository
-
-    @Autowired
-    private lateinit var albumPhotoCommentRepository: AlbumPhotoCommentRepository
 
     @Autowired
     private lateinit var favoriteRepository: FavoriteRepository
@@ -66,10 +57,10 @@ class DashboardController {
     private lateinit var commentRepository: CommentRepository
 
     @Autowired
-    private lateinit var recognitionLabelRepository: RecognitionLabelRepository
+    private lateinit var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository
 
     @Autowired
-    private lateinit var recognitionLabelPhotoRepository: RecognitionLabelPhotoRepository
+    private lateinit var keywordRepository: KeywordRepository
 
     private var logger: Logger = Logger.getLogger(DashboardController::class.simpleName)
 
@@ -150,10 +141,12 @@ class DashboardController {
         val favoritesCount = favoriteRepository.count()
         val commentsCount = commentRepository.count()
         val albumCount = albumRepository.count()
+        val keywordCount = keywordRepository.count()
         response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
         response["favoritesCount"] = favoritesCount
         response["commentsCount"] = commentsCount
         response["albumCount"] = albumCount
+        response["keywordCount"] = keywordCount
 
         // Files stats
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
@@ -187,6 +180,8 @@ class DashboardController {
         response["videoCount"] = videoCount
         response["notLocatedCount"] = notLocatedCount
         response["hiddenCount"] = hiddenCount
+
+        // Camera stats
         val cameraCounts = metadataRepository.countByCameraType()
         val cameraCountList = ArrayList<HashMap<String, Any>>()
         for (cameraCount in cameraCounts) {
@@ -201,6 +196,19 @@ class DashboardController {
         }
         response["cameraCountJson"] = mapper.writeValueAsString(cameraCountList)
         response["cameraTotalCount"] = cameraCountList.count()
+
+        // Keyword stats
+        val keywordCounts = keywordRepository.countByKeyword()
+        val keywordCountList = ArrayList<HashMap<String, Any>>()
+        for (kwCount in keywordCounts) {
+            val keywordCountMap = HashMap<String, Any>()
+            val keyword = kwCount.getKeyword().toString()
+            keywordCountMap["y"] = keyword
+            keywordCountMap["x"] = kwCount.getCount().toString().toInt()
+            keywordCountList.add(keywordCountMap)
+        }
+        response["keywordCountJson"] = mapper.writeValueAsString(keywordCountList)
+        response["keywordTotalCount"] = keywordCount
 
         response["message"] = ""
 

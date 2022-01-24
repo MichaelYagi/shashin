@@ -189,6 +189,74 @@ class Dashboard {
         });
     }
 
+    displayKeywordChart(data) {
+        const ctx = $('#keywordChart');
+        const keywordCounts = JSON.parse(Util.decodeHtml(data.keywordCountJson));
+        const keywordCountObj = JSON.parse(data.keywordCountJson);
+
+        // Click bars
+        function keywordGraphClickEvent(event, chart) {
+            let datasetIndex = chart[0].element.$context.dataIndex;
+            if (chart[0] && datasetIndex >= 0) {
+                let label = keywordCountObj[datasetIndex].y;
+                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
+                    window.open("/search?searchTerm=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
+                }
+            }
+        }
+
+        // Click label
+        document.getElementById("keywordChart").onclick = function (evt) {
+            let point = Chart.helpers.getRelativePosition(event, keywordChart);
+            let datasetIndex = keywordChart.scales.y.getValueForPixel(point.y);
+            if (datasetIndex >= 0) {
+                let label = keywordCountObj[datasetIndex].y;
+                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
+                    window.open("/search?searchTerm=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
+                }
+            }
+        };
+
+        return new Chart(ctx, {
+            type: 'bar',
+            data: {
+                datasets: [{
+                    data: keywordCounts
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        ticks: {
+                            // Truncate ticks
+                            callback: function (index) {
+                                let labelValue = keywordCountObj[index].y;
+                                if (labelValue.length > 9) {
+                                    labelValue = labelValue.substr(0, 8) + "...";
+                                }
+                                return labelValue;
+                            },
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    },
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: false
+                },
+                maintainAspectRatio: false,
+                onClick: keywordGraphClickEvent
+            }
+        });
+    }
+
     displayCpuChart() {
         const ctx = $('#cpuChart');
         return new Chart(ctx, {
