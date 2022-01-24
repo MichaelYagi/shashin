@@ -116,7 +116,7 @@ class Util {
     }
 
     static atEndOfPage(element) {
-        return ((window.innerHeight + element.scrollTop)  >= element.scrollHeight) // compare with scroll position + some give (*1.5)
+        return (((window.innerHeight + element.scrollTop)*1.5) >= element.scrollHeight) // compare with scroll position + some give (*1.5)
     }
 
     static hasScrollBar(containerElement) {
