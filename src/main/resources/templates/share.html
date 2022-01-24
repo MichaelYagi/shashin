@@ -19,6 +19,15 @@
 
                     <div class="row p-3">
                         <th:block th:each="metadata, iterStat: ${albumMetadataList}">
+
+                            <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and albumMetadataList[iterStat.index-1].year==metadata.year and albumMetadataList[iterStat.index-1].month==metadata.month and albumMetadataList[iterStat.index-1].day==metadata.day}">
+                                <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
+                                    <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
+                                        <section class="dateSection" th:id="${metadata.year+'-'+metadata.month+'-'+metadata.day}"><p><strong th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM d, yyyy')}"></strong></p></section>
+                                    </th:block>
+                                </th:block>
+                            </th:block>
+
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail"
                                  th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <img loading="lazy" th:src="${#uris.escapePath(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image"
@@ -45,6 +54,11 @@
                 </th:block>
             </div>
 
+            <!-- Back to top button -->
+            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+                <i class="bi-arrow-up-circle"></i>
+            </button>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -60,6 +74,8 @@
     $(document).ready(function () {
         /*<![CDATA[*/
         const shareLink = /*[[${shareLink}]]*/ '';
+        const activePage = /*[[${activePage}]]*/ 'share';
+        const albumId = /*[[${album.id}]]*/ 0;
         /*]]>*/
 
         const shareAlbum = new ShareAlbum(shareLink);
@@ -67,22 +83,23 @@
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
 
         function loadNextPage() {
-            const currentPage = parseInt($("#currentPage").val());
-            const nextPage = currentPage + 1;
-            /*<![CDATA[*/
-            const activePage = /*[[${activePage}]]*/ 'share';
-            const albumId = /*[[${album.id}]]*/ 0;
-            /*]]>*/
-            if (albumId > 0) {
-                shareAlbum.updateAlbum(albumId, nextPage, activePage).then(function(additionalMediaContentList) {
-                    mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
-                });
-                $("#currentPage").val(nextPage);
+            if (shareAlbum.rendering === false) {
+                const currentPage = parseInt($("#currentPage").val());
+                const nextPage = currentPage + 1;
+
+                if (albumId > 0) {
+                    shareAlbum.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
+                        mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+                    });
+                    $("#currentPage").val(nextPage);
+                }
             }
         }
 
         /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',true);
+        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',albumId > 0 && shareAlbum.rendering === false, function () {
+            shashin.checkRender(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]', shareAlbum.rendering);
+        });
         /*]]>*/
 
         $('[data-bs-toggle="tooltip"]').tooltip();

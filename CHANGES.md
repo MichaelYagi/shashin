@@ -7,6 +7,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Initial release
 - Added search auto-complete with search history for configurable number of unique terms
+- Scroll to top button for infinite scroll pages
+- Date headings for share link pages
 
 ### Changed
 - Improved API response for unauthorized requests

@@ -1,6 +1,8 @@
 class ShareAlbum {
+
     constructor(shareLink) {
         this.shareLink = shareLink;
+        this.rendering = false;
     }
 
     getShareLink() {
@@ -8,7 +10,9 @@ class ShareAlbum {
     }
 
     updateAlbum(albumId, nextPage, activePage) {
+        this.rendering = true;
         const self = this;
+
         const ajaxParams = {
             type: 'get',
             url: "/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage,
@@ -28,10 +32,20 @@ class ShareAlbum {
                         const mediaLinkLength = $(".mediaLink").length;
 
                         for (const index in albumMetadataList) {
+                            let html = "";
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                             const metadata = albumMetadataList[index];
 
-                            let html =
+                            const dateHeadingCount = $(".dateSection").length;
+                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                            const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
+                            const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+
+                            if (lastDateHeading !== currentDate) {
+                                html += '<section class="dateSection" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
+                            }
+
+                            html +=
                                 '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
                                 '   <img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlSmall) + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" class="photo-thumbnail-image" id="image' + metadata.id + '" onError="Util.errorImg(this,\'' + metadata.title + '\',209)">\n';
 
@@ -43,21 +57,26 @@ class ShareAlbum {
                             mediaContentList.push(centeredObj.mediaContent);
 
                             html += '</div>\n<span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>\n';
-                            $(html).insertAfter($(".appendAlbumPhotos").last())
+                            $(html).insertAfter($(".appendAlbumPhotos").last()).ready(function () {
+                                this.rendering = false;
+                            });
 
                             // Call JS and modal
                             shashin.setPhotoOverlays(metadata, activePage);
                         }
                     } else {
-                        $(".appendAlbumPhotos").last().text("EOL").css("display","none")
+                        $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                        this.rendering = false;
                     }
                 } else {
-                    $(".appendAlbumPhotos").last().text("EOL").css("display","none")
+                    $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                    this.rendering = false;
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
-                $(".appendAlbumPhotos").last().text("EOL").css("display","none")
+                $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                this.rendering = false;
             }
 
             return mediaContentList;

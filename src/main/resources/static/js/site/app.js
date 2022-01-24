@@ -362,6 +362,7 @@
             }
         }, 200);
         $("#container").on('scroll', function() {
+            shashin.showScrollToTop($("#container"));
             if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
                 if (conditionOnNext === true) {
                     func();
@@ -372,6 +373,7 @@
             }
         })
         $("main").on('scroll', function() {
+            shashin.showScrollToTop($("main"));
             if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
                 if (conditionOnNext === true) {
                     func();
@@ -381,6 +383,27 @@
                 }
             }
         })
+
+        const scrollToTopButton = $("#btn-back-to-top");
+
+        if (scrollToTopButton.length > 0) {
+            scrollToTopButton.on("click",function () {
+                $("main")[0].scrollTo({top: 0, behavior: 'smooth'});
+                $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+    }
+
+    shashin.showScrollToTop = function(scrollEl) {
+        const scrollToTopButton = $("#btn-back-to-top");
+
+        if (scrollToTopButton.length > 0) {
+            if ((scrollEl[0].scrollTop > 20)) {
+                scrollToTopButton.css("display","block");
+            } else {
+                scrollToTopButton.css("display","none");
+            }
+        }
     }
 
     shashin.refreshTimeline = function (mediaTypeFilter,currentOffCanvasId) {
