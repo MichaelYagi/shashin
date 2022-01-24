@@ -93,8 +93,11 @@ class TimelineController {
         }
 
         model["timeOffsets"] = timeOffsets()
-        val keywordList = keywordRepository.findAll().map { it?.getKeyword() }
-        val keywords = keywordList.joinToString(",")
+        val keywordList = keywordRepository.findAll()
+        var keywords = ""
+        if (keywordList.count() > 0) {
+            keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
+        }
         model["keywords"] = keywords
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -288,6 +291,14 @@ class TimelineController {
     @ResponseBody
     fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
         return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,true))
+    }
+
+    @RequestMapping(value = ["/api/v1/keywords"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getAllKeywords(model: Model): String {
+        val response = mutableMapOf<String, Any?>()
+        response["keywords"] = keywordRepository.findAll()
+        return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/timeline/dates/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -743,25 +754,27 @@ class TimelineController {
                 val keywordList = keywords.split(",").map { it.trim() }
 
                 for (keywordTerm in keywordList) {
-                    val keyword = keywordTerm.lowercase()
+                    val keyword = keywordTerm.trim().lowercase()
 
-                    val keywordCount = keywordRepository.countByKeywordIgnoreCase(keyword)
-                    var keywordObj = Keyword()
-                    if (keywordCount == 0) {
-                        keywordObj.setKeyword(keywordTerm)
-                        keywordObj.setCreatedAt(getCurrentTimestamp())
-                        keywordObj.setModifiedAt(getCurrentTimestamp())
-                        keywordRepository.save(keywordObj)
-                    } else {
-                        keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
+                    if (keyword.isNotEmpty()) {
+                        val keywordCount = keywordRepository.countByKeywordIgnoreCase(keyword)
+                        var keywordObj = Keyword()
+                        if (keywordCount == 0) {
+                            keywordObj.setKeyword(keywordTerm)
+                            keywordObj.setCreatedAt(getCurrentTimestamp())
+                            keywordObj.setModifiedAt(getCurrentTimestamp())
+                            keywordRepository.save(keywordObj)
+                        } else {
+                            keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
+                        }
+
+                        val keywordPhotoObj = KeywordPhoto()
+                        keywordPhotoObj.setKeywordId(keywordObj.getId())
+                        keywordPhotoObj.setMetadataId(metadataId)
+                        keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
+                        keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
+                        keywordPhotoRepository.save(keywordPhotoObj)
                     }
-
-                    val keywordPhotoObj = KeywordPhoto()
-                    keywordPhotoObj.setKeywordId(keywordObj.getId())
-                    keywordPhotoObj.setMetadataId(metadataId)
-                    keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
-                    keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
-                    keywordPhotoRepository.save(keywordPhotoObj)
                 }
             }
 
@@ -811,8 +824,11 @@ class TimelineController {
                 MetadataProcessing.updateSidecarMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
             }
 
-            val keywordList = keywordRepository.findAll().map { it?.getKeyword() }
-            val keywords = keywordList.joinToString(",")
+            val keywordList = keywordRepository.findAll()
+            var keywords = ""
+            if (keywordList.count() > 0) {
+                keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
+            }
             resp["keywords"] = keywords
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -1096,25 +1112,27 @@ class TimelineController {
                         keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
 
                         for (keywordTerm in keywordList) {
-                            val keyword = keywordTerm.lowercase()
+                            val keyword = keywordTerm.trim().lowercase()
 
-                            val keywordCount = keywordRepository.countByKeywordIgnoreCase(keyword)
-                            var keywordObj = Keyword()
-                            if (keywordCount == 0) {
-                                keywordObj.setKeyword(keywordTerm)
-                                keywordObj.setCreatedAt(getCurrentTimestamp())
-                                keywordObj.setModifiedAt(getCurrentTimestamp())
-                                keywordRepository.save(keywordObj)
-                            } else {
-                                keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
+                            if (keyword.isNotEmpty()) {
+                                val keywordCount = keywordRepository.countByKeywordIgnoreCase(keyword)
+                                var keywordObj = Keyword()
+                                if (keywordCount == 0) {
+                                    keywordObj.setKeyword(keywordTerm)
+                                    keywordObj.setCreatedAt(getCurrentTimestamp())
+                                    keywordObj.setModifiedAt(getCurrentTimestamp())
+                                    keywordRepository.save(keywordObj)
+                                } else {
+                                    keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
+                                }
+
+                                val keywordPhotoObj = KeywordPhoto()
+                                keywordPhotoObj.setKeywordId(keywordObj.getId())
+                                keywordPhotoObj.setMetadataId(metadata.getId())
+                                keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
+                                keywordPhotoRepository.save(keywordPhotoObj)
                             }
-
-                            val keywordPhotoObj = KeywordPhoto()
-                            keywordPhotoObj.setKeywordId(keywordObj.getId())
-                            keywordPhotoObj.setMetadataId(metadata.getId())
-                            keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
-                            keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
-                            keywordPhotoRepository.save(keywordPhotoObj)
                         }
                     }
                 }
@@ -1146,8 +1164,11 @@ class TimelineController {
                     }
                 }
 
-                val keywordList = keywordRepository.findAll().map { it?.getKeyword() }
-                val keywordListString = keywordList.joinToString(",")
+                val keywordList = keywordRepository.findAll()
+                var keywordListString = ""
+                if (keywordList.count() > 0) {
+                    keywordListString = keywordList.map { it?.getKeyword() }.joinToString(",")
+                }
                 resp["keywords"] = keywordListString
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"

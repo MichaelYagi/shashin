@@ -59,8 +59,11 @@ class BrowseController {
         }
 
         model["timeOffsets"] = TextUtils.timeOffsets()
-        val keywordList = keywordRepository.findAll().map { it?.getKeyword() }
-        val keywords = keywordList.joinToString(",")
+        val keywordList = keywordRepository.findAll()
+        var keywords = ""
+        if (keywordList.count() > 0) {
+            keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
+        }
         model["keywords"] = keywords
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -237,8 +240,11 @@ class BrowseController {
             model[k] = v!!
         }
 
-        val keywordList = keywordRepository.findAll().map { it?.getKeyword() }
-        val keywords = keywordList.joinToString(",")
+        val keywordList = keywordRepository.findAll()
+        var keywords = ""
+        if (keywordList.count() > 0) {
+            keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
+        }
         model["keywords"] = keywords
         model["activePage"] = module
         model["activeSidebar"] = module
