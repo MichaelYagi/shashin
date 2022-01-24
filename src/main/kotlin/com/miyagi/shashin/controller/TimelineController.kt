@@ -562,55 +562,56 @@ class TimelineController {
                 val albumsArray = metadataMap["albumnames"].toString().split(",")
 
                 for (albumNameRaw in albumsArray) {
+                    if (albumNameRaw.trim().isNotBlank()) {
+                        val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
+                        var albumObj = albumRepository.findAlbumByNameIgnoreCase(albumName)
+                        var albumId: Int
 
-                    val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
-                    var albumObj = albumRepository.findAlbumByNameIgnoreCase(albumName)
-                    var albumId: Int
-
-                    // Add new album
-                    if (albumObj == null) {
-                        albumObj = Album()
-                        if (metadataObj.get().getThumbnailUrlCentered() != null) {
-                            albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                        // Add new album
+                        if (albumObj == null) {
+                            albumObj = Album()
+                            if (metadataObj.get().getThumbnailUrlCentered() != null) {
+                                albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                            }
+                            albumObj.setName(albumName)
+                            albumObj.setCreatedAt(getCurrentTimestamp())
+                            albumObj.setModifiedAt(getCurrentTimestamp())
+                            albumObj = albumRepository.save(albumObj)
+                            albumId = albumObj.getId()
+                        } else {
+                            albumId = albumObj.getId()
                         }
-                        albumObj.setName(albumName)
-                        albumObj.setCreatedAt(getCurrentTimestamp())
-                        albumObj.setModifiedAt(getCurrentTimestamp())
-                        albumObj = albumRepository.save(albumObj)
-                        albumId = albumObj.getId()
-                    } else {
-                        albumId = albumObj.getId()
-                    }
 
-                    if (albumId > 0) {
-                        val currentUserObj = model.getAttribute("currentUser") as User?
-                        if (currentUserObj != null) {
-                            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
-                            if (userAlbumCount == 0) {
-                                val userAlbumObj = UserAlbum()
-                                userAlbumObj.setAlbumId(albumId)
-                                userAlbumObj.setUserId(currentUserObj.getId())
-                                userAlbumObj.setCreatedAt(getCurrentTimestamp())
-                                userAlbumObj.setModifiedAt(getCurrentTimestamp())
-                                userAlbumRepository.save(userAlbumObj)
+                        if (albumId > 0) {
+                            val currentUserObj = model.getAttribute("currentUser") as User?
+                            if (currentUserObj != null) {
+                                val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+                                if (userAlbumCount == 0) {
+                                    val userAlbumObj = UserAlbum()
+                                    userAlbumObj.setAlbumId(albumId)
+                                    userAlbumObj.setUserId(currentUserObj.getId())
+                                    userAlbumObj.setCreatedAt(getCurrentTimestamp())
+                                    userAlbumObj.setModifiedAt(getCurrentTimestamp())
+                                    userAlbumRepository.save(userAlbumObj)
+                                }
+                            }
+
+                            val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
+                            if (albumPhotoCount == 0) {
+                                val albumPhotoObj = AlbumPhoto()
+                                albumPhotoObj.setMetadataId(metadataId)
+                                albumPhotoObj.setAlbumId(albumId)
+                                albumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                albumPhotoObj.setModifiedAt(getCurrentTimestamp())
+                                albumPhotoRepository.save(albumPhotoObj)
                             }
                         }
 
-                        val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
-                        if (albumPhotoCount == 0) {
-                            val albumPhotoObj = AlbumPhoto()
-                            albumPhotoObj.setMetadataId(metadataId)
-                            albumPhotoObj.setAlbumId(albumId)
-                            albumPhotoObj.setCreatedAt(getCurrentTimestamp())
-                            albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-                            albumPhotoRepository.save(albumPhotoObj)
+                        if (currentAlbumIdList.contains(albumId)) {
+                            // Collect to delete
+                            val indexToRemove = currentAlbumIdList.indexOf(albumObj.getId())
+                            currentAlbumIdList.removeAt(indexToRemove)
                         }
-                    }
-
-                    if (currentAlbumIdList.contains(albumId)) {
-                        // Collect to delete
-                        val indexToRemove = currentAlbumIdList.indexOf(albumObj.getId())
-                        currentAlbumIdList.removeAt(indexToRemove)
                     }
                 }
             }
@@ -673,23 +674,30 @@ class TimelineController {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
                 for (recognitionLabel in recognitionLabelArray) {
-                    val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
-                    var recognitionLabelObj = RecognitionLabel()
-                    if (recognitionLabelRecord == null) {
-                        recognitionLabelObj.setName(recognitionLabel.trim())
-                        recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
-                        recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
-                        recognitionLabelRepository?.save(recognitionLabelObj)
-                    } else {
-                        recognitionLabelObj = recognitionLabelRecord
-                    }
-                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj.getId(),metadataObj.get().getId())
-                    if (recognitionLabelPhotoCount == 0) {
-                        val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                        recognitionLabelPhotoObj.setMetadataId(metadataObj.get().getId())
-                        recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
-                        recognitionLabelPhotoObj.setConfidence("0.0")
-                        recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                    if (recognitionLabel.trim().isNotBlank()) {
+                        val recognitionLabelRecord =
+                            recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
+                        var recognitionLabelObj = RecognitionLabel()
+                        if (recognitionLabelRecord == null) {
+                            recognitionLabelObj.setName(recognitionLabel.trim())
+                            recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                            recognitionLabelRepository?.save(recognitionLabelObj)
+                        } else {
+                            recognitionLabelObj = recognitionLabelRecord
+                        }
+                        val recognitionLabelPhotoCount =
+                            recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                recognitionLabelObj.getId(),
+                                metadataObj.get().getId()
+                            )
+                        if (recognitionLabelPhotoCount == 0) {
+                            val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                            recognitionLabelPhotoObj.setMetadataId(metadataObj.get().getId())
+                            recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                            recognitionLabelPhotoObj.setConfidence("0.0")
+                            recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                        }
                     }
                 }
             } else if (isObject) {
@@ -939,38 +947,40 @@ class TimelineController {
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
                 for (albumNameRaw in albumNameList) {
-                    val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
-                    val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
-                    var albumObj = Album()
-                    var albumId: Int
+                    if (albumNameRaw.trim().isNotBlank()) {
+                        val albumName = albumNameRaw.trim().replace(" +".toRegex(), " ")
+                        val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
+                        var albumObj = Album()
+                        var albumId: Int
 
-                    if (albumObject != null) {
-                        albumId = albumObject.getId()
-                    } else {
-                        val firstAvailableMetadataId = idArray[0]
-                        val metadataObj = metadataRepository.findById(firstAvailableMetadataId)
-                        if (metadataObj.get().getThumbnailUrlCentered() != null) {
-                            albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                        if (albumObject != null) {
+                            albumId = albumObject.getId()
+                        } else {
+                            val firstAvailableMetadataId = idArray[0]
+                            val metadataObj = metadataRepository.findById(firstAvailableMetadataId)
+                            if (metadataObj.get().getThumbnailUrlCentered() != null) {
+                                albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                            }
+                            albumObj.setName(albumName)
+                            albumObj.setCreatedAt(getCurrentTimestamp())
+                            albumObj.setModifiedAt(getCurrentTimestamp())
+                            albumObj = albumRepository.save(albumObj)
+                            albumId = albumObj.getId()
                         }
-                        albumObj.setName(albumName)
-                        albumObj.setCreatedAt(getCurrentTimestamp())
-                        albumObj.setModifiedAt(getCurrentTimestamp())
-                        albumObj = albumRepository.save(albumObj)
-                        albumId = albumObj.getId()
-                    }
 
-                    if (albumId > 0) {
-                        albumIdList.add(albumId)
+                        if (albumId > 0) {
+                            albumIdList.add(albumId)
 
-                        if (currentUserObj != null) {
-                            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
-                            if (userAlbumCount == 0) {
-                                val userAlbumObj = UserAlbum()
-                                userAlbumObj.setAlbumId(albumId)
-                                userAlbumObj.setUserId(currentUserObj.getId())
-                                userAlbumObj.setCreatedAt(getCurrentTimestamp())
-                                userAlbumObj.setModifiedAt(getCurrentTimestamp())
-                                userAlbumRepository.save(userAlbumObj)
+                            if (currentUserObj != null) {
+                                val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+                                if (userAlbumCount == 0) {
+                                    val userAlbumObj = UserAlbum()
+                                    userAlbumObj.setAlbumId(albumId)
+                                    userAlbumObj.setUserId(currentUserObj.getId())
+                                    userAlbumObj.setCreatedAt(getCurrentTimestamp())
+                                    userAlbumObj.setModifiedAt(getCurrentTimestamp())
+                                    userAlbumRepository.save(userAlbumObj)
+                                }
                             }
                         }
                     }
@@ -1052,23 +1062,30 @@ class TimelineController {
                             recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
                         }
                         for (recognitionLabel in recognitionLabelArray) {
-                            val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
-                            var recognitionLabelObj = RecognitionLabel()
-                            if (recognitionLabelRecord == null) {
-                                recognitionLabelObj.setName(recognitionLabel.trim())
-                                recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
-                                recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
-                                recognitionLabelRepository?.save(recognitionLabelObj)
-                            } else {
-                                recognitionLabelObj = recognitionLabelRecord
-                            }
-                            val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj.getId(),metadata.getId())
-                            if (recognitionLabelPhotoCount == 0) {
-                                val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                                recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
-                                recognitionLabelPhotoObj.setMetadataId(metadata.getId())
-                                recognitionLabelPhotoObj.setConfidence("0.0")
-                                recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                            if (recognitionLabel.trim().isNotBlank()) {
+                                val recognitionLabelRecord =
+                                    recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
+                                var recognitionLabelObj = RecognitionLabel()
+                                if (recognitionLabelRecord == null) {
+                                    recognitionLabelObj.setName(recognitionLabel.trim())
+                                    recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                                    recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                                    recognitionLabelRepository?.save(recognitionLabelObj)
+                                } else {
+                                    recognitionLabelObj = recognitionLabelRecord
+                                }
+                                val recognitionLabelPhotoCount =
+                                    recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                        recognitionLabelObj.getId(),
+                                        metadata.getId()
+                                    )
+                                if (recognitionLabelPhotoCount == 0) {
+                                    val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                                    recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                                    recognitionLabelPhotoObj.setMetadataId(metadata.getId())
+                                    recognitionLabelPhotoObj.setConfidence("0.0")
+                                    recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                                }
                             }
                         }
                     }

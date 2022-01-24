@@ -91,7 +91,8 @@ CREATE TABLE `recognitionlabel` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `name` VARCHAR(50) NOT NULL,
     `createdAt` DATETIME DEFAULT NULL,
-    `modifiedAt` DATETIME DEFAULT NULL
+    `modifiedAt` DATETIME DEFAULT NULL,
+    CHECK(`name` <> '')
 );
 
 DROP TABLE IF EXISTS `recognitionlabelphoto`;
@@ -115,7 +116,9 @@ CREATE TABLE `user` (
     `isAllowed` BOOLEAN NOT NULL DEFAULT FALSE,
     `loggedIn` BOOLEAN DEFAULT NULL CHECK (`loggedIn` IN (0, 1)),
     `createdAt` DATETIME DEFAULT NULL,
-    `modifiedAt` DATETIME DEFAULT NULL
+    `modifiedAt` DATETIME DEFAULT NULL,
+    CHECK(`username` <> ''),
+    CHECK(`password` <> '')
 );
 
 DROP TABLE IF EXISTS `mediadir`;
@@ -123,7 +126,8 @@ CREATE TABLE `mediadir` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `directory` VARCHAR(150) NOT NULL,
     `createdAt` DATETIME DEFAULT NULL,
-    `modifiedAt` DATETIME DEFAULT NULL
+    `modifiedAt` DATETIME DEFAULT NULL,
+    CHECK(`directory` <> '')
 );
 
 DROP TABLE IF EXISTS `album`;
@@ -133,7 +137,8 @@ CREATE TABLE `album` (
     `coverUrl` VARCHAR(255) DEFAULT NULL,
     `shareUrl` VARCHAR(255) DEFAULT NULL,
     `createdAt` DATETIME DEFAULT NULL,
-    `modifiedAt` DATETIME DEFAULT NULL
+    `modifiedAt` DATETIME DEFAULT NULL,
+    CHECK(`name` <> '')
 );
 
 DROP TABLE IF EXISTS `useralbum`;

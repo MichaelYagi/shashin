@@ -252,7 +252,7 @@ class SettingsController {
         var resetServer = false
         var mediaDirs: List<String>? = null
         val mediaDirArrayList: ArrayList<MediaDirectory> = ArrayList()
-        if  (mediaDirList.isNotBlank()) {
+        if (mediaDirList.isNotBlank()) {
             mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
         }
 
@@ -270,18 +270,20 @@ class SettingsController {
 
             mediaDirRepository?.deleteAll()
             for (mediaDir in mediaDirs) {
-                var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
-                if (mediaDirObj == null) {
-                    mediaDirObj = MediaDirectory()
-                    mediaDirObj.setDirectory(mediaDir)
-                }
-                mediaDirObj.setCreatedAt(getCurrentTimestamp())
-                mediaDirObj.setModifiedAt(getCurrentTimestamp())
-                mediaDirArrayList.add(mediaDirObj)
+                if (mediaDir.trim().isNotBlank()) {
+                    var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
+                    if (mediaDirObj == null) {
+                        mediaDirObj = MediaDirectory()
+                        mediaDirObj.setDirectory(mediaDir)
+                    }
+                    mediaDirObj.setCreatedAt(getCurrentTimestamp())
+                    mediaDirObj.setModifiedAt(getCurrentTimestamp())
+                    mediaDirArrayList.add(mediaDirObj)
 
-                val path: Path = Paths.get(mediaDir)
-                if (!Files.exists(path)) {
-                    dirDneString += "$mediaDir,"
+                    val path: Path = Paths.get(mediaDir)
+                    if (!Files.exists(path)) {
+                        dirDneString += "$mediaDir,"
+                    }
                 }
             }
             if (dirDneString.isNotBlank()) {
