@@ -108,7 +108,7 @@
                                     '       </a>\n' +
                                     '       <br>' +
                                     '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" class="overlayCommentIconBackground overlayCommentText">\n' +
-                                    '           <span id="brcommentcount' + metadata.id + '">' + albumPhotoCommentsMap[metadata.id].length + '</span> <span id="bricon' + metadata.id + '" class="bi-chat-square position-relative overlayCommentIcon">';
+                                    '           <span id="brcommentcount' + metadata.id + '">' + (albumPhotoCommentsMap.hasOwnProperty(metadata.id) ? albumPhotoCommentsMap[metadata.id].length : '0') + '</span> <span id="bricon' + metadata.id + '" class="bi-chat-square position-relative overlayCommentIcon">';
 
                                 if (notificationMap !== null && notificationMap[metadata.id] === true) {
                                     html +=
