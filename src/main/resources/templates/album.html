@@ -106,6 +106,11 @@
                 <span class="appendAlbumPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
             </th:block>
 
+            <!-- Back to top button -->
+            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+                <i class="bi-arrow-up-circle"></i>
+            </button>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -155,6 +160,9 @@
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
         const albumId = $("#albumId").val();
+        /*<![CDATA[*/
+        const activePage = /*[[${activePage}]]*/ 'album';
+        /*]]>*/
 
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
@@ -162,9 +170,6 @@
             if (albumSettings.rendering === false) {
                 const currentPage = parseInt($("#currentPage").val());
                 const nextPage = currentPage + 1;
-                /*<![CDATA[*/
-                const activePage = /*[[${activePage}]]*/ 'album';
-                /*]]>*/
 
                 albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
