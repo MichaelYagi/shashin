@@ -47,13 +47,13 @@
                     if (data.hasOwnProperty("album") &&
                         data.hasOwnProperty("albumMetadataList") &&
                         data.hasOwnProperty("albumPhotoCommentsMap") &&
-                        data.hasOwnProperty("currentUser") &&
+                        data.hasOwnProperty("userMap") &&
                         data.hasOwnProperty("notificationMap")
                     ) {
                         const albumData = data["album"];
                         const albumMetadataList = data["albumMetadataList"];
                         const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
-                        const currentUser = data["currentUser"];
+                        const userMap = data["userMap"];
                         const notificationMap = data["notificationMap"];
                         const favoritesMap = data["favorites"];
                         const keywordMap = data["keywordMap"];
@@ -61,7 +61,7 @@
                         shashin.printMessageToConsole(albumData);
                         shashin.printMessageToConsole(albumMetadataList);
                         shashin.printMessageToConsole(albumPhotoCommentsMap);
-                        shashin.printMessageToConsole(currentUser);
+                        shashin.printMessageToConsole(userMap);
                         shashin.printMessageToConsole(albumMetadataList.length);
 
                         if (albumMetadataList.length > 0) {
@@ -92,7 +92,7 @@
                                 const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                                 html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
 
-                                if (currentUser.authority === "ROLE_ADMIN") {
+                                if (userMap.showControls === true) {
                                     html += shashin.getTopLeftOverlay(metadata.id);
                                     html += shashin.getBottomLeftOverlay(metadata.id, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText');
                                 } else {
@@ -136,7 +136,7 @@
 
                                 // Call JS and modal
                                 shashin.setPhotoOverlays(metadata, activePage);
-                                albumModal.renderAlbumCommentsModal(albumData, metadata, currentUser, albumPhotoCommentsMap);
+                                albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
                                 $("#mediaLink"+metadata.id).attr("tag",JSON.stringify(Util.addKeywordToMetadata(metadata, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "")));
                                 $("#infoModalEdit"+metadata.id).click(function(e) {
@@ -322,7 +322,7 @@
         });
     }
 
-    albumSettings.albumCommentsUpdateSaveModalListener = function(metadata, album, currentUser) {
+    albumSettings.albumCommentsUpdateSaveModalListener = function(metadata, album, userMap) {
         $("#updateCommentMetadata"+metadata.id).hide();
         $("#cancelEditCommentMetadata"+metadata.id).hide();
 
@@ -432,7 +432,7 @@
                         // Insert comment at top of list
                         const commentItem = '<li class="list-group-item list-group-item-secondary" id="comment' + commentId + '">\n' +
                             '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
-                            '<small>' + currentUser.username + '<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
+                            '<small>' + userMap.username + '<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
                             '<span id="textareacontainer' + commentId + '"></span></li>';
                         $("#commentText"+metadata.id).val("")
                         $("#commentList"+metadata.id).prepend(commentItem);
@@ -457,7 +457,7 @@
 }( window.albumSettings = window.albumSettings || {}, jQuery ));
 
 (function( albumModal, $, undefined ) {
-    albumModal.renderAlbumCommentsModal = function (albumData,metadata,currentUser,albumPhotoCommentsMap) {
+    albumModal.renderAlbumCommentsModal = function (albumData,metadata,userMap,albumPhotoCommentsMap) {
         let index;
         let html =
             '<div class="modal fade" id="propalbumphotocomment' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true">\n' +
@@ -477,11 +477,11 @@
             commentIdArray.push(comments["commentId"]);
 
             html +=
-                '       <li id="comment'+comments["commentId"]+'" class="list-group-item'+(comments['userId'] === currentUser.id ? ' list-group-item-secondary' : '')+'">\n' +
+                '       <li id="comment'+comments["commentId"]+'" class="list-group-item'+(comments['userId'] === userMap.id ? ' list-group-item-secondary' : '')+'">\n' +
                 '           <span id="commentcontainer'+comments["commentId"]+'">\n' +
                 '               <p id="commentcontent'+comments["commentId"]+'">'+comments["comment"]+'</p>\n' +
                 '               <small><strong>'+comments["username"]+'</strong><span> on '+comments["createdAt"]+'</span></small>';
-            if (comments["userId"] === currentUser.id) {
+            if (comments["userId"] === userMap.id) {
                 html +=
                     '       <small><span style="float: right">\n' +
                     '           <a href="#" id="deletecomment'+comments["commentId"]+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;\n' +
@@ -514,6 +514,6 @@
             albumSettings.albumCommentsDeleteEditModalListener(commentId, metadata);
         }
 
-        albumSettings.albumCommentsUpdateSaveModalListener(metadata, albumData, currentUser);
+        albumSettings.albumCommentsUpdateSaveModalListener(metadata, albumData, userMap);
     }
 }( window.albumModal = window.albumModal || {}, jQuery ));

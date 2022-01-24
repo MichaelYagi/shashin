@@ -25,6 +25,7 @@ class MapController {
         model["message"] = ""
         model["mapdata"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
+        model["showControls"] = false
 
         val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -32,6 +33,7 @@ class MapController {
         if (currentUserObj != null) {
             if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 model["mapdata"] = metadataRepository!!.findTimelineAll()
+                model["showControls"] = true
             } else {
                 model["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserId(currentUserObj.getId())
             }

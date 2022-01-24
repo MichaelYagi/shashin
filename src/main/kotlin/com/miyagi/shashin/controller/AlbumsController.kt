@@ -512,6 +512,7 @@ class AlbumsController {
         for ((k, v) in response) {
             model[k] = v!!
         }
+        model["currentUser"] = model.getAttribute("currentUser") as User
         return model.getAttribute("activePage").toString()
     }
 
@@ -535,12 +536,13 @@ class AlbumsController {
         response["albumId"] = 0
         response["albumMetadataList"] = mutableListOf<Metadata>()
         response["albumPhotoCommentsMap"] = mutableMapOf<String, ArrayList<HashMap<String, Any>>>()
-        response["currentUser"] = mutableMapOf<String, Any>()
+        response["userMap"] = mutableMapOf<String, Any>()
         response["notificationMap"] = mutableMapOf<String, Boolean>()
         response["favorites"] = mutableMapOf<String, String>()
         response["msg"] = "No results"
         response["status"] = "noop"
         response["keywordMap"] = mutableMapOf<String, String>()
+        response["status"] = "noop"
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -613,8 +615,12 @@ class AlbumsController {
                         val userMap = HashMap<String, Any>()
                         userMap["id"] = currentUserObj.getId()
                         userMap["username"] = if (currentUserObj.getUsername() == null) "" else currentUserObj.getUsername()!!
-                        userMap["authority"] = if (currentUserObj.getAuthority() == null) "" else currentUserObj.getAuthority()!!
-                        response["currentUser"] = userMap
+                        var showControls = false
+                        if (currentUserObj.getAuthority() != null && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
+                            showControls = true
+                        }
+                        userMap["showControls"] = showControls
+                        response["userMap"] = userMap
                         response["albumMetadataList"] = albumMetadataList
                         response["msg"] = "Results retrieved"
                         response["status"] = "success"
