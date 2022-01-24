@@ -922,7 +922,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
-        //println(requestBody)
+        // println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
 
         val idArray: Array<String>? = batchMetadataMap.batchMetadataIds
@@ -930,6 +930,7 @@ class TimelineController {
         val monthTaken: Int? = batchMetadataMap.monthTakenBatchData
         val yearTaken: Int? = batchMetadataMap.yearTakenBatchData
         var latlng: String? = batchMetadataMap.latlngBatchData
+        val offset: String? = batchMetadataMap.offsetTakenBatchData
         var keywords: String? = batchMetadataMap.keywordsBatchData
         val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
         val albumNames: String? = batchMetadataMap.albumNameInput
@@ -1099,6 +1100,11 @@ class TimelineController {
                     if (yearTaken != null) {
                         metadata.setYear(yearTaken)
                     }
+                    if (offset == null || offset == "") {
+                        metadata.setTimeZone(null)
+                    } else {
+                        metadata.setTimeZone(offset)
+                    }
                     if (latlng != null) {
                         latlng = latlng.replace("\\s".toRegex(), "")
                         val latlngArr = latlng.split(",")
@@ -1107,15 +1113,15 @@ class TimelineController {
                             metadata.setLng(latlngArr[1])
                             val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,latlngArr[0], latlngArr[1]))
                             if (buildPlace.isNotBlank()) {
-                                metadataObj.get().setPlaceName(buildPlace)
+                                metadata.setPlaceName(buildPlace)
 
                                 val engine = TimeZoneEngine.initialize()
-                                val maybeZoneId: Optional<ZoneId> = engine.query(latlngArr[0].toString().toDouble(), latlngArr[1].toString().toDouble())
+                                val maybeZoneId: Optional<ZoneId> = engine.query(latlngArr[0].toDouble(), latlngArr[1].toDouble())
                                 val zone = ZoneId.of(maybeZoneId.get().id)
                                 val dt = LocalDateTime.now()
                                 val zdt: ZonedDateTime = dt.atZone(zone)
                                 val offset = zdt.offset
-                                metadataObj.get().setTimeZone(offset.toString())
+                                metadata.setTimeZone(offset.toString())
                             }
                         }
                     }

@@ -1226,7 +1226,7 @@
                 $("#editPhotosNamesModalLabel").html(thumbnailList);
             }
 
-            const keywordAvailableList = $("#keywordsBatchString").val().split(",");
+            const keywordAvailableList = $("#keywordsBatchString").length > 0 ? $("#keywordsBatchString").val().split(",") : [];
             shashin.createAutocomplete("#keywordsBatchData", keywordAvailableList, true);
 
             $("#propBatchMetadata").modal('show');

@@ -54,7 +54,7 @@ $("#saveBatchMetadata").click(function (e) {
         $("#monthTakenBatchData").val(),
         $("#yearTakenBatchData").val(),
         "",
-        "",
+        $("#offsetTakenBatchData").val(),
         $("#latlngBatchData").val(),
         "msgBatchMetadata"
     ) === true) {
