@@ -424,23 +424,30 @@ class PeopleController {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
                 for (recognitionLabel in recognitionLabelArray) {
-                    val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
-                    var recognitionLabelObj = RecognitionLabel()
-                    if (recognitionLabelRecord == null) {
-                        recognitionLabelObj.setName(recognitionLabel.trim())
-                        recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
-                        recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
-                        recognitionLabelRepository?.save(recognitionLabelObj)
-                    } else {
-                        recognitionLabelObj = recognitionLabelRecord
-                    }
-                    val recognitionLabelPhotoCount = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj.getId(),metadataId)
-                    if (recognitionLabelPhotoCount == 0) {
-                        val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                        recognitionLabelPhotoObj.setMetadataId(metadataId)
-                        recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
-                        recognitionLabelPhotoObj.setConfidence("0.0")
-                        recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                    if (recognitionLabel.trim().isNotBlank()) {
+                        val recognitionLabelRecord =
+                            recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
+                        var recognitionLabelObj = RecognitionLabel()
+                        if (recognitionLabelRecord == null) {
+                            recognitionLabelObj.setName(recognitionLabel.trim())
+                            recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                            recognitionLabelRepository?.save(recognitionLabelObj)
+                        } else {
+                            recognitionLabelObj = recognitionLabelRecord
+                        }
+                        val recognitionLabelPhotoCount =
+                            recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                recognitionLabelObj.getId(),
+                                metadataId
+                            )
+                        if (recognitionLabelPhotoCount == 0) {
+                            val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                            recognitionLabelPhotoObj.setMetadataId(metadataId)
+                            recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                            recognitionLabelPhotoObj.setConfidence("0.0")
+                            recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                        }
                     }
                 }
 
