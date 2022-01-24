@@ -240,6 +240,7 @@ class BrowseController {
             model[k] = v!!
         }
 
+        model["timeOffsets"] = TextUtils.timeOffsets()
         val keywordList = keywordRepository.findAll()
         var keywords = ""
         if (keywordList.count() > 0) {
