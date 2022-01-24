@@ -10,8 +10,8 @@ class ShareAlbum {
     }
 
     updateAlbum(albumId, nextPage, activePage) {
-        this.rendering = true;
         const self = this;
+        self.rendering = true;
 
         const ajaxParams = {
             type: 'get',
@@ -58,7 +58,7 @@ class ShareAlbum {
 
                             html += '</div>\n<span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>\n';
                             $(html).insertAfter($(".appendAlbumPhotos").last()).ready(function () {
-                                this.rendering = false;
+                                self.rendering = false;
                             });
 
                             // Call JS and modal
@@ -66,17 +66,17 @@ class ShareAlbum {
                         }
                     } else {
                         $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                        this.rendering = false;
+                        self.rendering = false;
                     }
                 } else {
                     $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                    this.rendering = false;
+                    self.rendering = false;
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                this.rendering = false;
+                self.rendering = false;
             }
 
             return mediaContentList;

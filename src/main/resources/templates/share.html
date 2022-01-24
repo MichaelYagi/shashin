@@ -97,7 +97,7 @@
         }
 
         /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',albumId > 0 && shareAlbum.rendering === false, function () {
+        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',shareAlbum.rendering === false, function () {
             shashin.checkRender(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]', shareAlbum.rendering);
         });
         /*]]>*/
