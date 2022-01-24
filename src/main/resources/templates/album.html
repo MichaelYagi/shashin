@@ -67,7 +67,7 @@
                                     </a>
                                     <br>
                                     <a href="#" data-bs-toggle="modal" th:data-bs-target="'#propalbumphotocomment'+${metadata.id}" class="overlayCommentIconBackground overlayCommentText">
-                                        <span th:id="'brcommentcount'+${metadata.id}"><th:block th:text="${#lists.size(albumPhotoCommentsMap.get(metadata.id))}"></th:block></span> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square position-relative overlayCommentIcon">
+                                        <span th:id="'brcommentcount'+${metadata.id}"><th:block th:text="${albumPhotoCommentsMap.containsKey(metadata.id) ? #lists.size(albumPhotoCommentsMap.get(metadata.id)) : '0'}"></th:block></span> <span th:id="'bricon'+${metadata.id}" class="bi-chat-square position-relative overlayCommentIcon">
                                             <th:block th:if="${notificationMap.get(metadata.id)}">
                                             <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
                                                 <span class="visually-hidden">New alerts</span>
