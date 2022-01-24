@@ -70,7 +70,8 @@ CREATE TABLE `keyword` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `keyword` VARCHAR(100) NOT NULL UNIQUE,
     `createdAt` DATETIME DEFAULT NULL,
-    `modifiedAt` DATETIME DEFAULT NULL
+    `modifiedAt` DATETIME DEFAULT NULL,
+    CHECK(`keyword` <> '')
 );
 
 DROP TABLE IF EXISTS `keywordphoto`;
