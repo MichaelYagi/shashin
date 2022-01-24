@@ -86,7 +86,7 @@
                             <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
-                                albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${currentUser}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{})
+                                albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{})
                                 albumSettings.activateAlbumListeners(/*[[${metadata}]]*/{},/*[[${album}]]*/{})
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(Util.addKeywordToMetadata(/*[[${metadata}]]*/{},/*[[${keywordMap.get(metadata.id)}]]*/"")));
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {

@@ -1,4 +1,4 @@
-async function showMap(mapdata,keywordMap,authority) {
+async function showMap(mapdata,keywordMap,showControls) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
 
@@ -237,7 +237,7 @@ async function showMap(mapdata,keywordMap,authority) {
     });
 
     const lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    if (authority === "ROLE_ADMIN") {
+    if (showControls === true) {
         lightGalleryConfigs["plugins"].push(lgEditLocation);
     }
     lightGalleryConfigs["controls"] = true;
