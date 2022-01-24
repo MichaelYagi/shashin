@@ -214,7 +214,7 @@ class Util {
     }
 
     static getDateGalleryHeight(id) {
-        if ($("#br" + id).length === 0 && $("#br" + id).length === 0 && $("#br" + id).length === 0 && $("#br" + id).length === 0 && $("#br" + id).length === 0) {
+        if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
             return 0;
         }
 
