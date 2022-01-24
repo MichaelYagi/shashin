@@ -124,7 +124,9 @@ class AlbumsController {
                             albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
                             albumCommentsList.add(albumCommentMap)
                         }
-                        albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
+                        if (albumCommentsList.isNotEmpty()) {
+                            albumsCommentsMap[albumObj.get().getId()] = albumCommentsList
+                        }
                     }
                 }
 
@@ -586,7 +588,9 @@ class AlbumsController {
                                 albumPhotoCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumPhotoComment.getCreatedAt().toString())
                                 albumPhotoCommentsList.add(albumPhotoCommentMap)
                             }
-                            albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
+                            if (albumPhotoCommentsList.isNotEmpty()) {
+                                albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
+                            }
                         }
                     }
                     if (albumMetadataList.count() > 0) {
