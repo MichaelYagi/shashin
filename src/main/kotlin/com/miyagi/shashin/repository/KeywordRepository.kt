@@ -1,15 +1,14 @@
 package com.miyagi.shashin.repository
 
-import com.miyagi.shashin.model.AlbumPhotoCount
-import com.miyagi.shashin.model.Keyword
-import com.miyagi.shashin.model.KeywordsMetadata
-import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.*
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
 interface KeywordRepository : CrudRepository<Keyword?, Int?> {
+    @Query("SELECT k.keyword, COUNT(kp.keyword_id) as count FROM keyword k INNER JOIN keywordphoto kp on k.id = kp.keyword_id GROUP BY kp.keyword_id", nativeQuery = true)
+    fun countByKeyword(): MutableIterable<KeywordCount>
     fun countByKeywordIgnoreCase(keyword: String?): Int
     fun findByKeywordIgnoreCase(keyword: String?): Keyword?
     @Query("SELECT k.* FROM keyword k INNER JOIN keywordphoto kp on kp.keyword_id = k.id WHERE kp.metadata_id = :metadataId", nativeQuery = true)

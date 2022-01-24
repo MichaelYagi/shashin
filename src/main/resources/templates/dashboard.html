@@ -52,9 +52,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="row pb-4">
 
                 <div class="col">
                     <div class="card">
@@ -86,6 +83,9 @@
                     </div>
                 </div>
 
+            </div>
+
+            <div class="row pb-4">
                 <div class="col">
                     <div class="card">
                         <div class="card-header">
@@ -95,7 +95,22 @@
                         <div class="card-body">
                             <h5 class="card-title">Camera Stats</h5>
                             <p class="card-text">
-                                <canvas id="cameraChart" height="400"></canvas>
+                                <canvas id="cameraChart" height="600"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 th:text="${keywordTotalCount}"></h2>
+                            <p class="text-muted">Total Keywords</p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Keyword Stats</h5>
+                            <p class="card-text">
+                                <canvas id="keywordChart" height="600"></canvas>
                             </p>
                         </div>
                     </div>
@@ -136,6 +151,9 @@
 
     const cameraChartData = {};
     cameraChartData["cameraCountJson"] = /*[[${cameraCountJson}]]*/ '[{"x":0,"y":""}]';
+
+    const keywordChartData = {};
+    keywordChartData["keywordCountJson"] = /*[[${keywordCountJson}]]*/ '[{"x":0,"y":""}]';
     /*]]>*/
 
     const dashboard = new Dashboard();
@@ -144,6 +162,7 @@
     const userChart = dashboard.displayUserChart(userChartData);
     const mediaChart = dashboard.displayMediaChart(mediaChartData);
     const cameraChart = dashboard.displayCameraChart(cameraChartData);
+    const keywordChart = dashboard.displayKeywordChart(keywordChartData);
     const cpuChart = dashboard.displayCpuChart();
     const memoryChart = dashboard.displayMemoryChart();
     dashboard.startWebSocket(cpuChart, memoryChart);
