@@ -16,6 +16,7 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.util.*
 import javax.transaction.Transactional
+import kotlin.collections.HashMap
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -80,7 +81,6 @@ class AlbumsController {
         val module = "albums"
         response["message"] = "There are no albums."
         response["albumsList"] =  mutableListOf<Album>()
-        response["albumsCount"] = mutableListOf<Int>()
         response["userAlbums"] = mutableListOf<UserAlbum>()
         response["userCount"] = 0
         response["albumsCommentsMap"] = mutableMapOf<Int, ArrayList<HashMap<String, Any>>>()
@@ -94,20 +94,25 @@ class AlbumsController {
                 val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
 
                 val notificationMap = HashMap<Int, Boolean>()
-                val albums = ArrayList<Album>()
-                val albumsCount = ArrayList<Int>()
+                val albums = ArrayList<HashMap<String, Any>>()
                 var albumCount: Int
                 for (userAlbum in userAlbums) {
+
                     val albumCommentsList = ArrayList<HashMap<String, Any>>()
                     if (userAlbum?.getAlbumId() != null) {
                         albumCount = 0
+                        val albumMap = HashMap<String, Any>()
                         val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
                         val albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum.getAlbumId()!!)
                         if (albumPhotoCount != null) {
                             albumCount = albumPhotoCount
                         }
-                        albumsCount.add(albumCount)
-                        albums.add(albumObj.get())
+                        albumMap["id"] = albumObj.get().getId()
+                        albumMap["name"] = if (albumObj.get().getName() == null) "" else albumObj.get().getName()!!
+                        albumMap["coverUrl"] = if (albumObj.get().getCoverUrl() == null) "" else albumObj.get().getCoverUrl()!!
+                        albumMap["shareUrl"] = if (albumObj.get().getShareUrl() == null) "" else albumObj.get().getShareUrl()!!
+                        albumMap["albumCount"] = albumCount
+                        albums.add(albumMap)
 
                         val notificationCount = notificationRepository.countAllByAlbumIdAndUserIdAndMetadataIdIsNullAndReadIsFalse(userAlbum.getAlbumId()!!,currentUserObj.getId())
                         notificationMap[userAlbum.getAlbumId()!!] = notificationCount > 0
@@ -134,7 +139,6 @@ class AlbumsController {
                     response["albumsList"] = albums
                     response["albumsCommentsMap"] = albumsCommentsMap
                     response["notificationMap"] = notificationMap
-                    response["albumsCount"] = albumsCount
 
                     val userCount = userRepository.count()
                     if (userCount > 1) {
@@ -531,7 +535,7 @@ class AlbumsController {
         response["albumId"] = 0
         response["albumMetadataList"] = mutableListOf<Metadata>()
         response["albumPhotoCommentsMap"] = mutableMapOf<String, ArrayList<HashMap<String, Any>>>()
-        response["currentUser"] = User()
+        response["currentUser"] = mutableMapOf<String, Any>()
         response["notificationMap"] = mutableMapOf<String, Boolean>()
         response["favorites"] = mutableMapOf<String, String>()
         response["msg"] = "No results"
@@ -606,11 +610,11 @@ class AlbumsController {
                             keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
                         }
                         response["keywordMap"] = keywordMap
-                        val userCopy = User()
-                        userCopy.setUsername(currentUserObj.getUsername())
-                        userCopy.setAuthority(currentUserObj.getAuthority())
-                        userCopy.setId(currentUserObj.getId())
-                        response["currentUser"] = userCopy
+                        val userMap = HashMap<String, Any>()
+                        userMap["id"] = currentUserObj.getId()
+                        userMap["username"] = if (currentUserObj.getUsername() == null) "" else currentUserObj.getUsername()!!
+                        userMap["authority"] = if (currentUserObj.getAuthority() == null) "" else currentUserObj.getAuthority()!!
+                        response["currentUser"] = userMap
                         response["albumMetadataList"] = albumMetadataList
                         response["msg"] = "Results retrieved"
                         response["status"] = "success"
