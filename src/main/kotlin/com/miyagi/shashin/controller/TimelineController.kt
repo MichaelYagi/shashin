@@ -784,11 +784,11 @@ class TimelineController {
                         keywordPhotoRepository.save(keywordPhotoObj)
                     }
                 }
+            }
 
-                val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
-                if (keywordIdsToDelete.count() > 0) {
-                    keywordRepository.deleteAllById(keywordIdsToDelete)
-                }
+            val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
+            if (keywordIdsToDelete.count() > 0) {
+                keywordRepository.deleteAllById(keywordIdsToDelete)
             }
 
             if (metadataMap["latlng"].toString() == "") {
@@ -1130,6 +1130,7 @@ class TimelineController {
                             }
                         }
                     }
+
                     if (keywords != null && keywords.isNotBlank()) {
                         keywords = keywords.toString().trim()
                         if (keywords.last() == ',') {
