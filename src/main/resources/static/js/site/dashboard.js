@@ -126,17 +126,6 @@ class Dashboard {
         const cameraCounts = JSON.parse(Util.decodeHtml(data.cameraCountJson));
         const cameraCountObj = JSON.parse(data.cameraCountJson);
 
-        // Click bars
-        function cameraGraphClickEvent(event, chart) {
-            let datasetIndex = chart[0].element.$context.dataIndex;
-            if (chart[0] && datasetIndex >= 0) {
-                let label = cameraCountObj[datasetIndex].y;
-                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?searchTerm=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
-                }
-            }
-        }
-
         // Click label
         document.getElementById("cameraChart").onclick = function (evt) {
             let point = Chart.helpers.getRelativePosition(event, cameraChart);
@@ -183,8 +172,7 @@ class Dashboard {
                 plugins: {
                     legend: false
                 },
-                maintainAspectRatio: false,
-                onClick: cameraGraphClickEvent
+                maintainAspectRatio: false
             }
         });
     }
@@ -194,19 +182,7 @@ class Dashboard {
         const keywordCounts = JSON.parse(Util.decodeHtml(data.keywordCountJson));
         const keywordCountObj = JSON.parse(data.keywordCountJson);
 
-        // Click bars
-        function keywordGraphClickEvent(event, chart) {
-            let datasetIndex = chart[0].element.$context.dataIndex;
-            if (chart[0] && datasetIndex >= 0) {
-                let label = keywordCountObj[datasetIndex].y;
-                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
-                    window.open("/search?searchTerm=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
-                }
-            }
-        }
-
-        // Click label
-        document.getElementById("keywordChart").onclick = function (evt) {
+        const openLinkFromLabel = function () {
             let point = Chart.helpers.getRelativePosition(event, keywordChart);
             let datasetIndex = keywordChart.scales.y.getValueForPixel(point.y);
             if (datasetIndex >= 0) {
@@ -215,7 +191,10 @@ class Dashboard {
                     window.open("/search?searchTerm=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
                 }
             }
-        };
+        }
+
+        // Click label
+        $('#keywordChart').on('click', openLinkFromLabel);
 
         return new Chart(ctx, {
             type: 'bar',
@@ -251,8 +230,7 @@ class Dashboard {
                 plugins: {
                     legend: false
                 },
-                maintainAspectRatio: false,
-                onClick: keywordGraphClickEvent
+                maintainAspectRatio: false
             }
         });
     }
