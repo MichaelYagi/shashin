@@ -98,7 +98,7 @@
             $("#offsetTaken option[value='"+metadata.timeZone+"']").attr('selected','selected');
         }
 
-        const latlngValue = (metadata.hasOwnProperty("lat") || metadata.hasOwnProperty("lng") || metadata.lat == null || metadata.lng == null || metadata.lat === "" || metadata.lng === "") ? '' : ($.trim(metadata.lat) + ',' + $.trim(metadata.lng));
+        const latlngValue = (metadata.hasOwnProperty("lat") && metadata.hasOwnProperty("lng") && metadata.lat != null && metadata.lng != null && metadata.lat !== "" && metadata.lng !== "") ? ($.trim(metadata.lat) + ',' + $.trim(metadata.lng)) : '';
         $("#latlng").val(latlngValue);
 
         let taggedPeopleString = "";
