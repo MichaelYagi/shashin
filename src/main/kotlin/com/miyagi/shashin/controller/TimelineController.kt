@@ -784,6 +784,11 @@ class TimelineController {
                         keywordPhotoRepository.save(keywordPhotoObj)
                     }
                 }
+
+                val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
+                if (keywordIdsToDelete.count() > 0) {
+                    keywordRepository.deleteAllById(keywordIdsToDelete)
+                }
             }
 
             if (metadataMap["latlng"].toString() == "") {
@@ -1161,6 +1166,11 @@ class TimelineController {
                 }
 
                 metadataList.add(metadata)
+            }
+
+            val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
+            if (keywordIdsToDelete.count() > 0) {
+                keywordRepository.deleteAllById(keywordIdsToDelete)
             }
 
             if (metadataList.isNotEmpty()) {

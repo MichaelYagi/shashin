@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Improved API response for unauthorized requests
 - Added keyword table and removed keyword field from metadata
 - Updated site CSS to make JQuery UI align with bootstrap UX
+- Delete all orphaned keywords if no longer used in any photos
 
 ### Fixed
 
@@ -25,3 +26,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed thumbnail removal for non-timeline views
 - Fixed API data structure of values returned
 - Prevent keyword blank string entry
+- Open only one search link when clicking on dashboard bar for camera and keywords
