@@ -2,12 +2,16 @@
     albumsModalSettings.updateShareLink = function (baseUrl,albumId,action) {
         $("#generateLink"+albumId).prop('disabled', true);
         $("#albumsModalStatus"+albumId).css("visibility","visible");
+        $("#share"+albumId+" span").removeClass('bi-share-fill').addClass('bi-share');
         $("#msg"+albumId).html("");
         let relativeShareLink = "";
+
         if (action === "generate") {
             relativeShareLink = albumsModalSettings.makeShareLinkId(8, 11);
             $("#shareLink"+albumId).val(relativeShareLink);
+            $("#share"+albumId+" span").removeClass('bi-share').addClass('bi-share-fill');
         }
+
         if ($("#shareLink"+albumId).val() !== "" && action !== "clear") {
             $("#copyLink"+albumId).prop('disabled', false);
         } else {
@@ -31,12 +35,14 @@
                 $("#shareLink"+albumId).val(relativeShareUrlData);
                 $("#fullShareLinkContainer"+albumId).css("display","none");
                 $("#fullShareLink"+albumId).text("");
+
                 if (relativeShareUrlData !== "") {
                     const fullShareLink = baseUrl+ "share/" + relativeShareUrlData + "/album/"+albumId;
                     $("#fullShareLinkContainer"+albumId).css("display","block");
                     $("#fullShareLink"+albumId).html("<a target='_blank' href='"+fullShareLink+"'>"+fullShareLink+"</a>");
                     $("#copyLink"+albumId).attr("data-clipboard-text",fullShareLink);
                 }
+
                 if (data["status"] === "success" && $("#shareLink"+albumId).val() === relativeShareUrlData) {
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     $("#albumsModalStatus"+albumId).addClass('bi-check-circle').removeClass('spinner-grow');
@@ -44,6 +50,7 @@
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
                 }
+
                 $("#generateLink"+albumId).prop('disabled', false);
                 //$("#msg"+albumId).html(message);
             } else {
