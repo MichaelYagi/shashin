@@ -15,14 +15,14 @@
                         <input type="hidden" name="id" th:value="${album.id}">
                         <strong>Share with other people</strong><br>
                         <div class="input-group">
-                            <input type="text" placeholder="Share Link" th:id="'shareLink'+${album.id}" th:name="'shareLink'+${album.id}" class="form-control" th:value="${album.shareUrl != null ? album.shareUrl : ''}" disabled>
+                            <input type="text" placeholder="Share Link" th:id="'shareLink'+${album.id}" th:name="'shareLink'+${album.id}" class="form-control" th:value="${album.shareUrl != null and album.shareUrl != ''  ? album.shareUrl : ''}" disabled>
                             <div class="input-group-append">
                                 <button class="btn btn-outline-secondary" th:id="'generateLink'+${album.id}" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Generate link"><span class="bi-arrow-clockwise"></span></button>
                                 <button class="btn btn-outline-secondary" th:id="'clearLink'+${album.id}" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Clear link"><span class="bi-x"></span></button>
-                                <button class="btn btn-outline-secondary" th:id="'copyLink'+${album.id}" type="button"data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link" th:data-clipboard-text="${album.shareUrl != null ? baseUrl + 'share/' + album.shareUrl + '/album/' + album.id : ''}"><span class="bi-clipboard-plus"></span></button>
+                                <button class="btn btn-outline-secondary" th:id="'copyLink'+${album.id}" type="button"data-bs-toggle="tooltip" data-bs-placement="top" title="Copy link" th:data-clipboard-text="${album.shareUrl != null and album.shareUrl != ''  ? baseUrl + 'share/' + album.shareUrl + '/album/' + album.id : ''}"><span class="bi-clipboard-plus"></span></button>
                             </div>
                         </div>
-                        <div th:id="'fullShareLinkContainer'+${album.id}" class="card" th:style="${album.shareUrl == null ? 'display: none;' : ''}"><div th:id="'fullShareLink'+${album.id}" class="card-body"><a target="_blank" th:href="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}" th:text="${album.shareUrl == null ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}"></a></div></div>
+                        <div th:id="'fullShareLinkContainer'+${album.id}" class="card" th:style="${album.shareUrl == null or album.shareUrl == '' ? 'display: none;' : ''}"><div th:id="'fullShareLink'+${album.id}" class="card-body"><a target="_blank" th:href="${album.shareUrl == null or album.shareUrl == '' ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}" th:text="${album.shareUrl == null or album.shareUrl == '' ? '' : baseUrl+'share/'+album.shareUrl+'/album/'+album.id}"></a></div></div>
                         <br>
                         <th:block th:if="${sharedAlbums !=''}">
                             <strong>Share with other users</strong><br>
@@ -119,7 +119,7 @@
             <div class="modal-body">
                 <input type="hidden" th:id="'currentCommentId'+${album.id}" th:name="'currentCommentId'+${album.id}">
                 <ul class="list-group" th:id="'commentList'+${album.id}">
-                    <th:block th:if="${albumsCommentsMap.containsKey(album.id)}" th:each="comments: ${albumsCommentsMap.get(album.id)}">
+                    <th:block th:if="${albumCommentsMap != ''}" th:each="comments: ${albumsCommentsMap.get(album.id)}">
                         <th:block th:if="${comments.get('albumId') == album.id}">
                             <li th:id="'comment'+${comments.get('commentId')}" th:class="'list-group-item'+${comments.get('userId') == currentUser.id ? ' list-group-item-secondary' : ''}">
                                 <span th:id="'commentcontainer'+${comments.get('commentId')}">
