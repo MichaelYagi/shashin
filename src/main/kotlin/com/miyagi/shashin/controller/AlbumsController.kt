@@ -358,7 +358,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/{albumId}/save/sharelink"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/album/{albumId}/save/sharelink","/api/v1/album/{albumId}/save/sharelink"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
