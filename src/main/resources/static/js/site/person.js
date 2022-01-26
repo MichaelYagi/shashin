@@ -1,5 +1,7 @@
 class Person {
     static updatePerson(personId,nextPage,activePage) {
+        $("#spinner").css("display","block");
+
         const ajaxParams = {
             type: 'get',
             url: "/person/" + personId + "/" + nextPage,
@@ -82,10 +84,12 @@ class Person {
                 $(".appendPersonPhotos").last().text("EOL").css("display", "none")
             }
 
+            $("#spinner").css("display","none");
             return mediaContentList;
         });
 
         return promise.done(function(data) {
+            $("#spinner").css("display","none");
             return data;
         });
     }

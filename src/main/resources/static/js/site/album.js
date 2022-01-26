@@ -28,6 +28,7 @@
 
     albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
         albumSettings.rendering = true;
+        $("#spinner").css("display","block");
 
         const ajaxParams = {
             type: 'get',
@@ -161,6 +162,7 @@
                 albumSettings.rendering = false;
             }
 
+            $("#spinner").css("display","none");
             return mediaContentList;
         });
 

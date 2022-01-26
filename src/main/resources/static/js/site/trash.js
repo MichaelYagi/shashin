@@ -1,5 +1,7 @@
 class Trash {
     static updateTrash(nextPage, activePage) {
+        $("#spinner").css("display","block");
+
         const ajaxParams = {
             type: 'get',
             url: "/trash/" + nextPage,
@@ -74,10 +76,12 @@ class Trash {
                 $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
             }
 
+            $("#spinner").css("display","none");
             return mediaContentList;
         });
 
         return promise.done(function (data) {
+            $("#spinner").css("display","none");
             return data;
         });
     }

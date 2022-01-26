@@ -107,6 +107,7 @@
                 <i class="bi-arrow-up-circle"></i>
             </button>
 
+            <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -127,7 +128,6 @@
         let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail,lgCastMedia],castMedia:true,metadataDetail:true},'.mediaLink');
 
         function loadNextPage() {
-            $("#spinner").css("display","block");
             const currentPage = parseInt($("#currentPage").val());
             const nextPage = currentPage + 1;
             /*<![CDATA[*/

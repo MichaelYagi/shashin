@@ -1,5 +1,7 @@
 class Folder {
     static updateRecent(nextPage,folderName,activePage) {
+        $("#spinner").css("display","block");
+
         const ajaxParams = {
             type: 'get',
             url: "/folder/"+nextPage+"/"+encodeURI(encodeURIComponent(folderName)),
