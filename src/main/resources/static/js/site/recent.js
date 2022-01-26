@@ -6,6 +6,7 @@ class Recent {
 
     updateRecent(nextPage,activePage) {
         this.rendering = true;
+        $("#spinner").css("display","block");
 
         const ajaxParams = {
             type: 'get',

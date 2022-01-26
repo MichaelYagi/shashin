@@ -114,6 +114,7 @@
                 <i class="bi-arrow-up-circle"></i>
             </button>
 
+            <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -136,7 +137,6 @@
         const recentInstance = new Recent();
 
         function loadNextPage() {
-            $("#spinner").css("display", "block");
             const currentPage = parseInt($("#currentPage").val());
             const nextPage = currentPage + 1;
             /*<![CDATA[*/

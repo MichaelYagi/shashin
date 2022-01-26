@@ -6,6 +6,7 @@ class Search {
 
     updateSearch(nextPage,searchTerm,activePage) {
         this.rendering = true;
+        $("#spinner").css("display","block");
 
         const ajaxParams = {
             type: 'get',
@@ -80,7 +81,6 @@ class Search {
             }
 
             $("#spinner").css("display","none");
-
             return mediaContentList;
         });
     }

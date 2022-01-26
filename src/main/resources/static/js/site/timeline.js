@@ -665,6 +665,7 @@
     }
 
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
+        $("#spinner").css("display", "block");
         $("#msgTimeline").html("");
 
         const ajaxParams = {

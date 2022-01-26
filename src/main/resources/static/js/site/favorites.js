@@ -6,6 +6,7 @@ class Favorites {
 
     updateFavorites(nextPage,activePage) {
         this.rendering = true;
+        $("#spinner").css("display","block");
 
         const ajaxParams = {
             type: 'get',
@@ -94,6 +95,7 @@ class Favorites {
                 this.rendering = false;
             }
 
+            $("#spinner").css("display","none");
             return mediaContentList;
         });
     }

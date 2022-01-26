@@ -12,6 +12,7 @@ class ShareAlbum {
     updateAlbum(albumId, nextPage, activePage) {
         const self = this;
         self.rendering = true;
+        $("#spinner").css("display","block");
 
         const ajaxParams = {
             type: 'get',
@@ -79,10 +80,12 @@ class ShareAlbum {
                 self.rendering = false;
             }
 
+            $("#spinner").css("display","none");
             return mediaContentList;
         });
 
         return promise.done(function(data) {
+            $("#spinner").css("display","none");
             return data;
         });
     }
