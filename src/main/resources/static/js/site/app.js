@@ -715,13 +715,21 @@
 
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
         const configs = {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen],
+            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate],
             counter: false,
             preload: 0,
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,
             speed: 0,
+            autoplayFirstVideo: false,
+            videojs: true,
+            gotoNextSlideOnVideoEnd: false,
+            rotate: true,
+            rotateLeft: true,
+            rotateRight: true,
+            flipHorizontal: false,
+            flipVertical: false,
             licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
         }
 
