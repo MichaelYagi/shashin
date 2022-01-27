@@ -8,6 +8,7 @@ global.lgZoom = require('../../../main/resources/static/js/lg-zoom.min')
 global.lgVideo = require('../../../main/resources/static/js/lg-video.min')
 global.lgRelativeCaption = require('../../../main/resources/static/js/lg-relative-caption.min')
 global.lgFullscreen = require('../../../main/resources/static/js/lg-fullscreen.min')
+global.lgRotate = require('../../../main/resources/static/js/lg-rotate.min')
 global.ol = require('../../../main/resources/static/js/ol.min')
 
 describe('#shashin app tests', function() {
