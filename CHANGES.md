@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Scroll to top button for infinite scroll pages
 - Date headings for share link pages
 - Dashboard stats for keywords
+- Added lightgallery rotate plugin
 
 ### Changed
 - Improved API response for unauthorized requests
