@@ -7,6 +7,7 @@
     timelineSettings.successMidMsg = "success_mid";
     timelineSettings.currentScrollTop = 0;
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+    timelineSettings.initialized = false;
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
@@ -665,7 +666,11 @@
     }
 
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
-        $("#spinner_top").css("display", "block");
+        if (timelineSettings.initialized === false) {
+            timelineSettings.initialized = true;
+        } else {
+            $("#spinner_top").css("display", "block");
+        }
         $("#spinner_bottom").css("display", "block");
         $("#msgTimeline").html("");
 
