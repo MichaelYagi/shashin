@@ -240,6 +240,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#tagBatchDataInput').val('');
     $('#albumNameInput').val('');
     $('#keywordsBatchData').val('');
+    $('#cameraBatchData').val('');
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
     shashin.clearTimelineSelection();
