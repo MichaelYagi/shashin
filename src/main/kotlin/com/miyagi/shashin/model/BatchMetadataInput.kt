@@ -8,6 +8,7 @@ class BatchMetadataInput {
     var yearTakenBatchData: Int? = null
     var latlngBatchData: String? = null
     var offsetTakenBatchData: String? = null
+    var cameraBatchData: String? = null
     var keywordsBatchData: String? = null
     var tagBatchDataInput: String? = null
     var albumNameInput: String? = null

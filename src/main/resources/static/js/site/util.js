@@ -233,6 +233,7 @@ class Util {
         jsonData.yearTakenBatchData = batchObj.hasOwnProperty("yearTakenBatchData") ? batchObj["yearTakenBatchData"] : null;
         jsonData.latlngBatchData = batchObj.hasOwnProperty("latlngBatchData") ? batchObj["latlngBatchData"] : null;
         jsonData.keywordsBatchData = batchObj.hasOwnProperty("keywordsBatchData") ? batchObj["keywordsBatchData"] : null;
+        jsonData.cameraBatchData = batchObj.hasOwnProperty("cameraBatchData") ? batchObj["cameraBatchData"] : null;
         jsonData.offsetTakenBatchData = batchObj.hasOwnProperty("offsetTakenBatchData") ? batchObj["offsetTakenBatchData"] : null;
         jsonData.tagBatchDataInput = batchObj.hasOwnProperty("tagBatchDataInput") ? batchObj["tagBatchDataInput"] : null;
         jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? batchObj["albumNameInput"] : null;

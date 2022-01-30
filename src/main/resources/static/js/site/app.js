@@ -50,6 +50,7 @@
 
         metadata = shashin.checkMetadata(metadata.id);
         const keywordsAvailable = $('#keywordsString').val();
+        const camerasList = $('#camerasString').val();
 
         // Clear modal data
         $('#propTimelineModal').find(':input').val('');
@@ -63,6 +64,7 @@
         $("#currentlng").val(metadata.lng)
         $("#metadataId").val(metadata.id);
         $("#keywordsString").val(keywordsAvailable);
+        $("#camerasString").val(camerasList);
 
         if (metadata.thumbnailUrlCentered !== null) {
             $("#propTimelineModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
@@ -70,6 +72,10 @@
 
         if (metadata.title !== null) {
             $("#title").val(metadata.title);
+        }
+
+        if (metadata.camera !== null) {
+            $("#camera").val(metadata.camera);
         }
 
         if (metadata.timeZone !== null) {
@@ -214,17 +220,16 @@
         Util.populateDetailsInfo(metadata,"propTimelineModal");
 
         const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function(v){return v!==''});
-        shashin.createAutocomplete("#keywords", keywordAvailableList, true);
+        shashin.createAutocomplete("#keywords", keywordAvailableList, true, 10);
+
+        const camerasAvailableList = $($("#camerasString").val().split(",")).not($("#camera").val().split(",")).get().filter(function(v){return v!==''});
+        shashin.createAutocomplete("#camera", camerasAvailableList, false);
 
         // Open modal window
         $("#propTimelineModal").modal('show');
     }
 
     shashin.createAutocomplete = function(inputEl, source, commaDelimited, resultLimit) {
-
-        if (typeof resultLimit === "undefined") {
-            resultLimit = 10;
-        }
 
         $(inputEl).autocomplete({
             minLength: 0,
@@ -239,12 +244,16 @@
                     }
                 });
 
-                response(
-                    $.ui.autocomplete.filter(
-                        source,
-                        shashin.autocompleteExtractLast(request.term)
-                    ).slice(0, resultLimit) // Only show 10 results
-                )
+                let filter = $.ui.autocomplete.filter(
+                    source,
+                    shashin.autocompleteExtractLast(request.term)
+                );
+
+                if (typeof resultLimit !== "undefined" && Number.isInteger(resultLimit)) {
+                    filter = filter.slice(0, resultLimit)
+                }
+
+                response(filter)
             },
             focus: function () {
                 // prevent value inserted on focus
@@ -1259,7 +1268,7 @@
             }
 
             const keywordAvailableList = $("#keywordsBatchString").length > 0 ? $("#keywordsBatchString").val().split(",") : [];
-            shashin.createAutocomplete("#keywordsBatchData", keywordAvailableList, true);
+            shashin.createAutocomplete("#keywordsBatchData", keywordAvailableList, true, 10);
 
             $("#propBatchMetadata").modal('show');
         });

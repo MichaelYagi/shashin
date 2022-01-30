@@ -96,6 +96,12 @@ $("#saveBatchMetadata").click(function (e) {
                         $("#keywordsString").val(data["keywords"]);
                         $("#keywordsBatchString").val(data["keywords"]);
                     }
+
+                    if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
+                        $("#camerasString").val(data["cameras"]);
+                        $("#camerasBatchString").val(data["cameras"]);
+                    }
+
                     const metadataIds = JSON.parse($("#batchMetadataIds").val());
                     for (const index in metadataIds) {
                         const metadataId = metadataIds[index];
@@ -121,6 +127,10 @@ $("#saveBatchMetadata").click(function (e) {
                                 if ($("#dayTakenBatchData").val().trim() !== "") {
                                     metadataObj.day = $("#dayTakenBatchData").val()
                                 }
+                            }
+
+                            if ($("#cameraBatchData").val().trim() !== "") {
+                                metadataObj.camera = $("#cameraBatchData").val()
                             }
 
                             if ($("#keywordsBatchData").val().trim() !== "") {

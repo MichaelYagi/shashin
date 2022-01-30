@@ -16,6 +16,13 @@
 
                     <div class="form-group row">
                         <div class="col-sm">
+                            <label for="cameraBatchData" class="col-form-label">Camera</label>
+                            <input type="text" class="form-control" id="cameraBatchData" name="cameraBatchData" value="">
+                            <input type="hidden" id="camerasBatchString" th:value="${cameras}">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm">
                             <label for="yearTakenBatchData" class="col-form-label">Year taken</label>
                             <input type="text" class="form-control" id="yearTakenBatchData" name="yearTakenBatchData" value="">
                         </div>

@@ -99,6 +99,23 @@ class TimelineController {
             keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
         }
         model["keywords"] = keywords
+
+        val cameraList = metadataRepository.countByCameraType()
+        var cameras = ""
+        if (cameraList.count() > 0) {
+            val cameraArray = mutableListOf<String>()
+            for (cameraCount in cameraList) {
+                if (cameraCount.getCamera() != null) {
+                    cameraArray.add(cameraCount.getCamera().toString())
+                    cameras += cameraCount.getCamera().toString() + ","
+                }
+            }
+            if (cameras.isNotBlank()) {
+                cameras = cameras.dropLast(1)
+            }
+        }
+        model["cameras"] = cameras
+
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -543,6 +560,7 @@ class TimelineController {
             metadataMap.containsKey("tagpeople") &&
             metadataMap.containsKey("hidden") &&
             metadataMap.containsKey("isObject") &&
+            metadataMap.containsKey("camera") &&
             metadataMap["id"].toString() == metadataId
         ) {
             val metadataObj = metadataRepository.findById(metadataId)
@@ -727,6 +745,17 @@ class TimelineController {
             } else {
                 metadataObj.get().setTitle(metadataMap["title"].toString().trim())
             }
+            if (metadataMap["camera"].toString().trim() != "") {
+                var camera = metadataMap["camera"].toString().trim()
+                val cameraCounts = metadataRepository.countByCameraType()
+                for (cameraCount in cameraCounts) {
+                    if (camera.trim().lowercase() == cameraCount.getCamera().toString().trim().lowercase()) {
+                        camera = cameraCount.getCamera().toString()
+                        break
+                    }
+                }
+                metadataObj.get().setCamera(camera)
+            }
             if (metadataMap["year"].toString() == "") {
                 metadataObj.get().setYear(null)
             } else {
@@ -843,6 +872,23 @@ class TimelineController {
                 keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
             }
             resp["keywords"] = keywords
+
+            val cameraList = metadataRepository.countByCameraType()
+            var cameras = ""
+            if (cameraList.count() > 0) {
+                val cameraArray = mutableListOf<String>()
+                for (cameraCount in cameraList) {
+                    if (cameraCount.getCamera() != null) {
+                        cameraArray.add(cameraCount.getCamera().toString())
+                        cameras += cameraCount.getCamera().toString() + ","
+                    }
+                }
+                if (cameras.isNotBlank()) {
+                    cameras = cameras.dropLast(1)
+                }
+            }
+            resp["cameras"] = cameras
+
             resp["msg"] = "Saved!"
             resp["status"] = "success"
             return mapper.writeValueAsString(resp)
@@ -936,6 +982,7 @@ class TimelineController {
         val yearTaken: Int? = batchMetadataMap.yearTakenBatchData
         var latlng: String? = batchMetadataMap.latlngBatchData
         val offset: String? = batchMetadataMap.offsetTakenBatchData
+        var camera: String? = batchMetadataMap.cameraBatchData
         var keywords: String? = batchMetadataMap.keywordsBatchData
         val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
         val albumNames: String? = batchMetadataMap.albumNameInput
@@ -989,6 +1036,16 @@ class TimelineController {
                                 }
                             }
                         }
+                    }
+                }
+            }
+
+            if (camera != null) {
+                val cameraCounts = metadataRepository.countByCameraType()
+                for (cameraCount in cameraCounts) {
+                    if (camera!!.trim().lowercase() == cameraCount.getCamera().toString().trim().lowercase()) {
+                        camera = cameraCount.getCamera().toString()
+                        break
                     }
                 }
             }
@@ -1105,6 +1162,9 @@ class TimelineController {
                     if (yearTaken != null) {
                         metadata.setYear(yearTaken)
                     }
+                    if (camera != null) {
+                        metadata.setCamera(camera)
+                    }
                     if (offset == null || offset == "") {
                         metadata.setTimeZone(null)
                     } else {
@@ -1204,6 +1264,23 @@ class TimelineController {
                     keywordListString = keywordList.map { it?.getKeyword() }.joinToString(",")
                 }
                 resp["keywords"] = keywordListString
+
+                val cameraList = metadataRepository.countByCameraType()
+                var cameras = ""
+                if (cameraList.count() > 0) {
+                    val cameraArray = mutableListOf<String>()
+                    for (cameraCount in cameraList) {
+                        if (cameraCount.getCamera() != null) {
+                            cameraArray.add(cameraCount.getCamera().toString())
+                            cameras += cameraCount.getCamera().toString() + ","
+                        }
+                    }
+                    if (cameras.isNotBlank()) {
+                        cameras = cameras.dropLast(1)
+                    }
+                }
+                resp["cameras"] = cameras
+
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)

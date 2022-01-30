@@ -53,6 +53,12 @@ $("#saveBatchMetadata").click(function (e) {
                     $("#keywordsString").val(data["keywords"]);
                     $("#keywordsBatchString").val(data["keywords"]);
                 }
+
+                if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
+                    $("#camerasString").val(data["cameras"]);
+                    $("#camerasBatchString").val(data["cameras"]);
+                }
+
                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                 // window.top.location = window.top.location
 
