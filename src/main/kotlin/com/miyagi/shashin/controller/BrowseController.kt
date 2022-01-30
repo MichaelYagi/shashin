@@ -59,12 +59,30 @@ class BrowseController {
         }
 
         model["timeOffsets"] = TextUtils.timeOffsets()
+
         val keywordList = keywordRepository.findAll()
         var keywords = ""
         if (keywordList.count() > 0) {
             keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
         }
         model["keywords"] = keywords
+
+        val cameraList = metadataRepository.countByCameraType()
+        var cameras = ""
+        if (cameraList.count() > 0) {
+            val cameraArray = mutableListOf<String>()
+            for (cameraCount in cameraList) {
+                if (cameraCount.getCamera() != null) {
+                    cameraArray.add(cameraCount.getCamera().toString())
+                    cameras += cameraCount.getCamera().toString() + ","
+                }
+            }
+            if (cameras.isNotBlank()) {
+                cameras = cameras.dropLast(1)
+            }
+        }
+        model["cameras"] = cameras
+
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -241,12 +259,30 @@ class BrowseController {
         }
 
         model["timeOffsets"] = TextUtils.timeOffsets()
+
         val keywordList = keywordRepository.findAll()
         var keywords = ""
         if (keywordList.count() > 0) {
             keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
         }
         model["keywords"] = keywords
+
+        val cameraList = metadataRepository.countByCameraType()
+        var cameras = ""
+        if (cameraList.count() > 0) {
+            val cameraArray = mutableListOf<String>()
+            for (cameraCount in cameraList) {
+                if (cameraCount.getCamera() != null) {
+                    cameraArray.add(cameraCount.getCamera().toString())
+                    cameras += cameraCount.getCamera().toString() + ","
+                }
+            }
+            if (cameras.isNotBlank()) {
+                cameras = cameras.dropLast(1)
+            }
+        }
+        model["cameras"] = cameras
+
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

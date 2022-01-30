@@ -67,6 +67,7 @@ $("#saveMetadata").click(function (e) {
         const json = {
             id:metadataId,
             title:$("#title").val().trim(),
+            camera:$("#camera").val().trim(),
             year:$("#yearTaken").val(),
             month:$("#monthTaken").val(),
             day:$("#dayTaken").val(),
@@ -109,6 +110,12 @@ $("#saveMetadata").click(function (e) {
                         $("#keywordsString").val(data["keywords"]);
                         $("#keywordsBatchString").val(data["keywords"]);
                     }
+
+                    if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
+                        $("#camerasString").val(data["cameras"]);
+                        $("#camerasBatchString").val(data["cameras"]);
+                    }
+
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     // window.top.location = window.top.location
 
@@ -128,6 +135,7 @@ $("#saveMetadata").click(function (e) {
                     metadataObj.time = $("#timeTaken").val()
                     metadataObj.timeZone = $("#offsetTaken").val()
                     metadataObj.keywords = $("#keywords").val()
+                    metadataObj.camera = $("#camera").val()
                     const latlngArray = $("#latlng").val().split(",");
                     metadataObj.lat = $.trim(latlngArray[0])
                     metadataObj.lng = $.trim(latlngArray[1])

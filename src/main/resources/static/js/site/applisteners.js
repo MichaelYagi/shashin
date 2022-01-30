@@ -18,7 +18,10 @@ $("#appToolsBatchEdit").click(function(e) {
     }
 
     const keywordAvailableList = $("#keywordsBatchString").val().split(",");
-    shashin.createAutocomplete("#keywordsBatchData", keywordAvailableList, true);
+    shashin.createAutocomplete("#keywordsBatchData", keywordAvailableList, true, 10);
+
+    const cameraList = $("#camerasBatchString").val().split(",");
+    shashin.createAutocomplete("#cameraBatchData", cameraList, false);
 
     $("#propBatchMetadata").modal('show');
 });

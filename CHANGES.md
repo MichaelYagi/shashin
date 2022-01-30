@@ -28,3 +28,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed API data structure of values returned
 - Prevent keyword blank string entry
 - Open only one search link when clicking on dashboard bar for camera and keywords
+
+## [1.0.1] - 2022-01-29
+### Added
+
+- Input to change or add camera model
+
+### Changed
+
+### Fixed
