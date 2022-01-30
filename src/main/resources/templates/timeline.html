@@ -59,6 +59,8 @@
 
             <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
 
+            <div id="spinner_top" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
+
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
@@ -144,9 +146,9 @@
 
             <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels})"></div>
 
-            <div id="msgTimeline"></div>
+            <!-- <div id="msgTimeline"></div> -->
+            <div id="spinner_bottom" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
 
-            <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
             <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
 

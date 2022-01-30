@@ -665,7 +665,8 @@
     }
 
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
-        $("#spinner").css("display", "block");
+        $("#spinner_top").css("display", "block");
+        $("#spinner_bottom").css("display", "block");
         $("#msgTimeline").html("");
 
         const ajaxParams = {
@@ -877,7 +878,8 @@
                 }
 
                 //deferred.resolve("success");
-                $("#spinner").css("display", "none");
+                $("#spinner_top").css("display", "none");
+                $("#spinner_bottom").css("display", "none");
                 // return deferred.promise();
                 return ret;
             });
