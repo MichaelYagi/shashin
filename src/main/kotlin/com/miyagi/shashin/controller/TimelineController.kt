@@ -100,21 +100,8 @@ class TimelineController {
         }
         model["keywords"] = keywords
 
-        val cameraList = metadataRepository.countByCameraType()
-        var cameras = ""
-        if (cameraList.count() > 0) {
-            val cameraArray = mutableListOf<String>()
-            for (cameraCount in cameraList) {
-                if (cameraCount.getCamera() != null) {
-                    cameraArray.add(cameraCount.getCamera().toString())
-                    cameras += cameraCount.getCamera().toString() + ","
-                }
-            }
-            if (cameras.isNotBlank()) {
-                cameras = cameras.dropLast(1)
-            }
-        }
-        model["cameras"] = cameras
+        val cameraList = metadataRepository.findByCameraTypeAlphabetical()
+        model["cameras"] = cameraList.joinToString()
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -747,10 +734,10 @@ class TimelineController {
             }
             if (metadataMap["camera"].toString().trim() != "") {
                 var camera = metadataMap["camera"].toString().trim()
-                val cameraCounts = metadataRepository.countByCameraType()
-                for (cameraCount in cameraCounts) {
-                    if (camera.trim().lowercase() == cameraCount.getCamera().toString().trim().lowercase()) {
-                        camera = cameraCount.getCamera().toString()
+                val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
+                for (cameraType in cameraTypes) {
+                    if (camera.trim().lowercase() == cameraType.trim().lowercase()) {
+                        camera = cameraType
                         break
                     }
                 }
@@ -873,21 +860,8 @@ class TimelineController {
             }
             resp["keywords"] = keywords
 
-            val cameraList = metadataRepository.countByCameraType()
-            var cameras = ""
-            if (cameraList.count() > 0) {
-                val cameraArray = mutableListOf<String>()
-                for (cameraCount in cameraList) {
-                    if (cameraCount.getCamera() != null) {
-                        cameraArray.add(cameraCount.getCamera().toString())
-                        cameras += cameraCount.getCamera().toString() + ","
-                    }
-                }
-                if (cameras.isNotBlank()) {
-                    cameras = cameras.dropLast(1)
-                }
-            }
-            resp["cameras"] = cameras
+            val cameraList = metadataRepository.findByCameraTypeAlphabetical()
+            model["cameras"] = cameraList.joinToString()
 
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -1041,10 +1015,10 @@ class TimelineController {
             }
 
             if (camera != null) {
-                val cameraCounts = metadataRepository.countByCameraType()
-                for (cameraCount in cameraCounts) {
-                    if (camera!!.trim().lowercase() == cameraCount.getCamera().toString().trim().lowercase()) {
-                        camera = cameraCount.getCamera().toString()
+                val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
+                for (cameraType in cameraTypes) {
+                    if (camera!!.trim().lowercase() == cameraType.trim().lowercase()) {
+                        camera = cameraType
                         break
                     }
                 }
@@ -1265,21 +1239,8 @@ class TimelineController {
                 }
                 resp["keywords"] = keywordListString
 
-                val cameraList = metadataRepository.countByCameraType()
-                var cameras = ""
-                if (cameraList.count() > 0) {
-                    val cameraArray = mutableListOf<String>()
-                    for (cameraCount in cameraList) {
-                        if (cameraCount.getCamera() != null) {
-                            cameraArray.add(cameraCount.getCamera().toString())
-                            cameras += cameraCount.getCamera().toString() + ","
-                        }
-                    }
-                    if (cameras.isNotBlank()) {
-                        cameras = cameras.dropLast(1)
-                    }
-                }
-                resp["cameras"] = cameras
+                val cameraList = metadataRepository.findByCameraTypeAlphabetical()
+                model["cameras"] = cameraList.joinToString()
 
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
