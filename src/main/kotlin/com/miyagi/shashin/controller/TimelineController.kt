@@ -270,7 +270,7 @@ class TimelineController {
                     response["keywordMap"] = keywordMap
                 }
 
-                val albumList = albumRepository.findAll()
+                val albumList = albumRepository.findAllOrderByAlbumName()
                 if (albumList.count() > 0) {
                     response["albumList"] = albumList
                 }
@@ -447,7 +447,7 @@ class TimelineController {
                         response["albumMap"] = albumMap
                         response["keywordMap"] = keywordMap
 
-                        val albumList = albumRepository.findAll()
+                        val albumList = albumRepository.findAllOrderByAlbumName()
                         if (albumList.count() > 0) {
                             response["albumList"] = albumList
                         }
