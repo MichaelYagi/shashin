@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface KeywordRepository : CrudRepository<Keyword?, Int?> {
-    @Query("SELECT k.keyword, COUNT(kp.keyword_id) as count FROM keyword k INNER JOIN keywordphoto kp on k.id = kp.keyword_id GROUP BY kp.keyword_id", nativeQuery = true)
+    @Query("SELECT k.keyword, COUNT(kp.keyword_id) as count FROM keyword k INNER JOIN keywordphoto kp on k.id = kp.keyword_id GROUP BY kp.keyword_id ORDER BY count DESC", nativeQuery = true)
     fun countByKeyword(): MutableIterable<KeywordCount>
     fun countByKeywordIgnoreCase(keyword: String?): Int
     fun findByKeywordIgnoreCase(keyword: String?): Keyword?
