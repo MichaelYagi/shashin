@@ -107,6 +107,12 @@
 
     // Render only what's needed
     timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
+        if (timelineSettings.initialized === false) {
+            timelineSettings.initialized = true;
+        } else {
+            $("#spinner_top").css("display", "block");
+        }
+        $("#spinner_bottom").css("display", "block");
         timelineSettings.enableScrollSpy = false;
         //let deferred = new $.Deferred();
 
@@ -317,6 +323,8 @@
         //deferred.resolve(timelineSettings.successMidMsg);
         //return deferred.promise();
 
+        $("#spinner_top").css("display", "none");
+        $("#spinner_bottom").css("display", "none");
         timelineSettings.enableScrollSpy = true;
 
         return timelineSettings.successMidMsg;
@@ -666,12 +674,6 @@
     }
 
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
-        if (timelineSettings.initialized === false) {
-            timelineSettings.initialized = true;
-        } else {
-            $("#spinner_top").css("display", "block");
-        }
-        $("#spinner_bottom").css("display", "block");
         $("#msgTimeline").html("");
 
         const ajaxParams = {
@@ -883,8 +885,6 @@
                 }
 
                 //deferred.resolve("success");
-                $("#spinner_top").css("display", "none");
-                $("#spinner_bottom").css("display", "none");
                 // return deferred.promise();
                 return ret;
             });
