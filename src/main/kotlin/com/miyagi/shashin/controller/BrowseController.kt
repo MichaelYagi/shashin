@@ -60,10 +60,10 @@ class BrowseController {
 
         model["timeOffsets"] = TextUtils.timeOffsets()
 
-        val keywordList = keywordRepository.findAll()
+        val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
         var keywords = ""
         if (keywordList.count() > 0) {
-            keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
+            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
         }
         model["keywords"] = keywords
 
@@ -247,10 +247,10 @@ class BrowseController {
 
         model["timeOffsets"] = TextUtils.timeOffsets()
 
-        val keywordList = keywordRepository.findAll()
+        val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
         var keywords = ""
         if (keywordList.count() > 0) {
-            keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
+            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
         }
         model["keywords"] = keywords
 

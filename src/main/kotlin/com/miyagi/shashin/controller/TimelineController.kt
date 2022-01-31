@@ -93,10 +93,10 @@ class TimelineController {
         }
 
         model["timeOffsets"] = timeOffsets()
-        val keywordList = keywordRepository.findAll()
+        val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
         var keywords = ""
         if (keywordList.count() > 0) {
-            keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
+            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
         }
         model["keywords"] = keywords
 
@@ -301,7 +301,7 @@ class TimelineController {
     @ResponseBody
     fun getAllKeywords(model: Model): String {
         val response = mutableMapOf<String, Any?>()
-        response["keywords"] = keywordRepository.findAll()
+        response["keywords"] = keywordRepository.findAllDistinctOrderByKeyword()
         return mapper.writeValueAsString(response)
     }
 
@@ -853,10 +853,10 @@ class TimelineController {
                 MetadataProcessing.updateSidecarMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
             }
 
-            val keywordList = keywordRepository.findAll()
+            val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
             var keywords = ""
             if (keywordList.count() > 0) {
-                keywords = keywordList.map { it?.getKeyword() }.joinToString(",")
+                keywords = keywordList.map { it.getKeyword() }.joinToString(",")
             }
             resp["keywords"] = keywords
 
@@ -1232,10 +1232,10 @@ class TimelineController {
                     }
                 }
 
-                val keywordList = keywordRepository.findAll()
+                val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
                 var keywordListString = ""
                 if (keywordList.count() > 0) {
-                    keywordListString = keywordList.map { it?.getKeyword() }.joinToString(",")
+                    keywordListString = keywordList.map { it.getKeyword() }.joinToString(",")
                 }
                 resp["keywords"] = keywordListString
 
