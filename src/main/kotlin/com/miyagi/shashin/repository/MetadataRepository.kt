@@ -41,7 +41,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT camera, COUNT(*) AS count FROM metadata GROUP BY camera ORDER BY count DESC", nativeQuery = true)
    fun countByCameraType(): MutableIterable<CameraTypeCount>
 
-   @Query("SELECT camera FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY camera ASC", nativeQuery = true)
+   @Query("SELECT camera FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY camera COLLATE NOCASE ASC", nativeQuery = true)
    fun findByCameraTypeAlphabetical(): MutableIterable<String>
 
    @Query("SELECT * FROM metadata WHERE hidden = true ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
