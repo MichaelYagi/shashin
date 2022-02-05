@@ -123,6 +123,13 @@
     timelineSettings.renderThumbnailsSimple = async function(elements,mediaTypeFilter,timelineDates) {
         timelineSettings.enableScrollSpy = false;
 
+        if (timelineSettings.initialized === false) {
+            timelineSettings.initialized = true;
+        } else {
+            $("#spinner_top").css("display", "block");
+        }
+        $("#spinner_bottom").css("display", "block");
+
         // Remove elements not visible in viewport
         $('section').each(function (index, element) {
             shashin.printMessageToConsole(element.id + " checking to remove beginning");
@@ -145,12 +152,13 @@
 
             // Render above visibleContainers going from bottom up
             let currentDate = $(firstVisibleContainer).attr("id");
+            const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
             for (const [index, timelineDate] of timelineDates.reverse().entries()) {
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                    if ($("#" + currentDate).length === 0 && (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up || $("footer").withinviewport().length > 0)) {
+                    if ($("#" + currentDate).length === 0 && (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up || $("#"+lastDate).withinviewport().length > 0)) {
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
@@ -208,6 +216,9 @@
             //     }
             // });
         }
+
+        $("#spinner_top").css("display", "none");
+        $("#spinner_bottom").css("display", "none");
 
         timelineSettings.enableScrollSpy = true;
 
