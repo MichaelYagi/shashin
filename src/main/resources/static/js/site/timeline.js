@@ -196,7 +196,7 @@
 
                         // Break if top not in viewport
                         if ($("#" + currentDate).withinviewport().length === 0) {
-                            Util.removeDateGallery(currentDate);
+                            // Util.removeDateGallery(currentDate);
                             break;
                         }
                     }
