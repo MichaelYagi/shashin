@@ -123,11 +123,6 @@
     timelineSettings.renderThumbnailsSimple = async function(elements,mediaTypeFilter,timelineDates) {
         timelineSettings.enableScrollSpy = false;
 
-        if (timelineSettings.initialized === false) {
-            timelineSettings.initialized = true;
-        } else {
-            $("#spinner_top").css("display", "block");
-        }
         $("#spinner_bottom").css("display", "block");
 
         // Remove elements not visible in viewport
