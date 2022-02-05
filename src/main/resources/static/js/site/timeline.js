@@ -147,17 +147,19 @@
 
             // Render above visibleContainers going from bottom up
             let currentDate = $(firstVisibleContainer).attr("id");
+            let prevDate = "";
+            const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
             const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
             for (const [index, timelineDate] of timelineDates.reverse().entries()) {
-                let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+                prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
                     if ($("#" + currentDate).length === 0 && (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up || $("#"+lastDate).withinviewport().length > 0)) {
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
-                        if (msg === "success" && $("#" + currentDate).length === 1) {
+                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
 
@@ -167,7 +169,14 @@
                         }
                     }
 
-                    currentDate = prevDate;
+                    if (prevDate !== firstDate) {
+                        currentDate = prevDate;
+                    } else {
+                        const msg = await timelineSettings.updateTimeline(firstDate, mediaTypeFilter, "above", currentDate);
+                        if (msg === timelineSettings.success && $("#" + firstDate).length === 1) {
+                            timelineSettings.attachAssociatedMetadata(firstDate, mediaTypeFilter);
+                        }
+                    }
                 }
             }
 
@@ -181,7 +190,7 @@
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
-                        if (msg === "success" && $("#" + currentDate).length === 1) {
+                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
 
@@ -191,7 +200,15 @@
                             break;
                         }
                     }
-                    currentDate = prevDate;
+
+                    if (prevDate !== lastDate) {
+                        currentDate = prevDate;
+                    } else {
+                        const msg = await timelineSettings.updateTimeline(lastDate, mediaTypeFilter, "below", currentDate);
+                        if (msg === timelineSettings.success && $("#" + lastDate).length === 1) {
+                            timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
+                        }
+                    }
                 }
             }
 
@@ -320,7 +337,7 @@
                 shashin.printMessageToConsole("actionAbove:" + action)
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
                 $("#container_"+currentId).outerHeight(true);
-                if (msg === "success" && $("#"+currentId).length === 1) {
+                if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
 
@@ -342,7 +359,7 @@
                 shashin.printMessageToConsole("attaching id:" + currentId);
                 shashin.printMessageToConsole("actionBelow:"+action)
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
-                if (msg === "success" && $("#"+currentId).length === 1) {
+                if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
                     timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
             }
@@ -371,7 +388,7 @@
                     }
 
                     const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
-                    if (msg === "success" && $("#" + currentId).length === 1) {
+                    if (msg === timelineSettings.success && $("#" + currentId).length === 1) {
                         timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                     }
 
@@ -428,7 +445,7 @@
                 shashin.printMessageToConsole("attaching id:" + id);
                 shashin.printMessageToConsole("attaching mid action:" + action)
                 const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
-                if (msg === "success" && $("#" + id).length === 1) {
+                if (msg === timelineSettings.success && $("#" + id).length === 1) {
                     timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                 }
             }
@@ -448,7 +465,7 @@
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
-        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
         timelineSettings.enableScrollSpy = false;
 
         $('section').each(function (index, element) {
@@ -470,9 +487,10 @@
         shashin.printMessageToConsole("jumpFromTimelineToc mediaTypeFilter:"+mediaTypeFilter);
 
         timelineSettings.renderThumbnails(anchor,mediaTypeFilter).then(function (msg) {
-            if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
+            if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg || msg === timelineSettings.success) {
                 timelineSettings.setScrollSpyActive(anchor);
                 timelineSettings.observeAnchorChange(anchor, timelineSettings.scrollToToc);
+                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
             }
         });
     }
@@ -559,7 +577,7 @@
         $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " attaching associated metadata")}).then(function(data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "success") {
+                if (data["status"] === timelineSettings.success) {
                     if (data.hasOwnProperty("metadataList") &&
                         data.hasOwnProperty("favorites") &&
                         data.hasOwnProperty("albumList") &&
@@ -806,7 +824,7 @@
                 let ret = "fail";
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
-                    if (data["status"] === "success") {
+                    if (data["status"] === timelineSettings.success) {
                         if (data.hasOwnProperty("metadataList")) {
                             const metadataList = data["metadataList"];
 
@@ -905,8 +923,8 @@
 
                                     if (action === "above") {
                                         htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
-                                            // deferred.resolve("success");
-                                            ret = "success";
+                                            // deferred.resolve(timelineSettings.success);
+                                            ret = timelineSettings.success;
                                             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                 if (Util.isSafari() === true) {
                                                     $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
@@ -928,8 +946,8 @@
                                                     htmlEl.show();
                                                 }
                                             }
-                                            // deferred.resolve("success");
-                                            ret = "success";
+                                            // deferred.resolve(timelineSettings.success);
+                                            ret = timelineSettings.success;
                                         });
                                     } else {
                                         if (attachToId == null) {
@@ -944,8 +962,8 @@
                                                             htmlEl.show();
                                                         }
                                                     }
-                                                    // deferred.resolve("success");
-                                                    ret = "success";
+                                                    // deferred.resolve(timelineSettings.success);
+                                                    ret = timelineSettings.success;
                                                 });
                                             } else {
                                                 $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
@@ -958,8 +976,8 @@
                                                             htmlEl.show();
                                                         }
                                                     }
-                                                    // deferred.resolve("success");
-                                                    ret = "success";
+                                                    // deferred.resolve(timelineSettings.success);
+                                                    ret = timelineSettings.success;
                                                 });
                                             }
                                         } else {
@@ -973,24 +991,24 @@
                                                         htmlEl.show();
                                                     }
                                                 }
-                                                // deferred.resolve("success");
-                                                ret = "success";
+                                                // deferred.resolve(timelineSettings.success);
+                                                ret = timelineSettings.success;
                                             });
                                         }
                                     }
                                 } else {
                                     // Already attached
-                                    // deferred.resolve("success");
-                                    ret = "success";
+                                    // deferred.resolve(timelineSettings.success);
+                                    ret = timelineSettings.success;
                                 }
                             } else {
                                 $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
-                                // deferred.resolve("success");
-                                ret = "success";
+                                // deferred.resolve(timelineSettings.success);
+                                ret = timelineSettings.success;
                             }
-                            ret = "success";
+                            ret = timelineSettings.success;
                         }
-                        ret = "success";
+                        ret = timelineSettings.success;
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#msgTimeline").html(message);
@@ -999,7 +1017,7 @@
                     }
                 }
 
-                //deferred.resolve("success");
+                //deferred.resolve(timelineSettings.success);
                 // return deferred.promise();
                 return ret;
             });
