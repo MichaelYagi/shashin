@@ -150,7 +150,7 @@
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                    if ($("#" + currentDate).length === 0) {
+                    if ($("#" + currentDate).length === 0 && (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up || $("footer").withinviewport().length > 0)) {
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
