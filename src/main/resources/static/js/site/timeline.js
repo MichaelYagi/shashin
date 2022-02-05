@@ -57,7 +57,7 @@
     timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter,timelineDates) {
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-        if (prevElements === null || JSON.stringify(prevElements) !== JSON.stringify(elements) || ($("#"+lastDate).withinviewport().length === 0 && $("footer").withinviewport().length > 0 && Util.atEndOfPage($("#container")[0]))) {
+        if (prevElements === null || (elements.length > 0 && JSON.stringify(prevElements) !== JSON.stringify(elements)) || ($("#"+lastDate).withinviewport().length === 0 && $("footer").withinviewport().length > 0 && Util.atEndOfPage($("#container")[0]))) {
 
             if (elements.length === 0) {
                 const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
