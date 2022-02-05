@@ -180,7 +180,7 @@
             const elementsInViewport = $(".scrollspy").withinviewport();
 
             timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
-            timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+            timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter, /*[[${metadataDates}]]*/ []);
             timelineSettings.setScrollSpyActive($(firstElem));
             timelineSettings.reinitLightGalleryInstance();
         } else {
@@ -219,7 +219,9 @@
 
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+                /*<![CDATA[*/
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter, /*[[${metadataDates}]]*/ []);
+                /*]]>*/
 
                 $(".bi-play-circle").css("visibility", "hidden");
                 $(".mediaLink").unbind('click');
