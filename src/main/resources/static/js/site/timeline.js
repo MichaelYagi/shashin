@@ -5,6 +5,7 @@
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
     timelineSettings.successMidMsg = "success_mid";
+    timelineSettings.success = "success";
     timelineSettings.currentScrollTop = 0;
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
@@ -53,56 +54,172 @@
     }
 
     let prevElements = null;
-    timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter) {
-        const lastDate = $("#offcanvasTocBody").children().last().attr("id").split("offcanvas_")[1];
+    timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter,timelineDates) {
+        // const lastDate = $("#offcanvasTocBody").children().last().attr("id").split("offcanvas_")[1];
+        //
+        // if (prevElements === null || JSON.stringify(prevElements) !== JSON.stringify(elements) || ($("#"+lastDate).withinviewport() === 0 && $("footer").withinviewport().length > 0)) {
+        //
+        //     // If no scrollspy elements found, find current thumbnail container
+        //     // and closest previous scrollspy element
+        //     if (elements.length === 0) {
+        //         const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
+        //         elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
+        //     }
+        //
+        //     const prevFirstElement = prevElements !== null ? $(prevElements[0]).attr('id') : prevElements;
+        //     const firstElement = $(elements[0]).attr('id');
+        //     const prevLastElement = prevElements !== null ? $(prevElements[prevElements.length-1]).attr('id') : prevElements;
+        //     const lastElement = $(elements[elements.length-1]).attr('id');
+        //
+        //     const prevFirstWithoutTail = (prevElements !== null && prevFirstElement.indexOf("tail_") > -1) ? prevFirstElement.split("tail_")[1] : prevFirstElement;
+        //     const firstWithoutTail = firstElement.indexOf("tail_") > -1 ? firstElement.split("tail_")[1] : firstElement;
+        //     const prevLastWithoutTail = (prevElements !== null && prevLastElement.indexOf("tail_") > -1) ? prevLastElement.split("tail_")[1] : prevLastElement;
+        //     const lastWithoutTail = lastElement.indexOf("tail_") > -1 ? lastElement.split("tail_")[1] : lastElement;
+        //
+        //     if (prevElements !== null) {
+        //         if ((Util.getDateObject(prevFirstWithoutTail) > Util.getDateObject(firstWithoutTail)) ||
+        //             (Util.getDateObject(prevLastWithoutTail) > Util.getDateObject(lastWithoutTail))
+        //         ) {
+        //             timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+        //         } else if ((Util.getDateObject(prevFirstWithoutTail) < Util.getDateObject(firstWithoutTail)) ||
+        //             (Util.getDateObject(prevLastWithoutTail) < Util.getDateObject(lastWithoutTail))
+        //         ) {
+        //             timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
+        //         }
+        //     }
+        //
+        //     elements.each(function (index) {
+        //         let id = $(this).attr("id");
+        //
+        //         if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
+        //
+        //             timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
+        //                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
+        //                     timelineSettings.setScrollSpyActive(id);
+        //                 }
+        //             });
+        //             timelineSettings.prevAnchor = id;
+        //         }
+        //     });
+        //
+        //     prevElements = elements;
+        // }
 
-        if (prevElements === null || JSON.stringify(prevElements) !== JSON.stringify(elements) || ($("#"+lastDate).withinviewport() === 0 && $("footer").withinviewport().length > 0)) {
+        const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-            // If no scrollspy elements found, find current thumbnail container
-            // and closest previous scrollspy element
-            if (elements.length === 0) {
-                const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
-                elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
-            }
-
-            const prevFirstElement = prevElements !== null ? $(prevElements[0]).attr('id') : prevElements;
-            const firstElement = $(elements[0]).attr('id');
-            const prevLastElement = prevElements !== null ? $(prevElements[prevElements.length-1]).attr('id') : prevElements;
-            const lastElement = $(elements[elements.length-1]).attr('id');
-
-            const prevFirstWithoutTail = (prevElements !== null && prevFirstElement.indexOf("tail_") > -1) ? prevFirstElement.split("tail_")[1] : prevFirstElement;
-            const firstWithoutTail = firstElement.indexOf("tail_") > -1 ? firstElement.split("tail_")[1] : firstElement;
-            const prevLastWithoutTail = (prevElements !== null && prevLastElement.indexOf("tail_") > -1) ? prevLastElement.split("tail_")[1] : prevLastElement;
-            const lastWithoutTail = lastElement.indexOf("tail_") > -1 ? lastElement.split("tail_")[1] : lastElement;
-
-            if (prevElements !== null) {
-                if ((Util.getDateObject(prevFirstWithoutTail) > Util.getDateObject(firstWithoutTail)) ||
-                    (Util.getDateObject(prevLastWithoutTail) > Util.getDateObject(lastWithoutTail))
-                ) {
-                    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-                } else if ((Util.getDateObject(prevFirstWithoutTail) < Util.getDateObject(firstWithoutTail)) ||
-                    (Util.getDateObject(prevLastWithoutTail) < Util.getDateObject(lastWithoutTail))
-                ) {
-                    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
-                }
-            }
-
-            elements.each(function (index) {
-                let id = $(this).attr("id");
-
-                if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
-
-                    timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
-                        if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
+        if (prevElements === null || JSON.stringify(prevElements) !== JSON.stringify(elements) || ($("#"+lastDate).withinviewport().length === 0 && $("footer").withinviewport().length > 0)) {
+            timelineSettings.renderThumbnailsSimple(elements, mediaTypeFilter, timelineDates).then(function (msg) {
+                if (msg === timelineSettings.success) {
+                    // Set TOC active element
+                    const elementsInViewport = $(".scrollspy").withinviewport();
+                    elementsInViewport.each(function (index) {
+                        let id = $(this).attr("id");
+                        if (id.indexOf("tail_") === -1) {
                             timelineSettings.setScrollSpyActive(id);
+                            return false;
                         }
                     });
-                    timelineSettings.prevAnchor = id;
                 }
             });
 
             prevElements = elements;
         }
+    }
+
+    timelineSettings.renderThumbnailsSimple = async function(elements,mediaTypeFilter,timelineDates) {
+        timelineSettings.enableScrollSpy = false;
+
+        // Remove elements not visible in viewport
+        $('section').each(function (index, element) {
+            shashin.printMessageToConsole(element.id + " checking to remove beginning");
+            if ($("#" + element.id).withinviewport().length === 0 &&
+                $("#br" + element.id).withinviewport().length === 0 &&
+                $("#row" + element.id).withinviewport().length === 0 &&
+                $("#amp_" + element.id).withinviewport().length === 0 &&
+                $("#tail_" + element.id).withinviewport().length === 0 &&
+                $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
+                //&& $("footer").withinviewport().length === 0
+            ) {
+                shashin.printMessageToConsole(element.id + " removed beginning");
+                Util.removeDateGallery(element.id);
+            }
+        });
+
+        // Get list of visible elements
+        const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
+        const lastVisibleContainer = $('section').length > 0 ? $('section')[$('section').length-1] : null;
+
+        if (firstVisibleContainer !== null) {
+
+            // Render above visibleContainers going from bottom up
+            let currentDate = $(firstVisibleContainer).attr("id");
+
+            for (const [index, timelineDate] of timelineDates.reverse().entries()) {
+                let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+
+                if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
+                    if ($("#" + currentDate).length === 0) {
+                        // Render currentDate
+                        const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+                        const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
+                        if (msg === "success" && $("#" + currentDate).length === 1) {
+                            timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                        }
+
+                        // Break if top not in viewport
+                        if ($("#" + currentDate).withinviewport().length === 0) {
+                            break;
+                        }
+                    }
+
+                    currentDate = prevDate;
+                }
+            }
+
+            // Render below visibleContainers going from top down
+            currentDate = $(lastVisibleContainer).attr("id");
+            for (const [index, timelineDate] of timelineDates.reverse().entries()) {
+                let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+
+                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate)) {
+                    if ($("#" + currentDate).length === 0) {
+                        // Render currentDate
+                        const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+                        const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
+                        if (msg === "success" && $("#" + currentDate).length === 1) {
+                            timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                        }
+
+                        // Break if top not in viewport
+                        if ($("#" + currentDate).withinviewport().length === 0) {
+                            Util.removeDateGallery(currentDate);
+                            break;
+                        }
+                    }
+                    currentDate = prevDate;
+                }
+            }
+
+            // Remove elements not visible in viewport
+            // $('section').each(function (index, element) {
+            //     shashin.printMessageToConsole(element.id + " checking to remove beginning");
+            //     if ($("#" + element.id).withinviewport().length === 0 &&
+            //         $("#br" + element.id).withinviewport().length === 0 &&
+            //         $("#row" + element.id).withinviewport().length === 0 &&
+            //         $("#amp_" + element.id).withinviewport().length === 0 &&
+            //         $("#tail_" + element.id).withinviewport().length === 0 &&
+            //         $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
+            //         //&& $("footer").withinviewport().length === 0
+            //     ) {
+            //         shashin.printMessageToConsole(element.id + " removed beginning");
+            //         Util.removeDateGallery(element.id);
+            //     }
+            // });
+        }
+
+        timelineSettings.enableScrollSpy = true;
+
+        return timelineSettings.success;
     }
 
     // Render only what's needed
@@ -529,7 +646,7 @@
                             for (const index in metadataList) {
                                 const metadata = metadataList[index];
 
-                                if ($("#image" + metadata.id).withinviewport()) {
+                                //if ($("#image" + metadata.id).withinviewport().length === 0) {
 
                                     let dateReformatted = "";
                                     if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
@@ -664,7 +781,7 @@
                                             $("#tntr" + metadata.id).addClass("thumbnail-tr");
                                         }
                                     }
-                                }
+                                //}
                             }
                         }
                     }
