@@ -57,7 +57,7 @@
     timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter,timelineDates) {
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-        if (prevElements === null || (elements.length > 0 && JSON.stringify(prevElements) !== JSON.stringify(elements)) || ($("#"+lastDate).withinviewport().length === 0 && $("footer").withinviewport().length > 0 && Util.atEndOfPage($("#container")[0]))) {
+        if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || ($("#"+lastDate).withinviewport().length === 0 && $("footer").withinviewport().length > 0 && Util.atEndOfPage($("#container")[0]))) {
 
             if (elements.length === 0) {
                 const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
@@ -155,7 +155,7 @@
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                    if ($("#" + currentDate).length === 0 && (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up || $("#"+lastDate).withinviewport().length > 0)) {
+                    if ($("#" + currentDate).length === 0) {
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
@@ -196,7 +196,7 @@
 
                         // Break if top not in viewport
                         if ($("#" + currentDate).withinviewport().length === 0) {
-                            // Util.removeDateGallery(currentDate);
+                            Util.removeDateGallery(currentDate);
                             break;
                         }
                     }
