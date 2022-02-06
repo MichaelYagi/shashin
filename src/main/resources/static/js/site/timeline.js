@@ -126,8 +126,8 @@
         $("#spinner_bottom").css("display", "block");
 
         // Remove elements not visible in viewport
+        let removeToggle = false;
         $('section').each(function (index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove beginning");
             if ($("#" + element.id).withinviewport().length === 0 &&
                 $("#br" + element.id).withinviewport().length === 0 &&
                 $("#row" + element.id).withinviewport().length === 0 &&
@@ -135,6 +135,11 @@
                 $("#tail_" + element.id).withinviewport().length === 0 &&
                 $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
             ) {
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && removeToggle === false) {
+                    removeToggle = true;
+                    return;
+                }
+
                 Util.removeDateGallery(element.id);
             }
         });
