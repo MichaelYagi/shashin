@@ -465,7 +465,7 @@
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
         e.preventDefault();
 
-        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
+        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
 
         $('section').each(function (index, element) {
@@ -490,7 +490,6 @@
             if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg || msg === timelineSettings.success) {
                 timelineSettings.setScrollSpyActive(anchor);
                 timelineSettings.observeAnchorChange(anchor, timelineSettings.scrollToToc);
-                timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
             }
         });
     }
