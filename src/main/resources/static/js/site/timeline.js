@@ -168,6 +168,7 @@
                         }
 
                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && removeToggle === false) {
+                            currentDate = prevDate;
                             removeToggle = true;
                             continue;
                         }
