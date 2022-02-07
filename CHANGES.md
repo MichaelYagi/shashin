@@ -37,5 +37,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Simplified timeline view logic
+- Optimized modals on views
 
 ### Fixed
