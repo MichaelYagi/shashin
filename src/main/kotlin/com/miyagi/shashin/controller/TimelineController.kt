@@ -1059,12 +1059,10 @@ class TimelineController {
                     if (camera != null && camera.trim().isNotBlank()) {
                         metadata.setCamera(camera)
                     }
-                    if (offset == null || offset == "") {
-                        metadata.setTimeZone(null)
-                    } else {
+                    if (offset != null && offset.trim().isNotBlank()) {
                         metadata.setTimeZone(offset)
                     }
-                    if (latlng != null) {
+                    if (latlng != null && latlng.trim().isNotBlank()) {
                         latlng = latlng.replace("\\s".toRegex(), "")
                         val latlngArr = latlng.split(",")
                         if (latlngArr.count() == 2) {
