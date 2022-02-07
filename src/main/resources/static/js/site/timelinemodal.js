@@ -116,60 +116,125 @@ $("#saveMetadata").click(function (e) {
                         $("#camerasBatchString").val(data["cameras"]);
                     }
 
+                    if (data.hasOwnProperty("allAlbumList") && data["allAlbumList"].length > 0) {
+                        let renderAlbumList = false;
+                        const albumList = data["allAlbumList"];
+
+                        let batchHtml =
+                            '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
+                            '<div class="input-group-append dropdown">\n' +
+                            '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineBatchModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                            '   <div class="dropdown-menu" id="albumNameList">\n';
+
+                        for (let index in albumList) {
+                            const album = albumList[index];
+
+                            if ($("#"+album.id).length === 0) {
+                                renderAlbumList = true;
+                            }
+
+                            batchHtml +=
+                                '<button class="dropdown-item" type="button">\n' +
+                                '    <input type="checkbox" onclick="return timelineBatchModal.populateBatchAlbum();" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                                '    <label for="'+album.id+'">'+album.name+'</label>\n' +
+                                '</button>\n';
+                        }
+
+                        batchHtml +=
+                            '   </div>\n' +
+                            '</div>\n';
+
+                        if (true === renderAlbumList) {
+                            $("#albumListForModal").html(batchHtml);
+                        }
+                    }
+
+                    if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+                        let renderRecognitionLabels = false;
+                        const recognitionLabels = data["recognitionLabels"];
+
+                        let batchHtml =
+                            '       <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
+                            '       <div class="input-group-append">\n' +
+                            '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                            '           <div class="dropdown-menu" id="peopleNameList">';
+
+                        for (let index in recognitionLabels) {
+                            const recognitionLabel = recognitionLabels[index];
+
+                            if ($("#"+recognitionLabel.id).length === 0) {
+                                renderRecognitionLabels = true;
+                            }
+
+                            batchHtml +=
+                                '           <button class="dropdown-item" type="button">\n' +
+                                '               <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
+                                '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
+                                '           </button>'
+                        }
+                        batchHtml +=
+                            '   </div>\n' +
+                            '</div>\n';
+
+                        if (true === renderRecognitionLabels) {
+                            $("#batchLabelIds").html(batchHtml);
+                        }
+                    }
+
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     // window.top.location = window.top.location
 
                     // Update tag
                     let takenDateUpdated = false;
-                    const metadataObj = shashin.checkMetadata(metadataId);
-                    if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
-                        parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
-                        parseInt(metadataObj.day) !== parseInt($("#dayTaken").val()))
-                    {
-                        takenDateUpdated = true;
-                    }
-                    metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
-                    metadataObj.year = $("#yearTaken").val()
-                    metadataObj.month = $("#monthTaken").val()
-                    metadataObj.day = $("#dayTaken").val()
-                    metadataObj.time = $("#timeTaken").val()
-                    metadataObj.timeZone = $("#offsetTaken").val()
-                    metadataObj.keywords = $("#keywords").val()
-                    metadataObj.camera = $("#camera").val()
-                    const latlngArray = $("#latlng").val().split(",");
-                    metadataObj.lat = $.trim(latlngArray[0])
-                    metadataObj.lng = $.trim(latlngArray[1])
-                    if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
-                        $("#latlng").val(metadataObj.lat+","+metadataObj.lng)
-                    }
-                    metadataObj.tagpeople = $("#tagpeople").val()
-                    metadataObj.albumlist = $("#albumnames").val()
-                    metadataObj.hidden = $("#hidden").prop("checked")
+                    shashin.getMetadata(metadataId).then(function (metadataObj) {
+                        if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
+                            parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
+                            parseInt(metadataObj.day) !== parseInt($("#dayTaken").val())) {
+                            takenDateUpdated = true;
+                        }
+                        metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
+                        metadataObj.year = $("#yearTaken").val()
+                        metadataObj.month = $("#monthTaken").val()
+                        metadataObj.day = $("#dayTaken").val()
+                        metadataObj.time = $("#timeTaken").val()
+                        metadataObj.timeZone = $("#offsetTaken").val()
+                        metadataObj.keywords = $("#keywords").val()
+                        metadataObj.camera = $("#camera").val()
+                        const latlngArray = $("#latlng").val().split(",");
+                        metadataObj.lat = $.trim(latlngArray[0])
+                        metadataObj.lng = $.trim(latlngArray[1])
+                        if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
+                            $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
+                        }
+                        metadataObj.tagpeople = $("#tagpeople").val()
+                        metadataObj.albumlist = $("#albumnames").val()
+                        metadataObj.hidden = $("#hidden").prop("checked")
 
-                    if ($("#offcanvasToc").length > 0) {
-                        const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
-                            "offcanvas_undated" : "offcanvas_" + metadataObj.year + '-' + metadataObj.month + '-' + metadataObj.day;
-                        shashin.refreshTimeline($("#mediaTypeFilter").val(), offCanvasId);
-                    }
-
-                    if (metadataObj.hidden === false) {
-                        Util.populateDetailsInfo(metadataObj,"propTimelineModal")
-                        $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
-                        $("#mediaLink" + metadataId).attr("tag", JSON.stringify(metadataObj))
-
-                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
-                        if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
-                            $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                        if ($("#offcanvasToc").length > 0) {
+                            const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
+                                "offcanvas_undated" : "offcanvas_" + metadataObj.year + '-' + metadataObj.month + '-' + metadataObj.day;
+                            shashin.refreshTimeline($("#mediaTypeFilter").val(), offCanvasId);
                         }
 
-                        if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() === "timeline") || $("#activePage").length === 0) {
+                        if (metadataObj.hidden === false) {
+                            Util.populateDetailsInfo(metadataObj, "propTimelineModal")
+                            $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
+                            $("#mediaLink" + metadataId).attr("tag", JSON.stringify(metadataObj))
+
+                            $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
+                            if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
+                                $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                            }
+
+                            if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() === "timeline") || $("#activePage").length === 0) {
+                                shashin.removeThumbnail(metadataId);
+                            }
+                        } else {
                             shashin.removeThumbnail(metadataId);
                         }
-                    } else {
-                        shashin.removeThumbnail(metadataId);
-                    }
 
-                    $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                    });
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
@@ -264,9 +329,10 @@ $("#mapTabLink").click(function (e) {
     $("#saveMetadata").prop('disabled', true);
 
     const metadataId = $("#metadataId").val();
-    const metadata = shashin.checkMetadata(metadataId);
 
-    shashin.openMap(metadata)
+    shashin.getMetadata(metadataId).then(function (data) {
+        shashin.openMap(data)
+    });
 });
 
 $("#generalTabLink").click(function (e) {

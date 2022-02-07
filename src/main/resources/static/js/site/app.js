@@ -45,188 +45,243 @@
         return metadata;
     }
 
-    shashin.openEditMetadataModal = function(metadata,recognitionLabels,taggedPeopleList,allAlbumList,albumList,keywordList) {
-        let index;
-
-        metadata = shashin.checkMetadata(metadata.id);
-        const keywordsAvailable = $('#keywordsString').val();
-        const camerasList = $('#camerasString').val();
-
-        // Clear modal data
-        $('#propTimelineModal').find(':input').val('');
-        $("#propTimelineModalThumbnail").html("");
-        $("#isobject")[0].checked = false;
-        $("#hidden")[0].checked = false;
-
-        $("#timelineModalTitle").text(metadata.title);
-        $("#currentfilename").val(metadata.fileName)
-        $("#currentlat").val(metadata.lat)
-        $("#currentlng").val(metadata.lng)
-        $("#metadataId").val(metadata.id);
-        $("#keywordsString").val(keywordsAvailable);
-        $("#camerasString").val(camerasList);
-
-        if (metadata.thumbnailUrlCentered !== null) {
-            $("#propTimelineModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
+    shashin.getTimelineMetadata = async function(metadataId) {
+        const ajaxParams = {
+            type: 'get',
+            url: "/api/v1/timeline/metadata/"+metadataId,
+            contentType: 'application/json; charset=utf-8',
+            async:true,
+            retries: shashin.ajaxRetries
         }
 
-        if (metadata.title !== null) {
-            $("#title").val(metadata.title);
+        return await $.ajax(ajaxParams)
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing timeline TOC")})
+            .then(function(data)
+            {
+                let ret = {};
+                if (data.hasOwnProperty("metadata")) {
+                    ret = data;
+                }
+
+                return ret;
+            });
+    }
+
+    shashin.getMetadata = async function(metadataId) {
+        const ajaxParams = {
+            type: 'get',
+            url: "/api/v1/metadata/"+metadataId,
+            contentType: 'application/json; charset=utf-8',
+            async:true,
+            retries: shashin.ajaxRetries
         }
 
-        if (metadata.camera !== null) {
-            $("#camera").val(metadata.camera);
-        }
+        return await $.ajax(ajaxParams)
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing timeline TOC")})
+            .then(function(data)
+            {
+                let ret = {};
+                if (data.hasOwnProperty("id")) {
+                    ret = data;
+                }
 
-        if (metadata.timeZone !== null) {
-            $("#offsetTaken").val(metadata.timeZone);
-        }
-        if (metadata.time !== null) {
-            $("#timeTaken").val(metadata.time);
-        }
+                return ret;
+            });
+    }
 
-        if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null) {
-            $("#keywords").val(metadata.keywords);
-        } else {
-            $("#keywords").val(keywordList);
-            metadata.keywords = keywordList
-        }
+    shashin.openEditMetadataModal = function (metadataId) {
+        shashin.getTimelineMetadata(metadataId).then(function (data) {
+            if (data.hasOwnProperty("metadata") &&
+                data.hasOwnProperty("taggedPeopleList") &&
+                data.hasOwnProperty("albumList") &&
+                data.hasOwnProperty("keywordList") &&
+                data.hasOwnProperty("allRecognitionLabels") &&
+                data.hasOwnProperty("allAlbumList"))
+            {
+                const metadata = data["metadata"];
+                const taggedPeopleArray = data["taggedPeopleList"];
+                const albumListArray = data["albumList"];
+                const keywordList = data["keywordList"];
+                const recognitionLabels = data["allRecognitionLabels"];
+                const allAlbumList = data["allAlbumList"];
+                let index;
 
-        if (metadata.day !== null) {
-            $("#dayTaken").val(metadata.day);
-        }
-        if (metadata.month !== null) {
-            $("#monthTaken").val(metadata.month);
-        }
-        if (metadata.year !== null) {
-            $("#yearTaken").val(metadata.year);
-        }
-        if (metadata.timeZone !== null) {
-            $("#offsetTaken option[value='"+metadata.timeZone+"']").attr('selected','selected');
-        }
+                const keywordsAvailable = $('#keywordsString').val();
+                const camerasList = $('#camerasString').val();
 
-        const latlngValue = (metadata.hasOwnProperty("lat") && metadata.hasOwnProperty("lng") && metadata.lat != null && metadata.lng != null && metadata.lat !== "" && metadata.lng !== "") ? ($.trim(metadata.lat) + ',' + $.trim(metadata.lng)) : '';
-        $("#latlng").val(latlngValue);
+                // Clear modal data
+                $('#propTimelineModal').find(':input').val('');
+                $("#propTimelineModalThumbnail").html("");
+                $("#isobject")[0].checked = false;
+                $("#hidden")[0].checked = false;
 
-        let taggedPeopleString = "";
-        let taggedPeopleArray =[];
-        let isObject = false;
-        if (taggedPeopleList) {
-            taggedPeopleArray = taggedPeopleList.split(",");
+                $("#timelineModalTitle").text(metadata.title);
+                $("#currentfilename").val(metadata.fileName)
+                $("#currentlat").val(metadata.lat)
+                $("#currentlng").val(metadata.lng)
+                $("#metadataId").val(metadata.id);
+                $("#keywordsString").val(keywordsAvailable);
+                $("#camerasString").val(camerasList);
 
-            for (index in taggedPeopleArray) {
-                const person = taggedPeopleArray[index];
-                if (person === "object") {
-                    isObject = true;
+                if (metadata.thumbnailUrlCentered !== null) {
+                    $("#propTimelineModalThumbnail").html('<img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" height="100" width="100" onError="Util.errorImg(this,\'' + metadata.title + '\',100)">');
+                }
+
+                if (metadata.title !== null) {
+                    $("#title").val(metadata.title);
+                }
+
+                if (metadata.camera !== null) {
+                    $("#camera").val(metadata.camera);
+                }
+
+                if (metadata.timeZone !== null) {
+                    $("#offsetTaken").val(metadata.timeZone);
+                }
+                if (metadata.time !== null) {
+                    $("#timeTaken").val(metadata.time);
+                }
+
+                if (metadata.hasOwnProperty("keywords") && metadata.keywords !== null) {
+                    $("#keywords").val(metadata.keywords);
                 } else {
-                    taggedPeopleString += person + ",";
-                }
-            }
-            taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
-            taggedPeopleString = taggedPeopleString.trim();
-        }
-        if (taggedPeopleString !== "") {
-            $("#tagpeople").val(taggedPeopleString);
-        } else if (metadata.tagpeople !== null) {
-            $("#tagpeople").val(metadata.tagpeople);
-        }
-
-        if ($("#recognitionLabelInput").length > 0) {
-            $("#recognitionLabelInput").remove();
-        }
-        if (recognitionLabels !== null && recognitionLabels.length > 0) {
-            let html = '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
-                '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
-
-            for (index in recognitionLabels) {
-                const recognitionLabel = recognitionLabels[index];
-                let checkedString = "";
-
-                if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
-                    checkedString = " checked";
+                    $("#keywords").val(keywordList);
+                    metadata.keywords = keywordList
                 }
 
-                html +=
-                    '           <button class="dropdown-item" type="button">\n' +
-                    '               <input type="checkbox" onclick="return timelineModal.populateLabel(\'' + metadata.id + '\');" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
-                    '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
-                    '           </button>\n';
-            }
-            html += '   </div>\n' +
-                '</div>\n';
-
-            $(html).insertAfter($("#labelIdData"))
-        }
-
-        let albumListString = "";
-        let albumListArray = [];
-        if (albumList) {
-            albumListArray = albumList.split(",");
-
-            for (index in albumListArray) {
-                const album = albumListArray[index];
-                albumListString += album + ",";
-            }
-
-            albumListString = albumListString.replace(/,\s*$/, "");
-            albumListString = albumListString.trim();
-        }
-        if (albumListString !== "") {
-            $("#albumnames").val(albumListString);
-        } else if (metadata.albumlist !== null) {
-            $("#albumnames").val(metadata.albumlist);
-        }
-
-        if ($("#albumListInput").length > 0) {
-            $("#albumListInput").remove();
-        }
-
-        if (allAlbumList !== null && allAlbumList.length > 0) {
-            let html =
-                '<div class="input-group-append dropdown" id="albumListInput">\n' +
-                '   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleAlbumDropdown(\'' + metadata.id + '\');" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                '   <div class="dropdown-menu" id="albumsList">\n';
-
-            for (index in allAlbumList) {
-                const eachAlbum = allAlbumList[index];
-                let checkedString = "";
-
-                if ($.inArray(eachAlbum.name, albumListArray) !== -1) {
-                    checkedString = " checked";
+                if (metadata.day !== null) {
+                    $("#dayTaken").val(metadata.day);
+                }
+                if (metadata.month !== null) {
+                    $("#monthTaken").val(metadata.month);
+                }
+                if (metadata.year !== null) {
+                    $("#yearTaken").val(metadata.year);
+                }
+                if (metadata.timeZone !== null) {
+                    $("#offsetTaken option[value='" + metadata.timeZone + "']").attr('selected', 'selected');
                 }
 
-                html +=
-                    '   <button class="dropdown-item" type="button">\n' +
-                    '       <input type="checkbox" onclick="return timelineModal.populateAlbum(\'' + metadata.id + '\');" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
-                    '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + eachAlbum.name + '</label>\n' +
-                    '   </button>\n';
+                const latlngValue = (metadata.hasOwnProperty("lat") && metadata.hasOwnProperty("lng") && metadata.lat != null && metadata.lng != null && metadata.lat !== "" && metadata.lng !== "") ? ($.trim(metadata.lat) + ',' + $.trim(metadata.lng)) : '';
+                $("#latlng").val(latlngValue);
+
+                let taggedPeopleString = "";
+                let isObject = false;
+                for (index in taggedPeopleArray) {
+                    const person = taggedPeopleArray[index];
+                    if (person === "object") {
+                        isObject = true;
+                    } else {
+                        taggedPeopleString += person + ",";
+                    }
+                }
+                taggedPeopleString = taggedPeopleString.replace(/,\s*$/, "");
+                taggedPeopleString = taggedPeopleString.trim();
+
+                if (taggedPeopleString !== "") {
+                    $("#tagpeople").val(taggedPeopleString);
+                } else if (metadata.tagpeople !== null) {
+                    $("#tagpeople").val(metadata.tagpeople);
+                }
+
+                if ($("#recognitionLabelInput").length > 0) {
+                    $("#recognitionLabelInput").remove();
+                }
+                if (recognitionLabels !== null && recognitionLabels.length > 0) {
+                    let html = '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
+                        '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                        '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
+
+                    for (index in recognitionLabels) {
+                        const recognitionLabel = recognitionLabels[index];
+                        let checkedString = "";
+
+                        if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                            checkedString = " checked";
+                        }
+
+                        html +=
+                            '           <button class="dropdown-item" type="button">\n' +
+                            '               <input type="checkbox" onclick="return timelineModal.populateLabel(\'' + metadata.id + '\');" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
+                            '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
+                            '           </button>\n';
+                    }
+                    html += '   </div>\n' +
+                        '</div>\n';
+
+                    $(html).insertAfter($("#labelIdData"))
+                }
+
+                let albumListString = "";
+                for (index in albumListArray) {
+                    const album = albumListArray[index];
+                    albumListString += album + ",";
+                }
+
+                albumListString = albumListString.replace(/,\s*$/, "");
+                albumListString = albumListString.trim();
+
+                if (albumListString !== "") {
+                    $("#albumnames").val(albumListString);
+                } else if (metadata.albumlist !== null) {
+                    $("#albumnames").val(metadata.albumlist);
+                }
+
+                if ($("#albumListInput").length > 0) {
+                    $("#albumListInput").remove();
+                }
+
+                if (allAlbumList !== null && allAlbumList.length > 0) {
+                    let html =
+                        '<div class="input-group-append dropdown" id="albumListInput">\n' +
+                        '   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleAlbumDropdown(\'' + metadata.id + '\');" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                        '   <div class="dropdown-menu" id="albumsList">\n';
+
+                    for (index in allAlbumList) {
+                        const eachAlbum = allAlbumList[index];
+                        let checkedString = "";
+
+                        if ($.inArray(eachAlbum.name, albumListArray) !== -1) {
+                            checkedString = " checked";
+                        }
+
+                        html +=
+                            '   <button class="dropdown-item" type="button">\n' +
+                            '       <input type="checkbox" onclick="return timelineModal.populateAlbum(\'' + metadata.id + '\');" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
+                            '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + eachAlbum.name + '</label>\n' +
+                            '   </button>\n';
+                    }
+                    html += '</div>\n' +
+                        '</div>\n';
+
+                    $(html).insertAfter($("#albumNameData"))
+                }
+
+                if (isObject === true) {
+                    $("#isobject")[0].checked = true;
+                }
+
+                if (metadata.hidden !== null && metadata.hidden === true) {
+                    $("#hidden")[0].checked = true;
+                }
+
+                $("#albumDetailRow").remove();
+                Util.populateDetailsInfo(metadata, "propTimelineModal");
+
+                const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function (v) {
+                    return v !== ''
+                });
+                shashin.createAutocomplete("#keywords", keywordAvailableList, true, 10);
+
+                const camerasAvailableList = $($("#camerasString").val().split(",")).not($("#camera").val().split(",")).get().filter(function (v) {
+                    return v !== ''
+                });
+                shashin.createAutocomplete("#camera", camerasAvailableList, false);
+
+                // Open modal window
+                $("#propTimelineModal").modal('show');
             }
-            html += '</div>\n' +
-                '</div>\n';
-
-            $(html).insertAfter($("#albumNameData"))
-        }
-
-        if (isObject === true) {
-            $("#isobject")[0].checked = true;
-        }
-
-        if (metadata.hidden !== null && metadata.hidden === true) {
-            $("#hidden")[0].checked = true;
-        }
-
-        $("#albumDetailRow").remove();
-        Util.populateDetailsInfo(metadata,"propTimelineModal");
-
-        const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function(v){return v!==''});
-        shashin.createAutocomplete("#keywords", keywordAvailableList, true, 10);
-
-        const camerasAvailableList = $($("#camerasString").val().split(",")).not($("#camera").val().split(",")).get().filter(function(v){return v!==''});
-        shashin.createAutocomplete("#camera", camerasAvailableList, false);
-
-        // Open modal window
-        $("#propTimelineModal").modal('show');
+        });
     }
 
     shashin.createAutocomplete = function(inputEl, source, commaDelimited, resultLimit) {
@@ -295,9 +350,9 @@
         $.each($(mediaElement), function() {
             const mediaContent = {};
             mediaContent.func = shashin.openInfoSidebar;
-            mediaContent.args = {};
+            mediaContent.args = "";
             try {
-                mediaContent.args = JSON.parse($(this).attr("tag"));
+                mediaContent.args = $(this).attr("tag");
             } catch(e) {}
             //mediaContent.subHtml = $(this).attr("data-sub-html");
             if ($(this).attr("data-src")) {
@@ -539,49 +594,48 @@
         }
     }
 
-    shashin.openInfoModal = function(metadata) {
-        // Populate modal data
-        if ($("#infoModalEdit"+metadata.id).attr("tag") && $("#infoModalEdit"+metadata.id).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#infoModalEdit"+metadata.id).attr("tag"));
-        }
+    shashin.openInfoModal = function(metadataId) {
+        shashin.getMetadata(metadataId).then(function (metadata) {
+            $("#infoModalTitle").text(metadata.title);
+            $("#currentfilename").val(metadata.fileName);
+            $("#currentlat").val(metadata.lat);
+            $("#currentlng").val(metadata.lng);
+            $("#metadataId").val(metadata.id);
 
-        $("#infoModalTitle").text(metadata.title);
-        $("#currentfilename").val(metadata.fileName);
-        $("#currentlat").val(metadata.lat);
-        $("#currentlng").val(metadata.lng);
-        $("#metadataId").val(metadata.id);
+            if (metadata.thumbnailUrlCentered !== null) {
+                $("#propInfoModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
+            }
 
-        if (metadata.thumbnailUrlCentered !== null) {
-            $("#propInfoModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
-        }
+            Util.populateDetailsInfo(metadata,"propInfoModal");
 
-        Util.populateDetailsInfo(metadata,"propInfoModal");
-
-        // Open modal window
-        $("#propInfoModal").modal('show');
+            // Open modal window
+            $("#propInfoModal").modal('show');
+        });
     }
 
-    shashin.openInfoSidebar = function(metadata) {
+    shashin.openInfoSidebar = function(metadataId) {
         // Populate modal data
-        metadata = shashin.checkMetadata(metadata.id);
+        shashin.getMetadata(metadataId).then(function (data) {
+            let metadata = data;
 
-        $("#infoSidebarTitle").text(metadata.title);
-        $("#currentfilename").val(metadata.fileName)
-        $("#currentlat").val(metadata.lat)
-        $("#currentlng").val(metadata.lng)
-        $("#metadataId").val(metadata.id);
+            $("#infoSidebarTitle").text(metadata.title);
+            $("#currentfilename").val(metadata.fileName)
+            $("#currentlat").val(metadata.lat)
+            $("#currentlng").val(metadata.lng)
+            $("#metadataId").val(metadata.id);
 
-        if (metadata.thumbnailUrlCentered !== null) {
-            $("#propInfoSidebarThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
-        }
+            if (metadata.thumbnailUrlCentered !== null) {
+                $("#propInfoSidebarThumbnail").html('<img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" height="100" width="100" onError="Util.errorImg(this,\'' + metadata.title + '\',100)">');
+            }
 
-        Util.populateDetailsInfo(metadata,"propInfoSidebar");
+            Util.populateDetailsInfo(metadata, "propInfoSidebar");
 
-        // Open info sidebar
-        $("#propInfoSidebar").css('z-index', 9999);
-        const infoSidebar = document.getElementById('propInfoSidebar');
-        const bsInfoSidebar = new bootstrap.Offcanvas(infoSidebar);
-        bsInfoSidebar.show()
+            // Open info sidebar
+            $("#propInfoSidebar").css('z-index', 9999);
+            const infoSidebar = document.getElementById('propInfoSidebar');
+            const bsInfoSidebar = new bootstrap.Offcanvas(infoSidebar);
+            bsInfoSidebar.show()
+        });
     }
 
     shashin.addToMetadataThumbnailsList = function(thumbnail) {
@@ -1182,7 +1236,7 @@
         const mediaContent = {};
 
         mediaContent.func = shashin.openInfoSidebar;
-        mediaContent.args = metadata;
+        mediaContent.args = metadata.id;
 
         html +=
             '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';

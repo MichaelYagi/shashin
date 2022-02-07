@@ -59,6 +59,30 @@ $("#saveBatchMetadata").click(function (e) {
                     $("#camerasBatchString").val(data["cameras"]);
                 }
 
+                if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+                    let renderRecognitionLabels = false;
+                    let batchHtml = "";
+                    const recognitionLabels = data["recognitionLabels"];
+
+                    for (let index in recognitionLabels) {
+                        const recognitionLabel = recognitionLabels[index];
+
+                        if ($("#"+recognitionLabel.id).length === 0) {
+                            renderRecognitionLabels = true;
+                        }
+
+                        batchHtml +=
+                            '           <button class="dropdown-item" type="button">\n' +
+                            '               <input type="checkbox" onclick="return matchModalBatchSettings.populateBatchLabel();" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
+                            '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
+                            '           </button>'
+                    }
+
+                    if (true === renderRecognitionLabels) {
+                        $("#peopleNameList").html(batchHtml);
+                    }
+                }
+
                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                 // window.top.location = window.top.location
 
@@ -132,7 +156,7 @@ $('#propBatchMetadata').bind('keypress', function () {
         if (recognitionLabels.length > 0) {
             html += '           <div class="input-group-append">\n' +
                 '                   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return matchModalSettings.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                '                   <div class="dropdown-menu" id="recognitionLabelsList' + metadata.id + '">\n';
+                '                   <div class="dropdown-menu personDropdown" id="recognitionLabelsList' + metadata.id + '">\n';
             for (const index in recognitionLabels) {
                 const recognitionLabel = recognitionLabels[index];
                 const taggedPeopleArray = taggedPeopleList.split(",");
@@ -204,6 +228,36 @@ $('#propBatchMetadata').bind('keypress', function () {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {
+                        if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+                            let renderRecognitionLabels = false;
+                            const recognitionLabels = data["recognitionLabels"];
+
+                            let batchHtml = "";
+
+                            for (let index in recognitionLabels) {
+                                const recognitionLabel = recognitionLabels[index];
+
+                                if ($("#"+metadata.id+'-'+recognitionLabel.id).length === 0) {
+                                    renderRecognitionLabels = true;
+                                }
+
+                                const taggedPeopleArray = $("#tagpeople" + metadata.id).val().split(",");
+                                let checkedString = "";
+                                if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                                    checkedString = " checked";
+                                }
+                                batchHtml +=
+                                    '           <button class="dropdown-item" type="button">\n' +
+                                    '               <input type="checkbox" onclick="return personModalSettings.populateLabel(\''+metadata.id+'\','+recognitionLabel.id+');" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
+                                    '               <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
+                                    '           </button>'
+                            }
+
+                            if (true === renderRecognitionLabels) {
+                                $(".dropdown-menu, .personDropdown").html(batchHtml);
+                            }
+                        }
+
                         message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                         // window.top.location = window.top.location
                         $("#matchesModalStatus"+metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');

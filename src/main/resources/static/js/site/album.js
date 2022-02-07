@@ -3,27 +3,25 @@
 
     albumSettings.openAlbumModal = function (e,metadataId) {
         e.preventDefault();
-        let metadata = null;
-        if ($("#mediaLink"+metadataId).attr("tag") && $("#mediaLink"+metadataId).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#mediaLink"+metadataId).attr("tag"));
-        }
 
-        if (metadata !== null) {
-            // Clear modal data
-            $("#albumModalTitle").text(metadata.title)
-            $('#propAlbumModal').find(':input').val('');
-            $("#removeFromAlbum")[0].checked = false;
-            $("#setCoverAlbum")[0].checked = false;
-            $("#propAlbumModalThumbnail").html("");
+        shashin.getMetadata(metadataId).then(function (metadata) {
+            if (metadata !== null) {
+                // Clear modal data
+                $("#albumModalTitle").text(metadata.title)
+                $('#propAlbumModal').find(':input').val('');
+                $("#removeFromAlbum")[0].checked = false;
+                $("#setCoverAlbum")[0].checked = false;
+                $("#propAlbumModalThumbnail").html("");
 
-            $("#metadataId").val(metadata.id);
-            if (metadata.thumbnailUrlCentered !== null) {
-                $("#propAlbumModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
+                $("#metadataId").val(metadata.id);
+                if (metadata.thumbnailUrlCentered !== null) {
+                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" height="100" width="100" onError="Util.errorImg(this,\'' + metadata.title + '\',100)">');
+                }
+
+                // Open modal window
+                $("#propAlbumModal").modal('show');
             }
-
-            // Open modal window
-            $("#propAlbumModal").modal('show');
-        }
+        });
     }
 
     albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
@@ -139,11 +137,10 @@
                                 shashin.setPhotoOverlays(metadata, activePage);
                                 albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
-                                $("#mediaLink"+metadata.id).attr("tag",JSON.stringify(Util.addKeywordToMetadata(metadata, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "")));
+                                $("#mediaLink" + metadata.id).attr("tag", metadata.id);
                                 $("#infoModalEdit"+metadata.id).click(function(e) {
                                     e.preventDefault();
-                                    const metadataObj = JSON.parse($("#mediaLink"+metadata.id).attr("tag"));
-                                    shashin.openInfoModal(metadataObj);
+                                    shashin.openInfoModal(metadata.id);
                                 });
                             }
                         } else {

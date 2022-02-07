@@ -65,7 +65,7 @@ class PeopleController {
     private val threadExtensionName: String = "facescan_shashinscan"
 
     val mapper = ObjectMapper()
-    val resp = mutableMapOf<String, String?>()
+    val resp = mutableMapOf<String, Any?>()
 
     @MessageMapping("/matchmessage")
     @SendTo("/topic/matchmessages")
@@ -451,6 +451,12 @@ class PeopleController {
                     }
                 }
 
+                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+                if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                    resp["recognitionLabels"] = recognitionLabels
+                }
+
                 resp["msg"] = "Saved"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
@@ -473,11 +479,23 @@ class PeopleController {
                 recognitionLabelPhotoObj.setConfidence("-0.1")
                 recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
 
+                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+                if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                    resp["recognitionLabels"] = recognitionLabels
+                }
+
                 resp["msg"] = "Saved"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
             } else if (personMap["tagpeople"].toString().isBlank()) {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+
+                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+                if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                    resp["recognitionLabels"] = recognitionLabels
+                }
 
                 resp["msg"] = "Saved"
                 resp["status"] = "success"

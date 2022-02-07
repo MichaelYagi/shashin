@@ -88,11 +88,10 @@
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
                                 albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{})
                                 albumSettings.activateAlbumListeners(/*[[${metadata}]]*/{},/*[[${album}]]*/{})
-                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(Util.addKeywordToMetadata(/*[[${metadata}]]*/{},/*[[${keywordMap.get(metadata.id)}]]*/"")));
+                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
                                     e.preventDefault();
-                                    const metadataObj = JSON.parse($("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag"));
-                                    shashin.openInfoModal(metadataObj);
+                                    shashin.openInfoModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                                 });
                                 /*]]>*/
                             </script>
