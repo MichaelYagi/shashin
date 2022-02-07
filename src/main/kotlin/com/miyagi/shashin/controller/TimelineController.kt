@@ -934,11 +934,11 @@ class TimelineController {
                 }
             }
 
-            if (camera != null) {
+            if (camera != null && camera.trim().isNotBlank()) {
                 val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
                 for (cameraType in cameraTypes) {
                     if (camera!!.trim().lowercase() == cameraType.trim().lowercase()) {
-                        camera = cameraType
+                        camera = cameraType.trim()
                         break
                     }
                 }
@@ -1056,7 +1056,7 @@ class TimelineController {
                     if (yearTaken != null) {
                         metadata.setYear(yearTaken)
                     }
-                    if (camera != null) {
+                    if (camera != null && camera.trim().isNotBlank()) {
                         metadata.setCamera(camera)
                     }
                     if (offset == null || offset == "") {
