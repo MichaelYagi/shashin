@@ -57,11 +57,10 @@
 
                             <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
-                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",JSON.stringify(Util.addKeywordToMetadata(/*[[${metadata}]]*/{},/*[[${keywordMap.get(metadata.id)}]]*/"")));
+                                $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"");
                                 $("#timelineModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
                                     e.preventDefault();
-
-                                    shashin.openEditMetadataModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/[],/*[[${labelPhotoMap.get(metadata.id)}]]*/{},/*[[${albumList}]]*/[],/*[[${albumMap.get(metadata.id)}]]*/{},/*[[${keywordMap.get(metadata.id)}]]*/{});
+                                    shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"");
                                 });
 
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'recent');
@@ -79,7 +78,7 @@
                 </th:block>
             </div>
 
-            <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels})"></div>
+            <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels},${allAlbumList})"></div>
             <script th:inline="javascript" type="text/javascript">
                 /*<![CDATA[*/
                 const albumList = /*[[${albumList}]]*/[];

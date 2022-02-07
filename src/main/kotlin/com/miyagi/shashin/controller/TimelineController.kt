@@ -71,7 +71,7 @@ class TimelineController {
     private var geocodeUrl: String? = null
 
     val mapper = ObjectMapper()
-    val resp = mutableMapOf<String, String?>()
+    val resp = mutableMapOf<String, Any?>()
 
     @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
     fun getTimelineByDate(model: Model): String {
@@ -90,6 +90,18 @@ class TimelineController {
 
         for ((k, v) in response) {
             model[k] = v!!
+        }
+
+        model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+        if (recognitionLabels != null && recognitionLabels.count() > 0) {
+            model["recognitionLabels"] = recognitionLabels
+        }
+
+        model["allAlbumList"] = mutableListOf<Album>()
+        val allAlbumList = albumRepository.findAllOrderByAlbumName()
+        if (allAlbumList.count() > 0) {
+            model["allAlbumList"] = allAlbumList
         }
 
         model["timeOffsets"] = timeOffsets()
@@ -178,11 +190,7 @@ class TimelineController {
         response["message"] = "There are no "+mediaType+"s. Please setup directories in Settings and scan."
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
-        response["albumList"] = mutableListOf<Album>()
-        response["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
-        response["keywordMap"] = mutableMapOf<String, Any>()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -199,11 +207,6 @@ class TimelineController {
                         }
                     }
                 }
-            }
-
-            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-            if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                response["recognitionLabels"] = recognitionLabels
             }
 
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
@@ -236,44 +239,8 @@ class TimelineController {
 
                 if (!isInitialRequest) {
                     response["favorites"] = favoritesMap
-
-                    val labelPhotoMap = mutableMapOf<String, String>()
-                    val keywordMap = mutableMapOf<String, String>()
-                    for (metadata in metadataList) {
-                        val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
-                        var labelString = ""
-                        if (recognitionLabelPhotos != null) {
-                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                                if (recognitionLabelObj != null) {
-                                    labelString += recognitionLabelObj.get().getName() + ","
-                                }
-                            }
-                        }
-                        if (labelString.isNotBlank()) {
-                            labelString = labelString.dropLast(1)
-                            labelPhotoMap[metadata.getId()] = labelString
-                        }
-
-                        val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
-                        var keywordMetadataList = ""
-                        for (keyword in keywords) {
-                            keywordMetadataList += keyword.getKeyword()+","
-                        }
-
-                        if (keywordMetadataList.isNotEmpty()) {
-                            keywordMetadataList = keywordMetadataList.dropLast(1)
-                            keywordMap[metadata.getId()] = keywordMetadataList
-                        }
-                    }
-                    response["labelPhotoMap"] = labelPhotoMap
-                    response["keywordMap"] = keywordMap
                 }
 
-                val albumList = albumRepository.findAllOrderByAlbumName()
-                if (albumList.count() > 0) {
-                    response["albumList"] = albumList
-                }
             }
 
             response["metadataList"] = metadataList
@@ -337,12 +304,7 @@ class TimelineController {
         response["message"] = "There are no "+mediaType+"s. Please setup directories in Settings and scan."
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
-        response["albumList"] = mutableListOf<Album>()
-        response["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
-        response["albumMap"] = mutableMapOf<String, Any>()
-        response["keywordMap"] = mutableMapOf<String, Any>()
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
@@ -379,15 +341,6 @@ class TimelineController {
                     response["favorites"] = favoritesMap
 
                     if (!metadataOnly) {
-                        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-                        if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                            response["recognitionLabels"] = recognitionLabels
-                        }
-
-                        val labelPhotoMap = mutableMapOf<String, String>()
-                        val albumMap = mutableMapOf<String, String>()
-                        val keywordMap = mutableMapOf<String, String>()
-
                         for (metadata in metadataList) {
                             val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
                             if (favorites != null) {
@@ -404,54 +357,7 @@ class TimelineController {
                                     }
                                 }
                             }
-                            val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
-                            var labelString = ""
-                            if (recognitionLabelPhotos != null) {
-                                for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                                    val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                                    if (recognitionLabelObj != null) {
-                                        labelString += recognitionLabelObj.get().getName() + ","
-                                    }
-                                }
-                            }
-                            if (labelString.isNotBlank()) {
-                                labelString = labelString.dropLast(1)
-                                labelPhotoMap[metadata.getId()] = labelString
-                            }
-
-                            val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadata.getId())
-                            if (albumPhotos != null) {
-                                var albumMetadataList = ""
-                                for (albumPhoto in albumPhotos) {
-                                    val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
-                                    albumMetadataList += album.get().getName()+","
-                                }
-                                if (albumMetadataList.isNotEmpty()) {
-                                    albumMetadataList = albumMetadataList.dropLast(1)
-                                    albumMap[metadata.getId()] = albumMetadataList
-                                }
-                            }
-
-                            val keywords = keywordRepository.findKeywordsByMetadataId(metadata.getId())
-                            var keywordMetadataList = ""
-                            for (keyword in keywords) {
-                                keywordMetadataList += keyword.getKeyword()+","
-                            }
-
-                            if (keywordMetadataList.isNotEmpty()) {
-                                keywordMetadataList = keywordMetadataList.dropLast(1)
-                                keywordMap[metadata.getId()] = keywordMetadataList
-                            }
                         }
-                        response["labelPhotoMap"] = labelPhotoMap
-                        response["albumMap"] = albumMap
-                        response["keywordMap"] = keywordMap
-
-                        val albumList = albumRepository.findAllOrderByAlbumName()
-                        if (albumList.count() > 0) {
-                            response["albumList"] = albumList
-                        }
-
                         response["favorites"] = favoritesMap
                     }
                 }
@@ -853,6 +759,18 @@ class TimelineController {
                 MetadataProcessing.updateSidecarMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
             }
 
+            resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+            if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                resp["recognitionLabels"] = recognitionLabels
+            }
+
+            resp["allAlbumList"] = mutableListOf<Album>()
+            val allAlbumList = albumRepository.findAllOrderByAlbumName()
+            if (allAlbumList.count() > 0) {
+                resp["allAlbumList"] = allAlbumList
+            }
+
             val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
             var keywords = ""
             if (keywordList.count() > 0) {
@@ -1159,8 +1077,8 @@ class TimelineController {
                                 val zone = ZoneId.of(maybeZoneId.get().id)
                                 val dt = LocalDateTime.now()
                                 val zdt: ZonedDateTime = dt.atZone(zone)
-                                val offset = zdt.offset
-                                metadata.setTimeZone(offset.toString())
+                                val zoneOffset = zdt.offset
+                                metadata.setTimeZone(zoneOffset.toString())
                             }
                         }
                     }
@@ -1239,8 +1157,20 @@ class TimelineController {
                 }
                 resp["keywords"] = keywordListString
 
+                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+                if (recognitionLabels != null && recognitionLabels.count() > 0) {
+                    resp["recognitionLabels"] = recognitionLabels
+                }
+
+                resp["allAlbumList"] = mutableListOf<Album>()
+                val allAlbumList = albumRepository.findAllOrderByAlbumName()
+                if (allAlbumList.count() > 0) {
+                    resp["allAlbumList"] = allAlbumList
+                }
+
                 val cameraList = metadataRepository.findByCameraTypeAlphabetical()
-                model["cameras"] = cameraList.joinToString()
+                resp["cameras"] = cameraList.joinToString()
 
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
@@ -1331,5 +1261,63 @@ class TimelineController {
         resp["msg"] = "Could not save"
         resp["status"] = "fail"
         return mapper.writeValueAsString(resp)
+    }
+
+    @RequestMapping(value = ["/api/v1/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getMetadata(model: Model, @PathVariable(required = true) id: String): String {
+        return mapper.writeValueAsString(metadataRepository.findById(id).get())
+    }
+
+    @RequestMapping(value = ["/api/v1/timeline/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
+        val response = mutableMapOf<String, Any?>()
+
+        response["metadata"] = metadataRepository.findById(id).get()
+
+        val labelArray = mutableListOf<String>()
+        val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
+        if (recognitionLabelPhotos != null) {
+            for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                if (recognitionLabelObj != null) {
+                    labelArray.add(recognitionLabelObj.get().getName()!!)
+                }
+            }
+        }
+        response["taggedPeopleList"] = labelArray
+
+        val albumArray = mutableListOf<String>()
+        val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(id)
+        if (albumPhotos != null) {
+            for (albumPhoto in albumPhotos) {
+                val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
+                albumArray.add(album.get().getName()!!)
+            }
+        }
+        response["albumList"] = albumArray
+
+        val keywordArray = mutableListOf<String>()
+        val keywords = keywordRepository.findKeywordsByMetadataId(id)
+        for (keyword in keywords) {
+            keywordArray.add(keyword.getKeyword()!!)
+        }
+        response["keywordList"] = keywordArray
+
+        response["allRecognitionLabels"] = mutableListOf<RecognitionLabel>()
+        val allRecognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+        if (allRecognitionLabels != null && allRecognitionLabels.count() > 0) {
+            response["allRecognitionLabels"] = allRecognitionLabels
+        }
+
+        response["allAlbumList"] = mutableListOf<Album>()
+        val allAlbumList = albumRepository.findAllOrderByAlbumName()
+        if (allAlbumList.count() > 0) {
+            response["allAlbumList"] = allAlbumList
+        }
+
+
+        return mapper.writeValueAsString(response)
     }
 }

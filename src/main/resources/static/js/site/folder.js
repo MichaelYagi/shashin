@@ -56,11 +56,10 @@ class Folder {
                             html += '</div>\n<span class="appendFolderPhotos" style="width:0;height:0;padding:0"></span>\n';
                             $(html).insertAfter($(".appendFolderPhotos").last())
 
-                            $("#timelineModalEdit"+metadata.id).attr("tag",JSON.stringify(Util.addKeywordToMetadata(metadata, keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "")));
+                            $("#timelineModalEdit"+metadata.id).attr("tag", metadata.id);
                             $("#timelineModalEdit"+metadata.id).click(function(e) {
                                 e.preventDefault();
-
-                                shashin.openEditMetadataModal(metadata,recognitionLabels,labelPhotoMap[metadata.id],albumList,albumMap[metadata.id],keywordMap[metadata.id]);
+                                shashin.openEditMetadataModal(metadata.id);
                             });
 
                             shashin.setPhotoOverlays(metadata, activePage);

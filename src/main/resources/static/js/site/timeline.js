@@ -583,86 +583,12 @@
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === timelineSettings.success) {
                     if (data.hasOwnProperty("metadataList") &&
-                        data.hasOwnProperty("favorites") &&
-                        data.hasOwnProperty("albumList") &&
-                        data.hasOwnProperty("recognitionLabels") &&
-                        data.hasOwnProperty("labelPhotoMap") &&
-                        data.hasOwnProperty("keywordMap")
+                        data.hasOwnProperty("favorites")
                     ) {
                         const metadataList = data["metadataList"];
                         const favoritesMap = data["favorites"];
-                        const recognitionLabels = data["recognitionLabels"];
-                        const labelPhotoMap = data["labelPhotoMap"];
-                        const keywordMap = data["keywordMap"];
-                        const albumMap = data["albumMap"];
-                        const albumList = data["albumList"];
 
                         if (metadataList.length > 0) {
-
-                            // Populate batch modals
-                            if (recognitionLabels !== null && recognitionLabels.length > 0) {
-                                let renderRecognitionLabels = false;
-
-                                let batchHtml =
-                                    '       <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
-                                    '       <div class="input-group-append">\n' +
-                                    '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                                    '           <div class="dropdown-menu" id="peopleNameList">';
-
-                                for (let index in recognitionLabels) {
-                                    const recognitionLabel = recognitionLabels[index];
-
-                                    if ($("#"+recognitionLabel.id).length === 0) {
-                                        renderRecognitionLabels = true;
-                                    }
-
-                                    batchHtml +=
-                                        '           <button class="dropdown-item" type="button">\n' +
-                                        '               <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
-                                        '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                                        '           </button>'
-                                }
-                                batchHtml +=
-                                    '   </div>\n' +
-                                    '</div>\n';
-
-                                if (true === renderRecognitionLabels) {
-                                    $("#batchLabelIds").html(batchHtml);
-                                }
-                            }
-
-                            if (albumList !== null && albumList.length > 0 && $("#albumListForModal").children().length !== albumList.length) {
-                                let renderAlbumList = false;
-
-                                let batchHtml =
-                                    '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
-                                    '<div class="input-group-append dropdown">\n' +
-                                    '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineBatchModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                                    '   <div class="dropdown-menu" id="albumNameList">\n';
-
-                                for (let index in albumList) {
-                                    const album = albumList[index];
-
-                                    if ($("#"+album.id).length === 0) {
-                                        renderAlbumList = true;
-                                    }
-
-                                    batchHtml +=
-                                        '<button class="dropdown-item" type="button">\n' +
-                                        '    <input type="checkbox" onclick="return timelineBatchModal.populateBatchAlbum();" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
-                                        '    <label for="'+album.id+'">'+album.name+'</label>\n' +
-                                        '</button>\n';
-                                }
-
-                                batchHtml +=
-                                    '   </div>\n' +
-                                    '</div>\n';
-
-                                if (true === renderAlbumList) {
-                                    $("#albumListForModal").html(batchHtml);
-                                }
-                            }
-
                             for (const index in metadataList) {
                                 const metadata = metadataList[index];
 
@@ -704,11 +630,11 @@
                                         $("#tncentered" + metadata.id).addClass("thumbnail-centered");
                                     }
 
-                                    metadata.keywords = keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "";
+                                    // metadata.keywords = keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "";
 
                                     const mediaContent = {};
                                     mediaContent.func = shashin.openInfoSidebar;
-                                    mediaContent.args = metadata;
+                                    mediaContent.args = metadata.id;
                                     mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
                                     //mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
                                     if (metadata.type.indexOf("video") >= 0) {
@@ -764,12 +690,10 @@
                                     html = '<a href="#" id="timelineModalEdit' + metadata.id + '" data-bs-target="#propTimelinModal"><span class="' + editIcon + '" style="font-size: 1rem;color: lightgray;"></span></a>';
                                     if ($("#timelineModalEdit" + metadata.id).length === 0) {
                                         $("#tnbl" + metadata.id).append(html);
-                                        $("#timelineModalEdit" + metadata.id).attr("tag", JSON.stringify(metadata));
+                                        $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                         $("#timelineModalEdit" + metadata.id).click(function (e) {
                                             e.preventDefault();
-
-                                            const metadataObj = JSON.parse($(this).attr("tag"));
-                                            shashin.openEditMetadataModal(metadataObj, recognitionLabels, labelPhotoMap[metadataObj.id], albumList, albumMap[metadataObj.id], keywordMap[metadataObj.id]);
+                                            shashin.openEditMetadataModal(metadata.id)
                                         });
                                     }
 

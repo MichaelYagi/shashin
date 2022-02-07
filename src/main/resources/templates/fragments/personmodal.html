@@ -23,7 +23,7 @@
                                 <th:block th:if="${not #lists.isEmpty(recognitionLabels)}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary dropdown-toggle" onclick="return personModalBatchSettings.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
-                                        <div class="dropdown-menu" id="peopleNameList">
+                                        <div class="dropdown-menu batchPersonDropdown" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
                                                     <input type="checkbox" onclick="return personModalBatchSettings.populateBatchLabel();" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
@@ -177,12 +177,12 @@
                 '       <div class="form-group row">\n' +
                 '           <div class="col-sm">\n' +
                 '               <label for="tagpeople'+metadata.id+'" class="col-form-label">Tag People (comma separated)</label>\n' +
-                '               <div class="input-group">\n' +
+                '               <div class="input-group" id="batchLabelIds'+metadata.id+'">\n' +
                 '                   <input type="text" onfocus="return personModalSettings.closeTagPeopleDropdown(\''+metadata.id+'\');" class="form-control" aria-label="Tag People" id="tagpeople'+metadata.id+'" name="tagpeople" value="'+taggedPeopleList+'">\n';
             if (recognitionLabels.length > 0) {
                 html += '           <div class="input-group-append">\n' +
                     '                   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return personModalSettings.toggleTagPeopleDropdown(\''+metadata.id+'\');" id="tagpeopledropdown'+metadata.id+'" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                    '                   <div class="dropdown-menu" id="recognitionLabelsList'+metadata.id+'">\n';
+                    '                   <div class="dropdown-menu personDropdown" id="recognitionLabelsList'+metadata.id+'">\n';
                 for (const index in recognitionLabels) {
                     const recognitionLabel = recognitionLabels[index];
                     const taggedPeopleArray = taggedPeopleList.split(",");
@@ -254,6 +254,36 @@
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         let message = "Error";
                         if (data["status"] === "success") {
+                            if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+                                let renderRecognitionLabels = false;
+                                const recognitionLabels = data["recognitionLabels"];
+
+                                let batchHtml = "";
+
+                                for (let index in recognitionLabels) {
+                                    const recognitionLabel = recognitionLabels[index];
+
+                                    if ($("#"+metadata.id+'-'+recognitionLabel.id).length === 0) {
+                                        renderRecognitionLabels = true;
+                                    }
+
+                                    const taggedPeopleArray = $("#tagpeople" + metadata.id).val().split(",");
+                                    let checkedString = "";
+                                    if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                                        checkedString = " checked";
+                                    }
+                                    batchHtml +=
+                                        '           <button class="dropdown-item" type="button">\n' +
+                                        '               <input type="checkbox" onclick="return personModalSettings.populateLabel(\''+metadata.id+'\','+recognitionLabel.id+');" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
+                                        '               <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
+                                        '           </button>'
+                                }
+
+                                if (true === renderRecognitionLabels) {
+                                    $(".dropdown-menu, .personDropdown").html(batchHtml);
+                                }
+                            }
+
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             // window.top.location = window.top.location
                             $("#personModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
@@ -272,6 +302,7 @@
             $('#propperson'+metadata.id).on('hide.bs.modal', function () {
                 $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
                 $("#personModalStatus" + metadata.id).css("visibility","hidden");
+                personModalSettings.closeTagPeopleDropdown(metadata.id);
                 $("#msg"+metadata.id).html("");
             });
 

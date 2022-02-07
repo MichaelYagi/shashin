@@ -51,12 +51,13 @@
         e.preventDefault();
 
         const metadataId = $("#metadataId").val();
-        const metadata = shashin.checkMetadata(metadataId);
 
-        if (metadataId === metadata.id) {
-            shashin.openMap(metadata)
+        if (metadataId.length > 0) {
+            shashin.getMetadata(metadataId).then(function (metadata) {
+                shashin.openMap(metadata)
+            });
         }
-    });
+    })
 </script>
 
 </body>
