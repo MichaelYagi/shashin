@@ -126,7 +126,6 @@
         $("#spinner_bottom").css("display", "block");
 
         // Remove elements not visible in viewport
-        let removeToggle = false;
         $('section').each(function (index, element) {
             if ($("#" + element.id).withinviewport().length === 0 &&
                 $("#br" + element.id).withinviewport().length === 0 &&
@@ -135,11 +134,6 @@
                 $("#tail_" + element.id).withinviewport().length === 0 &&
                 $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
             ) {
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && removeToggle === false) {
-                    removeToggle = true;
-                    return;
-                }
-
                 Util.removeDateGallery(element.id);
             }
         });
@@ -156,6 +150,11 @@
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
             const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
+            let removeToggle = false;
+
+            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                removeToggle = true;
+            }
             for (const [index, timelineDate] of timelineDates.reverse().entries()) {
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
@@ -168,8 +167,13 @@
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
 
+                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && removeToggle === false) {
+                            removeToggle = true;
+                            continue;
+                        }
+
                         // Break if top not in viewport
-                        if ($("#" + currentDate).withinviewport().length === 0) {
+                        if ($("#" + currentDate).withinviewport().length === 0 && removeToggle === true) {
                             break;
                         }
                     }
