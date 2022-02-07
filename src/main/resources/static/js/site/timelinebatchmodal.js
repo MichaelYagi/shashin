@@ -89,7 +89,6 @@ $("#saveBatchMetadata").click(function (e) {
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating batch timeline modal")}).then(function (data) {
-            console.log(data)
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
