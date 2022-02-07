@@ -648,6 +648,8 @@ class TimelineController {
                     }
                 }
                 metadataObj.get().setCamera(camera)
+            } else {
+                metadataObj.get().setCamera(null)
             }
             if (metadataMap["year"].toString() == "") {
                 metadataObj.get().setYear(null)
