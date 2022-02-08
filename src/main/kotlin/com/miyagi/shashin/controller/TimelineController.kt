@@ -73,23 +73,48 @@ class TimelineController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
-    fun getTimelineByDate(model: Model): String {
+//    @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
+//    fun getTimelineByDate(model: Model): String {
+//        return buildTimelineModel(model,"all")
+//    }
+
+    @RequestMapping(value = ["/timeline", "/timeline/{mediaType}"], method = [RequestMethod.GET])
+    fun getTimelineMediaTypeByDate(model: Model,@PathVariable(required = false) mediaType: String?): String {
+        return buildTimelineModel(model,mediaType)
+    }
+
+    private fun buildTimelineModel(model: Model,mediaTypeFilter: String?): String {
         val module = "timeline"
 
-        val initialMetadataObj = metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+        val validMediaTypes = arrayOf("all","video")
+
+        var mediaType = mediaTypeFilter
+
+        if (mediaTypeFilter.isNullOrEmpty()) {
+            mediaType = "all"
+        }
+
+        val initialMetadataObj = if (mediaType != "all") {
+            metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType!!)
+        } else {
+            metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+        }
         var date = "undated"
         if (initialMetadataObj != null && initialMetadataObj.getYear() != null && initialMetadataObj.getMonth() != null && initialMetadataObj.getDay() != null) {
             date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
         }
 
-        val dates = getMetadataDates("all")
+        val dates = getMetadataDates(mediaType!!)
         model["metadataDates"] = dates["metadataDates"]!!
 
-        val response = buildTimelineDataByDate(model,"all",date,true)
+        val response = buildTimelineDataByDate(model,mediaType,date,true)
 
         for ((k, v) in response) {
             model[k] = v!!
+        }
+
+        if (!validMediaTypes.contains(mediaType)) {
+            model["message"] = "Oops! $mediaType is not a valid media type!"
         }
 
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
@@ -118,35 +143,7 @@ class TimelineController {
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
-    }
 
-    @RequestMapping(value = ["/timeline/{mediaType}"], method = [RequestMethod.GET])
-    fun getTimelineMediaTypeByDate(model: Model,@PathVariable mediaType: String): String {
-        val module = "timeline"
-
-        val initialMetadataObj = if (mediaType != "all") {
-            metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType)
-        } else {
-            metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
-        }
-        var date = "undated"
-        if (initialMetadataObj != null && initialMetadataObj.getYear() != null && initialMetadataObj.getMonth() != null && initialMetadataObj.getDay() != null) {
-            date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
-        }
-
-        val dates = getMetadataDates(mediaType)
-        model["metadataDates"] = dates["metadataDates"]!!
-
-        val response = buildTimelineDataByDate(model,mediaType,date,true)
-
-        for ((k, v) in response) {
-            model[k] = v!!
-        }
-
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
     }
 
