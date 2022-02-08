@@ -125,6 +125,20 @@
 
         $("#spinner_bottom").css("display", "block");
 
+        let firstElementId = $(elements[0]).attr("id");
+        let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+        let ignoreTimelineDate = firstVisibleId;
+
+        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+            for (const timelineDateObj of timelineDates.slice().reverse()) {
+                ignoreTimelineDate = timelineDateObj.year + "-" + timelineDateObj.month + "-" + timelineDateObj.day;
+
+                if (Util.getDateObject(firstVisibleId) < Util.getDateObject(ignoreTimelineDate)) {
+                    break;
+                }
+            }
+        }
+
         // Remove elements not visible in viewport
         $('section').each(function (index, element) {
             if ($("#" + element.id).withinviewport().length === 0 &&
@@ -132,7 +146,9 @@
                 $("#row" + element.id).withinviewport().length === 0 &&
                 $("#amp_" + element.id).withinviewport().length === 0 &&
                 $("#tail_" + element.id).withinviewport().length === 0 &&
-                $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
+                $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0 &&
+                (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down ||
+                (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
                 Util.removeDateGallery(element.id);
             }
@@ -150,11 +166,6 @@
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
             const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-            let removeToggle = false;
-
-            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                removeToggle = true;
-            }
             for (const [index, timelineDate] of timelineDates.reverse().entries()) {
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
@@ -167,14 +178,8 @@
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
 
-                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && removeToggle === false) {
-                            currentDate = prevDate;
-                            removeToggle = true;
-                            continue;
-                        }
-
                         // Break if top not in viewport
-                        if ($("#" + currentDate).withinviewport().length === 0 && removeToggle === true) {
+                        if ($("#" + currentDate).withinviewport().length === 0) {
                             break;
                         }
                     }
