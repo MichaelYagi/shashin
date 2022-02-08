@@ -72,12 +72,7 @@ class TimelineController {
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
-
-//    @RequestMapping(value = ["/timeline"], method = [RequestMethod.GET])
-//    fun getTimelineByDate(model: Model): String {
-//        return buildTimelineModel(model,"all")
-//    }
-
+    
     @RequestMapping(value = ["/timeline", "/timeline/{mediaType}"], method = [RequestMethod.GET])
     fun getTimelineMediaTypeByDate(model: Model,@PathVariable(required = false) mediaType: String?): String {
         return buildTimelineModel(model,mediaType)
