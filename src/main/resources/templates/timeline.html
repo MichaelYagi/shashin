@@ -17,20 +17,34 @@
                 </th:block>
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" id="offcanvasTocCloseButton" aria-label="Close"></button>
             </div>
+
             <div class="offcanvas-body" id="offcanvasTocBody">
                 <th:block th:if="${not #lists.isEmpty(metadataDates)}">
-                    <th:block th:each="metadata, iterStat: ${metadataDates}">
-                        <th:block th:if="${metadata.year == null or metadata.month == null or metadata.day == null}">
-                            <a id="offcanvas_undated" class="list-group-item list-group-item-action" th:onclick="return timelineSettings.jumpFromTimelineToc(event,'undated',[[${mediaTypeFilter}]]);" href="#undated">Undated</a>
-                        </th:block>
-                        <th:block th:unless="${metadata.year == null or metadata.month == null or metadata.day == null}">
+                    <th:block th:each="date, iterStat: ${metadataDates}">
+                        <th:block th:unless="${date.year == null or date.month == null or date.day == null}">
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <a th:id="${'offcanvas_'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return timelineSettings.jumpFromTimelineToc(event,'[[${metadata.year}]]-[[${metadata.month}]]-[[${metadata.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+metadata.year+'-'+metadata.month+'-'+metadata.day}" th:text="${#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'MMM d, yyyy')}"></a>
+                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (metadataDates[iterStat.index-1].year)==(date.year)}">
+                                    <strong th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'yyyy')}"></strong>
+                                    <th:block th:utext="'&lt;div class=&quot;list-group&quot;&gt;'" />
+                                </th:block>
+
+                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
+                                    <a th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return timelineSettings.jumpFromTimelineToc(event,'[[${date.year}]]-[[${date.month}]]-[[${date.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
+                                </th:block>
+                                <th:block th:if="${iterStat.count > 0 and !iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
+                                    <a style="display:none" th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return timelineSettings.jumpFromTimelineToc(event,'[[${date.year}]]-[[${date.month}]]-[[${date.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
+                                </th:block>
+
+                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.last and (metadataDates[iterStat.index+1].year)==(date.year)}">
+                                    <th:block th:utext="'&lt;/div&gt;'" />
+                                    <br>
+                                </th:block>
                             </th:block>
                         </th:block>
                     </th:block>
                 </th:block>
             </div>
+
         </div>
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
 
@@ -63,6 +77,7 @@
 
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
+
                     <th:block th:if="${metadataList[0].year==null or metadataList[0].month==null or metadataList[0].day==null}">
                         <span class="dateContainer" id="container_undated">
                         <br id="brundated">
@@ -208,7 +223,7 @@
                 }
             }
 
-            const firstDate = $("#offcanvasTocBody").children().first().attr("id").split("offcanvas_")[1];
+            const firstDate = $("#offcanvasTocBody div").children().first().attr("id").split("offcanvas_")[1];
             const elementsInViewport = $(".scrollspy").withinviewport()
             topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
 

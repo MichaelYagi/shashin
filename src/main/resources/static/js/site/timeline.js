@@ -286,27 +286,54 @@
 
         let offCanvasId = $("#offcanvas_"+id);
 
+        let dateCount = 0;
+
         const attachAboveArray = [];
-        let tempOffCanvasIdAbove = offCanvasId;
-        for (let i = 0; i <= depthUp - 1; i++) {
-            tempOffCanvasIdAbove = tempOffCanvasIdAbove.prev();
-            if (typeof tempOffCanvasIdAbove.attr("id") !== 'undefined') {
-                const offcanvasIdParts = tempOffCanvasIdAbove.attr("id").split("_");
-                const offcanvasId = offcanvasIdParts[1];
-                attachAboveArray.unshift(offcanvasId);
+        let innerLoopBreak = false;
+        let offCanvasDate = offCanvasId.attr("id").split("_")[1];
+        $($("#offcanvasTocBody").children().get().reverse()).each(function () {
+            if ($(this).attr('class') === 'list-group') {
+                $($(this).children().get().reverse()).each(function () {
+                    const dateParts = $(this).attr("id").split("offcanvas_");
+                    const date = dateParts[1];
+                    if (Util.getDateObject(offCanvasDate) < Util.getDateObject(date)) {
+                        attachAboveArray.unshift(date);
+                        if (dateCount >= depthUp) {
+                            innerLoopBreak = true;
+                            return false;
+                        }
+                        dateCount++;
+                    }
+                });
             }
-        }
+            if (innerLoopBreak === true) {
+                return false;
+            }
+        });
 
         const attachBelowArray = [];
-        let tempOffCanvasIdBelow = offCanvasId;
-        for (let i = 0;i <= depthDown-1;i++) {
-            tempOffCanvasIdBelow = tempOffCanvasIdBelow.next();
-            if (typeof tempOffCanvasIdBelow.attr("id") !== 'undefined') {
-                const offcanvasIdParts = tempOffCanvasIdBelow.attr("id").split("_");
-                const offcanvasId = offcanvasIdParts[1];
-                attachBelowArray.push(offcanvasId);
+        dateCount = 0;
+        innerLoopBreak = false;
+        $("#offcanvasTocBody").children().each(function () {
+            if ($(this).attr('class') === 'list-group') {
+                $(this).children().each(function () {
+                    const dateParts = $(this).attr("id").split("offcanvas_");
+                    const date = dateParts[1];
+                    if (Util.getDateObject(date) < Util.getDateObject(offCanvasDate)) {
+                        attachBelowArray.push(date);
+                        if (dateCount > depthUp) {
+                            innerLoopBreak = true;
+                            return false;
+                        }
+                        dateCount++;
+                    }
+                });
             }
-        }
+            if (innerLoopBreak === true) {
+                return false;
+            }
+        });
+
 
         // Remove elements that are not visible
         let prevElementId = "";
@@ -387,14 +414,17 @@
                 let dateFound = false;
                 let currentId = attachPoint;
                 $("#offcanvasTocBody").children().each(function () {
-                    const dateParts = $(this).attr("id").split("offcanvas_");
-                    const date = dateParts[1];
-                    if ($(this).next().length > 0 && currentId === date) {
-                        currentId = $(this).next().attr("id").split("offcanvas_")[1];
-                        dateFound = true;
-                        return false;
+                    if ($(this).attr('class') === 'list-group') {
+                        $(this).children().each(function () {
+                            const dateParts = $(this).attr("id").split("offcanvas_");
+                            const date = dateParts[1];
+                            if ($(this).next().length > 0 && currentId === date) {
+                                currentId = $(this).next().attr("id").split("offcanvas_")[1];
+                                dateFound = true;
+                                return false;
+                            }
+                        });
                     }
-
                 });
 
                 if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
@@ -561,8 +591,13 @@
 
     // Set the active nav
     timelineSettings.setScrollSpyActive = function (id) {
-        const navElem = $('a[href="#' + id + '"]');
-        navElem.addClass('active').siblings().removeClass('active');
+        if (typeof id === 'string' || id instanceof String) {
+            $("#offcanvasTocBody").find('.active').removeClass('active');
+            const idArray = id.split("-");
+
+            const navElem = $('a[href^="#' + idArray[0] + "-" + idArray[1] + '"]');
+            navElem.addClass('active');
+        }
     }
 
     timelineSettings.scrollToTimelineToc = function(elements) {
@@ -833,7 +868,7 @@
                                         $("#timelineModalEdit" + metadata.id).attr("tag", JSON.stringify(metadata));
                                     }
 
-                                    const lastDateParts = $("#offcanvasTocBody").children().last().attr("id").split("offcanvas_");
+                                    const lastDateParts = $("#offcanvasTocBody div").children().last().attr("id").split("offcanvas_");
                                     const lastDate = lastDateParts[1];
 
                                     if (metadataList[0].year == null || metadataList[0].month == null || metadataList[0].day == null) {
