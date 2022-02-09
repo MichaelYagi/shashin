@@ -601,16 +601,36 @@
     }
 
     timelineSettings.scrollToTimelineToc = function(elements) {
+        let scrolled = false;
         elements.each(function(index) {
             let id = $(this).attr("id");
 
-            if (id.indexOf("tail_") < 0 && index === 1) {
-                document.getElementById("offcanvas_"+id).scrollIntoView({
+            if (id.indexOf("tail_") < 0 && $(id).is(":visible") === true) {
+                $("#offcanvas_"+id).scrollIntoView({
                     behavior: 'smooth'
                 });
+                scrolled = true;
                 return false;
             }
         });
+        if (scrolled === false) {
+            $("#offcanvasTocBody").children().each(function () {
+                if ($(this).attr('class') === 'list-group') {
+                    $(this).children().each(function () {
+                        if ($(this).hasClass("active")) {
+                            $(this)[0].scrollIntoView({
+                                behavior: 'smooth'
+                            });
+                            scrolled = true;
+                            return false;
+                        }
+                    });
+                }
+                if (scrolled === true) {
+                    return false;
+                }
+            });
+        }
     }
 
     // Hook up data to edit albums, favorites and people labels
