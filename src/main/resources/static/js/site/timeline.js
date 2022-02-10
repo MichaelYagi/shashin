@@ -10,25 +10,24 @@
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
 
-    function getPositions(elem) {
-        const clientRect = elem.getBoundingClientRect();
-        return [
-            [ clientRect.left, clientRect.left + clientRect.width ],
-            [ clientRect.top, clientRect.top + clientRect.height ]
-        ];
-    }
-
-
-    function intersect(elemA, elemB) {
-        let posA = getPositions(elemA),
-            posB = getPositions(elemB),
-            isOverlap = false;
-
-        if (posA[0][0] < posB[0][1] && posA[0][1] > posB[0][0] &&
-            posA[1][0] < posB[1][1] && posA[1][1] > posB[1][0])
-            isOverlap = true;
-
-        return isOverlap;
+    function isOverlap(idOne,idTwo){
+        const objOne = $(idOne),
+            objTwo = $(idTwo),
+            offsetOne = objOne.offset(),
+            offsetTwo = objTwo.offset(),
+            topOne = offsetOne.top,
+            topTwo = offsetTwo.top,
+            leftOne = offsetOne.left,
+            leftTwo = offsetTwo.left,
+            widthOne = objOne.width(),
+            widthTwo = objTwo.width(),
+            heightOne = objOne.height(),
+            heightTwo = objTwo.height();
+        const leftTop = leftTwo > leftOne && leftTwo < leftOne + widthOne && topTwo > topOne && topTwo < topOne + heightOne,
+            rightTop = leftTwo + widthTwo > leftOne && leftTwo + widthTwo < leftOne + widthOne && topTwo > topOne && topTwo < topOne + heightOne,
+            leftBottom = leftTwo > leftOne && leftTwo < leftOne + widthOne && topTwo + heightTwo > topOne && topTwo + heightTwo < topOne + heightOne,
+            rightBottom = leftTwo + widthTwo > leftOne && leftTwo + widthTwo < leftOne + widthOne && topTwo + heightTwo > topOne && topTwo + heightTwo < topOne + heightOne;
+        return leftTop || rightTop || leftBottom || rightBottom;
     }
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
@@ -582,29 +581,42 @@
                 const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
                 if (i === 0 || i > 0 && dateList[i - 1].year !== timelineDateObj.year) {
                     // Label for year
-                    const el = $('<span class="badge rounded-pill bg-light text-dark">' + dateObj.getFullYear() + '</span>').css({
+                    const el = $('<span class="badge rounded-pill bg-light text-dark" id="sliderLabel'+dateObj.getFullYear()+'">' + dateObj.getFullYear() + '</span>').css({
                         'width': '35px',
                         'right': '15px',
                         'position':'absolute',
                         'top':(i / dateList.length * 100) + '%'
                     });
 
-                    if (prevEl !== null && intersect(prevEl[0], el[0]) === false) {
-                        $("#dateSlider").append(el);
+                    if (prevEl !== null) {
+                        $("#dateSlider").append(el).ready(function () {
+                            // console.log(timelineDateObj.year + '-' + timelineDateObj.month)
+                            // console.log(prevEl.attr("id"))
+                            // console.log(el.attr("id"))
+                            // console.log(isOverlap("#" + prevEl.attr("id"), "#" + el.attr("id")))
+                            // console.log("")
+                            if (isOverlap("#" + prevEl.attr("id"), "#" + el.attr("id")) === true) {
+                                $("#sliderLabel" + dateObj.getFullYear()).remove();
+                            }
+                        });
                     }
 
                     prevEl = el;
                 } else if (i === 0 || (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month))) {
                     // Tick for month/year
-                    const tickEl = $('<span data-tick-id="'+timelineDateObj.year + '-' + timelineDateObj.month +'">' + '-' + '</span>').css({
+                    const tickEl = $('<span id="tickLabel'+timelineDateObj.year + '-' + timelineDateObj.month +'">' + '-' + '</span>').css({
                         'width': '10px',
                         'right': '15px',
                         'position':'absolute',
                         'top':(i / dateList.length * 100) + '%'
                     });
 
-                    if (prevTickEl !== null && intersect(prevTickEl[0], tickEl[0]) === false) {
-                        $("#dateSlider").append(tickEl);
+                    if (prevTickEl !== null) {
+                        $("#dateSlider").append(tickEl).ready(function () {
+                            if (isOverlap("#" + prevEl.attr("id"), "#" + tickEl.attr("id")) === true) {
+                                $("#dateSlider").append(tickEl);
+                            }
+                        });
                     }
 
                     prevTickEl = tickEl;
