@@ -14,12 +14,6 @@
                     </th:block>
                 </span>
             </a>
-            <th:block th:if="${activePage == 'timeline'}">
-                &nbsp;&nbsp;
-                <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline">
-                    <span class="bi-calendar3" style="font-size: 1.5rem;"></span>
-                </a>
-            </th:block>
             <th:block th:if="${activePage == 'logs'}">
                 &nbsp;&nbsp;
                 <a class="align-items-center mb-lg-0 link-dark text-decoration-none" href="/settings/logs/download" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download logs">
