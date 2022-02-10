@@ -10,24 +10,26 @@
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
 
-    function isOverlap(idOne,idTwo){
-        const objOne = $(idOne),
-            objTwo = $(idTwo),
-            offsetOne = objOne.offset(),
-            offsetTwo = objTwo.offset(),
-            topOne = offsetOne.top,
-            topTwo = offsetTwo.top,
-            leftOne = offsetOne.left,
-            leftTwo = offsetTwo.left,
-            widthOne = objOne.width(),
-            widthTwo = objTwo.width(),
-            heightOne = objOne.height(),
-            heightTwo = objTwo.height();
-        const leftTop = leftTwo > leftOne && leftTwo < leftOne + widthOne && topTwo > topOne && topTwo < topOne + heightOne,
-            rightTop = leftTwo + widthTwo > leftOne && leftTwo + widthTwo < leftOne + widthOne && topTwo > topOne && topTwo < topOne + heightOne,
-            leftBottom = leftTwo > leftOne && leftTwo < leftOne + widthOne && topTwo + heightTwo > topOne && topTwo + heightTwo < topOne + heightOne,
-            rightBottom = leftTwo + widthTwo > leftOne && leftTwo + widthTwo < leftOne + widthOne && topTwo + heightTwo > topOne && topTwo + heightTwo < topOne + heightOne;
-        return leftTop || rightTop || leftBottom || rightBottom;
+    isOverlap = function(div1, div2) {
+        if (div1.length > 0 && div2.length > 0) {
+            const x1 = div1.offset().left;
+            const y1 = div1.offset().top;
+            const h1 = div1.outerHeight(true);
+            const w1 = div1.outerWidth(true);
+            const b1 = y1 + h1;
+            const r1 = x1 + w1;
+            const x2 = div2.offset().left;
+            const y2 = div2.offset().top;
+            const h2 = div2.outerHeight(true);
+            const w2 = div2.outerWidth(true);
+            const b2 = y2 + h2;
+            const r2 = x2 + w2;
+
+            if (b1 < y2 || y1 > b2 || r1 < x2 || x1 > r2) return false;
+            return true;
+        } else {
+            return false;
+        }
     }
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
@@ -588,20 +590,13 @@
                         'top':(i / dateList.length * 100) + '%'
                     });
 
-                    if (prevEl !== null) {
-                        $("#dateSlider").append(el).ready(function () {
-                            // console.log(timelineDateObj.year + '-' + timelineDateObj.month)
-                            // console.log(prevEl.attr("id"))
-                            // console.log(el.attr("id"))
-                            // console.log(isOverlap("#" + prevEl.attr("id"), "#" + el.attr("id")))
-                            // console.log("")
-                            if (isOverlap("#" + prevEl.attr("id"), "#" + el.attr("id")) === true) {
-                                $("#sliderLabel" + dateObj.getFullYear()).remove();
-                            }
-                        });
-                    }
+                    $("#dateSlider").append(el).ready(function () {
+                        if (prevEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
+                            $("#sliderLabel" + timelineDateObj.year).remove();
+                        }
+                        prevEl = el;
+                    });
 
-                    prevEl = el;
                 } else if (i === 0 || (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month))) {
                     // Tick for month/year
                     const tickEl = $('<span id="tickLabel'+timelineDateObj.year + '-' + timelineDateObj.month +'">' + '-' + '</span>').css({
@@ -611,15 +606,13 @@
                         'top':(i / dateList.length * 100) + '%'
                     });
 
-                    if (prevTickEl !== null) {
-                        $("#dateSlider").append(tickEl).ready(function () {
-                            if (isOverlap("#" + prevEl.attr("id"), "#" + tickEl.attr("id")) === true) {
-                                $("#dateSlider").append(tickEl);
-                            }
-                        });
-                    }
+                    $("#dateSlider").append(tickEl).ready(function () {
+                        if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
+                            $("#tickLabel" + timelineDateObj.year + '-' + timelineDateObj.month).remove();
+                        }
+                        prevTickEl = tickEl;
+                    });
 
-                    prevTickEl = tickEl;
                 }
 
                 // Tooltip for month/year on slider
