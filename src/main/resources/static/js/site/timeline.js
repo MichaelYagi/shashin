@@ -603,8 +603,6 @@
                         'top':(i / dateList.length * 100) + '%'
                     });
 
-                    $("#dateSlider").append(tickEl);
-
                     if (prevTickEl !== null && intersect(prevTickEl[0], tickEl[0]) === false) {
                         $("#dateSlider").append(tickEl);
                     }
