@@ -10,6 +10,27 @@
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
 
+    function getPositions(elem) {
+        const clientRect = elem.getBoundingClientRect();
+        return [
+            [ clientRect.left, clientRect.left + clientRect.width ],
+            [ clientRect.top, clientRect.top + clientRect.height ]
+        ];
+    }
+
+
+    function intersect(elemA, elemB) {
+        let posA = getPositions(elemA),
+            posB = getPositions(elemB),
+            isOverlap = false;
+
+        if (posA[0][0] < posB[0][1] && posA[0][1] > posB[0][0] &&
+            posA[1][0] < posB[1][1] && posA[1][1] > posB[1][0])
+            isOverlap = true;
+
+        return isOverlap;
+    }
+
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
         const url = location.href;
         location.href = '#lightGalleryIndex'+metadataId;
@@ -522,7 +543,8 @@
         // Tooltip for handle
         const handleTooltip = $('<span class="badge bg-light text-dark" id="tooltip" />').css({
             position: 'absolute',
-            right: 12
+            right: 12,
+            zIndex: 2000
         }).hide();
 
         handleTooltip.text(Util.getShortMonths(dateList[0].month-1) + ' ' + dateList[0].year);
@@ -552,6 +574,8 @@
         });
 
         // Render ticks
+        let prevEl = null;
+        let prevTickEl = null;
         for (let i = 0; i <= dateList.length; i++) {
             const timelineDateObj = dateList[i];
             if (timelineDateObj) {
@@ -564,7 +588,12 @@
                         'position':'absolute',
                         'top':(i / dateList.length * 100) + '%'
                     });
-                    $("#dateSlider").append(el);
+
+                    if (prevEl !== null && intersect(prevEl[0], el[0]) === false) {
+                        $("#dateSlider").append(el);
+                    }
+
+                    prevEl = el;
                 } else if (i === 0 || (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month))) {
                     // Tick for month/year
                     const tickEl = $('<span data-tick-id="'+timelineDateObj.year + '-' + timelineDateObj.month +'">' + '-' + '</span>').css({
@@ -573,13 +602,21 @@
                         'position':'absolute',
                         'top':(i / dateList.length * 100) + '%'
                     });
+
                     $("#dateSlider").append(tickEl);
+
+                    if (prevTickEl !== null && intersect(prevTickEl[0], tickEl[0]) === false) {
+                        $("#dateSlider").append(tickEl);
+                    }
+
+                    prevTickEl = tickEl;
                 }
 
                 // Tooltip for month/year on slider
-                const sliderTooltip = $('<span class="badge bg-light text-dark" id="tooltip" />').css({
+                const sliderTooltip = $('<span class="badge bg-light text-dark" />').css({
                     position: 'absolute',
-                    right: 12
+                    right: 12,
+                    zIndex: 2000
                 }).hide();
                 sliderTooltip.text(Util.getShortMonths(timelineDateObj.month-1) + ' ' + timelineDateObj.year);
 
