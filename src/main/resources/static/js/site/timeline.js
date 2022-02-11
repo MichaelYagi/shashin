@@ -592,12 +592,16 @@
                         $("#dateSlider").append(el);
                         setTimeout(function() {
                             if (prevEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                                $("#sliderLabel" + timelineDateObj.year).hide();
+                                $("#" + el.attr("id")).hide();
+
+                                if (isOverlap($("#" + prevTickEl.attr("id")), $("#" + el.attr("id"))) === true) {
+                                    $("#" + prevTickEl.attr("id")).hide();
+                                }
                             } else {
                                 prevEl = el;
                             }
                         },0);
-                    } else if (i === 0 || (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month))) {
+                    } else if (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month)) {
                         // Tick for month/year
                         const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '">' + '-' + '</span>').css({
                             'width': '10px',
@@ -609,7 +613,7 @@
                         $("#dateSlider").append(tickEl);
                         setTimeout(function() {
                             if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
-                                $("#tickLabel" + timelineDateObj.year + '-' + timelineDateObj.month).hide();
+                                $("#" + tickEl.attr("id")).hide();
                             } else {
                                 prevTickEl = tickEl;
                             }
@@ -630,7 +634,7 @@
                         'right': '0px',
                         // 'background-color': 'grey',
                         'position': 'absolute',
-                        'top': (i===0 ? (i / dateList.length * 100) : (i / dateList.length * 100)-2) + '%'
+                        'top': (i===0 ? (i / dateList.length * 100)-1 : (i / dateList.length * 100)-2) + '%'
                     });
 
                     $(sliderEl).append(sliderTooltip);
