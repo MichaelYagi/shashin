@@ -630,7 +630,7 @@
                         'right': '0px',
                         // 'background-color': 'grey',
                         'position': 'absolute',
-                        'top': (i===0 ? (i / dateList.length * 100)-1 : (i / dateList.length * 100)-2) + '%'
+                        'top': (i===0 ? (i / dateList.length * 100) : (i / dateList.length * 100)-2) + '%'
                     });
 
                     $(sliderEl).append(sliderTooltip);
