@@ -592,7 +592,7 @@
                         $("#dateSlider").append(el);
                         setTimeout(function() {
                             if (prevEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                                $("#sliderLabel" + timelineDateObj.year).remove();
+                                $("#sliderLabel" + timelineDateObj.year).hide();
                             } else {
                                 prevEl = el;
                             }
@@ -609,7 +609,7 @@
                         $("#dateSlider").append(tickEl);
                         setTimeout(function() {
                             if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
-                                $("#tickLabel" + timelineDateObj.year + '-' + timelineDateObj.month).remove();
+                                $("#tickLabel" + timelineDateObj.year + '-' + timelineDateObj.month).hide();
                             } else {
                                 prevTickEl = tickEl;
                             }
