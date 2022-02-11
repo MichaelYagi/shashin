@@ -195,12 +195,12 @@
 
         /*<![CDATA[*/
         const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
-        const dateList = /*[[${metadataDates}]]*/ [];
+        timelineSettings.timelineDates = /*[[${metadataDates}]]*/ [];
         /*]]>*/
 
         // Initialize
         if (Util.isMobile() === false) {
-            timelineSettings.initializeTimelineSlider(dateList, mediaTypeFilter);
+            timelineSettings.initializeTimelineSlider(mediaTypeFilter);
             $("#timelineTocToggle").hide();
         }
 
@@ -209,7 +209,7 @@
             const elementsInViewport = $(".scrollspy").withinviewport();
 
             timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
-            timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter, dateList);
+            timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
             timelineSettings.reinitLightGalleryInstance();
         } else {
@@ -253,7 +253,7 @@
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 /*<![CDATA[*/
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter, dateList);
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
                 /*]]>*/
 
                 $(".bi-play-circle").css("visibility", "hidden");

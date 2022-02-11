@@ -9,6 +9,7 @@
     timelineSettings.currentScrollTop = 0;
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
+    timelineSettings.timelineDates = [];
 
     let isOverlap = function (div1, div2) {
         if (div1.length > 0 && div2.length > 0) {
@@ -76,7 +77,8 @@
     }
 
     let prevElements = null;
-    timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter,timelineDates) {
+    timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter) {
+        const timelineDates = timelineSettings.timelineDates;
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
         if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || ($("#"+lastDate).withinviewport().length === 0 && $("footer").withinviewport().length > 0 && Util.atEndOfPage($("#container")[0]))) {
@@ -540,7 +542,8 @@
         return timelineSettings.successMidMsg;
     }
 
-    timelineSettings.initializeTimelineSlider = async function (dateList, mediaTypeFilter) {
+    timelineSettings.initializeTimelineSlider = async function (mediaTypeFilter) {
+        const dateList = timelineSettings.timelineDates;
         if (dateList.length > 0) {
             // Tooltip for handle
             const handleTooltip = $('<span class="badge bg-light text-dark" id="tooltip" />').css({
@@ -601,7 +604,7 @@
                             if (prevEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
                                 $("#" + el.attr("id")).hide();
 
-                                if (isOverlap($("#" + prevTickEl.attr("id")), $("#" + el.attr("id"))) === true) {
+                                if (prevTickEl !== null && isOverlap($("#" + prevTickEl.attr("id")), $("#" + el.attr("id"))) === true) {
                                     $("#" + prevTickEl.attr("id")).hide();
                                 }
                             } else {
