@@ -216,6 +216,7 @@
         $('[data-bs-toggle="tooltip"]').tooltip();
 
         $(window).bind("scrollStop", function() {
+            $("#dateSlider").hide();
             timelineSettings.reinitLightGalleryInstance();
         });
 
@@ -226,6 +227,8 @@
             if (st === 0) {
                 topScroll = true;
             }
+
+            $("#dateSlider").show();
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false) {
