@@ -10,7 +10,7 @@
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
 
-    isOverlap = function(div1, div2) {
+    let isOverlap = function (div1, div2) {
         if (div1.length > 0 && div2.length > 0) {
             const x1 = div1.offset().left;
             const y1 = div1.offset().top;
@@ -25,8 +25,8 @@
             const b2 = y2 + h2;
             const r2 = x2 + w2;
 
-            if (b1 < y2 || y1 > b2 || r1 < x2 || x1 > r2) return false;
-            return true;
+            return !(b1 < y2 || y1 > b2 || r1 < x2 || x1 > r2);
+
         } else {
             return false;
         }
@@ -539,113 +539,113 @@
     }
 
     timelineSettings.initializeTimelineSlider = function (dateList, mediaTypeFilter) {
-        $("#dateSlider").hide();
+        if (dateList.length > 0) {
+            // Tooltip for handle
+            const handleTooltip = $('<span class="badge bg-light text-dark" id="tooltip" />').css({
+                position: 'absolute',
+                right: 12,
+                zIndex: 2000
+            }).hide();
 
-        // Tooltip for handle
-        const handleTooltip = $('<span class="badge bg-light text-dark" id="tooltip" />').css({
-            position: 'absolute',
-            right: 12,
-            zIndex: 2000
-        }).hide();
+            handleTooltip.text(Util.getShortMonths(dateList[0].month - 1) + ' ' + dateList[0].year);
 
-        handleTooltip.text(Util.getShortMonths(dateList[0].month-1) + ' ' + dateList[0].year);
+            $("#dateSlider").slider({
+                orientation: "vertical",
+                value: dateList.length - 1,
+                min: 0,
+                max: dateList.length - 1,
+                step: 0.0001,
+                range: false,
+                slide: function (event, ui) {
+                    const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
+                    handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
+                },
+                stop: function (event, ui) {
+                    const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
-        $("#dateSlider").slider({
-            orientation: "vertical",
-            value: dateList.length-1,
-            min: 0,
-            max: dateList.length - 1,
-            step : 0.0001,
-            range: false,
-            slide: function(event, ui) {
-                const currentDateObj = dateList[Math.round((dateList.length - 1)-ui.value)];
-                handleTooltip.text(Util.getShortMonths(currentDateObj.month-1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
-            },
-            stop: function(event, ui) {
-                const currentDateObj = dateList[Math.round((dateList.length - 1)-ui.value)];
+                    if (timelineSettings.enableScrollSpy === true) {
+                        timelineSettings.jumpFromTimelineToc(event, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
+                    }
+                }
+            }).find(".ui-slider-handle").append(handleTooltip).hover(function () {
+                handleTooltip.show();
+            }, function () {
+                handleTooltip.hide();
+            });
 
-                if (timelineSettings.enableScrollSpy === true) {
-                    timelineSettings.jumpFromTimelineToc(event, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
+            // Render ticks
+            let prevEl = null;
+            let prevTickEl = null;
+            for (let i = 0; i < dateList.length; i++) {
+                const timelineDateObj = dateList[i];
+                if (timelineDateObj) {
+                    const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
+                    if (i === 0 || i > 0 && dateList[i - 1].year !== timelineDateObj.year) {
+                        // Label for year
+                        const el = $('<span class="badge rounded-pill bg-light text-dark" id="sliderLabel' + dateObj.getFullYear() + '">' + dateObj.getFullYear() + '</span>').css({
+                            'width': '35px',
+                            'right': '15px',
+                            'position': 'absolute',
+                            'top': (i / dateList.length * 100) + '%'
+                        });
+
+                        $("#dateSlider").append(el).ready(function () {
+
+                            if (prevEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
+                                $("#sliderLabel" + timelineDateObj.year).remove();
+                            }
+                            prevEl = el;
+                        });
+
+                    } else if (i === 0 || (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month))) {
+                        // Tick for month/year
+                        const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '">' + '-' + '</span>').css({
+                            'width': '10px',
+                            'right': '15px',
+                            'position': 'absolute',
+                            'top': (i / dateList.length * 100) + '%'
+                        });
+
+                        $("#dateSlider").append(tickEl).ready(function () {
+                            if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
+                                $("#tickLabel" + timelineDateObj.year + '-' + timelineDateObj.month).remove();
+                            }
+                            prevTickEl = tickEl;
+                        });
+                    }
+
+                    // Tooltip for month/year on slider
+                    const sliderTooltip = $('<span class="badge bg-light text-dark" />').css({
+                        position: 'absolute',
+                        right: 12,
+                        zIndex: 2000
+                    }).hide();
+                    sliderTooltip.text(Util.getShortMonths(timelineDateObj.month - 1) + ' ' + timelineDateObj.year);
+
+                    const sliderEl = $('<span data-slider-id="' + timelineDateObj.year + '-' + timelineDateObj.month + '">&nbsp;</span>').css({
+                        'width': '70px',
+                        'right': '0px',
+                        // 'background-color': 'grey',
+                        'position': 'absolute',
+                        'top': (i / dateList.length * 100) + '%'
+                    });
+                    $(sliderEl).append(sliderTooltip);
+                    $("#dateSlider").append(sliderEl);
+
+                    sliderEl.hover(function () {
+                        sliderTooltip.show();
+                    }, function () {
+                        sliderTooltip.hide();
+                    });
                 }
             }
-        }).find(".ui-slider-handle").append(handleTooltip).hover(function() {
-            handleTooltip.show();
-        }, function() {
-            handleTooltip.hide();
-        });
 
-        // Render ticks
-        let prevEl = null;
-        let prevTickEl = null;
-        for (let i = 0; i <= dateList.length; i++) {
-            const timelineDateObj = dateList[i];
-            if (timelineDateObj) {
-                const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
-                if (i === 0 || i > 0 && dateList[i - 1].year !== timelineDateObj.year) {
-                    // Label for year
-                    const el = $('<span class="badge rounded-pill bg-light text-dark" id="sliderLabel'+dateObj.getFullYear()+'">' + dateObj.getFullYear() + '</span>').css({
-                        'width': '35px',
-                        'right': '15px',
-                        'position':'absolute',
-                        'top':(i / dateList.length * 100) + '%'
-                    });
-
-                    $("#dateSlider").append(el).ready(function () {
-                        if (prevEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                            $("#sliderLabel" + timelineDateObj.year).remove();
-                        }
-                        prevEl = el;
-                    });
-
-                } else if (i === 0 || (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month))) {
-                    // Tick for month/year
-                    const tickEl = $('<span id="tickLabel'+timelineDateObj.year + '-' + timelineDateObj.month +'">' + '-' + '</span>').css({
-                        'width': '10px',
-                        'right': '15px',
-                        'position':'absolute',
-                        'top':(i / dateList.length * 100) + '%'
-                    });
-
-                    $("#dateSlider").append(tickEl).ready(function () {
-                        if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
-                            $("#tickLabel" + timelineDateObj.year + '-' + timelineDateObj.month).remove();
-                        }
-                        prevTickEl = tickEl;
-                    });
-
-                }
-
-                // Tooltip for month/year on slider
-                const sliderTooltip = $('<span class="badge bg-light text-dark" />').css({
-                    position: 'absolute',
-                    right: 12,
-                    zIndex: 2000
-                }).hide();
-                sliderTooltip.text(Util.getShortMonths(timelineDateObj.month-1) + ' ' + timelineDateObj.year);
-
-                const sliderEl = $('<span data-slider-id="'+timelineDateObj.year + '-' + timelineDateObj.month +'">&nbsp;</span>').css({
-                    'width': '70px',
-                    'right': '0px',
-                    // 'background-color': 'grey',
-                    'position':'absolute',
-                    'top':(i / dateList.length * 100) + '%'
-                });
-                $(sliderEl).append(sliderTooltip);
-                $("#dateSlider").append(sliderEl);
-
-                sliderEl.hover(function() {
-                    sliderTooltip.show();
-                }, function() {
-                    sliderTooltip.hide();
-                });
-            }
+            $("#dateSliderWrapper").hover(function () {
+                $("#dateSlider").show();
+            }, function () {
+                $("#dateSlider").hide();
+            });
         }
-
-        $("#dateSliderWrapper").hover(function() {
-            $("#dateSlider").show();
-        }, function() {
-            $("#dateSlider").hide();
-        });
     }
 
     timelineSettings.jumpFromTimelineToc = function (e,anchor,mediaTypeFilter) {
