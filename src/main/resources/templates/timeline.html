@@ -199,7 +199,10 @@
         /*]]>*/
 
         // Initialize
-        timelineSettings.initializeTimelineSlider(dateList, mediaTypeFilter);
+        if (Util.isMobile() === false) {
+            timelineSettings.initializeTimelineSlider(dateList, mediaTypeFilter);
+            $("#timelineTocToggle").hide();
+        }
 
         if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
