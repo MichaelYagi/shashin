@@ -122,12 +122,14 @@
                     }
 
                     // Set the timeline slider while scrolling
-                    timelineDates.forEach(function (timelineDate, i) {
-                        if (id === timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day) {
-                            $("#dateSlider").slider("option", "value", timelineDates.length-i);
-                            return false;
-                        }
-                    });
+                    if (Util.isMobile() === false) {
+                        timelineDates.forEach(function (timelineDate, i) {
+                            if (id === timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day) {
+                                $("#dateSlider").slider("option", "value", timelineDates.length - i);
+                                return false;
+                            }
+                        });
+                    }
                 }
             });
 
@@ -566,6 +568,11 @@
                     if (timelineSettings.enableScrollSpy === true) {
                         timelineSettings.jumpFromTimelineToc(event, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
                     }
+                },
+                change: function (event, ui) {
+                    const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
+                    handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
+                    handleTooltip.show();
                 }
             }).find(".ui-slider-handle").append(handleTooltip).hover(function () {
                 handleTooltip.show();
