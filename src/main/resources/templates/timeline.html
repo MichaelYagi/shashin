@@ -185,22 +185,21 @@
     <script src="/js/site/applisteners.min.js" type="text/javascript"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript">
-    /*<![CDATA[*/
-    const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
-    const dateList = /*[[${metadataDates}]]*/ [];
-    /*]]>*/
-
-    // Initialize
-    timelineSettings.initializeTimelineSlider(dateList, mediaTypeFilter);
-
     $(document).ready(function() {
-        $("#dateSlider").hide();
         shashin.setLightGalleryElement('infinite-scroll-gallery');
         shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
 
         let topScroll = true;
         let topOfPage = true;
         let scrollTimer;
+
+        /*<![CDATA[*/
+        const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
+        const dateList = /*[[${metadataDates}]]*/ [];
+        /*]]>*/
+
+        // Initialize
+        timelineSettings.initializeTimelineSlider(dateList, mediaTypeFilter);
 
         if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
