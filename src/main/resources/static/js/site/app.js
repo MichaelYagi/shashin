@@ -483,36 +483,52 @@
         $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing timeline TOC")}).then(function(data) {
             if (data.hasOwnProperty("metadataDates")) {
+                const metadataDates = data["metadataDates"];
+                timelineSettings.timelineDates = metadataDates;
+
+                // Rebuild slider
+                if (Util.isMobile() === false) {
+                    $("#dateSlider").empty();
+                    $("#dateSlider").show();
+                    timelineSettings.initializeTimelineSlider(mediaTypeFilter);
+                }
+
+                // Clear offcanvas TOC and rebuild
+                $("#timelineTocToggle").show();
                 $("#offcanvasTocBody").empty();
 
-                const metadataDates = data["metadataDates"];
                 let html = "";
-                for (const index in metadataDates) {
+
+                for (let index = 0; index < metadataDates.length; index++) {
                     const metadataDate = metadataDates[index];
                     const year = metadataDate["year"];
                     const month = metadataDate["month"];
                     const day = metadataDate["day"];
 
-                    let offcanvasDate = "";
-                    let text = "Undated";
-                    let active = "";
-                    if (year == null || month == null || day == null) {
-                        offcanvasDate = "offcanvas_undated";
-                        if (currentOffCanvasId === offcanvasDate) {
-                            active = " active";
-                        }
-                        html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\'undated\',\''+mediaTypeFilter+'\')" href="#undated">'+text+'</a>\n';
+                    if (index === 0 || (index > 0 && metadataDates[index-1].year !== year)) {
+                        html += "<strong>"+year+"</strong>";
+                        html += "<div class='list-group'>";
+                    }
+
+                    if (index > 0 && metadataDates[index-1].year === year && metadataDates[index-1].month === month) {
+                        html += '<a style="display:none" id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\');" href="#'+year+'-'+month+'-'+day+'"></a>';
                     } else {
-                        offcanvasDate = "offcanvas_"+year+"-"+month+"-"+day;
-                        if (currentOffCanvasId === offcanvasDate) {
-                            active = " active";
-                        }
                         const dateObj = new Date(year, month-1, day);
-                        text = dateObj.format("mmm d, yyyy");
-                        html += '<a id="'+offcanvasDate+'" class="list-group-item list-group-item-action'+active+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\')" href="#'+year+'-'+month+'-'+day+'">'+text+'</a>\n';
+                        html += '<a id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\');" href="#'+year+'-'+month+'-'+day+'">'+dateObj.format("mmm yyyy")+'</a>';
+                    }
+
+                    if (index === metadataDates.length-1 || (index > 0 && index+1 < metadataDates.length-1 && metadataDates[index+1].year !== year)) {
+                        html += "</div><br>";
                     }
                 }
+
                 $("#offcanvasTocBody").append(html);
+
+                if (Util.isMobile() === false) {
+                    setTimeout(function() {
+                        $("#timelineTocToggle").hide();
+                    },0);
+                }
             }
         });
     }
