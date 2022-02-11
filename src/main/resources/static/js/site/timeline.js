@@ -593,8 +593,9 @@
 
                             if (prevEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
                                 $("#sliderLabel" + timelineDateObj.year).remove();
+                            } else {
+                                prevEl = el;
                             }
-                            prevEl = el;
                         });
 
                     } else if (i === 0 || (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month))) {
@@ -609,8 +610,9 @@
                         $("#dateSlider").append(tickEl).ready(function () {
                             if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
                                 $("#tickLabel" + timelineDateObj.year + '-' + timelineDateObj.month).remove();
+                            } else {
+                                prevTickEl = tickEl;
                             }
-                            prevTickEl = tickEl;
                         });
                     }
 
