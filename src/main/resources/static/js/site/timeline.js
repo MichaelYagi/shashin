@@ -586,7 +586,7 @@
                             'width': '35px',
                             'right': '15px',
                             'position': 'absolute',
-                            'top': (i===0 ? (i / dateList.length * 100)-1 : (i / dateList.length * 100)-2) + '%'
+                            'top': (i / dateList.length * 100)-0.5 + '%'
                         });
 
                         $("#dateSlider").append(el);
@@ -607,7 +607,7 @@
                             'width': '10px',
                             'right': '15px',
                             'position': 'absolute',
-                            'top': (i===0 ? (i / dateList.length * 100)-1 : (i / dateList.length * 100)-2) + '%'
+                            'top': (i / dateList.length * 100)-0.5 + '%'
                         });
 
                         $("#dateSlider").append(tickEl);
@@ -634,7 +634,7 @@
                         'right': '0px',
                         // 'background-color': 'grey',
                         'position': 'absolute',
-                        'top': (i===0 ? (i / dateList.length * 100)-1 : (i / dateList.length * 100)-2) + '%'
+                        'top': (i / dateList.length * 100) + '%'
                     });
 
                     $(sliderEl).append(sliderTooltip);
