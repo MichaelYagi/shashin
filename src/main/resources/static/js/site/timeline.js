@@ -538,7 +538,7 @@
         return timelineSettings.successMidMsg;
     }
 
-    timelineSettings.initializeTimelineSlider = function (dateList, mediaTypeFilter) {
+    timelineSettings.initializeTimelineSlider = async function (dateList, mediaTypeFilter) {
         if (dateList.length > 0) {
             // Tooltip for handle
             const handleTooltip = $('<span class="badge bg-light text-dark" id="tooltip" />').css({
