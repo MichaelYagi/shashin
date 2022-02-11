@@ -49,6 +49,20 @@ $("#saveBatchMetadata").click(function (e) {
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
 
+    const metadataIds = JSON.parse($("#batchMetadataIds").val());
+
+    const metadataChangeMap = {};
+    if ($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "") {
+        for (const index in metadataIds) {
+            const metadataId = metadataIds[index];
+
+            shashin.getMetadata(metadataId).then(function (metadataObj) {
+                metadataChangeMap[metadataId] = parseInt(metadataObj.year) !== parseInt($("#yearTakenBatchData").val()) ||
+                    parseInt(metadataObj.month) !== parseInt($("#monthTakenBatchData").val());
+            });
+        }
+    }
+
     if (Util.validateMetadataInputs(
         $("#dayTakenBatchData").val(),
         $("#monthTakenBatchData").val(),
@@ -167,32 +181,13 @@ $("#saveBatchMetadata").click(function (e) {
                         }
                     }
 
-                    const metadataIds = JSON.parse($("#batchMetadataIds").val());
                     for (const index in metadataIds) {
                         const metadataId = metadataIds[index];
 
                         if ($("#image" + metadataId).length > 0) {
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
-                            // Update tag
-                            let takenDateUpdated = false;
-
                             shashin.getMetadata(metadataId).then(function (metadataObj) {
-                                if (($("#yearTakenBatchData").val().trim() !== "" && parseInt(metadataObj.year) !== parseInt($("#yearTakenBatchData").val())) ||
-                                    ($("#monthTakenBatchData").val().trim() !== "" && parseInt(metadataObj.month) !== parseInt($("#monthTakenBatchData").val())) ||
-                                    ($("#dayTakenBatchData").val().trim() !== "" && parseInt(metadataObj.day) !== parseInt($("#dayTakenBatchData").val()))) {
-                                    takenDateUpdated = true;
-                                    if ($("#yearTakenBatchData").val().trim() !== "") {
-                                        metadataObj.year = $("#yearTakenBatchData").val()
-                                    }
-                                    if ($("#monthTakenBatchData").val().trim() !== "") {
-                                        metadataObj.month = $("#monthTakenBatchData").val()
-                                    }
-                                    if ($("#dayTakenBatchData").val().trim() !== "") {
-                                        metadataObj.day = $("#dayTakenBatchData").val()
-                                    }
-                                }
-
                                 if ($("#cameraBatchData").val().trim() !== "") {
                                     metadataObj.camera = $("#cameraBatchData").val()
                                 }
@@ -226,7 +221,7 @@ $("#saveBatchMetadata").click(function (e) {
                                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                                     }
 
-                                    if (takenDateUpdated === true) {
+                                    if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true) {
                                         shashin.removeThumbnail(metadataId);
                                     }
                                 } else {
@@ -244,7 +239,7 @@ $("#saveBatchMetadata").click(function (e) {
                     $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
 
-                if ($("#offcanvasToc").length > 0) {
+                if ($("#offcanvasToc").length > 0 && ($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "")) {
                     const offCanvasId = ($("#dayTakenBatchData").val() == null || $("#dayTakenBatchData").val() === "" || $("#monthTakenBatchData").val() == null || $("#monthTakenBatchData").val() === "" || $("#yearTakenBatchData").val() == null || $("#yearTakenBatchData").val() == "") ?
                         "offcanvas_undated" : "offcanvas_" + $("#yearTakenBatchData").val() + '-' + $("#monthTakenBatchData").val() + '-' + $("#dayTakenBatchData").val();
                     shashin.refreshTimeline($("#mediaTypeFilter").val(), offCanvasId);

@@ -55,6 +55,14 @@ $("#saveMetadata").click(function (e) {
 
     timelineModal.closeTagPeopleDropdown(metadataId);
 
+    let takenDateUpdated = false;
+    shashin.getMetadata(metadataId).then(function (metadataObj) {
+        if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
+            parseInt(metadataObj.month) !== parseInt($("#monthTaken").val())) {
+            takenDateUpdated = true;
+        }
+    });
+
     if (Util.validateMetadataInputs(
         $("#dayTaken").val(),
         $("#monthTaken").val(),
@@ -185,13 +193,7 @@ $("#saveMetadata").click(function (e) {
                     // window.top.location = window.top.location
 
                     // Update tag
-                    let takenDateUpdated = false;
                     shashin.getMetadata(metadataId).then(function (metadataObj) {
-                        if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
-                            parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
-                            parseInt(metadataObj.day) !== parseInt($("#dayTaken").val())) {
-                            takenDateUpdated = true;
-                        }
                         metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
                         metadataObj.year = $("#yearTaken").val()
                         metadataObj.month = $("#monthTaken").val()
@@ -210,7 +212,7 @@ $("#saveMetadata").click(function (e) {
                         metadataObj.albumlist = $("#albumnames").val()
                         metadataObj.hidden = $("#hidden").prop("checked")
 
-                        if ($("#offcanvasToc").length > 0) {
+                        if ($("#offcanvasToc").length > 0 && takenDateUpdated === true) {
                             const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
                                 "offcanvas_undated" : "offcanvas_" + metadataObj.year + '-' + metadataObj.month + '-' + metadataObj.day;
                             shashin.refreshTimeline($("#mediaTypeFilter").val(), offCanvasId);
