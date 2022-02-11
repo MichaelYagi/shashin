@@ -78,9 +78,9 @@ body {
   top: 62px;
   bottom:0;
   z-index: 1000;
-  min-height: 95%;
-  max-height: 95%;
-  height: 95%;
+  min-height: 94%;
+  max-height: 94%;
+  height: 94%;
   /*overflow: auto;*/
   right: 0;
 }
