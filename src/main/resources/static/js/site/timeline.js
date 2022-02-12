@@ -548,7 +548,7 @@
             // Tooltip for handle
             const handleTooltip = $('<span class="badge bg-light text-dark" id="tooltip" />').css({
                 position: 'absolute',
-                right: 12,
+                right: 17,
                 zIndex: 2000
             }).hide();
 
@@ -579,8 +579,8 @@
                 }
             }).find(".ui-slider-handle").append(handleTooltip).hover(function () {
                 handleTooltip.show();
-            }, function () {
-                handleTooltip.hide();
+            // }, function () {
+            //     handleTooltip.hide();
             });
 
             // Render ticks
