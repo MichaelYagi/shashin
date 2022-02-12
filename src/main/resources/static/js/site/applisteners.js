@@ -167,3 +167,19 @@ $("#albumAppToolsRestore").click(function(e) {
 
     return false;
 });
+
+if (window.location.href.indexOf("/timeline/video") > -1) {
+    $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video").addClass("bi-camera-video-off");
+} else if (window.location.href.indexOf("/timeline") > -1) {
+    $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video-off").addClass("bi-camera-video-off");
+}
+
+$("#timelineMediaTypeToggle").click(function(e) {
+    e.preventDefault();
+
+    if (window.location.href.indexOf("/timeline/video") > -1) {
+        window.location.replace("/timeline");
+    } else {
+        window.location.replace("/timeline/video");
+    }
+});
