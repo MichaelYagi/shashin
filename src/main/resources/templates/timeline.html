@@ -180,90 +180,9 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        shashin.setLightGalleryElement('infinite-scroll-gallery');
-        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
-
-        let topScroll = true;
-        let topOfPage = true;
-        let scrollTimer;
-
         /*<![CDATA[*/
-        const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
-        timelineSettings.timelineDates = /*[[${metadataDates}]]*/ [];
+        timelineSettings.init(/*[[${mediaTypeFilter}]]*/ 'all', /*[[${metadataDates}]]*/ []);
         /*]]>*/
-
-        // Initialize
-        if (Util.isMobile() === false) {
-            timelineSettings.initializeTimelineSlider(mediaTypeFilter);
-            $("#timelineTocToggle").hide();
-        }
-
-        if ($('.scrollspy').length > 0) {
-            const firstElem = $('.scrollspy')[0];
-            const elementsInViewport = $(".scrollspy").withinviewport();
-
-            timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
-            timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
-            timelineSettings.setScrollSpyActive($(firstElem));
-            timelineSettings.reinitLightGalleryInstance();
-        } else {
-            timelineSettings.enableScrollSpy = false;
-        }
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
-
-        $(window).bind("scrollStop", function() {
-            $("#dateSlider").hide();
-            timelineSettings.reinitLightGalleryInstance();
-        });
-
-        // Scroll event handler
-        const scrollHandler = function (e) {
-            let st = $(e.target).scrollTop();
-
-            if (st === 0) {
-                topScroll = true;
-            }
-
-            $("#dateSlider").show();
-
-            // Hack to prevent infinite scroll upwards and throttle scrolling
-            if (topScroll === true && topOfPage === false) {
-                document.getElementById("container").scrollBy({top: 1});
-                if (document.getElementsByTagName("MAIN").length > 0) {
-                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-                }
-            }
-
-            const firstDate = $("#offcanvasTocBody div").children().first().attr("id").split("offcanvas_")[1];
-            const elementsInViewport = $(".scrollspy").withinviewport()
-            topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
-
-            // Scroll to the timeline TOC
-            if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
-                timelineSettings.scrollToTimelineToc(elementsInViewport);
-            }
-
-            if (timelineSettings.enableScrollSpy === true) {
-                topScroll = false;
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
-
-                $(".bi-play-circle").css("visibility", "hidden");
-                $(".mediaLink").unbind('click');
-                clearTimeout(scrollTimer);
-                scrollTimer = setTimeout(function() {
-                    $(window).trigger("scrollStop");
-                }, 1000);
-            }
-        };
-        $("#container").on('scroll', scrollHandler);
-        //$("main").on('scroll', scrollHandler);
-
-        $("#offcanvasToc").on('show.bs.offcanvas', function () {
-            if (timelineSettings.enableScrollSpy === true) {
-                timelineSettings.scrollToTimelineToc($(".scrollspy").withinviewport());
-            }
-        });
     });
 </script>
 </body>
