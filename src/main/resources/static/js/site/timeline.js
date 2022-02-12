@@ -644,7 +644,7 @@
                         'right': '0px',
                         // 'background-color': 'grey',
                         'position': 'absolute',
-                        'top': (i / dateList.length * 100) + '%'
+                        'top': (i / dateList.length * 100)-0.5 + '%'
                     });
 
                     $(sliderEl).append(sliderTooltip);
