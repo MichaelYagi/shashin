@@ -43,8 +43,6 @@
         let topOfPage = true;
         let scrollTimer;
 
-
-
         // Initialize
         if (Util.isMobile() === false) {
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
@@ -806,7 +804,6 @@
                     }
                 }
             }
-
 
             // Render above visibleContainers going from bottom up
             let prevDate = "";
