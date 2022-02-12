@@ -151,13 +151,6 @@
                 }
             }, closeTimeout);
         }
-
-        // shashin.getLightGallery().refresh();
-        //
-        // shashin.getLightGallery().destroy();
-        // setTimeout(() => {
-        //     shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
-        // }, 500);
     }
 
     let prevElements = null;
@@ -211,7 +204,7 @@
                     if (Util.isMobile() === false) {
                         timelineDates.forEach(function (timelineDate, i) {
                             if (id === timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day) {
-                                $("#dateSlider").slider("option", "value", timelineDates.length - i);
+                                $("#dateSlider").slider("option", "value", timelineDates.length - i - 1);
                                 return false;
                             }
                         });
@@ -345,22 +338,6 @@
                     }
                 }
             }
-
-            // Remove elements not visible in viewport
-            // $('section').each(function (index, element) {
-            //     shashin.printMessageToConsole(element.id + " checking to remove beginning");
-            //     if ($("#" + element.id).withinviewport().length === 0 &&
-            //         $("#br" + element.id).withinviewport().length === 0 &&
-            //         $("#row" + element.id).withinviewport().length === 0 &&
-            //         $("#amp_" + element.id).withinviewport().length === 0 &&
-            //         $("#tail_" + element.id).withinviewport().length === 0 &&
-            //         $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0
-            //         //&& $("footer").withinviewport().length === 0
-            //     ) {
-            //         shashin.printMessageToConsole(element.id + " removed beginning");
-            //         Util.removeDateGallery(element.id);
-            //     }
-            // });
         }
 
         $("#spinner_top").css("display", "none");
@@ -672,6 +649,8 @@
             let prevTickEl = null;
             for (let i = 0; i < dateList.length; i++) {
                 const timelineDateObj = dateList[i];
+                const tickTopMargin = (i / dateList.length * 100)-0.5;
+
                 if (timelineDateObj) {
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
                     if (i === 0 || i > 0 && dateList[i - 1].year !== timelineDateObj.year) {
@@ -680,7 +659,7 @@
                             'width': '35px',
                             'right': '15px',
                             'position': 'absolute',
-                            'top': (i / dateList.length * 100)-0.5 + '%'
+                            'top': tickTopMargin + '%'
                         });
 
                         $("#dateSlider").append(el);
@@ -701,7 +680,7 @@
                             'width': '10px',
                             'right': '15px',
                             'position': 'absolute',
-                            'top': (i / dateList.length * 100)-0.5 + '%'
+                            'top': tickTopMargin + '%'
                         });
 
                         $("#dateSlider").append(tickEl);
@@ -728,7 +707,7 @@
                         'right': '0px',
                         // 'background-color': 'grey',
                         'position': 'absolute',
-                        'top': (i / dateList.length * 100)-0.5 + '%'
+                        'top': tickTopMargin + '%'
                     });
 
                     $(sliderEl).append(sliderTooltip);
@@ -756,7 +735,7 @@
 
     timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter) {
         //e.preventDefault();
-
+console.log(timelineSettings.timelineDates)
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
 
@@ -773,6 +752,7 @@
             // Render below visibleContainers going from top down
             const timelineDates = timelineSettings.timelineDates;
             let currentDate = anchor;
+            const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
             const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
             for (const [index, timelineDate] of timelineDates.entries()) {
@@ -808,14 +788,14 @@
             // Render above visibleContainers going from bottom up
             let prevDate = "";
             currentDate = anchor;
-            const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
-            for (const [index, timelineDate] of timelineDates.slice().reverse().entries()) {
+            const timelineDatesReverse = timelineDates.slice().reverse();
+            for (const [index, timelineDate] of timelineDatesReverse.entries()) {
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
                     if ($("#" + currentDate).length === 0) {
                         // Render currentDate
-                        const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+                        const anchorPoint = timelineDatesReverse[index - 2].year + "-" + timelineDatesReverse[index - 2].month + "-" + timelineDatesReverse[index - 2].day;
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
