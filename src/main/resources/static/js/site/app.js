@@ -517,7 +517,7 @@
                         html += '<a id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\');" href="#'+year+'-'+month+'-'+day+'">'+dateObj.format("mmm yyyy")+'</a>';
                     }
 
-                    if (index === metadataDates.length-1 || (index > 0 && index+1 < metadataDates.length-1 && metadataDates[index+1].year !== year)) {
+                    if (index > 0 && index < metadataDates.length-1 && metadataDates[index+1].year !== year) {
                         html += "</div><br>";
                     }
                 }
