@@ -169,9 +169,9 @@ $("#albumAppToolsRestore").click(function(e) {
 });
 
 if (window.location.href.indexOf("/timeline/video") > -1) {
-    $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video").addClass("bi-camera-video-off");
+    $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video").addClass("bi-camera-video-fill");
 } else if (window.location.href.indexOf("/timeline") > -1) {
-    $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video-off").addClass("bi-camera-video-off");
+    $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video-fill").addClass("bi-camera-video");
 }
 
 $("#timelineMediaTypeToggle").click(function(e) {
