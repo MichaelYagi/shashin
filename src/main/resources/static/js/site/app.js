@@ -18,7 +18,7 @@
     }
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description) {
-        $("#spinner").css("display", "none");
+        $("#spinner").hide();
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
         if (xhr.status === 403 || xhr.status === 401) {
             $(location).prop('href', '/users/login');
@@ -875,36 +875,36 @@
         shashin.printMessageToConsole(metadataIdArray);
         const index = metadataIdArray.indexOf(metadata.id);
         if (index > -1) {
-            $("#tntl" + metadata.id).css("display", "block");
+            $("#tntl" + metadata.id).show();
             $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
             $("#image" + metadata.id).css("opacity", opaque);
-            $("#tncentered" + metadata.id).css("display", "none");
-            $("#tnbr" + metadata.id).css("display", "none");
-            $("#tnbl" + metadata.id).css("display", "none");
+            $("#tncentered" + metadata.id).hide();
+            $("#tnbr" + metadata.id).hide();
+            $("#tnbl" + metadata.id).hide();
         }
 
         $("#select" + metadata.id).click(function (e) {
             e.preventDefault();
 
             if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                $("#tntl" + metadata.id).css("display", "block");
+                $("#tntl" + metadata.id).show();
                 $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                 $("#image" + metadata.id).css("opacity", opaque);
-                //$("#tntr" + metadata.id).css("display", "none");
-                $("#tncentered" + metadata.id).css("display", "none");
-                $("#tnbr" + metadata.id).css("display", "none");
-                $("#tnbl" + metadata.id).css("display", "none");
+                //$("#tntr" + metadata.id).hide();
+                $("#tncentered" + metadata.id).hide();
+                $("#tnbr" + metadata.id).hide();
+                $("#tnbl" + metadata.id).hide();
                 shashin.addToMetadataIdList(metadata.id);
                 shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
                 shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
             } else {
-                $("#tntl" + metadata.id).css("display", "block");
+                $("#tntl" + metadata.id).show();
                 $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                 $("#image" + metadata.id).css("opacity", opaque);
-                $("#tntr" + metadata.id).css("display", "block");
-                $("#tncentered" + metadata.id).css("display", "block");
-                $("#tnbr" + metadata.id).css("display", "block");
-                $("#tnbl" + metadata.id).css("display", "block");
+                $("#tntr" + metadata.id).show();
+                $("#tncentered" + metadata.id).show();
+                $("#tnbr" + metadata.id).show();
+                $("#tnbl" + metadata.id).show();
                 shashin.removeFromMetadataIdList(metadata.id);
                 shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                 shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
@@ -913,13 +913,16 @@
             metadataIdArray = shashin.getMetdataIdList();
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-                $("#appSearch").css("display", "none");
+                $("#appSearch").hide();
                 if (view === "album" || view === "favorites" || view === "trash") {
-                    $("#albumAppTools").css("display", "block");
+                    $("#albumAppTools").show();
                 } else if (view === "timeline" || view === "recent" || view === "folder") {
-                    $("#timelineAppTools").css("display", "block");
+                    $("#timelineAppTools").show();
+                    if (view === "timeline") {
+                        $("#timelineTools").hide();
+                    }
                 } else if (view === "matches" || view === "person") {
-                    $("#matchesAppTools").css("display", "block");
+                    $("#matchesAppTools").show();
                 }
 
                 // Hide all center and bottom left icons
@@ -928,10 +931,13 @@
                 //$('.thumbnail-tr').hide();
                 $('.thumbnail-centered').hide();
             } else {
-                $("#appSearch").css("display", "block");
-                $("#timelineAppTools").css("display", "none");
-                $("#albumAppTools").css("display", "none");
-                $("#matchesAppTools").css("display", "none");
+                $("#appSearch").show();
+                $("#timelineAppTools").hide();
+                $("#albumAppTools").hide();
+                $("#matchesAppTools").hide();
+                if (view === "timeline") {
+                    $("#timelineTools").show();
+                }
             }
 
             const metadataList = shashin.getMetdataIdList();
@@ -952,22 +958,22 @@
             // Fill top left icon when clicking anywhere on thumbnail
             if ($('.bi-circle-fill')[0] || metadataIdArray.length > 0) {
                 if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
-                    $("#tntl" + metadata.id).css("display", "block");
+                    $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
                     $("#image" + metadata.id).css("opacity", opaque);
-                    $("#tncentered" + metadata.id).css("display", "none");
-                    $("#tnbr" + metadata.id).css("display", "none");
-                    $("#tnbl" + metadata.id).css("display", "none");
+                    $("#tncentered" + metadata.id).hide();
+                    $("#tnbr" + metadata.id).hide();
+                    $("#tnbl" + metadata.id).hide();
                     shashin.addToMetadataIdList(metadata.id);
                     shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
                 } else {
-                    $("#tntl" + metadata.id).css("display", "block");
+                    $("#tntl" + metadata.id).show();
                     $("#tlicon" + metadata.id).addClass('bi-circle').removeClass('bi-circle-fill');
                     $("#image" + metadata.id).css("opacity", opaque);
-                    $("#tncentered" + metadata.id).css("display", "block");
-                    $("#tnbr" + metadata.id).css("display", "block");
-                    $("#tnbl" + metadata.id).css("display", "block");
+                    $("#tncentered" + metadata.id).show();
+                    $("#tnbr" + metadata.id).show();
+                    $("#tnbl" + metadata.id).show();
                     shashin.removeFromMetadataIdList(metadata.id);
                     shashin.removeFromMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.removeFromMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
@@ -977,13 +983,16 @@
             metadataIdArray = shashin.getMetdataIdList();
 
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-                $("#appSearch").css("display", "none");
+                $("#appSearch").hide();
                 if (view === "album" || view === "favorites" || view === "trash") {
-                    $("#albumAppTools").css("display", "block");
+                    $("#albumAppTools").show();
                 } else if (view === "timeline" || view === "recent" || view === "folder") {
-                    $("#timelineAppTools").css("display", "block");
+                    $("#timelineAppTools").show();
+                    if (view === "timeline") {
+                        $("#timelineTools").hide();
+                    }
                 } else if (view === "matches" || view === "person") {
-                    $("#matchesAppTools").css("display", "block");
+                    $("#matchesAppTools").show();
                 }
 
                 // Hide all center and bottom left icons
@@ -992,11 +1001,14 @@
                 //$('.thumbnail-tr').hide();
                 $('.thumbnail-centered').hide();
             } else {
-                $("#appSearch").css("display", "block");
+                $("#appSearch").show();
                 //$('.thumbnail-br').show();
-                $("#timelineAppTools").css("display", "none");
-                $("#albumAppTools").css("display", "none");
-                $("#matchesAppTools").css("display", "none");
+                $("#timelineAppTools").hide();
+                if (view === "timeline") {
+                    $("#timelineTools").show();
+                }
+                $("#albumAppTools").hide();
+                $("#matchesAppTools").hide();
             }
 
             let timelineSelectCount = $('.bi-circle-fill').length;
@@ -1015,12 +1027,12 @@
             const index = metadataIdArray.indexOf(metadata.id);
 
             $(this).css("opacity", 0.3);
-            $(this).siblings().css("display", "block");
+            $(this).siblings().show();
             if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill" || index > -1) {
-                $("#tncentered" + metadata.id).css("display", "none");
-                $("#tnbl" + metadata.id).css("display", "none");
-                $("#tnbr" + metadata.id).css("display", "none");
-                //$("#tntr" + metadata.id).css("display", "none");
+                $("#tncentered" + metadata.id).hide();
+                $("#tnbl" + metadata.id).hide();
+                $("#tnbr" + metadata.id).hide();
+                //$("#tntr" + metadata.id).hide();
             }
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
@@ -1034,11 +1046,11 @@
 
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
                 $(this).css("opacity", 1.0);
-                $(this).siblings(".thumbnail-tl").css("display", "none");
-                $(this).siblings(".thumbnail-bl").css("display", "none");
-                $(this).siblings(".thumbnail-centered").css("display", "none");
-                //$(this).siblings(".thumbnail-tr").css("display", "none");
-                $(this).siblings(".thumbnail-br").css("display", "none");
+                $(this).siblings(".thumbnail-tl").hide();
+                $(this).siblings(".thumbnail-bl").hide();
+                $(this).siblings(".thumbnail-centered").hide();
+                //$(this).siblings(".thumbnail-tr").hide();
+                $(this).siblings(".thumbnail-br").hide();
             } else {
                 if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                     $('.thumbnail-bl').hide();
@@ -1046,10 +1058,10 @@
                     //$('.thumbnail-tr').hide();
                     $('.thumbnail-br').hide();
                 }
-                $("#tncentered" + metadata.id).css("display", "none");
-                $("#tnbl" + metadata.id).css("display", "none");
-                //$("#tntr" + metadata.id).css("display", "none");
-                $("#tnbr" + metadata.id).css("display", "none");
+                $("#tncentered" + metadata.id).hide();
+                $("#tnbl" + metadata.id).hide();
+                //$("#tntr" + metadata.id).hide();
+                $("#tnbr" + metadata.id).hide();
             }
         });
 
@@ -1063,11 +1075,11 @@
             metadataIdArray = shashin.getMetdataIdList();
 
             $('.bi-play-circle').css("color", "midnightblue");
-            $(this).css("display", "block");
-            $(this).siblings(".thumbnail-tl").css("display", "block");
-            $(this).siblings(".thumbnail-bl").css("display", "block");
-            $(this).siblings(".thumbnail-br").css("display", "block");
-            $(this).siblings(".thumbnail-tr").css("display", "block");
+            $(this).show();
+            $(this).siblings(".thumbnail-tl").show();
+            $(this).siblings(".thumbnail-bl").show();
+            $(this).siblings(".thumbnail-br").show();
+            $(this).siblings(".thumbnail-tr").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
@@ -1077,11 +1089,11 @@
             }
         }, function () {
             $('.bi-play-circle').css("color", "lightgray");
-            $(this).css("display", "none");
-            $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-bl").css("display", "none");
-            $(this).siblings(".thumbnail-br").css("display", "none");
-            //$(this).siblings(".thumbnail-tr").css("display", "none");
+            $(this).hide();
+            $(this).siblings(".thumbnail-tl").hide();
+            $(this).siblings(".thumbnail-bl").hide();
+            $(this).siblings(".thumbnail-br").hide();
+            //$(this).siblings(".thumbnail-tr").hide();
             $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
 
@@ -1089,11 +1101,11 @@
             metadataIdArray = shashin.getMetdataIdList();
             const index = metadataIdArray.indexOf(metadata.id);
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill" && index <= -1) {
-                $(this).css("display", "block");
-                $(this).siblings(".thumbnail-centered").css("display", "block");
-                $(this).siblings(".thumbnail-tr").css("display", "block");
-                $(this).siblings(".thumbnail-br").css("display", "block");
-                $(this).siblings(".thumbnail-bl").css("display", "block");
+                $(this).show();
+                $(this).siblings(".thumbnail-centered").show();
+                $(this).siblings(".thumbnail-tr").show();
+                $(this).siblings(".thumbnail-br").show();
+                $(this).siblings(".thumbnail-bl").show();
                 $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
                 if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                     $('.thumbnail-bl').hide();
@@ -1104,24 +1116,24 @@
             }
         }, function () {
             if ($("#tlicon" + metadata.id).attr("class") !== "bi-circle-fill") {
-                $(this).css("display", "none");
+                $(this).hide();
                 $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
             } else {
                 $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             }
-            $(this).siblings(".thumbnail-centered").css("display", "none");
-            //$(this).siblings(".thumbnail-tr").css("display", "none");
-            $(this).siblings(".thumbnail-br").css("display", "none");
-            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).siblings(".thumbnail-centered").hide();
+            //$(this).siblings(".thumbnail-tr").hide();
+            $(this).siblings(".thumbnail-br").hide();
+            $(this).siblings(".thumbnail-bl").hide();
         });
 
         $("#tnbl" + metadata.id).hover(function () {
             metadataIdArray = shashin.getMetdataIdList();
-            $(this).css("display", "block");
-            $(this).siblings(".thumbnail-tl").css("display", "block");
-            $(this).siblings(".thumbnail-centered").css("display", "block");
-            $(this).siblings(".thumbnail-tr").css("display", "block");
-            $(this).siblings(".thumbnail-br").css("display", "block");
+            $(this).show();
+            $(this).siblings(".thumbnail-tl").show();
+            $(this).siblings(".thumbnail-centered").show();
+            $(this).siblings(".thumbnail-tr").show();
+            $(this).siblings(".thumbnail-br").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
@@ -1130,21 +1142,21 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
-            $(this).css("display", "none");
-            $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-centered").css("display", "none");
-            //$(this).siblings(".thumbnail-tr").css("display", "none");
-            $(this).siblings(".thumbnail-br").css("display", "none");
+            $(this).hide();
+            $(this).siblings(".thumbnail-tl").hide();
+            $(this).siblings(".thumbnail-centered").hide();
+            //$(this).siblings(".thumbnail-tr").hide();
+            $(this).siblings(".thumbnail-br").hide();
             $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
 
         $("#tnbr" + metadata.id).hover(function () {
             metadataIdArray = shashin.getMetdataIdList();
-            $(this).css("display", "block");
-            $(this).siblings(".thumbnail-tl").css("display", "block");
-            $(this).siblings(".thumbnail-centered").css("display", "block");
-            $(this).siblings(".thumbnail-tr").css("display", "block");
-            $(this).siblings(".thumbnail-bl").css("display", "block");
+            $(this).show();
+            $(this).siblings(".thumbnail-tl").show();
+            $(this).siblings(".thumbnail-centered").show();
+            $(this).siblings(".thumbnail-tr").show();
+            $(this).siblings(".thumbnail-bl").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
@@ -1153,21 +1165,21 @@
                 $('.thumbnail-br').hide();
             }
         }, function () {
-            $(this).css("display", "none");
-            $(this).siblings(".thumbnail-tl").css("display", "none");
-            $(this).siblings(".thumbnail-centered").css("display", "none");
-            //$(this).siblings(".thumbnail-tr").css("display", "none");
-            $(this).siblings(".thumbnail-bl").css("display", "none");
+            $(this).hide();
+            $(this).siblings(".thumbnail-tl").hide();
+            $(this).siblings(".thumbnail-centered").hide();
+            //$(this).siblings(".thumbnail-tr").hide();
+            $(this).siblings(".thumbnail-bl").hide();
             $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
         });
 
         $("#tntr" + metadata.id).hover(function () {
             metadataIdArray = shashin.getMetdataIdList();
-            $(this).css("display", "block");
-            $(this).siblings(".thumbnail-tl").css("display", "block");
-            $(this).siblings(".thumbnail-centered").css("display", "block");
-            $(this).siblings(".thumbnail-bl").css("display", "block");
-            $(this).siblings(".thumbnail-br").css("display", "block");
+            $(this).show();
+            $(this).siblings(".thumbnail-tl").show();
+            $(this).siblings(".thumbnail-centered").show();
+            $(this).siblings(".thumbnail-bl").show();
+            $(this).siblings(".thumbnail-br").show();
             $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
             if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
                 $('.thumbnail-bl').hide();
@@ -1177,10 +1189,10 @@
             }
         }, function () {
             if ($(this).siblings(".thumbnail-tl").find('.bi-circle-fill').length === 0) {
-                $(this).siblings(".thumbnail-tl").css("display", "none");
-                $(this).siblings(".thumbnail-centered").css("display", "none");
-                $(this).siblings(".thumbnail-bl").css("display", "none");
-                $(this).siblings(".thumbnail-br").css("display", "none");
+                $(this).siblings(".thumbnail-tl").hide();
+                $(this).siblings(".thumbnail-centered").hide();
+                $(this).siblings(".thumbnail-bl").hide();
+                $(this).siblings(".thumbnail-br").hide();
                 $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
             }
         });
@@ -1287,39 +1299,41 @@
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
-        $(".thumbnail-centered").css("display", "none");
-        //$(".thumbnail-tr").css("display", "none");
-        $(".thumbnail-br").css("display", "none");
-        $(".thumbnail-bl").css("display", "none");
-        $(".thumbnail-tl").css("display", "none");
+        $(".thumbnail-centered").hide();
+        //$(".thumbnail-tr").hide();
+        $(".thumbnail-br").hide();
+        $(".thumbnail-bl").hide();
+        $(".thumbnail-tl").hide();
         $(".photo-thumbnail-image").css("opacity", 1.0);
         $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
-        $("#appSearch").css("display", "block");
-        $("#timelineAppTools").css("display", "none");
-        $("#albumAppTools").css("display", "none");
-        $("#matchesAppTools").css("display", "none");
+        $("#appSearch").show();
+        $("#timelineAppTools").hide();
+        $("#timelineTools").show();
+        $("#albumAppTools").hide();
+        $("#matchesAppTools").hide();
     }
 
     shashin.matchingListeners = function () {
         $("#matchToolsDeselectAll").click(function(e) {
             e.preventDefault();
 
-            $(".thumbnail-centered").css("display", "none");
-            //$(".thumbnail-tr").css("display", "none");
-            $(".thumbnail-br").css("display", "none");
-            $(".thumbnail-bl").css("display", "none");
-            $(".thumbnail-tl").css("display", "none");
+            $(".thumbnail-centered").hide();
+            //$(".thumbnail-tr").hide();
+            $(".thumbnail-br").hide();
+            $(".thumbnail-bl").hide();
+            $(".thumbnail-tl").hide();
             $(".photo-thumbnail-image").css("opacity", 1.0);
             $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
 
-            $("#appSearch").css("display", "block");
-            $("#timelineAppTools").css("display", "none");
-            $("#albumAppTools").css("display", "none");
-            $("#matchesAppTools").css("display", "none");
+            $("#appSearch").show();
+            $("#timelineAppTools").hide();
+            $("#timelineTools").show();
+            $("#albumAppTools").hide();
+            $("#matchesAppTools").hide();
         })
 
-        $("#matchesAppTools").css("display", "none");
+        $("#matchesAppTools").hide();
 
         $("#matchToolsBatchEdit").click(function(e) {
             e.preventDefault();
