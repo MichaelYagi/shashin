@@ -934,7 +934,6 @@
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
             contentType: 'application/json; charset=utf-8',
             async: true,
-            cache: true,
             retries: shashin.ajaxRetries
         }
 
@@ -1102,7 +1101,6 @@
             url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
             contentType: 'application/json; charset=utf-8',
             async: true,
-            cache: true,
             retries: shashin.ajaxRetries
         }
 
