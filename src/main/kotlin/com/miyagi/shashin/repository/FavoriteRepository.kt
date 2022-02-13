@@ -2,6 +2,7 @@ package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
@@ -14,7 +15,9 @@ interface FavoriteRepository : CrudRepository<Favorite?, Int?> {
     fun findAllByUserIdAndOffsetAndLimit(@Param("userId") userId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Favorite?>?
     fun findAllByUserId(userId: Int?): MutableIterable<Favorite?>?
     fun findAllByMetadataIdAndUserId(metadataId: String?, userId: Int?): MutableIterable<Favorite?>?
+    @Cacheable("favoritesByMetadata")
     fun findAllByMetadataId(metadataId: String?): MutableIterable<Favorite?>?
+    @Cacheable("favoriteCountsByMetadata")
     fun countAllByMetadataId(metadataId: String): Int
     fun deleteByMetadataIdAndUserId(metadataId: String?, userId: Int?): Long
     fun deleteByUserId(userId: Int?): Long
