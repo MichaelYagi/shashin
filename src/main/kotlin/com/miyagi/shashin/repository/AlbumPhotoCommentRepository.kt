@@ -1,10 +1,11 @@
 package com.miyagi.shashin.repository
 
-import com.miyagi.shashin.model.AlbumComment
 import com.miyagi.shashin.model.AlbumPhotoComment
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
+import javax.transaction.Transactional
 
+@Transactional
 @Repository
 interface AlbumPhotoCommentRepository : CrudRepository<AlbumPhotoComment?, Int?> {
     fun deleteByCommentId(commentId: Int): Long
