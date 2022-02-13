@@ -46,7 +46,7 @@
         // Initialize
         if (Util.isMobile() === false) {
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
-            //$("#timelineTocToggle").hide();
+            $("#timelineTocToggle").hide();
         }
 
         if ($('.scrollspy').length > 0) {
