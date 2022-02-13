@@ -1257,6 +1257,7 @@ class TimelineController {
 
     @RequestMapping(value = ["/api/v1/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
+    @Secured("ROLE_ADMIN","ROLE_USER")
     fun getMetadata(model: Model, @PathVariable(required = true) id: String): String {
         return mapper.writeValueAsString(metadataRepository.findById(id).get())
     }
