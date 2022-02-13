@@ -887,7 +887,7 @@
             $("#offcanvasTocBody").find('.active').removeClass('active');
             const idArray = id.split("-");
 
-            const navElem = $('a[href^="#' + idArray[0] + "-" + idArray[1] + '"]');
+            const navElem = $('a[href^="#' + idArray[0] + '-' + idArray[1] + '-"]');
             navElem.addClass('active');
         }
     }
