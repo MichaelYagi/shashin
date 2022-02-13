@@ -46,7 +46,7 @@
         // Initialize
         if (Util.isMobile() === false) {
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
-            $("#timelineTocToggle").hide();
+            //$("#timelineTocToggle").hide();
         }
 
         if ($('.scrollspy').length > 0) {
@@ -735,7 +735,7 @@
 
     timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter) {
         //e.preventDefault();
-console.log(timelineSettings.timelineDates)
+
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
 
@@ -825,6 +825,8 @@ console.log(timelineSettings.timelineDates)
                 }
             }
 
+            timelineSettings.setScrollSpyActive(anchor);
+            timelineSettings.scrollToTimelineToc($(".scrollspy").withinviewport());
             timelineSettings.renderThumbnailsSimple($(".scrollspy").withinviewport(), mediaTypeFilter, timelineDates);
         }
     }
