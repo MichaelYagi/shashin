@@ -77,7 +77,7 @@
         }
 
         return await $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing timeline TOC")})
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting metadata")})
             .then(function(data)
             {
                 let ret = {};
