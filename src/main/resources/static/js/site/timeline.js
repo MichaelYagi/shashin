@@ -213,7 +213,7 @@
                 }
             });
 
-            if (Util.isChrome() === true) {
+            if (Util.isSafari() === false && Util.isFirefox() === false) {
                 timelineSettings.renderThumbnailsSimple(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                     if (msg === timelineSettings.success) {
                         // Set TOC active element
