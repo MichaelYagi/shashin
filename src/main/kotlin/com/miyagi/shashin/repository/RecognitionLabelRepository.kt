@@ -1,6 +1,5 @@
 package com.miyagi.shashin.repository
 
-import com.miyagi.shashin.model.AlbumPhotoCount
 import com.miyagi.shashin.model.RecognitionLabel
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository

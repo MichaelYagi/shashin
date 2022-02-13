@@ -1,14 +1,14 @@
 package com.miyagi.shashin.repository
 
-import com.miyagi.shashin.model.MetadataPeople
 import com.miyagi.shashin.model.RecognitionLabelId
 import com.miyagi.shashin.model.RecognitionLabelPhoto
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
 @Transactional
+@Repository
 interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto?, Int?> {
     fun countByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): Int
 
