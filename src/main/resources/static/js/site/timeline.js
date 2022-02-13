@@ -64,7 +64,9 @@
         $('[data-bs-toggle="tooltip"]').tooltip();
 
         $(window).bind("scrollStop", function() {
-            $("#dateSlider").hide();
+            if ($("#dateSliderWrapper:not(:hover)").length === 1) {
+                $("#dateSlider").hide();
+            }
             timelineSettings.reinitLightGalleryInstance();
         });
 
@@ -108,7 +110,6 @@
             }
         };
         $("#container").on('scroll', scrollHandler);
-        //$("main").on('scroll', scrollHandler);
 
         $("#offcanvasToc").on('show.bs.offcanvas', function () {
             if (timelineSettings.enableScrollSpy === true) {
