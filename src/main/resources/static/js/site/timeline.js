@@ -698,15 +698,17 @@
                     // Tooltip for month/year on slider
                     const sliderTooltip = $('<span class="badge bg-light text-dark" />').css({
                         position: 'absolute',
-                        right: 12,
+                        right: 15,
                         zIndex: 2000
                     }).hide();
 
                     sliderTooltip.text(Util.getShortMonths(timelineDateObj.month - 1) + ' ' + timelineDateObj.year);
 
                     const sliderEl = $('<span data-slider-id="' + timelineDateObj.year + '-' + timelineDateObj.month + '">&nbsp;</span>').css({
-                        'width': '70px',
+                        'width': '73px',
                         'right': '0px',
+                        'margin-right': '-3px',
+                        'cursor': 'default',
                         // 'background-color': 'grey',
                         'position': 'absolute',
                         'top': tickTopMargin + '%'
