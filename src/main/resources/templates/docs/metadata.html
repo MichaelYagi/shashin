@@ -8,6 +8,7 @@
         <ul class="section-nav">
             <li class="toc-entry toc-h2"><a href="#api-metadata">Metadata</a></li>
                 <ul>
+                    <li class="toc-entry toc-h4"><a href="#api-metadata">/api/v1/metadata/{metadataId}</a></li>
                     <li class="toc-entry toc-h4"><a href="#api-metadata-update">/api/v1/update/metadata/{metadataId}</a></li>
                     <li class="toc-entry toc-h4"><a href="#api-metadata-batchupdate">/api/v1/update/metadata/batch</a></li>
                 </ul>
@@ -20,6 +21,77 @@
 
         <p>Image or video <a href="#" data-bs-toggle="modal" data-bs-target="#propMetadataDocs">Metadata</a>.</p>
         <p>Roles: Admin</p>
+
+        <!-- /api/v1/metadata/{metadataId} -->
+        <p id="api-metadata" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>/api/v1/metadata/{metadataId}</code><a class="anchorjs-link " href="#api-metadata" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
+
+        <p>Get metadata.</p>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-api-metadata" role="button" aria-expanded="false" aria-controls="request-api-metadata">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-api-metadata">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>var</th>
+                    <th>type</th>
+                    <th>values</th>
+                    <th>required</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>metadataId</td>
+                    <td>string</td>
+                    <td>UUID</td>
+                    <td>&#10003;</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p>
+            <div class="alert alert-secondary">
+                <code>/api/v1/metadata/a9c7a06f-4868-37a8-a6d1-ffd72770a9c7</code>
+            </div>
+            </p>
+        </div>
+
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-api-metadata" role="button" aria-expanded="false" aria-controls="response-api-metadata">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-api-metadata">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>var</th>
+                    <th>type</th>
+                    <th>values</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td></td>
+                    <td>object</td>
+                    <td></td>
+                    <td><a href="#" data-bs-toggle="modal" data-bs-target="#propMetadataDocs">Metadata</a></td>
+                </tr>
+                </tbody>
+            </table>
+            <p>
+            <div class="alert alert-secondary">
+                <code>
+                    {"id":"a9c7a06f-4868-37a8-a6d1-ffd72770a9c7","path":"C:\\Users\\Michael\\Downloads\\Japan 2015\\IMG_20150328_102804.jpg","title":"IMG_20150328_102804.jpg","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102804.jpg_209.jpg","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102804.jpg_209.jpg","thumbnailSmallWidth":279,"thumbnailSmallHeight":209,"originalImageWidth":1600,"originalImageHeight":1200,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102804.jpg_centered.jpg","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102804.jpg_centered.jpg","thumbnailUrlOriginal":"/api/v1/image/a9c7a06f-4868-37a8-a6d1-ffd72770a9c7","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102804.jpg_mapmarker.jpg","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102804.jpg_mapmarker.jpg","folder":"/c/users/michael/downloads/japan 2015","videoUrl":null,"duration":null,"type":"image/jpeg","fileName":"IMG_20150328_102804.jpg","expectedExtension":"jpg","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2022,"month":1,"day":12,"time":"00:55:25","iso":null,"exposure":null,"fstopNumber":null,"focalLength":null,"camera":null,"lens":null,"quality":null,"compressionType":"Baseline","hidden":false,"addedAt":"2022-02-03 16:07:08","takenAt":"2022-01-12 00:55:25","createdAt":"2022-01-12 00:55:25","modifiedAt":"2021-09-19 21:14:11","lastAccessedAt":"2022-01-16 04:07:29"}
+                </code>
+            </div>
+            </p>
+        </div>
 
         <!-- /api/v1/update/metadata/{metadataId} -->
         <p id="api-metadata-update" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-primary">POST</span> <code>/api/v1/update/metadata/{metadataId}</code><a class="anchorjs-link " href="#api-metadata-update" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>

@@ -8,8 +8,10 @@
         <ul class="section-nav">
             <li class="toc-entry toc-h2"><a href="#api-timeline">Timeline</a></li>
             <ul>
-                <li class="toc-entry toc-h4"><a href="#api-timeline-taken">/api/v1/timeline</a></li>
+                <li class="toc-entry toc-h4"><a href="#api-timeline-taken-default">/api/v1/timeline</a></li>
                 <li class="toc-entry toc-h4"><a href="#api-timeline-taken-paged">/api/v1/timeline/{page}</a></li>
+                <li class="toc-entry toc-h4"><a href="#api-timeline-taken-bydate">/api/v1/timeline/mediatype/{mediaType}/date/{date}</a></li>
+                <li class="toc-entry toc-h4"><a href="#api-timeline-taken-bydate-metadata">/api/v1/timeline/metadata/{metadataId}</a></li>
             </ul>
             </li>
         </ul>
@@ -90,37 +92,13 @@
                         <td>favorites</td>
                         <td>object</td>
                         <td></td>
-                        <td>Array of Metadata ID: boolean</td>
-                    </tr>
-                    <tr>
-                        <td>albumList</td>
-                        <td>array</td>
-                        <td></td>
-                        <td>Array of album ID, album name, album cover art URL, album share URL</td>
-                    </tr>
-                    <tr>
-                        <td>recognitionLabels</td>
-                        <td>array</td>
-                        <td></td>
-                        <td>Array of person ID, person name</td>
-                    </tr>
-                    <tr>
-                        <td>labelPhotoMap</td>
-                        <td>object</td>
-                        <td></td>
-                        <td>Metadata ID: person string list</td>
+                        <td>Object of Metadata ID: favorite count and boolean</td>
                     </tr>
                     <tr>
                         <td>mediaTypeFilter</td>
                         <td>string</td>
                         <td>all/video</td>
                         <td>Return video & images or video only</td>
-                    </tr>
-                    <tr>
-                        <td>timeOffsets</td>
-                        <td>array</td>
-                        <td></td>
-                        <td>Array of time offsets</td>
                     </tr>
                     <tr>
                         <td>msg</td>
@@ -139,7 +117,7 @@
             <p>
                 <div class="alert alert-secondary">
                     <code>
-                        {"message":"","metadataList":[{"id":"9760a916-4d11-3d31-a1ff-21d0348b8647","path":"C:\\Users\\Michael\\Downloads\\shashintestimages\\SANY0068.JPG","title":"SANY0068.JPG","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_209.jpg","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_209.jpg","thumbnailSmallWidth":279,"thumbnailSmallHeight":209,"originalImageWidth":3456,"originalImageHeight":2592,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_centered.jpg","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_centered.jpg","thumbnailUrlOriginal":"/api/v1/image/9760a916-4d11-3d31-a1ff-21d0348b8647","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_mapmarker.jpg","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_mapmarker.jpg","folder":"/c/users/michael/downloads/shashintestimages","videoUrl":null,"duration":null,"type":"image/jpeg","fileName":"SANY0068.JPG","expectedExtension":"jpg","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2009,"month":7,"day":12,"time":"18:47:37","iso":200,"exposure":"1/30","fstopNumber":3.5,"focalLength":68,"camera":"SANYO Electric Co.,Ltd. CG9","lens":null,"quality":null,"compressionType":"Baseline","keywords":null,"hidden":false,"addedAt":"2021-12-20 21:38:11","takenAt":"2009-07-12 18:47:37","createdAt":"2009-07-12 18:47:37","modifiedAt":"2009-07-12 18:47:36","lastAccessedAt":"2021-12-18 16:52:05"}],"favorites":{},"albumList":[],"recognitionLabels":"","labelPhotoMap":{"9760a916-4d11-3d31-a1ff-21d0348b8647":""},"mediaTypeFilter":"all","timeOffsets":["-12:00","-11:00","-10:00","-09:30","-09:00","-07:00","-06:00","-05:00","-04:30","-04:00","-03:00","-02:00","-01:00","±00:00","+01:00","+02:00","+03:00","+04:00","+04:30","+05:00","+05:30","+05:45","+06:00","+06:30","+07:00","+08:00","+08:45","+09:00","+09:30","+10:00","+11:00","+11:30","+12:00","+13:00","+14:00"],"msg":"Results","status":"success"}
+                        {"message":"","metadataList":[{"id":"da4fad01-adce-3410-ae57-e4f594e6eed6","path":"C:\\Users\\Michael\\Downloads\\Japan 2015\\IMG_20150328_102833.jpg","title":"IMG_20150328_102833.jpg","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_209.jpg","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_209.jpg","thumbnailSmallWidth":157,"thumbnailSmallHeight":209,"originalImageWidth":1200,"originalImageHeight":1600,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_centered.jpg","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_centered.jpg","thumbnailUrlOriginal":"/api/v1/image/da4fad01-adce-3410-ae57-e4f594e6eed6","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_mapmarker.jpg","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_mapmarker.jpg","folder":"/c/users/michael/downloads/japan 2015","videoUrl":null,"duration":null,"type":"image/jpeg","fileName":"IMG_20150328_102833.jpg","expectedExtension":"jpg","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2022,"month":1,"day":12,"time":"23:26:55","iso":null,"exposure":null,"fstopNumber":null,"focalLength":null,"camera":null,"lens":null,"quality":null,"compressionType":"Baseline","hidden":false,"addedAt":"2022-02-13 12:53:07","takenAt":"2022-01-11 23:26:55","createdAt":"2022-01-11 23:26:55","modifiedAt":"2021-09-19 21:14:11","lastAccessedAt":"2022-02-13 22:54:17"},{"id":"948bfddb-8d3d-3104-aa15-51da6ad2813b","path":"C:\\Users\\Michael\\Downloads\\Japan 2015\\IMG_20150322_091750.jpg","title":"IMG_20150322_091750.jpg","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_209.jpg","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_209.jpg","thumbnailSmallWidth":279,"thumbnailSmallHeight":209,"originalImageWidth":1600,"originalImageHeight":1200,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_centered.jpg","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_centered.jpg","thumbnailUrlOriginal":"/api/v1/image/948bfddb-8d3d-3104-aa15-51da6ad2813b","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_mapmarker.jpg","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_mapmarker.jpg","folder":"/c/users/michael/downloads/japan 2015","videoUrl":null,"duration":null,"type":"image/jpeg","fileName":"IMG_20150322_091750.jpg","expectedExtension":"jpg","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2022,"month":1,"day":12,"time":"01:58:12","iso":null,"exposure":null,"fstopNumber":null,"focalLength":null,"camera":null,"lens":null,"quality":null,"compressionType":"Baseline","hidden":false,"addedAt":"2022-02-13 12:49:26","takenAt":"2022-01-12 01:58:12","createdAt":"2022-01-12 01:58:12","modifiedAt":"2021-09-19 21:14:11","lastAccessedAt":"2022-02-13 22:03:44"}],"favorites":{"da4fad01-adce-3410-ae57-e4f594e6eed6":{"count":1,"favorite":false}},"mediaTypeFilter":"all","msg":"Results","status":"success"}
                     </code>
                 </div>
             </p>
@@ -151,11 +129,11 @@
         <p>Get timeline data by <code>mediaType</code> and <code>date</code>.</p>
 
         <p>
-            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-timeline-taken-bydate" role="button" aria-expanded="false" aria-controls="request-timeline-taken-bydate">
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-api-timeline-taken-bydate" role="button" aria-expanded="false" aria-controls="request-api-timeline-taken-bydate">
                 Request
             </a>
         </p>
-        <div class="collapse" id="request-timeline-taken-bydate">
+        <div class="collapse" id="request-api-timeline-taken-bydate">
             <table class="table">
                 <thead>
                     <tr>
@@ -188,13 +166,12 @@
             </p>
         </div>
 
-
         <p>
-            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-timeline-taken-bydate" role="button" aria-expanded="false" aria-controls="response-timeline-taken-bydate">
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-api-timeline-taken-bydate" role="button" aria-expanded="false" aria-controls="response-api-timeline-taken-bydate">
                 Response
             </a>
         </p>
-        <div class="collapse" id="response-timeline-taken-bydate">
+        <div class="collapse" id="response-api-timeline-taken-bydate">
             <table class="table">
                 <thead>
                 <tr>
@@ -215,25 +192,7 @@
                     <td>favorites</td>
                     <td>object</td>
                     <td></td>
-                    <td>Array of Metadata ID: boolean</td>
-                </tr>
-                <tr>
-                    <td>albumList</td>
-                    <td>array</td>
-                    <td></td>
-                    <td>Array of album ID, album name, album cover art URL, album share URL</td>
-                </tr>
-                <tr>
-                    <td>recognitionLabels</td>
-                    <td>array</td>
-                    <td></td>
-                    <td>Array of person ID, person name</td>
-                </tr>
-                <tr>
-                    <td>labelPhotoMap</td>
-                    <td>object</td>
-                    <td></td>
-                    <td>Metadata ID: person string list</td>
+                    <td>Object of Metadata ID: favorite count and boolean</td>
                 </tr>
                 <tr>
                     <td>mediaTypeFilter</td>
@@ -264,7 +223,120 @@
             <p>
             <div class="alert alert-secondary">
                 <code>
-                    {"message":"","metadataList":[{"id":"9760a916-4d11-3d31-a1ff-21d0348b8647","path":"C:\\Users\\Michael\\Downloads\\shashintestimages\\SANY0068.JPG","title":"SANY0068.JPG","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_209.jpg","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_209.jpg","thumbnailSmallWidth":279,"thumbnailSmallHeight":209,"originalImageWidth":3456,"originalImageHeight":2592,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_centered.jpg","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_centered.jpg","thumbnailUrlOriginal":"/api/v1/image/9760a916-4d11-3d31-a1ff-21d0348b8647","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_mapmarker.jpg","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/SANY0068.JPG_mapmarker.jpg","folder":"/c/users/michael/downloads/shashintestimages","videoUrl":null,"duration":null,"type":"image/jpeg","fileName":"SANY0068.JPG","expectedExtension":"jpg","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2009,"month":7,"day":12,"time":"18:47:37","iso":200,"exposure":"1/30","fstopNumber":3.5,"focalLength":68,"camera":"SANYO Electric Co.,Ltd. CG9","lens":null,"quality":null,"compressionType":"Baseline","keywords":null,"hidden":false,"addedAt":"2021-12-20 21:38:11","takenAt":"2009-07-12 18:47:37","createdAt":"2009-07-12 18:47:37","modifiedAt":"2009-07-12 18:47:36","lastAccessedAt":"2021-12-18 16:52:05"}],"favorites":{},"albumList":[],"recognitionLabels":"","labelPhotoMap":{"9760a916-4d11-3d31-a1ff-21d0348b8647":""},"mediaTypeFilter":"all","timeOffsets":["-12:00","-11:00","-10:00","-09:30","-09:00","-07:00","-06:00","-05:00","-04:30","-04:00","-03:00","-02:00","-01:00","±00:00","+01:00","+02:00","+03:00","+04:00","+04:30","+05:00","+05:30","+05:45","+06:00","+06:30","+07:00","+08:00","+08:45","+09:00","+09:30","+10:00","+11:00","+11:30","+12:00","+13:00","+14:00"],"msg":"Results","status":"success"}
+                    {"message":"","metadataList":[{"id":"da4fad01-adce-3410-ae57-e4f594e6eed6","path":"C:\\Users\\Michael\\Downloads\\Japan 2015\\IMG_20150328_102833.jpg","title":"IMG_20150328_102833.jpg","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_209.jpg","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_209.jpg","thumbnailSmallWidth":157,"thumbnailSmallHeight":209,"originalImageWidth":1200,"originalImageHeight":1600,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_centered.jpg","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_centered.jpg","thumbnailUrlOriginal":"/api/v1/image/da4fad01-adce-3410-ae57-e4f594e6eed6","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_mapmarker.jpg","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150328_102833.jpg_mapmarker.jpg","folder":"/c/users/michael/downloads/japan 2015","videoUrl":null,"duration":null,"type":"image/jpeg","fileName":"IMG_20150328_102833.jpg","expectedExtension":"jpg","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2022,"month":1,"day":12,"time":"23:26:55","iso":null,"exposure":null,"fstopNumber":null,"focalLength":null,"camera":null,"lens":null,"quality":null,"compressionType":"Baseline","hidden":false,"addedAt":"2022-02-13 12:53:07","takenAt":"2022-01-11 23:26:55","createdAt":"2022-01-11 23:26:55","modifiedAt":"2021-09-19 21:14:11","lastAccessedAt":"2022-02-13 22:54:17"},{"id":"948bfddb-8d3d-3104-aa15-51da6ad2813b","path":"C:\\Users\\Michael\\Downloads\\Japan 2015\\IMG_20150322_091750.jpg","title":"IMG_20150322_091750.jpg","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_209.jpg","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_209.jpg","thumbnailSmallWidth":279,"thumbnailSmallHeight":209,"originalImageWidth":1600,"originalImageHeight":1200,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_centered.jpg","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_centered.jpg","thumbnailUrlOriginal":"/api/v1/image/948bfddb-8d3d-3104-aa15-51da6ad2813b","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_mapmarker.jpg","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_mapmarker.jpg","folder":"/c/users/michael/downloads/japan 2015","videoUrl":null,"duration":null,"type":"image/jpeg","fileName":"IMG_20150322_091750.jpg","expectedExtension":"jpg","timeZone":null,"lat":null,"lng":null,"placeName":null,"year":2022,"month":1,"day":12,"time":"01:58:12","iso":null,"exposure":null,"fstopNumber":null,"focalLength":null,"camera":null,"lens":null,"quality":null,"compressionType":"Baseline","hidden":false,"addedAt":"2022-02-13 12:49:26","takenAt":"2022-01-12 01:58:12","createdAt":"2022-01-12 01:58:12","modifiedAt":"2021-09-19 21:14:11","lastAccessedAt":"2022-02-13 22:03:44"}],"favorites":{"da4fad01-adce-3410-ae57-e4f594e6eed6":{"count":1,"favorite":false}},"mediaTypeFilter":"all","msg":"Results","status":"success"}
+                </code>
+            </div>
+            </p>
+        </div>
+
+        <!-- /api/v1/timeline/metadata/{metadataId} -->
+        <p id="api-timeline-taken-bydate-metadata" class="mt-4"><div style="font-size: x-large;"><span class="badge bg-success">GET</span> <code>/api/v1/timeline/metadata/{metadataId}</code><a class="anchorjs-link " href="#api-timeline-taken-bydate-metadata" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div></p>
+
+        <p>Get metadata, tagged people, album list and keyword list by <code>metadata ID</code>.</p>
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#request-api-timeline-taken-bydate-metadata" role="button" aria-expanded="false" aria-controls="request-api-timeline-taken-bydate-metadata">
+                Request
+            </a>
+        </p>
+        <div class="collapse" id="request-api-timeline-taken-bydate-metadata">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>var</th>
+                    <th>type</th>
+                    <th>values</th>
+                    <th>required</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>metadataId</td>
+                    <td>string</td>
+                    <td>UUID</td>
+                    <td>&#10003;</td>
+                </tr>
+                </tbody>
+            </table>
+
+            <p>
+            <div class="alert alert-secondary">
+                <code>/api/v1/timeline/metadata/948bfddb-8d3d-3104-aa15-51da6ad2813b</code>
+            </div>
+            </p>
+        </div>
+
+
+        <p>
+            <a class="btn btn-secondary" data-bs-toggle="collapse" href="#response-api-timeline-taken-bydate-metadata" role="button" aria-expanded="false" aria-controls="response-api-timeline-taken-bydate-metadata">
+                Response
+            </a>
+        </p>
+        <div class="collapse" id="response-api-timeline-taken-bydate-metadata">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>var</th>
+                    <th>type</th>
+                    <th>values</th>
+                    <th>description</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>metadata</td>
+                    <td>object</td>
+                    <td></td>
+                    <td>Array of <a href="#" data-bs-toggle="modal" data-bs-target="#propMetadataDocs">Metadata</a></td>
+                </tr>
+                <tr>
+                    <td>taggedPeopleList</td>
+                    <td>array</td>
+                    <td></td>
+                    <td>List of tagged people</td>
+                </tr>
+                <tr>
+                    <td>albumList</td>
+                    <td>array</td>
+                    <td></td>
+                    <td>List of albums metadata belongs to</td>
+                </tr>
+                <tr>
+                    <td>keywordList</td>
+                    <td>array</td>
+                    <td></td>
+                    <td>List of keywords for metadata</td>
+                </tr>
+                <tr>
+                    <td>allRecognitionLabels</td>
+                    <td>array</td>
+                    <td></td>
+                    <td>Array of people objects</td>
+                </tr>
+                <tr>
+                    <td>allAlbumList</td>
+                    <td>array</td>
+                    <td></td>
+                    <td>Array of album objects</td>
+                </tr>
+                <tr>
+                    <td>msg</td>
+                    <td>string</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>status</td>
+                    <td>string</td>
+                    <td>success/fail</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <p>
+            <div class="alert alert-secondary">
+                <code>
+                    {"metadata":{"id":"948bfddb-8d3d-3104-aa15-51da6ad2813b","path":"C:\\Users\\Michael\\Downloads\\Japan 2015\\IMG_20150322_091750.jpg","title":"IMG_20150322_091750.jpg","thumbnailPathSmall":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_209.jpg","thumbnailUrlSmall":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_209.jpg","thumbnailSmallWidth":279,"thumbnailSmallHeight":209,"originalImageWidth":1600,"originalImageHeight":1200,"thumbnailPathCentered":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_centered.jpg","thumbnailUrlCentered":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_centered.jpg","thumbnailUrlOriginal":"/api/v1/image/948bfddb-8d3d-3104-aa15-51da6ad2813b","mapMarkerPath":"C:/Users/Michael/Documents/development/shashin/sidecar_dev/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_mapmarker.jpg","mapMarkerUrl":"/api/v1/thumbnails/c/users/michael/downloads/japan 2015/IMG_20150322_091750.jpg_mapmarker.jpg","folder":"/c/users/michael/downloads/japan 2015","videoUrl":null,"duration":null,"type":"image/jpeg","fileName":"IMG_20150322_091750.jpg","expectedExtension":"jpg","timeZone":"+09:00","lat":"35.32288333333333336","lng":"139.403525","placeName":"茅ヶ崎市, 日本","year":2022,"month":1,"day":12,"time":"01:58:12","iso":null,"exposure":null,"fstopNumber":null,"focalLength":null,"camera":"LGE Nexus 5","lens":null,"quality":null,"compressionType":"Baseline","hidden":false,"addedAt":"2022-02-03 16:03:23","takenAt":"2022-01-12 01:58:12","createdAt":"2022-01-12 01:58:12","modifiedAt":"2021-09-19 21:14:11","lastAccessedAt":"2022-01-18 02:29:57"},"taggedPeopleList":["anon"],"albumList":["asdf"],"keywordList":["garden","boss baby","mom"],"allRecognitionLabels":[{"id":870,"name":"anon","createdAt":"2022-02-06 14:43:52","modifiedAt":"2022-02-06 14:43:52"}],"allAlbumList":[{"id":210,"name":"asdf","coverUrl":"/api/v1/thumbnails/c/users/michael/downloads/shashintestimages/R0000148.JPG_centered.jpg","shareUrl":"somelink","createdAt":"2022-01-23 15:23:17","modifiedAt":"2022-02-06 14:42:54"}]}
                 </code>
             </div>
             </p>
