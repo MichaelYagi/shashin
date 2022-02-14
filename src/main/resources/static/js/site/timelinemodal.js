@@ -58,7 +58,8 @@ $("#saveMetadata").click(function (e) {
     let takenDateUpdated = false;
     shashin.getMetadata(metadataId).then(function (metadataObj) {
         if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
-            parseInt(metadataObj.month) !== parseInt($("#monthTaken").val())) {
+            parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
+            parseInt(metadataObj.day) !== parseInt($("#dayTaken").val())) {
             takenDateUpdated = true;
         }
     });

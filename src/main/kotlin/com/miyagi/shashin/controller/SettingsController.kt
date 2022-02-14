@@ -18,6 +18,7 @@ import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.context.event.EventListener
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.InputStreamResource
@@ -658,7 +659,7 @@ class SettingsController {
         @RequestParam reindexFiles: Boolean
     ): String {
         resp["msg"] = "Nothing to see here"
-        
+
         alreadyScannedFilepaths.clear()
 
         if (deleteThread) {
@@ -682,6 +683,7 @@ class SettingsController {
         return mapper.writeValueAsString(resp)
     }
 
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     fun scanMediaDirectories(reindexFiles: Boolean): String {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir

@@ -10,6 +10,7 @@ import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -89,6 +90,7 @@ class TrashController {
     @RequestMapping(value = ["/trash/unhide"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     fun postUnhideMetadata(model: Model, @RequestBody requestBody: JsonNode): String {
         val trashMp = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (trashMp.containsKey("metadataIdList")) {

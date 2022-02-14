@@ -58,7 +58,8 @@ $("#saveBatchMetadata").click(function (e) {
 
             shashin.getMetadata(metadataId).then(function (metadataObj) {
                 metadataChangeMap[metadataId] = parseInt(metadataObj.year) !== parseInt($("#yearTakenBatchData").val()) ||
-                    parseInt(metadataObj.month) !== parseInt($("#monthTakenBatchData").val());
+                    parseInt(metadataObj.month) !== parseInt($("#monthTakenBatchData").val()) ||
+                    parseInt(metadataObj.day) !== parseInt($("#dayTakenBatchData").val());
             });
         }
     }

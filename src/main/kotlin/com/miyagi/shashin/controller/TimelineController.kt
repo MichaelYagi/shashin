@@ -12,6 +12,7 @@ import com.miyagi.shashin.util.TextUtils.Companion.timeOffsets
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -72,7 +73,7 @@ class TimelineController {
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
-    
+
     @RequestMapping(value = ["/timeline", "/timeline/{mediaType}"], method = [RequestMethod.GET])
     fun getTimelineMediaTypeByDate(model: Model,@PathVariable(required = false) mediaType: String?): String {
         return buildTimelineModel(model,mediaType)
@@ -365,6 +366,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/remove/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     fun removeMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -428,6 +430,7 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -787,6 +790,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/remove/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     fun removeBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
 //        println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -858,6 +862,7 @@ class TimelineController {
 
     @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
         // println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
