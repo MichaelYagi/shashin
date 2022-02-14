@@ -146,7 +146,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
     fun getTimelineMediaType(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
-        val response = buildTimelineData(model,mediaType,0, true)
+        val response = buildTimelineData(model,mediaType,0)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -160,7 +160,7 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}","/api/v1/timeline/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedTimeline(model: Model, @PathVariable page: Int,@PathVariable mediaType: String): String {
-        return mapper.writeValueAsString(buildTimelineData(model,mediaType,page,false))
+        return mapper.writeValueAsString(buildTimelineData(model,mediaType,page))
     }
 
     @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -170,10 +170,10 @@ class TimelineController {
         if (page != null) {
             pageValue = page
         }
-        return mapper.writeValueAsString(buildTimelineData(model,"all",pageValue,false))
+        return mapper.writeValueAsString(buildTimelineData(model,"all",pageValue))
     }
 
-    private fun buildTimelineData(model: Model,mediaTypeFilter: String,page: Int,isInitialRequest: Boolean): MutableMap<String, Any?> {
+    private fun buildTimelineData(model: Model,mediaTypeFilter: String,page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         var mediaType = "photo"
@@ -188,20 +188,9 @@ class TimelineController {
         response["msg"] = "Could not get results"
         response["status"] = "fail"
 
-        val favoritesMap = HashMap<String, Boolean>()
+        val favoritesMap = HashMap<String, HashMap<String, Any>>()
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
-            if (!isInitialRequest) {
-                val favorites = favoriteRepository.findAllByUserId(currentUserObj?.getId())
-                if (favorites != null) {
-                    for (favorite in favorites) {
-                        if (favorite != null) {
-                            favoritesMap[favorite.getMetadataId().toString()] = true
-                        }
-                    }
-                }
-            }
-
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
 
@@ -218,22 +207,26 @@ class TimelineController {
                 ).toMutableList()
             }
 
-//            val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
-//                metadataRepository.findTimelineAll().toMutableList()
-//            } else {
-//                metadataRepository.findTimelineAllByType(
-//                    mediaTypeFilter
-//                ).toMutableList()
-//            }
-            response["metadataList"] = metadataList
-
             if (metadataList.isNotEmpty()) {
                 response["message"] = ""
+                for (metadata in metadataList) {
+                    val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
+                    if (favorites != null) {
+                        for (favorite in favorites) {
+                            if (favorite != null) {
+                                favoritesMap[metadata.getId()] = hashMapOf(
+                                    "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
+                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
+                                )
 
-                if (!isInitialRequest) {
-                    response["favorites"] = favoritesMap
+                                if ((favorite.getUserId() == currentUserObj?.getId())) {
+                                    break
+                                }
+                            }
+                        }
+                    }
                 }
-
+                response["favorites"] = favoritesMap
             }
 
             response["metadataList"] = metadataList
