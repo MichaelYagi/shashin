@@ -1,6 +1,7 @@
 package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.*
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.PagingAndSortingRepository
 import org.springframework.data.repository.query.Param
@@ -54,6 +55,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Cacheable("allMetadataByDate")
    fun findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(year: Int?, month: Int?, day: Int?, hidden: Boolean?): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
@@ -62,6 +64,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByTypeOffsetAndLimit(@Param("type") type: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Cacheable("allMetadataByDateAndType")
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND year = :year AND month = :month AND day = :day AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC", nativeQuery = true)
    fun findAllByTypeAndYearAndMonthAndDay(@Param("type") type: String,@Param("year") year: Int?,@Param("month") month: Int?,@Param("day") day: Int?): MutableIterable<Metadata>
 
