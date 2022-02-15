@@ -756,7 +756,7 @@
     }
 
     timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter) {
-        //e.preventDefault();
+        e.preventDefault();
 
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
