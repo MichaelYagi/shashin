@@ -74,10 +74,10 @@
 
     if (scrollToTopButton.length > 0) {
         $("#container").on('scroll', function () {
-            shashin.showScrollToTop(this);
+            shashin.showScrollToTop($(this));
         });
         $("main").on('scroll', function () {
-            shashin.showScrollToTop(this);
+            shashin.showScrollToTop($(this));
         });
 
         scrollToTopButton.on("click",function () {
