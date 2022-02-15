@@ -137,6 +137,7 @@
                             let link;
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data["status"] === "success") {
+                                    document.body.style.opacity="0";
                                     let head = document.getElementsByTagName('head')[0];
                                     if (darkMode === true) {
                                         link = document.createElement('link');
@@ -153,6 +154,7 @@
                                         head.appendChild(link);
                                         $("LINK[href*='/css/bootstrap-night.min.css']").remove();
                                     }
+                                    document.body.style.opacity="100";
                                 }
                             }
                         });
