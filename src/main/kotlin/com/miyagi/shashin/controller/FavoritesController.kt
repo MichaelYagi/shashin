@@ -17,11 +17,9 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
+import java.text.SimpleDateFormat
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-import java.util.ArrayList
+import java.util.*
 import javax.transaction.Transactional
 
 @Suppress("UNCHECKED_CAST")
@@ -119,7 +117,6 @@ class FavoritesController {
             if (currentUserObj != null) {
                 favorite.setUserId(currentUserObj.getId())
                 favorite.setMetadataId(metadataId)
-                val now = LocalDateTime.now()
                 favorite.setModifiedAt(getCurrentTimestamp())
                 val favoriteObj = favoriteRepository.findByMetadataIdAndUserId(metadataId,currentUserObj.getId())
                 if (favoriteObj != null) {
@@ -140,9 +137,8 @@ class FavoritesController {
                 val admins = userRepository.findAllByAuthorityEquals(adminRole!!)
                 val metadata = metadataRepository.findById(metadataId)
                 val notificationObjList = mutableListOf<Notification>()
-                val sdtf = DateTimeFormatter
-                    .ofLocalizedTime(FormatStyle.LONG)
-                    .withZone(ZoneId.systemDefault())
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 for (admin in admins) {
                     if (admin.getId() != currentUserObj.getId()) {
                         val notificationObj = Notification()
@@ -152,7 +148,7 @@ class FavoritesController {
                         notificationObj.setMessage(
                             currentUserObj.getUsername() + " likes <a href='/api/v1/image/" + metadata.get()
                                 .getId() + "' target='_blank'>" + metadata.get()
-                                .getFileName() + "</a> on " + sdtf.format(now)
+                                .getFileName() + "</a> on " + sdtf.format(Date())
                         )
                         notificationObj.setFavoriteId(favorite.getId())
                         notificationObj.setUserId(admin.getId())

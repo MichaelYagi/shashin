@@ -21,14 +21,17 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import kotlin.collections.ArrayList
 
 
 @Component
@@ -142,10 +145,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     private fun notifyLogin(currentUserObj: User?) {
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
-        val sdtf = DateTimeFormatter
-            .ofLocalizedTime(FormatStyle.LONG)
-            .withZone(ZoneId.systemDefault())
-        val now = LocalDateTime.now()
+        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
 
         if (admins != null && currentUserObj != null) {
             val notificationObjList = mutableListOf<Notification>()
@@ -161,7 +162,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 } else {
                     notificationObj.setRead(false)
                 }
-                notificationObj.setMessage("$identity logged in at "+sdtf.format(now)+".")
+                notificationObj.setMessage("$identity logged in at "+sdtf.format(Date())+".")
                 notificationObjList.add(notificationObj)
             }
             if (notificationObjList.isNotEmpty()) {

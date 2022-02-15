@@ -28,6 +28,7 @@ import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.math.BigInteger
 import java.security.MessageDigest
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -166,7 +167,6 @@ class UserController {
         if (newUser != null) {
             val encodedPassword: String = bcrypt.encode(newUser.getPassword())
             newUser.setPassword(encodedPassword)
-            val now = LocalDateTime.now()
             newUser.setCreatedAt(getCurrentTimestamp())
             newUser.setModifiedAt(getCurrentTimestamp())
             newUser.setLoggedIn(false)
@@ -182,16 +182,15 @@ class UserController {
                 val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
                 if (admins != null) {
                     val notificationObjList = mutableListOf<Notification>()
-                    val sdtf = DateTimeFormatter
-                        .ofLocalizedTime(FormatStyle.LONG)
-                        .withZone(ZoneId.systemDefault())
+                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                    sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                     for (admin in admins) {
                         val notificationObj = Notification()
                         notificationObj.setUserId(admin.getId())
                         notificationObj.setCreatedAt(getCurrentTimestamp())
                         notificationObj.setModifiedAt(getCurrentTimestamp())
                         notificationObj.setRead(false)
-                        notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+sdtf.format(now)+" and is pending approval.")
+                        notificationObj.setMessage("<a href='/settings/users' target='_blank'>"+newUser.getUsername()+"</a> registered at "+sdtf.format(Date())+" and is pending approval.")
                         notificationObjList.add(notificationObj)
                     }
                     if (notificationObjList.isNotEmpty()) {

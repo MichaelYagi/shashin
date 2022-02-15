@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
 import javax.transaction.Transactional
 
 @Controller
@@ -68,8 +70,6 @@ class CommentsController {
             val currentUserObj = model.getAttribute("currentUser") as User?
 
             if (currentUserObj != null) {
-                val now = LocalDateTime.now()
-
                 // Insert into comments
                 val comment = Comment()
                 comment.setUserId(currentUserObj.getId())
@@ -90,9 +90,8 @@ class CommentsController {
                 val albumObj = albumRepository.findById(albumId)
                 val users = userRepository.findAll()
                 val notificationObjList = mutableListOf<Notification>()
-                val sdtf = DateTimeFormatter
-                    .ofLocalizedTime(FormatStyle.LONG)
-                    .withZone(ZoneId.systemDefault())
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
                 for (user in users) {
                     val notificationObj = Notification()
                     var createEntry = false
@@ -113,7 +112,7 @@ class CommentsController {
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
                             notificationObj.setRead(false)
-                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album <a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" on "+sdtf.format(now))
+                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album <a href='/albums' target='_blank'>"+albumObj.get().getName()+"</a> \""+commentText+"\" on "+sdtf.format(Date()))
                             notificationObjList.add(notificationObj)
                         }
                     }
@@ -147,8 +146,6 @@ class CommentsController {
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                val now = LocalDateTime.now()
-
                 // Insert into comments
                 val comment = Comment()
                 comment.setUserId(currentUserObj.getId())
@@ -171,10 +168,9 @@ class CommentsController {
                 val albumObj = albumRepository.findById(albumId)
                 val users = userRepository.findAll()
                 val notificationObjList = mutableListOf<Notification>()
-                val sdtf = DateTimeFormatter
-                    .ofLocalizedTime(FormatStyle.LONG)
-                    .withZone(ZoneId.systemDefault())
-                for (user in users) {
+                val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
+                    for (user in users) {
                     val notificationObj = Notification()
                     var createEntry = false
                     if (user != null && user.getId() != currentUserObj.getId()) {
@@ -195,7 +191,7 @@ class CommentsController {
                             notificationObj.setRead(false)
                             notificationObj.setCreatedAt(getCurrentTimestamp())
                             notificationObj.setModifiedAt(getCurrentTimestamp())
-                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" for photo <a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+sdtf.format(now))
+                            notificationObj.setMessage(currentUserObj.getUsername()+" commented on album "+albumObj.get().getName()+" for photo <a href='/album/"+albumObj.get().getId()+"' target='_blank'>"+metadataObj.get().getFileName()+"</a> \""+commentText+"\" on "+sdtf.format(Date()))
                             notificationObjList.add(notificationObj)
                         }
                     }
