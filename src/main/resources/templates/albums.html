@@ -49,6 +49,11 @@
                 </div>
             </th:block>
 
+            <!-- Back to top button -->
+            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+                <i class="bi-arrow-up-circle"></i>
+            </button>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
         </main>
     </div>
@@ -64,6 +69,15 @@
         $("#container").scrollTop(sessionStorage.scrollPos || 0)
     };
     window.onload = init;
+
+    const scrollToTopButton = $("#btn-back-to-top");
+
+    if (scrollToTopButton.length > 0) {
+        scrollToTopButton.on("click",function () {
+            $("main")[0].scrollTo({top: 0, behavior: 'smooth'});
+            $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
+        });
+    }
 </script>
 
 </body>
