@@ -73,6 +73,9 @@
     const scrollToTopButton = $("#btn-back-to-top");
 
     if (scrollToTopButton.length > 0) {
+        shashin.showScrollToTop($("main"));
+        shashin.showScrollToTop($("#container"));
+
         scrollToTopButton.on("click",function () {
             $("main")[0].scrollTo({top: 0, behavior: 'smooth'});
             $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
