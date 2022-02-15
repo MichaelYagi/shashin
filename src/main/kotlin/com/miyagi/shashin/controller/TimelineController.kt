@@ -209,23 +209,20 @@ class TimelineController {
 
             if (metadataList.isNotEmpty()) {
                 response["message"] = ""
-                for (metadata in metadataList) {
-                    val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
-                    if (favorites != null) {
-                        for (favorite in favorites) {
-                            if (favorite != null) {
-                                favoritesMap[metadata.getId()] = hashMapOf(
-                                    "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
-                                )
+                val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
+                if (favoriteCounts.count() > 0) {
+                    for (favoriteCount in favoriteCounts) {
+                        favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
+                            "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
+                            "count" to favoriteCount.getCount() as Any
+                        )
 
-                                if ((favorite.getUserId() == currentUserObj?.getId())) {
-                                    break
-                                }
-                            }
+                        if ((favoriteCount.getUserId() == currentUserObj?.getId())) {
+                            break
                         }
                     }
                 }
+
                 response["favorites"] = favoritesMap
             }
 
@@ -327,23 +324,20 @@ class TimelineController {
                     response["favorites"] = favoritesMap
 
                     if (!metadataOnly) {
-                        for (metadata in metadataList) {
-                            val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
-                            if (favorites != null) {
-                                for (favorite in favorites) {
-                                    if (favorite != null) {
-                                        favoritesMap[metadata.getId()] = hashMapOf(
-                                            "favorite" to (favorite.getUserId() == currentUserObj?.getId()),
-                                            "count" to favoriteRepository.countAllByMetadataId(metadata.getId())
-                                        )
+                        val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
+                        if (favoriteCounts.count() > 0) {
+                            for (favoriteCount in favoriteCounts) {
+                                favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
+                                    "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
+                                    "count" to favoriteCount.getCount() as Any
+                                )
 
-                                        if ((favorite.getUserId() == currentUserObj?.getId())) {
-                                            break
-                                        }
-                                    }
+                                if ((favoriteCount.getUserId() == currentUserObj?.getId())) {
+                                    break
                                 }
                             }
                         }
+
                         response["favorites"] = favoritesMap
                     }
                 }
