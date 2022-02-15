@@ -20,6 +20,8 @@ class User {
     private var loggedIn: Boolean? = false
     @NotBlank
     private var isAllowed: Boolean? = false
+    @NotBlank
+    private var darkMode: Boolean? = false
     private var authority: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
@@ -99,6 +101,14 @@ class User {
         this.isAllowed = isAllowed
     }
 
+    fun getDarkMode(): Boolean? {
+        return this.darkMode
+    }
+
+    fun setDarkMode(darkMode: Boolean?) {
+        this.darkMode = darkMode
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is User) return false
@@ -119,6 +129,7 @@ class User {
         map["authority"] = this.authority
         map["loggedIn"] = this.loggedIn
         map["isAllowed"] = this.isAllowed
+        map["darkMode"] = this.darkMode
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

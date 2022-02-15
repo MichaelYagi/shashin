@@ -351,6 +351,30 @@ class UserController {
         response.addCookie(cookie)
     }
 
+    @RequestMapping(value = ["/users/darkmode"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_ADMIN","ROLE_USER")
+    fun toggleDarkmode(model: Model, @RequestBody requestBody: JsonNode): String? {
+        val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+
+        resp["status"] = "fail"
+        resp["msg"] = "Darkmode not toggled"
+
+        if (userMap.containsKey("darkMode")) {
+            val darkMode = userMap["darkMode"].toBoolean()
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null) {
+                currentUserObj.setDarkMode(darkMode)
+                userRepository?.save(currentUserObj)
+                resp["status"] = "success"
+                resp["msg"] = "Darkmode toggled"
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
     @RequestMapping(value = ["/users/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN")

@@ -18,7 +18,13 @@
         <script src="/js/clipboard.min.js"></script>
         <script src="/js/bootstrap.min.js"></script>
         <script src="/js/date.format.js"></script>
-        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <th:block th:if="${currentUser.darkMode}">
+<!--            <meta name="color-scheme" content="dark">-->
+            <link href="/css/bootstrap-night.min.css" rel="stylesheet">
+        </th:block>
+        <th:block th:if="${!currentUser.darkMode}">
+            <link href="/css/bootstrap.min.css" rel="stylesheet">
+        </th:block>
         <link href="/css/bootstrap-icons.css" rel="stylesheet">
         <th:block th:if="${titleDescriptorLower == 'timeline'}">
             <link href="/css/jquery-ui.css" rel="stylesheet">
