@@ -134,27 +134,31 @@
 
                         $.ajax(ajaxParams)
                             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting search history")}).then(function (data) {
-                            let link;
                             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                                 if (data["status"] === "success") {
-                                    document.body.style.opacity="0";
-                                    let head = document.getElementsByTagName('head')[0];
+                                    let body = $("body");
+                                    let head = $("head");
+                                    body.css('visibility', 'hidden');
+                                    
                                     if (darkMode === true) {
-                                        link = document.createElement('link');
-                                        link.rel = 'stylesheet';
-                                        link.type = 'text/css';
-                                        link.href = "/css/bootstrap-night.min.css";
-                                        head.appendChild(link);
                                         $("LINK[href*='/css/bootstrap.min.css']").remove();
+                                        $('<link>',{
+                                            rel: 'stylesheet',
+                                            type: 'text/css',
+                                            href: '/css/bootstrap-night.min.css'
+                                        }).appendTo(head).ready(function () {
+                                            body.css('visibility', 'visible');
+                                        });
                                     } else {
-                                        link = document.createElement('link');
-                                        link.rel = 'stylesheet';
-                                        link.type = 'text/css';
-                                        link.href = "/css/bootstrap.min.css";
-                                        head.appendChild(link);
                                         $("LINK[href*='/css/bootstrap-night.min.css']").remove();
+                                        $('<link>',{
+                                            rel: 'stylesheet',
+                                            type: 'text/css',
+                                            href: '/css/bootstrap.min.css'
+                                        }).appendTo(head).ready(function () {
+                                            body.css('visibility', 'visible');
+                                        });
                                     }
-                                    document.body.style.opacity="100";
                                 }
                             }
                         });
