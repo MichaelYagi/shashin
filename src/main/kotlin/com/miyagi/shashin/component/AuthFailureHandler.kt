@@ -11,12 +11,14 @@ import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.stereotype.Component
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -44,12 +46,10 @@ class AuthFailureHandler : SimpleUrlAuthenticationFailureHandler() {
         val lastUserName: String = request?.getParameter("username") ?: ""
 
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
-        val sdtf = DateTimeFormatter
-            .ofLocalizedTime(FormatStyle.LONG)
-            .withZone(ZoneId.systemDefault())
-        val now = LocalDateTime.now()
+        val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+        sdtf.timeZone = TimeZone.getTimeZone(ZoneId.systemDefault())
 
-        val message = "User $lastUserName failed login at "+ sdtf.format(now)+"."
+        val message = "User $lastUserName failed login at "+ sdtf.format(Date())+"."
         val logger: Logger = Logger.getLogger(AuthFailureHandler::class.simpleName)
         logger.log(Level.WARNING, message)
 
