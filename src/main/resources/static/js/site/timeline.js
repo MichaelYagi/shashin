@@ -295,16 +295,38 @@
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
             const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-            let currentDateArr = currentDate.split("-");
-            let startingIndex = 0;
-            let timelineArr = timelineDates.reverse();
-            timelineArr.map(function(item, i) {
-                if (item.year === parseInt(currentDateArr[0]) && item.month === parseInt(currentDateArr[1]) && item.day === parseInt(currentDateArr[2])) {
-                    startingIndex = i;
-                }
-            })
+            let firstVisibleDateArr = $(firstVisibleContainer).attr("id").split("-");
+            let lastVisibleDateArr = $(lastVisibleContainer).attr("id").split("-");
 
-            for (let index = startingIndex; index < timelineArr.length; index ++) {
+            let startingIndexTop = 0;
+            let startingIndexBottom = 0;
+
+            let timelineDateArr = timelineDates;
+            const halfwayPoint = timelineDates.length/2;
+            let reversed = false;
+            if (Util.getDateObject(currentDate) < Util.getDateObject(timelineDates[halfwayPoint].year+"-"+timelineDates[halfwayPoint].month+"-"+timelineDates[halfwayPoint].day)) {
+                timelineDateArr = timelineDates.slice().reverse();
+                reversed = true;
+            }
+
+            for (let i = 0; i < timelineDateArr.length; i ++) {
+                if (timelineDateArr[i].year === parseInt(firstVisibleDateArr[0]) && timelineDateArr[i].month === parseInt(firstVisibleDateArr[1]) && timelineDateArr[i].day === parseInt(firstVisibleDateArr[2])) {
+                    startingIndexTop = i;
+                    if (reversed === true) {
+                        break;
+                    }
+                }
+
+                if (timelineDates[i].year === parseInt(lastVisibleDateArr[0]) && timelineDates[i].month === parseInt(lastVisibleDateArr[1]) && timelineDates[i].day === parseInt(lastVisibleDateArr[2])) {
+                    startingIndexBottom = i;
+                    if (reversed === false) {
+                        break;
+                    }
+                }
+            }
+
+            let timelineArr = timelineDates.reverse();
+            for (let index = startingIndexTop; index < timelineArr.length; index++) {
                 const timelineDate = timelineArr[index];
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
@@ -336,14 +358,9 @@
 
             // Render below visibleContainers going from top down
             currentDate = $(lastVisibleContainer).attr("id");
-            currentDateArr = currentDate.split("-");
             timelineArr = timelineDates.reverse();
-            timelineArr.map(function(item, i) {
-                if (item.year === parseInt(currentDateArr[0]) && item.month === parseInt(currentDateArr[1]) && item.day === parseInt(currentDateArr[2])) {
-                    startingIndex = i;
-                }
-            })
-            for (let index = startingIndex; index < timelineArr.length; index ++) {
+
+            for (let index = startingIndexBottom; index < timelineArr.length; index ++) {
                 const timelineDate = timelineArr[index];
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
