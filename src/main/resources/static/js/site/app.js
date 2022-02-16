@@ -471,6 +471,24 @@
         }
     }
 
+    shashin.activateScrollToTop = function() {
+        const scrollToTopButton = $("#btn-back-to-top");
+
+        if (scrollToTopButton.length > 0) {
+            $("#container").on('scroll', function () {
+                shashin.showScrollToTop($(this));
+            });
+            $("main").on('scroll', function () {
+                shashin.showScrollToTop($(this));
+            });
+
+            scrollToTopButton.on("click",function () {
+                $("main")[0].scrollTo({top: 0, behavior: 'smooth'});
+                $("#container")[0].scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+    }
+
     shashin.refreshTimeline = function (mediaTypeFilter,currentOffCanvasId) {
         const ajaxParams = {
             type: 'get',
