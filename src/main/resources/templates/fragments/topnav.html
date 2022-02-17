@@ -143,21 +143,21 @@
                                     body.hide();
 
                                     if (darkMode === true) {
-                                        $("LINK[href*='/css/bootstrap.min.css']").remove();
                                         $('<link>',{
                                             rel: 'stylesheet',
                                             type: 'text/css',
                                             href: '/css/bootstrap-night.min.css'
                                         }).appendTo(head).ready(function () {
+                                            $("LINK[href*='/css/bootstrap.min.css']").remove();
                                             body.show();
                                         });
                                     } else {
-                                        $("LINK[href*='/css/bootstrap-night.min.css']").remove();
                                         $('<link>',{
                                             rel: 'stylesheet',
                                             type: 'text/css',
                                             href: '/css/bootstrap.min.css'
                                         }).appendTo(head).ready(function () {
+                                            $("LINK[href*='/css/bootstrap-night.min.css']").remove();
                                             body.show();
                                         });
                                     }
