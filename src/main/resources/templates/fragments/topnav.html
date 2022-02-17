@@ -35,8 +35,8 @@
         </div>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <div class="flex-grow-1 d-flex align-items-center">
-            <form id="appSearch" class="form-control-dark w-100" action="/search" method="post">
-                <input id="appSearchInput" name="appSearchInput" class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
+            <form id="appSearch" class="w-100" action="/search" method="post">
+                <input id="appSearchInput" name="appSearchInput" class="form-control" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
                 <input type="submit" style="position: absolute; left: -9999px"/>
                 <script th:inline="javascript" type="text/javascript">
                     $(document).ready(function () {
