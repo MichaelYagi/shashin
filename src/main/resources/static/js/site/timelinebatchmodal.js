@@ -241,9 +241,7 @@ $("#saveBatchMetadata").click(function (e) {
                 }
 
                 if ($("#offcanvasToc").length > 0 && ($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "")) {
-                    const offCanvasId = ($("#dayTakenBatchData").val() == null || $("#dayTakenBatchData").val() === "" || $("#monthTakenBatchData").val() == null || $("#monthTakenBatchData").val() === "" || $("#yearTakenBatchData").val() == null || $("#yearTakenBatchData").val() == "") ?
-                        "offcanvas_undated" : "offcanvas_" + $("#yearTakenBatchData").val() + '-' + $("#monthTakenBatchData").val() + '-' + $("#dayTakenBatchData").val();
-                    shashin.refreshTimeline($("#mediaTypeFilter").val(), offCanvasId);
+                    shashin.refreshTimeline($("#mediaTypeFilter").val());
                 }
 
                 //$("#msgBatchMetadata").html(message);

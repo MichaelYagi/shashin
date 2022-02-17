@@ -489,7 +489,7 @@
         }
     }
 
-    shashin.refreshTimeline = function (mediaTypeFilter,currentOffCanvasId) {
+    shashin.refreshTimeline = function (mediaTypeFilter) {
         const ajaxParams = {
             type: 'get',
             url: "/timeline/dates/"+mediaTypeFilter,

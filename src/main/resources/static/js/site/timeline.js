@@ -740,7 +740,7 @@
                         },0);
                     } else if (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month)) {
                         // Tick for month/year
-                        const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '" class="darkIcons">' + '-' + '</span>').css({
+                        const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '" style="color: #777777">' + '-' + '</span>').css({
                             'width': '10px',
                             'right': '15px',
                             'position': 'absolute',
