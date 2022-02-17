@@ -113,11 +113,13 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
                 <h6 class="dropdown-header" th:text="${currentUser.username}"></h6>
-                <a class="dropdown-item" href="/users/update">Change password</a>
                 <div class="dropdown-item">
-                    <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
-                    <label class="form-check-label" for="darkModeSwitch">Dark mode</label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
+                        <label class="form-check-label" for="darkModeSwitch">Dark mode</label>
+                    </div>
                 </div>
+                <a class="dropdown-item" href="/users/update">Change password</a>
                 <a class="dropdown-item" href="/users/logout">Sign out</a>
                 <script th:inline="javascript" type="text/javascript">
                     $("#darkModeSwitch").change(function() {
