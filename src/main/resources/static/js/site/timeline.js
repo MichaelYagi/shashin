@@ -302,7 +302,7 @@
             let startingIndexBottom = 0;
 
             let timelineDateArr = timelineDates;
-            const halfwayPoint = timelineDates.length/2;
+            const halfwayPoint = Math.floor(timelineDates.length/2);
             let reversed = false;
             if (Util.getDateObject(currentDate) < Util.getDateObject(timelineDates[halfwayPoint].year+"-"+timelineDates[halfwayPoint].month+"-"+timelineDates[halfwayPoint].day)) {
                 timelineDateArr = timelineDates.slice().reverse();
