@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.miyagi</groupId>
     <artifactId>shashin</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>Shashin</name>
     <description>Shashin</description>
     <properties>
