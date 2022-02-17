@@ -214,9 +214,7 @@ $("#saveMetadata").click(function (e) {
                         metadataObj.hidden = $("#hidden").prop("checked")
 
                         if ($("#offcanvasToc").length > 0 && takenDateUpdated === true) {
-                            const offCanvasId = (metadataObj.year == null || metadataObj.month == null || metadataObj.day == null) ?
-                                "offcanvas_undated" : "offcanvas_" + metadataObj.year + '-' + metadataObj.month + '-' + metadataObj.day;
-                            shashin.refreshTimeline($("#mediaTypeFilter").val(), offCanvasId);
+                            shashin.refreshTimeline($("#mediaTypeFilter").val());
                         }
 
                         if (metadataObj.hidden === false) {
