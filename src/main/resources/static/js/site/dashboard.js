@@ -142,7 +142,14 @@ class Dashboard {
             type: 'bar',
             data: {
                 datasets: [{
-                    data: cameraCounts
+                    data: cameraCounts,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -200,7 +207,14 @@ class Dashboard {
             type: 'bar',
             data: {
                 datasets: [{
-                    data: keywordCounts
+                    data: keywordCounts,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
                 }]
             },
             options: {

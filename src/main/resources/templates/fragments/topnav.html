@@ -6,7 +6,7 @@
     <div class="container-fluid align-items-center d-flex">
         <div class="flex-shrink-0">
             <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasMenu" aria-controls="offcanvasMenu" title="Show Menu">
-                <span class="bi-list position-relative" style="font-size: 1.5rem;">
+                <span class="bi-list position-relative" style="font-size: 1.5rem;color:dimgrey">
                     <th:block th:if="${hasNotifications}">
                         <span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle">
                             <span class="visually-hidden">New alerts</span>
@@ -18,18 +18,18 @@
                 <span id="timelineTools">
                     &nbsp;
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline" style="display: none">
-                        <span class="bi-calendar3" style="font-size: 1.5rem;"></span>
+                        <span class="bi-calendar3" style="font-size: 1.5rem;color:dimgrey"></span>
                     </a>
                     &nbsp;
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineMediaTypeToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">
-                        <span id="timelineMediaTypeToggleIcon" class="bi-camera-video" style="font-size: 1.5rem;"></span>
+                        <span id="timelineMediaTypeToggleIcon" class="bi-camera-video" style="font-size: 1.5rem;color:dimgrey"></span>
                     </a>
                 </span>
             </th:block>
             <th:block th:if="${activePage == 'logs'}">
                 &nbsp;&nbsp;
                 <a class="align-items-center mb-lg-0 link-dark text-decoration-none" href="/settings/logs/download" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download logs">
-                    <span class="bi-download" style="font-size: 1.5rem;"></span>
+                    <span class="bi-download" style="font-size: 1.5rem;color:dimgrey"></span>
                 </a>
             </th:block>
         </div>
@@ -108,7 +108,7 @@
         </div>
         <div class="flex-shrink-0 dropdown dropstart" style="margin-left: 10px;">
             <a id="dLabel" class="d-block link-dark text-decoration-none dropdown-toggle" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
-                <span class="bi-person-circle" style="font-size: 1.5rem;"></span>
+                <span class="bi-person-circle" style="font-size: 1.5rem;color:dimgrey"></span>
                 <span class="caret"></span>
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
