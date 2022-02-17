@@ -364,3 +364,15 @@ footer {
   right: 40px;
   display: none;
 }
+
+.lightIcons {
+  color: white;
+}
+
+.darkIcons {
+  color: black;
+}
+
+.darkIcons:hover, .lightIcons:hover {
+  color: slategray;
+}
