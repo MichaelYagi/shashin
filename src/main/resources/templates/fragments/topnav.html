@@ -140,7 +140,7 @@
                                 if (data["status"] === "success") {
                                     let body = $("body");
                                     let head = $("head");
-                                    body.css('visibility', 'hidden');
+                                    body.hide();
 
                                     if (darkMode === true) {
                                         $("LINK[href*='/css/bootstrap.min.css']").remove();
@@ -149,7 +149,7 @@
                                             type: 'text/css',
                                             href: '/css/bootstrap-night.min.css'
                                         }).appendTo(head).ready(function () {
-                                            body.css('visibility', 'visible');
+                                            body.show();
                                         });
                                     } else {
                                         $("LINK[href*='/css/bootstrap-night.min.css']").remove();
@@ -158,7 +158,7 @@
                                             type: 'text/css',
                                             href: '/css/bootstrap.min.css'
                                         }).appendTo(head).ready(function () {
-                                            body.css('visibility', 'visible');
+                                            body.show();
                                         });
                                     }
                                 }
