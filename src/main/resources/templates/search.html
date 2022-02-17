@@ -68,6 +68,7 @@
                     </div>
                 </th:block>
                 <th:block th:if="${#lists.isEmpty(metadataSearchList)}">
+                    <h1 th:text="'No results for \''+${searchTerm}+'\''"></h1>
                     <span class="appendSearchPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
                 </th:block>
             </div>
