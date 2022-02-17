@@ -20,11 +20,7 @@
                                 <img loading="lazy" class="card-img-top" th:src="${#uris.escapePath(folder.thumbnailUrlCentered)}" width="209" height="209" style="width: 209px;height: 209px;" th:onError="Util.errorImg(this,[[${folder.folder}]],209)">
                             </a>
                             <div class="card-body">
-                                <p class="card-text">
-                                    <a th:href="'/folder/'+${#uris.escapePath(#uris.escapePathSegment(folder.folder))}" style="text-decoration: none !important;color: dimgray;">
-                                        <strong th:text="${folder.folder}"></strong><br>
-                                    </a>
-                                </p>
+                                <p class="card-text"><strong th:text="${folder.folder}"></strong></p>
                                 <p class="card-text"><small class="text-muted" th:text="${folder.count + ' items'}"></small></p>
                             </div>
                         </div>
