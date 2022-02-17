@@ -6,6 +6,7 @@
     shashin.infiniteScrollGallery = null;
     shashin.lg = null;
     shashin.ajaxRetries = 3;
+    shashin.darkMode = true;
 
     function fixContentHeight(){
         const viewHeight = $(window).height();
@@ -1092,7 +1093,11 @@
             $('#currentfilename').val(metadata.fileName === null ? "" : metadata.fileName);
             metadataIdArray = shashin.getMetdataIdList();
 
-            $('.bi-play-circle').css("color", "midnightblue");
+            let hoverColor = "white";
+            if (shashin.darkMode === true) {
+                hoverColor = "slategray";
+            }
+            $('.bi-play-circle').css("color", hoverColor);
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-bl").show();

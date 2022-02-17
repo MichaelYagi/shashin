@@ -2,6 +2,12 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="topnav(currentUser,hasNotification,activePage,searchTerm)">
 
+<script th:inline="javascript" type="text/javascript">
+    /*<![CDATA[*/
+    shashin.darkMode = /*[[${currentUser.darkMode}]]*/ true;
+    /*]]>*/
+</script>
+
 <header class="py-2 mb-3 border-bottom shadow">
     <div class="container-fluid align-items-center d-flex">
         <div class="flex-shrink-0">
@@ -124,6 +130,7 @@
                 <script th:inline="javascript" type="text/javascript">
                     $("#darkModeSwitch").change(function() {
                         const darkMode = this.checked;
+                        shashin.darkMode = darkMode;
 
                         let json = {darkMode: darkMode};
                         const ajaxParams = {
