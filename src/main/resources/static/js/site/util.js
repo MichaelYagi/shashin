@@ -144,7 +144,7 @@ class Util {
     }
 
     static atEndOfPage(element) {
-        return (((window.innerHeight + element.scrollTop)*1.01) >= element.scrollHeight) // compare with scroll position + some give (*1.5)
+        return (((window.innerHeight + element.scrollTop) * 1.05) >= element.scrollHeight) // compare with scroll position + some give (*1.5)
     }
 
     static hasScrollBar(containerElement) {
@@ -343,7 +343,7 @@ class Util {
             $(".pathLabel").show();
             $(".pathDetails").text(metadata.path);
         }
-        if (metadata.keywords != null && metadata.keywords !== '') {
+        if (metadata.keywords != null && metadata.keywords.length > 0) {
             $(".keywordsLabel").show();
             $(".keywordsDetails").text(metadata.keywords);
         }
