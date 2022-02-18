@@ -19,13 +19,12 @@
         <script src="/js/bootstrap.min.js"></script>
         <script src="/js/date.format.js"></script>
         <th:block th:if="${currentUser.darkMode}">
-<!--            <meta name="color-scheme" content="dark">-->
             <link rel="stylesheet" href="/css/bootstrap-night.min.css">
         </th:block>
         <th:block th:if="${!currentUser.darkMode}">
             <link rel="stylesheet" href="/css/bootstrap.min.css">
         </th:block>
-        <link href="/css/bootstrap-icons.css">
+        <link rel="stylesheet" href="/css/bootstrap-icons.css">
         <th:block th:if="${titleDescriptorLower == 'timeline'}">
             <link rel="stylesheet" href="/css/jquery-ui.css">
         </th:block>
