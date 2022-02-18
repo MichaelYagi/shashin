@@ -284,6 +284,7 @@ class Util {
 
         // Clear data
         $(".pathDetails").text("");
+        $(".timelineLink").html("");
         $(".typeDetails").text("");
         $(".isoDetails").text("");
         $(".compressionDetails").text("");
@@ -306,6 +307,7 @@ class Util {
         $(".locationDetails").html("");
 
         $(".pathLabel").hide();
+        $(".timelineLink").hide();
         $(".typeLabel").hide();
         $(".isoLabel").hide();
         $(".compressionLabel").hide();
@@ -404,12 +406,16 @@ class Util {
             $(".resolutionDetails").text(metadata.originalImageWidth+"x"+metadata.originalImageHeight);
         }
         if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-            let takenDetails = metadata.year + '-' + metadata.month + '-' + metadata.day;
+            let takenDate = metadata.year + '-' + metadata.month + '-' + metadata.day;
+            let takenDetails = takenDate;
             if (metadata.time !== null && metadata.time !== "") {
                 takenDetails += ' ' + metadata.time;
             }
             $(".manualTakenAtLabel").show();
             $(".manualTakenAtDetails").text(takenDetails);
+
+            $(".timelineLink").show();
+            $(".timelineLink").html("<a href='/timeline#"+takenDate+"' target='_blank'>View in timeline</a>");
         }
         if (metadata.timeZone != null) {
             $(".timeZoneLabel").show();
