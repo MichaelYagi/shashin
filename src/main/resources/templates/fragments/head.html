@@ -20,20 +20,20 @@
         <script src="/js/date.format.js"></script>
         <th:block th:if="${currentUser.darkMode}">
 <!--            <meta name="color-scheme" content="dark">-->
-            <link href="/css/bootstrap-night.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/bootstrap-night.min.css" rel="stylesheet">
         </th:block>
         <th:block th:if="${!currentUser.darkMode}">
-            <link href="/css/bootstrap.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/bootstrap.min.css" rel="stylesheet">
         </th:block>
         <link href="/css/bootstrap-icons.css" rel="stylesheet">
         <th:block th:if="${titleDescriptorLower == 'timeline'}">
-            <link href="/css/jquery-ui.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/jquery-ui.css" rel="stylesheet">
         </th:block>
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-            <link href="/css/site/style.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/site/style.min.css" rel="stylesheet">
         </th:block>
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-            <link href="/css/site/style.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/site/style.css" rel="stylesheet">
         </th:block>
         <th:block th:if="${titleDescriptorLower == 'person' or
         titleDescriptorLower == 'matches' or
@@ -57,16 +57,16 @@
             <script src="/js/lg-metadata-detail.js"></script>
             <script src="/js/cast.min.js"></script>
             <script src="/js/lg-cast-media.js"></script>
-            <link href="/css/lightgallery.min.css" rel="stylesheet">
-            <link href="/css/lg-video.min.css" rel="stylesheet">
-            <link href="/css/lg-zoom.min.css" rel="stylesheet">
-            <link href="/css/lg-relative-caption.min.css" rel="stylesheet">
-            <link href="/css/lg-rotate.min.css" rel="stylesheet">
-            <link href="/css/lg-fullscreen.min.css" rel="stylesheet">
-            <link href="/css/ol.min.css" rel="stylesheet">
-            <link href="/css/lg-editlocation.css" rel="stylesheet">
-            <link href="/css/lg-metadata-detail.css" rel="stylesheet">
-            <link href="/css/lg-cast-media.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lightgallery.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lg-video.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lg-zoom.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lg-relative-caption.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lg-rotate.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lg-fullscreen.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/ol.min.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lg-editlocation.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lg-metadata-detail.css" rel="stylesheet">
+            <link rel="stylesheet" href="/css/lg-cast-media.css" rel="stylesheet">
         </th:block>
         <th:block th:if="${titleDescriptorLower == 'timeline'}">
             <style>
