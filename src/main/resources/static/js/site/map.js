@@ -16,8 +16,6 @@ async function showMap(mapdata,keywordMap,showControls) {
     function editLocation(...args) {
         const locationArgs = [].concat(...args);
         let metadataId = "";
-        let lat = "";
-        let lng = "";
         let modalLabel = "";
 
         const metadata = {}
@@ -47,6 +45,8 @@ async function showMap(mapdata,keywordMap,showControls) {
             metadata.timeZone = locationArgs[21];
             metadata.placeName = locationArgs[22];
             metadata.keywords = locationArgs[23];
+            metadata.thumbnailUrlOriginal = locationArgs[24];
+            metadata.videoUrl = locationArgs[25];
         }
         if (modalLabel && modalLabel.length > 0) {
             $("#editPhotoLocationModalLabel").text("for " + modalLabel);
@@ -180,6 +180,8 @@ async function showMap(mapdata,keywordMap,showControls) {
                     featureProperties["timeZone"],
                     featureProperties["placeName"],
                     featureProperties["keywords"],
+                    featureProperties["thumbnailUrlOriginal"],
+                    featureProperties["videoUrl"]
                 ]
             };
             if (featureProperties.type.includes("image")) {
