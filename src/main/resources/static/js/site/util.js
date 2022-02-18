@@ -414,8 +414,13 @@ class Util {
             $(".manualTakenAtLabel").show();
             $(".manualTakenAtDetails").text(takenDetails);
 
-            $(".timelineLink").show();
-            $(".timelineLink").html("<a href='/timeline#"+takenDate+"' target='_blank'>View in timeline</a>");
+            const getUrl = window.location;
+            const baseUrl = getUrl.protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1];
+
+            if (baseUrl.includes("timeline") === false) {
+                $(".timelineLink").show();
+                $(".timelineLink").html("<a href='/timeline#" + takenDate + "' target='_blank'>View in timeline</a>");
+            }
         }
         if (metadata.timeZone != null) {
             $(".timeZoneLabel").show();
