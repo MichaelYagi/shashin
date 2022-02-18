@@ -81,12 +81,13 @@
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting metadata")})
             .then(function(data)
             {
-                let ret = {};
-                if (data.hasOwnProperty("id")) {
-                    ret = data;
+                let metadata = {};
+                if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList")) {
+                    metadata = data["metadata"];
+                    metadata["keywords"] = data["keywordList"];
                 }
 
-                return ret;
+                return metadata;
             });
     }
 
