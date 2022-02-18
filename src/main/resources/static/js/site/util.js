@@ -279,6 +279,8 @@ class Util {
                 containerModalId = "propTimelineModal";
             } else if ($("#propInfoSidebar").length > 0) {
                 containerModalId = "propInfoSidebar";
+            } else if ($("#propMetadataLocation").length > 0) {
+                containerModalId = "propMetadataLocation";
             }
         }
 
