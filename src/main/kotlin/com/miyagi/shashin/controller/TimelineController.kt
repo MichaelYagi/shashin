@@ -1251,7 +1251,16 @@ class TimelineController {
     @ResponseBody
     @Secured("ROLE_ADMIN","ROLE_USER")
     fun getMetadata(model: Model, @PathVariable(required = true) id: String): String {
-        return mapper.writeValueAsString(metadataRepository.findById(id).get())
+        val response = mutableMapOf<String, Any?>()
+        val keywordArray = mutableListOf<String>()
+        val keywords = keywordRepository.findKeywordsByMetadataId(id)
+        for (keyword in keywords) {
+            keywordArray.add(keyword.getKeyword()!!)
+        }
+        response["keywordList"] = keywordArray
+        response["metadata"] = metadataRepository.findById(id).get()
+
+        return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/api/v1/timeline/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
