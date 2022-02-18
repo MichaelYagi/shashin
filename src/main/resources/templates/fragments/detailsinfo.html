@@ -3,9 +3,12 @@
 <body th:fragment="detailsinfo(${currentUser})">
 
 <br>
-<th:block th:if="${currentUser.authority == 'ROLE_ADMIN'}">
+<th:block th:if="${currentUser.authority == 'ROLE_ADMIN' && activePage != 'trash'}">
     <div class="row"><span class="shareUrlDetails"></span></div>
-    <div class="row"><span class="timelineLink"></span></div><br>
+    <th:block th:if="${activePage != 'timeline'}">
+        <div class="row"><span class="timelineLink"></span></div>
+    </th:block>
+    <br>
 </th:block>
 <div class="row"><strong class="pathLabel">File name:&nbsp;</strong><span class="pathDetails"></span></div>
 <div class="row"><strong class="keywordsLabel">Keywords:&nbsp;</strong><span class="keywordsDetails"></span></div>
