@@ -117,6 +117,19 @@
                 timelineSettings.scrollToTimelineToc($(".scrollspy").withinviewport());
             }
         });
+
+        // Jump to date
+        if (window.location.hash) {
+            //Puts hash in variable, and removes the # character
+            const hash = window.location.hash.substring(1);
+            history.pushState("", document.title, window.location.pathname + window.location.search);
+
+            if ($("#offcanvas_"+hash).length > 0) {
+
+                // Remove hash
+                timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
+            }
+        }
     }
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
@@ -800,7 +813,9 @@
     }
 
     timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter) {
-        e.preventDefault();
+        if (e) {
+            e.preventDefault();
+        }
 
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
