@@ -689,31 +689,36 @@
                 range: false,
                 slide: function (event, ui) {
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
-                    const prevDateObj = dateList.length > 1 ? dateList[Math.round((dateList.length - 2) - ui.value)] : currentDateObj;
 
-                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                        handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
-                    } else {
-                        handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
+                    if (currentDateObj) {
+                        const prevDateObj = dateList.length > 1 ? dateList[Math.round((dateList.length - 2) - ui.value)] : currentDateObj;
+
+                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                            handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
+                        } else {
+                            handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
+                        }
                     }
                 },
                 stop: function (event, ui) {
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
-                    if (timelineSettings.enableScrollSpy === true) {
+                    if (currentDateObj && timelineSettings.enableScrollSpy === true) {
                         timelineSettings.jumpFromTimelineToc(event, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
                     }
                 },
                 change: function (event, ui) {
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
-                    const prevDateObj = dateList.length > 1 ? dateList[Math.round((dateList.length - 2) - ui.value)] : currentDateObj;
+                    if (currentDateObj) {
+                        const prevDateObj = dateList.length > 1 ? dateList[Math.round((dateList.length - 2) - ui.value)] : currentDateObj;
 
-                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                        handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
-                    } else {
-                        handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
+                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                            handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
+                        } else {
+                            handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
+                        }
+                        handleTooltip.show();
                     }
-                    handleTooltip.show();
                 }
             }).find(".ui-slider-handle").append(handleTooltip).hover(function () {
                 handleTooltip.show();
