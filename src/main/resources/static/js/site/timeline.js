@@ -103,6 +103,7 @@
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
 
                 $(".bi-play-circle").css("visibility", "hidden");
+                $(".bi-play-btn").css("visibility", "hidden");
                 $(".mediaLink").unbind('click');
                 clearTimeout(scrollTimer);
                 scrollTimer = setTimeout(function() {
@@ -161,6 +162,7 @@
                     setTimeout(() => {
                         shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
                         $(".bi-play-circle").css("visibility", "visible");
+                        $(".bi-play-btn").css("visibility", "visible");
                         $(".mediaLink").bind('click');
                     }, 500);
                 }
@@ -1098,7 +1100,7 @@
                                         }
                                         html +=
                                             '>' +
-                                            '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
+                                            '<span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>' +
                                             '</a>';
 
                                     } else {

@@ -1099,6 +1099,7 @@
                 hoverColor = "slategray";
             }
             $('.bi-play-circle').css("color", hoverColor);
+            $('.bi-play-btn').css("color", hoverColor);
             $(this).show();
             $(this).siblings(".thumbnail-tl").show();
             $(this).siblings(".thumbnail-bl").show();
@@ -1113,6 +1114,7 @@
             }
         }, function () {
             $('.bi-play-circle').css("color", "lightgray");
+            $('.bi-play-btn').css("color", "lightgray");
             $(this).hide();
             $(this).siblings(".thumbnail-tl").hide();
             $(this).siblings(".thumbnail-bl").hide();
@@ -1301,7 +1303,7 @@
                 '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
                 '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n' +
                 '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'>\n' +
-                '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                '       <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;
