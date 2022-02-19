@@ -431,6 +431,7 @@ class TimelineController {
             metadataMap.containsKey("keywords") &&
             metadataMap.containsKey("latlng") &&
             metadataMap.containsKey("title") &&
+            metadataMap.containsKey("description") &&
             metadataMap.containsKey("albumnames") &&
             metadataMap.containsKey("tagpeople") &&
             metadataMap.containsKey("hidden") &&
@@ -619,6 +620,11 @@ class TimelineController {
                 metadataObj.get().setTitle(metadataObj.get().getFileName())
             } else {
                 metadataObj.get().setTitle(metadataMap["title"].toString().trim())
+            }
+            if (metadataMap["description"].toString().trim() == "") {
+                metadataObj.get().setDescription(metadataObj.get().getDescription())
+            } else {
+                metadataObj.get().setDescription(metadataMap["description"].toString().trim())
             }
             if (metadataMap["camera"].toString().trim() != "") {
                 var camera = metadataMap["camera"].toString().trim()
