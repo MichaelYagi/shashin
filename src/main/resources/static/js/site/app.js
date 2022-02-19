@@ -815,6 +815,7 @@
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
         const configs = {
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate],
+            videojs: false,
             counter: false,
             preload: 0,
             fullScreen: true,
@@ -822,7 +823,6 @@
             zoomFromOrigin: true,
             speed: 0,
             autoplayFirstVideo: false,
-            videojs: true,
             gotoNextSlideOnVideoEnd: false,
             rotate: true,
             rotateLeft: true,

@@ -37,7 +37,7 @@
         timelineSettings.timelineDates = metadataDates;
 
         shashin.setLightGalleryElement('infinite-scroll-gallery');
-        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
+        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail],metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
 
         let topScroll = true;
         let topOfPage = true;
@@ -160,7 +160,7 @@
                     shashin.lg = null;
 
                     setTimeout(() => {
-                        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail,lgCastMedia],metadataDetail:true,castMedia:true,metadataDetailFunc:shashin.openInfoSidebar});
+                        shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail],metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
                         $(".bi-play-circle").css("visibility", "visible");
                         $(".bi-play-btn").css("visibility", "visible");
                         $(".mediaLink").bind('click');
