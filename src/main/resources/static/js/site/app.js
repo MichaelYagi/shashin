@@ -819,6 +819,16 @@
         }
     }
 
+    // Hide caption when showing lg gallery
+    let lgSubHtmlTimeout = null;
+    $("html").mousemove(function() {
+        clearTimeout(lgSubHtmlTimeout);
+        $(".lg-sub-html").fadeIn();
+        lgSubHtmlTimeout = setTimeout(function () {
+            $(".lg-sub-html").fadeOut("slow");
+        }, 5000);
+    });
+
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
         const configs = {
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate],
