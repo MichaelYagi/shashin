@@ -1090,6 +1090,10 @@
                                             'data-download-url="' + encodeURI(metadata.videoUrl) + '/download" ' +
                                             'data-metadataid="' + metadata.id + '" ' +
                                             'data-video="' + Util.encodeHtml(mediaContent.video) + '" ';
+                                        if (metadata.description != null) {
+                                            html +=
+                                            'data-sub-html="<h4>'+metadata.description+'</h4>" ';
+                                        }
                                         if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                             html +=
@@ -1111,6 +1115,10 @@
                                             'data-download-url="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ' +
                                             'data-metadataid="' + metadata.id + '" ' +
                                             'data-src="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ';
+                                        if (metadata.description != null) {
+                                            html +=
+                                            'data-sub-html="<h4>'+metadata.description+'</h4>" ';
+                                        }
                                         if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
                                             html +=

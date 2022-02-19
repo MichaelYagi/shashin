@@ -133,6 +133,10 @@
                     $("#title").val(metadata.title);
                 }
 
+                if (metadata.description !== null) {
+                    $("#description").val(metadata.description);
+                }
+
                 if (metadata.camera !== null) {
                     $("#camera").val(metadata.camera);
                 }
@@ -356,7 +360,10 @@
             try {
                 mediaContent.args = $(this).attr("tag");
             } catch(e) {}
-            //mediaContent.subHtml = $(this).attr("data-sub-html");
+            let subHtmlAttr = $(this).attr("data-sub-html");
+            if (typeof subHtmlAttr !== 'undefined' && subHtmlAttr !== false) {
+                mediaContent.subHtml = subHtmlAttr;
+            }
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
                 mediaContent.downloadUrl = $(this).attr("data-src");
@@ -816,6 +823,8 @@
         const configs = {
             plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate],
             videojs: false,
+            hideBarsDelay: 5000,
+            allowMediaOverlap: true,
             counter: false,
             preload: 0,
             fullScreen: true,
@@ -1301,7 +1310,12 @@
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl)+"/download";
             html +=
                 '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
-                '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n' +
+                '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n';
+            if (metadata.description !== null) {
+                html +=
+                '       data-sub-html="<h4>'+metadata.description+'</h4>" \n';
+            }
+            html +=
                 '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'>\n' +
                 '       <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
@@ -1310,8 +1324,13 @@
             mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
             html +=
                 '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
-                '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'"> \n' +
-                '       <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
+                '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'" \n';
+            if (metadata.description !== null) {
+                html +=
+                '       data-sub-html="<h4>'+metadata.description+'</h4>" \n';
+            }
+            html +=
+                '> \n<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
         }
 

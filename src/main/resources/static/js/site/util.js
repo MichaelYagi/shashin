@@ -309,6 +309,7 @@ class Util {
         $(".locationDetails").html("");
 
         $(".pathLabel").hide();
+        $(".descriptionLabel").hide();
         $(".timelineLink").hide();
         $(".typeLabel").hide();
         $(".isoLabel").hide();
@@ -346,6 +347,10 @@ class Util {
         if (metadata.path != null) {
             $(".pathLabel").show();
             $(".pathDetails").text(metadata.path);
+        }
+        if (metadata.description != null) {
+            $(".descriptionLabel").show();
+            $(".descriptionDetails").text(metadata.description);
         }
         if (metadata.keywords != null && metadata.keywords.length > 0) {
             $(".keywordsLabel").show();

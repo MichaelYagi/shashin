@@ -76,6 +76,7 @@ $("#saveMetadata").click(function (e) {
         const json = {
             id:metadataId,
             title:$("#title").val().trim(),
+            description:$("#description").val().trim(),
             camera:$("#camera").val().trim(),
             year:$("#yearTaken").val(),
             month:$("#monthTaken").val(),
@@ -196,6 +197,7 @@ $("#saveMetadata").click(function (e) {
                     // Update tag
                     shashin.getMetadata(metadataId).then(function (metadataObj) {
                         metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
+                        metadataObj.description = $("#description").val()
                         metadataObj.year = $("#yearTaken").val()
                         metadataObj.month = $("#monthTaken").val()
                         metadataObj.day = $("#dayTaken").val()
