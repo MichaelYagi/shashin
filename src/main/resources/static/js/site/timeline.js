@@ -695,7 +695,7 @@
 
                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                             handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
-                        } else {
+                        } else if (prevDateObj) {
                             handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
                         }
                     }
@@ -714,7 +714,7 @@
 
                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                             handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
-                        } else {
+                        } else if (prevDateObj) {
                             handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
                         }
                         handleTooltip.show();
