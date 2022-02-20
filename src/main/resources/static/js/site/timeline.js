@@ -119,6 +119,8 @@
             }
         });
 
+        shashin.mouseMoveListener();
+
         // Jump to date
         if (window.location.hash) {
             //Puts hash in variable, and removes the # character
@@ -1105,7 +1107,7 @@
                                             'data-video="' + Util.encodeHtml(mediaContent.video) + '" ';
                                         if (metadata.description != null) {
                                             html +=
-                                            'data-sub-html="<h4>'+metadata.description+'</h4>" ';
+                                            'data-sub-html="'+metadata.description+'" ';
                                         }
                                         if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
@@ -1130,7 +1132,7 @@
                                             'data-src="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ';
                                         if (metadata.description != null) {
                                             html +=
-                                            'data-sub-html="<h4>'+metadata.description+'</h4>" ';
+                                            'data-sub-html="'+metadata.description+'" ';
                                         }
                                         if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
                                             metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {

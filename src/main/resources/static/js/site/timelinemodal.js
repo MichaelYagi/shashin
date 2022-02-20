@@ -56,11 +56,16 @@ $("#saveMetadata").click(function (e) {
     timelineModal.closeTagPeopleDropdown(metadataId);
 
     let takenDateUpdated = false;
+    let captionUpdated = false;
     shashin.getMetadata(metadataId).then(function (metadataObj) {
         if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
             parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
             parseInt(metadataObj.day) !== parseInt($("#dayTaken").val())) {
             takenDateUpdated = true;
+        }
+
+        if ($("#description").val() !== metadataObj.description) {
+            captionUpdated = true;
         }
     });
 
@@ -198,6 +203,9 @@ $("#saveMetadata").click(function (e) {
                     shashin.getMetadata(metadataId).then(function (metadataObj) {
                         metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
                         metadataObj.description = $("#description").val()
+                        if (captionUpdated === true) {
+                            $("#mediaLink" + metadataId).attr("data-sub-html", $("#description").val());
+                        }
                         metadataObj.year = $("#yearTaken").val()
                         metadataObj.month = $("#monthTaken").val()
                         metadataObj.day = $("#dayTaken").val()
@@ -221,8 +229,6 @@ $("#saveMetadata").click(function (e) {
 
                         if (metadataObj.hidden === false) {
                             Util.populateDetailsInfo(metadataObj, "propTimelineModal")
-                            $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
-                            $("#mediaLink" + metadataId).attr("tag", JSON.stringify(metadataObj))
 
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
                             if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
@@ -234,6 +240,11 @@ $("#saveMetadata").click(function (e) {
                             }
                         } else {
                             shashin.removeThumbnail(metadataId);
+                        }
+
+                        if (captionUpdated === true) {
+                            // Refresh gallery if caption updated
+                            timelineSettings.reinitLightGalleryInstance();
                         }
 
                         $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
