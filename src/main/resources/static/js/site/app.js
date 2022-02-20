@@ -805,25 +805,25 @@
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
 
         // Show caption on slide change
-        if (shashin.infiniteScrollGallery) {
-            shashin.lgSubHtmlTimeout = null;
-            shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', (event) => {
-                if (parseInt($(".lg-toolbar").css('opacity')) === 1) {
-                    $(".lg-sub-html").show();
-                } else {
-                    $(".lg-sub-html").hide();
-                }
-                shashin.mouseMoveListener();
-            });
-            shashin.infiniteScrollGallery.addEventListener('lgDragStart', (event) => {
-                if (parseInt($(".lg-toolbar").css('opacity')) === 1) {
-                    $(".lg-sub-html").show();
-                } else {
-                    $(".lg-sub-html").hide();
-                }
-                shashin.mouseMoveListener();
-            });
-        }
+        // if (shashin.infiniteScrollGallery) {
+        //     shashin.lgSubHtmlTimeout = null;
+        //     shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', (event) => {
+        //         if (parseInt($(".lg-toolbar").css('opacity')) === 1) {
+        //             $(".lg-sub-html").show();
+        //         } else {
+        //             $(".lg-sub-html").hide();
+        //         }
+        //         shashin.mouseMoveListener();
+        //     });
+        //     shashin.infiniteScrollGallery.addEventListener('lgDragStart', (event) => {
+        //         if (parseInt($(".lg-toolbar").css('opacity')) === 1) {
+        //             $(".lg-sub-html").show();
+        //         } else {
+        //             $(".lg-sub-html").hide();
+        //         }
+        //         shashin.mouseMoveListener();
+        //     });
+        // }
     }
 
     shashin.mouseMoveListener = function () {
@@ -841,8 +841,6 @@
             $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
         }, 5000);
     }
-
-    shashin.mouseMoveListener();
 
     shashin.getLightGalleryElement = function () {
         return shashin.infiniteScrollGallery;
@@ -1353,7 +1351,7 @@
                 '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n';
             if (metadata.description !== null) {
                 html +=
-                '       data-sub-html="<h4>'+metadata.description+'</h4>" \n';
+                '       data-sub-html="'+metadata.description+'" \n';
             }
             html +=
                 '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'>\n' +
@@ -1367,7 +1365,7 @@
                 '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'" \n';
             if (metadata.description !== null) {
                 html +=
-                '       data-sub-html="<h4>'+metadata.description+'</h4>" \n';
+                '       data-sub-html="'+metadata.description+'" \n';
             }
             html +=
                 '> \n<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
