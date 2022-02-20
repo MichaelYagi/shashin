@@ -33,11 +33,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Input to change or add camera model
+- Added description field in metadata
 
 ### Changed
 
 - Simplified timeline view logic
 - Optimized modals on views
-- Rehauled date scrolling
+- Re-hauled date scrolling
+- Changed params for UUID generation for metadata
 
 ### Fixed
