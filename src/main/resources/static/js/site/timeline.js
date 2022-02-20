@@ -677,7 +677,7 @@
         const dateList = timelineSettings.timelineDates;
         if (dateList.length > 0) {
             // Tooltip for handle
-            const handleTooltip = $('<span class="badge bg-secondary text-light" id="tooltip" style="background-color: slategray" />').css({
+            const handleTooltip = $('<span class="badge bg-secondary" id="tooltip" style="background-color: slategray" />').css({
                 position: 'absolute',
                 right: 17,
                 zIndex: 2000
@@ -742,7 +742,7 @@
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
                     if (i === 0 || i > 0 && dateList[i - 1].year !== timelineDateObj.year) {
                         // Label for year
-                        const el = $('<span class="badge rounded-pill bg-secondary text-light" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
+                        const el = $('<span class="badge rounded-pill bg-secondary" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
                             'width': '35px',
                             'right': '15px',
                             'position': 'absolute',
@@ -781,7 +781,7 @@
                     }
 
                     // Tooltip for month/year on slider
-                    const sliderTooltip = $('<span class="badge bg-secondary text-light"  style="background-color: slategray" />').css({
+                    const sliderTooltip = $('<span class="badge bg-secondary" style="background-color: slategray" />').css({
                         position: 'absolute',
                         right: 15,
                         zIndex: 2000
