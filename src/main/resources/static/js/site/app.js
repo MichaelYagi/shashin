@@ -802,6 +802,13 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
+
+        // Show caption on slide change
+        if (shashin.infiniteScrollGallery) {
+            shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', (event) => {
+                $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+            });
+        }
     }
 
     shashin.getLightGalleryElement = function () {
