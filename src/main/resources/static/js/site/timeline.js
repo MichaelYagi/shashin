@@ -390,7 +390,10 @@
 
                         // Break if top not in viewport
                         if ($("#" + currentDate).withinviewport().length === 0) {
-                            Util.removeDateGallery(currentDate);
+                            // Mobile Chrome browsers prevents further rendering
+                            if (Util.isMobile() === false || Util.isChrome() === false) {
+                                Util.removeDateGallery(currentDate);
+                            }
                             break;
                         }
                     }
