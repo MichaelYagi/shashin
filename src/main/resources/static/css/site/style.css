@@ -10,7 +10,7 @@ body {
 }
 
 .list-group-hover .list-group-item:hover {
-  background-color: #f5f5f5;
+  background-color: slategray;
 }
 
 .list-group-select {
