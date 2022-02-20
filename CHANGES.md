@@ -37,7 +37,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Simplified timeline view logic
+- Simplified timeline API and view logic
 - Optimized modals on views
 - Re-hauled date scrolling
 - Changed params for UUID generation for metadata
