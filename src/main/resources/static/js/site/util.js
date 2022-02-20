@@ -422,7 +422,7 @@ class Util {
             $(".manualTakenAtDetails").text(takenDetails);
 
             $(".timelineLink").show();
-            $(".timelineLink").html("<a href='/timeline#" + takenDate + "' target='_blank'>View in timeline</a>");
+            $(".timelineLink").html("<a href='/timeline#" + takenDate + "' target='_blank'>View date in timeline</a>");
         }
         if (metadata.timeZone != null) {
             $(".timeZoneLabel").show();
