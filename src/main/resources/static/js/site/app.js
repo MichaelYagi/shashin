@@ -807,17 +807,27 @@
         if (shashin.infiniteScrollGallery) {
             shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', (event) => {
                 // Hide caption when showing lg gallery
-                let lgSubHtmlTimeout = null;
+                let lgSubHtmlSideTimeout = null;
                 $("html").mousemove(function() {
-                    clearTimeout(lgSubHtmlTimeout);
+                    clearTimeout(lgSubHtmlSideTimeout);
                     $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
-                    lgSubHtmlTimeout = setTimeout(function () {
+                    lgSubHtmlSideTimeout = setTimeout(function () {
                         $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
                     }, 5000);
                 });
             });
         }
     }
+
+    // Hide caption when showing lg gallery
+    let lgSubHtmlTimeout = null;
+    $("html").mousemove(function() {
+        clearTimeout(lgSubHtmlTimeout);
+        $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+        lgSubHtmlTimeout = setTimeout(function () {
+            $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
+        }, 5000);
+    });
 
     shashin.getLightGalleryElement = function () {
         return shashin.infiniteScrollGallery;
