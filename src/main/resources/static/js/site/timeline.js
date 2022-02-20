@@ -915,7 +915,17 @@
 
             timelineSettings.setScrollSpyActive(anchor);
             timelineSettings.scrollToTimelineToc($(".scrollspy").withinviewport());
-            timelineSettings.renderThumbnailsSimple($(".scrollspy").withinviewport(), mediaTypeFilter, timelineDates);
+            timelineSettings.renderThumbnailsSimple($(".scrollspy").withinviewport(), mediaTypeFilter, timelineDates).then(function () {
+                if ($("#" + firstDate).withinviewport().length > 0 ||
+                    $("#br" + firstDate).withinviewport().length > 0 ||
+                    $("#row" + firstDate).withinviewport().length > 0) {
+                    document.getElementById("container").scrollBy({top: 1});
+                    if (document.getElementsByTagName("MAIN").length > 0) {
+                        document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
+                    }
+                }
+            });
+
         }
     }
 
