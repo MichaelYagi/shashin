@@ -823,9 +823,9 @@
     let lgSubHtmlTimeout = null;
     $("html").mousemove(function() {
         clearTimeout(lgSubHtmlTimeout);
-        $(".lg-sub-html").fadeIn();
+        $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
         lgSubHtmlTimeout = setTimeout(function () {
-            $(".lg-sub-html").fadeOut("slow");
+            $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
         }, 5000);
     });
 

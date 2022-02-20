@@ -376,3 +376,7 @@ footer {
 .darkIcons:hover, .lightIcons:hover {
   color: slategray;
 }
+
+.lg-components {
+  background-image:linear-gradient(0deg,rgba(0,0,0,.4),rgba(0,0,0,0))
+}
