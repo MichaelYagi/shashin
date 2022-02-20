@@ -7,6 +7,7 @@
     shashin.lg = null;
     shashin.ajaxRetries = 3;
     shashin.darkMode = true;
+    shashin.lgSubHtmlTimeout = null;
 
     function fixContentHeight(){
         const viewHeight = $(window).height();
@@ -805,30 +806,43 @@
 
         // Show caption on slide change
         if (shashin.infiniteScrollGallery) {
+            shashin.lgSubHtmlTimeout = null;
             shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', (event) => {
-                $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
-                shashin.captionListener();
+                if (parseInt($(".lg-toolbar").css('opacity')) === 1) {
+                    $(".lg-sub-html").show();
+                } else {
+                    $(".lg-sub-html").hide();
+                }
+                shashin.mouseMoveListener();
             });
             shashin.infiniteScrollGallery.addEventListener('lgDragStart', (event) => {
-                $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
-                shashin.captionListener();
+                if (parseInt($(".lg-toolbar").css('opacity')) === 1) {
+                    $(".lg-sub-html").show();
+                } else {
+                    $(".lg-sub-html").hide();
+                }
+                shashin.mouseMoveListener();
             });
         }
     }
 
-    shashin.captionListener = function () {
+    shashin.mouseMoveListener = function () {
         // Hide caption when showing lg gallery
-        let lgSubHtmlTimeout = null;
+        shashin.lgSubHtmlTimeout = null;
         $("html").mousemove(function() {
-            clearTimeout(lgSubHtmlTimeout);
-            $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
-            lgSubHtmlTimeout = setTimeout(function () {
-                $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
-            }, 5000);
+            shashin.captionListener();
         });
     }
 
-    shashin.captionListener();
+    shashin.captionListener = function () {
+        clearTimeout(shashin.lgSubHtmlTimeout);
+        $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+        shashin.lgSubHtmlTimeout = setTimeout(function () {
+            $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
+        }, 5000);
+    }
+
+    shashin.mouseMoveListener();
 
     shashin.getLightGalleryElement = function () {
         return shashin.infiniteScrollGallery;
