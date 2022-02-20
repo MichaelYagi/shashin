@@ -8,7 +8,7 @@
             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                 <a class="mediaLink" th:id="'mediaLink'+${metadata.id}" th:attr="onclick=${'return '+(onclickFunctionCall == null ? 'false' : onclickFunctionCall+'(event,'+index+')')}"
                    th:data-download-url="${metadata.thumbnailUrlOriginal}"
-                   th:data-sub-html="${metadata.description}"
+                   th:data-sub-html="${'<h4>'+metadata.description+'</h4>'}"
                    th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}">
                     <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
                 </a>
@@ -17,7 +17,7 @@
         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <a class="mediaLink" th:id="'mediaLink'+${metadata.id}" th:attr="onclick=${'return '+(onclickFunctionCall == null ? 'false' : onclickFunctionCall+'(event,'+index+')')}"
                th:data-download-url="${metadata.thumbnailUrlOriginal}"
-               th:data-sub-html="${metadata.description}"
+               th:data-sub-html="${'<h4>'+metadata.description+'</h4>'}"
                th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}">
                 <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
             </a>
@@ -29,7 +29,7 @@
             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                 <a class="mediaLink" th:id="'mediaLink'+${metadata.id}" th:attr="onclick=${'return '+(onclickFunctionCall == null ? 'false' : onclickFunctionCall+'(event,'+index+')')}"
                    th:data-download-url="${metadata.videoUrl+'/download'}"
-                   th:data-sub-html="${metadata.description}"
+                   th:data-sub-html="${'<h4>'+metadata.description+'</h4>'}"
                    th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}">
                     <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
                 </a>
@@ -38,7 +38,7 @@
         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <a class="mediaLink" th:id="'mediaLink'+${metadata.id}" th:attr="onclick=${'return '+(onclickFunctionCall == null ? 'false' : onclickFunctionCall+'(event,'+index+')')}"
                th:data-download-url="${metadata.videoUrl+'/download'}"
-               th:data-sub-html="${metadata.description}"
+               th:data-sub-html="${'<h4>'+metadata.description+'</h4>'}"
                th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}">
                 <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
             </a>
