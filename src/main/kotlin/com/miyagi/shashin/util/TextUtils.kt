@@ -85,11 +85,10 @@ class TextUtils {
             filePath:String?,
             createdAt:String?,
             type: String?,
-            camera: String?,
             fStopNumber: Double?,
             iso: Int?,
             exposure: String?): UUID {
-            val uuidInput = "$filePath-$createdAt-$type-$camera-$fStopNumber-$iso-$exposure"
+            val uuidInput = "$filePath-$createdAt-$type-$fStopNumber-$iso-$exposure"
             val uuid = UUID.nameUUIDFromBytes(uuidInput.toByteArray())
             logger.log(Level.INFO, "UUID $uuid generated from input $uuidInput")
             return uuid

@@ -464,7 +464,6 @@ class MetadataProcessing() {
                 file.path,
                 this.metadataObj.getCreatedAt(),
                 this.metadataObj.getType(),
-                this.metadataObj.getCamera(),
                 this.metadataObj.getFstopNumber(),
                 this.metadataObj.getIso(),
                 this.metadataObj.getExposure()
