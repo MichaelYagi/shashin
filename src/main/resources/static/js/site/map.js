@@ -2,6 +2,8 @@ async function showMap(mapdata,keywordMap,showControls) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
 
+    shashin.mouseMoveListener();
+
     const textFill = new ol.style.Fill({
         color: '#fff',
     });
@@ -47,6 +49,7 @@ async function showMap(mapdata,keywordMap,showControls) {
             metadata.keywords = locationArgs[23];
             metadata.thumbnailUrlOriginal = locationArgs[24];
             metadata.videoUrl = locationArgs[25];
+            metadata.description = locationArgs[26];
         }
         if (modalLabel && modalLabel.length > 0) {
             $("#editPhotoLocationModalLabel").text("for " + modalLabel);
@@ -181,12 +184,12 @@ async function showMap(mapdata,keywordMap,showControls) {
                     featureProperties["placeName"],
                     featureProperties["keywords"],
                     featureProperties["thumbnailUrlOriginal"],
-                    featureProperties["videoUrl"]
+                    featureProperties["videoUrl"],
+                    featureProperties["description"]
                 ]
             };
             if (featureProperties.type.includes("image")) {
-                mediaContent.src = featureProperties.thumbnailUrlOriginal
-                //mediaContent.subHtml = (featureProperties.placeName !== null ? featureProperties.placeName : "") + '<br>' + featureProperties.fileName + (dateString !== "" ? ' taken on ' + dateString : '')
+                mediaContent.src = featureProperties.thumbnailUrlOriginal;
                 mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal);
             } else if (featureProperties.type.includes("video")) {
                 mediaContent.video = {
@@ -195,6 +198,7 @@ async function showMap(mapdata,keywordMap,showControls) {
                 }
                 mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl)+"/download";
             }
+            mediaContent.subHtml = featureProperties.description;
             mediaContentList.push(mediaContent);
         }
 
@@ -354,7 +358,8 @@ async function showMap(mapdata,keywordMap,showControls) {
                 takenAt: data["takenAt"],
                 time: data["time"],
                 timeZone: data["timeZone"],
-                keywords: keywords
+                keywords: keywords,
+                description: data["description"]
             });
 
             iconFeature.setStyle(data["mapMarkerIcon"]);

@@ -201,6 +201,7 @@ $("#saveMetadata").click(function (e) {
 
                     // Update tag
                     shashin.getMetadata(metadataId).then(function (metadataObj) {
+                        let dateGalleryRemoved = false;
                         metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
                         metadataObj.description = $("#description").val()
                         if (captionUpdated === true) {
@@ -223,10 +224,6 @@ $("#saveMetadata").click(function (e) {
                         metadataObj.albumlist = $("#albumnames").val()
                         metadataObj.hidden = $("#hidden").prop("checked")
 
-                        if ($("#offcanvasToc").length > 0 && takenDateUpdated === true) {
-                            shashin.refreshTimeline($("#mediaTypeFilter").val());
-                        }
-
                         if (metadataObj.hidden === false) {
                             Util.populateDetailsInfo(metadataObj, "propTimelineModal")
 
@@ -236,13 +233,25 @@ $("#saveMetadata").click(function (e) {
                             }
 
                             if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() === "timeline") || $("#activePage").length === 0) {
-                                shashin.removeThumbnail(metadataId);
+                                dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                             }
                         } else {
-                            shashin.removeThumbnail(metadataId);
+                            dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                         }
 
-                        if (captionUpdated === true) {
+                        if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
+                            shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
+                                // If a date section was removed refresh the timeline
+                                if (dateGalleryRemoved === true) {
+                                    const elements = $(".scrollspy").withinviewport()
+                                    let firstElementId = $(elements[0]).attr("id");
+                                    let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+                                    timelineSettings.jumpFromTimelineToc(e, firstVisibleId, $("#mediaTypeFilter").val());
+                                }
+                            });
+                        }
+
+                        if (dateGalleryRemoved === false && captionUpdated === true) {
                             // Refresh gallery if caption updated
                             timelineSettings.reinitLightGalleryInstance();
                         }

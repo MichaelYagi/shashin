@@ -499,7 +499,7 @@
         }
     }
 
-    shashin.refreshTimeline = function (mediaTypeFilter) {
+    shashin.refreshTimeline = async function (mediaTypeFilter) {
         const ajaxParams = {
             type: 'get',
             url: "/timeline/dates/"+mediaTypeFilter,
@@ -508,7 +508,7 @@
             retries: shashin.ajaxRetries
         }
 
-        $.ajax(ajaxParams)
+        return await $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing timeline TOC")}).then(function(data) {
             if (data.hasOwnProperty("metadataDates")) {
                 const metadataDates = data["metadataDates"];
@@ -1458,6 +1458,7 @@
     }
 
     shashin.removeThumbnail = function(metadataId) {
+        let dateGalleryRemoved = false;
         const targetElement = $("#photoThumbnailContainer" + metadataId);
 
         const rowId = targetElement.parent().attr("id");
@@ -1472,7 +1473,10 @@
 
         if (currentNumChildren === 0 && headingId && headingId.length > 0) {
             Util.removeDateGallery(headingId);
+            dateGalleryRemoved = true;
         }
+
+        return dateGalleryRemoved;
     }
 
     shashin.autocompleteSplit = function(val) {

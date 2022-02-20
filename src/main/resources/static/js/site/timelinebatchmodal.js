@@ -84,7 +84,7 @@ $("#saveBatchMetadata").click(function (e) {
 
         const batchObj = Util.serializeObject($('#saveBatchData'));
 
-        if($("#batchhidden").is(':checked')) {
+        if ($("#batchhidden").is(':checked')) {
             ajaxParams = {
                 type: "post",
                 url: "/timeline/remove/batch",
@@ -182,6 +182,7 @@ $("#saveBatchMetadata").click(function (e) {
                         }
                     }
 
+                    let dateGalleryRemoved = false;
                     for (const index in metadataIds) {
                         const metadataId = metadataIds[index];
 
@@ -223,10 +224,26 @@ $("#saveBatchMetadata").click(function (e) {
                                     }
 
                                     if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true) {
-                                        shashin.removeThumbnail(metadataId);
+                                        dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                                     }
                                 } else {
-                                    shashin.removeThumbnail(metadataId);
+                                    dateGalleryRemoved = shashin.removeThumbnail(metadataId);
+                                }
+
+
+
+                                if (parseInt(index) === (metadataIds.length-1)) {
+                                    if ($("#offcanvasToc").length > 0 && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
+                                        shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
+                                            // If a date section was removed refresh the timeline
+                                            if (dateGalleryRemoved === true) {
+                                                const elements = $(".scrollspy").withinviewport()
+                                                let firstElementId = $(elements[0]).attr("id");
+                                                let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+                                                timelineSettings.jumpFromTimelineToc(null, firstVisibleId, $("#mediaTypeFilter").val());
+                                            }
+                                        });
+                                    }
                                 }
                             });
                         }
@@ -234,14 +251,11 @@ $("#saveBatchMetadata").click(function (e) {
 
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     $("#timelineBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+
                     // window.top.location = window.top.location
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                }
-
-                if ($("#offcanvasToc").length > 0 && ($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "")) {
-                    shashin.refreshTimeline($("#mediaTypeFilter").val());
                 }
 
                 //$("#msgBatchMetadata").html(message);
