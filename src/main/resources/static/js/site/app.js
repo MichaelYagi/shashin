@@ -806,28 +806,29 @@
         // Show caption on slide change
         if (shashin.infiniteScrollGallery) {
             shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', (event) => {
-                // Hide caption when showing lg gallery
-                let lgSubHtmlSideTimeout = null;
-                $("html").mousemove(function() {
-                    clearTimeout(lgSubHtmlSideTimeout);
-                    $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
-                    lgSubHtmlSideTimeout = setTimeout(function () {
-                        $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
-                    }, 5000);
-                });
+                $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+                shashin.captionListener();
+            });
+            shashin.infiniteScrollGallery.addEventListener('lgDragStart', (event) => {
+                $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+                shashin.captionListener();
             });
         }
     }
 
-    // Hide caption when showing lg gallery
-    let lgSubHtmlTimeout = null;
-    $("html").mousemove(function() {
-        clearTimeout(lgSubHtmlTimeout);
-        $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
-        lgSubHtmlTimeout = setTimeout(function () {
-            $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
-        }, 5000);
-    });
+    shashin.captionListener = function () {
+        // Hide caption when showing lg gallery
+        let lgSubHtmlTimeout = null;
+        $("html").mousemove(function() {
+            clearTimeout(lgSubHtmlTimeout);
+            $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+            lgSubHtmlTimeout = setTimeout(function () {
+                $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
+            }, 5000);
+        });
+    }
+
+    shashin.captionListener();
 
     shashin.getLightGalleryElement = function () {
         return shashin.infiniteScrollGallery;
