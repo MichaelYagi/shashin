@@ -806,7 +806,15 @@
         // Show caption on slide change
         if (shashin.infiniteScrollGallery) {
             shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', (event) => {
-                $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+                // Hide caption when showing lg gallery
+                let lgSubHtmlTimeout = null;
+                $("html").mousemove(function() {
+                    clearTimeout(lgSubHtmlTimeout);
+                    $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+                    lgSubHtmlTimeout = setTimeout(function () {
+                        $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
+                    }, 5000);
+                });
             });
         }
     }
@@ -825,16 +833,6 @@
             shashin.getLightGallery().openGallery(index);
         }
     }
-
-    // Hide caption when showing lg gallery
-    let lgSubHtmlTimeout = null;
-    $("html").mousemove(function() {
-        clearTimeout(lgSubHtmlTimeout);
-        $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
-        lgSubHtmlTimeout = setTimeout(function () {
-            $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
-        }, 5000);
-    });
 
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
         const configs = {
