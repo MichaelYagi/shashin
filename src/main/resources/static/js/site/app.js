@@ -568,8 +568,9 @@
         ) {
             $("#map").css("display","block");
             $("#mapTabMessage").css("display","block");
-            $("#mapTabMessage").text(metadata.placeName);
-            $("#mapTabMessage").wrapInner('<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" class="bi-pin-fill" style="text-decoration: none;"></a>');
+            const linkHtml = '<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" class="bi-pin-fill" style="text-decoration: none;">&nbsp;'+metadata.placeName+'</a><br>' +
+                '<a href="https://www.google.com/maps/search/?api=1&query='+metadata.lat+'%2C'+metadata.lng+'" target="_blank" class="bi-google" style="text-decoration: none;">&nbsp;Google Maps link</a>';
+            $("#mapTabMessage").html(linkHtml);
 
             if (shashin.map === null) {
                 shashin.map = new ol.Map({
