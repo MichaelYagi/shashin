@@ -341,7 +341,9 @@ class Util {
 
             if (metadata.placeName != null) {
                 $(".locationLabel").show();
-                $(".locationDetails").html("<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'>" + metadata.placeName + "</a>");
+                const linkHtml = "<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'>" + metadata.placeName + "</a>" +
+                "&nbsp;<a href='https://www.google.com/maps/search/?api=1&query="+metadata.lat+"%2C"+metadata.lng+"' target='_blank' class='bi-google'></a>";
+                $(".locationDetails").html(linkHtml);
             }
         }
         if (metadata.path != null) {
