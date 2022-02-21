@@ -305,6 +305,10 @@ footer {
   margin: 33px 0 12px -10px;
 }
 
+.image-group-padding {
+  padding-left: 15px;
+}
+
 /* JQuery UI/Bootstrap */
 .ui-autocomplete {
   position: absolute;

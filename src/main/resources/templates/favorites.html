@@ -27,7 +27,7 @@
             <div id="infinite-scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <h1>Favorites</h1>
-                    <div class="row p-3">
+                    <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
                             <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadataList[iterStat.index-1].year==metadata.year and metadataList[iterStat.index-1].month==metadata.month and metadataList[iterStat.index-1].day==metadata.day}">
