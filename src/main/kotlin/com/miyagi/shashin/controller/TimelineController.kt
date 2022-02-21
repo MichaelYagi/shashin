@@ -100,7 +100,7 @@ class TimelineController {
             date = initialMetadataObj.getYear().toString() + "-" + initialMetadataObj.getMonth().toString() + "-" + initialMetadataObj.getDay().toString()
         }
 
-        val dates = getMetadataDates(mediaType!!)
+        val dates = getMetadataDates(mediaType)
         model["metadataDates"] = dates["metadataDates"]!!
 
         val response = buildTimelineDataByDate(model,mediaType,date,true)
