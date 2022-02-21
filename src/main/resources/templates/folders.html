@@ -13,7 +13,7 @@
             <div id="foldersMessage"></div>
 
             <th:block th:if="${not #lists.isEmpty(foldersList)}">
-                <div class="row p-3">
+                <div class="row image-group-padding">
                     <th:block th:each="folder, iterStat: ${foldersList}">
                         <div class="card" style="width:235px;padding-top:10px;">
                             <a th:href="'/folder/'+${#uris.escapePath(#uris.escapePathSegment(folder.folder))}" style="text-decoration: none !important;color: #777777;">

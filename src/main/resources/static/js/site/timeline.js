@@ -48,6 +48,7 @@
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
             $("#timelineTocToggle").show();
+            $("#dateSliderContainer").hide();
         }
 
         if ($('.scrollspy').length > 0) {
@@ -1235,12 +1236,12 @@
                                 {
                                     html += '<span class="dateContainer" id="container_undated">\n' +
                                         '<br id="brundated"><section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>\n' +
-                                        '<div class="row p-3" id="rowundated">\n';
+                                        '<div class="row image-group-padding" id="rowundated">\n';
                                 } else {
                                     idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
                                     html += '<span class="dateContainer" id="container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '">\n' +
                                         '<br id="br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><section class="scrollspy" id="' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><p><strong class="dateHeading p-1">' + dateString + '</strong></p></section>\n' +
-                                        '<div class="row p-3" id="row' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '">\n' +
+                                        '<div class="row image-group-padding" id="row' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '">\n' +
                                         '<span style="display: none;" class="yearTaken">' + metadataList[0]["year"] + '</span>\n' +
                                         '<span style="display: none;" class="monthTaken">' + metadataList[0]["month"] + '</span>\n' +
                                         '<span style="display: none;" class="dayTaken">' + metadataList[0]["day"] + '</span>\n';

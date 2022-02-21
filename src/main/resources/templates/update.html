@@ -10,7 +10,7 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
-            <div class="row p-3">
+            <div class="row image-group-padding">
                 <form action="/users/update" method="post">
                     <h2 class="form-signin-heading">Change Password</h2>
                     <th:block th:if="${message != '' and alertClass != ''}">

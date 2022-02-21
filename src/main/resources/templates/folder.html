@@ -26,7 +26,7 @@
             <div id="scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <h1 th:text="${folder}"></h1>
-                    <div class="row p-3">
+                    <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
