@@ -43,3 +43,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Changed params for UUID generation for metadata
 
 ### Fixed
+
+## [2.0.1] - 2022-02-21
+### Added
+
+### Changed
+
+### Fixed
+
+- UX fixes and improvements for mobile
