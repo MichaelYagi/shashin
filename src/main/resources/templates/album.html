@@ -62,7 +62,7 @@
                                 <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">
                                     <a href="#" th:id="'favorite'+${metadata.id}" class="text-decoration-none">
                                         <span class="overlayIconBackground">
-                                            <span th:id="'briconcount'+${metadata.id}" th:text="${#maps.containsKey(favorites, metadata.id) ? favorites.get(metadata.id).get('count')+ ' ' : '0 '}"></span><span th:id="'brfavoriteicon'+${metadata.id}" th:class="${#maps.containsKey(favorites, metadata.id) and favorites.get(metadata.id).get('favorite')} ? 'bi-suit-heart-fill overlayIcon' : 'bi-suit-heart overlayIcon'"></span>
+                                            <span th:id="'briconcount'+${metadata.id}" th:text="${#maps.containsKey(favorites, metadata.id) ? favorites.get(metadata.id).get('count') : '0'}"></span>&nbsp;<span th:id="'brfavoriteicon'+${metadata.id}" th:class="${#maps.containsKey(favorites, metadata.id) and favorites.get(metadata.id).get('favorite')} ? 'bi-suit-heart-fill overlayIcon' : 'bi-suit-heart overlayIcon'"></span>
                                         </span>
                                     </a>
                                     <br>
