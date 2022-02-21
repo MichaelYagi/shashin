@@ -102,7 +102,7 @@
                                     '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
                                     '       <a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
                                     '           <span class="overlayIconBackground">\n' +
-                                    '               <span id="briconcount' + metadata.id + '">'+favoriteCount+' </span><span class="'+favoriteIcon+' overlayIcon" id="brfavoriteicon'+metadata.id+'"></span>\n' +
+                                    '               <span id="briconcount' + metadata.id + '">'+favoriteCount+' </span>&nbsp;<span class="'+favoriteIcon+' overlayIcon" id="brfavoriteicon'+metadata.id+'"></span>\n' +
                                     '           </span>\n' +
                                     '       </a>\n' +
                                     '       <br>' +
