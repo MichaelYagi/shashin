@@ -842,6 +842,13 @@ class SettingsController {
                                                     "Removed favorite records for: " + metadata.getId()
                                                 )
 
+                                                // Delete from keywords
+                                                keywordPhotoRepository?.deleteAllByMetadataId(metadata.getId())
+                                                logger.log(
+                                                    Level.INFO,
+                                                    "Removed keywords records for: " + metadata.getId()
+                                                )
+
                                                 // Delete from album
                                                 albumPhotoRepository?.deleteByMetadataId(metadata.getId())
                                                 val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
