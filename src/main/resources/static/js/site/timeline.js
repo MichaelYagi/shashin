@@ -45,6 +45,7 @@
 
         // Initialize
         if (Util.isMobile() === false) {
+            $(".image-group-padding").attr('style', 'width: 97%');
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
             $("#timelineTocToggle").show();
