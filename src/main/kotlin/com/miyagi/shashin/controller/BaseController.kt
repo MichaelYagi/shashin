@@ -86,7 +86,7 @@ class BaseController {
             settingsObj.setNotificationLimit(20)
             settingsObj.setSearchHistoryLimit(15)
             settingsObj.setPort("6624")
-            settingsObj.setScanAutomatically(true)
+            settingsObj.setScanAutomatically(false)
             settingsObj.setRecognitionConfidenceThreshold("0.6")
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
