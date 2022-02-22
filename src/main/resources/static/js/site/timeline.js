@@ -1029,7 +1029,7 @@
     }
 
     // Hook up data to edit albums, favorites and people labels
-    timelineSettings.attachAssociatedMetadata = function(date,mediaTypeFilter) {
+    timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
         const ajaxParams = {
             type: 'get',
             url: "/timeline/mediatype/"+mediaTypeFilter+"/date/"+date,
