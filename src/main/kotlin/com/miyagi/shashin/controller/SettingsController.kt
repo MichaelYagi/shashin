@@ -825,7 +825,10 @@ class SettingsController {
                                                 if (albumPhotoCommentList != null) {
                                                     for (albumPhotoComment in albumPhotoCommentList) {
                                                         if (albumPhotoComment != null) {
-                                                            commentRepository?.deleteById(albumPhotoComment.getId())
+                                                            val commentCount = commentRepository?.countById(albumPhotoComment.getId())
+                                                            if (commentCount != null && commentCount > 0) {
+                                                                commentRepository?.deleteById(albumPhotoComment.getId())
+                                                            }
                                                         }
                                                     }
                                                 }

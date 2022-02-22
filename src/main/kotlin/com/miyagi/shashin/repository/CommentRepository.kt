@@ -17,4 +17,5 @@ interface CommentRepository : CrudRepository<Comment?, Int?> {
     @Query("SELECT c.id as commentId, c.comment, a.album_id as albumId, a.metadata_id as metadataId, u.id as userId, u.username, c.created_at as createdAt FROM comment c, metadata m LEFT JOIN user u ON u.id = c.user_id LEFT JOIN albumphotocomment a on c.id = a.comment_id WHERE a.metadata_id = m.id AND a.album_id = :albumId AND a.metadata_id = :metadataId ORDER BY c.created_at DESC", nativeQuery = true)
     fun findCommentsByAlbumIdAndMetadataId(@Param("albumId") albumId: Int, @Param("metadataId") metadataId: String): MutableIterable<AlbumPhotoComments>
     fun deleteByUserId(userId: Int?): Long
+    fun countById(commentId: Int): Int
 }
