@@ -232,10 +232,10 @@ $("#saveMetadata").click(function (e) {
                                 $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                             }
 
-                            if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() === "timeline") || $("#activePage").length === 0) {
+                            if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
                                 dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                             }
-                        } else {
+                        } else if (($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folders") || $("#activePage").length === 0) {
                             dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                         }
 
@@ -251,7 +251,7 @@ $("#saveMetadata").click(function (e) {
                             });
                         }
 
-                        if (dateGalleryRemoved === false && captionUpdated === true) {
+                        if (typeof timelineSettings !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
                             // Refresh gallery if caption updated
                             timelineSettings.reinitLightGalleryInstance();
                         }
