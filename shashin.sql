@@ -61,7 +61,7 @@ CREATE TABLE `settings` (
     `notificationLimit` INTEGER NOT NULL DEFAULT 20,
     `searchHistoryLimit` INTEGER NOT NULL DEFAULT 15,
     `port` VARCHAR(10) NOT NULL DEFAULT '6624',
-    `scanAutomatically` BOOLEAN DEFAULT TRUE,
+    `scanAutomatically` BOOLEAN DEFAULT FALSE,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL
 );
