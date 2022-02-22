@@ -229,20 +229,8 @@
 
             $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving album favorite")}).then(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    shashin.printMessageToConsole(data["status"]);
-                    shashin.printMessageToConsole(data["msg"]);
-
-                    let currentCount = parseInt($("#briconcount"+metadata.id).text());
-                    if (isFavorite === true) {
-                        currentCount++;
-                    } else {
-                        currentCount--;
-                        if (currentCount < 0) {
-                            currentCount = 0;
-                        }
-                    }
-                    $("#briconcount"+metadata.id).text(currentCount)
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
+                    $("#briconcount"+metadata.id).text(data["count"]);
                 }
             });
 

@@ -1446,6 +1446,7 @@
             }
 
             const isFavorite = ($("#bricon" + metadataId).hasClass("bi-suit-heart-fill"));
+            let currentCount = parseInt($("#briconcount"+metadata.id).text());
 
             const json = {metadataId: metadataId, isFavorite: isFavorite};
 
@@ -1466,17 +1467,8 @@
             }
 
             posting.done(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    let currentCount = parseInt($("#briconcount"+metadata.id).text());
-                    if (isFavorite === true) {
-                        currentCount++;
-                    } else {
-                        currentCount--;
-                        if (currentCount < 0) {
-                            currentCount = 0;
-                        }
-                    }
-                    $("#briconcount"+metadata.id).text(currentCount)
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
+                    $("#briconcount"+metadata.id).text(data["count"]);
                 }
             });
         });
