@@ -865,6 +865,10 @@ class SettingsController {
                                                 }
                                                 logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
 
+                                                // Delete tagged people
+                                                recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
+
+                                                // Delete metadata
                                                 metadataRepository?.deleteById(metadata.getId())
                                                 logger.log(
                                                     Level.INFO,
