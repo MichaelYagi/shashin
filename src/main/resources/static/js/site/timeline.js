@@ -45,7 +45,6 @@
 
         // Initialize
         if (Util.isMobile() === false) {
-            $(".image-group-padding").attr('style', 'width: 97%');
             timelineSettings.initializeTimelineSlider(mediaTypeFilter);
         } else {
             $("#timelineTocToggle").show();
@@ -414,6 +413,10 @@
             }
         }
 
+        if (Util.isMobile() === false) {
+            $(".image-group-padding").attr('style', 'width: 97%');
+        }
+
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
 
@@ -669,6 +672,10 @@
         shashin.printMessageToConsole("==============================================");
         //deferred.resolve(timelineSettings.successMidMsg);
         //return deferred.promise();
+
+        if (Util.isMobile() === false) {
+            $(".image-group-padding").attr('style', 'width: 97%');
+        }
 
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
