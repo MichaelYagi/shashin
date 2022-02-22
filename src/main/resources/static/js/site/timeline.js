@@ -261,7 +261,9 @@
     timelineSettings.renderThumbnailsSimple = async function(elements,mediaTypeFilter,timelineDates) {
         timelineSettings.enableScrollSpy = false;
 
-        $("#spinner_bottom").css("display", "block");
+        if ($(".attachMetadataPhotos").last().text() !== "EOL") {
+            $("#spinner_bottom").css("display", "block");
+        }
 
         let firstElementId = $(elements[0]).attr("id");
         let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
@@ -432,7 +434,10 @@
         } else {
             $("#spinner_top").css("display", "block");
         }
-        $("#spinner_bottom").css("display", "block");
+        if ($(".attachMetadataPhotos").last().text() !== "EOL") {
+            $("#spinner_bottom").css("display", "block");
+        }
+
         timelineSettings.enableScrollSpy = false;
         //let deferred = new $.Deferred();
 
