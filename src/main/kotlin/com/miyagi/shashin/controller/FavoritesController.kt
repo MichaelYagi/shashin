@@ -45,7 +45,7 @@ class FavoritesController {
     private val keywordRepository: KeywordRepository? = null
 
     val mapper = ObjectMapper()
-    val resp = mutableMapOf<String, String?>()
+    val resp = mutableMapOf<String, Any?>()
 
     @GetMapping("/favorites")
     fun getFavorites(model: Model): String {
@@ -157,6 +157,7 @@ class FavoritesController {
                 }
                 notificationRepository.saveAll(notificationObjList)
 
+                resp["count"] = favoriteRepository.countAllByMetadataId(metadataId)
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
@@ -198,6 +199,7 @@ class FavoritesController {
                     favoriteRepository.save(favorite)
                 }
 
+                resp["count"] = favoriteRepository.countAllByMetadataId(metadataId)
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
