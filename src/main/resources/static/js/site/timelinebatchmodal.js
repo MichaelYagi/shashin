@@ -48,6 +48,7 @@ $("#saveBatchMetadata").click(function (e) {
     $("#timelineBatchModalStatus").css("visibility","visible");
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
+    const activePage = $("#activePage").val();
 
     const metadataIds = JSON.parse($("#batchMetadataIds").val());
 
@@ -223,10 +224,10 @@ $("#saveBatchMetadata").click(function (e) {
                                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                                     }
 
-                                    if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true) {
+                                    if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true && activePage === "timeline") {
                                         dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                                     }
-                                } else {
+                                } else if (activePage === "timeline") {
                                     dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                                 }
 
