@@ -52,3 +52,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - UX fixes and improvements for mobile
+- Fixed favorite counts for media
