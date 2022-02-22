@@ -774,13 +774,13 @@
                         });
 
                         $("#dateSlider").append(tickEl);
-                        setTimeout(function() {
-                            if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
-                                $("#" + tickEl.attr("id")).hide();
-                            } else {
-                                prevTickEl = tickEl;
-                            }
-                        },0);
+                        // setTimeout(function() {
+                        //     if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
+                        //         $("#" + tickEl.attr("id")).hide();
+                        //     } else {
+                        //         prevTickEl = tickEl;
+                        //     }
+                        // },0);
                     }
 
                     // Tooltip for month/year on slider
