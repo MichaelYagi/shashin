@@ -109,9 +109,9 @@ $("#saveBatchMetadata").click(function (e) {
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {
-            shashin.onFail(xhr, textStatus, ajaxParams, " updating batch timeline modal");
             $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#timelineBatchModalCancel").prop("disabled", false);
+            shashin.onFail(xhr, textStatus, ajaxParams, " updating batch timeline modal");
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";

@@ -42,9 +42,9 @@ $(document).ready(function () {
 
         $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {
-                shashin.onFail(xhr, textStatus, ajaxParams, " saving album");
                 $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#albumsModalCancel").prop('disabled', false);
+                shashin.onFail(xhr, textStatus, ajaxParams, " saving album");
             }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "redirect") {

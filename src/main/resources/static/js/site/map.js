@@ -446,9 +446,9 @@ async function showMap(mapdata,keywordMap,showControls) {
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {
-            shashin.onFail(xhr, textStatus, ajaxParams, " saving map location data");
             $("#metadataLocationModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataLocationModalCancel").prop('disabled', false);
+            shashin.onFail(xhr, textStatus, ajaxParams, " saving map location data");
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
