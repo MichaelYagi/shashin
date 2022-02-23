@@ -73,6 +73,7 @@
                 $("#resetPasswordUser[[${user.id}]]").click(function(e) {
                     e.preventDefault();
 
+                    $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
                     $("#resetPasswordUserStatus[[${user.id}]]").css("visibility","visible");
                     $("#resetPasswordUserStatus[[${user.id}]]").attr("title", "");
                     $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', true);

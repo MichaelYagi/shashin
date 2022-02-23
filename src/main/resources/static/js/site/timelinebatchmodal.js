@@ -47,6 +47,7 @@ $("#saveBatchMetadata").click(function (e) {
 
     $("#timelineBatchModalCancel").prop("disabled", true);
     $("#msgBatchMetadata").html("");
+    $("#timelineBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
     $("#timelineBatchModalStatus").css("visibility","visible");
     $("#timelineBatchModalStatus").attr("title", "");
     timelineBatchModal.closeBatchTagPeopleDropdown();
@@ -273,6 +274,8 @@ $("#saveBatchMetadata").click(function (e) {
                 $("#timelineBatchModalCancel").prop("disabled", false);
             }
         });
+    } else {
+        $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
     }
 
     return false;

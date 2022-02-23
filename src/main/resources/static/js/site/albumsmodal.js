@@ -2,6 +2,7 @@
     albumsModalSettings.updateShareLink = function (baseUrl,albumId,action) {
         $("#generateLink"+albumId).prop('disabled', true);
         $("#cancelUserShare"+albumId).prop('disabled', true);
+        $("#albumsModalStatus"+albumId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
         $("#albumsModalStatus"+albumId).css("visibility","visible");
         $("#albumsModalStatus"+albumId).attr("title","");
         $("#share"+albumId+" span").removeClass('bi-share-fill').addClass('bi-share');

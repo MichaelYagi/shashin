@@ -84,6 +84,7 @@
         $("#editAlbum"+albumId).click(function(e) {
             e.preventDefault();
 
+            $("#editAlbumNameStatus"+albumId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#editAlbumNameStatus"+albumId).css("visibility","visible");
             $("#editAlbumNameStatus"+albumId).attr("title","");
             $("#cancelAlbum"+albumId).prop('disabled', true);
@@ -171,6 +172,8 @@
 
         $("#saveUserShare"+albumId).click(function (e) {
             e.preventDefault();
+
+            $("#albumsModalStatus"+albumId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#albumsModalStatus"+albumId).css("visibility","visible");
             $("#albumsModalStatus"+albumId).attr("title", "");
             $("#cancelUserShare"+albumId).prop('disabled', true);

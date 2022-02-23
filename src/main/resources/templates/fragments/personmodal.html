@@ -85,7 +85,9 @@
 
                 $("#saveBatchMetadata").click(function (e) {
                     e.preventDefault();
+
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
+                    $("#personBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
                     $("#personBatchModalStatus").css("visibility","visible");
                     $("#personBatchModalStatus").attr("title", "");
                     $("#personBatchModalCancel").prop('disabled', true);
@@ -247,7 +249,9 @@
 
             $("#saveMetadata"+metadata.id).click(function (e) {
                 e.preventDefault();
+
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
+                $("#personModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
                 $("#personModalStatus" + metadata.id).css("visibility","visible");
                 $("#personModalStatus" + metadata.id).attr("title", "");
                 $("#personModalCancel" + metadata.id).prop('disabled', true);

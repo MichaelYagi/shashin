@@ -50,6 +50,7 @@
 $("#saveMetadata").click(function (e) {
     e.preventDefault();
     $("#timelineModalMsg").html("");
+    $("#timelineModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
     $("#timelineModalStatus").css("visibility","visible");
     $("#timelineModalStatus").attr("title", "");
     $("#timelineModalCancel").prop('disabled', true);
@@ -279,6 +280,8 @@ $("#saveMetadata").click(function (e) {
             }
             //$("#timelineModalStatus").css("visibility","hidden");
         });
+    } else {
+        $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
     }
 });
 
