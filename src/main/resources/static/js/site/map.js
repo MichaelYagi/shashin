@@ -426,6 +426,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         e.preventDefault();
 
         $("#metadataLocationModalStatus").css("visibility", "visible");
+        $("#metadataLocationModalStatus").attr("title", "");
         $("#metadataLocationModalCancel").prop('disabled', true);
         let metadataIdList = [];
         metadataIdList.push($("#mapMetadataId").val());
@@ -444,7 +445,11 @@ async function showMap(mapdata,keywordMap,showControls) {
         }
 
         $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving map location data")}).then(function (data) {
+        .fail(function(xhr, textStatus) {
+            shashin.onFail(xhr, textStatus, ajaxParams, " saving map location data");
+            $("#metadataLocationModalStatus").attr("title", shashin.modalStatusFailMessage());
+            $("#metadataLocationModalCancel").prop('disabled', false);
+        }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -461,10 +466,12 @@ async function showMap(mapdata,keywordMap,showControls) {
                     window.top.location = window.location.href.split("?")[0];
                 } else {
                     $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#metadataLocationModalStatus").attr("title", shashin.modalStatusFailMessage());
                     $("#metadataLocationModalCancel").prop('disabled', false);
                 }
             } else {
                 $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#metadataLocationModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#metadataLocationModalCancel").prop('disabled', false);
             }
         });

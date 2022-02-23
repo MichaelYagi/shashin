@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <div id="personBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                <div id="personBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                 <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
                 <button id="personBatchModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -87,6 +87,7 @@
                     e.preventDefault();
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
                     $("#personBatchModalStatus").css("visibility","visible");
+                    $("#personBatchModalStatus").attr("title", "");
                     $("#personBatchModalCancel").prop('disabled', true);
 
                     const batchObj = Util.serializeObject($('#saveBatchData'));
@@ -100,7 +101,11 @@
                     }
 
                     $.ajax(ajaxParams)
-                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving batch modal for person")}).then(function (data) {
+                    .fail(function(xhr, textStatus) {
+                        shashin.onFail(xhr, textStatus, ajaxParams, " saving batch modal for person");
+                        $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+                        $("#personBatchModalCancel").prop('disabled', false);
+                    }).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             let message = "Error";
                             if (data["status"] === "success") {
@@ -115,12 +120,14 @@
                             } else {
                                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                                 $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                                $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                                 $("#personBatchModalCancel").prop('disabled', false);
                             }
                             //$("#msgBatchMetadata").html(message);
                             //shashin.clearTimelineSelection();
                         } else {
                             $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                            $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                             $("#personBatchModalCancel").prop('disabled', false);
                         }
                     });
@@ -223,7 +230,7 @@
                 '   </div>\n' +
                 '</div>\n' +
                 '<div class="modal-footer">\n' +
-                '   <div id="personModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>' +
+                '   <div id="personModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>' +
                 '   <button type="button" class="btn btn-primary" id="saveMetadata'+metadata.id+'">Save</button>\n' +
                 '   <button id="personModalCancel'+metadata.id+'" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
                 '</div></div></div></div>';
@@ -242,6 +249,7 @@
                 e.preventDefault();
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
                 $("#personModalStatus" + metadata.id).css("visibility","visible");
+                $("#personModalStatus" + metadata.id).attr("title", "");
                 $("#personModalCancel" + metadata.id).prop('disabled', true);
 
                 const json = {
@@ -258,7 +266,11 @@
                 }
 
                 $.ajax(ajaxParams)
-                .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving person")}).then(function (data) {
+                .fail(function(xhr, textStatus) {
+                    shashin.onFail(xhr, textStatus, ajaxParams, " saving person");
+                    $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
+                    $("#personModalCancel" + metadata.id).prop('disabled', false);
+                }).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         let message = "Error";
                         if (data["status"] === "success") {
@@ -299,11 +311,13 @@
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                             $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                            $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                             $("#personModalCancel" + metadata.id).prop('disabled', false);
                         }
                         //$("#msg"+metadata.id).html(message);
                     } else {
                         $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                         $("#personModalCancel" + metadata.id).prop('disabled', false);
                     }
                 });
