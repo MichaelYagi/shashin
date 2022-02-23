@@ -121,9 +121,9 @@ $("#saveMetadata").click(function (e) {
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {
-            shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline data");
             $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#timelineModalCancel").prop('disabled', false);
+            shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline data");
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";

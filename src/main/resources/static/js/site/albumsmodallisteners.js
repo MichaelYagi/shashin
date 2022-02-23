@@ -102,9 +102,9 @@
 
             $.ajax(ajaxParams)
                 .fail(function(xhr, textStatus) {
-                    shashin.onFail(xhr, textStatus, ajaxParams, " updating album name");
                     $("#editAlbumNameStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
                     $("#editAlbumNameStatus"+albumId).attr("title",shashin.modalStatusFailMessage());
+                    shashin.onFail(xhr, textStatus, ajaxParams, " updating album name");
                 }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
                     $("#albumName"+albumId).text(albumName);
@@ -199,9 +199,9 @@
 
             $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {
-                shashin.onFail(xhr, textStatus, ajaxParams, " saving user share");
                 $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
                 $("#cancelUserShare"+albumId).prop('disabled', false);
+                shashin.onFail(xhr, textStatus, ajaxParams, " saving user share");
             }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";

@@ -32,9 +32,9 @@
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {
-            shashin.onFail(xhr, textStatus, ajaxParams, " updating album share link");
             $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
             $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
+            shashin.onFail(xhr, textStatus, ajaxParams, " updating album share link");
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {
                 let message = "Generated link not saved";

@@ -91,9 +91,9 @@
 
                     $.ajax(ajaxParams)
                         .fail(function(xhr, textStatus) {
-                            shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving user");
                             $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
                             $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
+                            shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving user");
                         }).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             let message = "Error";

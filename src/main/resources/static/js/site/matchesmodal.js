@@ -50,9 +50,9 @@ $("#saveBatchMetadata").click(function (e) {
 
     $.ajax(ajaxParams)
     .fail(function(xhr, textStatus) {
-        shashin.onFail(xhr, textStatus, ajaxParams, " saving persons matches");
         $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
         $("#matchesBatchModalCancel").prop('disabled', false);
+        shashin.onFail(xhr, textStatus, ajaxParams, " saving persons matches");
     }).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
@@ -243,9 +243,9 @@ $('#propBatchMetadata').bind('keypress', function () {
 
             $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {
-                shashin.onFail(xhr, textStatus, ajaxParams, " saving person matches");
                 $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
                 $("#matchesModalCancel"+metadata.id).prop('disabled', false);
+                shashin.onFail(xhr, textStatus, ajaxParams, " saving person matches");
             }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";

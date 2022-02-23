@@ -104,9 +104,9 @@
 
                     $.ajax(ajaxParams)
                     .fail(function(xhr, textStatus) {
-                        shashin.onFail(xhr, textStatus, ajaxParams, " saving batch modal for person");
                         $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                         $("#personBatchModalCancel").prop('disabled', false);
+                        shashin.onFail(xhr, textStatus, ajaxParams, " saving batch modal for person");
                     }).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             let message = "Error";
@@ -271,9 +271,9 @@
 
                 $.ajax(ajaxParams)
                 .fail(function(xhr, textStatus) {
-                    shashin.onFail(xhr, textStatus, ajaxParams, " saving person");
                     $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                     $("#personModalCancel" + metadata.id).prop('disabled', false);
+                    shashin.onFail(xhr, textStatus, ajaxParams, " saving person");
                 }).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                         let message = "Error";
