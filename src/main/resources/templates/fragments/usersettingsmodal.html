@@ -66,7 +66,7 @@
             <div class="modal-footer">
                 <div th:id="'resetPasswordUserStatus'+${user.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" th:id="'resetPasswordUser'+${user.id}">Confirm</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button th:id="'resetPasswordUserCancel'+${user.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
                 /*<![CDATA[*/
@@ -74,6 +74,7 @@
                     e.preventDefault();
 
                     $("#resetPasswordUserStatus[[${user.id}]]").css("visibility","visible");
+                    $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', true);
 
                     let userId = "[[${user.id}]]";
 
@@ -92,12 +93,15 @@
                             let message = "Error";
                             if (data["status"] === "success") {
                                 $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-check-circle').removeClass('spinner-grow');
+                                $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
                                 window.location.replace("/settings/users");
                             } else {
                                 $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
+                                $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
                             }
                         } else {
                             $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
+                            $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
                         }
                     });
                 });

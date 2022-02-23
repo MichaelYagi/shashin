@@ -51,7 +51,7 @@
             <div class="modal-footer">
                 <div id="personBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
                 <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="personBatchModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
             <script type="text/javascript">
                 (function( personModalBatchSettings, $, undefined ) {
@@ -87,6 +87,7 @@
                     e.preventDefault();
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
                     $("#personBatchModalStatus").css("visibility","visible");
+                    $("#personBatchModalCancel").prop('disabled', true);
 
                     const batchObj = Util.serializeObject($('#saveBatchData'));
 
@@ -110,14 +111,17 @@
                                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                                 // window.top.location = window.top.location
                                 $("#personBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                                $("#personBatchModalCancel").prop('disabled', false);
                             } else {
                                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                                 $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                                $("#personBatchModalCancel").prop('disabled', false);
                             }
                             //$("#msgBatchMetadata").html(message);
                             //shashin.clearTimelineSelection();
                         } else {
                             $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                            $("#personBatchModalCancel").prop('disabled', false);
                         }
                     });
 
@@ -221,7 +225,7 @@
                 '<div class="modal-footer">\n' +
                 '   <div id="personModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>' +
                 '   <button type="button" class="btn btn-primary" id="saveMetadata'+metadata.id+'">Save</button>\n' +
-                '   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
+                '   <button id="personModalCancel'+metadata.id+'" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
                 '</div></div></div></div>';
 
             $("#personmodal"+metadata.id).after(html);
@@ -238,6 +242,7 @@
                 e.preventDefault();
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
                 $("#personModalStatus" + metadata.id).css("visibility","visible");
+                $("#personModalCancel" + metadata.id).prop('disabled', true);
 
                 const json = {
                     metadataId: metadata.id,
@@ -290,13 +295,16 @@
                             message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                             // window.top.location = window.top.location
                             $("#personModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
+                            $("#personModalCancel" + metadata.id).prop('disabled', false);
                         } else {
                             message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                             $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                            $("#personModalCancel" + metadata.id).prop('disabled', false);
                         }
                         //$("#msg"+metadata.id).html(message);
                     } else {
                         $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#personModalCancel" + metadata.id).prop('disabled', false);
                     }
                 });
 

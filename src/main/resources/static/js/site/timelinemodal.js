@@ -51,6 +51,7 @@ $("#saveMetadata").click(function (e) {
     e.preventDefault();
     $("#timelineModalMsg").html("");
     $("#timelineModalStatus").css("visibility","visible");
+    $("#timelineModalCancel").prop('disabled', true);
     const metadataId = $("#metadataId").val();
 
     timelineModal.closeTagPeopleDropdown(metadataId);
@@ -257,14 +258,17 @@ $("#saveMetadata").click(function (e) {
                         }
 
                         $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#timelineModalCancel").prop('disabled', false);
                     });
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#timelineModalCancel").prop('disabled', false);
                 }
                 //$("#timelineModalMsg").html(message);
             } else {
                 $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#timelineModalCancel").prop('disabled', false);
             }
             //$("#timelineModalStatus").css("visibility","hidden");
         });

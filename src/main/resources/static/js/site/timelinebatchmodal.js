@@ -44,6 +44,8 @@
 
 $("#saveBatchMetadata").click(function (e) {
     e.preventDefault();
+
+    $("#timelineBatchModalCancel").prop("disabled", true);
     $("#msgBatchMetadata").html("");
     $("#timelineBatchModalStatus").css("visibility","visible");
     timelineBatchModal.closeBatchTagPeopleDropdown();
@@ -252,30 +254,17 @@ $("#saveBatchMetadata").click(function (e) {
 
                     message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     $("#timelineBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-
+                    $("#timelineBatchModalCancel").prop("disabled", false);
                     // window.top.location = window.top.location
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#timelineBatchModalStatus")
+                    $("#timelineBatchModalCancel").prop("disabled", false);
                 }
-
-                //$("#msgBatchMetadata").html(message);
-                //$("#timelineBatchModalStatus").css("visibility","hidden");
-
-                // shashin.clearTimelineSelection();
-                // $("#batchMetadataIds").val("");
-                // $("#batchFilenames").val("");
-                // $("#dayTakenBatchData").val("");
-                // $("#monthTakenBatchData").val("");
-                // $("#yearTakenBatchData").val("");
-                // $("#latlngBatchData").val("");
-                // $("#keywordsBatchData").val("");
-                // $("#albumNameInput").val("");
-                // $("#tagBatchDataInput").val("");
-                // $("#batchisobject")[0].checked = false;
-                // $("#batchhidden")[0].checked = false;
             } else {
                 $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#timelineBatchModalCancel").prop("disabled", false);
             }
         });
     }

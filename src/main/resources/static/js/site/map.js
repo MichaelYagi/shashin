@@ -426,6 +426,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         e.preventDefault();
 
         $("#metadataLocationModalStatus").css("visibility", "visible");
+        $("#metadataLocationModalCancel").prop('disabled', true);
         let metadataIdList = [];
         metadataIdList.push($("#mapMetadataId").val());
 
@@ -456,12 +457,15 @@ async function showMap(mapdata,keywordMap,showControls) {
                     localStorage.setItem("lat", lat);
                     localStorage.setItem("lng", lng);
 
+                    $("#metadataLocationModalCancel").prop('disabled', false);
                     window.top.location = window.location.href.split("?")[0];
                 } else {
                     $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#metadataLocationModalCancel").prop('disabled', false);
                 }
             } else {
                 $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#metadataLocationModalCancel").prop('disabled', false);
             }
         });
 

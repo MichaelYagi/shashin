@@ -33,6 +33,7 @@ $("#saveBatchMetadata").click(function (e) {
     e.preventDefault();
     matchModalBatchSettings.closeBatchTagPeopleDropdown();
     $("#matchesBatchModalStatus").css("visibility","visible");
+    $("#matchesBatchModalCancel").prop('disabled', true);
 
     const batchObj = Util.serializeObject($('#saveBatchData'));
 
@@ -87,15 +88,17 @@ $("#saveBatchMetadata").click(function (e) {
                 // window.top.location = window.top.location
 
                 $("#matchesBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                $("#matchesBatchModalCancel").prop('disabled', false);
             } else {
                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-
                 $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#matchesBatchModalCancel").prop('disabled', false);
             }
             //$("#msgBatchMetadata").html(message);
             //shashin.clearTimelineSelection();
         } else {
             $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+            $("#matchesBatchModalCancel").prop('disabled', false);
         }
     });
 
@@ -194,7 +197,7 @@ $('#propBatchMetadata').bind('keypress', function () {
             '<div class="modal-footer">\n' +
             '   <div id="matchesModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>' +
             '   <button type="button" class="btn btn-primary" id="saveMetadata' + metadata.id + '">Save</button>\n' +
-            '   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
+            '   <button id="matchesModalCancel'+metadata.id+'" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
             '</div></div></div></div>';
 
         $("#matchesmodal" + metadata.id).after(html);
@@ -211,6 +214,7 @@ $('#propBatchMetadata').bind('keypress', function () {
             e.preventDefault();
             matchModalSettings.closeTagPeopleDropdown(metadata.id);
             $("#matchesModalStatus"+metadata.id).css("visibility","visible");
+            $("#matchesModalCancel"+metadata.id).prop('disabled', true);
 
             const json = {
                 metadataId: metadata.id,
@@ -263,13 +267,16 @@ $('#propBatchMetadata').bind('keypress', function () {
                         message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                         // window.top.location = window.top.location
                         $("#matchesModalStatus"+metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#matchesModalCancel"+metadata.id).prop('disabled', false);
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#matchesModalCancel"+metadata.id).prop('disabled', false);
                     }
                     //$("#msg" + metadata.id).html(message);
                 } else {
                     $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#matchesModalCancel"+metadata.id).prop('disabled', false);
                 }
             });
 
