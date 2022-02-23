@@ -94,6 +94,8 @@ $("#saveBatchMetadata").click(function (e) {
             }
             //$("#msgBatchMetadata").html(message);
             //shashin.clearTimelineSelection();
+        } else {
+            $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
         }
     });
 
@@ -266,6 +268,8 @@ $('#propBatchMetadata').bind('keypress', function () {
                         $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                     }
                     //$("#msg" + metadata.id).html(message);
+                } else {
+                    $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                 }
             });
 

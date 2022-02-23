@@ -195,6 +195,8 @@
                         $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
                     }
                     //$("#albumsMessage").html(message);
+                } else {
+                    $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
                 }
 
                 //$("#propsharealbums"+albumId).modal('hide');

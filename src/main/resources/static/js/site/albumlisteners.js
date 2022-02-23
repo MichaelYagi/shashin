@@ -54,6 +54,8 @@ $(document).ready(function () {
                     }
                     //$('#albumModalMsg').html(message);
                 }
+            } else {
+                $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             }
         });
         return false;
