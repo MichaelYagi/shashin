@@ -19,6 +19,10 @@
         shashin.map.updateSize();
     }
 
+    shashin.modalStatusFailMessage = function() {
+        return "Something went wrong. Please try again.";
+    }
+
     shashin.onFail = function(xhr, textStatus, ajaxParams, description) {
         $("#spinner").hide();
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");

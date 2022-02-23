@@ -51,6 +51,7 @@ $("#saveMetadata").click(function (e) {
     e.preventDefault();
     $("#timelineModalMsg").html("");
     $("#timelineModalStatus").css("visibility","visible");
+    $("#timelineModalStatus").attr("title", "");
     $("#timelineModalCancel").prop('disabled', true);
     const metadataId = $("#metadataId").val();
 
@@ -118,7 +119,11 @@ $("#saveMetadata").click(function (e) {
         }
 
         $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline data")}).then(function (data) {
+        .fail(function(xhr, textStatus) {
+            shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline data");
+            $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
+            $("#timelineModalCancel").prop('disabled', false);
+        }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -263,11 +268,13 @@ $("#saveMetadata").click(function (e) {
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
                     $("#timelineModalCancel").prop('disabled', false);
                 }
                 //$("#timelineModalMsg").html(message);
             } else {
                 $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#timelineModalCancel").prop('disabled', false);
             }
             //$("#timelineModalStatus").css("visibility","hidden");

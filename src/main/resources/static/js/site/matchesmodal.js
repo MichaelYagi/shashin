@@ -33,6 +33,7 @@ $("#saveBatchMetadata").click(function (e) {
     e.preventDefault();
     matchModalBatchSettings.closeBatchTagPeopleDropdown();
     $("#matchesBatchModalStatus").css("visibility","visible");
+    $("#matchesBatchModalStatus").attr("title", "");
     $("#matchesBatchModalCancel").prop('disabled', true);
 
     const batchObj = Util.serializeObject($('#saveBatchData'));
@@ -46,7 +47,11 @@ $("#saveBatchMetadata").click(function (e) {
     }
 
     $.ajax(ajaxParams)
-    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving persons matches")}).then(function (data) {
+    .fail(function(xhr, textStatus) {
+        shashin.onFail(xhr, textStatus, ajaxParams, " saving persons matches");
+        $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+        $("#matchesBatchModalCancel").prop('disabled', false);
+    }).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
@@ -92,12 +97,14 @@ $("#saveBatchMetadata").click(function (e) {
             } else {
                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#matchesBatchModalCancel").prop('disabled', false);
             }
             //$("#msgBatchMetadata").html(message);
             //shashin.clearTimelineSelection();
         } else {
             $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+            $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#matchesBatchModalCancel").prop('disabled', false);
         }
     });
@@ -195,7 +202,7 @@ $('#propBatchMetadata').bind('keypress', function () {
             '   </div>\n' +
             '</div>\n' +
             '<div class="modal-footer">\n' +
-            '   <div id="matchesModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>' +
+            '   <div id="matchesModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>' +
             '   <button type="button" class="btn btn-primary" id="saveMetadata' + metadata.id + '">Save</button>\n' +
             '   <button id="matchesModalCancel'+metadata.id+'" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
             '</div></div></div></div>';
@@ -214,6 +221,7 @@ $('#propBatchMetadata').bind('keypress', function () {
             e.preventDefault();
             matchModalSettings.closeTagPeopleDropdown(metadata.id);
             $("#matchesModalStatus"+metadata.id).css("visibility","visible");
+            $("#matchesModalStatus"+metadata.id).attr("title", "");
             $("#matchesModalCancel"+metadata.id).prop('disabled', true);
 
             const json = {
@@ -230,7 +238,11 @@ $('#propBatchMetadata').bind('keypress', function () {
             }
 
             $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving person matches")}).then(function (data) {
+            .fail(function(xhr, textStatus) {
+                shashin.onFail(xhr, textStatus, ajaxParams, " saving person matches");
+                $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
+                $("#matchesModalCancel"+metadata.id).prop('disabled', false);
+            }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {
@@ -271,11 +283,13 @@ $('#propBatchMetadata').bind('keypress', function () {
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
                         $("#matchesModalCancel"+metadata.id).prop('disabled', false);
                     }
                     //$("#msg" + metadata.id).html(message);
                 } else {
                     $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
                     $("#matchesModalCancel"+metadata.id).prop('disabled', false);
                 }
             });

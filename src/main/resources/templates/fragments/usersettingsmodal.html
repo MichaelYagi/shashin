@@ -64,7 +64,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <div th:id="'resetPasswordUserStatus'+${user.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
+                <div th:id="'resetPasswordUserStatus'+${user.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                 <button type="button" class="btn btn-primary" th:id="'resetPasswordUser'+${user.id}">Confirm</button>
                 <button th:id="'resetPasswordUserCancel'+${user.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
@@ -74,6 +74,7 @@
                     e.preventDefault();
 
                     $("#resetPasswordUserStatus[[${user.id}]]").css("visibility","visible");
+                    $("#resetPasswordUserStatus[[${user.id}]]").attr("title", "");
                     $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', true);
 
                     let userId = "[[${user.id}]]";
@@ -88,7 +89,11 @@
                     }
 
                     $.ajax(ajaxParams)
-                        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving user")}).then(function (data) {
+                        .fail(function(xhr, textStatus) {
+                            shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving user");
+                            $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
+                            $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
+                        }).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                             let message = "Error";
                             if (data["status"] === "success") {
@@ -97,10 +102,12 @@
                                 window.location.replace("/settings/users");
                             } else {
                                 $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
+                                $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
                                 $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
                             }
                         } else {
                             $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
+                            $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
                             $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
                         }
                     });

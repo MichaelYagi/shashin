@@ -3,6 +3,7 @@
         $("#generateLink"+albumId).prop('disabled', true);
         $("#cancelUserShare"+albumId).prop('disabled', true);
         $("#albumsModalStatus"+albumId).css("visibility","visible");
+        $("#albumsModalStatus"+albumId).attr("title","");
         $("#share"+albumId+" span").removeClass('bi-share-fill').addClass('bi-share');
         $("#msg"+albumId).html("");
         let relativeShareLink = "";
@@ -29,7 +30,11 @@
         }
 
         $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album share link")}).then(function (data) {
+        .fail(function(xhr, textStatus) {
+            shashin.onFail(xhr, textStatus, ajaxParams, " updating album share link");
+            $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+            $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
+        }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {
                 let message = "Generated link not saved";
                 let relativeShareUrlData = data["relativeShareUrl"] === null ? "" : data["relativeShareUrl"];
@@ -50,6 +55,7 @@
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
                 }
 
                 $("#generateLink"+albumId).prop('disabled', false);
@@ -59,6 +65,7 @@
                 $("#generateLink"+albumId).prop('disabled', false);
                 //$("#msg"+albumId).html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
                 $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
                 $("#cancelUserShare"+albumId).prop('disabled', false);
             }
         });

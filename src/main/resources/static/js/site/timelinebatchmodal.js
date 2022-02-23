@@ -48,6 +48,7 @@ $("#saveBatchMetadata").click(function (e) {
     $("#timelineBatchModalCancel").prop("disabled", true);
     $("#msgBatchMetadata").html("");
     $("#timelineBatchModalStatus").css("visibility","visible");
+    $("#timelineBatchModalStatus").attr("title", "");
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
     const activePage = $("#activePage").val();
@@ -106,7 +107,11 @@ $("#saveBatchMetadata").click(function (e) {
         }
 
         $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating batch timeline modal")}).then(function (data) {
+        .fail(function(xhr, textStatus) {
+            shashin.onFail(xhr, textStatus, ajaxParams, " updating batch timeline modal");
+            $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+            $("#timelineBatchModalCancel").prop("disabled", false);
+        }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -259,11 +264,12 @@ $("#saveBatchMetadata").click(function (e) {
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                    $("#timelineBatchModalStatus")
+                    $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                     $("#timelineBatchModalCancel").prop("disabled", false);
                 }
             } else {
                 $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#timelineBatchModalCancel").prop("disabled", false);
             }
         });

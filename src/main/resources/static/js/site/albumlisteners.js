@@ -18,6 +18,7 @@ $(document).ready(function () {
         // $('#saveAlbum'+metadata.id).click(function (e) {
         e.preventDefault();
         $("#albumsModalStatus").css("visibility","visible");
+        $("#albumsModalStatus").attr("title", "");
         $("#albumsModalCancel").prop('disabled', true);
 
         $('#albumModalMsg').html("");
@@ -39,7 +40,11 @@ $(document).ready(function () {
         }
 
         $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving album")}).then(function (data) {
+            .fail(function(xhr, textStatus) {
+                shashin.onFail(xhr, textStatus, ajaxParams, " saving album");
+                $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#albumsModalCancel").prop('disabled', false);
+            }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "redirect") {
                     window.location.replace(data["msg"]);
@@ -53,12 +58,14 @@ $(document).ready(function () {
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
                         $("#albumsModalCancel").prop('disabled', false);
                     }
                     //$('#albumModalMsg').html(message);
                 }
             } else {
                 $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#albumsModalCancel").prop('disabled', false);
             }
         });

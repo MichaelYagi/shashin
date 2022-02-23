@@ -85,6 +85,7 @@
             e.preventDefault();
 
             $("#editAlbumNameStatus"+albumId).css("visibility","visible");
+            $("#editAlbumNameStatus"+albumId).attr("title","");
             $("#cancelAlbum"+albumId).prop('disabled', true);
 
             const albumName = $("#albumEditName"+albumId).val();
@@ -99,12 +100,17 @@
             }
 
             $.ajax(ajaxParams)
-                .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album name")}).then(function (data) {
+                .fail(function(xhr, textStatus) {
+                    shashin.onFail(xhr, textStatus, ajaxParams, " updating album name");
+                    $("#editAlbumNameStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#editAlbumNameStatus"+albumId).attr("title",shashin.modalStatusFailMessage());
+                }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
                     $("#albumName"+albumId).text(albumName);
                     $("#editAlbumNameStatus"+albumId).addClass('bi-check-circle').removeClass('spinner-grow');
                 } else {
                     $("#editAlbumNameStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#editAlbumNameStatus"+albumId).attr("title",shashin.modalStatusFailMessage());
                 }
 
                 $("#cancelAlbum"+albumId).prop('disabled', false);
@@ -166,6 +172,7 @@
         $("#saveUserShare"+albumId).click(function (e) {
             e.preventDefault();
             $("#albumsModalStatus"+albumId).css("visibility","visible");
+            $("#albumsModalStatus"+albumId).attr("title", "");
             $("#cancelUserShare"+albumId).prop('disabled', true);
 
             let userShareMap = {};
@@ -188,7 +195,11 @@
             }
 
             $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving user share")}).then(function (data) {
+            .fail(function(xhr, textStatus) {
+                shashin.onFail(xhr, textStatus, ajaxParams, " saving user share");
+                $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
+                $("#cancelUserShare"+albumId).prop('disabled', false);
+            }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                     let message = "Error";
                     if (data["status"] === "success") {
@@ -198,11 +209,13 @@
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
                         $("#cancelUserShare"+albumId).prop('disabled', false);
                     }
                     //$("#albumsMessage").html(message);
                 } else {
                     $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
                     $("#cancelUserShare"+albumId).prop('disabled', false);
                 }
 
