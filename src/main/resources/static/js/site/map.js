@@ -460,6 +460,8 @@ async function showMap(mapdata,keywordMap,showControls) {
                 } else {
                     $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
+            } else {
+                $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             }
         });
 

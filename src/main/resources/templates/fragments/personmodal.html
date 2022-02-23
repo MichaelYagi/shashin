@@ -115,6 +115,8 @@
                             }
                             //$("#msgBatchMetadata").html(message);
                             //shashin.clearTimelineSelection();
+                        } else {
+                            $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                         }
                     });
 
@@ -292,6 +294,8 @@
                             $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                         }
                         //$("#msg"+metadata.id).html(message);
+                    } else {
+                        $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                     }
                 });
 
