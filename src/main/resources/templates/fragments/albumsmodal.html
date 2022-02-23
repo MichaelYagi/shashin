@@ -48,8 +48,8 @@
                 </div>
                 <div class="modal-footer">
                     <div th:id="'albumsModalStatus'+${album.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
-                    <button type="button" class="btn btn-primary" th:id="'saveUserShare'+${album.id}">Save</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button th:id="'saveUserShare'+${album.id}" type="button" class="btn btn-primary">Save</button>
+                    <button th:id="'cancelUserShare'+${album.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
                 <script th:inline="javascript" type="text/javascript">
                     /*<![CDATA[*/
@@ -95,8 +95,8 @@
                 </div>
                 <div class="modal-footer">
                     <div th:id="'editAlbumNameStatus'+${album.id}" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true"></div>
-                    <button type="button" class="btn btn-primary" th:id="'editAlbum'+${album.id}">Confirm</button>
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button th:id="'editAlbum'+${album.id}" type="button" class="btn btn-primary">Confirm</button>
+                    <button th:id="'cancelAlbum'+${album.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
                 <script th:inline="javascript" type="text/javascript">
                     /*<![CDATA[*/

@@ -18,6 +18,7 @@ $(document).ready(function () {
         // $('#saveAlbum'+metadata.id).click(function (e) {
         e.preventDefault();
         $("#albumsModalStatus").css("visibility","visible");
+        $("#albumsModalCancel").prop('disabled', true);
 
         $('#albumModalMsg').html("");
         const metadataId = $("#metadataId").val();
@@ -48,14 +49,17 @@ $(document).ready(function () {
                         message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                         // window.top.location = window.top.location;
                         $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#albumsModalCancel").prop('disabled', false);
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#albumsModalCancel").prop('disabled', false);
                     }
                     //$('#albumModalMsg').html(message);
                 }
             } else {
                 $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#albumsModalCancel").prop('disabled', false);
             }
         });
         return false;

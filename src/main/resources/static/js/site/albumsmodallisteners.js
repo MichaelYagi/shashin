@@ -85,6 +85,7 @@
             e.preventDefault();
 
             $("#editAlbumNameStatus"+albumId).css("visibility","visible");
+            $("#cancelAlbum"+albumId).prop('disabled', true);
 
             const albumName = $("#albumEditName"+albumId).val();
 
@@ -105,6 +106,8 @@
                 } else {
                     $("#editAlbumNameStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
                 }
+
+                $("#cancelAlbum"+albumId).prop('disabled', false);
             });
         });
 
@@ -163,6 +166,7 @@
         $("#saveUserShare"+albumId).click(function (e) {
             e.preventDefault();
             $("#albumsModalStatus"+albumId).css("visibility","visible");
+            $("#cancelUserShare"+albumId).prop('disabled', true);
 
             let userShareMap = {};
             $('input[name^="userShare'+albumId+'"]').each(function () {
@@ -190,13 +194,16 @@
                     if (data["status"] === "success") {
                         message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                         $("#albumsModalStatus"+albumId).addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#cancelUserShare"+albumId).prop('disabled', false);
                     } else {
                         message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#cancelUserShare"+albumId).prop('disabled', false);
                     }
                     //$("#albumsMessage").html(message);
                 } else {
                     $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#cancelUserShare"+albumId).prop('disabled', false);
                 }
 
                 //$("#propsharealbums"+albumId).modal('hide');

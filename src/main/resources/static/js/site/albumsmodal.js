@@ -1,6 +1,7 @@
 (function( albumsModalSettings, $, undefined ) {
     albumsModalSettings.updateShareLink = function (baseUrl,albumId,action) {
         $("#generateLink"+albumId).prop('disabled', true);
+        $("#cancelUserShare"+albumId).prop('disabled', true);
         $("#albumsModalStatus"+albumId).css("visibility","visible");
         $("#share"+albumId+" span").removeClass('bi-share-fill').addClass('bi-share');
         $("#msg"+albumId).html("");
@@ -52,11 +53,13 @@
                 }
 
                 $("#generateLink"+albumId).prop('disabled', false);
+                $("#cancelUserShare"+albumId).prop('disabled', false);
                 //$("#msg"+albumId).html(message);
             } else {
                 $("#generateLink"+albumId).prop('disabled', false);
                 //$("#msg"+albumId).html("<div class=\"alert alert-danger\" role=\"alert\">Generated link not saved</div>");
                 $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#cancelUserShare"+albumId).prop('disabled', false);
             }
         });
     }
