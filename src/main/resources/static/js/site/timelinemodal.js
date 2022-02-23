@@ -263,6 +263,8 @@ $("#saveMetadata").click(function (e) {
                     $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 }
                 //$("#timelineModalMsg").html(message);
+            } else {
+                $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             }
             //$("#timelineModalStatus").css("visibility","hidden");
         });

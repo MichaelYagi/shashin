@@ -274,6 +274,8 @@ $("#saveBatchMetadata").click(function (e) {
                 // $("#tagBatchDataInput").val("");
                 // $("#batchisobject")[0].checked = false;
                 // $("#batchhidden")[0].checked = false;
+            } else {
+                $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             }
         });
     }
