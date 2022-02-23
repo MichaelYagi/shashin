@@ -31,7 +31,9 @@ $("#batchisobject").click(function (e) {
 
 $("#saveBatchMetadata").click(function (e) {
     e.preventDefault();
+
     matchModalBatchSettings.closeBatchTagPeopleDropdown();
+    $("#matchesBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
     $("#matchesBatchModalStatus").css("visibility","visible");
     $("#matchesBatchModalStatus").attr("title", "");
     $("#matchesBatchModalCancel").prop('disabled', true);
@@ -219,7 +221,9 @@ $('#propBatchMetadata').bind('keypress', function () {
 
         $("#saveMetadata" + metadata.id).click(function (e) {
             e.preventDefault();
+
             matchModalSettings.closeTagPeopleDropdown(metadata.id);
+            $("#matchesModalStatus"+metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#matchesModalStatus"+metadata.id).css("visibility","visible");
             $("#matchesModalStatus"+metadata.id).attr("title", "");
             $("#matchesModalCancel"+metadata.id).prop('disabled', true);

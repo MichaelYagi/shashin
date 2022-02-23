@@ -104,7 +104,7 @@ class Util {
             msg = "Enter Valid Month";
         }
 
-        if (year !== "" && !(+year >= 1888 && +year <= new Date().getFullYear())) {
+        if (year !== "" && !(+year >= 1826 && +year <= new Date().getFullYear())) {
             msg = "Enter Valid Year";
         }
 
