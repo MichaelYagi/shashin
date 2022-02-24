@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.MediaDirectory
@@ -35,22 +36,26 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileWriter
+import java.io.*
+import java.lang.String.format
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
 import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 
@@ -681,6 +686,194 @@ class SettingsController {
         }
 
         return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/settings/snapshot")
+    fun getSnapshot(model: Model): String {
+        val module = "snapshot"
+        model["message"] = "Export or import metadata.zip"
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping("/settings/snapshot/export")
+    fun postExportSnapshot(model: Model, @RequestParam snapshot: String, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = "$rootPath$relativeSidecarDir/metadata"
+        val dir = Paths.get(sidecarDir)
+        if (snapshot == "export" && Files.exists(dir)) {
+            val inputDirectory = File(sidecarDir)
+            val outputZipFile = zipFolder(inputDirectory)
+
+            if (outputZipFile != null) {
+                val headers = HttpHeaders()
+                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
+                headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                headers.add("Pragma", "no-cache")
+                headers.add("Expires", "0")
+
+                val resource = InputStreamResource(FileInputStream(outputZipFile))
+
+                return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentLength(outputZipFile.length())
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .body(resource)
+            } else {
+                return null;
+            }
+        }
+
+        return null
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping("/settings/snapshot")
+    fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam snapshotFile: MultipartFile): String {
+        val module = "snapshot"
+
+        model["message"] = "Invalid file"
+
+        println(snapshot)
+        println(snapshotFile.originalFilename)
+        println(snapshotFile.size)
+
+        if (snapshot == "import" && !snapshotFile.isEmpty) {
+
+            model["message"] = "Completed import."
+
+            val tempFile = File.createTempFile("upload", null)
+            snapshotFile.transferTo(tempFile)
+            val zipFile = ZipFile(tempFile)
+
+            val mapper = ObjectMapper(YAMLFactory())
+            val entries: Enumeration<out ZipEntry> = zipFile.entries()
+
+            while (entries.hasMoreElements()) {
+                val entry = entries.nextElement()
+                val stream: InputStream = zipFile.getInputStream(entry)
+                val inputAsString = stream.bufferedReader().use { it.readText() }
+                val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
+                if (importedMetadata != null) {
+
+                    val foundMetadata = metadataRepository?.findById(importedMetadata.getId())?.get()
+                    var message = "not imported"
+                    if (foundMetadata != null) {
+                        val saved = saveImportedMetadata(importedMetadata, foundMetadata)
+                        if (saved) {
+                            message = "imported"
+                        }
+                    }
+
+                    logger.log(
+                        Level.INFO,
+                        "Metadata: " + importedMetadata.getId() + " pointing to " + importedMetadata.getPath() + " " + message + "."
+
+                    )
+                }
+            }
+
+            tempFile.delete();
+        }
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    private fun saveImportedMetadata(importedMetadata: Metadata?, foundMetadata: Metadata?): Boolean {
+        if (importedMetadata != null && foundMetadata != null &&
+            (importedMetadata.getTitle() != foundMetadata.getTitle() ||
+            importedMetadata.getCamera() != foundMetadata.getCamera() ||
+            importedMetadata.getDescription() != foundMetadata.getDescription() ||
+            importedMetadata.getYear() != foundMetadata.getYear() ||
+            importedMetadata.getMonth() != foundMetadata.getMonth() ||
+            importedMetadata.getDay() != foundMetadata.getDay() ||
+            importedMetadata.getTime() != foundMetadata.getTime() ||
+            importedMetadata.getTimeZone() != foundMetadata.getTimeZone() ||
+            importedMetadata.getLat() != foundMetadata.getLat() ||
+            importedMetadata.getLng() != foundMetadata.getLng())
+        ) {
+            val metadata = Metadata()
+            metadata.setId(importedMetadata.getId())
+            metadata.setTitle(importedMetadata.getTitle())
+            metadata.setCamera(importedMetadata.getCamera())
+            metadata.setDescription(importedMetadata.getDescription())
+            metadata.setYear(importedMetadata.getYear())
+            metadata.setMonth(importedMetadata.getMonth())
+            metadata.setDay(importedMetadata.getDay())
+            metadata.setTime(importedMetadata.getTime())
+            metadata.setTimeZone(importedMetadata.getTimeZone())
+            metadata.setCamera(importedMetadata.getCamera())
+            metadata.setLat(importedMetadata.getLat())
+            metadata.setLng(importedMetadata.getLng())
+            metadataRepository?.save(metadata)
+
+            return true
+        }
+
+        return false
+    }
+
+    /**
+     * Zips a Folder to "[Folder].zip"
+     * @param toZipFolder Folder to be zipped
+     * @return the resulting ZipFile
+     */
+    fun zipFolder(toZipFolder: File): File? {
+        val zipFile = File(toZipFolder.parent, format("%s.zip", toZipFolder.name))
+        return try {
+            val out = ZipOutputStream(FileOutputStream(zipFile))
+            zipSubFolder(out, toZipFolder, toZipFolder.path.length)
+            out.close()
+            zipFile
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+            null
+        }
+    }
+
+    /**
+     * Main zip Function
+     * @param out Target ZipStream
+     * @param folder Folder to be zipped
+     * @param basePathLength Length of original Folder Path (for recursion)
+     */
+    @Throws(IOException::class)
+    private fun zipSubFolder(out: ZipOutputStream, folder: File, basePathLength: Int) {
+        val buffer = 2048
+        val fileList = folder.listFiles()
+        var origin: BufferedInputStream? = null
+
+        if (fileList != null) {
+            for (file in fileList) {
+                if (file.isDirectory) {
+                    zipSubFolder(out, file, basePathLength)
+                } else {
+                    if (!file.path.endsWith(".exif.yaml")) {
+                        val data = ByteArray(buffer)
+                        val unmodifiedFilePath = file.path
+                        val relativePath = unmodifiedFilePath.substring(basePathLength + 1)
+                        val fi = FileInputStream(unmodifiedFilePath)
+                        origin = BufferedInputStream(fi, buffer)
+                        val entry = ZipEntry(relativePath)
+                        entry.time = file.lastModified() // to keep modification time after unzipping
+                        out.putNextEntry(entry)
+                        var count: Int
+                        while (origin.read(data, 0, buffer).also { count = it } != -1) {
+                            out.write(data, 0, count)
+                        }
+                        origin.close()
+                        out.closeEntry()
+                    }
+                }
+            }
+        }
     }
 
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)

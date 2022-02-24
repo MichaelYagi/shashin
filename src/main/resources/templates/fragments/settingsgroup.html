@@ -15,6 +15,9 @@
     <a th:attr="class='nav-link' + ${activePage=='users' ? ' active' : ''}" href="/settings/users">User Management</a>
   </li>
   <li class="nav-item">
+    <a th:attr="class='nav-link' + ${activePage=='snapshot' ? ' active' : ''}" href="/settings/snapshot">Import/Export</a>
+  </li>
+  <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='logs' ? ' active' : ''}" href="/settings/logs">Logs</a>
   </li>
 </ul>
