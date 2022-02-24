@@ -47,6 +47,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.0.1] - 2022-02-21
 ### Added
 
+- Import/Export metadata functionality
+
 ### Changed
 
 ### Fixed
