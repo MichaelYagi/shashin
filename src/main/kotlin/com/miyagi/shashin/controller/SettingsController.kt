@@ -759,21 +759,21 @@ class SettingsController {
                 val inputAsString = stream.bufferedReader().use { it.readText() }
                 val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
                 if (importedMetadata != null) {
+                    val foundMetadataRepo = metadataRepository?.findById(importedMetadata.getId())
 
-                    val foundMetadata = metadataRepository?.findById(importedMetadata.getId())?.get()
-                    var message = "not imported"
-                    if (foundMetadata != null) {
+                    if (foundMetadataRepo != null && !foundMetadataRepo.isEmpty) {
+                        val foundMetadata = foundMetadataRepo.get()
+                        var message = "not imported"
                         val saved = saveImportedMetadata(importedMetadata, foundMetadata)
                         if (saved) {
                             message = "imported"
                         }
+
+                        logger.log(
+                            Level.INFO,
+                            "Metadata: " + importedMetadata.getId() + " pointing to " + importedMetadata.getPath() + " " + message + "."
+                        )
                     }
-
-                    logger.log(
-                        Level.INFO,
-                        "Metadata: " + importedMetadata.getId() + " pointing to " + importedMetadata.getPath() + " " + message + "."
-
-                    )
                 }
             }
 
@@ -799,22 +799,25 @@ class SettingsController {
             importedMetadata.getLat() != foundMetadata.getLat() ||
             importedMetadata.getLng() != foundMetadata.getLng())
         ) {
-            val metadata = Metadata()
-            metadata.setId(importedMetadata.getId())
-            metadata.setTitle(importedMetadata.getTitle())
-            metadata.setCamera(importedMetadata.getCamera())
-            metadata.setDescription(importedMetadata.getDescription())
-            metadata.setYear(importedMetadata.getYear())
-            metadata.setMonth(importedMetadata.getMonth())
-            metadata.setDay(importedMetadata.getDay())
-            metadata.setTime(importedMetadata.getTime())
-            metadata.setTimeZone(importedMetadata.getTimeZone())
-            metadata.setCamera(importedMetadata.getCamera())
-            metadata.setLat(importedMetadata.getLat())
-            metadata.setLng(importedMetadata.getLng())
-            metadataRepository?.save(metadata)
-
-            return true
+            val metadataRepo = metadataRepository?.findById(importedMetadata.getId())
+            if (metadataRepo != null && !metadataRepo.isEmpty) {
+                val metadata = metadataRepo.get()
+                metadata.setTitle(importedMetadata.getTitle())
+                metadata.setCamera(importedMetadata.getCamera())
+                metadata.setDescription(importedMetadata.getDescription())
+                metadata.setYear(importedMetadata.getYear())
+                metadata.setMonth(importedMetadata.getMonth())
+                metadata.setDay(importedMetadata.getDay())
+                metadata.setTime(importedMetadata.getTime())
+                metadata.setTimeZone(importedMetadata.getTimeZone())
+                metadata.setCamera(importedMetadata.getCamera())
+                metadata.setLat(importedMetadata.getLat())
+                metadata.setLng(importedMetadata.getLng())
+                metadataRepository?.save(metadata)
+                return true
+            } else {
+                return false
+            }
         }
 
         return false
