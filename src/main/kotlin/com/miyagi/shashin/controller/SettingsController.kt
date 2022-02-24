@@ -738,10 +738,6 @@ class SettingsController {
 
         model["message"] = "Invalid file"
 
-        println(snapshot)
-        println(snapshotFile.originalFilename)
-        println(snapshotFile.size)
-
         if (snapshot == "import" && !snapshotFile.isEmpty) {
 
             model["message"] = "Completed import."
@@ -786,6 +782,7 @@ class SettingsController {
         return module
     }
 
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     private fun saveImportedMetadata(importedMetadata: Metadata?, foundMetadata: Metadata?): Boolean {
         if (importedMetadata != null && foundMetadata != null &&
             (importedMetadata.getTitle() != foundMetadata.getTitle() ||
