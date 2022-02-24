@@ -47,6 +47,8 @@ import java.lang.String.format
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
@@ -692,7 +694,7 @@ class SettingsController {
     @GetMapping("/settings/snapshot")
     fun getSnapshot(model: Model): String {
         val module = "snapshot"
-        model["message"] = "Export or import metadata.zip"
+        model["message"] = "Export or import metadata zip file"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -717,10 +719,13 @@ class SettingsController {
                 headers.add("Expires", "0")
 
                 val resource = InputStreamResource(FileInputStream(outputZipFile))
+                val contentLength = outputZipFile.length()
+
+
 
                 return ResponseEntity.ok()
                     .headers(headers)
-                    .contentLength(outputZipFile.length())
+                    .contentLength(contentLength)
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .body(resource)
             } else {
@@ -732,6 +737,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     @PostMapping("/settings/snapshot")
     fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam snapshotFile: MultipartFile): String {
         val module = "snapshot"
@@ -782,7 +788,6 @@ class SettingsController {
         return module
     }
 
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
     private fun saveImportedMetadata(importedMetadata: Metadata?, foundMetadata: Metadata?): Boolean {
         if (importedMetadata != null && foundMetadata != null &&
             (importedMetadata.getTitle() != foundMetadata.getTitle() ||
@@ -826,7 +831,9 @@ class SettingsController {
      * @return the resulting ZipFile
      */
     fun zipFolder(toZipFolder: File): File? {
-        val zipFile = File(toZipFolder.parent, format("%s.zip", toZipFolder.name))
+        val dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
+        val now = LocalDateTime.now()
+        val zipFile = File(toZipFolder.parent, format("%s.zip", toZipFolder.name+dtf.format(now)))
         return try {
             val out = ZipOutputStream(FileOutputStream(zipFile))
             zipSubFolder(out, toZipFolder, toZipFolder.path.length)
