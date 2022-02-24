@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.google.javascript.jscomp.jarjar.org.apache.tools.ant.DirectoryScanner
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
@@ -9,6 +10,7 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
+import org.springframework.core.io.FileSystemResource
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
@@ -18,8 +20,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.io.File
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -160,6 +161,8 @@ class BaseController {
         model["activePage"] = ""
         model["activeSidebar"] = ""
         model["titleDescriptor"] = ""
+
+        cleanupFiles()
     }
 
     private fun getOperatingSystemInfo(): String {
@@ -171,5 +174,22 @@ class BaseController {
         val architecture = "os.arch"
 
         return System.getProperty(name)+" v"+System.getProperty(version)+" "+System.getProperty(architecture)
+    }
+
+    private fun cleanupFiles() {
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = "$rootPath$relativeSidecarDir"
+
+        val scanner = DirectoryScanner()
+        scanner.setIncludes(arrayOf("**/metadata*.zip"))
+        scanner.setBasedir(sidecarDir.dropLast(1))
+        scanner.isCaseSensitive = true
+        scanner.scan()
+        val filenames = scanner.includedFiles
+        for (filename in filenames) {
+            val fileToDelete = File(sidecarDir+filename)
+            logger.log(Level.INFO, "BaseController cleanup files: $sidecarDir$filename")
+            fileToDelete.delete()
+        }
     }
 }
