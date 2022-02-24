@@ -178,18 +178,21 @@ class BaseController {
 
     private fun cleanupFiles() {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = "$rootPath$relativeSidecarDir"
+        val sidecarDir = File("$rootPath$relativeSidecarDir")
 
-        val scanner = DirectoryScanner()
-        scanner.setIncludes(arrayOf("**/metadata*.zip"))
-        scanner.setBasedir(sidecarDir.dropLast(1))
-        scanner.isCaseSensitive = true
-        scanner.scan()
-        val filenames = scanner.includedFiles
-        for (filename in filenames) {
-            val fileToDelete = File(sidecarDir+filename)
-            logger.log(Level.INFO, "BaseController cleanup files: $sidecarDir$filename")
-            fileToDelete.delete()
+        if (sidecarDir.exists()) {
+            val sidecarDirPath = sidecarDir.path
+            val scanner = DirectoryScanner()
+            scanner.setIncludes(arrayOf("**/metadata*.zip"))
+            scanner.setBasedir(sidecarDirPath)
+            scanner.isCaseSensitive = true
+            scanner.scan()
+            val filenames = scanner.includedFiles
+            for (filename in filenames) {
+                val fileToDelete = File(sidecarDir.path + "/" + filename)
+                logger.log(Level.INFO, "BaseController cleanup files: ${fileToDelete.path}")
+                fileToDelete.delete()
+            }
         }
     }
 }
