@@ -39,7 +39,6 @@
         }
 
         fileChooser.on("change", function(){
-            console.log(fileChooser.val())
             if (fileChooser.val() === "") {
                 $("#import").addClass('disabled');
             } else {
@@ -47,6 +46,9 @@
             }
         });
 
+        $("#import").on("click", function() {
+            $("#msg").text("Importing metadata.")
+        });
     });
 </script>
 
