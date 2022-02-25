@@ -802,7 +802,7 @@ class SettingsController {
             importedMetadata.getTimeZone() != foundMetadata.getTimeZone() ||
             importedMetadata.getLat() != foundMetadata.getLat() ||
             importedMetadata.getLng() != foundMetadata.getLng() ||
-            importedMetadata.getHidden() != foundMetadata.getHidden())
+            (importedMetadata.getHidden() != foundMetadata.getHidden() && importedMetadata.getHidden() != null && foundMetadata.getHidden() != null))
         ) {
             val metadataRepo = metadataRepository?.findById(importedMetadata.getId())
             if (metadataRepo != null && !metadataRepo.isEmpty) {
@@ -818,7 +818,9 @@ class SettingsController {
                 metadata.setCamera(importedMetadata.getCamera())
                 metadata.setLat(importedMetadata.getLat())
                 metadata.setLng(importedMetadata.getLng())
-                if (importedMetadata.getHidden() != null) {
+                println("testzzz")
+                println(importedMetadata.getHidden())
+                if (importedMetadata.getHidden() != null && foundMetadata.getHidden() != null) {
                     metadata.setHidden(importedMetadata.getHidden())
                 }
                 metadataRepository?.save(metadata)
