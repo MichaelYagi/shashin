@@ -818,7 +818,9 @@ class SettingsController {
                 metadata.setCamera(importedMetadata.getCamera())
                 metadata.setLat(importedMetadata.getLat())
                 metadata.setLng(importedMetadata.getLng())
-                metadata.setHidden(importedMetadata.getHidden())
+                if (importedMetadata.getHidden() != null) {
+                    metadata.setHidden(importedMetadata.getHidden())
+                }
                 metadataRepository?.save(metadata)
                 return true
             } else {
