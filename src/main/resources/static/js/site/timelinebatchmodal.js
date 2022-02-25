@@ -109,6 +109,7 @@ $("#saveBatchMetadata").click(function (e) {
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {
+            $("#timelineBatchModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
             $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#timelineBatchModalCancel").prop("disabled", false);
             shashin.onFail(xhr, textStatus, ajaxParams, " updating batch timeline modal");

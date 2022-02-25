@@ -102,8 +102,9 @@
 
             $.ajax(ajaxParams)
                 .fail(function(xhr, textStatus) {
-                    $("#editAlbumNameStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#editAlbumNameStatus"+albumId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                     $("#editAlbumNameStatus"+albumId).attr("title",shashin.modalStatusFailMessage());
+                    $("#cancelAlbum"+albumId).prop('disabled', false);
                     shashin.onFail(xhr, textStatus, ajaxParams, " updating album name");
                 }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
@@ -199,6 +200,7 @@
 
             $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {
+                $("#albumsModalStatus"+albumId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                 $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
                 $("#cancelUserShare"+albumId).prop('disabled', false);
                 shashin.onFail(xhr, textStatus, ajaxParams, " saving user share");

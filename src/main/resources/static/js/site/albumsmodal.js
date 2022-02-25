@@ -32,8 +32,9 @@
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {
-            $("#albumsModalStatus"+albumId).addClass('bi-x-circle').removeClass('spinner-grow');
+            $("#albumsModalStatus"+albumId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
             $("#albumsModalStatus"+albumId).attr("title", shashin.modalStatusFailMessage());
+            $("#cancelUserShare"+albumId).prop('disabled', false);
             shashin.onFail(xhr, textStatus, ajaxParams, " updating album share link");
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("relativeShareUrl")) {

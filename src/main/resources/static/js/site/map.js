@@ -446,6 +446,7 @@ async function showMap(mapdata,keywordMap,showControls) {
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {
+            $("#metadataLocationModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
             $("#metadataLocationModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#metadataLocationModalCancel").prop('disabled', false);
             shashin.onFail(xhr, textStatus, ajaxParams, " saving map location data");

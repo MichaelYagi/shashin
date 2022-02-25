@@ -91,6 +91,7 @@
 
                     $.ajax(ajaxParams)
                         .fail(function(xhr, textStatus) {
+                            $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                             $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
                             $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
                             shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving user");

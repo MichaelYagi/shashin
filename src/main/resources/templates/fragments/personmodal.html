@@ -104,6 +104,7 @@
 
                     $.ajax(ajaxParams)
                     .fail(function(xhr, textStatus) {
+                        $("#personBatchModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                         $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                         $("#personBatchModalCancel").prop('disabled', false);
                         shashin.onFail(xhr, textStatus, ajaxParams, " saving batch modal for person");
@@ -271,6 +272,7 @@
 
                 $.ajax(ajaxParams)
                 .fail(function(xhr, textStatus) {
+                    $("#personModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                     $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                     $("#personModalCancel" + metadata.id).prop('disabled', false);
                     shashin.onFail(xhr, textStatus, ajaxParams, " saving person");
