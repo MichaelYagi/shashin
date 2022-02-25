@@ -18,10 +18,10 @@
                     </form>
                 </div>
                 <div class="col-lg-10">
-                    <form method="post" enctype="multipart/form-data" action="/settings/snapshot" class="col-lg-3">
+                    <form method="post" enctype="multipart/form-data" action="/settings/snapshot" class="col-lg-4">
                         <div class="input-group">
                             <input type="file" class="form-control" id="snapshotFile" name="snapshotFile" aria-describedby="snapshotFile" aria-label="Upload">
-                            <button class="btn btn-secondary" type="submit" name="snapshot" value="import">Import metadata</button>
+                            <button class="btn btn-secondary" id="import" type="submit" name="snapshot" value="import">Import metadata</button>
                         </div>
                     </form>
                 </div>
@@ -30,6 +30,25 @@
         </main>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        const fileChooser = $("#snapshotFile");
+        if (fileChooser.val() === "") {
+            $("#import").addClass('disabled');
+        }
+
+        fileChooser.on("change", function(){
+            console.log(fileChooser.val())
+            if (fileChooser.val() === "") {
+                $("#import").addClass('disabled');
+            } else {
+                $("#import").removeClass('disabled');
+            }
+        });
+
+    });
+</script>
 
 </body>
 </html>
