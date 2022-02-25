@@ -121,6 +121,7 @@ $("#saveMetadata").click(function (e) {
 
         $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {
+            $("#timelineModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
             $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#timelineModalCancel").prop('disabled', false);
             shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline data");

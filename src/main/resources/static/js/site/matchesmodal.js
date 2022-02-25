@@ -50,6 +50,7 @@ $("#saveBatchMetadata").click(function (e) {
 
     $.ajax(ajaxParams)
     .fail(function(xhr, textStatus) {
+        $("#matchesBatchModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
         $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
         $("#matchesBatchModalCancel").prop('disabled', false);
         shashin.onFail(xhr, textStatus, ajaxParams, " saving persons matches");
@@ -243,6 +244,7 @@ $('#propBatchMetadata').bind('keypress', function () {
 
             $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {
+                $("#matchesModalStatus"+metadata.id).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                 $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
                 $("#matchesModalCancel"+metadata.id).prop('disabled', false);
                 shashin.onFail(xhr, textStatus, ajaxParams, " saving person matches");

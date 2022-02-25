@@ -42,6 +42,7 @@ $(document).ready(function () {
 
         $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {
+                $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                 $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#albumsModalCancel").prop('disabled', false);
                 shashin.onFail(xhr, textStatus, ajaxParams, " saving album");
