@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
@@ -753,6 +754,7 @@ class SettingsController {
             val zipFile = ZipFile(tempFile)
 
             val mapper = ObjectMapper(YAMLFactory())
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             val entries: Enumeration<out ZipEntry> = zipFile.entries()
 
             while (entries.hasMoreElements()) {
