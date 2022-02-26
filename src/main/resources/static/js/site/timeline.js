@@ -384,7 +384,7 @@
                 const timelineDate = timelineArr[index];
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
-                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate)) {
+                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && $("footer").withinviewport().length > 0) {
                     if ($("#" + currentDate).length === 0) {
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
@@ -394,11 +394,7 @@
                         }
 
                         // Break if top not in viewport
-                        if ($("#" + currentDate).withinviewport().length === 0) {
-                            // Mobile Chrome browsers prevents further rendering
-                            if (Util.isMobile() === false || Util.isChrome() === false) {
-                                Util.removeDateGallery(currentDate);
-                            }
+                        if ($("footer").withinviewport().length === 0) {
                             break;
                         }
                     }
