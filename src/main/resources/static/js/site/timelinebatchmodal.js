@@ -226,8 +226,8 @@ $("#saveBatchMetadata").click(function (e) {
 
                                 if (metadataObj.hidden === false) {
                                     Util.populateDetailsInfo(metadataObj, "propTimelineModal")
-                                    $("#timelineModalEdit" + metadataId).attr("tag", JSON.stringify(metadataObj))
-                                    $("#mediaLink" + metadataId).attr("tag", JSON.stringify(metadataObj))
+                                    $("#timelineModalEdit" + metadataId).attr("tag", metadataId)
+                                    $("#mediaLink" + metadataId).attr("tag", metadataId)
 
                                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
                                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
