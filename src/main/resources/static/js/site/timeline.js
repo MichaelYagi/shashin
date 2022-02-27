@@ -178,7 +178,7 @@
         const timelineDates = timelineSettings.timelineDates;
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-        if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || ($("#"+lastDate).withinviewport().length === 0 && $("footer").withinviewport().length > 0 && Util.atEndOfPage($("#container")[0]))) {
+        if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || ($("#"+lastDate).withinviewport().length === 0 && $("#subfooter").withinviewport().length > 0 && Util.atEndOfPage($("#container")[0]))) {
 
             if (elements.length === 0) {
                 const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
@@ -384,7 +384,7 @@
                 const timelineDate = timelineArr[index];
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
-                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && $("footer").withinviewport().length > 0) {
+                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && $("#subfooter").withinviewport().length > 0) {
                     if ($("#" + currentDate).length === 0) {
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
@@ -394,7 +394,7 @@
                         }
 
                         // Break if top not in viewport
-                        if ($("footer").withinviewport().length === 0) {
+                        if ($("#subfooter").withinviewport().length === 0) {
                             break;
                         }
                     }
