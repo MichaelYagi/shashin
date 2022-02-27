@@ -1297,7 +1297,7 @@
                                         html += '   <span id="timelinemodal' + metadata.id + '"></span>' +
                                             '   </div>\n';
 
-                                        $("#timelineModalEdit" + metadata.id).attr("tag", JSON.stringify(metadata));
+                                        $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                     }
 
                                     const lastDateParts = $("#offcanvasTocBody div").children().last().attr("id").split("offcanvas_");
