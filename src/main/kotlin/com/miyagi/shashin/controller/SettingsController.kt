@@ -861,7 +861,7 @@ class SettingsController {
     private fun zipSubFolder(out: ZipOutputStream, folder: File, basePathLength: Int) {
         val buffer = 2048
         val fileList = folder.listFiles()
-        var origin: BufferedInputStream? = null
+        var origin: BufferedInputStream?
 
         if (fileList != null) {
             for (file in fileList) {
