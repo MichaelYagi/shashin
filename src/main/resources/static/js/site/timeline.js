@@ -393,7 +393,7 @@
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
 
-                        // Break if top not in viewport
+                        // Break if footer not in viewport
                         if ($("#subfooter").withinviewport().length === 0 || $("footer").withinviewport().length === 0) {
                             break;
                         }
