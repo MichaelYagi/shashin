@@ -90,7 +90,7 @@ class TrashController {
     @RequestMapping(value = ["/trash/unhide"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     fun postUnhideMetadata(model: Model, @RequestBody requestBody: JsonNode): String {
         val trashMp = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (trashMp.containsKey("metadataIdList")) {
