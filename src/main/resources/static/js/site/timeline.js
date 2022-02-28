@@ -103,9 +103,6 @@
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
 
-                $(".bi-play-circle").css("visibility", "hidden");
-                $(".bi-play-btn").css("visibility", "hidden");
-                $(".mediaLink").unbind('click');
                 clearTimeout(scrollTimer);
                 scrollTimer = setTimeout(function() {
                     $(window).trigger("scrollStop");
@@ -180,6 +177,10 @@
 
         if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || ($("#"+lastDate).withinviewport().length === 0 && ($("#subfooter").withinviewport().length > 0 || $("footer").withinviewport().length > 0) && Util.atEndOfPage($("#container")[0]))) {
 
+            $(".bi-play-circle").css("visibility", "hidden");
+            $(".bi-play-btn").css("visibility", "hidden");
+            $(".mediaLink").unbind('click');
+
             if (elements.length === 0) {
                 const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
                 elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
@@ -214,7 +215,6 @@
                     if (Util.isSafari() === true || Util.isFirefox() === true) {
                         timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
                             if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
-                                timelineSettings.reinitLightGalleryInstance();
                                 timelineSettings.setScrollSpyActive(id);
                             }
                         });
@@ -254,6 +254,8 @@
                         });
                     }
                 });
+            } else {
+                timelineSettings.reinitLightGalleryInstance();
             }
 
             prevElements = elements;
