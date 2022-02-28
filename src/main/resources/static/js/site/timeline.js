@@ -258,7 +258,7 @@
             }
 
             $("img").hover(function () {
-                if (reinitGalleryFlag === false) {
+                if (reinitGalleryFlag === false && timelineSettings.enableScrollSpy === true) {
                     reinitGalleryFlag = true;
                     timelineSettings.reinitLightGalleryInstance();
                 }
