@@ -14,7 +14,7 @@
             <div class="row">
                 <div class="col-md-auto">
                     <form method="post" action="/settings/snapshot/export">
-                        <button class="btn btn-primary" type="submit" name="snapshot" value="export">Export metadata</button>
+                        <button class="btn btn-primary" type="submit" id="export" name="snapshot" value="export">Export metadata</button>
                     </form>
                 </div>
                 <div class="col-lg-10">
@@ -47,7 +47,11 @@
         });
 
         $("#import").on("click", function() {
-            $("#msg").text("Importing metadata.")
+            $("#msg").text("Importing metadata.");
+        });
+
+        $("#export").on("click", function() {
+            $("#msg").text("Exporting metadata.");
         });
     });
 </script>
