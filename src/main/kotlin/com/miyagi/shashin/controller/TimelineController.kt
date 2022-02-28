@@ -242,16 +242,15 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}","/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
-    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
-        return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
+    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
+        return ResponseEntity.ok().cacheControl(CacheControl.noCache()).body(mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false)))
     }
 
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
-    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
-        //return ResponseEntity.ok().cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS)).body(mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,true)))
-        return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,true))
+    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
+        return ResponseEntity.ok().cacheControl(CacheControl.noCache()).body(mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,true)))
     }
 
     @RequestMapping(value = ["/api/v1/keywords"], method = [RequestMethod.GET], produces = ["application/json"])
