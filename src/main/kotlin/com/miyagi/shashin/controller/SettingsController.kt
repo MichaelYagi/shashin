@@ -738,7 +738,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     @PostMapping("/settings/snapshot")
     fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam snapshotFile: MultipartFile): String {
         val module = "snapshot"
@@ -889,7 +889,7 @@ class SettingsController {
         }
     }
 
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     fun scanMediaDirectories(reindexFiles: Boolean): String {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
