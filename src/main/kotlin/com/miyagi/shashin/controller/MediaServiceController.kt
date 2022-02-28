@@ -2,11 +2,9 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.repository.MetadataRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,6 +22,7 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletResponse
@@ -122,6 +121,7 @@ class MediaServiceController {
                     headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
                 }
             }
+            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
             throw IOException("File Not Found")
@@ -159,6 +159,7 @@ class MediaServiceController {
                     headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
                 }
             }
+            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
             throw IOException("File Not Found")
