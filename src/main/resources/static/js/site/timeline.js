@@ -69,7 +69,6 @@
             if ($("#dateSliderWrapper:not(:hover)").length === 1) {
                 $("#dateSlider").hide();
             }
-            // timelineSettings.reinitLightGalleryInstance();
         });
 
         // Scroll event handler
@@ -170,6 +169,8 @@
         }
     }
 
+    let reinitGalleryFlag = true;
+
     let prevElements = null;
     timelineSettings.renderThumbnailsInViewport = function (elements,mediaTypeFilter) {
         const timelineDates = timelineSettings.timelineDates;
@@ -180,6 +181,7 @@
             $(".bi-play-circle").css("visibility", "hidden");
             $(".bi-play-btn").css("visibility", "hidden");
             $(".mediaLink").unbind('click');
+            reinitGalleryFlag = false;
 
             if (elements.length === 0) {
                 const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
@@ -236,7 +238,6 @@
             if (Util.isSafari() === false && Util.isFirefox() === false) {
                 timelineSettings.renderThumbnailsSimple(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                     if (msg === timelineSettings.success) {
-                        timelineSettings.reinitLightGalleryInstance();
                         // Set TOC active element
                         const elementsInViewport = $(".scrollspy").withinviewport();
                         elementsInViewport.each(function (index) {
@@ -254,9 +255,15 @@
                         });
                     }
                 });
-            } else {
-                timelineSettings.reinitLightGalleryInstance();
             }
+
+            $("img").hover(function () {
+                if (reinitGalleryFlag === false) {
+                    reinitGalleryFlag = true;
+                    timelineSettings.reinitLightGalleryInstance();
+                }
+            });
+
 
             prevElements = elements;
         }
