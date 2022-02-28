@@ -69,7 +69,7 @@
             if ($("#dateSliderWrapper:not(:hover)").length === 1) {
                 $("#dateSlider").hide();
             }
-            timelineSettings.reinitLightGalleryInstance();
+            // timelineSettings.reinitLightGalleryInstance();
         });
 
         // Scroll event handler
@@ -214,6 +214,7 @@
                     if (Util.isSafari() === true || Util.isFirefox() === true) {
                         timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
                             if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
+                                timelineSettings.reinitLightGalleryInstance();
                                 timelineSettings.setScrollSpyActive(id);
                             }
                         });
@@ -235,6 +236,7 @@
             if (Util.isSafari() === false && Util.isFirefox() === false) {
                 timelineSettings.renderThumbnailsSimple(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                     if (msg === timelineSettings.success) {
+                        timelineSettings.reinitLightGalleryInstance();
                         // Set TOC active element
                         const elementsInViewport = $(".scrollspy").withinviewport();
                         elementsInViewport.each(function (index) {
