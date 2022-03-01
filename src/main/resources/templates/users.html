@@ -32,10 +32,10 @@
                                 <td>
                                     <a href="#" th:id="${'permissiontoggle' + user.id}">
                                         <th:block th:if="${user.authority == 'ROLE_ADMIN'}">
-                                            <span class="bi-person-badge" style="font-size: 1rem;color: black;"></span>
+                                            <span class="bi-person-badge" style="font-size: 1rem;"></span>
                                         </th:block>
                                         <th:block th:if="${user.authority == 'ROLE_USER'}">
-                                            <span class="bi-person" style="font-size: 1rem;color: black;"></span>
+                                            <span class="bi-person" style="font-size: 1rem"></span>
                                         </th:block>
                                     </a>
                                 </td>
@@ -61,12 +61,12 @@
                                 </td>
                                 <td>
                                     <a href="#" th:id="${'resetPassword' + user.id}">
-                                        <span class="bi-arrow-clockwise overlayIcon"></span>
+                                        <span class="bi-arrow-clockwise overlayIconBackground overlayIcon"></span>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="#" th:id="${'trash' + user.id}">
-                                        <span class="bi-trash overlayIcon"></span>
+                                        <span class="bi-trash overlayIconBackground overlayIcon"></span>
                                     </a>
                                 </td>
                             </tr>

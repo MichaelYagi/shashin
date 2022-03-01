@@ -243,14 +243,24 @@ class TimelineController {
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
     fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(0, TimeUnit.DAYS)).body(mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false)))
+        val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
+        return ResponseEntity
+            .ok()
+            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
+            .cacheControl(CacheControl.noCache())
+            .body(json)
     }
 
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
     fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
-        return ResponseEntity.ok().cacheControl(CacheControl.maxAge(0, TimeUnit.DAYS)).body(mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,true)))
+        val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,true))
+        return ResponseEntity
+            .ok()
+            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
+            .cacheControl(CacheControl.noCache())
+            .body(json)
     }
 
     @RequestMapping(value = ["/api/v1/keywords"], method = [RequestMethod.GET], produces = ["application/json"])
