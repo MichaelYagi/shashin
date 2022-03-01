@@ -117,6 +117,8 @@ $("#saveBatchMetadata").click(function (e) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
+                    Util.setMetadataLocalStorage();
+
                     if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
                         $("#keywordsString").val(data["keywords"]);
                         $("#keywordsBatchString").val(data["keywords"]);

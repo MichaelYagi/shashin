@@ -230,7 +230,7 @@ async function showMap(mapdata,keywordMap,showControls) {
     if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
         initialCoord = [qslng, qslat];
         initialZoom = 20;
-    } else if ("lat" in localStorage && "lng" in localStorage) {
+    } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
         initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
         initialZoom = 20;
         localStorage.removeItem('lat');
@@ -460,8 +460,11 @@ async function showMap(mapdata,keywordMap,showControls) {
                     const latlngArray = latlng.split(",");
                     const lat = latlngArray[0].trim();
                     const lng = latlngArray[1].trim();
-                    localStorage.setItem("lat", lat);
-                    localStorage.setItem("lng", lng);
+
+                    if (Util.localStorageAvailable() === true) {
+                        localStorage.setItem("lat", lat);
+                        localStorage.setItem("lng", lng);
+                    }
 
                     $("#metadataLocationModalCancel").prop('disabled', false);
                     window.top.location = window.location.href.split("?")[0];
