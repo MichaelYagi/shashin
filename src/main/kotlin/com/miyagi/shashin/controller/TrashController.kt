@@ -37,7 +37,7 @@ class TrashController {
     @GetMapping("/trash")
     fun getFavorites(model: Model): String {
         val module = "trash"
-        model["message"] = "There are nothing trashed."
+        model["message"] = "There is nothing trashed."
         model["metadataList"] = mutableListOf<Metadata>()
         model["keywordMap"] = mutableMapOf<String, String>()
 

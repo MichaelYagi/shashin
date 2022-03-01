@@ -1,15 +1,51 @@
 class Util {
 
-    static setMetadataLocalStorage() {
+    static setMetadataLocalStorage(date) {
         if (Util.localStorageAvailable() === true) {
-            localStorage.setItem("metadataDateVersion", uuidv4());
+            let json = {};
+            if (localStorage.getItem("metadataDateVersion") !== null && localStorage.getItem("metadataDateVersion").length > 0) {
+                json = JSON.parse(localStorage.getItem("metadataDateVersion"));
+                if (typeof date === "undefined") {
+                    localStorage.removeItem("metadataDateVersion");
+                } else {
+                    json[date] = uuidv4();
+                }
+
+                if (Object.keys(json).length > 0) {
+                    localStorage.setItem("metadataDateVersion", JSON.stringify(json));
+                }
+            } else {
+                let json = {};
+
+                if (typeof date !== "undefined") {
+                    json[date] = uuidv4();
+                }
+
+                localStorage.setItem("metadataDateVersion", JSON.stringify(json));
+            }
         }
     }
 
-    static getMetadataLocalStorage() {
+    static removeMetadataLocalStorage(date) {
+        if (Util.localStorageAvailable() === true) {
+            let json = {};
+            if (localStorage.getItem("metadataDateVersion") !== null && localStorage.getItem("metadataDateVersion").length > 0) {
+                json = JSON.parse(localStorage.getItem("metadataDateVersion"));
+                if (json.hasOwnProperty(date)) {
+                    delete json[date];
+                }
+                localStorage.setItem("metadataDateVersion", JSON.stringify(json));
+            }
+        }
+    }
+
+    static getMetadataLocalStorage(date) {
         let version = "";
         if (Util.localStorageAvailable() === true && "metadataDateVersion" in localStorage && localStorage.getItem("metadataDateVersion").length > 0) {
-            version = localStorage.getItem("metadataDateVersion");
+            const json = JSON.parse(localStorage.getItem("metadataDateVersion"));
+            if (json.hasOwnProperty(date) && json[date].length > 0) {
+                version = json[date];
+            }
         }
 
         return version;
