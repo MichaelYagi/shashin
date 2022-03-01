@@ -57,7 +57,7 @@ $("#saveBatchMetadata").click(function (e) {
     const metadataIds = JSON.parse($("#batchMetadataIds").val());
 
     const metadataChangeMap = {};
-    if ($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "") {
+    if ($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== ""|| $("#dayTakenBatchData").val().trim() !== "") {
         for (const index in metadataIds) {
             const metadataId = metadataIds[index];
 
@@ -117,8 +117,6 @@ $("#saveBatchMetadata").click(function (e) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
-                    Util.setMetadataLocalStorage();
-
                     if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
                         $("#keywordsString").val(data["keywords"]);
                         $("#keywordsBatchString").val(data["keywords"]);
@@ -195,6 +193,7 @@ $("#saveBatchMetadata").click(function (e) {
                     }
 
                     let dateGalleryRemoved = false;
+                    let metadataLocalStorageIncremented = false;
                     for (const index in metadataIds) {
                         const metadataId = metadataIds[index];
 
@@ -242,10 +241,8 @@ $("#saveBatchMetadata").click(function (e) {
                                     dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                                 }
 
-
-
                                 if (parseInt(index) === (metadataIds.length-1)) {
-                                    if ($("#offcanvasToc").length > 0 && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
+                                    if ($("#offcanvasToc").length > 0 && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "" || $("#dayTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
                                         shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
                                             // If a date section was removed refresh the timeline
                                             if (dateGalleryRemoved === true) {
@@ -255,6 +252,11 @@ $("#saveBatchMetadata").click(function (e) {
                                                 timelineSettings.jumpFromTimelineToc(null, firstVisibleId, $("#mediaTypeFilter").val());
                                             }
                                         });
+
+                                        if (metadataLocalStorageIncremented === false) {
+                                            Util.setMetadataLocalStorage();
+                                            metadataLocalStorageIncremented = true;
+                                        }
                                     }
                                 }
                             });
