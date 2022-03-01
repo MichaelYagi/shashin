@@ -193,7 +193,7 @@ $("#saveBatchMetadata").click(function (e) {
                     }
 
                     let dateGalleryRemoved = false;
-                    let metadataLocalStorageIncremented = false;
+                    let metadataLocalStorageChanged = false;
                     for (const index in metadataIds) {
                         const metadataId = metadataIds[index];
 
@@ -253,9 +253,9 @@ $("#saveBatchMetadata").click(function (e) {
                                             }
                                         });
 
-                                        if (metadataLocalStorageIncremented === false) {
+                                        if (metadataLocalStorageChanged === false) {
                                             Util.setMetadataLocalStorage();
-                                            metadataLocalStorageIncremented = true;
+                                            metadataLocalStorageChanged = true;
                                         }
                                     }
                                 }

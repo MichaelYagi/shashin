@@ -2,18 +2,13 @@ class Util {
 
     static setMetadataLocalStorage() {
         if (Util.localStorageAvailable() === true) {
-            if ("metadataDateVersion" in localStorage && /^-?\d+$/.test(localStorage.getItem("metadataDateVersion"))) {
-                const version = parseInt(localStorage.getItem("metadataDateVersion")) + 1;
-                localStorage.setItem("metadataDateVersion", JSON.stringify(version));
-            } else {
-                localStorage.setItem("metadataDateVersion", "0");
-            }
+            localStorage.setItem("metadataDateVersion", uuidv4());
         }
     }
 
     static getMetadataLocalStorage() {
         let version = "";
-        if (Util.localStorageAvailable() === true && "metadataDateVersion" in localStorage && /^-?\d+$/.test(localStorage.getItem("metadataDateVersion"))) {
+        if (Util.localStorageAvailable() === true && "metadataDateVersion" in localStorage && localStorage.getItem("metadataDateVersion").length > 0) {
             version = localStorage.getItem("metadataDateVersion");
         }
 
