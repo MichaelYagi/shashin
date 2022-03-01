@@ -31,6 +31,7 @@
         $("#scanPhotos").click(function (e) {
             e.preventDefault();
             postToScan(false);
+            Util.clearMetadataLocalStorage();
         });
 
         $("#deleteThread").click(function (e) {
@@ -69,7 +70,6 @@
             );
 
             posting.done(function (data) {
-                Util.setMetadataLocalStorage();
 
                 showMessage(data.hasOwnProperty("msg") ? data["msg"] : "")
                 if (scanInProgress === false) {
