@@ -39,6 +39,14 @@ class Util {
         }
     }
 
+    static clearMetadataLocalStorage() {
+        if (Util.localStorageAvailable() === true) {
+            if (localStorage.getItem("metadataDateVersion") !== null && localStorage.getItem("metadataDateVersion").length > 0) {
+                localStorage.removeItem("metadataDateVersion");
+            }
+        }
+    }
+
     static getMetadataLocalStorage(date) {
         let version = "";
         if (Util.localStorageAvailable() === true && "metadataDateVersion" in localStorage && localStorage.getItem("metadataDateVersion").length > 0) {
