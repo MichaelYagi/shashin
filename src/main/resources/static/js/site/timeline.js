@@ -1050,12 +1050,9 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
-
-        let version = Util.getMetadataLocalStorage(date);
-
         const ajaxParams = {
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version),
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date,
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries
@@ -1228,11 +1225,9 @@
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
         $("#msgTimeline").html("");
 
-        let version = Util.getMetadataLocalStorage(date);
-
         const ajaxParams = {
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries

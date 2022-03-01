@@ -247,7 +247,7 @@ class TimelineController {
         return ResponseEntity
             .ok()
             .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
-            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .cacheControl(CacheControl.maxAge(0, TimeUnit.DAYS))
             .body(json)
     }
 
@@ -259,7 +259,7 @@ class TimelineController {
         return ResponseEntity
             .ok()
             .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
-            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .cacheControl(CacheControl.maxAge(0, TimeUnit.DAYS))
             .body(json)
     }
 
@@ -323,7 +323,7 @@ class TimelineController {
             if (model.getAttribute("currentUser") != "") {
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
-                val metadataList: MutableList<Metadata>? = if (mediaTypeFilter == "all") {
+                val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
                     metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
                         year, month, day, false
                     ).toMutableList()
@@ -334,7 +334,7 @@ class TimelineController {
                     ).toMutableList()
                 }
 
-                if (metadataList != null && metadataList.isNotEmpty()) {
+                if (metadataList.isNotEmpty()) {
                     response["metadataList"] = metadataList
                     response["message"] = ""
                     response["favorites"] = favoritesMap
