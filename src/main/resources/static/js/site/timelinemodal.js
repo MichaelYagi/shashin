@@ -64,6 +64,7 @@ $("#saveMetadata").click(function (e) {
         if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
             parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
             parseInt(metadataObj.day) !== parseInt($("#dayTaken").val())) {
+            Util.setMetadataLocalStorage(metadataObj.year + "-" + metadataObj.month + "-" + metadataObj.day);
             takenDateUpdated = true;
         }
 
@@ -247,8 +248,12 @@ $("#saveMetadata").click(function (e) {
                             dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                         }
 
+                        if (dateGalleryRemoved) {
+                            Util.removeMetadataLocalStorage(metadataObj.year + "-" + metadataObj.month + "-" + metadataObj.day)
+                        }
+
                         if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
-                            Util.setMetadataLocalStorage();
+                            Util.setMetadataLocalStorage(metadataObj.year + "-" + metadataObj.month + "-" + metadataObj.day);
                             shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
                                 // If a date section was removed refresh the timeline
                                 if (dateGalleryRemoved === true) {

@@ -141,6 +141,29 @@ $("#albumAppToolsRestore").click(function(e) {
     });
 
     if (metadataIdList.length > 0) {
+
+        for (let index in metadataIdList) {
+            const metadataId = metadataIdList[index];
+            shashin.getMetadata(metadataId).then(function (metadata) {
+                Util.setMetadataLocalStorage(metadata.year + "-" + metadata.month + "-" + metadata.day);
+                if (index === metadataIdList.length-1) {
+                    $.ajax(ajaxParams)
+                        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " restore")}).then(function (data) {
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            let message = "Error";
+                            if (data["status"] === "success") {
+                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                                window.top.location = window.top.location
+                            } else {
+                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                            }
+                            $("#trashMessage").html(message);
+                        }
+                    });
+                }
+            });
+        }
+
         let json = {metadataIdList: metadataIdList}
         const ajaxParams = {
             type: "post",
@@ -149,20 +172,6 @@ $("#albumAppToolsRestore").click(function(e) {
             contentType: 'application/json; charset=utf-8',
             retries: shashin.ajaxRetries
         }
-
-        $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " restore")}).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === "success") {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    window.top.location = window.top.location
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                }
-                $("#trashMessage").html(message);
-            }
-        });
     }
 
     return false;

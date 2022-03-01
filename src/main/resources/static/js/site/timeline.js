@@ -1051,7 +1051,7 @@
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
 
-        let version = Util.getMetadataLocalStorage();
+        let version = Util.getMetadataLocalStorage(date);
 
         const ajaxParams = {
             type: 'get',
@@ -1228,7 +1228,7 @@
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
         $("#msgTimeline").html("");
 
-        let version = Util.getMetadataLocalStorage();
+        let version = Util.getMetadataLocalStorage(date);
 
         const ajaxParams = {
             type: 'get',
