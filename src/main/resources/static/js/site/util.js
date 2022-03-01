@@ -1,5 +1,47 @@
 class Util {
 
+    static setMetadataLocalStorage() {
+        if (Util.localStorageAvailable() === true) {
+            if ("metadataDateVersion" in localStorage && /^-?\d+$/.test(localStorage.getItem("metadataDateVersion"))) {
+                const version = parseInt(localStorage.getItem("metadataDateVersion")) + 1;
+                localStorage.setItem("metadataDateVersion", JSON.stringify(version));
+            } else {
+                localStorage.setItem("metadataDateVersion", "0");
+            }
+        }
+    }
+
+    static getMetadataLocalStorage() {
+        let version = "";
+        if (Util.localStorageAvailable() === true && "metadataDateVersion" in localStorage && /^-?\d+$/.test(localStorage.getItem("metadataDateVersion"))) {
+            version = localStorage.getItem("metadataDateVersion");
+        }
+
+        return version;
+    }
+
+    static localStorageAvailable() {
+        if (typeof localStorage !== 'undefined') {
+            try {
+                localStorage.setItem('feature_test', 'yes');
+                if (localStorage.getItem('feature_test') === 'yes') {
+                    localStorage.removeItem('feature_test');
+                    // localStorage is enabled
+                    return true;
+                } else {
+                    // localStorage is disabled
+                    return false;
+                }
+            } catch(e) {
+                // localStorage is disabled
+                return false;
+            }
+        } else {
+            // localStorage is not available
+            return false;
+        }
+    }
+
     static isMobile() {
         let isMobile = false; //initiate as false
         // device detection

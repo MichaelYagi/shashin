@@ -18,6 +18,8 @@ class Trash {
                 let message = "Error";
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("metadataList")) {
+                        Util.setMetadataLocalStorage();
+
                         const metadataList = data["metadataList"];
                         const keywordMap = data["keywordMap"];
                         let html = "";
