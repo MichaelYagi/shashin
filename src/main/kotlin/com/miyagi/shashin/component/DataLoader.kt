@@ -6,10 +6,13 @@ import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.stereotype.Component
 
 @Component
 class DataLoader @Autowired constructor(private val settingsRepository: SettingsRepository) : ApplicationRunner {
+    
+    @CacheEvict(value = ["firstSettingQuery"], allEntries = true)
     override fun run(args: ApplicationArguments) {
         val settings = settingsRepository.findFirstByOrderByIdAsc()
         if (settings == null) {
