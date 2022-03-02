@@ -2,6 +2,7 @@ package com.miyagi.shashin.repository
 
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.model.UserSharedAlbums
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Repository
 interface UserRepository : CrudRepository<User?, Int?> {
     fun findAll(sort: Sort?): MutableIterable<User?>?
     fun findAllByIsAllowedTrue(): MutableIterable<User>
+    @Cacheable(value = ["userByUsername"], key = "{#username}")
     fun findByUsername(username: String?): User?
     fun findById(userId: Int?): User?
     @Query("SELECT u.id as userId, u.username, a.id as albumId, CASE WHEN ua.user_id IS NULL THEN FALSE ELSE TRUE END AS isShared FROM user u, album a LEFT JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id != :userId", nativeQuery = true)
