@@ -3,7 +3,6 @@ package com.miyagi.shashin.controller
 import com.google.javascript.jscomp.jarjar.org.apache.tools.ant.DirectoryScanner
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -39,9 +38,6 @@ class BaseController {
 
     @Autowired
     private var settingsRepository: SettingsRepository? = null
-
-    @Autowired
-    private var notificationRepository: NotificationRepository? = null
 
     @Autowired
     private var buildProperties: BuildProperties? = null
@@ -88,7 +84,6 @@ class BaseController {
             settingsObj.setRecognitionConfidenceThreshold("0.6")
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
-            //settingsRepository?.save(settingsObj)
 
             model["settings"] = settingsObj
         }
