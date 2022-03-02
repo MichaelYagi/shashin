@@ -11,6 +11,7 @@ import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.authentication.AuthenticationManager
@@ -206,6 +207,7 @@ class UserController {
         return module
     }
 
+    @CacheEvict(value = ["firstSettingQuery"], allEntries = true)
     @GetMapping("/users/login")
     fun getLoginUser(model: Model, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
         val module = "login"
