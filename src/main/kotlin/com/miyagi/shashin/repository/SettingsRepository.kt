@@ -5,5 +5,6 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.data.repository.CrudRepository
 
 interface SettingsRepository : CrudRepository<Settings?, Int?> {
+    @Cacheable("firstSettingQuery")
     fun findFirstByOrderByIdAsc(): Settings?
 }

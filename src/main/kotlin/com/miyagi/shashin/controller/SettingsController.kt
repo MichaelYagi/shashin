@@ -204,8 +204,8 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @GetMapping("/settings")
-    fun getSettings(model: Model): String {
+    @RequestMapping(value = ["/settings"], method = [RequestMethod.GET])
+    fun getSettings(model: Model, @ModelAttribute("settings") settings: Settings): String {
         val mediaDirectories = mediaDirRepository?.findAll()
 
         val module = "settings"
@@ -230,8 +230,7 @@ class SettingsController {
                 dirDneString = "Cannot find "+dirDneString.dropLast(1)
                 model["alertClass"] = "alert-warning"
             }
-            val settings = settingsRepository?.findFirstByOrderByIdAsc()
-            model["settings"] = settings as Settings
+            model.addAttribute("settings", settings)
         }
 
         model["activePage"] = module
@@ -243,6 +242,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
+    @CacheEvict(value = ["firstSettingQuery"], allEntries = true)
     @RequestMapping(value = ["/settings"], method = [RequestMethod.POST])
     fun postSettings(
         model: Model, redirectAttributes: RedirectAttributes,
