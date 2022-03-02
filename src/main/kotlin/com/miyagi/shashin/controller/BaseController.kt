@@ -69,16 +69,11 @@ class BaseController {
         var queryLimit = 20
         var searchHistoryLimit = 15
 
-        val settingsCount = settingsRepository?.count()
-        if (settingsCount != null && settingsCount > 0) {
-            val settings = settingsRepository?.findFirstByOrderByIdAsc()
-            if (settings != null) {
-                queryLimit = settings.getQueryLimit()!!
-                searchHistoryLimit = settings.getSearchHistoryLimit()!!
-            }
-            if (settings != null) {
-                model["settings"] = settings
-            }
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+        if (settings != null) {
+            queryLimit = settings.getQueryLimit()!!
+            searchHistoryLimit = settings.getSearchHistoryLimit()!!
+            model["settings"] = settings
         } else {
             val settingsObj = Settings()
             settingsObj.setQueryLimit(20)
