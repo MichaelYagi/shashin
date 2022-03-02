@@ -100,7 +100,6 @@ class BaseController {
             model["buildProperties"] = buildProperties!!
         }
         model["parameter"] = ""
-        model["hasNotifications"] = false
         model["currentUser"] = User()
 
         model["authority"] = ""
@@ -119,10 +118,6 @@ class BaseController {
             val currentUser = userRepository.findByUsername(securityContext.authentication.name)
             if (currentUser != null && currentUser.getAuthority() == adminRole && (currentUser.getIsAllowed() == false || currentUser.getIsAllowed() == null)) {
                 currentUser.setIsAllowed(true)
-            }
-            val notificationCount = currentUser?.let { notificationRepository?.countAllByUserIdAndReadIsFalse(it.getId()) }
-            if (notificationCount != null) {
-                model["hasNotifications"] = notificationCount > 0
             }
             if (currentUser == null || currentUser.getIsAllowed() == false) {
                 SecurityContextHolder.clearContext()

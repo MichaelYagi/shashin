@@ -183,6 +183,26 @@ class NotificationsController {
         return "{}"
     }
 
+    @GetMapping("/notifications/check/{userId}", produces = ["application/json"])
+    @ResponseBody
+    fun checkHasNotifications(@PathVariable userId: Int): String {
+        val response = mutableMapOf<String, Any?>()
+
+        response["msg"] = "No results"
+        response["status"] = "fail"
+        response["hasNotifications"] = false
+
+        if (userId > 0) {
+            response["msg"] = "Results"
+            response["status"] = "success"
+
+            val notificationCount = notificationRepository.countAllByUserIdAndReadIsFalse(userId)
+            response["hasNotifications"] = notificationCount > 0
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/notifications/markread/notification"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional

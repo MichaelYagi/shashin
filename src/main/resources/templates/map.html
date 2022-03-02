@@ -3,7 +3,7 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100 overflow-hidden">
 
-<div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage},'')"></div>
+<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
 <script type="text/javascript">
     $("#progressBarWrapper").css("visibility","visible");
@@ -12,7 +12,7 @@
 </script>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
-    <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
+    <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
     <main role="main" class="col overflow-auto h-100">
         <div id="map" class="map" style="z-index: 0">
             <div id="light-gallery-photo"></div>

@@ -3,11 +3,11 @@
 <head th:insert="fragments/head :: head(${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100">
 
-<div th:replace="fragments/topnav :: topnav(${currentUser},${hasNotifications},${activePage},'')"></div>
+<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
     <div class="row flex-grow-sm-1 flex-grow-0">
-        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser},${hasNotifications})"></div>
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100 table-responsive">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <table class="table">
