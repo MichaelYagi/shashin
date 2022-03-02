@@ -26,6 +26,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
+import javax.transaction.Transactional
 
 
 @ControllerAdvice
@@ -61,6 +62,7 @@ class BaseController {
     private lateinit var geocodeUrl: String
 
     @ModelAttribute
+    @Transactional
     fun addAttributes(model: Model, response: HttpServletResponse) {
         model["userRole"] = userRole
         model["adminRole"] = adminRole
