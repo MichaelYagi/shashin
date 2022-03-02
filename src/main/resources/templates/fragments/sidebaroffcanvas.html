@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="sidebaroffcanvas(activeSidebar,currentUser,hasNotifications)">
+<body th:fragment="sidebaroffcanvas(activeSidebar,currentUser)">
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
     <div class="offcanvas-header">
@@ -46,14 +46,7 @@
             </li>
             <li class="nav-item">
                 <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='notifications' ? ' active' : ''} + ' position-relative'" href="/notifications">
-                    <span class="bi-bell position-relative" style="font-size: 1rem;">
-                        <th:block th:if="${hasNotifications}">
-                        <span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                            <span class="visually-hidden">New alerts</span>
-                        </span>
-                        </th:block>
-                    </span> Notifications
-
+                    <span id="sidebarNotification" class="bi-bell position-relative" style="font-size: 1rem;"></span> Notifications
                 </a>
             </li>
             <th:block th:if="${currentUser.authority == 'ROLE_ADMIN'}">
@@ -98,6 +91,22 @@
         const randGreeting = greetings[Math.floor(Math.random() * greetings.length)];
         $("#sidebarGreeting").text(randGreeting);
     }
+
+    const aParams = {
+        type: "get",
+        url: "/notifications/check/" + userId,
+        contentType: 'application/json; charset=utf-8',
+        retries: shashin.ajaxRetries
+    };
+
+    $.ajax(aParams)
+        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting notification")}).then(function (data) {
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications")) {
+            if (data["hasNotifications"] === true) {
+                $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+            }
+        }
+    })
 </script>
 
 </body>
