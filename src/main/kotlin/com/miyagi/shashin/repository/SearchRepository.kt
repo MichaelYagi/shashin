@@ -5,7 +5,9 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import javax.transaction.Transactional
 
+@Transactional
 @Repository
 interface SearchRepository : CrudRepository<Metadata?, String?> {
     @Query("SELECT DISTINCT m.* FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id LEFT JOIN recognitionlabel rl ON rl.id = rlp.recognition_label_id LEFT JOIN keywordphoto kp on kp.metadata_id = m.id LEFT JOIN keyword k on kp.keyword_id = k.id WHERE (k.keyword LIKE lower('%' || :searchTerm || '%') OR m.id LIKE lower('%' || :searchTerm || '%') OR m.path LIKE lower('%' || :searchTerm || '%') OR m.title LIKE lower('%' || :searchTerm || '%') OR m.description LIKE lower('%' || :searchTerm || '%') OR m.place_name LIKE lower('%' || :searchTerm || '%') OR rl.name LIKE lower('%' || :searchTerm || '%') OR m.camera LIKE lower('%' || :searchTerm || '%') OR m.type LIKE lower('%' || :searchTerm || '%') OR m.original_image_height = :searchTerm OR m.original_image_width = :searchTerm OR m.original_image_width || 'x' || m.original_image_height = :searchTerm) AND m.hidden = false ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
