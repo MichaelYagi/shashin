@@ -88,7 +88,7 @@ class BaseController {
             settingsObj.setRecognitionConfidenceThreshold("0.6")
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
-            settingsRepository?.save(settingsObj)
+            //settingsRepository?.save(settingsObj)
 
             model["settings"] = settingsObj
         }
