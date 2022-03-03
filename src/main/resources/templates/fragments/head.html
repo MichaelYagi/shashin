@@ -19,11 +19,11 @@
         <script src="/js/bootstrap.min.js"></script>
         <script src="/js/date.format.js"></script>
         <script src="/js/uuid4.min.js"></script>
-        <th:block th:if="${currentUser.darkMode}">
+        <th:block th:if="${currentUser.darkMode or {#request.getParameter('m') != null and #request.getParameter('m') == 'dark'}}">
             <meta name="color-scheme" content="dark">
             <link rel="stylesheet" href="/css/bootstrap-night.min.css">
         </th:block>
-        <th:block th:if="${!currentUser.darkMode}">
+        <th:block th:if="${!currentUser.darkMode and {#request.getParameter('m') == null or #request.getParameter('m') != 'dark'}}">
             <meta name="color-scheme" content="light">
             <link rel="stylesheet" href="/css/bootstrap.min.css">
         </th:block>
