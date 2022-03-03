@@ -38,6 +38,10 @@
 
         Util.setMetadataLocalStorage();
 
+        if (Util.isMobile() === false) {
+            $("#infinite-scroll-gallery").attr('style', 'width: 97%');
+        }
+
         shashin.setLightGalleryElement('infinite-scroll-gallery');
         shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail],metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
 
@@ -424,10 +428,6 @@
             }
         }
 
-        if (Util.isMobile() === false) {
-            $(".image-group-padding").attr('style', 'width: 97%');
-        }
-
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
 
@@ -686,10 +686,6 @@
         shashin.printMessageToConsole("==============================================");
         //deferred.resolve(timelineSettings.successMidMsg);
         //return deferred.promise();
-
-        if (Util.isMobile() === false) {
-            $(".image-group-padding").attr('style', 'width: 97%');
-        }
 
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
