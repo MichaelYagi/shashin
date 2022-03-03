@@ -257,6 +257,7 @@ $("#saveMetadata").click(function (e) {
                                     timelineSettings.jumpFromTimelineToc(e, firstVisibleId, $("#mediaTypeFilter").val());
                                 }
                             });
+                            Util.setMetadataLocalStorage();
                         }
 
                         if (typeof timelineSettings !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {

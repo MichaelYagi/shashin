@@ -36,6 +36,8 @@
     timelineSettings.init = function(mediaTypeFilter, metadataDates) {
         timelineSettings.timelineDates = metadataDates;
 
+        Util.setMetadataLocalStorage();
+
         shashin.setLightGalleryElement('infinite-scroll-gallery');
         shashin.setLightGallery({"selector":".mediaLink",plugins:[lgMetadataDetail],metadataDetail:true,metadataDetailFunc:shashin.openInfoSidebar});
 
@@ -1050,9 +1052,12 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
+
+        const version = Util.getMetadataLocalStorage();
+
         const ajaxParams = {
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date,
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version),
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries
@@ -1225,9 +1230,11 @@
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
         $("#msgTimeline").html("");
 
+        const version = Util.getMetadataLocalStorage();
+
         const ajaxParams = {
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries

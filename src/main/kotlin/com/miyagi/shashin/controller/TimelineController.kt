@@ -247,7 +247,7 @@ class TimelineController {
         return ResponseEntity
             .ok()
             .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
-            .cacheControl(CacheControl.maxAge(0, TimeUnit.DAYS))
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
             .body(json)
     }
 
@@ -259,7 +259,7 @@ class TimelineController {
         return ResponseEntity
             .ok()
             .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
-            .cacheControl(CacheControl.maxAge(0, TimeUnit.DAYS))
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
             .body(json)
     }
 
