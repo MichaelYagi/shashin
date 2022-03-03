@@ -55,6 +55,7 @@ $("#saveMetadata").click(function (e) {
     $("#timelineModalStatus").attr("title", "");
     $("#timelineModalCancel").prop('disabled', true);
     const metadataId = $("#metadataId").val();
+    let timeTakenPrev = $("#timeTaken").val();
 
     timelineModal.closeTagPeopleDropdown(metadataId);
 
@@ -70,6 +71,8 @@ $("#saveMetadata").click(function (e) {
         if ($("#description").val() !== metadataObj.description) {
             captionUpdated = true;
         }
+
+        timeTakenPrev = metadataObj.time;
     });
 
     if (Util.validateMetadataInputs(
@@ -257,6 +260,9 @@ $("#saveMetadata").click(function (e) {
                                     timelineSettings.jumpFromTimelineToc(e, firstVisibleId, $("#mediaTypeFilter").val());
                                 }
                             });
+                        }
+
+                        if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || metadataObj.time !== timeTakenPrev)) {
                             Util.setMetadataLocalStorage();
                         }
 
