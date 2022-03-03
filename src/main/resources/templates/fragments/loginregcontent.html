@@ -26,13 +26,39 @@
         </th:block>
 
         <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><th:block th:text="${#strings.capitalize(activePage)}"></th:block></button>
-        <th:block th:if="${activePage == 'login'}">
-            <a href="/users/register">Register</a>
-        </th:block>
-        <th:block th:if="${activePage == 'register'}">
-            <a href="/users/login">Login</a>
-        </th:block>
+        <div class="row">
+            <div class="col">
+                <th:block th:if="${activePage == 'login'}">
+                    <a href="/users/register">Register</a>
+                </th:block>
+                <th:block th:if="${activePage == 'register'}">
+                    <a href="/users/login">Login</a>
+                </th:block>
+            </div>
+            <div class="col">
+                <div class="form-check form-switch float-end">
+                    <input class="form-check-input" type="checkbox" id="darkmodeSwitch">
+                    <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
+                </div>
+            </div>
+        </div>
     </form>
+
+    <script type="text/javascript">
+        const mode = Util.getParameterByName("m");
+
+        if (mode === "dark") {
+            $("#darkmodeSwitch").prop('checked', true);
+        }
+
+        $('#darkmodeSwitch').click(function() {
+            if($("#darkmodeSwitch").is(':checked')) {
+                window.location.href = window.location.pathname+"?"+$.param({'m':'dark'})
+            } else {
+                window.location = window.location.href.split("?")[0];
+            }
+        });
+    </script>
 </div>
 </body>
 </html>
