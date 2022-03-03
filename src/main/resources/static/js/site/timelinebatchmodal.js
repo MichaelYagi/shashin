@@ -252,6 +252,9 @@ $("#saveBatchMetadata").click(function (e) {
                                             }
                                         });
                                     }
+                                    if (index === metadataIds.length-1) {
+                                        Util.setMetadataLocalStorage();
+                                    }
                                 }
                             });
                         }
