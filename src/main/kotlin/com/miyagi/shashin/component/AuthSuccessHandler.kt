@@ -93,10 +93,11 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 }
 
                 if (isAllowed) {
-                    notifyLogin(user)
+                    if (user != null) {
+                        notifyLogin(user)
+                        checkLatestAppVersion(user)
+                    }
                     if (currentAuthority == adminRole) {
-                        checkLatestAppVersion(user!!)
-
                         redirectStrategy.sendRedirect(request, response, "/timeline")
                     } else {
                         redirectStrategy.sendRedirect(request, response, "/albums")

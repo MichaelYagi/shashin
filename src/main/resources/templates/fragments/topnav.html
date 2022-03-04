@@ -12,7 +12,7 @@
         $("header .placeholder").removeClass("placeholder");
     });
 
-    const ajaxParams = {
+    let ajaxParams = {
         type: "get",
         url: "/notifications/check/" + userId,
         contentType: 'application/json; charset=utf-8',
@@ -25,6 +25,20 @@
             if (data["hasNotifications"] === true) {
                 $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
             }
+        }
+    })
+
+    ajaxParams = {
+        type: "get",
+        url: "/settings/cleanup/snapshots",
+        contentType: 'application/json; charset=utf-8',
+        retries: shashin.ajaxRetries
+    };
+
+    $.ajax(ajaxParams)
+        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " cleaning snapshots")}).then(function (data) {
+        if (data.hasOwnProperty("status") === false || data.hasOwnProperty("msg") === false) {
+            shashin.printMessageToConsole("Error cleaning snapshots");
         }
     })
 </script>

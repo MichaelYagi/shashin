@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.google.javascript.jscomp.jarjar.org.apache.tools.ant.DirectoryScanner
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.MediaDirectory
@@ -689,6 +690,34 @@ class SettingsController {
         if (submit == "Scan") {
             resp["msg"] = scanMediaDirectories(reindexFiles)
         }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/cleanup/snapshots"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun cleanupSnapshots(model: Model): String {
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val sidecarDir = File("$rootPath$relativeSidecarDir")
+
+        if (sidecarDir.exists()) {
+            val sidecarDirPath = sidecarDir.path
+            val scanner = DirectoryScanner()
+            scanner.setIncludes(arrayOf("**/metadata*.zip"))
+            scanner.setBasedir(sidecarDirPath)
+            scanner.isCaseSensitive = true
+            scanner.scan()
+            val filenames = scanner.includedFiles
+            for (filename in filenames) {
+                val fileToDelete = File(sidecarDir.path + "/" + filename)
+                logger.log(Level.INFO, "Snapshot cleanup files: ${fileToDelete.path}")
+                fileToDelete.delete()
+            }
+        }
+
+        resp["msg"] = "Success"
+        resp["status"] = "success"
 
         return mapper.writeValueAsString(resp)
     }
