@@ -107,7 +107,7 @@ class TimelineController {
         val dates = getMetadataDates(mediaType)
         model["metadataDates"] = dates["metadataDates"]!!
 
-        val response = buildTimelineDataByDate(model,mediaType,date,true)
+        val response = buildTimelineDataByDate(model,mediaType,date,false)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -246,19 +246,20 @@ class TimelineController {
         val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
         return ResponseEntity
             .ok()
-            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
+//            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
             .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
             .body(json)
     }
 
-    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata","/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
     fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
-        val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,true))
+        val jsonMap = buildTimelineDataByDate(model,mediaType,date,true)
+        val json = mapper.writeValueAsString(jsonMap)
         return ResponseEntity
             .ok()
-            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
+//            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
             .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
             .body(json)
     }
@@ -322,24 +323,41 @@ class TimelineController {
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
             if (model.getAttribute("currentUser") != "") {
                 val currentUserObj = model.getAttribute("currentUser") as User?
+                val start = System.nanoTime()
+                if (metadataOnly) {
+                    val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
+                        metadataRepository.findTimelineDateFocused(
+                            year, month, day
+                        ).toMutableList()
+                    } else {
+                        metadataRepository.findAllByTypeAndYearAndMonthAndDayFocused(
+                            mediaTypeFilter,
+                            year, month, day
+                        ).toMutableList()
+                    }
 
-                val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
-                    metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
-                        year, month, day, false
-                    ).toMutableList()
+                    if (metadataList.isNotEmpty()) {
+                        response["metadataList"] = metadataList
+                        response["message"] = ""
+                        response["favorites"] = favoritesMap
+                    }
                 } else {
-                    metadataRepository.findAllByTypeAndYearAndMonthAndDay(
-                        mediaTypeFilter,
-                        year, month, day
-                    ).toMutableList()
-                }
+                    val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
+                        metadataRepository.findAllByYearAndMonthAndDayAndHiddenEqualsOrderByYearDescMonthDescDayDescTimeDesc(
+                            year, month, day, false
+                        ).toMutableList()
+                    } else {
+                        metadataRepository.findAllByTypeAndYearAndMonthAndDay(
+                            mediaTypeFilter,
+                            year, month, day
+                        ).toMutableList()
+                    }
 
-                if (metadataList.isNotEmpty()) {
-                    response["metadataList"] = metadataList
-                    response["message"] = ""
-                    response["favorites"] = favoritesMap
+                    if (metadataList.isNotEmpty()) {
+                        response["metadataList"] = metadataList
+                        response["message"] = ""
+                        response["favorites"] = favoritesMap
 
-                    if (!metadataOnly) {
                         val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
                         if (favoriteCounts.count() > 0) {
                             for (favoriteCount in favoriteCounts) {
@@ -357,7 +375,8 @@ class TimelineController {
                         response["favorites"] = favoritesMap
                     }
                 }
-
+                val end = System.nanoTime()
+                println(((end-start)).toString() + " ns query")
                 response["msg"] = "Results"
                 response["status"] = "success"
             }

@@ -148,8 +148,6 @@ class BaseController {
         model["activePage"] = ""
         model["activeSidebar"] = ""
         model["titleDescriptor"] = ""
-
-        cleanupFiles()
     }
 
     private fun getOperatingSystemInfo(): String {
@@ -161,25 +159,5 @@ class BaseController {
         val architecture = "os.arch"
 
         return System.getProperty(name)+" v"+System.getProperty(version)+" "+System.getProperty(architecture)
-    }
-
-    private fun cleanupFiles() {
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = File("$rootPath$relativeSidecarDir")
-
-        if (sidecarDir.exists()) {
-            val sidecarDirPath = sidecarDir.path
-            val scanner = DirectoryScanner()
-            scanner.setIncludes(arrayOf("**/metadata*.zip"))
-            scanner.setBasedir(sidecarDirPath)
-            scanner.isCaseSensitive = true
-            scanner.scan()
-            val filenames = scanner.includedFiles
-            for (filename in filenames) {
-                val fileToDelete = File(sidecarDir.path + "/" + filename)
-                logger.log(Level.INFO, "BaseController cleanup files: ${fileToDelete.path}")
-                fileToDelete.delete()
-            }
-        }
     }
 }

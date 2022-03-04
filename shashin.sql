@@ -51,6 +51,9 @@ CREATE TABLE `metadata` (
     PRIMARY KEY (`id`)
 );
 
+DROP INDEX IF EXISTS `idx_metadata_date`;
+CREATE INDEX `idx_metadata_date` ON metadata (`year`, `month`, `day`, `time`);
+
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,

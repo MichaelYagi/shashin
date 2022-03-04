@@ -174,6 +174,7 @@ class UserController {
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
                 newUser.setAuthority("ROLE_ADMIN")
+                newUser.setIsAllowed(true)
                 userRepository?.save(newUser)
                 return "redirect:/users/login?msg=regsuccess"
             } else {

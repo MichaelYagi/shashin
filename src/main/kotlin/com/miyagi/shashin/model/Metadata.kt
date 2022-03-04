@@ -1,7 +1,6 @@
 package com.miyagi.shashin.model
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.apache.commons.compress.archivers.dump.DumpArchiveConstants
 import java.io.IOException
 import javax.persistence.*
 
