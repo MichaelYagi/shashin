@@ -242,16 +242,26 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}","/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
-    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
-        return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
+    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
+        val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
+        return ResponseEntity
+            .ok()
+//            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
     }
 
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata","/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
-    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
+    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
         val jsonMap = buildTimelineDataByDate(model,mediaType,date,true)
-        return mapper.writeValueAsString(jsonMap)
+        val json = mapper.writeValueAsString(jsonMap)
+        return ResponseEntity
+            .ok()
+//            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
     }
 
     @RequestMapping(value = ["/api/v1/keywords"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -313,7 +323,7 @@ class TimelineController {
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
             if (model.getAttribute("currentUser") != "") {
                 val currentUserObj = model.getAttribute("currentUser") as User?
-                val start = System.nanoTime()
+
                 if (metadataOnly) {
                     val metadataList: MutableList<MetadataFocused> = if (mediaTypeFilter == "all") {
                         metadataRepository.findTimelineDateFocused(
@@ -365,8 +375,7 @@ class TimelineController {
                         response["favorites"] = favoritesMap
                     }
                 }
-                val end = System.nanoTime()
-                println(((end-start)).toString() + " ns query")
+
                 response["msg"] = "Results"
                 response["status"] = "success"
             }
