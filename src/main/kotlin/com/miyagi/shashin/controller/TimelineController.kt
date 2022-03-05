@@ -242,26 +242,16 @@ class TimelineController {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}","/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
-    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
-        val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
-        return ResponseEntity
-            .ok()
-//            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
-            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-            .body(json)
+    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
+        return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
     }
 
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata","/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
-    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
+    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
         val jsonMap = buildTimelineDataByDate(model,mediaType,date,true)
-        val json = mapper.writeValueAsString(jsonMap)
-        return ResponseEntity
-            .ok()
-//            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
-            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-            .body(json)
+        return mapper.writeValueAsString(jsonMap)
     }
 
     @RequestMapping(value = ["/api/v1/keywords"], method = [RequestMethod.GET], produces = ["application/json"])

@@ -659,6 +659,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
