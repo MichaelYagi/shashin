@@ -262,6 +262,10 @@ $("#saveMetadata").click(function (e) {
                             });
                         }
 
+                        if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || metadataObj.time !== timeTakenPrev)) {
+                            Util.setMetadataLocalStorage();
+                        }
+
                         if (typeof timelineSettings !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
                             // Refresh gallery if caption updated
                             timelineSettings.reinitLightGalleryInstance();
@@ -289,45 +293,6 @@ $("#saveMetadata").click(function (e) {
     }
 });
 
-$("#refreshTakenDate").click(function (e) {
-    e.preventDefault();
-
-    const metadataId = $("#metadataId").val();
-
-    const json = {
-        id: metadataId
-    };
-    const ajaxParams = {
-        type: "post",
-        url: "/timeline/sync/"+metadataId,
-        data: JSON.stringify(json),
-        contentType: 'application/json; charset=utf-8',
-        retries: shashin.ajaxRetries
-    }
-
-    $.ajax(ajaxParams)
-    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing taken date")}).then(function (data) {
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            let message = "Error";
-            if (data["status"] === "success") {
-                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                if (data["year"] !== "" && data["month"] !== "" && data["day"] !== "" && data["time"] !== "") {
-                    $("#yearTaken").val(data["year"]);
-                    $("#monthTaken").val(data["month"]);
-                    $("#dayTaken").val(data["day"]);
-                    $("#timeTaken").val(data["time"]);
-                }
-                // window.top.location = window.top.location
-            } else {
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-            }
-            // $("#timelineModalMsg").html(message);
-        }
-    });
-
-    return false;
-});
-
 // Clear message on modal close
 $('#propTimelineModal').on('hide.bs.modal', function () {
     $("#timelineModalStatus").attr("class","spinner-grow me-auto");
@@ -348,17 +313,56 @@ $('#propTimelineModal').find(':input').bind('keypress', function() {
 $("#refreshTakenDate").click(function (e) {
     e.preventDefault();
 
-    const originalTakenAtDate = $("#takenAtDetails").text();
+    const originalTakenAtDate = $(".takenAtDetails").first().text();
     const originalTakenAtDateArray = originalTakenAtDate.split(" ");
     const takenAtParts = originalTakenAtDateArray[0].split("-");
 
-    if (takenAtParts.length > 3) {
-        $("#yearTaken").val(takenAtParts[0]);
-        $("#monthTaken").val(takenAtParts[1]);
-        $("#dayTaken").val(takenAtParts[2]);
+    if (takenAtParts.length === 3) {
+        $("#yearTaken").val(parseInt(takenAtParts[0]));
+        $("#monthTaken").val(parseInt(takenAtParts[1]));
+        $("#dayTaken").val(parseInt(takenAtParts[2]));
         $("#timeTaken").val(originalTakenAtDateArray[1])
     }
 });
+
+// $("#refreshTakenDate").click(function (e) {
+//     e.preventDefault();
+//
+//     const metadataId = $("#metadataId").val();
+//
+//     const json = {
+//         id: metadataId
+//     };
+//     const ajaxParams = {
+//         type: "post",
+//         url: "/timeline/sync/"+metadataId,
+//         data: JSON.stringify(json),
+//         contentType: 'application/json; charset=utf-8',
+//         retries: shashin.ajaxRetries
+//     }
+//
+//     $.ajax(ajaxParams)
+//         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing taken date")}).then(function (data) {
+//         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+//             let message = "Error";
+//             if (data["status"] === "success") {
+//                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+//                 if (data["year"] !== "" && data["month"] !== "" && data["day"] !== "" && data["time"] !== "") {
+//                     $("#yearTaken").val(data["year"]);
+//                     $("#monthTaken").val(data["month"]);
+//                     $("#dayTaken").val(data["day"]);
+//                     $("#timeTaken").val(data["time"]);
+//                 }
+//                 // window.top.location = window.top.location
+//             } else {
+//                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+//             }
+//             // $("#timelineModalMsg").html(message);
+//         }
+//     });
+//
+//     return false;
+// });
 
 $("#detailsTabLink").click(function (e) {
     e.preventDefault();
