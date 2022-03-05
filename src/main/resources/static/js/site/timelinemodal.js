@@ -262,10 +262,6 @@ $("#saveMetadata").click(function (e) {
                             });
                         }
 
-                        if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || metadataObj.time !== timeTakenPrev)) {
-                            Util.setMetadataLocalStorage();
-                        }
-
                         if (typeof timelineSettings !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
                             // Refresh gallery if caption updated
                             timelineSettings.reinitLightGalleryInstance();

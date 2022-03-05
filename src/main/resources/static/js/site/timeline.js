@@ -36,8 +36,6 @@
     timelineSettings.init = function(mediaTypeFilter, metadataDates) {
         timelineSettings.timelineDates = metadataDates;
 
-        Util.setMetadataLocalStorage();
-
         if (Util.isMobile() === false) {
             $("#infinite-scroll-gallery").attr('style', 'width: 97%');
         }
@@ -1048,12 +1046,9 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
-
-        const version = Util.getMetadataLocalStorage();
-
         const ajaxParams = {
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version),
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date,
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries
@@ -1226,11 +1221,9 @@
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
         $("#msgTimeline").html("");
 
-        const version = Util.getMetadataLocalStorage();
-
         const ajaxParams = {
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata",
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries
