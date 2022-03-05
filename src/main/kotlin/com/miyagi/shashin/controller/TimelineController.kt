@@ -969,6 +969,43 @@ class TimelineController {
             }
 
             val metadataList: ArrayList<Metadata> = ArrayList()
+
+            // Process keyword and lat/lng data
+            var lat: String? = null
+            var lng: String? = null
+            var place: String? = null
+            var timezone: String? = null
+            if (latlng != null && latlng.trim().isNotBlank()) {
+                latlng = latlng.replace("\\s".toRegex(), "")
+                val latlngArr = latlng.split(",")
+                if (latlngArr.count() == 2) {
+                    lat = latlngArr[0]
+                    lng = latlngArr[1]
+
+                    val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,lat, lng))
+                    if (buildPlace.isNotBlank()) {
+                        place = buildPlace
+
+                        val engine = TimeZoneEngine.initialize()
+                        val maybeZoneId: Optional<ZoneId> = engine.query(lat.toDouble(), lng.toDouble())
+                        val zone = ZoneId.of(maybeZoneId.get().id)
+                        val dt = LocalDateTime.now()
+                        val zdt: ZonedDateTime = dt.atZone(zone)
+                        val zoneOffset = zdt.offset
+                        timezone = zoneOffset.toString()
+                    }
+                }
+            }
+
+            var keywordList = mutableListOf<String>()
+            if (keywords != null && keywords.isNotBlank()) {
+                keywords = keywords.toString().trim()
+                if (keywords.last() == ',') {
+                    keywords = keywords.dropLast(1)
+                }
+                keywordList = keywords.split(",").map { it.trim() } as MutableList<String>
+            }
+
             for (id in idArray) {
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
                 val metadata = metadataObj.get()
@@ -994,14 +1031,6 @@ class TimelineController {
                             }
                         }
                     }
-
-                    // Process tagged people
-//                    val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
-//                    if (recognitionLabelPhotos != null) {
-//                        for (recognitionLabelPhoto in recognitionLabelPhotos) {
-//                            recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
-//                        }
-//                    }
 
                     if (isObject) {
                         // Process tagged people
@@ -1086,34 +1115,21 @@ class TimelineController {
                     if (offset != null && offset.trim().isNotBlank()) {
                         metadata.setTimeZone(offset)
                     }
-                    if (latlng != null && latlng.trim().isNotBlank()) {
-                        latlng = latlng.replace("\\s".toRegex(), "")
-                        val latlngArr = latlng.split(",")
-                        if (latlngArr.count() == 2) {
-                            metadata.setLat(latlngArr[0])
-                            metadata.setLng(latlngArr[1])
-                            val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,latlngArr[0], latlngArr[1]))
-                            if (buildPlace.isNotBlank()) {
-                                metadata.setPlaceName(buildPlace)
 
-                                val engine = TimeZoneEngine.initialize()
-                                val maybeZoneId: Optional<ZoneId> = engine.query(latlngArr[0].toDouble(), latlngArr[1].toDouble())
-                                val zone = ZoneId.of(maybeZoneId.get().id)
-                                val dt = LocalDateTime.now()
-                                val zdt: ZonedDateTime = dt.atZone(zone)
-                                val zoneOffset = zdt.offset
-                                metadata.setTimeZone(zoneOffset.toString())
-                            }
+                    if (lat != null && lng != null) {
+                        metadata.setLat(lat)
+                        metadata.setLng(lng)
+
+                        if (place != null) {
+                            metadata.setPlaceName(place)
+                        }
+
+                        if (timezone != null) {
+                            metadata.setTimeZone(timezone)
                         }
                     }
 
-                    if (keywords != null && keywords.isNotBlank()) {
-                        keywords = keywords.toString().trim()
-                        if (keywords.last() == ',') {
-                            keywords = keywords.dropLast(1)
-                        }
-                        val keywordList = keywords.split(",").map { it.trim() }
-
+                    if (keywordList.isNotEmpty()) {
                         keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
 
                         for (keywordTerm in keywordList) {
