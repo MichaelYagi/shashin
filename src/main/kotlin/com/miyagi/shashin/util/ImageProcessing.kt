@@ -12,6 +12,9 @@ import org.bytedeco.javacv.Java2DFrameConverter
 import java.awt.RenderingHints
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
+import java.awt.image.BufferedImageOp
+import java.awt.image.ConvolveOp
+import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
 import java.util.logging.Level
@@ -121,7 +124,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_original." + extension
                 tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
                 if (tnFile != null) {
-                    ImageIO.write(img, extension, tnFile)
+                    ImageIO.write(sharpenAndBrightenImage(img), extension, tnFile)
                 }
                 _metadataObj?.setThumbnailUrlOriginal("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_original." + extension)
             }
@@ -160,7 +163,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 }
             }
             if (tnFile != null) {
-                ImageIO.write(scaled209, extension, tnFile)
+                ImageIO.write(sharpenAndBrightenImage(scaled209), extension, tnFile)
             }
             _metadataObj?.setThumbnailSmallHeight(scaled209.height)
             _metadataObj?.setThumbnailSmallWidth(scaled209.width)
@@ -198,7 +201,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
 //                val square: BufferedImage = getSquareThumbnail(scaled)
 
-                ImageIO.write(square, extension, tnFile)
+                ImageIO.write(sharpenAndBrightenImage(square), extension, tnFile)
             }
             _metadataObj?.setThumbnailPathCentered(thumbnailFileStr)
             _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
@@ -238,7 +241,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 //                    }
 //                    val mapMarker: BufferedImage = getSquareThumbnail(scaled)
 
-                ImageIO.write(mapMarker, extension, tnFile)
+                ImageIO.write(sharpenAndBrightenImage(mapMarker), extension, tnFile)
             }
             _metadataObj?.setMapMarkerPath(thumbnailFileStr)
             _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
@@ -369,5 +372,22 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             w, h,
             BufferedImage.TYPE_INT_RGB
         )
+    }
+
+    private fun sharpenAndBrightenImage(bufferedImage: BufferedImage): BufferedImage {
+//        -0.15f, -0.15f, -0.15f,
+//        -0.15f, 2.2f, -0.15f,
+//        -0.15f, -0.15f, -0.15f
+        val fnums = -0.05f
+        val kernel = Kernel(
+            3, 3, floatArrayOf(
+                fnums, fnums, fnums,
+                fnums, 1.4f, fnums,
+                fnums, fnums, fnums
+            )
+        )
+
+        val op: BufferedImageOp = ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null)
+        return op.filter(bufferedImage, null)
     }
 }
