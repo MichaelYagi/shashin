@@ -761,7 +761,7 @@
 
                 if (timelineDateObj) {
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
-                    if (i === 0 || i > 0 && dateList[i - 1].year !== timelineDateObj.year) {
+                    if (i === 0 || i === dateList.length-1 || (i < dateList.length && dateList[i + 1].year !== timelineDateObj.year)) {
                         // Label for year
                         const el = $('<span class="badge rounded-pill bg-secondary" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
                             'width': '35px',
