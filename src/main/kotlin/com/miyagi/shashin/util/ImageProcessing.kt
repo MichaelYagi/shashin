@@ -382,7 +382,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         val kernel = Kernel(
             3, 3, floatArrayOf(
                 fnums, fnums, fnums,
-                fnums, 1.4f, fnums,
+                fnums, 1.42f, fnums,
                 fnums, fnums, fnums
             )
         )
