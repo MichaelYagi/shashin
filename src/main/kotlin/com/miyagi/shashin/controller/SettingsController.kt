@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.google.javascript.jscomp.jarjar.org.apache.tools.ant.DirectoryScanner
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
@@ -62,6 +63,9 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
+import kotlin.io.path.deleteExisting
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.isDirectory
 
 
 @Controller
@@ -737,32 +741,58 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @PostMapping("/settings/snapshot/export")
     fun postExportSnapshot(model: Model, @RequestParam snapshot: String, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = "$rootPath$relativeSidecarDir/metadata"
-        val dir = Paths.get(sidecarDir)
-        if (snapshot == "export" && Files.exists(dir)) {
-            val inputDirectory = File(sidecarDir)
-            val outputZipFile = zipFolder(inputDirectory)
+        if (snapshot == "export") {
+            val metadataList = metadataRepository?.findAll()
 
-            if (outputZipFile != null) {
-                val headers = HttpHeaders()
-                headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
-                headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
-                headers.add("Pragma", "no-cache")
-                headers.add("Expires", "0")
+            if (metadataList != null && metadataList.count() > 0) {
+                val tempExportDir = Files.createTempDirectory("metadata")
 
-                val resource = InputStreamResource(FileInputStream(outputZipFile))
-                val contentLength = outputZipFile.length()
+                for (metadata in metadataList) {
+                    if (metadata != null) {
+                        val tempFile = File(tempExportDir.toAbsolutePath().toString() + "/" + metadata.getId() + ".yaml")
+                        if (tempFile.createNewFile()) {
+                            val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                                .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                                .build()
+                            val om = ObjectMapper(yamlFactory)
+                            om.writeValue(tempFile, metadata)
+                        } else {
+                            logger.log(
+                                Level.INFO,
+                                "Exporting metadata. File already exists: " + tempFile.absolutePath
+                            )
+                        }
+                    }
+                }
 
+                if (tempExportDir.isDirectory() && tempExportDir.toList().isNotEmpty()) {
+                    val tempDir = tempExportDir.toFile()
+                    val outputZipFile = zipFolder(tempDir,"metadata")
 
+                    tempDir.listFiles()
+                        .filterNot { it.isDirectory }
+                        .forEach { it.delete() }
+                    tempExportDir.deleteExisting()
 
-                return ResponseEntity.ok()
-                    .headers(headers)
-                    .contentLength(contentLength)
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .body(resource)
-            } else {
-                return null;
+                    if (outputZipFile != null) {
+                        outputZipFile.deleteOnExit()
+                        val headers = HttpHeaders()
+                        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
+                        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                        headers.add("Pragma", "no-cache")
+                        headers.add("Expires", "0")
+
+                        val resource = InputStreamResource(FileInputStream(outputZipFile))
+                        val contentLength = outputZipFile.length()
+
+                        return ResponseEntity.ok()
+                            .headers(headers)
+                            .contentLength(contentLength)
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                            .body(resource)
+                    }
+                }
             }
         }
 
@@ -868,10 +898,10 @@ class SettingsController {
      * @param toZipFolder Folder to be zipped
      * @return the resulting ZipFile
      */
-    fun zipFolder(toZipFolder: File): File? {
+    fun zipFolder(toZipFolder: File, fileName: String): File? {
         val dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
         val now = LocalDateTime.now()
-        val zipFile = File(toZipFolder.parent, format("%s.zip", toZipFolder.name+dtf.format(now)))
+        val zipFile = File(toZipFolder.parent, format("%s.zip", fileName+dtf.format(now)))
         return try {
             val out = ZipOutputStream(FileOutputStream(zipFile))
             zipSubFolder(out, toZipFolder, toZipFolder.path.length)
