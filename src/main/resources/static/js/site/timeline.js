@@ -33,16 +33,13 @@
         }
     }
 
-    timelineSettings.init = function(mediaTypeFilter, metadataDates, maxWidth) {
+    timelineSettings.init = function(mediaTypeFilter, metadataDates) {
         timelineSettings.timelineDates = metadataDates;
 
         Util.setMetadataLocalStorage();
 
         if (Util.isMobile() === false) {
             $("#infinite-scroll-gallery").attr('style', 'width: 97%');
-        } else if (maxWidth > 0) {
-            const galleryWidth = 'min-width: ' + maxWidth + 'px;';
-            $("#infinite-scroll-gallery").attr('style', galleryWidth);
         }
 
         shashin.setLightGalleryElement('infinite-scroll-gallery');

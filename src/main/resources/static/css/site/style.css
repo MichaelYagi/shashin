@@ -3,6 +3,11 @@ body {
   position: relative;
 }
 
+.photo-thumbnail-image {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
 .feather {
   width: 16px;
   height: 16px;
