@@ -14,7 +14,6 @@ import java.awt.image.ConvolveOp
 import java.awt.image.Kernel
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
@@ -132,7 +131,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
 
             if (tnFile != null) {
-                val tempFile = File.createTempFile("thumb", ".jpg")
                 if (img.width > img.height * 2) {
                     if (file.extension.lowercase() == "gif") {
                         Thumbnails.of(img)
@@ -140,13 +138,13 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             .crop(Positions.CENTER)
                             .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                             .outputQuality(1.0)
-                            .toFile(tempFile)
+                            .toFile(tnFile)
                     } else {
                         Thumbnails.of(img)
                             .crop(Positions.CENTER)
                             .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                             .outputQuality(1.0)
-                            .toFile(tempFile)
+                            .toFile(tnFile)
                     }
                 } else {
                     if (file.extension.lowercase() == "gif") {
@@ -154,20 +152,18 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                             .height(FileUtils.thumbnailHeight())
                             .imageType(BufferedImage.TYPE_INT_ARGB)
                             .outputQuality(1.0)
-                            .toFile(tempFile)
+                            .toFile(tnFile)
                     } else {
                         Thumbnails.of(img)
                             .height(FileUtils.thumbnailHeight())
                             .outputQuality(1.0)
-                            .toFile(tempFile)
+                            .toFile(tnFile)
                     }
                 }
 
                 val scaledImage: BufferedImage?
                 try {
-                    scaledImage = ImageIO.read(tempFile)
-                    tempFile.delete()
-                    ImageIO.write(sharpenAndBrightenImage(scaledImage), extension, tnFile)
+                    scaledImage = ImageIO.read(tnFile)
                     _metadataObj?.setThumbnailSmallHeight(scaledImage.height)
                     _metadataObj?.setThumbnailSmallWidth(scaledImage.width)
                     _metadataObj?.setThumbnailPathSmall(thumbnailFileStr)
@@ -182,46 +178,28 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                val tempFile = File.createTempFile("square", ".jpg")
                 Thumbnails.of(img)
                     .crop(Positions.CENTER)
                     .size(209, 209)
                     .outputQuality(1.0)
-                    .toFile(tempFile)
+                    .toFile(tnFile)
 
-                val scaledImage: BufferedImage?
-                try {
-                    scaledImage = ImageIO.read(tempFile)
-                    tempFile.delete()
-                    ImageIO.write(sharpenAndBrightenImage(scaledImage), extension, tnFile)
-                    _metadataObj?.setThumbnailPathCentered(thumbnailFileStr)
-                    _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
-                } catch (e: IOException) {
-                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
-                }
+                _metadataObj?.setThumbnailPathCentered(thumbnailFileStr)
+                _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
             }
 
             // Map marker thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                val tempFile = File.createTempFile("map", ".jpg")
                 Thumbnails.of(img)
                     .crop(Positions.CENTER)
                     .size(45, 45)
                     .outputQuality(1.0)
-                    .toFile(tempFile)
+                    .toFile(tnFile)
 
-                val scaledImage: BufferedImage?
-                try {
-                    scaledImage = ImageIO.read(tempFile)
-                    tempFile.delete()
-                    ImageIO.write(sharpenAndBrightenImage(scaledImage), extension, tnFile)
-                    _metadataObj?.setMapMarkerPath(thumbnailFileStr)
-                    _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
-                } catch (e: IOException) {
-                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
-                }
+                _metadataObj?.setMapMarkerPath(thumbnailFileStr)
+                _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
             }
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)
