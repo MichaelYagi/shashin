@@ -134,16 +134,16 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                 if (img.width > img.height * 2) {
                     if (file.extension.lowercase() == "gif") {
                         Thumbnails.of(img)
-                            .height(FileUtils.thumbnailHeight())
                             .imageType(BufferedImage.TYPE_INT_ARGB)
+                            .crop(Positions.CENTER)
+                            .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                             .outputQuality(1.0)
-                            .sourceRegion(Positions.CENTER, FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                             .toFile(tnFile)
                     } else {
                         Thumbnails.of(img)
-                            .height(FileUtils.thumbnailHeight())
+                            .crop(Positions.CENTER)
+                            .size(FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                             .outputQuality(1.0)
-                            .sourceRegion(Positions.CENTER, FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                             .toFile(tnFile)
                     }
                 } else {
