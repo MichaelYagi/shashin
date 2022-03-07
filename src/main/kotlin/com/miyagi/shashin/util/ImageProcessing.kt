@@ -130,106 +130,77 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
 
-            var scaledImage: BufferedImage = if (file.extension.lowercase() == "gif") {
-                Thumbnails.of(img)
-                    .height(FileUtils.thumbnailHeight())
-                    .imageType(BufferedImage.TYPE_INT_ARGB)
-                    .outputQuality(1.0)
-                    .asBufferedImage()
-            } else {
-                Thumbnails.of(img)
-                    .height(FileUtils.thumbnailHeight())
-                    .outputQuality(1.0)
-                    .asBufferedImage()
-            }
-
-            if (scaledImage.width > scaledImage.height * 2) {
-                scaledImage = if (file.extension.lowercase() == "gif") {
-                    Thumbnails.of(img)
-                        .height(FileUtils.thumbnailHeight())
-                        .imageType(BufferedImage.TYPE_INT_ARGB)
-                        .outputQuality(1.0)
-                        .sourceRegion(Positions.CENTER, FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
-                        .asBufferedImage()
-                } else {
-                    Thumbnails.of(scaledImage)
-                        .height(FileUtils.thumbnailHeight())
-                        .outputQuality(1.0)
-                        .sourceRegion(Positions.CENTER, FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
-                        .asBufferedImage()
-                }
-            }
             if (tnFile != null) {
-                ImageIO.write(sharpenAndBrightenImage(scaledImage), extension, tnFile)
+                if (img.width > img.height * 2) {
+                    if (file.extension.lowercase() == "gif") {
+                        Thumbnails.of(img)
+                            .height(FileUtils.thumbnailHeight())
+                            .imageType(BufferedImage.TYPE_INT_ARGB)
+                            .outputQuality(1.0)
+                            .sourceRegion(Positions.CENTER, FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
+                            .toFile(tnFile)
+                    } else {
+                        Thumbnails.of(img)
+                            .height(FileUtils.thumbnailHeight())
+                            .outputQuality(1.0)
+                            .sourceRegion(Positions.CENTER, FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
+                            .toFile(tnFile)
+                    }
+                } else {
+                    if (file.extension.lowercase() == "gif") {
+                        Thumbnails.of(img)
+                            .height(FileUtils.thumbnailHeight())
+                            .imageType(BufferedImage.TYPE_INT_ARGB)
+                            .outputQuality(1.0)
+                            .toFile(tnFile)
+                    } else {
+                        Thumbnails.of(img)
+                            .height(FileUtils.thumbnailHeight())
+                            .outputQuality(1.0)
+                            .toFile(tnFile)
+                    }
+                }
+
+                val scaledImage: BufferedImage?
+                try {
+                    scaledImage = ImageIO.read(tnFile)
+                    _metadataObj?.setThumbnailSmallHeight(scaledImage.height)
+                    _metadataObj?.setThumbnailSmallWidth(scaledImage.width)
+                    _metadataObj?.setThumbnailPathSmall(thumbnailFileStr)
+                    _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension)
+                } catch (e: IOException) {
+                    logger.log(Level.WARNING, "Could not read file: " + tnFile.path)
+                }
+                
             }
-            _metadataObj?.setThumbnailSmallHeight(scaledImage.height)
-            _metadataObj?.setThumbnailSmallWidth(scaledImage.width)
-            _metadataObj?.setThumbnailPathSmall(thumbnailFileStr)
-            _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension)
 
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                val square: BufferedImage
-                if (img.height > img.width) {
-                    val temp = Thumbnails.of(img)
-                        .width(209)
-                        .outputQuality(1.0)
-                        .asBufferedImage()
-                    square = Thumbnails.of(temp)
-                        .width(209)
-                        .outputQuality(1.0)
-                        .sourceRegion(Positions.CENTER, 209, 209)
-                        .asBufferedImage()
-                } else {
-                    val temp = Thumbnails.of(img)
-                        .height(209)
-                        .outputQuality(1.0)
-                        .asBufferedImage()
-                    square = Thumbnails.of(temp)
-                        .height(209)
-                        .outputQuality(1.0)
-                        .sourceRegion(Positions.CENTER, 209, 209)
-                        .asBufferedImage()
-                }
+                Thumbnails.of(img)
+                    .crop(Positions.CENTER)
+                    .size(209, 209)
+                    .outputQuality(1.0)
+                    .toFile(tnFile)
 
-                ImageIO.write(sharpenAndBrightenImage(square), extension, tnFile)
+                _metadataObj?.setThumbnailPathCentered(thumbnailFileStr)
+                _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
             }
-            _metadataObj?.setThumbnailPathCentered(thumbnailFileStr)
-            _metadataObj?.setThumbnailUrlCentered("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_centered." + extension)
 
             // Map marker thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_mapmarker." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
             if (tnFile != null) {
-                val mapMarker: BufferedImage
-                if (img.height > img.width) {
-                    val temp = Thumbnails.of(img)
-                        .width(45)
-                        .outputQuality(1.0)
-                        .asBufferedImage()
-                    mapMarker = Thumbnails.of(temp)
-                        .width(45)
-                        .outputQuality(1.0)
-                        .sourceRegion(Positions.CENTER, 45, 45)
-                        .asBufferedImage()
-                } else {
-                    val temp = Thumbnails.of(img)
-                        .height(45)
-                        .outputQuality(1.0)
-                        .asBufferedImage()
-                    mapMarker = Thumbnails.of(temp)
-                        .height(45)
-                        .outputQuality(1.0)
-                        .sourceRegion(Positions.CENTER, 45, 45)
-                        .asBufferedImage()
-                }
+                Thumbnails.of(img)
+                    .crop(Positions.CENTER)
+                    .size(45, 45)
+                    .outputQuality(1.0)
+                    .toFile(tnFile)
 
-                ImageIO.write(sharpenAndBrightenImage(mapMarker), extension, tnFile)
+                _metadataObj?.setMapMarkerPath(thumbnailFileStr)
+                _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
             }
-            _metadataObj?.setMapMarkerPath(thumbnailFileStr)
-            _metadataObj?.setMapMarkerUrl("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_mapmarker." + extension)
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)
             _metadataObj = null
