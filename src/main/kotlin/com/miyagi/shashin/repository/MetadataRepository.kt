@@ -101,4 +101,6 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT * FROM metadata WHERE folder = :folder AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByFolderOffsetAndLimit(@Param("folder") folder: String,@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
+   @Query("SELECT MAX(thumbnail_small_width) AS maxWidth FROM metadata", nativeQuery = true)
+   fun findMaxThumbnailWidth(): Int
 }
