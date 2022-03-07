@@ -1,5 +1,9 @@
 class Util {
 
+    static thumbnailHeight() {
+        return 225;
+    }
+
     static setMetadataLocalStorage(date) {
         if (Util.localStorageAvailable() === true) {
             if (typeof date !== "undefined") {
@@ -306,7 +310,7 @@ class Util {
     }
 
     static errorImg(_this,text,defaulWidthtHeight) {
-        let dimensions = "/209";
+        let dimensions = "/" + Util.thumbnailHeight();
         if (defaulWidthtHeight != null) {
             dimensions = "/"+defaulWidthtHeight;
         }

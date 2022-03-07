@@ -12,6 +12,10 @@ class FileUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
+        fun thumbnailHeight(): Int {
+            return 225
+        }
+
         fun allowableMediaFiles(): Array<String> {
             return allowableImageFiles() + allowableVideoFiles() + allowableRawImageFiles()
         }
