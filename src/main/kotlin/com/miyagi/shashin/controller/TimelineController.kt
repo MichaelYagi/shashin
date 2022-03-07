@@ -140,6 +140,8 @@ class TimelineController {
         val cameraList = metadataRepository.findByCameraTypeAlphabetical()
         model["cameras"] = cameraList.joinToString()
 
+        model["maxWidth"] = metadataRepository.findMaxThumbnailWidth()
+
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
