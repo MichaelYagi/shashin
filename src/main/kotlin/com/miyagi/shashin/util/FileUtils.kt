@@ -13,7 +13,7 @@ class FileUtils {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
         fun thumbnailHeight(): Int {
-            return 225
+            return 209
         }
 
         fun allowableMediaFiles(): Array<String> {
