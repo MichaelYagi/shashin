@@ -1234,7 +1234,7 @@ class SettingsController {
                                 if (metadataCount == 0) {
                                     val imageProcessing = ImageProcessing(apiVersion, file, sidecarDir, metadataObj)
                                     metadataObj = imageProcessing.createThumbnails()
-                                    if (metadataObj != null) {
+                                    if (metadataObj?.getThumbnailSmallWidth() != null && metadataObj.getThumbnailSmallHeight() != null && metadataObj.getThumbnailUrlSmall() != null) {
                                         metadataObj.setHidden(false)
 
                                         try {
