@@ -84,7 +84,7 @@ describe('#Util tests', function() {
         assert.equal(imgEl.src,'https://via.placeholder.com/199?text=Some%20Title')
 
         Util.errorImg(imgEl,'Some Title')
-        assert.equal(imgEl.src,'https://via.placeholder.com/225?text=Some%20Title')
+        assert.equal(imgEl.src,'https://via.placeholder.com/'+Util.thumbnailHeight()+'?text=Some%20Title')
 
         $("#someid").attr("height","100")
         $("#someid").attr("width","200")
