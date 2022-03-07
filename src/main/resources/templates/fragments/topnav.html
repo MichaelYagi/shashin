@@ -27,20 +27,6 @@
             }
         }
     })
-
-    ajaxParams = {
-        type: "get",
-        url: "/settings/cleanup/snapshots",
-        contentType: 'application/json; charset=utf-8',
-        retries: shashin.ajaxRetries
-    };
-
-    $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " cleaning snapshots")}).then(function (data) {
-        if (data.hasOwnProperty("status") === false || data.hasOwnProperty("msg") === false) {
-            shashin.printMessageToConsole("Error cleaning snapshots");
-        }
-    })
 </script>
 
 <header class="py-2 mb-3 border-bottom shadow">

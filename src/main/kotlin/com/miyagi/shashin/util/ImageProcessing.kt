@@ -1,9 +1,6 @@
 package com.miyagi.shashin.util
 
 import com.drew.imaging.ImageMetadataReader
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
 import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
@@ -236,19 +233,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
         } else {
             logger.log(Level.WARNING, "File not supported: " + file.name)
             _metadataObj = null
-        }
-
-        // Save serialized metadata obj
-        val metadataDirectory = sidecarDir.dropLast(1) + "/metadata/"
-        val metadataFileStr = metadataDirectory + fileRootDir + "/" + file.name + ".yaml"
-        val mdFile = FileUtils.createFile(metadataDirectory + fileRootDir, metadataFileStr, "YAML metadata")
-        if (mdFile != null) {
-            val yamlFactory: YAMLFactory = YAMLFactory.builder()
-                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                .disable(YAMLGenerator.Feature.SPLIT_LINES)
-                .build()
-            val om = ObjectMapper(yamlFactory)
-            om.writeValue(mdFile, _metadataObj)
         }
 
         return _metadataObj
