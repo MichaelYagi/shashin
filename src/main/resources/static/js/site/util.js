@@ -1,7 +1,7 @@
 class Util {
 
     static thumbnailHeight() {
-        return 209;
+        return 225;
     }
 
     static setMetadataLocalStorage(date) {
