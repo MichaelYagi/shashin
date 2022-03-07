@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
-import com.google.javascript.jscomp.jarjar.org.apache.tools.ant.DirectoryScanner
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.MediaDirectory
@@ -700,34 +699,6 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/cleanup/snapshots"], method = [RequestMethod.GET], produces = ["application/json"])
-    @ResponseBody
-    fun cleanupSnapshots(model: Model): String {
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val sidecarDir = File("$rootPath$relativeSidecarDir")
-
-        if (sidecarDir.exists()) {
-            val sidecarDirPath = sidecarDir.path
-            val scanner = DirectoryScanner()
-            scanner.setIncludes(arrayOf("**/metadata*.zip"))
-            scanner.setBasedir(sidecarDirPath)
-            scanner.isCaseSensitive = true
-            scanner.scan()
-            val filenames = scanner.includedFiles
-            for (filename in filenames) {
-                val fileToDelete = File(sidecarDir.path + "/" + filename)
-                logger.log(Level.INFO, "Snapshot cleanup files: ${fileToDelete.path}")
-                fileToDelete.delete()
-            }
-        }
-
-        resp["msg"] = "Success"
-        resp["status"] = "success"
-
-        return mapper.writeValueAsString(resp)
-    }
-
-    @Secured("ROLE_ADMIN")
     @GetMapping("/settings/snapshot")
     fun getSnapshot(model: Model): String {
         val module = "snapshot"
@@ -1062,18 +1033,9 @@ class SettingsController {
                                                     metadata.getThumbnailPathCentered()!!.replace('\\', '/').lowercase()
                                                         .replace(thumbnailDir.lowercase(), "")
                                                 relativePath = relativePath.replace("_centered.jpg", "")
-                                                val metadataYamlFile = "$metadataDir$relativePath.yaml"
-                                                var fileObj = File(metadataYamlFile)
-                                                if (fileObj.delete()) {
-                                                    logger.log(Level.INFO, "Deleted yaml file: " + fileObj.name)
-                                                } else {
-                                                    logger.log(
-                                                        Level.WARNING,
-                                                        "Failed to delete yaml file: " + fileObj.name
-                                                    )
-                                                }
+
                                                 val metadataExifFile = "$metadataDir$relativePath.exif.yaml"
-                                                fileObj = File(metadataExifFile)
+                                                val fileObj = File(metadataExifFile)
                                                 if (fileObj.delete()) {
                                                     logger.log(Level.INFO, "Deleted EXIF file: " + fileObj.name)
                                                 } else {

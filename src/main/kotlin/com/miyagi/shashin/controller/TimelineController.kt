@@ -437,9 +437,6 @@ class TimelineController {
                 }
             }
 
-            if (rootDir != null) {
-                MetadataProcessing.updateSidecarMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
-            }
             resp["msg"] = "Saved!"
             resp["status"] = "success"
             return mapper.writeValueAsString(resp)
@@ -779,10 +776,6 @@ class TimelineController {
                 }
             }
 
-            if (rootDir != null) {
-                MetadataProcessing.updateSidecarMetadata(metadataObj.get(), model.getAttribute("relativeSidecarDir").toString())
-            }
-
             resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
             val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
             if (recognitionLabels != null && recognitionLabels.count() > 0) {
@@ -872,9 +865,6 @@ class TimelineController {
                                 break
                             }
                         }
-                    }
-                    if (rootDir != null) {
-                        MetadataProcessing.updateSidecarMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
                     }
                 }
                 resp["msg"] = "Saved!"
@@ -1183,10 +1173,6 @@ class TimelineController {
                                 break
                             }
                         }
-                    }
-
-                    if (rootDir != null) {
-                        MetadataProcessing.updateSidecarMetadata(metadata, model.getAttribute("relativeSidecarDir").toString())
                     }
                 }
 

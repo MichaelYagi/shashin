@@ -6,7 +6,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
 import net.iakovlev.timeshape.TimeZoneEngine
-import org.springframework.core.io.FileSystemResource
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
@@ -504,27 +503,6 @@ class MetadataProcessing() {
                     .build()
                 val om = ObjectMapper(yamlFactory)
                 om.writeValue(exifFile, exifMap)
-            }
-        }
-    }
-
-    companion object {
-        fun updateSidecarMetadata(metadataObj: Metadata?, _sidecarDir: String) {
-            if (metadataObj != null) {
-                // Update MD file
-                val rootPath = FileSystemResource("").file.absolutePath
-                val sidecarDir = rootPath + _sidecarDir
-                val metadataDirectory = sidecarDir.dropLast(1) + "/metadata"
-                val photoFile = File(metadataObj.getPath()!!)
-                val fileRootDir = FileUtils.getRootDir(photoFile)
-                val metadataFileStr = metadataDirectory + fileRootDir + "/" + photoFile.name + ".yaml"
-                val mdFile = File(metadataFileStr)
-                val yamlFactory: YAMLFactory = YAMLFactory.builder()
-                    .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
-                    .disable(YAMLGenerator.Feature.SPLIT_LINES)
-                    .build()
-                val om = ObjectMapper(yamlFactory)
-                om.writeValue(mdFile, metadataObj)
             }
         }
     }
