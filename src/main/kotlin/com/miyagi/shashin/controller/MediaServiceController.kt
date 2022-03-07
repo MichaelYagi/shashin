@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.util.FileUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
@@ -83,8 +84,8 @@ class MediaServiceController {
                 // Here 160 kbps video is 160000
                 //video.setBitRate(160000)
                 //video.setFrameRate(15)
-                val width = if (metadata.getOriginalImageWidth() == null) 209 else metadata.getOriginalImageWidth()!!
-                val height = if (metadata.getOriginalImageHeight() == null) 209 else metadata.getOriginalImageHeight()!!
+                val width = if (metadata.getOriginalImageWidth() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageWidth()!!
+                val height = if (metadata.getOriginalImageHeight() == null) FileUtils.thumbnailHeight() else metadata.getOriginalImageHeight()!!
                 video.setSize(VideoSize(width, height))
 
                 /* Step 4. Set Encoding Attributes*/

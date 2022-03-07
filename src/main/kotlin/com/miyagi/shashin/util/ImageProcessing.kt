@@ -130,45 +130,45 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             }
 
             // Gallery thumbnails
-            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_209." + extension
+            thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension
             tnFile = FileUtils.createFile(thumbnailDirectory + fileRootDir, thumbnailFileStr, "Thumbnail")
 
-            var scaled209: BufferedImage = if (file.extension.lowercase() == "gif") {
+            var scaledImage: BufferedImage = if (file.extension.lowercase() == "gif") {
                 Thumbnails.of(img)
-                    .height(209)
+                    .height(FileUtils.thumbnailHeight())
                     .imageType(BufferedImage.TYPE_INT_ARGB)
                     .outputQuality(1.0)
                     .asBufferedImage()
             } else {
                 Thumbnails.of(img)
-                    .height(209)
+                    .height(FileUtils.thumbnailHeight())
                     .outputQuality(1.0)
                     .asBufferedImage()
             }
 
-            if (scaled209.width > scaled209.height * 2) {
-                scaled209 = if (file.extension.lowercase() == "gif") {
+            if (scaledImage.width > scaledImage.height * 2) {
+                scaledImage = if (file.extension.lowercase() == "gif") {
                     Thumbnails.of(img)
-                        .height(209)
+                        .height(FileUtils.thumbnailHeight())
                         .imageType(BufferedImage.TYPE_INT_ARGB)
                         .outputQuality(1.0)
-                        .sourceRegion(Positions.CENTER, 209, 209)
+                        .sourceRegion(Positions.CENTER, FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                         .asBufferedImage()
                 } else {
-                    Thumbnails.of(scaled209)
-                        .height(209)
+                    Thumbnails.of(scaledImage)
+                        .height(FileUtils.thumbnailHeight())
                         .outputQuality(1.0)
-                        .sourceRegion(Positions.CENTER, 209, 209)
+                        .sourceRegion(Positions.CENTER, FileUtils.thumbnailHeight(), FileUtils.thumbnailHeight())
                         .asBufferedImage()
                 }
             }
             if (tnFile != null) {
-                ImageIO.write(sharpenAndBrightenImage(scaled209), extension, tnFile)
+                ImageIO.write(sharpenAndBrightenImage(scaledImage), extension, tnFile)
             }
-            _metadataObj?.setThumbnailSmallHeight(scaled209.height)
-            _metadataObj?.setThumbnailSmallWidth(scaled209.width)
+            _metadataObj?.setThumbnailSmallHeight(scaledImage.height)
+            _metadataObj?.setThumbnailSmallWidth(scaledImage.width)
             _metadataObj?.setThumbnailPathSmall(thumbnailFileStr)
-            _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_209." + extension)
+            _metadataObj?.setThumbnailUrlSmall("/api/$apiVersion/thumbnails$fileRootDir/" + file.name + "_" + FileUtils.thumbnailHeight() + "." + extension)
 
             // Square image thumbnail
             thumbnailFileStr = thumbnailDirectory + fileRootDir + "/" + file.name + "_centered." + extension
@@ -176,7 +176,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             if (tnFile != null) {
                 val square: BufferedImage
                 if (img.height > img.width) {
-//                    scaled = scaleImageByWidth(img, 209)
                     val temp = Thumbnails.of(img)
                         .width(209)
                         .outputQuality(1.0)
@@ -187,7 +186,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         .sourceRegion(Positions.CENTER, 209, 209)
                         .asBufferedImage()
                 } else {
-//                    scaled = scaleImageByHeight(img, 209)
                     val temp = Thumbnails.of(img)
                         .height(209)
                         .outputQuality(1.0)
@@ -198,8 +196,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         .sourceRegion(Positions.CENTER, 209, 209)
                         .asBufferedImage()
                 }
-
-//                val square: BufferedImage = getSquareThumbnail(scaled)
 
                 ImageIO.write(sharpenAndBrightenImage(square), extension, tnFile)
             }
@@ -232,14 +228,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                         .sourceRegion(Positions.CENTER, 45, 45)
                         .asBufferedImage()
                 }
-
-//                    val scaled: BufferedImage
-//                    if (img.height > img.width) {
-//                        scaled = scaleImageByWidth(img, 45)
-//                    } else {
-//                        scaled = scaleImageByHeight(img, 45)
-//                    }
-//                    val mapMarker: BufferedImage = getSquareThumbnail(scaled)
 
                 ImageIO.write(sharpenAndBrightenImage(mapMarker), extension, tnFile)
             }

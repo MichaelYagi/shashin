@@ -40,6 +40,9 @@
 
         if (Util.isMobile() === false) {
             $("#infinite-scroll-gallery").attr('style', 'width: 97%');
+        } else {
+            const galleryWidth = 'min-width: ' + ((Util.thumbnailHeight() * 2) + 20) + 'px;';
+            $("#infinite-scroll-gallery").attr('style', galleryWidth);
         }
 
         shashin.setLightGalleryElement('infinite-scroll-gallery');
@@ -1100,7 +1103,7 @@
                                     if ($("#image" + metadata.id).length === 1) {
                                         $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall));
                                         $("#image" + metadata.id).css("background-color", "lightgray");
-                                        $("#image" + metadata.id).attr("onError", "Util.errorImg(this,\'" + metadata.title + "\',209)");
+                                        $("#image" + metadata.id).attr("onError", "Util.errorImg(this,\'" + metadata.title + "\',Util.thumbnailHeight())");
                                     }
 
                                     if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {
