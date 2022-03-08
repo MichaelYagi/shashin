@@ -366,12 +366,20 @@ $("#refreshTakenDate").click(function (e) {
 
 $("#detailsTabLink").click(function (e) {
     e.preventDefault();
+
+    const propTimelineModal = document.getElementById('propTimelineModal');
+    const modal = bootstrap.Modal.getInstance(propTimelineModal);
+    modal.handleUpdate();
     $("#timelineModalMsg").html("");
     $("#saveMetadata").prop('disabled', true);
 });
 
 $("#mapTabLink").click(function (e) {
     e.preventDefault();
+
+    const propTimelineModal = document.getElementById('propTimelineModal');
+    const modal = bootstrap.Modal.getInstance(propTimelineModal);
+    modal.handleUpdate();
     $("#timelineModalMsg").html("");
     $("#saveMetadata").prop('disabled', true);
 
@@ -384,6 +392,10 @@ $("#mapTabLink").click(function (e) {
 
 $("#generalTabLink").click(function (e) {
     e.preventDefault();
+
+    const propTimelineModal = document.getElementById('propTimelineModal');
+    const modal = bootstrap.Modal.getInstance(propTimelineModal);
+    modal.handleUpdate();
     $("#saveMetadata").prop('disabled', false);
 });
 
