@@ -9,14 +9,16 @@
     shashin.darkMode = true;
     shashin.lgSubHtmlTimeout = null;
 
-    function fixContentHeight(){
+    function fixContentHeight() {
         const viewHeight = $(window).height();
         const header = $("div[data-role='header']:visible:visible");
         const navbar = $("div[data-role='navbar']:visible:visible");
         const content = $("div[data-role='content']:visible:visible");
         const contentHeight = viewHeight - header.outerHeight() - navbar.outerHeight();
         content.height(contentHeight);
-        shashin.map.updateSize();
+        if (contentHeight > 0) {
+            shashin.map.updateSize();
+        }
     }
 
     shashin.modalStatusFailMessage = function() {
