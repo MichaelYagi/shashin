@@ -10,13 +10,10 @@
     shashin.lgSubHtmlTimeout = null;
 
     function fixContentHeight() {
-        const viewHeight = $(window).height();
-        const header = $("div[data-role='header']:visible:visible");
-        const navbar = $("div[data-role='navbar']:visible:visible");
-        const content = $("div[data-role='content']:visible:visible");
-        const contentHeight = viewHeight - header.outerHeight() - navbar.outerHeight();
-        content.height(contentHeight);
-        if (contentHeight > 0) {
+        if ($("div[data-role='dialog']").is(":visible")) {
+            const dialog = $("div[data-role='dialog']:visible:visible");
+            const contentHeight = 400;
+            dialog.height(contentHeight);
             shashin.map.updateSize();
         }
     }
