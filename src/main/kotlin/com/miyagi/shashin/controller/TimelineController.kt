@@ -649,12 +649,12 @@ class TimelineController {
 
             if (metadataMap["title"].toString().trim() == "") {
                 metadataObj.get().setTitle(metadataObj.get().getFileName())
-            } else {
+            } else if (metadataObj.get().getTitle() != metadataMap["title"].toString().trim()) {
                 metadataObj.get().setTitle(metadataMap["title"].toString().trim())
             }
             if (metadataMap["description"].toString().trim() == "") {
                 metadataObj.get().setDescription(metadataObj.get().getDescription())
-            } else {
+            } else if (metadataObj.get().getDescription() != metadataMap["description"].toString().trim()) {
                 metadataObj.get().setDescription(metadataMap["description"].toString().trim())
             }
             if (metadataMap["camera"].toString().trim() != "") {
@@ -666,33 +666,36 @@ class TimelineController {
                         break
                     }
                 }
-                metadataObj.get().setCamera(camera)
+
+                if (metadataObj.get().getCamera() != camera) {
+                    metadataObj.get().setCamera(camera)
+                }
             } else {
                 metadataObj.get().setCamera(null)
             }
             if (metadataMap["year"].toString() == "") {
                 metadataObj.get().setYear(null)
-            } else {
+            } else if (metadataObj.get().getYear() != metadataMap["year"].toString().toInt()) {
                 metadataObj.get().setYear(metadataMap["year"].toString().toInt())
             }
             if (metadataMap["month"].toString() == "") {
                 metadataObj.get().setMonth(null)
-            } else {
+            } else if (metadataObj.get().getMonth() != metadataMap["month"].toString().toInt()) {
                 metadataObj.get().setMonth(metadataMap["month"].toString().toInt())
             }
             if (metadataMap["day"].toString() == "") {
                 metadataObj.get().setDay(null)
-            } else {
+            } else if (metadataObj.get().getDay() != metadataMap["day"].toString().toInt()) {
                 metadataObj.get().setDay(metadataMap["day"].toString().toInt())
             }
             if (metadataMap["time"].toString() == "") {
                 metadataObj.get().setTime(null)
-            } else {
+            } else if (metadataObj.get().getTime() != metadataMap["time"].toString()) {
                 metadataObj.get().setTime(metadataMap["time"].toString())
             }
             if (metadataMap["offset"].toString() == "") {
                 metadataObj.get().setTimeZone(null)
-            } else {
+            } else if (metadataObj.get().getTimeZone() != metadataMap["offset"].toString()) {
                 metadataObj.get().setTimeZone(metadataMap["offset"].toString())
             }
 
@@ -741,16 +744,19 @@ class TimelineController {
                 var latlng = metadataMap["latlng"].toString()
                 latlng = latlng.replace("\\s".toRegex(), "")
                 val latlngArr = latlng.split(",")
-                if (latlngArr.count() == 2) {
-                    metadataObj.get().setLat(latlngArr[0])
-                    metadataObj.get().setLng(latlngArr[1])
 
-                    val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,latlngArr[0], latlngArr[1]))
+                if (latlngArr.count() == 2 && (metadataObj.get().getLat() != latlngArr[0].trim() || metadataObj.get().getLng() != latlngArr[1].trim())) {
+                    val lat = latlngArr[0].trim()
+                    val lng = latlngArr[1].trim()
+                    metadataObj.get().setLat(lat)
+                    metadataObj.get().setLng(lng)
+
+                    val buildPlace = TextUtils.getPlaceNameFromJson(TextUtils.getGeoData(geocodeUrl!!,lat, lng))
                     if (buildPlace.isNotBlank()) {
                         metadataObj.get().setPlaceName(buildPlace)
 
                         val engine = TimeZoneEngine.initialize()
-                        val maybeZoneId: Optional<ZoneId> = engine.query(latlngArr[0].toString().toDouble(), latlngArr[1].toString().toDouble())
+                        val maybeZoneId: Optional<ZoneId> = engine.query(lat.toDouble(), lng.toDouble())
                         val zone = ZoneId.of(maybeZoneId.get().id)
                         val dt = LocalDateTime.now()
                         val zdt: ZonedDateTime = dt.atZone(zone)
