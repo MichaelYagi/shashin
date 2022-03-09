@@ -744,8 +744,9 @@ class TimelineController {
                 var latlng = metadataMap["latlng"].toString()
                 latlng = latlng.replace("\\s".toRegex(), "")
                 val latlngArr = latlng.split(",")
+                val latlngRegex = "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)\\s*,\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$".toRegex()
 
-                if (latlngArr.count() == 2 && (metadataObj.get().getLat() != latlngArr[0].trim() || metadataObj.get().getLng() != latlngArr[1].trim())) {
+                if (latlngArr.count() == 2 && latlngRegex.matches(latlng) && (metadataObj.get().getLat() != latlngArr[0].trim() || metadataObj.get().getLng() != latlngArr[1].trim())) {
                     val lat = latlngArr[0].trim()
                     val lng = latlngArr[1].trim()
                     metadataObj.get().setLat(lat)
