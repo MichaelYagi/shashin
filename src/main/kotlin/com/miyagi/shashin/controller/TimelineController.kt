@@ -425,17 +425,17 @@ class TimelineController {
             metadataRepository.save(metadataObj.get())
             // Update MD file
             //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-            val originalImagePath = metadataObj.get().getPath()
-            var rootDir: String? = null
-            val rootMediaDirs = mediaDirRepository.findAll()
-            for (rootmediaDir in rootMediaDirs) {
-                if (originalImagePath != null && rootmediaDir != null) {
-                    if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
-                        rootDir = rootmediaDir.getDirectory()
-                        break
-                    }
-                }
-            }
+//            val originalImagePath = metadataObj.get().getPath()
+//            var rootDir: String? = null
+//            val rootMediaDirs = mediaDirRepository.findAll()
+//            for (rootmediaDir in rootMediaDirs) {
+//                if (originalImagePath != null && rootmediaDir != null) {
+//                    if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
+//                        rootDir = rootmediaDir.getDirectory()
+//                        break
+//                    }
+//                }
+//            }
 
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -470,6 +470,9 @@ class TimelineController {
             metadataMap.containsKey("camera") &&
             metadataMap["id"].toString() == metadataId
         ) {
+            resp["msg"] = "Saved!"
+            resp["status"] = "success"
+
             val metadataObj = metadataRepository.findById(metadataId)
 
             // Process albums
@@ -746,7 +749,9 @@ class TimelineController {
                 val latlngArr = latlng.split(",")
                 val latlngRegex = "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)\\s*,\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$".toRegex()
 
-                if (latlngArr.count() == 2 && latlngRegex.matches(latlng) && (metadataObj.get().getLat() != latlngArr[0].trim() || metadataObj.get().getLng() != latlngArr[1].trim())) {
+                if (!latlngRegex.matches(latlng)) {
+                    resp["msg"] = "Saved. Latitude/longitude incorrect format."
+                } else if (latlngArr.count() == 2 && (metadataObj.get().getLat() != latlngArr[0].trim() || metadataObj.get().getLng() != latlngArr[1].trim())) {
                     val lat = latlngArr[0].trim()
                     val lng = latlngArr[1].trim()
                     metadataObj.get().setLat(lat)
@@ -771,17 +776,17 @@ class TimelineController {
             metadataRepository.save(metadataObj.get())
             // Update MD file
             //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-            val originalImagePath = metadataObj.get().getPath()
-            var rootDir: String? = null
-            val rootMediaDirs = mediaDirRepository.findAll()
-            for (rootmediaDir in rootMediaDirs) {
-                if (originalImagePath != null && rootmediaDir != null) {
-                    if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
-                        rootDir = rootmediaDir.getDirectory()
-                        break
-                    }
-                }
-            }
+//            val originalImagePath = metadataObj.get().getPath()
+//            var rootDir: String? = null
+//            val rootMediaDirs = mediaDirRepository.findAll()
+//            for (rootmediaDir in rootMediaDirs) {
+//                if (originalImagePath != null && rootmediaDir != null) {
+//                    if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
+//                        rootDir = rootmediaDir.getDirectory()
+//                        break
+//                    }
+//                }
+//            }
 
             resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
             val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
@@ -805,8 +810,6 @@ class TimelineController {
             val cameraList = metadataRepository.findByCameraTypeAlphabetical()
             model["cameras"] = cameraList.joinToString()
 
-            resp["msg"] = "Saved!"
-            resp["status"] = "success"
             return mapper.writeValueAsString(resp)
         }
         resp["msg"] = "Could not save"
@@ -861,19 +864,19 @@ class TimelineController {
 
                 // Update MD file
                 //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-                for (metadata in metadataList) {
-                    val originalImagePath = metadata.getPath()
-                    var rootDir: String? = null
-                    val rootMediaDirs = mediaDirRepository.findAll()
-                    for (rootmediaDir in rootMediaDirs) {
-                        if (originalImagePath != null && rootmediaDir != null) {
-                            if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
-                                rootDir = rootmediaDir.getDirectory()
-                                break
-                            }
-                        }
-                    }
-                }
+//                for (metadata in metadataList) {
+//                    val originalImagePath = metadata.getPath()
+//                    var rootDir: String? = null
+//                    val rootMediaDirs = mediaDirRepository.findAll()
+//                    for (rootmediaDir in rootMediaDirs) {
+//                        if (originalImagePath != null && rootmediaDir != null) {
+//                            if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
+//                                rootDir = rootmediaDir.getDirectory()
+//                                break
+//                            }
+//                        }
+//                    }
+//                }
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
@@ -905,6 +908,8 @@ class TimelineController {
         val isHidden = batchMetadataMap.batchhidden == "on"
 
         if (!idArray.isNullOrEmpty()) {
+            resp["msg"] = "Saved!"
+            resp["status"] = "success"
 
             val albumIdList: ArrayList<Int> = ArrayList()
 
@@ -975,7 +980,10 @@ class TimelineController {
             if (latlng != null && latlng.trim().isNotBlank()) {
                 latlng = latlng.replace("\\s".toRegex(), "")
                 val latlngArr = latlng.split(",")
-                if (latlngArr.count() == 2) {
+                val latlngRegex = "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)\\s*,\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$".toRegex()
+                if (!latlngRegex.matches(latlng)) {
+                    resp["msg"] = "Saved. Latitude/longitude incorrect format."
+                } else if (latlngArr.count() == 2) {
                     lat = latlngArr[0]
                     lng = latlngArr[1]
 
@@ -1169,24 +1177,24 @@ class TimelineController {
 
                 // Update MD file
                 //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-                for (metadata in metadataList) {
-                    val originalImagePath = metadata.getPath()
-                    var rootDir: String? = null
-                    val rootMediaDirs = mediaDirRepository.findAll()
-                    for (rootmediaDir in rootMediaDirs) {
-                        if (originalImagePath != null && rootmediaDir != null) {
-                            if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
-                                rootDir = rootmediaDir.getDirectory()
-                                break
-                            }
-                        }
-                    }
-                }
+//                for (metadata in metadataList) {
+//                    val originalImagePath = metadata.getPath()
+//                    var rootDir: String? = null
+//                    val rootMediaDirs = mediaDirRepository.findAll()
+//                    for (rootmediaDir in rootMediaDirs) {
+//                        if (originalImagePath != null && rootmediaDir != null) {
+//                            if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
+//                                rootDir = rootmediaDir.getDirectory()
+//                                break
+//                            }
+//                        }
+//                    }
+//                }
 
-                val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
+                val keywordDistinctList = keywordRepository.findAllDistinctOrderByKeyword()
                 var keywordListString = ""
-                if (keywordList.count() > 0) {
-                    keywordListString = keywordList.map { it.getKeyword() }.joinToString(",")
+                if (keywordDistinctList.count() > 0) {
+                    keywordListString = keywordDistinctList.map { it.getKeyword() }.joinToString(",")
                 }
                 resp["keywords"] = keywordListString
 
@@ -1205,8 +1213,6 @@ class TimelineController {
                 val cameraList = metadataRepository.findByCameraTypeAlphabetical()
                 resp["cameras"] = cameraList.joinToString()
 
-                resp["msg"] = "Saved!"
-                resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
             }
         }
