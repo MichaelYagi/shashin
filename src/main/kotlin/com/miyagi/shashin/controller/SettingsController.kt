@@ -79,6 +79,9 @@ class SettingsController {
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
 
+    @Value("\${app.build.properties.name}")
+    private val appName: String? = null
+
     @Autowired
     private val metadataRepository: MetadataRepository? = null
 
@@ -623,7 +626,7 @@ class SettingsController {
         val f = File(logFilePath)
         if (f.exists() && !f.isDirectory) {
             val headers = HttpHeaders()
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=shashin_"+java.time.Clock.systemUTC().instant()+".log")
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+appName+"_"+java.time.Clock.systemUTC().instant()+".log")
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
             headers.add("Pragma", "no-cache")
             headers.add("Expires", "0")
@@ -716,7 +719,7 @@ class SettingsController {
             val metadataList = metadataRepository?.findAll()
 
             if (metadataList != null && metadataList.count() > 0) {
-                val tempExportDir = Files.createTempDirectory("metadata")
+                val tempExportDir = Files.createTempDirectory(appName+"_metadata")
 
                 for (metadata in metadataList) {
                     if (metadata != null) {
@@ -739,7 +742,7 @@ class SettingsController {
 
                 if (tempExportDir.isDirectory() && tempExportDir.toList().isNotEmpty()) {
                     val tempDir = tempExportDir.toFile()
-                    val outputZipFile = zipFolder(tempDir,"metadata")
+                    val outputZipFile = zipFolder(tempDir,appName+"_metadata")
 
                     tempDir.listFiles()
                         .filterNot { it.isDirectory }
