@@ -15,6 +15,7 @@ interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countByAlbumId(albumId: Int?): Int?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId  AND ap.metadata_id = m.id ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByAlbumIdAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
+    fun findFirstByAlbumId(@Param("albumId") albumId: Int): AlbumPhoto?
     fun findFirstByOrderByIdAsc(): AlbumPhoto?
     fun findAlbumPhotoByMetadataId(metadataId: String?): MutableIterable<AlbumPhoto?>?
     fun deleteByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Long?
