@@ -112,6 +112,7 @@ class MetadataProcessing() {
             var mp4VideoCreationTime = false
             var fileModificationTime = false
 
+            var takenTagged = false
             for (directory in metadata.directories) {
                 for (tag in directory.tags) {
                     if (tag.description != null) {
@@ -120,12 +121,15 @@ class MetadataProcessing() {
                         if ("unknowntag" !in tagName.lowercase()) {
                             exifMap["$directoryName-$tagName"] = tag.description
                         }
-//                println(directory.name)
-//                println(directory.tagCount)
-//                println(file.path)
-//                println(tag.tagName)
-//                println(tag.description)
-//                println()
+
+//                        if (file.name == "DSC00115.JPG") {
+//                            println(directory.name)
+//                            println(directory.tagCount)
+//                            println(file.path)
+//                            println(tag.tagName)
+//                            println(tag.description)
+//                            println()
+//                        }
 
                         when (tag.tagName) {
                             "Orientation" -> {
@@ -137,7 +141,7 @@ class MetadataProcessing() {
                                     }
                                 }
                             }
-                            "Date/Time", "Creation Time", "Date/Time Original" -> {
+                            "Date/Time Digitized", "Date/Time Original", "Date/Time", "Creation Time" -> {
                                 // Sometimes created time is incorrect for mp4 files
                                 if (mp4VideoCreationTime) {
                                     continue
@@ -178,7 +182,7 @@ class MetadataProcessing() {
                                     }
                                 }
 
-                                if (date != null) {
+                                if (date != null && !takenTagged) {
                                     this.metadataObj.setTakenAt(destFormat.format(date))
                                     this.metadataObj.setCreatedAt(destFormat.format(date))
 
@@ -189,6 +193,10 @@ class MetadataProcessing() {
                                     this.metadataObj.setMonth(takenDateArray[1].toInt())
                                     this.metadataObj.setDay(takenDateArray[2].toInt())
                                     this.metadataObj.setTime(dateArray[1])
+
+                                    if (tag.tagName == "Date/Time Digitized" || tag.tagName == "Date/Time Original") {
+                                        takenTagged = true
+                                    }
                                 }
                             }
                             "Modification Time", "File Modified Date" -> {
