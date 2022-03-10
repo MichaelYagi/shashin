@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
 @Table(name = "favorite", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("metadataId", "userId"))])
 class Favorite {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Int = 0
 
     @NotBlank

@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank
 @Table(name = "albumphoto", uniqueConstraints = [UniqueConstraint(columnNames = arrayOf("albumId", "metadataId"))])
 class AlbumPhoto {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Int = 0
 
     @NotBlank

@@ -8,10 +8,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
-import com.miyagi.shashin.model.MediaDirectory
-import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.Settings
-import com.miyagi.shashin.model.User
+import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.FileUtils
@@ -63,8 +60,8 @@ import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 import kotlin.io.path.deleteExisting
-import kotlin.io.path.deleteIfExists
 import kotlin.io.path.isDirectory
+import kotlin.io.path.pathString
 
 
 @Controller
@@ -715,15 +712,19 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @PostMapping("/settings/snapshot/export")
     fun postExportSnapshot(model: Model, @RequestParam snapshot: String, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
-        if (snapshot == "export") {
+        val user = model.getAttribute("currentUser") as User?
+        val userId = user?.getId()
+
+        if (snapshot == "export" && userId != null && userId > 0) {
+            val tempExportBaseDir = Files.createTempDirectory("shashin")
+
+            // Rebuild metadata
             val metadataList = metadataRepository?.findAll()
-
             if (metadataList != null && metadataList.count() > 0) {
-                val tempExportDir = Files.createTempDirectory(appName?.lowercase()+"_metadata")
-
+                val tempMetadataExportDir = Files.createDirectories(Paths.get(tempExportBaseDir.pathString+"/metadata"))
                 for (metadata in metadataList) {
                     if (metadata != null) {
-                        val tempFile = File(tempExportDir.toAbsolutePath().toString() + "/" + metadata.getId() + ".yaml")
+                        val tempFile = File(tempMetadataExportDir.toAbsolutePath().toString() + "/" + metadata.getId() + ".yaml")
                         if (tempFile.createNewFile()) {
                             val yamlFactory: YAMLFactory = YAMLFactory.builder()
                                 .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
@@ -739,33 +740,102 @@ class SettingsController {
                         }
                     }
                 }
+            }
 
-                if (tempExportDir.isDirectory() && tempExportDir.toList().isNotEmpty()) {
-                    val tempDir = tempExportDir.toFile()
-                    val outputZipFile = zipFolder(tempDir,appName?.lowercase()+"_metadata")
-
-                    tempDir.listFiles()
-                        .filterNot { it.isDirectory }
-                        .forEach { it.delete() }
-                    tempExportDir.deleteExisting()
-
-                    if (outputZipFile != null) {
-                        outputZipFile.deleteOnExit()
-                        val headers = HttpHeaders()
-                        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
-                        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
-                        headers.add("Pragma", "no-cache")
-                        headers.add("Expires", "0")
-
-                        val resource = InputStreamResource(FileInputStream(outputZipFile))
-                        val contentLength = outputZipFile.length()
-
-                        return ResponseEntity.ok()
-                            .headers(headers)
-                            .contentLength(contentLength)
-                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                            .body(resource)
+            // Rebuild Favorites
+            val favoriteList = favoriteRepository?.findAll()
+            if (favoriteList != null && favoriteList.count() > 0) {
+                val tempMetadataExportDir = Files.createDirectories(Paths.get(tempExportBaseDir.pathString+"/favorite"))
+                for (favorite in favoriteList) {
+                    if (favorite != null) {
+                        favorite.setUserId(userId)
+                        val tempFile = File(tempMetadataExportDir.toAbsolutePath().toString() + "/" + favorite.getMetadataId() + "_" + userId + ".yaml")
+                        if (tempFile.createNewFile()) {
+                            val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                                .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                                .build()
+                            val om = ObjectMapper(yamlFactory)
+                            om.writeValue(tempFile, favorite)
+                        } else {
+                            logger.log(
+                                Level.INFO,
+                                "Exporting metadata. File already exists: " + tempFile.absolutePath
+                            )
+                        }
                     }
+                }
+            }
+
+            // Rebuild albums
+            val albumList = albumRepository?.findAll()
+            if (albumList != null && albumList.count() > 0) {
+                val tempMetadataExportDir = Files.createDirectories(Paths.get(tempExportBaseDir.pathString+"/album"))
+                for (album in albumList) {
+                    if (album != null) {
+                        val tempFile = File(tempMetadataExportDir.toAbsolutePath().toString() + "/" + album.getId() + ".yaml")
+                        if (tempFile.createNewFile()) {
+                            val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                                .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                                .build()
+                            val om = ObjectMapper(yamlFactory)
+                            om.writeValue(tempFile, album)
+                        } else {
+                            logger.log(
+                                Level.INFO,
+                                "Exporting album. File already exists: " + tempFile.absolutePath
+                            )
+                        }
+                    }
+                }
+            }
+
+            // Rebuild albumphoto
+            val albumPhotoList = albumPhotoRepository?.findAll()
+            if (albumPhotoList != null && albumPhotoList.count() > 0) {
+                val tempMetadataExportDir = Files.createDirectories(Paths.get(tempExportBaseDir.pathString+"/albumphoto"))
+                for (albumPhoto in albumPhotoList) {
+                    if (albumPhoto != null) {
+                        val tempFile = File(tempMetadataExportDir.toAbsolutePath().toString() + "/" + albumPhoto.getMetadataId() + "_" + albumPhoto.getAlbumId() + ".yaml")
+                        if (tempFile.createNewFile()) {
+                            val yamlFactory: YAMLFactory = YAMLFactory.builder()
+                                .enable(YAMLGenerator.Feature.MINIMIZE_QUOTES)
+                                .disable(YAMLGenerator.Feature.SPLIT_LINES)
+                                .build()
+                            val om = ObjectMapper(yamlFactory)
+                            om.writeValue(tempFile, albumPhoto)
+                        } else {
+                            logger.log(
+                                Level.INFO,
+                                "Exporting albumPhoto. File already exists: " + tempFile.absolutePath
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
+                val tempDir = tempExportBaseDir.toFile()
+                val outputZipFile = zipFolder(tempDir,appName?.lowercase()+"_backup")
+                deleteDirectory(tempDir)
+
+                if (outputZipFile != null) {
+                    outputZipFile.deleteOnExit()
+                    val headers = HttpHeaders()
+                    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
+                    headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                    headers.add("Pragma", "no-cache")
+                    headers.add("Expires", "0")
+
+                    val resource = InputStreamResource(FileInputStream(outputZipFile))
+                    val contentLength = outputZipFile.length()
+
+                    return ResponseEntity.ok()
+                        .headers(headers)
+                        .contentLength(contentLength)
+                        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                        .body(resource)
                 }
             }
         }
@@ -773,15 +843,28 @@ class SettingsController {
         return null
     }
 
+    private fun deleteDirectory(directoryToBeDeleted: File): Boolean {
+        val allContents = directoryToBeDeleted.listFiles()
+        if (allContents != null) {
+            for (file in allContents) {
+                deleteDirectory(file)
+            }
+        }
+        return directoryToBeDeleted.delete()
+    }
+
     @Secured("ROLE_ADMIN")
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     @PostMapping("/settings/snapshot")
+    @Transactional
     fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam snapshotFile: MultipartFile): String {
         val module = "snapshot"
 
         model["message"] = "Invalid file"
+        val user = model.getAttribute("currentUser") as User?
+        val userId = user?.getId()
 
-        if (snapshot == "import" && !snapshotFile.isEmpty) {
+        if (snapshot == "import" && !snapshotFile.isEmpty && userId != null && userId > 0) {
 
             model["message"] = "Completed import."
 
@@ -791,28 +874,143 @@ class SettingsController {
 
             val mapper = ObjectMapper(YAMLFactory())
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            val entries: Enumeration<out ZipEntry> = zipFile.entries()
+            var entries: Enumeration<out ZipEntry> = zipFile.entries()
 
+            val albumPhotoList = mutableListOf<AlbumPhoto>()
+            val favoriteList = mutableListOf<Favorite>()
+
+            // Get all entries in zip file
             while (entries.hasMoreElements()) {
                 val entry = entries.nextElement()
                 val stream: InputStream = zipFile.getInputStream(entry)
                 val inputAsString = stream.bufferedReader().use { it.readText() }
-                val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
-                if (importedMetadata != null) {
-                    val foundMetadataRepo = metadataRepository?.findById(importedMetadata.getId())
 
-                    if (foundMetadataRepo != null && !foundMetadataRepo.isEmpty) {
-                        val foundMetadata = foundMetadataRepo.get()
-                        var message = "not imported"
-                        val saved = saveImportedMetadata(importedMetadata, foundMetadata)
-                        if (saved) {
-                            message = "imported"
+                if (entry.name.startsWith("metadata\\")) {
+                    val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
+                    if (importedMetadata != null) {
+                        val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId())
+
+                        if (foundMetadataRecord != null && !foundMetadataRecord.isEmpty) {
+                            val foundMetadata = foundMetadataRecord.get()
+                            var message = "not imported"
+                            val saved = saveImportedMetadata(importedMetadata, foundMetadata)
+                            if (saved) {
+                                message = "imported"
+                            }
+
+                            logger.log(
+                                Level.INFO,
+                                "Metadata: " + importedMetadata.getId() + " pointing to " + importedMetadata.getPath() + " " + message + "."
+                            )
+                        }
+                    }
+                }
+
+                if (entry.name.startsWith("albumphoto\\")) {
+                    val importedAlbumPhoto = mapper.readValue(inputAsString, AlbumPhoto::class.java)
+                    albumPhotoList.add(importedAlbumPhoto)
+                }
+
+                if (entry.name.startsWith("favorite\\")) {
+                    val importedFavorite = mapper.readValue(inputAsString, Favorite::class.java)
+                    if (importedFavorite != null && importedFavorite.getUserId() == userId) {
+                        val importedFavoriteRecord = favoriteRepository?.findByMetadataIdAndUserId(importedFavorite.getMetadataId(), userId)
+
+                        if (importedFavoriteRecord == null) {
+                            val favoriteObj = Favorite()
+                            favoriteObj.setUserId(importedFavorite.getUserId())
+                            favoriteObj.setMetadataId(importedFavorite.getMetadataId())
+                            favoriteObj.setCreatedAt(getCurrentTimestamp())
+                            favoriteObj.setModifiedAt(getCurrentTimestamp())
+                            favoriteList.add(favoriteObj)
+
+                            logger.log(
+                                Level.INFO,
+                                "Favorite: " + importedFavorite.getMetadataId() + " imported."
+                            )
+                        } else {
+                            logger.log(
+                                Level.INFO,
+                                "Favorite: " + importedFavorite.getMetadataId() + " not imported."
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (favoriteList.isNotEmpty()) {
+                favoriteRepository?.saveAll(favoriteList)
+            }
+
+            entries = zipFile.entries()
+            while (entries.hasMoreElements()) {
+                val entry = entries.nextElement()
+                val stream: InputStream = zipFile.getInputStream(entry)
+                val inputAsString = stream.bufferedReader().use { it.readText() }
+
+                if (entry.name.startsWith("album\\")) {
+                    var hasAlbumCover = true
+                    val importedAlbum = mapper.readValue(inputAsString, Album::class.java)
+                    if (importedAlbum != null) {
+                        val foundAlbumRecord = albumRepository?.findAlbumByNameIgnoreCase(importedAlbum.getName()!!)
+                        var albumId: Int?
+
+                        if (foundAlbumRecord == null) {
+                            // Insert record
+                            val albumObj = Album()
+                            albumObj.setName(importedAlbum.getName())
+                            albumObj.setCreatedAt(getCurrentTimestamp())
+                            albumObj.setModifiedAt(getCurrentTimestamp())
+                            albumRepository?.save(albumObj)
+                            albumId = albumObj.getId()
+                            hasAlbumCover = false
+
+                            logger.log(
+                                Level.INFO,
+                                "Album: " + importedAlbum.getName()!! + " created."
+                            )
+                        } else {
+                            albumId = foundAlbumRecord.getId()
+
+                            logger.log(
+                                Level.INFO,
+                                "Album: " + importedAlbum.getName()!! + " already exists."
+                            )
                         }
 
-                        logger.log(
-                            Level.INFO,
-                            "Metadata: " + importedMetadata.getId() + " pointing to " + importedMetadata.getPath() + " " + message + "."
-                        )
+                        val userAlbumCount = userAlbumRepository?.countByUserIdAndAlbumId(userId, albumId)
+                        if (userAlbumCount == 0) {
+                            val userAlbumObj = UserAlbum()
+                            userAlbumObj.setAlbumId(albumId)
+                            userAlbumObj.setUserId(userId)
+                            userAlbumObj.setModifiedAt(getCurrentTimestamp())
+                            userAlbumObj.setCreatedAt(getCurrentTimestamp())
+                            userAlbumRepository?.save(userAlbumObj)
+                        }
+
+                        for (albumPhoto in albumPhotoList) {
+                            if (albumPhoto.getAlbumId() == importedAlbum.getId()) {
+                                if (!hasAlbumCover) {
+                                    val metadataObj = metadataRepository?.findById(albumPhoto.getMetadataId()!!)
+                                    val albumObj = albumRepository?.findById(albumId)
+                                    if (albumObj != null && metadataObj != null) {
+                                        albumObj.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                                        albumRepository?.save(albumObj.get())
+                                        hasAlbumCover = true
+                                    }
+                                }
+
+                                val albumPhotoCount = albumPhotoRepository?.countByMetadataIdAndAlbumId(albumPhoto.getMetadataId()!!, albumId)
+                                if (albumPhotoCount == 0) {
+                                    val albumPhotoObj = AlbumPhoto()
+                                    albumPhotoObj.setAlbumId(albumId)
+                                    albumPhotoObj.setMetadataId(albumPhoto.getMetadataId())
+                                    albumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                    albumPhotoObj.setModifiedAt(getCurrentTimestamp())
+                                    albumPhotoRepository?.save(albumPhotoObj)
+                                }
+                            }
+                        }
                     }
                 }
             }

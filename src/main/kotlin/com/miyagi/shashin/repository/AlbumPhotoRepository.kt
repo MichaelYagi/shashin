@@ -11,7 +11,7 @@ import javax.transaction.Transactional
 @Repository
 @Transactional
 interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
-    fun countByMetadataIdAndAlbumId(metdataId: String?, albumId: Int?): Int?
+    fun countByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Int?
     fun countByAlbumId(albumId: Int?): Int?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId  AND ap.metadata_id = m.id ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)
     fun findAllByAlbumIdAndOffsetAndLimit(@Param("albumId") albumId: Int, @Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<AlbumPhoto?>?
