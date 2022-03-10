@@ -990,24 +990,35 @@ class SettingsController {
 
                         for (albumPhoto in albumPhotoList) {
                             if (albumPhoto.getAlbumId() == importedAlbum.getId()) {
+                                val metadataObj = metadataRepository?.findById(albumPhoto.getMetadataId()!!)
+
+                                if (metadataObj != null && metadataObj.isPresent) {
+                                    albumPhotoRepository?.deleteByMetadataId(metadataObj.get().getId())
+                                    hasAlbumCover = false
+                                }
+
                                 if (!hasAlbumCover) {
-                                    val metadataObj = metadataRepository?.findById(albumPhoto.getMetadataId()!!)
                                     val albumObj = albumRepository?.findById(albumId)
-                                    if (albumObj != null && metadataObj != null) {
+                                    if (albumObj != null && metadataObj != null && metadataObj.isPresent && !metadataObj.get().getHidden()!!) {
                                         albumObj.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
                                         albumRepository?.save(albumObj.get())
                                         hasAlbumCover = true
                                     }
                                 }
 
-                                val albumPhotoCount = albumPhotoRepository?.countByMetadataIdAndAlbumId(albumPhoto.getMetadataId()!!, albumId)
-                                if (albumPhotoCount == 0) {
-                                    val albumPhotoObj = AlbumPhoto()
-                                    albumPhotoObj.setAlbumId(albumId)
-                                    albumPhotoObj.setMetadataId(albumPhoto.getMetadataId())
-                                    albumPhotoObj.setCreatedAt(getCurrentTimestamp())
-                                    albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-                                    albumPhotoRepository?.save(albumPhotoObj)
+                                if (metadataObj != null && metadataObj.isPresent && !metadataObj.get().getHidden()!!) {
+                                    val albumPhotoCount = albumPhotoRepository?.countByMetadataIdAndAlbumId(
+                                        albumPhoto.getMetadataId()!!,
+                                        albumId
+                                    )
+                                    if (albumPhotoCount == 0) {
+                                        val albumPhotoObj = AlbumPhoto()
+                                        albumPhotoObj.setAlbumId(albumId)
+                                        albumPhotoObj.setMetadataId(albumPhoto.getMetadataId())
+                                        albumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                        albumPhotoObj.setModifiedAt(getCurrentTimestamp())
+                                        albumPhotoRepository?.save(albumPhotoObj)
+                                    }
                                 }
                             }
                         }
@@ -1292,7 +1303,6 @@ class SettingsController {
                                                     "Removed keywords records for: " + metadata.getId()
                                                 )
 
-
                                                 // Delete from album
                                                 albumPhotoRepository?.deleteByMetadataId(metadata.getId())
                                                 val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
@@ -1303,6 +1313,14 @@ class SettingsController {
                                                                 // Delete the album
                                                                 albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
                                                                 userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
+                                                            } else {
+                                                                val firstAlbumPhoto = albumPhotoRepository?.findFirstByAlbumId(albumPhotoCount.getAlbumId()!!)
+                                                                val metadataObj = metadataRepository?.findById(firstAlbumPhoto?.getMetadataId()!!)
+                                                                val albumObj = albumRepository?.findById(albumPhotoCount.getAlbumId()!!)
+                                                                if (metadataObj != null && metadataObj.isPresent && albumObj != null && albumObj.isPresent) {
+                                                                    albumObj.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                                                                    albumRepository?.save(albumObj.get())
+                                                                }
                                                             }
                                                         }
                                                     }
