@@ -719,7 +719,7 @@ class SettingsController {
             val metadataList = metadataRepository?.findAll()
 
             if (metadataList != null && metadataList.count() > 0) {
-                val tempExportDir = Files.createTempDirectory(appName+"_metadata")
+                val tempExportDir = Files.createTempDirectory(appName?.lowercase()+"_metadata")
 
                 for (metadata in metadataList) {
                     if (metadata != null) {
@@ -742,7 +742,7 @@ class SettingsController {
 
                 if (tempExportDir.isDirectory() && tempExportDir.toList().isNotEmpty()) {
                     val tempDir = tempExportDir.toFile()
-                    val outputZipFile = zipFolder(tempDir,appName+"_metadata")
+                    val outputZipFile = zipFolder(tempDir,appName?.lowercase()+"_metadata")
 
                     tempDir.listFiles()
                         .filterNot { it.isDirectory }
