@@ -141,7 +141,7 @@ class MetadataProcessing() {
                                     }
                                 }
                             }
-                            "Date/Time Original", "Date/Time Digitized", "Date/Time", "Creation Time" -> {
+                            "Date/Time", "Creation Time", "Date/Time Digitized", "Date/Time Original" -> {
                                 // Sometimes created time is incorrect for mp4 files
                                 if (mp4VideoCreationTime) {
                                     continue
