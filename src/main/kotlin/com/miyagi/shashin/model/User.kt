@@ -10,7 +10,7 @@ import java.util.Objects;
 @Table(name = "user")
 class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Int = 0
     @NotBlank
     private var username: String? = null

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
 @Table(name = "recognitionlabel")
 class RecognitionLabel {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Int = 0
     @NotBlank
     private var name: String? = null
