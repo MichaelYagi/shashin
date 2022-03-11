@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
 @Table(name = "searchhistory")
 class SearchHistory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Int = 0
     @NotBlank
     private var term: String? = null

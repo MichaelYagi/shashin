@@ -7,7 +7,7 @@ import javax.validation.constraints.NotBlank
 @Table(name = "mediadir")
 class MediaDirectory {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Int = 0
     @NotBlank
     private var directory: String? = null

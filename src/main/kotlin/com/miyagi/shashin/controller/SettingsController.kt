@@ -885,6 +885,11 @@ class SettingsController {
                 val stream: InputStream = zipFile.getInputStream(entry)
                 val inputAsString = stream.bufferedReader().use { it.readText() }
 
+                logger.log(
+                    Level.INFO,
+                    "Importing Entry: " + entry.name + "."
+                )
+
                 if (entry.name.startsWith("metadata\\")) {
                     val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
                     if (importedMetadata != null) {
@@ -988,6 +993,7 @@ class SettingsController {
                             userAlbumRepository?.save(userAlbumObj)
                         }
 
+                        val albumPhotoToSave = mutableListOf<AlbumPhoto>()
                         for (albumPhoto in albumPhotoList) {
                             if (albumPhoto.getAlbumId() == importedAlbum.getId()) {
                                 val metadataObj = metadataRepository?.findById(albumPhoto.getMetadataId()!!)
@@ -1017,10 +1023,14 @@ class SettingsController {
                                         albumPhotoObj.setMetadataId(albumPhoto.getMetadataId())
                                         albumPhotoObj.setCreatedAt(getCurrentTimestamp())
                                         albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-                                        albumPhotoRepository?.save(albumPhotoObj)
+                                        albumPhotoToSave.add(albumPhotoObj)
                                     }
                                 }
                             }
+                        }
+
+                        if (albumPhotoToSave.isNotEmpty()) {
+                            albumPhotoRepository?.saveAll(albumPhotoToSave)
                         }
                     }
                 }

@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank
 @Table(name = "settings")
 class Settings {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Int = 0
     @NotBlank
     private var recognitionConfidenceThreshold: String? = null
