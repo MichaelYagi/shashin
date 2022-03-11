@@ -141,7 +141,7 @@ class MetadataProcessing() {
                                     }
                                 }
                             }
-                            "Date/Time Digitized", "Date/Time Original", "Date/Time", "Creation Time" -> {
+                            "Date/Time Original", "Date/Time Digitized", "Date/Time", "Creation Time" -> {
                                 // Sometimes created time is incorrect for mp4 files
                                 if (mp4VideoCreationTime) {
                                     continue
@@ -194,7 +194,7 @@ class MetadataProcessing() {
                                     this.metadataObj.setDay(takenDateArray[2].toInt())
                                     this.metadataObj.setTime(dateArray[1])
 
-                                    if (tag.tagName == "Date/Time Digitized" || tag.tagName == "Date/Time Original") {
+                                    if (tag.tagName == "Date/Time Original") {
                                         takenTagged = true
                                     }
                                 }
