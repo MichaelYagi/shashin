@@ -884,13 +884,14 @@ class SettingsController {
                 val entry = entries.nextElement()
                 val stream: InputStream = zipFile.getInputStream(entry)
                 val inputAsString = stream.bufferedReader().use { it.readText() }
+                val tempEntry = entry.name.replace("\\", "/")
 
                 logger.log(
                     Level.INFO,
                     "Importing Entry: " + entry.name + "."
                 )
 
-                if (entry.name.startsWith("metadata\\")) {
+                if (tempEntry.startsWith("metadata/") || entry.name.startsWith("metadata\\")) {
                     val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
                     if (importedMetadata != null) {
                         val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId())
@@ -911,12 +912,12 @@ class SettingsController {
                     }
                 }
 
-                if (entry.name.startsWith("albumphoto\\")) {
+                if (tempEntry.startsWith("albumphoto/") || entry.name.startsWith("albumphoto\\")) {
                     val importedAlbumPhoto = mapper.readValue(inputAsString, AlbumPhoto::class.java)
                     albumPhotoList.add(importedAlbumPhoto)
                 }
 
-                if (entry.name.startsWith("favorite\\")) {
+                if (tempEntry.startsWith("favorite/") || entry.name.startsWith("favorite\\")) {
                     val importedFavorite = mapper.readValue(inputAsString, Favorite::class.java)
                     if (importedFavorite != null && importedFavorite.getUserId() == userId) {
                         val importedFavoriteRecord = favoriteRepository?.findByMetadataIdAndUserId(importedFavorite.getMetadataId(), userId)
@@ -950,8 +951,9 @@ class SettingsController {
                 val entry = entries.nextElement()
                 val stream: InputStream = zipFile.getInputStream(entry)
                 val inputAsString = stream.bufferedReader().use { it.readText() }
+                val tempEntry = entry.name.replace("\\", "/")
 
-                if (entry.name.startsWith("album\\")) {
+                if (tempEntry.startsWith("album/") || entry.name.startsWith("album\\")) {
                     var hasAlbumCover = true
                     val importedAlbum = mapper.readValue(inputAsString, Album::class.java)
                     if (importedAlbum != null) {
