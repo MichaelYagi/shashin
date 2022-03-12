@@ -943,9 +943,7 @@ class SettingsController {
                 }
             }
 
-            if (favoriteList.isNotEmpty()) {
-                favoriteRepository?.saveAll(favoriteList)
-            }
+            saveImportedFavorites(favoriteList)
 
             entries = zipFile.entries()
             while (entries.hasMoreElements()) {
@@ -1045,7 +1043,15 @@ class SettingsController {
         return module
     }
 
-    private fun saveImportedMetadata(importedMetadata: Metadata?, foundMetadata: Metadata?): Boolean {
+    @Transactional
+    fun saveImportedFavorites(favoriteList: MutableList<Favorite>) {
+        if (favoriteList.isNotEmpty()) {
+            favoriteRepository?.saveAll(favoriteList)
+        }
+    }
+
+    @Transactional
+    fun saveImportedMetadata(importedMetadata: Metadata?, foundMetadata: Metadata?): Boolean {
         if (importedMetadata != null && foundMetadata != null &&
             (importedMetadata.getTitle() != foundMetadata.getTitle() ||
             importedMetadata.getCamera() != foundMetadata.getCamera() ||
