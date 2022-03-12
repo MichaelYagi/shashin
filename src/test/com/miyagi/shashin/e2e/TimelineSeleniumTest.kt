@@ -102,7 +102,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
         val saveSettings = this.driver!!.findElement(By.id("saveSettings"))
         saveSettings.click()
-        // println(this.driver?.pageSource)
+//         println(this.driver?.pageSource)
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Settings saved')]")))
 
         // Scan new image
@@ -121,7 +121,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
-        // println(this.driver?.pageSource)
+//         println(this.driver?.pageSource)
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfAllElements(scrollContainer.findElement(By.xpath("./span[1]"))))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))
