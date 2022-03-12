@@ -317,7 +317,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val commentEl = commentList.findElement(By.xpath("./li[1]"))
         val commentId = commentEl.getAttribute("id").substringAfter("comment")
 
-        Assertions.assertTrue(this.driver!!.findElement(By.id("comment$commentId")).text.contains("Test comment"))
+//        println(this.driver?.pageSource)
+
+        Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test comment"))
 
         // Update comment
         val editCommentEl = this.driver!!.findElement(By.id("editcomment$commentId"))
@@ -342,7 +344,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
-        Assertions.assertTrue(this.driver!!.findElement(By.id("comment$commentId")).text.contains("Test update"))
+        Assertions.assertTrue(this.driver!!.findElement(By.id("commentcontent$commentId")).text.contains("Test update"))
 
         // Delete comment
         val deleteCommentEl = this.driver!!.findElement(By.id("deletecomment$commentId"))
@@ -354,7 +356,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
-        Assertions.assertFalse(this.driver!!.findElements(By.id("comment$commentId")).isNotEmpty())
+        Assertions.assertTrue(this.driver!!.findElements(By.id("commentcontent$commentId")).isNotEmpty())
 
         this.driver?.get("http://localhost:$port/albums")
         val albumLink = this.driver!!.findElement(By.id("album$albumId"))
