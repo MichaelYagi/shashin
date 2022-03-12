@@ -1,6 +1,7 @@
 (function( timelineSettings, $, undefined ) {
     timelineSettings.ScrollDirection = Object.freeze({"up":1, "down":0})
     timelineSettings.enableScrollSpy = true;
+    timelineSettings.isScrolling = false;
     timelineSettings.prevAnchor = "";
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
@@ -9,6 +10,7 @@
     timelineSettings.currentScrollTop = 0;
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
+    timelineSettings.rendered = false;
     timelineSettings.timelineDates = [];
 
     let isOverlap = function (div1, div2) {
@@ -65,6 +67,18 @@
             timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
             timelineSettings.reinitLightGalleryInstance();
+
+            // Only show overlays when scrolling stopped for current hovered image
+            let hovered = false;
+            $(".photo-thumbnail-image").mousemove(function () {
+                if (hovered === false && timelineSettings.rendered === true && timelineSettings.enableScrollSpy === true) {
+                    document.getElementById("container").scrollBy({top: 1});
+                    if (document.getElementsByTagName("MAIN").length > 0) {
+                        document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
+                    }
+                    hovered = true;
+                }
+            });
         } else {
             timelineSettings.enableScrollSpy = false;
         }
@@ -72,6 +86,19 @@
         $('[data-bs-toggle="tooltip"]').tooltip();
 
         $(window).bind("scrollStop", function() {
+            timelineSettings.isScrolling = false;
+
+            // Only show overlays when scrolling stopped for current hovered image
+            let hovered = false;
+            $(".photo-thumbnail-image").mousemove(function () {
+                if (hovered === false) {
+                    const attrId = $(this).attr("id");
+                    const metadataId = attrId.substring(5, attrId.length);
+                    shashin.imageHover(this, metadataId);
+                }
+                hovered = true;
+            });
+
             if ($("#dateSliderWrapper:not(:hover)").length === 1) {
                 $("#dateSlider").hide();
             }
@@ -79,6 +106,7 @@
 
         // Scroll event handler
         const scrollHandler = function (e) {
+            timelineSettings.isScrolling = true;
             let st = $(e.target).scrollTop();
 
             if (st === 0) {
@@ -136,6 +164,11 @@
                 timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
             }
         }
+
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function() {
+            $(".photo-thumbnail-image").mousemove();
+        }, 1000);
     }
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
@@ -1048,6 +1081,7 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = function(date,mediaTypeFilter) {
+        timelineSettings.rendered = false;
 
         const version = Util.getMetadataLocalStorage();
 
@@ -1060,7 +1094,7 @@
         }
 
         $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " attaching associated metadata")}).then(function(data) {
+            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " attaching associated metadata");timelineSettings.rendered = true;}).then(function(data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === timelineSettings.success) {
                     if (data.hasOwnProperty("metadataList") &&
@@ -1188,9 +1222,13 @@
                                         }
 
                                         html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
+
                                         if ($("#select" + metadata.id).length === 0) {
-                                            $("#tntl" + metadata.id).append(html);
+                                            $("#tntl" + metadata.id).append(html).ready(function () {
+                                                timelineSettings.rendered = true;
+                                            });
                                         }
+
                                         if ($("#tntl" + metadata.id + ".thumbnail-tl").length === 0) {
                                             $("#tntl" + metadata.id).addClass("thumbnail-tl");
                                             shashin.setPhotoOverlays(metadata, "timeline")
@@ -1201,7 +1239,9 @@
                                             const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                                             html = '<span class="overlayIconBackground">' + duration + '&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>';
                                             if ($("#video" + metadata.id).length === 0) {
-                                                $("#tntr" + metadata.id).append(html);
+                                                $("#tntr" + metadata.id).append(html).ready(function () {
+                                                    timelineSettings.rendered = true;
+                                                });
                                             }
                                             if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
                                                 $("#tntr" + metadata.id).addClass("thumbnail-tr");
@@ -1209,7 +1249,9 @@
                                         } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
                                             html = '<span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>';
                                             if ($("#panorama" + metadata.id).length === 0) {
-                                                $("#tntr" + metadata.id).append(html);
+                                                $("#tntr" + metadata.id).append(html).ready(function () {
+                                                    timelineSettings.rendered = true;
+                                                });
                                             }
                                             if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
                                                 $("#tntr" + metadata.id).addClass("thumbnail-tr");
@@ -1220,7 +1262,11 @@
                             }
                         }
                     }
+                } else {
+                    timelineSettings.rendered = true;
                 }
+            } else {
+                timelineSettings.rendered = true;
             }
         });
     }

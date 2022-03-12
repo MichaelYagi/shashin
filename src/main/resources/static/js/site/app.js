@@ -938,6 +938,26 @@
         return mapSource
     }
 
+    shashin.imageHover = function (_this, metadataId) {
+        const metadataIdArray = shashin.getMetdataIdList();
+        const index = metadataIdArray.indexOf(metadataId);
+
+        $(_this).css("opacity", 0.3);
+        $(_this).siblings().show();
+        if ($("#tlicon" + metadataId).attr("class") === "bi-circle-fill" || index > -1) {
+            $("#tncentered" + metadataId).hide();
+            $("#tnbl" + metadataId).hide();
+            $("#tnbr" + metadataId).hide();
+            //$("#tntr" + metadata.id).hide();
+        }
+        if ($('.bi-circle-fill')[0] || $(_this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
+            $('.thumbnail-bl').hide();
+            $('.thumbnail-centered').hide();
+            //$('.thumbnail-tr').hide();
+            $('.thumbnail-br').hide();
+        }
+    }
+
     shashin.setPhotoOverlays = function (metadata, view) {
         const opaque = 0.3
         const transparent = 1.0
@@ -1094,22 +1114,9 @@
         });
 
         $("#image" + metadata.id).hover(function () {
-            metadataIdArray = shashin.getMetdataIdList();
-            const index = metadataIdArray.indexOf(metadata.id);
-
-            $(this).css("opacity", 0.3);
-            $(this).siblings().show();
-            if ($("#tlicon" + metadata.id).attr("class") === "bi-circle-fill" || index > -1) {
-                $("#tncentered" + metadata.id).hide();
-                $("#tnbl" + metadata.id).hide();
-                $("#tnbr" + metadata.id).hide();
-                //$("#tntr" + metadata.id).hide();
-            }
-            if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill" || metadataIdArray.length > 0) {
-                $('.thumbnail-bl').hide();
-                $('.thumbnail-centered').hide();
-                //$('.thumbnail-tr').hide();
-                $('.thumbnail-br').hide();
+            // Only show overlays when scrolling stopped in timeline view
+            if (view !== "timeline" || (view === "timeline" && timelineSettings && timelineSettings.isScrolling === false)) {
+                shashin.imageHover(this, metadata.id);
             }
         }, function () {
             metadataIdArray = shashin.getMetdataIdList();
