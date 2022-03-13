@@ -77,35 +77,11 @@
         const shareLink = /*[[${shareLink}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'share';
         const albumId = /*[[${album.id}]]*/ 0;
+        const albumMetadataList = /*[[${albumMetadataList}]]*/ '[]';
         /*]]>*/
 
-        const shareAlbum = new ShareAlbum(shareLink);
-
-        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
-
-        function loadNextPage() {
-            if (shareAlbum.rendering === false) {
-                const currentPage = parseInt($("#currentPage").val());
-                const nextPage = currentPage + 1;
-
-                if (albumId > 0) {
-                    shareAlbum.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
-                        mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
-                    });
-                    $("#currentPage").val(nextPage);
-                }
-            }
-        }
-
-        /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]',shareAlbum.rendering === false, function () {
-            shashin.checkRender(loadNextPage, ".appendAlbumPhotos", /*[[${albumMetadataList}]]*/ '[]', shareAlbum.rendering);
-        });
-        /*]]>*/
-
-        shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        const shareAlbumInstance = new ShareAlbum(shareLink, activePage, albumId, albumMetadataList);
+        shareAlbumInstance.init();
     });
 </script>
 </body>

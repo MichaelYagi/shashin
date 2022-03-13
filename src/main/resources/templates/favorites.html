@@ -93,31 +93,13 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
-        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
-
-        const favoritesInstance = new Favorites();
-
-        function loadNextPage() {
-            const currentPage = parseInt($("#currentPage").val());
-            const nextPage = currentPage + 1;
-            /*<![CDATA[*/
-            const activePage = /*[[${activePage}]]*/ 'favorites';
-            /*]]>*/
-            favoritesInstance.updateFavorites(nextPage,activePage).then(function(additionalMediaContentList) {
-                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
-            });
-            $("#currentPage").val(nextPage);
-        }
-
         /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendMetadataPhotos", /*[[${metadataList}]]*/ '[]',true, function () {
-            shashin.checkRender(loadNextPage, ".appendMetadataPhotos", /*[[${metadataList}]]*/ '[]', favoritesInstance.rendering);
-        });
+        const metadataList = /*[[${metadataList}]]*/ '[]';
+        const activePage = /*[[${activePage}]]*/ 'favorites';
         /*]]>*/
 
-        shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        const favoritesInstance = new Favorites(metadataList, activePage);
+        favoritesInstance.init();
     });
 </script>
 

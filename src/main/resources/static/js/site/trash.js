@@ -1,5 +1,29 @@
 class Trash {
-    static updateTrash(nextPage, activePage) {
+    constructor(activePage, metadataList) {
+        this.activePage = activePage;
+        this.metadataList = metadataList;
+        this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+    }
+
+    init() {
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, true);
+
+        shashin.mouseMoveListener();
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    loadNextPage() {
+        const currentPage = parseInt($("#currentPage").val());
+        const nextPage = currentPage + 1;
+
+        this.updateTrash(nextPage, this.activePage).then(function(additionalMediaContentList) {
+            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        }.bind(this));
+        $("#currentPage").val(nextPage);
+    }
+
+    updateTrash(nextPage, activePage) {
         $("#spinner").css("display","block");
 
         const ajaxParams = {
