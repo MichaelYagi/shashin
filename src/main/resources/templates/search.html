@@ -91,37 +91,15 @@
     <script src="/js/site/applisteners.min.js" type="text/javascript"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript">
-    $(document).ready(function(){
-        $(function() {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
-        let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
-
-        const searchInstance = new Search();
-
-        function loadNextPage() {
-            const currentPage = parseInt($("#currentPage").val());
-            const nextPage = currentPage + 1;
-            /*<![CDATA[*/
-            const activePage = /*[[${activePage}]]*/ 'search';
-            const searchTerm = /*[[${searchTerm}]]*/ '';
-            /*]]>*/
-            searchInstance.updateSearch(nextPage,searchTerm,activePage).then(function(additionalMediaContentList) {
-                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
-            });
-            $("#currentPage").val(nextPage);
-        }
-
+    $(document).ready(function() {
         /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendSearchPhotos", /*[[${metadataSearchList}]]*/ '[]',true, function () {
-            shashin.checkRender(loadNextPage, ".appendSearchPhotos", /*[[${metadataSearchList}]]*/ '[]', searchInstance.rendering);
-        });
+        const activePage = /*[[${activePage}]]*/ 'search';
+        const searchTerm = /*[[${searchTerm}]]*/ '';
+        const metadataSearchList = /*[[${metadataSearchList}]]*/ '[]';
         /*]]>*/
 
-        shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        const searchInstance = new Search(searchTerm, activePage, metadataSearchList);
+        searchInstance.init();
     });
 </script>
 

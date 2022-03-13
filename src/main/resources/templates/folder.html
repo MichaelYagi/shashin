@@ -120,32 +120,14 @@
 </th:block>
 <script th:inline="javascript" type="text/javascript">
     $(document).ready(function(){
-        $(function() {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
-        let mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
-
-        function loadNextPage() {
-            const currentPage = parseInt($("#currentPage").val());
-            const nextPage = currentPage + 1;
-            /*<![CDATA[*/
-            const activePage = /*[[${activePage}]]*/ 'folder';
-            const folderName = /*[[${folder}]]*/ '';
-            /*]]>*/
-            Folder.updateRecent(nextPage,folderName,activePage).then(function(additionalMediaContentList) {
-                mediaContentList = shashin.updateMediaContent(mediaContentList,additionalMediaContentList);
-            });
-            $("#currentPage").val(nextPage);
-        }
-
         /*<![CDATA[*/
-        shashin.pageLoader(loadNextPage, ".appendFolderPhotos", /*[[${metadataList}]]*/ '[]',true);
+        const activePage = /*[[${activePage}]]*/ 'folder';
+        const folderName = /*[[${folder}]]*/ '';
+        const metadataList = /*[[${metadataList}]]*/ '[]';
         /*]]>*/
 
-        shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
+        const folderInstance = new Folder(metadataList, activePage, folderName);
+        folderInstance.init();
     });
 </script>
 

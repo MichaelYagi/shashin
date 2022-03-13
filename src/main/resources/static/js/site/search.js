@@ -1,7 +1,35 @@
 class Search {
 
-    constructor() {
+    constructor(searchTerm, activePage, metadataSearchList) {
         this.rendering = false;
+        this.searchTerm = searchTerm;
+        this.activePage = activePage;
+        this.metadataSearchList = metadataSearchList;
+        this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+    }
+
+    init() {
+        $(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList,true, function () {
+            shashin.checkRender(this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList, this.rendering);
+        }.bind(this));
+
+        shashin.mouseMoveListener();
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    loadNextPage() {
+        const currentPage = parseInt($("#currentPage").val());
+        const nextPage = currentPage + 1;
+
+        this.updateSearch(nextPage,this.searchTerm,this.activePage).then(function(additionalMediaContentList) {
+            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
+        }.bind(this));
+        $("#currentPage").val(nextPage);
     }
 
     updateSearch(nextPage,searchTerm,activePage) {

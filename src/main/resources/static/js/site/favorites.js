@@ -1,7 +1,30 @@
 class Favorites {
 
-    constructor() {
+    constructor(metadataList, activePage) {
         this.rendering = false;
+        this.metadataList = metadataList;
+        this.activePage = activePage;
+        this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+    }
+
+    init() {
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, true, function () {
+            shashin.checkRender(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, this.rendering);
+        }.bind(this));
+
+        shashin.mouseMoveListener();
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    loadNextPage() {
+        const currentPage = parseInt($("#currentPage").val());
+        const nextPage = currentPage + 1;
+
+        this.updateFavorites(nextPage, this.activePage).then(function(additionalMediaContentList) {
+            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        }.bind(this));
+        $("#currentPage").val(nextPage);
     }
 
     updateFavorites(nextPage,activePage) {

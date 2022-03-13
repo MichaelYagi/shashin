@@ -1,7 +1,34 @@
 class Recent {
 
-    constructor() {
+    constructor(metadataList, activePage) {
         this.rendering = false;
+        this.metadataList = metadataList;
+        this.activePage = activePage;
+        this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+    }
+
+    init() {
+        $(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList, true, function () {
+            shashin.checkRender(this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList, this.rendering);
+        }.bind(this));
+
+        shashin.mouseMoveListener();
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    loadNextPage() {
+        const currentPage = parseInt($("#currentPage").val());
+        const nextPage = currentPage + 1;
+
+        this.updateRecent(nextPage, this.activePage).then(function (additionalMediaContentList) {
+            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        }.bind(this));
+        $("#currentPage").val(nextPage);
     }
 
     updateRecent(nextPage,activePage) {

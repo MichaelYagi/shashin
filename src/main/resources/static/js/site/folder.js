@@ -1,5 +1,36 @@
 class Folder {
-    static updateRecent(nextPage,folderName,activePage) {
+
+    constructor(metadataList, activePage, folderName) {
+        this.rendering = false;
+        this.metadataList = metadataList;
+        this.activePage = activePage;
+        this.folderName = folderName;
+        this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+    }
+
+    init() {
+        $(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList, true);
+
+        shashin.mouseMoveListener();
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    loadNextPage() {
+        const currentPage = parseInt($("#currentPage").val());
+        const nextPage = currentPage + 1;
+
+        this.updateRecent(nextPage, this.folderName, this.activePage).then(function(additionalMediaContentList) {
+            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
+        }.bind(this));
+        $("#currentPage").val(nextPage);
+    }
+
+    updateRecent(nextPage,folderName,activePage) {
         $("#spinner").css("display","block");
 
         const ajaxParams = {

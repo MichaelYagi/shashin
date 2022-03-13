@@ -1,6 +1,31 @@
 (function( albumSettings, $, undefined ) {
     albumSettings.rendering = false;
 
+    albumSettings.init = function(albumId, activePage, albumMetadataList) {
+        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+
+        function loadNextPage() {
+            if (albumSettings.rendering === false) {
+                const currentPage = parseInt($("#currentPage").val());
+                const nextPage = currentPage + 1;
+
+                albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
+                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+                });
+
+                $("#currentPage").val(nextPage);
+            }
+        }
+
+        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", albumMetadataList, albumId > 0 && albumSettings.rendering === false, function () {
+            shashin.checkRender(loadNextPage, ".appendAlbumPhotos", albumMetadataList, albumSettings.rendering);
+        });
+
+        shashin.mouseMoveListener();
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
     albumSettings.openAlbumModal = function (e,metadataId) {
         e.preventDefault();
 

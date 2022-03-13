@@ -1,8 +1,36 @@
 class ShareAlbum {
 
-    constructor(shareLink) {
+    constructor(shareLink, activePage, albumId, albumMetadataList) {
         this.shareLink = shareLink;
         this.rendering = false;
+        this.activePage = activePage;
+        this.albumId = albumId;
+        this.albumMetadataList = albumMetadataList;
+        this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
+    }
+
+    init() {
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList,this.rendering === false, function () {
+            shashin.checkRender(this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList, this.rendering);
+        }.bind(this));
+
+        shashin.mouseMoveListener();
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    loadNextPage() {
+        if (this.rendering === false) {
+            const currentPage = parseInt($("#currentPage").val());
+            const nextPage = currentPage + 1;
+
+            if (this.albumId > 0) {
+                this.updateAlbum(this.albumId, nextPage, this.activePage).then(function (additionalMediaContentList) {
+                    this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+                }.bind(this));
+                $("#currentPage").val(nextPage);
+            }
+        }
     }
 
     getShareLink() {

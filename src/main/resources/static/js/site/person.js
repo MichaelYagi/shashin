@@ -1,5 +1,36 @@
 class Person {
-    static updatePerson(personId,nextPage,activePage) {
+
+    constructor(metadataList, activePage, personId) {
+        this.rendering = false;
+        this.metadataList = metadataList;
+        this.activePage = activePage;
+        this.personId = personId;
+        this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+    }
+
+    init() {
+        $(function() {
+            $('[data-bs-toggle="tooltip"]').tooltip()
+        })
+
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList,true);
+
+        shashin.matchingListeners();
+        shashin.mouseMoveListener();
+
+        $('[data-bs-toggle="tooltip"]').tooltip();
+    }
+
+    loadNextPage() {
+        const currentPage = parseInt($("#currentPage").val());
+        const nextPage = currentPage + 1;
+        this.updatePerson(this.personId,nextPage,this.activePage).then(function(additionalMediaContentList) {
+            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
+        }.bind(this));
+        $("#currentPage").val(nextPage);
+    }
+
+    updatePerson(personId,nextPage,activePage) {
         $("#spinner").css("display","block");
 
         const ajaxParams = {
