@@ -62,7 +62,9 @@
             markNotificationRead(notificationIdList);
         } else {
             const notificationId = $(this).attr("id");
-            markNotificationRead([parseInt(notificationId)]);
+            if (notificationId !== null) {
+                markNotificationRead([parseInt(notificationId)]);
+            }
             listItems.removeClass('list-group-select');
             lastSelected = null;
         }

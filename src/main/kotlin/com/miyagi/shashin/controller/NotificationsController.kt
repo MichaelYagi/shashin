@@ -214,7 +214,7 @@ class NotificationsController {
             val notificationObjList = mutableListOf<Notification>()
             for (notificationId in notificationIds) {
                 val currentUserObj = model.getAttribute("currentUser") as User?
-                if (currentUserObj != null && notificationId as Int > 0) {
+                if (currentUserObj != null && notificationId != null && notificationId as Int > 0) {
                     val notificationObj = notificationRepository.findById(notificationId)
                     notificationObj.get().setRead(true)
                     notificationObjList.add(notificationObj.get())
