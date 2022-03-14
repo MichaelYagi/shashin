@@ -91,7 +91,11 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
         http
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
-            .headers().frameOptions().sameOrigin()
+            .headers()
+                .xssProtection()
+                .and()
+                .frameOptions()
+                .sameOrigin()
                 .and()
             .authorizeRequests()
                 .antMatchers("/", "/docs/**", "/features", "/api/**", "/share/**", "/css/**", "/js/**", "/fonts/**", "/images/**", "/users/register", "/users/login", "/users/logout", "/websocket-endpoint", "/topic/messages", "/topic/matchmessages", "/settings/matchmessage", "/settings/scanmessage","/dashboard/statmessages","/dashboard/statmessage").permitAll()
