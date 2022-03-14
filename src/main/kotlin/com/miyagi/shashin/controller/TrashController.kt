@@ -9,6 +9,7 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.TextUtils
+import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
@@ -98,7 +99,7 @@ class TrashController {
 
             if (metadataIdList.count() > 0) {
                 for (metadataId in metadataIdList) {
-                    val metadataObj = metadataRepository.findById(metadataId as String)
+                    val metadataObj = metadataRepository.findById(StringEscapeUtils.escapeHtml4(metadataId as String))
                     metadataObj.get().setHidden(false)
                     metadataRepository.save(metadataObj.get())
                 }

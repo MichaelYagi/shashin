@@ -8,6 +8,7 @@ import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.TextUtils
+import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
@@ -106,7 +107,7 @@ class SearchController {
     fun postSearch(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
         model["searchTerm"] = ""
         if (formData.containsKey("appSearchInput")) {
-            val searchTerm: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
+            val searchTerm: String = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("appSearchInput")))
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
