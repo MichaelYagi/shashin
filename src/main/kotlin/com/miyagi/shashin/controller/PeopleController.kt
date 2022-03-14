@@ -11,6 +11,7 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
@@ -415,8 +416,8 @@ class PeopleController {
             personMap.containsKey("tagpeople") &&
             personMap.containsKey("isObject")
         ) {
-            val metadataId = personMap.get("metadataId").toString()
-            val isObject = personMap.get("isObject").toString().toBoolean()
+            val metadataId = StringEscapeUtils.escapeHtml4(personMap["metadataId"].toString())
+            val isObject = personMap["isObject"].toString().toBoolean()
 
             if (personMap["tagpeople"].toString() != "") {
                 val recognitionLabelArray = personMap["tagpeople"].toString().split(",")
