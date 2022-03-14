@@ -9,6 +9,7 @@ import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
@@ -55,6 +56,9 @@ class AlbumsController {
 
     @Autowired
     private val keywordRepository: KeywordRepository? = null
+
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
@@ -544,6 +548,7 @@ class AlbumsController {
         response["status"] = "noop"
         response["keywordMap"] = mutableMapOf<String, String>()
         response["status"] = "noop"
+        response["canEdit"] = model.getAttribute("authority") == adminRole
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?

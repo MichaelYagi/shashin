@@ -1,10 +1,11 @@
 class Person {
 
-    constructor(metadataList, activePage, personId) {
+    constructor(metadataList, activePage, personId, canEdit) {
         this.rendering = false;
         this.metadataList = metadataList;
         this.activePage = activePage;
         this.personId = personId;
+        this.canEdit = canEdit;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
@@ -70,9 +71,9 @@ class Person {
                                     '   <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" th:value="' + metadata.thumbnailUrlCentered + '">\n';
 
                                 const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, (currentUser.authority === "ROLE_ADMIN" && labelPhotoMap[metadata.id]["isTagged"] === true));
+                                html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, (this.canEdit === true && labelPhotoMap[metadata.id]["isTagged"] === true));
 
-                                if (currentUser.authority === "ROLE_ADMIN") {
+                                if (this.canEdit === true) {
                                     html += shashin.getTopLeftOverlay(metadata.id);
                                     html += shashin.getBottomLeftOverlay(metadata.id, 'propperson', null, null, null);
                                 } else {

@@ -100,9 +100,10 @@
         const personId = /*[[${personInfo.id}]]*/ 0;
         const activePage = /*[[${activePage}]]*/ 'person';
         const metadataList = /*[[${metadataList}]]*/ '[]';
+        const canEdit = /*[[${canEdit == "true"}]]*/ false;
         /*]]>*/
 
-        const personInstance = new Person(metadataList, activePage, personId);
+        const personInstance = new Person(metadataList, activePage, personId, canEdit);
         personInstance.init();
     });
 </script>
