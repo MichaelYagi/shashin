@@ -7,11 +7,11 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.web.util.TextEscapeUtils
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -294,7 +294,7 @@ class AlbumsController {
             albumOptionsMapper.containsKey("albumId")
         ) {
             val albumId = albumOptionsMapper["albumId"].toString().toInt()
-            val metadataId = StringEscapeUtils.escapeHtml4(albumOptionsMapper["metadataId"].toString())
+            val metadataId = TextEscapeUtils.escapeEntities(albumOptionsMapper["metadataId"].toString())
             val removeFromAlbum = albumOptionsMapper["removeFromAlbum"].toString().toBoolean()
             val setCoverAlbum = albumOptionsMapper["setCoverAlbum"].toString().toBoolean()
 
@@ -369,7 +369,7 @@ class AlbumsController {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
             val albumIdRequest = albumShareInfo["albumId"].toString().toInt()
-            var relativeShareUrl: String? = StringEscapeUtils.escapeHtml4(albumShareInfo["relativeShareUrl"].toString().trim())
+            var relativeShareUrl: String? = TextEscapeUtils.escapeEntities(albumShareInfo["relativeShareUrl"].toString().trim())
 
             if (albumId == albumIdRequest && albumId > 0) {
                 val albumObj = albumRepository.findById(albumId)
@@ -419,7 +419,7 @@ class AlbumsController {
     @ResponseBody
     fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-        val response = buildShareData(albumId,StringEscapeUtils.escapeHtml4(shareLink), queryLimit, page)
+        val response = buildShareData(albumId,TextEscapeUtils.escapeEntities(shareLink), queryLimit, page)
         return mapper.writeValueAsString(response)
     }
 
@@ -468,7 +468,7 @@ class AlbumsController {
     fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
         val shareAlbum = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (shareAlbum.containsKey("albumId") && shareAlbum.containsKey("userShareMap")) {
-            val userMapObj = mapper.readTree(StringEscapeUtils.escapeHtml4(shareAlbum["userShareMap"].toString()))
+            val userMapObj = mapper.readTree(TextEscapeUtils.escapeEntities(shareAlbum["userShareMap"].toString()))
             val userMap = mapper.convertValue(userMapObj, object : TypeReference<Map<String, Boolean>>() {})
             val shareAlbumId = shareAlbum["albumId"].toString().toInt()
             val userAlbumList = mutableListOf<UserAlbum>()
@@ -646,7 +646,7 @@ class AlbumsController {
         val albumPayload = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumPayload.containsKey("albumId") && albumPayload.containsKey("albumName")) {
             val postAlbumId = albumPayload["albumId"].toString().toInt()
-            val albumName = StringEscapeUtils.escapeHtml4(albumPayload["albumName"].toString())
+            val albumName = TextEscapeUtils.escapeEntities(albumPayload["albumName"].toString())
 
             if (postAlbumId == albumId && albumName.isNotEmpty()) {
                 val albumObj = albumRepository.findById(albumId).get()

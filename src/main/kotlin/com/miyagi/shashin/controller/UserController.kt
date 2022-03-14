@@ -9,10 +9,8 @@ import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.annotation.CacheEvict
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.authentication.AuthenticationManager
@@ -21,6 +19,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY
+import org.springframework.security.web.util.TextEscapeUtils
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -31,10 +30,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -97,9 +93,9 @@ class UserController {
         model["message"] = "Could not save password"
         model["alertClass"] = "alert-danger"
         if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
-            val oldPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("oldpassword")))
-            val newPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpassword")))
-            val newPasswordConfirm = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpasswordconfirm")))
+            val oldPassword = TextEscapeUtils.escapeEntities(java.lang.String.valueOf(formData.getFirst("oldpassword")))
+            val newPassword = TextEscapeUtils.escapeEntities(java.lang.String.valueOf(formData.getFirst("newpassword")))
+            val newPasswordConfirm = TextEscapeUtils.escapeEntities(java.lang.String.valueOf(formData.getFirst("newpasswordconfirm")))
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
@@ -242,8 +238,8 @@ class UserController {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
         if (userMap.containsKey("username") && userMap.containsKey("password")) {
-            val username = StringEscapeUtils.escapeHtml4(StringEscapeUtils.escapeHtml4(userMap["username"].toString()))
-            val password = StringEscapeUtils.escapeHtml4(StringEscapeUtils.escapeHtml4(userMap["password"].toString()))
+            val username = TextEscapeUtils.escapeEntities(TextEscapeUtils.escapeEntities(userMap["username"].toString()))
+            val password = TextEscapeUtils.escapeEntities(TextEscapeUtils.escapeEntities(userMap["password"].toString()))
             var rememberMe = "off"
             if (userMap.containsKey("remember-me") && userMap["remember-me"].toString().isNotEmpty()) {
                 rememberMe = userMap["remember-me"].toString()

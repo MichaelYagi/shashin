@@ -3,23 +3,18 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Favorite
 import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.TextUtils
-import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.web.util.TextEscapeUtils
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.ArrayList
 import javax.transaction.Transactional
 
 @Controller
@@ -99,7 +94,7 @@ class TrashController {
 
             if (metadataIdList.count() > 0) {
                 for (metadataId in metadataIdList) {
-                    val metadataObj = metadataRepository.findById(StringEscapeUtils.escapeHtml4(metadataId as String))
+                    val metadataObj = metadataRepository.findById(TextEscapeUtils.escapeEntities(metadataId as String))
                     metadataObj.get().setHidden(false)
                     metadataRepository.save(metadataObj.get())
                 }

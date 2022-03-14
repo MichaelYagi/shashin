@@ -6,10 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.data.repository.query.Param
+import org.springframework.security.web.util.TextEscapeUtils
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.RequestBody
@@ -17,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 import javax.transaction.Transactional
 
@@ -66,7 +62,7 @@ class CommentsController {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment")) {
             val albumId = commentMap["albumId"].toString().toInt()
-            val commentText = StringEscapeUtils.escapeHtml4(commentMap["comment"].toString())
+            val commentText = TextEscapeUtils.escapeEntities(commentMap["comment"].toString())
 
             val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -142,8 +138,8 @@ class CommentsController {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment") && commentMap.containsKey("metadataId")) {
             val albumId = commentMap["albumId"].toString().toInt()
-            val metadataId = StringEscapeUtils.escapeHtml4(commentMap["metadataId"].toString())
-            val commentText = StringEscapeUtils.escapeHtml4(commentMap["comment"].toString())
+            val metadataId = TextEscapeUtils.escapeEntities(commentMap["metadataId"].toString())
+            val commentText = TextEscapeUtils.escapeEntities(commentMap["comment"].toString())
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
@@ -218,7 +214,7 @@ class CommentsController {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("commentId") && commentMap.containsKey("comment")) {
             val commentId = commentMap["commentId"].toString().toInt()
-            val commentText = StringEscapeUtils.escapeHtml4(commentMap["comment"].toString())
+            val commentText = TextEscapeUtils.escapeEntities(commentMap["comment"].toString())
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
