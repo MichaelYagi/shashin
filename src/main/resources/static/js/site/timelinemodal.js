@@ -86,18 +86,18 @@ $("#saveMetadata").click(function (e) {
     ) === true) {
         const json = {
             id:metadataId,
-            title:$("#title").val().trim(),
-            description:$("#description").val().trim(),
-            camera:$("#camera").val().trim(),
+            title:Util.decodeHtml($("#title").val().trim()),
+            description:Util.decodeHtml($("#description").val().trim()),
+            camera:Util.decodeHtml($("#camera").val().trim()),
             year:$("#yearTaken").val(),
             month:$("#monthTaken").val(),
             day:$("#dayTaken").val(),
             time:$("#timeTaken").val(),
             offset:$("#offsetTaken").val() === null ? "" : $("#offsetTaken").val(),
-            latlng:$("#latlng").val(),
-            keywords:$("#keywords").val(),
-            tagpeople:$("#tagpeople").val(),
-            albumnames:$("#albumnames").val(),
+            latlng:Util.decodeHtml($("#latlng").val()),
+            keywords:Util.decodeHtml($("#keywords").val()),
+            tagpeople:Util.decodeHtml($("#tagpeople").val()),
+            albumnames:Util.decodeHtml($("#albumnames").val()),
             hidden:$("#hidden").prop("checked"),
             isObject:$("#isobject").prop("checked")
         }
