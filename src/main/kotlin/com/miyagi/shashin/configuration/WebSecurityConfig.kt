@@ -3,6 +3,7 @@ package com.miyagi.shashin.configuration
 import com.miyagi.shashin.component.AjaxAwareAuthenticationEntryPoint
 import com.miyagi.shashin.component.AuthFailureHandler
 import com.miyagi.shashin.component.AuthSuccessHandler
+import com.miyagi.shashin.component.CSPNonceFilter
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.StrictHttpFirewall
+import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
 import javax.sql.DataSource
 
@@ -89,11 +91,14 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
     @Throws(Exception::class)
     override fun configure(http: HttpSecurity) {
         http
+            .addFilterBefore(CSPNonceFilter(), HeaderWriterFilter::class.java)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 .and()
             .headers()
                 .xssProtection()
                 .and()
+//                .contentSecurityPolicy("script-src 'self' 'nonce-{nonce}'")
+//                .and()
                 .frameOptions()
                 .sameOrigin()
                 .and()
