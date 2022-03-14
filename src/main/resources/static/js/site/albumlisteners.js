@@ -1,7 +1,7 @@
 $(document).ready(function () {
     const albumId = $("#albumId").val();
     let albumName = $("#albumName").val();
-    const authority = $("#authority").val();
+    const canEdit = $("#canEdit").val();
 
     $("#removeFromAlbum").change(function() {
         if(this.checked) {
@@ -79,7 +79,7 @@ $(document).ready(function () {
         $("#albumsModalStatus").css("visibility","hidden");
     });
 
-    if (authority === 'ROLE_ADMIN') {
+    if (canEdit === "true") {
         // Album header to input
         $("#albumNameHeader").click(function () {
             if ($("#albumNameHeading").length > 0) {
@@ -107,6 +107,8 @@ $(document).ready(function () {
         });
 
         function saveHeader(val) {
+            val = Util.escapeHtml(val);
+
             if (val.length > 0) {
                 let json = {albumId: albumId,albumName: val}
                 const ajaxParams = {
@@ -119,11 +121,11 @@ $(document).ready(function () {
 
                 $.ajax(ajaxParams)
                     .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album name")}).then(function (data) {
+
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
                         $('#albumNameHeader').html('<h1 id="albumNameHeading">'+val+'</h1>');
-                        albumName = val;
                     } else {
-                        $('#albumNameHeader').html('<h1 id="albumNameHeading">'+albumName+'</h1>');
+                        $('#albumNameHeader').html('<h1 id="albumNameHeading">'+val+'</h1>');
                     }
                 });
             }

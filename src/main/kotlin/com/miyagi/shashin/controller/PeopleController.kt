@@ -320,6 +320,7 @@ class PeopleController {
         counts["person"] = 0
         counts["matches"] = 0
         response["counts"] = counts
+        response["canEdit"] = model.getAttribute("authority") == adminRole
 
         response["msg"] = "Could not get results"
         response["status"] = "fail"
