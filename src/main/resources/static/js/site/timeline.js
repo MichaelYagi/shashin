@@ -123,7 +123,7 @@
                 }
             }
 
-            const firstDate = $("#offcanvasTocBody div").children().first().attr("id").split("offcanvas_")[1];
+            const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
             const elementsInViewport = $(".scrollspy").withinviewport()
             topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
 
@@ -1362,7 +1362,7 @@
                                         $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                     }
 
-                                    const lastDateParts = $("#offcanvasTocBody div").children().last().attr("id").split("offcanvas_");
+                                    const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
                                     const lastDate = lastDateParts[1];
 
                                     if (metadataList[0].year == null || metadataList[0].month == null || metadataList[0].day == null) {
