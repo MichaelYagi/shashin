@@ -90,8 +90,8 @@
             $("#cancelAlbum"+albumId).prop('disabled', true);
 
             const albumName = $("#albumEditName"+albumId).val();
+            let json = {albumId: albumId, albumName: Util.htmlDecode(albumName)}
 
-            let json = {albumId: albumId, albumName: albumName}
             const ajaxParams = {
                 type: "post",
                 url: "/album/updatename/"+albumId,

@@ -17,7 +17,7 @@
         if (labelString.length > 0) {
             labelString = labelString.slice(0,-1)
         }
-        $("#tagBatchDataInput").val(Util.decodeHtml(labelString));
+        $("#tagBatchDataInput").val(labelString);
     }
 
     timelineBatchModal.toggleBatchTagAlbumDropdown = function() {
@@ -37,7 +37,7 @@
         if (albumsString.length > 0) {
             albumsString = albumsString.slice(0,-1)
         }
-        $("#albumNameInput").val(Util.decodeHtml(albumsString));
+        $("#albumNameInput").val(albumsString);
     }
 
 }( window.timelineBatchModal = window.timelineBatchModal || {}, jQuery ));

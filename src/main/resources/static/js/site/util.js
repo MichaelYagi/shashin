@@ -378,12 +378,12 @@ class Util {
         jsonData.dayTakenBatchData = batchObj.hasOwnProperty("dayTakenBatchData") ? batchObj["dayTakenBatchData"] : null;
         jsonData.monthTakenBatchData = batchObj.hasOwnProperty("monthTakenBatchData") ? batchObj["monthTakenBatchData"] : null;
         jsonData.yearTakenBatchData = batchObj.hasOwnProperty("yearTakenBatchData") ? batchObj["yearTakenBatchData"] : null;
-        jsonData.latlngBatchData = batchObj.hasOwnProperty("latlngBatchData") ? batchObj["latlngBatchData"] : null;
-        jsonData.keywordsBatchData = batchObj.hasOwnProperty("keywordsBatchData") ? batchObj["keywordsBatchData"] : null;
-        jsonData.cameraBatchData = batchObj.hasOwnProperty("cameraBatchData") ? batchObj["cameraBatchData"] : null;
+        jsonData.latlngBatchData = batchObj.hasOwnProperty("latlngBatchData") ? Util.decodeHtml(batchObj["latlngBatchData"]) : null;
+        jsonData.keywordsBatchData = batchObj.hasOwnProperty("keywordsBatchData") ? Util.decodeHtml(batchObj["keywordsBatchData"]) : null;
+        jsonData.cameraBatchData = batchObj.hasOwnProperty("cameraBatchData") ? Util.decodeHtml(batchObj["cameraBatchData"]) : null;
         jsonData.offsetTakenBatchData = batchObj.hasOwnProperty("offsetTakenBatchData") ? batchObj["offsetTakenBatchData"] : null;
-        jsonData.tagBatchDataInput = batchObj.hasOwnProperty("tagBatchDataInput") ? batchObj["tagBatchDataInput"] : null;
-        jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? batchObj["albumNameInput"] : null;
+        jsonData.tagBatchDataInput = batchObj.hasOwnProperty("tagBatchDataInput") ? Util.decodeHtml(batchObj["tagBatchDataInput"]) : null;
+        jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? Util.decodeHtml(batchObj["albumNameInput"]) : null;
         jsonData.batchisobject = batchObj.hasOwnProperty("batchisobject") ? batchObj["batchisobject"] : null;
         jsonData.batchhidden = batchObj.hasOwnProperty("batchhidden") ? batchObj["batchhidden"] : null;
 

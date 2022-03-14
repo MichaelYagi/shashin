@@ -1,7 +1,5 @@
 $(document).ready(function () {
     const albumId = $("#albumId").val();
-    let albumName = $("#albumName").val();
-    const canEdit = $("#canEdit").val();
 
     $("#removeFromAlbum").change(function() {
         if(this.checked) {
@@ -78,57 +76,4 @@ $(document).ready(function () {
         $("#albumsModalStatus").attr("class","spinner-grow me-auto");
         $("#albumsModalStatus").css("visibility","hidden");
     });
-
-    if (canEdit === "true") {
-        // Album header to input
-        $("#albumNameHeader").click(function () {
-            if ($("#albumNameHeading").length > 0) {
-                const inputText = $("#albumNameHeader").text();
-                $(this).html('<h1><input id="albumNameHeaderEdit" type="text" style="width: 100%" value=""></h1>');
-                $("#albumNameHeaderEdit").focus().val(inputText);
-            }
-        });
-
-        // On blur, save the album title
-        $('body').click(function(event) {
-            if (!$(event.target).closest("#albumNameHeaderEdit").length && $("#albumNameHeaderEdit").length > 0 && $("#albumNameHeaderEdit").is(":focus") === false) {
-                saveHeader($("#albumNameHeaderEdit").val());
-            }
-        });
-
-        // On enter, save the album title
-        $('#albumNameHeader').keypress(function (e) {
-            const key = e.which;
-            if (key === 13) {
-                const val = $("#albumNameHeaderEdit").val();
-                saveHeader(val);
-                return false;
-            }
-        });
-
-        function saveHeader(val) {
-            val = Util.escapeHtml(val);
-
-            if (val.length > 0) {
-                let json = {albumId: albumId,albumName: val}
-                const ajaxParams = {
-                    type: "post",
-                    url: "/album/updatename/"+albumId,
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8',
-                    retries: shashin.ajaxRetries
-                }
-
-                $.ajax(ajaxParams)
-                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album name")}).then(function (data) {
-
-                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
-                        $('#albumNameHeader').html('<h1 id="albumNameHeading">'+val+'</h1>');
-                    } else {
-                        $('#albumNameHeader').html('<h1 id="albumNameHeading">'+val+'</h1>');
-                    }
-                });
-            }
-        }
-    }
 });
