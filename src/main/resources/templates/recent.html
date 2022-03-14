@@ -55,7 +55,7 @@
 
                             </div>
 
-                            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+                            <script th:inline="javascript" type="text/javascript">
                                 /*<![CDATA[*/
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"");
                                 $("#timelineModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
@@ -79,7 +79,7 @@
             </div>
 
             <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels},${allAlbumList})"></div>
-            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+            <script th:inline="javascript" type="text/javascript">
                 /*<![CDATA[*/
                 const albumList = /*[[${albumList}]]*/[];
 
@@ -120,12 +120,12 @@
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/applisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/applisteners.js" type="text/javascript"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/applisteners.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/applisteners.min.js" type="text/javascript"></script>
 </th:block>
-<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+<script th:inline="javascript" type="text/javascript">
     $(document).ready(function() {
         /*<![CDATA[*/
         const activePage = /*[[${activePage}]]*/ 'recent';
