@@ -55,3 +55,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - UX fixes and improvements for mobile
 - Fixed favorite counts for media
+
+## [2.0.2] - 2022-03-15
+### Added
+
+- Added nonce to inline Javascript
+
+### Changed
+
+### Fixed
