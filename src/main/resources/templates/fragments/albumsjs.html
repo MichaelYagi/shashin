@@ -3,7 +3,7 @@
 <body th:fragment="albumsjs(album,authority)">
 
 <th:block th:if="${authority == 'ROLE_ADMIN'}">
-    <script th:inline="javascript" type="text/javascript">
+    <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
         /*<![CDATA[*/
         $("#share[[${album.id}]]").click(function(e) {
             e.preventDefault();
@@ -25,7 +25,7 @@
     </script>
 </th:block>
 
-<script th:inline="javascript" type="text/javascript">
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $("#comment[[${album.id}]]").click(function(e) {
         e.preventDefault();
 

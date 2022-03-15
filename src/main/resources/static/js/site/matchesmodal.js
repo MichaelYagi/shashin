@@ -82,13 +82,16 @@ $("#saveBatchMetadata").click(function (e) {
 
                         batchHtml +=
                             '           <button class="dropdown-item" type="button">\n' +
-                            '               <input type="checkbox" onclick="return matchModalBatchSettings.populateBatchLabel();" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
+                            '               <input type="checkbox" class="recognitionLabel" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
                             '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
                             '           </button>'
                     }
 
                     if (true === renderRecognitionLabels) {
                         $("#peopleNameList").html(batchHtml);
+                        $(".recognitionLabel").on("click", function (e) {
+                            matchModalBatchSettings.populateBatchLabel();
+                        });
                     }
                 }
 
@@ -167,10 +170,10 @@ $('#propBatchMetadata').bind('keypress', function () {
             '           <div class="col-sm">\n' +
             '               <label for="tagpeople' + metadata.id + '" class="col-form-label">Tag People (comma separated)</label>\n' +
             '               <div class="input-group">\n' +
-            '                   <input type="text" onfocus="return matchModalSettings.closeTagPeopleDropdown(\'' + metadata.id + '\');" class="form-control" aria-label="Tag People" id="tagpeople' + metadata.id + '" name="tagpeople" value="' + taggedPeopleList + '">\n';
+            '                   <input type="text" class="form-control" aria-label="Tag People" id="tagpeople' + metadata.id + '" name="tagpeople" value="' + taggedPeopleList + '">\n';
         if (recognitionLabels.length > 0) {
             html += '           <div class="input-group-append">\n' +
-                '                   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return matchModalSettings.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                '                   <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                 '                   <div class="dropdown-menu personDropdown" id="recognitionLabelsList' + metadata.id + '">\n';
             for (const index in recognitionLabels) {
                 const recognitionLabel = recognitionLabels[index];
@@ -180,7 +183,7 @@ $('#propBatchMetadata').bind('keypress', function () {
                     checkedString = " checked";
                 }
                 html += '               <button class="dropdown-item" type="button">\n' +
-                    '                       <input type="checkbox" onclick="return matchModalSettings.populateLabel(\'' + metadata.id + '\',' + recognitionLabel.id + ');" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
+                    '                       <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
                     '                       <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
                     '                   </button>\n';
             }
@@ -211,6 +214,20 @@ $('#propBatchMetadata').bind('keypress', function () {
             '</div></div></div></div>';
 
         $("#matchesmodal" + metadata.id).after(html);
+
+        $("#tagpeople").on("focus", function (e) {
+            e.preventDefault();
+            matchModalSettings.closeTagPeopleDropdown(metadata.id);
+        });
+
+        $("#tagpeopledropdown" + metadata.id).on("click", function (e) {
+            e.preventDefault();
+            matchModalSettings.toggleTagPeopleDropdown(metadata.id);
+        });
+
+        $(".recognitionLabel").on("click", function (e) {
+            matchModalSettings.populateLabel(metadata.id);
+        });
 
         $("#isobject" + metadata.id).click(function (e) {
             matchModalSettings.closeTagPeopleDropdown(metadata.id);
@@ -272,13 +289,16 @@ $('#propBatchMetadata').bind('keypress', function () {
                                 }
                                 batchHtml +=
                                     '           <button class="dropdown-item" type="button">\n' +
-                                    '               <input type="checkbox" onclick="return personModalSettings.populateLabel(\''+metadata.id+'\','+recognitionLabel.id+');" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
+                                    '               <input type="checkbox" class="recognitionLabel" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
                                     '               <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
                                     '           </button>'
                             }
 
                             if (true === renderRecognitionLabels) {
                                 $(".dropdown-menu, .personDropdown").html(batchHtml);
+                                $(".recognitionLabel").on("click", function (e) {
+                                    personModalSettings.populateLabel(metadata.id);
+                                });
                             }
                         }
 

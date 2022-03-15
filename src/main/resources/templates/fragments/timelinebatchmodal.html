@@ -65,15 +65,24 @@
 
                                     <th:block th:if="${#lists.size(allAlbumList)} > 0">
                                         <div class="input-group-append dropdown">
-                                            <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>
+                                            <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>
                                             <div class="dropdown-menu" id="albumNameList">
                                                 <th:block th:each="album, iterStat: ${allAlbumList}">
                                                     <button class="dropdown-item" type="button">
-                                                        <input type="checkbox" onclick="return timelineBatchModal.populateBatchAlbum();" th:id="${album.id}" th:value="${album.name}" name="albums[]">
+                                                        <input type="checkbox" class="album" th:id="${album.id}" th:value="${album.name}" name="albums[]">
                                                         <label th:for="${album.id}" th:text="${album.name}"></label>
                                                     </button>
                                                 </th:block>
                                             </div>
+                                            <script type="text/javascript" th:nonce="${cspNonce}">
+                                                $(".album").on("click", function (e) {
+                                                    timelineBatchModal.populateBatchAlbum();
+                                                });
+                                                $("#tagalbumdropdown").on("click", function (e) {
+                                                    e.preventDefault();
+                                                    timelineBatchModal.toggleBatchTagAlbumDropdown();
+                                                });
+                                            </script>
                                         </div>
                                     </th:block>
                                 </div>
@@ -82,19 +91,34 @@
                         <div class="col-sm">
                             <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
                             <div class="input-group" id="batchLabelIds">
-                                <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+                                <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+                                <script type="text/javascript" th:nonce="${cspNonce}">
+                                    $("#tagBatchDataInput").on("focus", function (e) {
+                                        e.preventDefault();
+                                        timelineBatchModal.closeBatchTagPeopleDropdown();
+                                    });
+                                </script>
 
                                 <th:block th:if="${#lists.size(recognitionLabels)} > 0">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+                                        <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
-                                                    <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
+                                                    <input type="checkbox" class="recognitionLabel" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
                                                     <label th:for="${recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
                                                 </button>
                                             </th:block>
                                         </div>
+                                        <script type="text/javascript" th:nonce="${cspNonce}">
+                                            $(".recognitionLabel").on("click", function (e) {
+                                                timelineBatchModal.populateBatchLabel();
+                                            });
+                                            $("#tagpeopledropdown").on("click", function (e) {
+                                                e.preventDefault();
+                                                timelineBatchModal.toggleBatchTagPeopleDropdown();
+                                            });
+                                        </script>
                                     </div>
                                 </th:block>
                             </div>
@@ -132,10 +156,10 @@
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/timelinebatchmodal.js" type="text/javascript"></script>
+    <script src="/js/site/timelinebatchmodal.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/timelinebatchmodal.min.js" type="text/javascript"></script>
+    <script src="/js/site/timelinebatchmodal.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 </body>
 </html>

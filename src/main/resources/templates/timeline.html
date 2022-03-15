@@ -23,10 +23,26 @@
                                 </th:block>
 
                                 <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
-                                    <a th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return timelineSettings.jumpFromTimelineToc(event,'[[${date.year}]]-[[${date.month}]]-[[${date.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
+                                    <a th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
+                                    <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+                                        /*<![CDATA[*/
+                                        $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
+                                            e.preventDefault();
+                                            timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
+                                        });
+                                        /*]]>*/
+                                    </script>
                                 </th:block>
                                 <th:block th:if="${iterStat.count > 0 and !iterStat.first and (metadataDates[iterStat.index-1].year+'-'+metadataDates[iterStat.index-1].month)==(date.year+'-'+date.month)}">
-                                    <a style="display:none" th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:onclick="return timelineSettings.jumpFromTimelineToc(event,'[[${date.year}]]-[[${date.month}]]-[[${date.day}]]',[[${mediaTypeFilter}]]);" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
+                                    <a style="display:none" th:id="${'offcanvas_'+date.year+'-'+date.month+'-'+date.day}" th:class="${'list-group-item list-group-item-action'+{iterStat.first ? ' active' : ''}}" th:href="${'#'+date.year+'-'+date.month+'-'+date.day}" th:text="${#dates.format(sdf.parse(date.year+'-'+date.month+'-'+date.day), 'MMM yyyy')}"></a>
+                                    <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+                                        /*<![CDATA[*/
+                                        $(/*[[${'#offcanvas_'+date.year+'-'+date.month+'-'+date.day}]]*/ '').on("click", function (e) {
+                                            e.preventDefault();
+                                            timelineSettings.jumpFromTimelineToc(e,/*[[${date.year+'-'+date.month+'-'+date.day}]]*/ '',/*[[${mediaTypeFilter}]]*/ 'all');
+                                        });
+                                        /*]]>*/
+                                    </script>
                                 </th:block>
 
                                 <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.last and (metadataDates[iterStat.index+1].year)==(date.year)}">
@@ -44,7 +60,7 @@
 
         <main role="main" class="col overflow-auto h-100" id="timelineMain">
             <th:block th:if="${not #lists.isEmpty(metadataList)}">
-                <script th:inline="javascript" type="text/javascript">
+                <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                     $("#progressBarWrapper").css("visibility","visible");
                     const totalSize = [[${#lists.size(metadataList)}]];
                     $("#progressBar").attr("aria-valuenow","50");
@@ -147,7 +163,7 @@
 
                 </th:block>
             </div>
-            <script type="text/javascript">
+            <script type="text/javascript" th:nonce="${cspNonce}">
                 $("#progressBarWrapper").css("visibility","hidden");
                 $("#timelineMain").css("visibility","visible");
             </script>
@@ -173,14 +189,15 @@
 </th:block>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/applisteners.js" type="text/javascript"></script>
+    <script src="/js/site/applisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/applisteners.min.js" type="text/javascript"></script>
+    <script src="/js/site/applisteners.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
-<script th:inline="javascript" type="text/javascript">
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
         /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
         timelineSettings.init(/*[[${mediaTypeFilter}]]*/ 'all', /*[[${metadataDates}]]*/ []);
         /*]]>*/
     });

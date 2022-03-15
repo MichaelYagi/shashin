@@ -6,7 +6,7 @@
     <th:block th:unless="${metadata.type.contains('video')}">
         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                <a class="mediaLink" th:id="'mediaLink'+${metadata.id}" th:attr="onclick=${'return '+(onclickFunctionCall == null ? 'false' : onclickFunctionCall+'(event,'+index+')')}"
+                <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                    th:data-download-url="${metadata.thumbnailUrlOriginal}"
                    th:data-sub-html="${metadata.description}"
                    th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}">
@@ -15,7 +15,7 @@
             </th:block>
         </th:block>
         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-            <a class="mediaLink" th:id="'mediaLink'+${metadata.id}" th:attr="onclick=${'return '+(onclickFunctionCall == null ? 'false' : onclickFunctionCall+'(event,'+index+')')}"
+            <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                th:data-download-url="${metadata.thumbnailUrlOriginal}"
                th:data-sub-html="${metadata.description}"
                th:data-src="${metadata.thumbnailUrlOriginal}" th:href="${metadata.thumbnailUrlOriginal}">
@@ -27,7 +27,7 @@
     <th:block th:if="${metadata.type.contains('video')}">
         <th:block th:unless="${metadata.year==null or metadata.month==null or metadata.day==null}">
             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                <a class="mediaLink" th:id="'mediaLink'+${metadata.id}" th:attr="onclick=${'return '+(onclickFunctionCall == null ? 'false' : onclickFunctionCall+'(event,'+index+')')}"
+                <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                    th:data-download-url="${metadata.videoUrl+'/download'}"
                    th:data-sub-html="${metadata.description}"
                    th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}">
@@ -36,7 +36,7 @@
             </th:block>
         </th:block>
         <th:block th:if="${metadata.year==null or metadata.month==null or metadata.day==null}">
-            <a class="mediaLink" th:id="'mediaLink'+${metadata.id}" th:attr="onclick=${'return '+(onclickFunctionCall == null ? 'false' : onclickFunctionCall+'(event,'+index+')')}"
+            <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                th:data-download-url="${metadata.videoUrl+'/download'}"
                th:data-sub-html="${metadata.description}"
                th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: false, &quot;controls&quot;: true}}'}">
@@ -44,6 +44,22 @@
             </a>
         </th:block>
     </th:block>
+
+    <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+        /*<![CDATA[*/
+        $(/*[[${'#mediaLink'+metadata.id}]]*/ '').on("click", function (e) {
+            e.preventDefault();
+            const fnName = /*[[${onclickFunctionCall}]]*/ null;
+            if (fnName !== null) {
+                const index = /*[[${index}]]*/ -1;
+                const fn = Util.genericFunction(fnName);
+                if (typeof fn === "function" && index > -1) {
+                    fn(e, index);
+                }
+            }
+        });
+        /*]]>*/
+    </script>
 </div>
 
 </body>

@@ -48,7 +48,7 @@
 
                             </div>
 
-                            <script th:inline="javascript" type="text/javascript">
+                            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"");
                                 $("#timelineModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").click(function(e) {
@@ -72,7 +72,7 @@
             </div>
 
             <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels},${allAlbumList})"></div>
-            <script th:inline="javascript" type="text/javascript">
+            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
                 const albumList = /*[[${albumList}]]*/[];
 
@@ -80,14 +80,14 @@
                     let batchHtml =
                         '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
                         '<div class="input-group-append">\n' +
-                        '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineBatchModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                        '   <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                         '   <div class="dropdown-menu" id="albumNameList">\n';
 
                     for (let index in albumList) {
                         const album = albumList[index];
                         batchHtml +=
                             '<button class="dropdown-item" type="button">\n' +
-                            '    <input type="checkbox" onclick="return timelineBatchModal.populateBatchAlbum();" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                            '    <input type="checkbox" class="album" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
                             '    <label for="'+album.id+'">'+album.name+'</label>\n' +
                             '</button>\n';
                     }
@@ -97,6 +97,13 @@
                         '</div>\n';
 
                     $("#albumListForModal").html(batchHtml);
+                    $("#tagalbumdropdown").on("click", function (e) {
+                        e.preventDefault();
+                        timelineBatchModal.toggleBatchTagAlbumDropdown();
+                    });
+                    $(".album").on("click", function (e) {
+                        timelineBatchModal.populateBatchAlbum();
+                    });
                 }
                 /*]]>*/
             </script>
@@ -113,14 +120,15 @@
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/applisteners.js" type="text/javascript"></script>
+    <script src="/js/site/applisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/applisteners.min.js" type="text/javascript"></script>
+    <script src="/js/site/applisteners.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
-<script th:inline="javascript" type="text/javascript">
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function(){
         /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'folder';
         const folderName = /*[[${folder}]]*/ '';
         const metadataList = /*[[${metadataList}]]*/ '[]';

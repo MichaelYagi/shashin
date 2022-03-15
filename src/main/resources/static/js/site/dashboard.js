@@ -123,7 +123,6 @@ class Dashboard {
 
     displayCameraChart(data) {
         const ctx = $('#cameraChart');
-        const cameraCounts = JSON.parse(Util.decodeHtml(data.cameraCountJson));
         const cameraCountObj = JSON.parse(data.cameraCountJson);
 
         // Click label
@@ -142,7 +141,7 @@ class Dashboard {
             type: 'bar',
             data: {
                 datasets: [{
-                    data: cameraCounts,
+                    data: cameraCountObj,
                     backgroundColor: [
                         'rgba(54, 162, 235, 0.2)'
                     ],

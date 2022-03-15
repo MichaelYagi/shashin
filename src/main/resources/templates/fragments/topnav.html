@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="topnav(currentUser,activePage,searchTerm)">
 
-<script th:inline="javascript" type="text/javascript">
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     /*<![CDATA[*/
     shashin.darkMode = /*[[${currentUser.darkMode}]]*/ true;
     const userId = /*[[${currentUser.id}]]*/ 0;
@@ -60,7 +60,7 @@
             <form id="appSearch" class="w-100" action="/search" method="post">
                 <input id="appSearchInput" name="appSearchInput" class="form-control" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
                 <input type="submit" style="position: absolute; left: -9999px"/>
-                <script th:inline="javascript" type="text/javascript">
+                <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                     $(document).ready(function () {
                         const ajaxParams = {
                             type: "get",
@@ -143,7 +143,7 @@
                 </div>
                 <a class="dropdown-item" href="/users/update">Change password</a>
                 <a class="dropdown-item" href="/users/logout">Sign out</a>
-                <script th:inline="javascript" type="text/javascript">
+                <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                     $("#darkModeSwitch").change(function() {
                         const darkMode = this.checked;
                         shashin.darkMode = darkMode;

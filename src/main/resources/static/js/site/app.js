@@ -8,6 +8,7 @@
     shashin.ajaxRetries = 3;
     shashin.darkMode = true;
     shashin.lgSubHtmlTimeout = null;
+    shashin.nonce = "";
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -199,7 +200,7 @@
                 }
                 if (recognitionLabels !== null && recognitionLabels.length > 0) {
                     let html = '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
-                        '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleTagPeopleDropdown(\'' + metadata.id + '\');" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                        '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                         '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
 
                     for (index in recognitionLabels) {
@@ -212,14 +213,21 @@
 
                         html +=
                             '           <button class="dropdown-item" type="button">\n' +
-                            '               <input type="checkbox" onclick="return timelineModal.populateLabel(\'' + metadata.id + '\');" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
+                            '               <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
                             '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
                             '           </button>\n';
                     }
                     html += '   </div>\n' +
                         '</div>\n';
 
-                    $(html).insertAfter($("#labelIdData"))
+                    $(html).insertAfter($("#labelIdData"));
+                    $("#tagpeopledropdown" + metadata.id).on("click", function (e) {
+                       e.preventDefault();
+                       timelineModal.toggleTagPeopleDropdown(metadata.id);
+                    });
+                    $(".recognitionLabel").on("click", function (e) {
+                        timelineModal.populateLabel(metadata.id);
+                    });
                 }
 
                 let albumListString = "";
@@ -244,7 +252,7 @@
                 if (allAlbumList !== null && allAlbumList.length > 0) {
                     let html =
                         '<div class="input-group-append dropdown" id="albumListInput">\n' +
-                        '   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineModal.toggleAlbumDropdown(\'' + metadata.id + '\');" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                        '   <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                         '   <div class="dropdown-menu" id="albumsList">\n';
 
                     for (index in allAlbumList) {
@@ -257,7 +265,7 @@
 
                         html +=
                             '   <button class="dropdown-item" type="button">\n' +
-                            '       <input type="checkbox" onclick="return timelineModal.populateAlbum(\'' + metadata.id + '\');" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
+                            '       <input type="checkbox" class="album" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
                             '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + Util.escapeHtml(eachAlbum.name) + '</label>\n' +
                             '   </button>\n';
                     }
@@ -265,6 +273,13 @@
                         '</div>\n';
 
                     $(html).insertAfter($("#albumNameData"))
+                    $("#albumdropdown" + metadata.id).on("click", function (e) {
+                        e.preventDefault();
+                        timelineModal.toggleAlbumDropdown(metadata.id);
+                    });
+                    $(".album").on("click", function (e) {
+                        timelineModal.populateAlbum(metadata.id);
+                    });
                 }
 
                 if (isObject === true) {
@@ -542,11 +557,18 @@
                     }
 
                     if (index > 0 && metadataDates[index-1].year === year && metadataDates[index-1].month === month) {
-                        html += '<a style="display:none" id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\');" href="#'+year+'-'+month+'-'+day+'"></a>';
+                        html += '<a style="display:none" id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" href="#'+year+'-'+month+'-'+day+'"></a>';
                     } else {
                         const dateObj = new Date(year, month-1, day);
-                        html += '<a id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" onclick="return timelineSettings.jumpFromTimelineToc(event,\''+year+'-'+month+'-'+day+'\',\''+mediaTypeFilter+'\');" href="#'+year+'-'+month+'-'+day+'">'+dateObj.format("mmm yyyy")+'</a>';
+                        html += '<a id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" href="#'+year+'-'+month+'-'+day+'">'+dateObj.format("mmm yyyy")+'</a>';
                     }
+
+                    html += '<script type="text/javascript"'+(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')+ '>\n' +
+                            '   $("#offcanvas_'+year+'-'+month+'-'+day+'").on("click", function (e) {\n' +
+                            '       e.preventDefault();\n' +
+                            '       timelineSettings.jumpFromTimelineToc(e,"'+year+'-'+month+'-'+day+'"'+',"'+mediaTypeFilter+'");\n' +
+                            '   });\n' +
+                            '</script>\n';
 
                     if (index > 0 && index < metadataDates.length-1 && metadataDates[index+1].year !== year) {
                         html += "</div><br>";
@@ -1326,9 +1348,15 @@
             if (onclickFunctionCall != null) {
                 html +=
                 '<a href="#" id="'+onclickIdPrefix+id+'"\n' +
-                '   onclick="return '+onclickFunctionCall+'(event, \''+id+'\')" class="'+editClass+'">\n' +
                 '   <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
                 '</a>\n';
+
+                html += '<script type="text/javascript"'+(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')+ '>\n' +
+                    '   $("#'+onclickIdPrefix+id+'").on("click", function (e) {\n' +
+                    '       e.preventDefault();\n' +
+                    '      '+onclickFunctionCall+'(e,"'+id+'");\n' +
+                    '   });\n' +
+                    '</script>\n';
             } else if (targetPrefix != null) {
                 html +=
                 '<a href="#" data-bs-toggle="modal" data-bs-target="#'+targetPrefix+id+'">\n' +
@@ -1358,7 +1386,7 @@
             mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl)+"/download";
             html +=
-                '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'"\n' +
+                '   <a class="mediaLink" id="mediaLink'+metadata.id+'"\n' +
                 '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n';
             if (metadata.description !== null) {
                 html +=
@@ -1372,7 +1400,7 @@
             mediaContent.src = metadata.thumbnailUrlOriginal;
             mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
             html +=
-                '   <a class="mediaLink" id="mediaLink'+metadata.id+'" onclick="return '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+')'))+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
+                '   <a class="mediaLink" id="mediaLink'+metadata.id+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
                 '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'" \n';
             if (metadata.description !== null) {
                 html +=
@@ -1382,6 +1410,13 @@
                 '> \n<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
                 '   </a>\n';
         }
+
+        html += '<script type="text/javascript"'+(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')+ '>\n' +
+            '   $("#mediaLink'+metadata.id+'").on("click", function (e) {\n' +
+            '       e.preventDefault();\n' +
+            '       '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+');'))+'\n' +
+            '   });\n' +
+            '</script>\n';
 
         html +=
             '   </div>\n';

@@ -82,7 +82,7 @@
 
                             <span th:id="'albummodal'+${metadata.id}" style="width:0;height:0;padding:0"></span>
 
-                            <script th:inline="javascript" type="text/javascript">
+                            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
                                 albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{})
@@ -149,17 +149,18 @@
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/applisteners.js" type="text/javascript"></script>
-    <script src="/js/site/albumlisteners.js" type="text/javascript"></script>
+    <script src="/js/site/applisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/albumlisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/applisteners.min.js" type="text/javascript"></script>
-    <script src="/js/site/albumlisteners.min.js" type="text/javascript"></script>
+    <script src="/js/site/applisteners.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/albumlisteners.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
-<script th:inline="javascript" type="text/javascript">
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function() {
         const albumId = $("#albumId").val();
         /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'album';
         const albumMetadataList = /*[[${albumMetadataList}]]*/ '[]'
         /*]]>*/

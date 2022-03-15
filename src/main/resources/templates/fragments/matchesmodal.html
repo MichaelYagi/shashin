@@ -21,13 +21,17 @@
                             <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
                             <div class="input-group">
                                 <input type="text" class="form-control"
-                                       onfocus="return matchModalBatchSettings.closeBatchTagPeopleDropdown();"
                                        aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+                                <script type="text/javascript" th:nonce="${cspNonce}">
+                                    $("#tagBatchDataInput").on("click", function (e) {
+                                        e.preventDefault();
+                                        matchModalBatchSettings.closeBatchTagPeopleDropdown();
+                                    });
+                                </script>
 
                                 <th:block th:if="${not #lists.isEmpty(recognitionLabels)}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary dropdown-toggle"
-                                                onclick="return matchModalBatchSettings.toggleBatchTagPeopleDropdown();"
                                                 id="tagpeopledropdown" type="button" aria-haspopup="true"
                                                 aria-expanded="false">People
                                         </button>
@@ -35,8 +39,8 @@
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
                                                     <input type="checkbox"
-                                                           onclick="return matchModalBatchSettings.populateBatchLabel();"
-                                                           th:id="${recognitionLabel.id}"
+\                                                           th:id="${recognitionLabel.id}"
+                                                           class="recognitionLabel"
                                                            th:value="${recognitionLabel.name}"
                                                            name="recognitionLabel[]">
                                                     <label th:for="${recognitionLabel.id}"
@@ -44,6 +48,15 @@
                                                 </button>
                                             </th:block>
                                         </div>
+                                        <script type="text/javascript" th:nonce="${cspNonce}">
+                                            $("#tagpeopledropdown").on("click", function (e) {
+                                                e.preventDefault();
+                                                matchModalBatchSettings.toggleBatchTagPeopleDropdown();
+                                            });
+                                            $(".recognitionLabel").on("click", function (e) {
+                                                matchModalBatchSettings.populateBatchLabel();
+                                            });
+                                        </script>
                                     </div>
                                 </th:block>
                             </div>
@@ -70,10 +83,10 @@
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/matchesmodal.js" type="text/javascript"></script>
+    <script src="/js/site/matchesmodal.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/matchesmodal.min.js" type="text/javascript"></script>
+    <script src="/js/site/matchesmodal.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 
 </body>

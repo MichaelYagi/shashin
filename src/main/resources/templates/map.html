@@ -5,7 +5,7 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:nonce="${cspNonce}">
     $("#progressBarWrapper").css("visibility","visible");
     $("#progressBar").attr("aria-valuenow","100");
     $("#progressBar").css("width","100%");
@@ -69,14 +69,15 @@
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/map.js" type="text/javascript"></script>
+    <script src="/js/site/map.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/map.min.js" type="text/javascript"></script>
+    <script src="/js/site/map.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
-<script th:inline="javascript" type="text/javascript">
+<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     $(document).ready(function () {
         /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
         const mapdata = /*[[${mapdata}]]*/ [];
         const keywordMap = /*[[${keywordMap}]]*/ {};
         const showControls = /*[[${showControls}]]*/ false;

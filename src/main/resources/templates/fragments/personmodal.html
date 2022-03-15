@@ -19,19 +19,34 @@
                         <div class="col-sm">
                             <label for="tagBatchDataInput" class="col-form-label">Tag People (comma separated)</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" onfocus="return personModalBatchSettings.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+                                <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">
+                                <script type="text/javascript" th:nonce="${cspNonce}">
+                                    $("#tagBatchDataInput").on("focus", function (e) {
+                                       e.preventDefault();
+                                        personModalBatchSettings.closeBatchTagPeopleDropdown();
+                                    });
+                                </script>
 
                                 <th:block th:if="${not #lists.isEmpty(recognitionLabels)}">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" onclick="return personModalBatchSettings.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+                                        <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu batchPersonDropdown" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
-                                                    <input type="checkbox" onclick="return personModalBatchSettings.populateBatchLabel();" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
+                                                    <input type="checkbox" class="batchRecognitionLabel" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
                                                     <label th:for="${recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
                                                 </button>
                                             </th:block>
                                         </div>
+                                        <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+                                            $("#tagpeopledropdown").on("click", function (e) {
+                                               e.preventDefault();
+                                                personModalBatchSettings.toggleBatchTagPeopleDropdown();
+                                            });
+                                            $(".batchRecognitionLabel").on("click", function (e) {
+                                                personModalBatchSettings.populateBatchLabel();
+                                            });
+                                        </script>
                                     </div>
                                 </th:block>
                             </div>
@@ -53,7 +68,7 @@
                 <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
                 <button id="personBatchModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript">
+            <script type="text/javascript" th:nonce="${cspNonce}">
                 (function( personModalBatchSettings, $, undefined ) {
                     personModalBatchSettings.toggleBatchTagPeopleDropdown = function() {
                         $("#tagpeopledropdown").dropdown('toggle');
@@ -159,7 +174,7 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:nonce="${cspNonce}">
     (function( personModalSettings, $, undefined ) {
         personModalSettings.toggleTagPeopleDropdown = function (metadataId) {
             $("#tagpeopledropdown"+metadataId).dropdown('toggle')
@@ -195,10 +210,10 @@
                 '           <div class="col-sm">\n' +
                 '               <label for="tagpeople'+metadata.id+'" class="col-form-label">Tag People (comma separated)</label>\n' +
                 '               <div class="input-group" id="batchLabelIds'+metadata.id+'">\n' +
-                '                   <input type="text" onfocus="return personModalSettings.closeTagPeopleDropdown(\''+metadata.id+'\');" class="form-control" aria-label="Tag People" id="tagpeople'+metadata.id+'" name="tagpeople" value="'+taggedPeopleList+'">\n';
+                '                   <input type="text" class="form-control" aria-label="Tag People" id="tagpeople'+metadata.id+'" name="tagpeople" value="'+taggedPeopleList+'">\n';
             if (recognitionLabels.length > 0) {
                 html += '           <div class="input-group-append">\n' +
-                    '                   <button class="btn btn-outline-secondary dropdown-toggle" onclick="return personModalSettings.toggleTagPeopleDropdown(\''+metadata.id+'\');" id="tagpeopledropdown'+metadata.id+'" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                    '                   <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown'+metadata.id+'" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                     '                   <div class="dropdown-menu personDropdown" id="recognitionLabelsList'+metadata.id+'">\n';
                 for (const index in recognitionLabels) {
                     const recognitionLabel = recognitionLabels[index];
@@ -208,7 +223,7 @@
                         checkedString = " checked";
                     }
                     html += '               <button class="dropdown-item" type="button">\n' +
-                        '                       <input type="checkbox" onclick="return personModalSettings.populateLabel(\''+metadata.id+'\','+recognitionLabel.id+');" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
+                        '                       <input type="checkbox" class="recognitionLabel" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
                         '                       <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
                         '                   </button>\n';
                 }
@@ -239,6 +254,20 @@
                 '</div></div></div></div>';
 
             $("#personmodal"+metadata.id).after(html);
+
+            $(".recognitionLabel").on("click", function (e) {
+                personModalSettings.populateLabel(metadata.id);
+            });
+
+            $("#tagpeopledropdown"+metadata.id).on("click", function (e) {
+               e.preventDefault();
+                personModalSettings.toggleTagPeopleDropdown(metadata.id);
+            });
+
+            $("#tagpeople"+metadata.id).on("focus", function (e) {
+                e.preventDefault();
+                personModalSettings.closeTagPeopleDropdown(metadata.id);
+            });
 
             $("#isobject"+metadata.id).click(function (e) {
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
@@ -300,13 +329,16 @@
                                     }
                                     batchHtml +=
                                         '           <button class="dropdown-item" type="button">\n' +
-                                        '               <input type="checkbox" onclick="return personModalSettings.populateLabel(\''+metadata.id+'\','+recognitionLabel.id+');" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
+                                        '               <input type="checkbox" class="recognitionLabel" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
                                         '               <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
                                         '           </button>'
                                 }
 
                                 if (true === renderRecognitionLabels) {
                                     $(".dropdown-menu, .personDropdown").html(batchHtml);
+                                    $(".recognitionLabel").on("click", function (e) {
+                                        personModalSettings.populateLabel(metadata.id);
+                                    });
                                 }
                             }
 
