@@ -16,7 +16,7 @@
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#deleteUser[[${user.id}]]").click(function(e) {
+                $("#deleteUser[[${user.id}]]").on("click", function(e) {
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";
@@ -70,7 +70,7 @@
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#resetPasswordUser[[${user.id}]]").click(function(e) {
+                $("#resetPasswordUser[[${user.id}]]").on("click", function(e) {
                     e.preventDefault();
 
                     $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
@@ -140,7 +140,7 @@
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#roleUser[[${user.id}]]").click(function(e) {
+                $("#roleUser[[${user.id}]]").on("click", function(e) {
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";
@@ -191,7 +191,7 @@
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#allowUser[[${user.id}]]").click(function(e) {
+                $("#allowUser[[${user.id}]]").on("click", function(e) {
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";

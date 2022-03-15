@@ -47,7 +47,7 @@
 
 }( window.timelineModal = window.timelineModal || {}, jQuery ));
 
-$("#saveMetadata").click(function (e) {
+$("#saveMetadata").on("click", function (e) {
     e.preventDefault();
     $("#timelineModalMsg").html("");
     $("#timelineModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
@@ -332,7 +332,7 @@ $('#propTimelineModal').find(':input').bind('keypress', function() {
     $("#timelineModalMsg").html("");
 });
 
-$("#refreshTakenDate").click(function (e) {
+$("#refreshTakenDate").on("click", function (e) {
     e.preventDefault();
 
     const originalTakenAtDate = $(".takenAtDetails").first().text();
@@ -347,46 +347,7 @@ $("#refreshTakenDate").click(function (e) {
     }
 });
 
-// $("#refreshTakenDate").click(function (e) {
-//     e.preventDefault();
-//
-//     const metadataId = $("#metadataId").val();
-//
-//     const json = {
-//         id: metadataId
-//     };
-//     const ajaxParams = {
-//         type: "post",
-//         url: "/timeline/sync/"+metadataId,
-//         data: JSON.stringify(json),
-//         contentType: 'application/json; charset=utf-8',
-//         retries: shashin.ajaxRetries
-//     }
-//
-//     $.ajax(ajaxParams)
-//         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing taken date")}).then(function (data) {
-//         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-//             let message = "Error";
-//             if (data["status"] === "success") {
-//                 message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-//                 if (data["year"] !== "" && data["month"] !== "" && data["day"] !== "" && data["time"] !== "") {
-//                     $("#yearTaken").val(data["year"]);
-//                     $("#monthTaken").val(data["month"]);
-//                     $("#dayTaken").val(data["day"]);
-//                     $("#timeTaken").val(data["time"]);
-//                 }
-//                 // window.top.location = window.top.location
-//             } else {
-//                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-//             }
-//             // $("#timelineModalMsg").html(message);
-//         }
-//     });
-//
-//     return false;
-// });
-
-$("#detailsTabLink").click(function (e) {
+$("#detailsTabLink").on("click", function (e) {
     e.preventDefault();
 
     const propTimelineModal = document.getElementById('propTimelineModal');
@@ -396,7 +357,7 @@ $("#detailsTabLink").click(function (e) {
     $("#saveMetadata").prop('disabled', true);
 });
 
-$("#mapTabLink").click(function (e) {
+$("#mapTabLink").on("click", function (e) {
     e.preventDefault();
 
     const propTimelineModal = document.getElementById('propTimelineModal');
@@ -412,7 +373,7 @@ $("#mapTabLink").click(function (e) {
     });
 });
 
-$("#generalTabLink").click(function (e) {
+$("#generalTabLink").on("click", function (e) {
     e.preventDefault();
 
     const propTimelineModal = document.getElementById('propTimelineModal');
@@ -421,7 +382,7 @@ $("#generalTabLink").click(function (e) {
     $("#saveMetadata").prop('disabled', false);
 });
 
-$("#isobject").click(function (e) {
+$("#isobject").on("click", function (e) {
     const metadataId = $("#metadataId").val();
 
     timelineModal.closeTagPeopleDropdown(metadataId);
@@ -430,14 +391,14 @@ $("#isobject").click(function (e) {
     }
 });
 
-$("#tagpeople").focus(function (e) {
+$("#tagpeople").on("focus", function (e) {
     e.preventDefault();
 
     const metadataId = $("#metadataId").val();
     timelineModal.closeTagPeopleDropdown(metadataId);
 });
 
-$('body').click(function(event) {
+$('body').on("click", function(event) {
     const metadataId = $("#metadataId").val();
 
     if (!$(event.target).closest("#albumdropdown"+metadataId).length && !$(event.target).closest("#albumsList").length && $("#albumdropdown"+metadataId).hasClass("show")) {

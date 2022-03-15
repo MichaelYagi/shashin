@@ -47,7 +47,7 @@
         tab.show();
     });
 
-    $("#mapTabLinkInfo").click(function (e) {
+    $("#mapTabLinkInfo").on("click", function (e) {
         e.preventDefault();
 
         const metadataId = $("#metadataId").val();

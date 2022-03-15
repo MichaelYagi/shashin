@@ -5,19 +5,19 @@
 <th:block th:if="${authority == 'ROLE_ADMIN'}">
     <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
         /*<![CDATA[*/
-        $("#share[[${album.id}]]").click(function(e) {
+        $("#share[[${album.id}]]").on("click", function(e) {
             e.preventDefault();
 
             $("#propsharealbums[[${album.id}]]").modal('show');
         });
 
-        $("#edit[[${album.id}]]").click(function(e) {
+        $("#edit[[${album.id}]]").on("click", function(e) {
             e.preventDefault();
 
             $("#propeditalbums[[${album.id}]]").modal('show');
         });
 
-        $("#trash[[${album.id}]]").click(function(e) {
+        $("#trash[[${album.id}]]").on("click", function(e) {
             e.preventDefault();
 
             $("#proptrashalbums[[${album.id}]]").modal('show');
@@ -26,7 +26,7 @@
 </th:block>
 
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-    $("#comment[[${album.id}]]").click(function(e) {
+    $("#comment[[${album.id}]]").on("click", function(e) {
         e.preventDefault();
 
         $("#propcommentalbums[[${album.id}]]").modal('show');

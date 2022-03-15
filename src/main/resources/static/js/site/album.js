@@ -163,7 +163,7 @@
                                 albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
                                 $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                                $("#infoModalEdit"+metadata.id).click(function(e) {
+                                $("#infoModalEdit"+metadata.id).on("click", function(e) {
                                     e.preventDefault();
                                     shashin.openInfoModal(metadata.id);
                                 });
@@ -219,7 +219,7 @@
             $.ajax(ajaxParams).fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating photo comment")});
         });
 
-        $("#favorite"+metadata.id).click(function (e) {
+        $("#favorite"+metadata.id).on("click", function (e) {
             e.preventDefault();
 
             const metadataId = metadata.id;
@@ -323,12 +323,12 @@
     }
 
     albumSettings.albumCommentsDeleteEditModalListener = function(commentId, metadata) {
-        $("#deletecomment" + commentId).click(function (e) {
+        $("#deletecomment" + commentId).on("click", function (e) {
             e.preventDefault();
             albumSettings.deleteComment(commentId, metadata);
         });
 
-        $("#editcomment" + commentId).click(function (e) {
+        $("#editcomment" + commentId).on("click", function (e) {
             e.preventDefault();
             albumSettings.editComment(commentId, metadata);
         });
@@ -338,7 +338,7 @@
         $("#updateCommentMetadata"+metadata.id).hide();
         $("#cancelEditCommentMetadata"+metadata.id).hide();
 
-        $("#cancelEditCommentMetadata"+metadata.id).click(function (e) {
+        $("#cancelEditCommentMetadata"+metadata.id).on("click", function (e) {
             e.preventDefault();
 
             const currentCommentId = $("#currentCommentId" + metadata.id).val();
@@ -357,7 +357,7 @@
             }
         });
 
-        $("#updateCommentMetadata"+metadata.id).click(function (e) {
+        $("#updateCommentMetadata"+metadata.id).on("click", function (e) {
             e.preventDefault();
 
             const currentCommentId = $("#currentCommentId" + metadata.id).val();
@@ -415,7 +415,7 @@
             }
         });
 
-        $("#saveCommentMetadata"+metadata.id).click(function(e) {
+        $("#saveCommentMetadata"+metadata.id).on("click", function(e) {
             e.preventDefault();
 
             let comment = $.trim($("#commentText"+metadata.id).val());
@@ -449,12 +449,12 @@
                         $("#commentText"+metadata.id).val("")
                         $("#commentList"+metadata.id).prepend(commentItem);
 
-                        $("#deletecomment" + commentId).click(function (e) {
+                        $("#deletecomment" + commentId).on("click", function (e) {
                             e.preventDefault();
                             albumSettings.deleteComment(commentId, metadata);
                         });
 
-                        $("#editcomment" + commentId).click(function (e) {
+                        $("#editcomment" + commentId).on("click", function (e) {
                             e.preventDefault();
                             albumSettings.editComment(commentId, metadata);
                         });

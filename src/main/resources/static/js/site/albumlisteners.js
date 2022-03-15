@@ -12,8 +12,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#saveAlbumModal').click(function (e) {
-        // $('#saveAlbum'+metadata.id).click(function (e) {
+    $('#saveAlbumModal').on("click", function (e) {
         e.preventDefault();
         $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
         $("#albumsModalStatus").css("visibility","visible");

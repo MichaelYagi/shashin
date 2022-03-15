@@ -996,7 +996,7 @@
             $("#tnbl" + metadata.id).hide();
         }
 
-        $("#select" + metadata.id).click(function (e) {
+        $("#select" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
             if ($("#tlicon" + metadata.id).attr("class") === "bi-circle") {
@@ -1065,7 +1065,7 @@
             $("#albumNumberSelected").text($('.bi-circle-fill').length+" Selected");
         });
 
-        $("#image" + metadata.id).click(function (e) {
+        $("#image" + metadata.id).on("click", function (e) {
             e.preventDefault();
 
             // Fill top left icon when clicking anywhere on thumbnail
@@ -1444,7 +1444,7 @@
     }
 
     shashin.matchingListeners = function () {
-        $("#matchToolsDeselectAll").click(function(e) {
+        $("#matchToolsDeselectAll").on("click", function(e) {
             e.preventDefault();
 
             $(".thumbnail-centered").hide();
@@ -1464,7 +1464,7 @@
 
         $("#matchesAppTools").hide();
 
-        $("#matchToolsBatchEdit").click(function(e) {
+        $("#matchToolsBatchEdit").on("click", function(e) {
             e.preventDefault();
 
             let metadataIdList = [];
