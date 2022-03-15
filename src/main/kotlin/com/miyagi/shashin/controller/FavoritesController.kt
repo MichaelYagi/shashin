@@ -10,10 +10,11 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.CacheEvict
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.web.util.TextEscapeUtils
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -107,10 +108,11 @@ class FavoritesController {
 
     @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {
-            val metadataId = TextEscapeUtils.escapeEntities(favoritesMap["metadataId"].toString())
+            val metadataId = StringEscapeUtils.escapeHtml4(favoritesMap["metadataId"].toString())
             val isFavorite = favoritesMap["isFavorite"].toString().toBoolean()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -173,10 +175,11 @@ class FavoritesController {
     @RequestMapping(value = ["/favorite/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     fun postDeleteFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {
-            val metadataId = TextEscapeUtils.escapeEntities(favoritesMap["metadataId"].toString())
+            val metadataId = StringEscapeUtils.escapeHtml4(favoritesMap["metadataId"].toString())
             val isFavorite = favoritesMap["isFavorite"].toString().toBoolean()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -217,6 +220,7 @@ class FavoritesController {
     @RequestMapping(value = ["/favorites/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     fun postDeleteFavorites(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataIdList")) {
@@ -225,7 +229,7 @@ class FavoritesController {
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
                 for (metadataId in metadataIdList) {
-                    favoriteRepository.deleteByMetadataIdAndUserId(TextEscapeUtils.escapeEntities(metadataId), currentUserObj.getId())
+                    favoriteRepository.deleteByMetadataIdAndUserId(StringEscapeUtils.escapeHtml4(metadataId), currentUserObj.getId())
                 }
 
                 resp["msg"] = "Removed from favorites"
