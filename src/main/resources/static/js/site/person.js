@@ -91,7 +91,7 @@ class Person {
                                 shashin.setPhotoOverlays(metadata, activePage);
                                 personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
                                 $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                                $("#infoModalEdit" + metadata.id).click(function (e) {
+                                $("#infoModalEdit" + metadata.id).on("click", function (e) {
                                     e.preventDefault();
                                     shashin.openInfoModal(metadata.id);
                                 });

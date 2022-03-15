@@ -12,7 +12,7 @@
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">
-    $(document).click(function(event) {
+    $(document).on("click", function(event) {
         const $target = $(event.target);
         if (!$target.closest('#propInfoSidebar').length &&
             !$target.closest('.bi-info-circle.lg-icon').length &&

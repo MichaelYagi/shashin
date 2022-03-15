@@ -51,7 +51,7 @@
             $("#darkmodeSwitch").prop('checked', true);
         }
 
-        $('#darkmodeSwitch').click(function() {
+        $('#darkmodeSwitch').on("click", function() {
             if($("#darkmodeSwitch").is(':checked')) {
                 window.location.href = window.location.pathname+"?"+$.param({'m':'dark'})
             } else {

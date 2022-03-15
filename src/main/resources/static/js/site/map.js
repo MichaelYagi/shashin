@@ -411,18 +411,18 @@ async function showMap(mapdata,keywordMap,showControls) {
         tab.show();
     });
 
-    $("#detailsTabLink").click(function (e) {
+    $("#detailsTabLink").on("click", function (e) {
         e.preventDefault();
         $("#locationMapResponseMsg").html("");
         $("#saveMetadata").prop('disabled', true);
     });
 
-    $("#locationTabLink").click(function (e) {
+    $("#locationTabLink").on("click", function (e) {
         e.preventDefault();
         $("#saveMetadata").prop('disabled', false);
     });
 
-    $("#saveMetadata").click(function (e) {
+    $("#saveMetadata").on("click", function (e) {
         e.preventDefault();
 
         $("#metadataLocationModalStatus").css("visibility", "visible");

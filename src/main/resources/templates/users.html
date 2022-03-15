@@ -73,22 +73,22 @@
 
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
-                                $("#trash[[${user.id}]]").click(function(e) {
+                                $("#trash[[${user.id}]]").on("click", function(e) {
                                     e.preventDefault();
 
                                     $("#proptrashuser[[${user.id}]]").modal('show');
                                 });
-                                $("#resetPassword[[${user.id}]]").click(function(e) {
+                                $("#resetPassword[[${user.id}]]").on("click", function(e) {
                                     e.preventDefault();
 
                                     $("#propresetpassworduser[[${user.id}]]").modal('show');
                                 });
-                                $("#permissiontoggle[[${user.id}]]").click(function(e) {
+                                $("#permissiontoggle[[${user.id}]]").on("click", function(e) {
                                     e.preventDefault();
 
                                     $("#proproleuser[[${user.id}]]").modal('show');
                                 });
-                                $("#isallowed[[${user.id}]]").click(function(e) {
+                                $("#isallowed[[${user.id}]]").on("click", function(e) {
                                     e.preventDefault();
 
                                     $("#propisalloweduser[[${user.id}]]").modal('show');

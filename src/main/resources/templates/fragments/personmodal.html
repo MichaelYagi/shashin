@@ -91,14 +91,14 @@
                     }
                 }( window.personModalBatchSettings = window.personModalBatchSettings || {}, jQuery ));
 
-                $("#batchisobject").click(function (e) {
+                $("#batchisobject").on("click", function (e) {
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
                     if($(this).prop("checked") === true) {
                         $("#tagBatchDataInput").val("");
                     }
                 });
 
-                $("#saveBatchMetadata").click(function (e) {
+                $("#saveBatchMetadata").on("click", function (e) {
                     e.preventDefault();
 
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
@@ -269,7 +269,7 @@
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
             });
 
-            $("#isobject"+metadata.id).click(function (e) {
+            $("#isobject"+metadata.id).on("click", function (e) {
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
 
                 if($(this).prop("checked") === true) {
@@ -277,7 +277,7 @@
                 }
             });
 
-            $("#saveMetadata"+metadata.id).click(function (e) {
+            $("#saveMetadata"+metadata.id).on("click", function (e) {
                 e.preventDefault();
 
                 personModalSettings.closeTagPeopleDropdown(metadata.id);

@@ -103,7 +103,7 @@
             </div>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#deleteAllContent").click(function(e) {
+                $("#deleteAllContent").on("click", function(e) {
                     e.preventDefault();
 
                     $("#deleteContentModalStatus").css("visibility","visible");
@@ -143,7 +143,7 @@
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
 
-    $("#deleteContent").click(function(e) {
+    $("#deleteContent").on("click", function(e) {
         e.preventDefault();
         $("#propDeleteContent").modal('show');
     });

@@ -1,4 +1,4 @@
-$("#appToolsBatchEdit").click(function(e) {
+$("#appToolsBatchEdit").on("click", function(e) {
     e.preventDefault();
 
     let thumbnailList = "";
@@ -26,19 +26,19 @@ $("#appToolsBatchEdit").click(function(e) {
     $("#propBatchMetadata").modal('show');
 });
 
-$("#appToolsDeselectAll").click(function(e) {
+$("#appToolsDeselectAll").on("click", function(e) {
     e.preventDefault();
 
     shashin.clearTimelineSelection();
 });
 
-$("#albumAppToolsDeselectAll").click(function(e) {
+$("#albumAppToolsDeselectAll").on("click", function(e) {
     e.preventDefault();
 
     shashin.clearTimelineSelection();
 });
 
-$("#appToolsAddAlbum").click(function(e) {
+$("#appToolsAddAlbum").on("click", function(e) {
     e.preventDefault();
 
     let thumbnailList = "";
@@ -57,7 +57,7 @@ $("#appToolsAddAlbum").click(function(e) {
     $("#propAddAlbum").modal('show');
 });
 
-$("#albumAppToolsRemoveAlbum").click(function(e) {
+$("#albumAppToolsRemoveAlbum").on("click", function(e) {
     e.preventDefault();
 
     let metadataIdList = [];
@@ -96,7 +96,7 @@ $("#albumAppToolsRemoveAlbum").click(function(e) {
     }
 });
 
-$("#albumAppToolsRemoveFavorites").click(function(e) {
+$("#albumAppToolsRemoveFavorites").on("click", function(e) {
     e.preventDefault();
 
     let metadataIdList = [];
@@ -132,7 +132,7 @@ $("#albumAppToolsRemoveFavorites").click(function(e) {
     return false;
 });
 
-$("#albumAppToolsRestore").click(function(e) {
+$("#albumAppToolsRestore").on("click", function(e) {
     e.preventDefault();
 
     let metadataIdList = [];
@@ -174,7 +174,7 @@ if (window.location.href.indexOf("/timeline/video") > -1) {
     $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video-fill").addClass("bi-camera-video");
 }
 
-$("#timelineMediaTypeToggle").click(function(e) {
+$("#timelineMediaTypeToggle").on("click", function(e) {
     e.preventDefault();
 
     if (window.location.href.indexOf("/timeline/video") > -1) {

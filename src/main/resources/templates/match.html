@@ -29,7 +29,7 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         /*]]>*/
 
-        $("#matchAction").click(function(e) {
+        $("#matchAction").on("click", function(e) {
             e.preventDefault();
 
             let posting = $.post(
@@ -46,7 +46,7 @@
             });
         });
 
-        $("#cancelThread").click(function(e) {
+        $("#cancelThread").on("click", function(e) {
             e.preventDefault();
 
             let posting = $.post(

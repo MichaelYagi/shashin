@@ -91,7 +91,7 @@ class Search {
                         shashin.setPhotoOverlays(metadata, activePage);
                         Util.activateMetadataListeners(metadata);
                         $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                        $("#infoModalEdit"+metadata.id).click(function(e) {
+                        $("#infoModalEdit"+metadata.id).on("click", function(e) {
                             e.preventDefault();
                             shashin.openInfoModal(metadata.id);
                         });

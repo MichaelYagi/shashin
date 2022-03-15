@@ -42,7 +42,7 @@
 
 }( window.timelineBatchModal = window.timelineBatchModal || {}, jQuery ));
 
-$("#saveBatchMetadata").click(function (e) {
+$("#saveBatchMetadata").on("click", function (e) {
     e.preventDefault();
 
     $("#timelineBatchModalCancel").prop("disabled", true);
@@ -311,7 +311,7 @@ $('#propAddAlbum').bind('keypress', function() {
     $("#albumResponseMsg").html("");
 });
 
-$("#batchisobject").click(function (e) {
+$("#batchisobject").on("click", function (e) {
     timelineBatchModal.closeBatchTagPeopleDropdown();
     if($(this).prop("checked") === true) {
         $("#tagBatchDataInput").val("");
@@ -348,7 +348,7 @@ $('#propBatchMetadata').bind('keypress', function() {
     $("#msgBatchMetadata").html("");
 });
 
-$('body').click(function(event) {
+$('body').on("click", function(event) {
     if (!$(event.target).closest("#tagalbumdropdown").length && !$(event.target).closest("#albumNameList").length && $("#tagalbumdropdown").hasClass("show")) {
         timelineBatchModal.toggleBatchTagAlbumDropdown();
     }

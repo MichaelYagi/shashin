@@ -1215,7 +1215,7 @@
                                         if ($("#timelineModalEdit" + metadata.id).length === 0) {
                                             $("#tnbl" + metadata.id).append(html);
                                             $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
-                                            $("#timelineModalEdit" + metadata.id).click(function (e) {
+                                            $("#timelineModalEdit" + metadata.id).on("click", function (e) {
                                                 e.preventDefault();
                                                 shashin.openEditMetadataModal(metadata.id, timelineSettings)
                                             });
@@ -1497,7 +1497,7 @@
     timelineSettings.activateMetadataListeners = function(metadata) {
         Util.activateMetadataListeners(metadata);
 
-        $("#favorite"+metadata.id).click(function (e) {
+        $("#favorite"+metadata.id).on("click", function (e) {
             e.preventDefault();
 
             const metadataId = metadata.id;
@@ -1540,7 +1540,7 @@
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));
 
 // Hack to close TOC canvas
-$(document).click(function(event) {
+$(document).on("click", function(event) {
     const $target = $(event.target);
     if (!$target.closest('#offcanvasToc').length &&
         !$target.closest('#timelineTocToggle').length &&

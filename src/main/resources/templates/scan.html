@@ -32,12 +32,12 @@
 
         connect();
 
-        $("#scanPhotos").click(function (e) {
+        $("#scanPhotos").on("click", function (e) {
             e.preventDefault();
             postToScan(false);
         });
 
-        $("#deleteThread").click(function (e) {
+        $("#deleteThread").on("click", function (e) {
             e.preventDefault();
             let posting = $.post(
                 "/settings/scan",
@@ -51,7 +51,7 @@
             });
         });
 
-        $("#cancelScan").click(function (e) {
+        $("#cancelScan").on("click", function (e) {
             e.preventDefault();
             let posting = $.post(
                 "/settings/scan",

@@ -43,7 +43,7 @@
     const listItems = $('.list-group-item');
     let lastSelected = null;
 
-    listItems.click(function(e) {
+    listItems.on("click", function(e) {
         if (e.shiftKey) {
             if (!lastSelected) {
                 lastSelected = this;
