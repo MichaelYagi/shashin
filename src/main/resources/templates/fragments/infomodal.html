@@ -40,7 +40,7 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:nonce="${cspNonce}">
     // Clear message on modal close
     $('#propInfoModal').on('hide.bs.modal', function () {
         const tab = new bootstrap.Tab($("#detailsTabLinkInfo"));

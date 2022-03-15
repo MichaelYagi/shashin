@@ -39,7 +39,11 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:nonce="${cspNonce}">
+    /*<![CDATA[*/
+    shashin.nonce = /*[[${cspNonce}]]*/ '';
+    /*]]>*/
+
     $("#container").scroll(function () {
         //set scroll position in session storage
         sessionStorage.scrollPos = $("#container").scrollTop();

@@ -468,7 +468,7 @@ class AlbumsController {
     fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
         val shareAlbum = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (shareAlbum.containsKey("albumId") && shareAlbum.containsKey("userShareMap")) {
-            val userMapObj = mapper.readTree(StringEscapeUtils.escapeHtml4(shareAlbum["userShareMap"].toString()))
+            val userMapObj = mapper.readTree(shareAlbum["userShareMap"].toString())
             val userMap = mapper.convertValue(userMapObj, object : TypeReference<Map<String, Boolean>>() {})
             val shareAlbumId = shareAlbum["albumId"].toString().toInt()
             val userAlbumList = mutableListOf<UserAlbum>()

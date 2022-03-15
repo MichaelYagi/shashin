@@ -1217,7 +1217,7 @@
                                             $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                             $("#timelineModalEdit" + metadata.id).click(function (e) {
                                                 e.preventDefault();
-                                                shashin.openEditMetadataModal(metadata.id)
+                                                shashin.openEditMetadataModal(metadata.id, timelineSettings)
                                             });
                                         }
 

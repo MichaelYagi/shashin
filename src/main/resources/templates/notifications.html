@@ -27,7 +27,11 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:nonce="${cspNonce}">
+    /*<![CDATA[*/
+    shashin.nonce = /*[[${cspNonce}]]*/ '';
+    /*]]>*/
+
     const promise = $.ajax({
         type: 'get',
         url: "/notifications/markread/favorites",

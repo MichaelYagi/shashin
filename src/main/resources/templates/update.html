@@ -39,7 +39,11 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:nonce="${cspNonce}">
+    /*<![CDATA[*/
+    shashin.nonce = /*[[${cspNonce}]]*/ '';
+    /*]]>*/
+
     $(document).ready(function(){
         $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip()

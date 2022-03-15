@@ -134,7 +134,7 @@ $("#saveBatchMetadata").click(function (e) {
                         let batchHtml =
                             '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
                             '<div class="input-group-append dropdown">\n' +
-                            '   <button class="btn btn-outline-secondary dropdown-toggle" onClick="return timelineBatchModal.toggleBatchTagAlbumDropdown();" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                            '   <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                             '   <div class="dropdown-menu" id="albumNameList">\n';
 
                         for (let index in albumList) {
@@ -146,7 +146,7 @@ $("#saveBatchMetadata").click(function (e) {
 
                             batchHtml +=
                                 '<button class="dropdown-item" type="button">\n' +
-                                '    <input type="checkbox" onclick="return timelineBatchModal.populateBatchAlbum();" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                                '    <input type="checkbox" class="album" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
                                 '    <label for="'+album.id+'">'+album.name+'</label>\n' +
                                 '</button>\n';
                         }
@@ -157,6 +157,13 @@ $("#saveBatchMetadata").click(function (e) {
 
                         if (true === renderAlbumList) {
                             $("#albumListForModal").html(batchHtml);
+                            $(".album").on("click", function (e) {
+                                timelineBatchModal.populateBatchAlbum();
+                            });
+                            $(".tagalbumdropdown").on("click", function (e) {
+                                e.preventDefault();
+                                timelineBatchModal.toggleBatchTagAlbumDropdown();
+                            });
                         }
                     }
 
@@ -165,9 +172,9 @@ $("#saveBatchMetadata").click(function (e) {
                         const recognitionLabels = data["recognitionLabels"];
 
                         let batchHtml =
-                            '       <input type="text" class="form-control" onfocus="return timelineBatchModal.closeBatchTagPeopleDropdown();" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
+                            '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
                             '       <div class="input-group-append">\n' +
-                            '           <button class="btn btn-outline-secondary dropdown-toggle" onclick="return timelineBatchModal.toggleBatchTagPeopleDropdown();" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                            '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                             '           <div class="dropdown-menu" id="peopleNameList">';
 
                         for (let index in recognitionLabels) {
@@ -179,7 +186,7 @@ $("#saveBatchMetadata").click(function (e) {
 
                             batchHtml +=
                                 '           <button class="dropdown-item" type="button">\n' +
-                                '               <input type="checkbox" onclick="return timelineBatchModal.populateBatchLabel();" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
+                                '               <input type="checkbox" class="recognitionLabel" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
                                 '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
                                 '           </button>'
                         }
@@ -189,6 +196,17 @@ $("#saveBatchMetadata").click(function (e) {
 
                         if (true === renderRecognitionLabels) {
                             $("#batchLabelIds").html(batchHtml);
+                            $(".recognitionLabel").on("click", function (e) {
+                                timelineBatchModal.populateBatchLabel();
+                            });
+                            $(".tagpeopledropdown").on("click", function (e) {
+                                e.preventDefault();
+                                timelineBatchModal.toggleBatchTagPeopleDropdown();
+                            });
+                            $("#tagBatchDataInput").on("focus", function (e) {
+                                e.preventDefault();
+                                timelineBatchModal.closeBatchTagPeopleDropdown();
+                            });
                         }
                     }
 

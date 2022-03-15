@@ -71,7 +71,7 @@
                                 </td>
                             </tr>
 
-                            <script th:inline="javascript" type="text/javascript">
+                            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
                                 $("#trash[[${user.id}]]").click(function(e) {
                                     e.preventDefault();
@@ -107,7 +107,11 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:nonce="${cspNonce}">
+    /*<![CDATA[*/
+    shashin.nonce = /*[[${cspNonce}]]*/ '';
+    /*]]>*/
+
     const promise = $.ajax({
         type: 'get',
         url: "/notifications/markread/users",

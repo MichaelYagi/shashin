@@ -1,5 +1,11 @@
 class Util {
 
+    static genericFunction(path) {
+        return [window].concat(path.split('.')).reduce(function(prev, curr) {
+            return prev[curr];
+        });
+    }
+
     static escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")

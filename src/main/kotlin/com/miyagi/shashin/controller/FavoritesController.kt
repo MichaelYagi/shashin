@@ -107,8 +107,8 @@ class FavoritesController {
     }
 
     @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], produces = ["application/json"])
-    @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @ResponseBody
     fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {

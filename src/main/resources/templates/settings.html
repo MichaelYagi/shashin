@@ -101,7 +101,7 @@
                 <button type="button" class="btn btn-primary" id="deleteAllContent">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script th:inline="javascript" type="text/javascript">
+            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
                 $("#deleteAllContent").click(function(e) {
                     e.preventDefault();
@@ -138,7 +138,11 @@
     </div>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" th:nonce="${cspNonce}">
+    /*<![CDATA[*/
+    shashin.nonce = /*[[${cspNonce}]]*/ '';
+    /*]]>*/
+
     $("#deleteContent").click(function(e) {
         e.preventDefault();
         $("#propDeleteContent").modal('show');

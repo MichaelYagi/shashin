@@ -44,7 +44,7 @@
         </div>
     </form>
 
-    <script type="text/javascript">
+    <script type="text/javascript" th:nonce="${cspNonce}">
         const mode = Util.getParameterByName("m");
 
         if (mode === "dark") {
