@@ -9,6 +9,7 @@ import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.timeOffsets
 import net.iakovlev.timeshape.TimeZoneEngine
+import org.apache.commons.lang3.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
@@ -16,7 +17,6 @@ import org.springframework.cache.annotation.Cacheable
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.web.util.TextEscapeUtils
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -358,13 +358,11 @@ class TimelineController {
                         val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
                         if (favoriteCounts.count() > 0) {
                             for (favoriteCount in favoriteCounts) {
-                                favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
-                                    "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
-                                    "count" to favoriteCount.getCount() as Any
-                                )
-
                                 if ((favoriteCount.getUserId() == currentUserObj?.getId())) {
-                                    break
+                                    favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
+                                        "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
+                                        "count" to favoriteCount.getCount() as Any
+                                    )
                                 }
                             }
                         }
@@ -488,7 +486,7 @@ class TimelineController {
 
                 for (albumNameRaw in albumsArray) {
                     if (albumNameRaw.trim().isNotBlank()) {
-                        val albumName = TextEscapeUtils.escapeEntities(albumNameRaw).trim().replace(" +".toRegex(), " ")
+                        val albumName = StringEscapeUtils.escapeHtml4(albumNameRaw).trim().replace(" +".toRegex(), " ")
                         var albumObj = albumRepository.findAlbumByNameIgnoreCase(albumName)
                         var albumId: Int
 
@@ -594,7 +592,7 @@ class TimelineController {
             val isObject = metadataMap["isObject"].toString().toBoolean()
 
             if (metadataMap["tagpeople"].toString().trim() != "") {
-                val recognitionLabelArray = TextEscapeUtils.escapeEntities(metadataMap["tagpeople"].toString()).split(",")
+                val recognitionLabelArray = StringEscapeUtils.escapeHtml4(metadataMap["tagpeople"].toString()).split(",")
                 if (recognitionLabelArray.count() > 0) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
@@ -650,15 +648,15 @@ class TimelineController {
             if (metadataMap["title"].toString().trim() == "") {
                 metadataObj.get().setTitle(metadataObj.get().getFileName())
             } else if (metadataObj.get().getTitle() != metadataMap["title"].toString().trim()) {
-                metadataObj.get().setTitle(TextEscapeUtils.escapeEntities(metadataMap["title"].toString()).trim())
+                metadataObj.get().setTitle(StringEscapeUtils.escapeHtml4(metadataMap["title"].toString()).trim())
             }
             if (metadataMap["description"].toString().trim() == "") {
                 metadataObj.get().setDescription(metadataObj.get().getDescription())
             } else if (metadataObj.get().getDescription() != metadataMap["description"].toString().trim()) {
-                metadataObj.get().setDescription(TextEscapeUtils.escapeEntities(metadataMap["description"].toString()).trim())
+                metadataObj.get().setDescription(StringEscapeUtils.escapeHtml4(metadataMap["description"].toString()).trim())
             }
             if (metadataMap["camera"].toString().trim() != "") {
-                var camera = TextEscapeUtils.escapeEntities(metadataMap["camera"].toString()).trim()
+                var camera = StringEscapeUtils.escapeHtml4(metadataMap["camera"].toString()).trim()
                 val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
                 for (cameraType in cameraTypes) {
                     if (camera.trim().lowercase() == cameraType.trim().lowercase()) {
@@ -676,32 +674,32 @@ class TimelineController {
             if (metadataMap["year"].toString() == "") {
                 metadataObj.get().setYear(null)
             } else if (metadataObj.get().getYear() != metadataMap["year"].toString().toInt()) {
-                metadataObj.get().setYear(TextEscapeUtils.escapeEntities(metadataMap["year"].toString()).toInt())
+                metadataObj.get().setYear(StringEscapeUtils.escapeHtml4(metadataMap["year"].toString()).toInt())
             }
             if (metadataMap["month"].toString() == "") {
                 metadataObj.get().setMonth(null)
             } else if (metadataObj.get().getMonth() != metadataMap["month"].toString().toInt()) {
-                metadataObj.get().setMonth(TextEscapeUtils.escapeEntities(metadataMap["month"].toString()).toInt())
+                metadataObj.get().setMonth(StringEscapeUtils.escapeHtml4(metadataMap["month"].toString()).toInt())
             }
             if (metadataMap["day"].toString() == "") {
                 metadataObj.get().setDay(null)
             } else if (metadataObj.get().getDay() != metadataMap["day"].toString().toInt()) {
-                metadataObj.get().setDay(TextEscapeUtils.escapeEntities(metadataMap["day"].toString()).toInt())
+                metadataObj.get().setDay(StringEscapeUtils.escapeHtml4(metadataMap["day"].toString()).toInt())
             }
             if (metadataMap["time"].toString() == "") {
                 metadataObj.get().setTime(null)
             } else if (metadataObj.get().getTime() != metadataMap["time"].toString()) {
-                metadataObj.get().setTime(TextEscapeUtils.escapeEntities(metadataMap["time"].toString()))
+                metadataObj.get().setTime(StringEscapeUtils.escapeHtml4(metadataMap["time"].toString()))
             }
             if (metadataMap["offset"].toString() == "") {
                 metadataObj.get().setTimeZone(null)
             } else if (metadataObj.get().getTimeZone() != metadataMap["offset"].toString()) {
-                metadataObj.get().setTimeZone(TextEscapeUtils.escapeEntities(metadataMap["offset"].toString()))
+                metadataObj.get().setTimeZone(StringEscapeUtils.escapeHtml4(metadataMap["offset"].toString()))
             }
 
             keywordPhotoRepository.deleteAllByMetadataId(metadataId)
             if (metadataMap["keywords"].toString().isNotBlank()) {
-                var keywords = TextEscapeUtils.escapeEntities(metadataMap["keywords"].toString()).trim()
+                var keywords = StringEscapeUtils.escapeHtml4(metadataMap["keywords"].toString()).trim()
                 if (keywords.last() == ',') {
                     keywords = keywords.dropLast(1)
                 }
@@ -741,7 +739,7 @@ class TimelineController {
                 metadataObj.get().setLat(null)
                 metadataObj.get().setLng(null)
             } else {
-                var latlng = TextEscapeUtils.escapeEntities(metadataMap["latlng"].toString())
+                var latlng = StringEscapeUtils.escapeHtml4(metadataMap["latlng"].toString())
                 latlng = latlng.replace("\\s".toRegex(), "")
                 val latlngArr = latlng.split(",")
                 val latlngRegex = "^[-+]?([1-8]?\\d(\\.\\d+)?|90(\\.0+)?)\\s*,\\s*[-+]?(180(\\.0+)?|((1[0-7]\\d)|([1-9]?\\d))(\\.\\d+)?)$".toRegex()
@@ -895,12 +893,12 @@ class TimelineController {
         val dayTaken: Int? = batchMetadataMap.dayTakenBatchData
         val monthTaken: Int? = batchMetadataMap.monthTakenBatchData
         val yearTaken: Int? = batchMetadataMap.yearTakenBatchData
-        var latlng: String? = TextEscapeUtils.escapeEntities(batchMetadataMap.latlngBatchData)
-        val offset: String? = TextEscapeUtils.escapeEntities(batchMetadataMap.offsetTakenBatchData)
-        var camera: String? = TextEscapeUtils.escapeEntities(batchMetadataMap.cameraBatchData)
-        var keywords: String? = TextEscapeUtils.escapeEntities(batchMetadataMap.keywordsBatchData)
-        val recognitionLabelNames: String? = TextEscapeUtils.escapeEntities(batchMetadataMap.tagBatchDataInput)
-        val albumNames: String? = TextEscapeUtils.escapeEntities(batchMetadataMap.albumNameInput)
+        var latlng: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.latlngBatchData)
+        val offset: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.offsetTakenBatchData)
+        var camera: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.cameraBatchData)
+        var keywords: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.keywordsBatchData)
+        val recognitionLabelNames: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.tagBatchDataInput)
+        val albumNames: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.albumNameInput)
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
 
@@ -926,7 +924,7 @@ class TimelineController {
                         if (albumObject != null) {
                             albumId = albumObject.getId()
                         } else {
-                            val firstAvailableMetadataId = TextEscapeUtils.escapeEntities(idArray[0])
+                            val firstAvailableMetadataId = StringEscapeUtils.escapeHtml4(idArray[0])
                             val metadataObj = metadataRepository.findById(firstAvailableMetadataId)
                             if (metadataObj.get().getThumbnailUrlCentered() != null) {
                                 albumObj.setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
@@ -1009,7 +1007,7 @@ class TimelineController {
             }
 
             for (idVal in idArray) {
-                val id = TextEscapeUtils.escapeEntities(idVal)
+                val id = StringEscapeUtils.escapeHtml4(idVal)
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
                 val metadata = metadataObj.get()
 
