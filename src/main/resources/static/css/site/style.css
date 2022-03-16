@@ -272,7 +272,7 @@ footer {
 }
 
 .overlayIcon {
-  font-size: 1rem;
+  font-size: 1em;
   color: midnightblue;
 }
 
@@ -284,7 +284,7 @@ footer {
 }
 
 .overlayCommentIcon {
-  font-size: 1rem;
+  font-size: 1em;
   color: midnightblue;
 }
 
@@ -295,7 +295,7 @@ footer {
 
 .overlayCommentIconBackground {
   background-color:white;
-  padding:3px 5px 0 5px;
+  padding:0 5px 0 5px;
   border-radius: 5px;
 }
 
