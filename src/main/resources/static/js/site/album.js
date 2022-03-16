@@ -255,6 +255,7 @@
             $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving album favorite")}).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
+                    Util.setMetadataLocalStorage();
                     $("#briconcount"+metadata.id).text(data["count"]);
                 }
             });
