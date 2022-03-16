@@ -1497,45 +1497,7 @@
     timelineSettings.activateMetadataListeners = function(metadata) {
         Util.activateMetadataListeners(metadata);
 
-        $("#favorite"+metadata.id).on("click", function (e) {
-            e.preventDefault();
-
-            const metadataId = metadata.id;
-
-            if ($("#bricon" + metadataId).hasClass("bi-suit-heart")) {
-                $("#bricon" + metadataId).removeClass("bi-suit-heart").addClass("bi-suit-heart-fill");
-            } else if ($("#bricon" + metadataId).hasClass("bi-suit-heart-fill")) {
-                $("#bricon" + metadataId).removeClass("bi-suit-heart-fill").addClass("bi-suit-heart");
-            }
-
-            const isFavorite = ($("#bricon" + metadataId).hasClass("bi-suit-heart-fill"));
-            let currentCount = parseInt($("#briconcount"+metadata.id).text());
-
-            const json = {metadataId: metadataId, isFavorite: isFavorite};
-
-            let posting;
-
-            if (isFavorite === true) {
-                posting = $.post({
-                    url: "/favorite/save",
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
-                });
-            } else {
-                posting = $.post({
-                    url: "/favorite/delete",
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
-                });
-            }
-
-            posting.done(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
-                    Util.setMetadataLocalStorage();
-                    $("#briconcount"+metadata.id).text(data["count"]);
-                }
-            });
-        });
+        shashin.updateFavorites("#favorite","#bricon","#briconcount",metadata.id);
     }
 
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));
