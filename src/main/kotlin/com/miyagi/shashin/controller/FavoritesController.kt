@@ -112,7 +112,7 @@ class FavoritesController {
     fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {
-            val metadataId = StringEscapeUtils.escapeHtml4(favoritesMap["metadataId"].toString())
+            val metadataId = favoritesMap["metadataId"].toString()
             val isFavorite = favoritesMap["isFavorite"].toString().toBoolean()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -179,7 +179,7 @@ class FavoritesController {
     fun postDeleteFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {
-            val metadataId = StringEscapeUtils.escapeHtml4(favoritesMap["metadataId"].toString())
+            val metadataId = favoritesMap["metadataId"].toString()
             val isFavorite = favoritesMap["isFavorite"].toString().toBoolean()
 
             val currentUserObj = model.getAttribute("currentUser") as User?

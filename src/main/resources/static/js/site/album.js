@@ -219,49 +219,7 @@
             $.ajax(ajaxParams).fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating photo comment")});
         });
 
-        $("#favorite"+metadata.id).on("click", function (e) {
-            e.preventDefault();
-
-            const metadataId = metadata.id;
-
-            if ($("#brfavoriteicon" + metadataId).hasClass("bi-suit-heart")) {
-                $("#brfavoriteicon" + metadataId).removeClass("bi-suit-heart").addClass("bi-suit-heart-fill");
-            } else if ($("#brfavoriteicon" + metadataId).hasClass("bi-suit-heart-fill")) {
-                $("#brfavoriteicon" + metadataId).removeClass("bi-suit-heart-fill").addClass("bi-suit-heart");
-            }
-
-            const isFavorite = ($("#brfavoriteicon" + metadataId).hasClass("bi-suit-heart-fill"));
-            const json = {metadataId: metadataId, isFavorite: isFavorite};
-            let ajaxParams = {}
-
-            if (isFavorite === true) {
-                ajaxParams = {
-                    type: "post",
-                    url: "/favorite/save",
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8',
-                    retries: shashin.ajaxRetries
-                };
-            } else {
-                ajaxParams = {
-                    type: "post",
-                    url: "/favorite/delete",
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8',
-                    retries: shashin.ajaxRetries
-                };
-            }
-
-            $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving album favorite")}).then(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
-                    Util.setMetadataLocalStorage();
-                    $("#briconcount"+metadata.id).text(data["count"]);
-                }
-            });
-
-            return false;
-        });
+        shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",metadata.id);
 
         // Clear message on modal close
         $('#propAlbumModal').on('hide.bs.modal', function () {

@@ -217,10 +217,6 @@ class TimelineController {
                             "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
                             "count" to favoriteCount.getCount() as Any
                         )
-
-                        if ((favoriteCount.getUserId() == currentUserObj?.getId())) {
-                            break
-                        }
                     }
                 }
 
@@ -358,12 +354,10 @@ class TimelineController {
                         val favoriteCounts = favoriteRepository.countByMetadataIdIn(metadataList.map { it.getId() }.toList())
                         if (favoriteCounts.count() > 0) {
                             for (favoriteCount in favoriteCounts) {
-                                if ((favoriteCount.getUserId() == currentUserObj?.getId())) {
-                                    favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
-                                        "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
-                                        "count" to favoriteCount.getCount() as Any
-                                    )
-                                }
+                                favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
+                                    "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
+                                    "count" to favoriteCount.getCount() as Any
+                                )
                             }
                         }
 

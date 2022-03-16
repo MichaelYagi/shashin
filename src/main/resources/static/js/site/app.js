@@ -19,6 +19,45 @@
         }
     }
 
+    shashin.updateFavorites = function(listenerPrefix, iconPrefix, countPrefix, metadataId) {
+        $(listenerPrefix+metadataId).on("click", function (e) {
+            e.preventDefault();
+
+            if ($(iconPrefix + metadataId).hasClass("bi-suit-heart")) {
+                $(iconPrefix + metadataId).removeClass("bi-suit-heart").addClass("bi-suit-heart-fill");
+            } else if ($(iconPrefix + metadataId).hasClass("bi-suit-heart-fill")) {
+                $(iconPrefix + metadataId).removeClass("bi-suit-heart-fill").addClass("bi-suit-heart");
+            }
+
+            const isFavorite = ($(iconPrefix + metadataId).hasClass("bi-suit-heart-fill"));
+
+            const json = {metadataId: metadataId, isFavorite: isFavorite};
+
+            let posting;
+
+            if (isFavorite === true) {
+                posting = $.post({
+                    url: "/favorite/save",
+                    data: JSON.stringify(json),
+                    contentType: 'application/json; charset=utf-8'
+                });
+            } else {
+                posting = $.post({
+                    url: "/favorite/delete",
+                    data: JSON.stringify(json),
+                    contentType: 'application/json; charset=utf-8'
+                });
+            }
+
+            posting.done(function (data) {
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
+                    Util.setMetadataLocalStorage();
+                    $(countPrefix + metadataId).text(data["count"]);
+                }
+            });
+        });
+    }
+
     shashin.modalStatusFailMessage = function() {
         return "Something went wrong. Please try again.";
     }
