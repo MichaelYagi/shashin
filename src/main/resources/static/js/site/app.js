@@ -462,12 +462,12 @@
     }
 
     shashin.checkRender = function (func, appendClass, list, renderConditionVar) {
-        const refreshIntervalId = window.setInterval(function () {
+        const refreshIntervalId = window.setInterval(async function () {
             if ($(appendClass).last().text() === "EOL" || list === '' || list === '[]') {
                 clearInterval(refreshIntervalId);
             } else if (renderConditionVar === false && (Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(appendClass).last().text() !== "EOL") {
                 clearInterval(refreshIntervalId);
-                func();
+                await func();
             } else if (renderConditionVar === false && !(Util.atEndOfPage($("main")[0]) || Util.atEndOfPage($("#container")[0])) && $(appendClass).last().text() !== "EOL") {
                 clearInterval(refreshIntervalId);
             }
@@ -477,8 +477,8 @@
     shashin.pageLoader = function(func, appendClass, list) {
         const refreshIntervalId = window.setInterval(function () {
             if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
-                setTimeout(() => {
-                    func();
+                setTimeout(async () => {
+                    await func();
                 }, 1000);
             } else {
                 clearInterval(refreshIntervalId);
@@ -488,16 +488,16 @@
                 clearInterval(refreshIntervalId);
             }
         }, 200);
-        $("#container").on('scroll', function() {
+        $("#container").on('scroll', async function () {
             shashin.showScrollToTop($("#container"));
             if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
-                func();
+                await func();
             }
         })
-        $("main").on('scroll', function() {
+        $("main").on('scroll', async function () {
             shashin.showScrollToTop($("main"));
             if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
-                func();
+                await func();
             }
         })
 
