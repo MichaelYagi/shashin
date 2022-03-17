@@ -474,16 +474,11 @@
         }, 200);
     }
 
-    shashin.pageLoader = function(func, appendClass, list, conditionOnNext, callback) {
+    shashin.pageLoader = function(func, appendClass, list) {
         const refreshIntervalId = window.setInterval(function () {
             if (!Util.hasScrollBar($("#container")) && !Util.hasScrollBar($("main"))) {
                 setTimeout(() => {
-                    if (conditionOnNext === true) {
-                        func();
-                        if (callback) {
-                            callback();
-                        }
-                    }
+                    func();
                 }, 1000);
             } else {
                 clearInterval(refreshIntervalId);
@@ -496,23 +491,13 @@
         $("#container").on('scroll', function() {
             shashin.showScrollToTop($("#container"));
             if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
-                if (conditionOnNext === true) {
-                    func();
-                    if (callback) {
-                        callback();
-                    }
-                }
+                func();
             }
         })
         $("main").on('scroll', function() {
             shashin.showScrollToTop($("main"));
             if (Util.atEndOfPage(this) && $(appendClass).last().text() !== "EOL") {
-                if (conditionOnNext === true) {
-                    func();
-                    if (callback) {
-                        callback();
-                    }
-                }
+                func();
             }
         })
 

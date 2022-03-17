@@ -12,7 +12,7 @@ class Recent {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList, true);
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList);
 
         shashin.mouseMoveListener();
 

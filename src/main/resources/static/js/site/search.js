@@ -13,7 +13,7 @@ class Search {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList,true);
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList);
 
         shashin.mouseMoveListener();
 

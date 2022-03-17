@@ -2,7 +2,6 @@ class ShareAlbum {
 
     constructor(shareLink, activePage, albumId, albumMetadataList) {
         this.shareLink = shareLink;
-        this.rendering = false;
         this.activePage = activePage;
         this.albumId = albumId;
         this.albumMetadataList = albumMetadataList;
@@ -10,7 +9,7 @@ class ShareAlbum {
     }
 
     init() {
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList, this.rendering === false);
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList);
 
         shashin.mouseMoveListener();
 
@@ -18,15 +17,13 @@ class ShareAlbum {
     }
 
     async loadNextPage() {
-        if (this.rendering === false) {
-            const currentPage = parseInt($("#currentPage").val());
-            const nextPage = currentPage + 1;
-            $("#currentPage").val(nextPage);
+        const currentPage = parseInt($("#currentPage").val());
+        const nextPage = currentPage + 1;
+        $("#currentPage").val(nextPage);
 
-            if (this.albumId > 0) {
-                const additionalMediaContentList = await this.updateAlbum(this.albumId, nextPage, this.activePage);
-                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-            }
+        if (this.albumId > 0) {
+            const additionalMediaContentList = await this.updateAlbum(this.albumId, nextPage, this.activePage);
+            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
         }
     }
 
@@ -36,7 +33,6 @@ class ShareAlbum {
 
     async updateAlbum(albumId, nextPage, activePage) {
         const self = this;
-        self.rendering = true;
         $("#spinner").css("display","block");
 
         const ajaxParams = {
@@ -83,26 +79,21 @@ class ShareAlbum {
                             mediaContentList.push(centeredObj.mediaContent);
 
                             html += '</div>\n<span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>\n';
-                            $(html).insertAfter($(".appendAlbumPhotos").last()).ready(function () {
-                                self.rendering = false;
-                            });
+                            $(html).insertAfter($(".appendAlbumPhotos").last());
 
                             // Call JS and modal
                             shashin.setPhotoOverlays(metadata, activePage);
                         }
                     } else {
                         $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                        self.rendering = false;
                     }
                 } else {
                     $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                    self.rendering = false;
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                self.rendering = false;
             }
 
             $("#spinner").css("display","none");

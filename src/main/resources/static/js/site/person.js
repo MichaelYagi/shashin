@@ -14,7 +14,7 @@ class Person {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList, true);
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList);
 
         shashin.matchingListeners();
         shashin.mouseMoveListener();
