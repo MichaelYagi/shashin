@@ -21,7 +21,7 @@ class FileUtils {
         }
 
         fun allowableImageFiles(): Array<String> {
-            return arrayOf("jpeg","jpg","png","bmp","gif","webm","webp","ico","tiff")
+            return arrayOf("jpeg","jpg","png","bmp","gif","webm","webp","ico")
         }
 
         fun allowableAudioFiles(): Array<String> {
