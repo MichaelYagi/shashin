@@ -13,7 +13,7 @@ class Folder {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList, true);
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList);
 
         shashin.mouseMoveListener();
 

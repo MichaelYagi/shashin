@@ -8,7 +8,7 @@ class Favorites {
     }
 
     init() {
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, true);
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
 
         shashin.mouseMoveListener();
 

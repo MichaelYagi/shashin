@@ -15,7 +15,7 @@
             }
         }
 
-        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", albumMetadataList, true);
+        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", albumMetadataList);
 
         shashin.mouseMoveListener();
 
