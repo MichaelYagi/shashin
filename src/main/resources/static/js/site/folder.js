@@ -24,13 +24,12 @@ class Folder {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
 
-        this.updateRecent(nextPage, this.folderName, this.activePage).then(function(additionalMediaContentList) {
-            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
-        }.bind(this));
+        const additionalMediaContentList = this.updateRecent(nextPage, this.folderName, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
         $("#currentPage").val(nextPage);
     }
 
-    updateRecent(nextPage,folderName,activePage) {
+    async updateRecent(nextPage,folderName,activePage) {
         $("#spinner").css("display","block");
 
         const ajaxParams = {

@@ -25,13 +25,12 @@ class Person {
     loadNextPage() {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
-        this.updatePerson(this.personId,nextPage,this.activePage).then(function(additionalMediaContentList) {
-            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
-        }.bind(this));
+        const additionalMediaContentList = this.updatePerson(this.personId,nextPage,this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
         $("#currentPage").val(nextPage);
     }
 
-    updatePerson(personId,nextPage,activePage) {
+    async updatePerson(personId,nextPage,activePage) {
         $("#spinner").css("display","block");
 
         const ajaxParams = {

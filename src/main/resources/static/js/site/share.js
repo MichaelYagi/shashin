@@ -25,9 +25,8 @@ class ShareAlbum {
             const nextPage = currentPage + 1;
 
             if (this.albumId > 0) {
-                this.updateAlbum(this.albumId, nextPage, this.activePage).then(function (additionalMediaContentList) {
-                    this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-                }.bind(this));
+                const additionalMediaContentList = this.updateAlbum(this.albumId, nextPage, this.activePage);
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
                 $("#currentPage").val(nextPage);
             }
         }
@@ -37,7 +36,7 @@ class ShareAlbum {
         return this.shareLink;
     }
 
-    updateAlbum(albumId, nextPage, activePage) {
+    async updateAlbum(albumId, nextPage, activePage) {
         const self = this;
         self.rendering = true;
         $("#spinner").css("display","block");

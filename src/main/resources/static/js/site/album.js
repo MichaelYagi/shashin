@@ -9,9 +9,8 @@
                 const currentPage = parseInt($("#currentPage").val());
                 const nextPage = currentPage + 1;
 
-                albumSettings.updateAlbum(albumId, nextPage, activePage).then(function (additionalMediaContentList) {
-                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
-                });
+                const additionalMediaContentList = albumSettings.updateAlbum(albumId, nextPage, activePage);
+                mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
 
                 $("#currentPage").val(nextPage);
             }
@@ -49,7 +48,7 @@
         });
     }
 
-    albumSettings.updateAlbum = function(albumId,nextPage,activePage) {
+    albumSettings.updateAlbum = async function(albumId,nextPage,activePage) {
         albumSettings.rendering = true;
         $("#spinner").css("display","block");
 

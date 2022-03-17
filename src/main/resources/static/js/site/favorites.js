@@ -21,13 +21,12 @@ class Favorites {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
 
-        this.updateFavorites(nextPage, this.activePage).then(function(additionalMediaContentList) {
-            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-        }.bind(this));
+        const additionalMediaContentList = this.updateFavorites(nextPage, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
         $("#currentPage").val(nextPage);
     }
 
-    updateFavorites(nextPage,activePage) {
+    async updateFavorites(nextPage,activePage) {
         this.rendering = true;
         $("#spinner").css("display","block");
 

@@ -25,13 +25,12 @@ class Recent {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
 
-        this.updateRecent(nextPage, this.activePage).then(function (additionalMediaContentList) {
-            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-        }.bind(this));
+        const additionalMediaContentList = this.updateRecent(nextPage, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
         $("#currentPage").val(nextPage);
     }
 
-    updateRecent(nextPage,activePage) {
+    async updateRecent(nextPage,activePage) {
         this.rendering = true;
         $("#spinner").css("display","block");
 
