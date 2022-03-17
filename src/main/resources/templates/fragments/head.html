@@ -127,37 +127,37 @@
         </th:block>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-            <script src="/js/site/util.min.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/site/app.min.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/site/min/util.min.js" th:nonce="${cspNonce}"></script>
+            <script src="/js/site/min/app.min.js" th:nonce="${cspNonce}"></script>
             <th:block th:if="${titleDescriptorLower == 'album'}">
-                <script src="/js/site/album.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/album.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'timeline'}">
-                <script src="/js/site/timeline.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/timeline.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'recent'}">
-                <script src="/js/site/recent.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/recent.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'folder'}">
-                <script src="/js/site/folder.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/folder.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'favorites'}">
-                <script src="/js/site/favorites.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/favorites.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'search'}">
-                <script src="/js/site/search.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/search.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'trash'}">
-                <script src="/js/site/trash.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/trash.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'share'}">
-                <script src="/js/site/share.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/share.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'person'}">
-                <script src="/js/site/person.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/person.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'albums'}">
-                <script src="/js/site/albumsmodallisteners.min.js" th:nonce="${cspNonce}"></script>
+                <script src="/js/site/min/albumsmodallisteners.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
         </th:block>
     </th:block>

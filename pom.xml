@@ -344,9 +344,14 @@
             </plugin>
             <!-- Minify js/css -->
             <plugin>
-                <groupId>com.samaxes.maven</groupId>
-                <artifactId>minify-maven-plugin</artifactId>
-                <version>1.7.6</version>
+                <groupId>com.github.blutorange</groupId>
+                <artifactId>closure-compiler-maven-plugin</artifactId>
+                <version>2.22.0</version>
+                <configuration>
+                    <!-- Base configuration for all executions (bundles) -->
+                    <baseSourceDir>${project.basedir}/src/main/resources/static/js</baseSourceDir>
+                    <baseTargetDir>${project.basedir}/src/main/resources/static/js/site</baseTargetDir>
+                </configuration>
                 <executions>
                     <execution>
                         <id>default-minify</id>
@@ -356,43 +361,16 @@
                         </goals>
                         <configuration>
 
-                            <webappSourceDir>${project.basedir}/src/main/resources/static</webappSourceDir>
-                            <webappTargetDir>${project.basedir}/src/main/resources/static</webappTargetDir>
-
-                            <cssSourceDir>css/site</cssSourceDir>
-                            <cssSourceFiles>
-                                <cssSourceFile>style.css</cssSourceFile>
-                            </cssSourceFiles>
-
-                            <jsSourceDir>js/site</jsSourceDir>
-                            <jsSourceFiles>
-                                <jsSourceFile>app.js</jsSourceFile>
-                                <jsSourceFile>applisteners.js</jsSourceFile>
-                                <jsSourceFile>album.js</jsSourceFile>
-                                <jsSourceFile>albumsmodal.js</jsSourceFile>
-                                <jsSourceFile>albumsmodallisteners.js</jsSourceFile>
-                                <jsSourceFile>favorites.js</jsSourceFile>
-                                <jsSourceFile>map.js</jsSourceFile>
-                                <jsSourceFile>matchesmodal.js</jsSourceFile>
-                                <jsSourceFile>person.js</jsSourceFile>
-                                <jsSourceFile>search.js</jsSourceFile>
-                                <jsSourceFile>share.js</jsSourceFile>
-                                <jsSourceFile>timeline.js</jsSourceFile>
-                                <jsSourceFile>timelinebatchmodal.js</jsSourceFile>
-                                <jsSourceFile>timelinemodal.js</jsSourceFile>
-                                <jsSourceFile>trash.js</jsSourceFile>
-                                <jsSourceFile>util.js</jsSourceFile>
-                                <jsSourceFile>folder.js</jsSourceFile>
-                                <jsSourceFile>recent.js</jsSourceFile>
-                                <jsSourceFile>albumlisteners.js</jsSourceFile>
-                                <jsSourceFile>dashboard.js</jsSourceFile>
-                                <jsSourceFile>test.js</jsSourceFile>
-                            </jsSourceFiles>
-
-                            <cssEngine>YUI</cssEngine>
-                            <jsEngine>CLOSURE</jsEngine>
-                            <closureCompilationLevel>SIMPLE_OPTIMIZATIONS</closureCompilationLevel>
-
+                            <encoding>UTF-8</encoding>
+                            <sourceDir>site</sourceDir>
+                            <targetDir>min</targetDir>
+                            <includes>
+                                <include>**/*.js</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*.min.js</exclude>
+                            </excludes>
+                            <closureLanguageOut>ECMASCRIPT_2019</closureLanguageOut>
                             <skipMerge>true</skipMerge>
 
                         </configuration>

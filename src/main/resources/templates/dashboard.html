@@ -126,7 +126,7 @@
     <script src="/js/site/dashboard.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/dashboard.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/min/dashboard.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
     /*<![CDATA[*/
