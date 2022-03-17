@@ -4,21 +4,18 @@
     albumSettings.init = function(albumId, activePage, albumMetadataList) {
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
 
-        function loadNextPage() {
+        async function loadNextPage() {
             if (albumSettings.rendering === false) {
                 const currentPage = parseInt($("#currentPage").val());
                 const nextPage = currentPage + 1;
-
-                const additionalMediaContentList = albumSettings.updateAlbum(albumId, nextPage, activePage);
-                mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
-
                 $("#currentPage").val(nextPage);
+
+                const additionalMediaContentList = await albumSettings.updateAlbum(albumId, nextPage, activePage);
+                mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
             }
         }
 
-        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", albumMetadataList, albumId > 0 && albumSettings.rendering === false, function () {
-            shashin.checkRender(loadNextPage, ".appendAlbumPhotos", albumMetadataList, albumSettings.rendering);
-        });
+        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", albumMetadataList, true);
 
         shashin.mouseMoveListener();
 

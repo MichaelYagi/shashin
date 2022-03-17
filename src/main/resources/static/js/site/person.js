@@ -10,11 +10,11 @@ class Person {
     }
 
     init() {
-        $(function() {
+        $(function () {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList,true);
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList, true);
 
         shashin.matchingListeners();
         shashin.mouseMoveListener();
@@ -22,12 +22,13 @@ class Person {
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
-    loadNextPage() {
+    async loadNextPage() {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
-        const additionalMediaContentList = this.updatePerson(this.personId,nextPage,this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
         $("#currentPage").val(nextPage);
+
+        const additionalMediaContentList = await this.updatePerson(this.personId, nextPage, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
     }
 
     async updatePerson(personId,nextPage,activePage) {

@@ -8,26 +8,24 @@ class Recent {
     }
 
     init() {
-        $(function() {
+        $(function () {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList, true, function () {
-            shashin.checkRender(this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList, this.rendering);
-        }.bind(this));
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendRecentPhotos", this.metadataList, true);
 
         shashin.mouseMoveListener();
 
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
-    loadNextPage() {
+    async loadNextPage() {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
-
-        const additionalMediaContentList = this.updateRecent(nextPage, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
         $("#currentPage").val(nextPage);
+
+        const additionalMediaContentList = await this.updateRecent(nextPage, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
     }
 
     async updateRecent(nextPage,activePage) {

@@ -10,24 +10,22 @@ class ShareAlbum {
     }
 
     init() {
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList,this.rendering === false, function () {
-            shashin.checkRender(this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList, this.rendering);
-        }.bind(this));
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList, this.rendering === false);
 
         shashin.mouseMoveListener();
 
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
-    loadNextPage() {
+    async loadNextPage() {
         if (this.rendering === false) {
             const currentPage = parseInt($("#currentPage").val());
             const nextPage = currentPage + 1;
+            $("#currentPage").val(nextPage);
 
             if (this.albumId > 0) {
-                const additionalMediaContentList = this.updateAlbum(this.albumId, nextPage, this.activePage);
+                const additionalMediaContentList = await this.updateAlbum(this.albumId, nextPage, this.activePage);
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-                $("#currentPage").val(nextPage);
             }
         }
     }
