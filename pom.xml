@@ -377,6 +377,35 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>com.samaxes.maven</groupId>
+                <artifactId>minify-maven-plugin</artifactId>
+                <version>1.7.6</version>
+                <executions>
+                    <execution>
+                        <id>default-minify</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                        <configuration>
+
+                            <webappSourceDir>${project.basedir}/src/main/resources/static/css</webappSourceDir>
+                            <webappTargetDir>${project.basedir}/src/main/resources/static/css</webappTargetDir>
+
+                            <cssSourceDir>site</cssSourceDir>
+                            <cssSourceFiles>
+                                <cssSourceFile>style.css</cssSourceFile>
+                            </cssSourceFiles>
+
+                            <cssEngine>YUI</cssEngine>
+
+                            <skipMerge>true</skipMerge>
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Run mocha tests-->
             <plugin>
                 <groupId>com.github.eirslett</groupId>
