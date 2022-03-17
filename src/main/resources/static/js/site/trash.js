@@ -17,13 +17,12 @@ class Trash {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
 
-        this.updateTrash(nextPage, this.activePage).then(function(additionalMediaContentList) {
-            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-        }.bind(this));
+        const additionalMediaContentList = this.updateTrash(nextPage, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
         $("#currentPage").val(nextPage);
     }
 
-    updateTrash(nextPage, activePage) {
+    async updateTrash(nextPage, activePage) {
         $("#spinner").css("display","block");
 
         const ajaxParams = {

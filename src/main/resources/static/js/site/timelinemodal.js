@@ -233,32 +233,36 @@ $("#saveMetadata").on("click", function (e) {
                     // window.top.location = window.top.location
 
                     // Update tag
-                    shashin.getMetadata(metadataId).then(function (metadataObj) {
+                    const metadataObj = {};
+                    // shashin.getMetadata(metadataId).then(function (metadataObj) {
                         let dateGalleryRemoved = false;
-                        metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
-                        metadataObj.description = $("#description").val()
+                        // metadataObj.title = $("#title").val().trim() === "" ? $("#currentfilename").val() : $("#title").val().trim()
+                        // metadataObj.description = $("#description").val()
                         if (captionUpdated === true) {
                             $("#mediaLink" + metadataId).attr("data-sub-html", $("#description").val());
                         }
-                        metadataObj.year = $("#yearTaken").val()
-                        metadataObj.month = $("#monthTaken").val()
-                        metadataObj.day = $("#dayTaken").val()
-                        metadataObj.time = $("#timeTaken").val()
-                        metadataObj.timeZone = $("#offsetTaken").val()
-                        metadataObj.keywords = $("#keywords").val()
-                        metadataObj.camera = $("#camera").val()
+                        // metadataObj.year = $("#yearTaken").val()
+                        // metadataObj.month = $("#monthTaken").val()
+                        // metadataObj.day = $("#dayTaken").val()
+                        // metadataObj.time = $("#timeTaken").val()
+                        // metadataObj.timeZone = $("#offsetTaken").val()
+                        // metadataObj.keywords = $("#keywords").val()
+                        // metadataObj.camera = $("#camera").val()
                         const latlngArray = $("#latlng").val().split(",");
                         metadataObj.lat = $.trim(latlngArray[0])
                         metadataObj.lng = $.trim(latlngArray[1])
-                        if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
-                            $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
-                        }
-                        metadataObj.tagpeople = $("#tagpeople").val()
-                        metadataObj.albumlist = $("#albumnames").val()
+                        // if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
+                        //     $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
+                        // }
+                        // metadataObj.tagpeople = $("#tagpeople").val()
+                        // metadataObj.albumlist = $("#albumnames").val()
                         metadataObj.hidden = $("#hidden").prop("checked")
 
                         if (metadataObj.hidden === false) {
-                            Util.populateDetailsInfo(metadataObj, "propTimelineModal")
+                            //Util.populateDetailsInfo(metadataObj, "propTimelineModal")
+
+                            $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
+                            $("#mediaLink" + metadataId).attr("tag", metadataId);
 
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
                             if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
@@ -295,7 +299,7 @@ $("#saveMetadata").on("click", function (e) {
 
                         $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                         $("#timelineModalCancel").prop('disabled', false);
-                    });
+                    // });
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
@@ -355,6 +359,11 @@ $("#detailsTabLink").on("click", function (e) {
     modal.handleUpdate();
     $("#timelineModalMsg").html("");
     $("#saveMetadata").prop('disabled', true);
+
+    const metadataId = $("#metadataId").val();
+    shashin.getMetadata(metadataId).then(function (metadataObj) {
+        Util.populateDetailsInfo(metadataObj, "propTimelineModal");
+    });
 });
 
 $("#mapTabLink").on("click", function (e) {
@@ -367,9 +376,8 @@ $("#mapTabLink").on("click", function (e) {
     $("#saveMetadata").prop('disabled', true);
 
     const metadataId = $("#metadataId").val();
-
-    shashin.getMetadata(metadataId).then(function (data) {
-        shashin.openMap(data)
+    shashin.getMetadata(metadataId).then(function (metadataObj) {
+        shashin.openMap(metadataObj);
     });
 });
 

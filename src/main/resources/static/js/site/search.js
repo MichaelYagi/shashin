@@ -26,13 +26,12 @@ class Search {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
 
-        this.updateSearch(nextPage,this.searchTerm,this.activePage).then(function(additionalMediaContentList) {
-            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
-        }.bind(this));
+        const additionalMediaContentList = this.updateSearch(nextPage,this.searchTerm,this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
         $("#currentPage").val(nextPage);
     }
 
-    updateSearch(nextPage,searchTerm,activePage) {
+    async updateSearch(nextPage,searchTerm,activePage) {
         this.rendering = true;
         $("#spinner").css("display","block");
 

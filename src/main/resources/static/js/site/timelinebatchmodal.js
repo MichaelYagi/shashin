@@ -217,14 +217,15 @@ $("#saveBatchMetadata").on("click", function (e) {
                         if ($("#image" + metadataId).length > 0) {
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
-                            shashin.getMetadata(metadataId).then(function (metadataObj) {
-                                if ($("#cameraBatchData").val().trim() !== "") {
-                                    metadataObj.camera = $("#cameraBatchData").val()
-                                }
-
-                                if ($("#keywordsBatchData").val().trim() !== "") {
-                                    metadataObj.keywords = $("#keywordsBatchData").val()
-                                }
+                            const metadataObj = {};
+                            //shashin.getMetadata(metadataId).then(function (metadataObj) {
+                            //     if ($("#cameraBatchData").val().trim() !== "") {
+                            //         metadataObj.camera = $("#cameraBatchData").val()
+                            //     }
+                            //
+                            //     if ($("#keywordsBatchData").val().trim() !== "") {
+                            //         metadataObj.keywords = $("#keywordsBatchData").val()
+                            //     }
 
                                 if ($("#latlngBatchData").val().trim() !== "") {
                                     const latlngArray = $("#latlngBatchData").val().split(",");
@@ -234,18 +235,19 @@ $("#saveBatchMetadata").on("click", function (e) {
                                         $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
                                     }
                                 }
-                                if ($("#tagBatchDataInput").val().trim() !== "") {
-                                    metadataObj.tagpeople = $("#tagBatchDataInput").val()
-                                }
-                                if ($("#albumNameInput").val().trim() !== "") {
-                                    metadataObj.albumlist = $("#albumNameInput").val()
-                                }
+                                // if ($("#tagBatchDataInput").val().trim() !== "") {
+                                //     metadataObj.tagpeople = $("#tagBatchDataInput").val()
+                                // }
+                                // if ($("#albumNameInput").val().trim() !== "") {
+                                //     metadataObj.albumlist = $("#albumNameInput").val()
+                                // }
                                 metadataObj.hidden = $("#batchhidden").prop("checked")
 
                                 if (metadataObj.hidden === false) {
-                                    Util.populateDetailsInfo(metadataObj, "propTimelineModal")
-                                    $("#timelineModalEdit" + metadataId).attr("tag", metadataId)
-                                    $("#mediaLink" + metadataId).attr("tag", metadataId)
+                                    //Util.populateDetailsInfo(metadataObj, "propTimelineModal")
+
+                                    $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
+                                    $("#mediaLink" + metadataId).attr("tag", metadataId);
 
                                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
                                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
@@ -274,7 +276,7 @@ $("#saveBatchMetadata").on("click", function (e) {
                                         }
                                     }
                                 }
-                            });
+                            //});
                         }
                     }
 
