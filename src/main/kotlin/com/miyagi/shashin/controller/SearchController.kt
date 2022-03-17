@@ -8,7 +8,7 @@ import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.TextUtils
-import org.apache.commons.lang3.StringEscapeUtils
+import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
