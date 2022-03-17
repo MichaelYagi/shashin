@@ -790,7 +790,7 @@
             let prevTickEl = null;
             for (let i = 0; i < dateList.length; i++) {
                 const timelineDateObj = dateList[i];
-                const tickTopMargin = (i / dateList.length * 100)-0.5;
+                const tickTopMargin = (i / dateList.length * 100)-0.8;
 
                 if (timelineDateObj) {
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
