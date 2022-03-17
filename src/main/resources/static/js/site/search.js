@@ -8,27 +8,25 @@ class Search {
         this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
-    init() {
+    async init() {
         $(function() {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList,true, function () {
-            shashin.checkRender(this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList, this.rendering);
-        }.bind(this));
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList,true);
 
         shashin.mouseMoveListener();
 
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
-    loadNextPage() {
+    async loadNextPage() {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
-
-        const additionalMediaContentList = this.updateSearch(nextPage,this.searchTerm,this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
         $("#currentPage").val(nextPage);
+
+        const additionalMediaContentList = await this.updateSearch(nextPage,this.searchTerm,this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
     }
 
     async updateSearch(nextPage,searchTerm,activePage) {

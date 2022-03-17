@@ -13,13 +13,13 @@ class Trash {
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
-    loadNextPage() {
+    async loadNextPage() {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
-
-        const additionalMediaContentList = this.updateTrash(nextPage, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
         $("#currentPage").val(nextPage);
+
+        const additionalMediaContentList = await this.updateTrash(nextPage, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
     }
 
     async updateTrash(nextPage, activePage) {

@@ -9,7 +9,7 @@ class Folder {
     }
 
     init() {
-        $(function() {
+        $(function () {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
@@ -20,13 +20,13 @@ class Folder {
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
-    loadNextPage() {
+    async loadNextPage() {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
-
-        const additionalMediaContentList = this.updateRecent(nextPage, this.folderName, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
         $("#currentPage").val(nextPage);
+
+        const additionalMediaContentList = await this.updateRecent(nextPage, this.folderName, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
     }
 
     async updateRecent(nextPage,folderName,activePage) {

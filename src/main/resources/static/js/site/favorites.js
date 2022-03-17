@@ -8,22 +8,20 @@ class Favorites {
     }
 
     init() {
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, true, function () {
-            shashin.checkRender(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, this.rendering);
-        }.bind(this));
+        shashin.pageLoader(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList, true);
 
         shashin.mouseMoveListener();
 
         $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
-    loadNextPage() {
+    async loadNextPage() {
         const currentPage = parseInt($("#currentPage").val());
         const nextPage = currentPage + 1;
-
-        const additionalMediaContentList = this.updateFavorites(nextPage, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
         $("#currentPage").val(nextPage);
+
+        const additionalMediaContentList = await this.updateFavorites(nextPage, this.activePage);
+        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
     }
 
     async updateFavorites(nextPage,activePage) {
