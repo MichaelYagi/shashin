@@ -8,8 +8,8 @@ class ShareAlbum {
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
     }
 
-    init() {
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList);
+    async init() {
+        shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList);
 
         shashin.mouseMoveListener();
 

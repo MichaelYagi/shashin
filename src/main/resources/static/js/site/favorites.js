@@ -7,8 +7,8 @@ class Favorites {
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
-    init() {
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
+    async init() {
+        shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
 
         shashin.mouseMoveListener();
 

@@ -8,12 +8,12 @@ class Folder {
         this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
-    init() {
+    async init() {
         $(function () {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList);
+        shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList);
 
         shashin.mouseMoveListener();
 
