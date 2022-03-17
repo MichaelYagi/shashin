@@ -1,8 +1,12 @@
 (function( albumSettings, $, undefined ) {
     albumSettings.rendering = false;
 
-    albumSettings.init = function(albumId, activePage, albumMetadataList) {
-        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
+    albumSettings.init = async function (albumId, activePage, albumMetadataList) {
+        let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', {
+            dynamic: true,
+            plugins: [lgMetadataDetail],
+            metadataDetail: true
+        }, '.mediaLink');
 
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
@@ -15,7 +19,7 @@
             }
         }
 
-        shashin.pageLoader(loadNextPage, ".appendAlbumPhotos", albumMetadataList);
+        shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList);
 
         shashin.mouseMoveListener();
 

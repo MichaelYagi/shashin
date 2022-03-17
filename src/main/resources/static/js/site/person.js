@@ -9,12 +9,12 @@ class Person {
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
-    init() {
+    async init() {
         $(function () {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
-        shashin.pageLoader(this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList);
+        shashin.pageLoader(await this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList);
 
         shashin.matchingListeners();
         shashin.mouseMoveListener();
