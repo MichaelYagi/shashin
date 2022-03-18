@@ -64,3 +64,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 ### Fixed
+
+## [2.1.0] - 2022-03-18
+### Added
+
+- Added recently modified view and API
+
+### Changed
+
+### Fixed
