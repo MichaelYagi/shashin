@@ -1,6 +1,7 @@
 class Favorites {
 
     constructor(metadataList, activePage) {
+        this.page = 1;
         this.rendering = false;
         this.metadataList = metadataList;
         this.activePage = activePage;
@@ -16,12 +17,14 @@ class Favorites {
     }
 
     async loadNextPage() {
-        const currentPage = parseInt($("#currentPage").val());
-        const nextPage = currentPage + 1;
-        $("#currentPage").val(nextPage);
-
-        const additionalMediaContentList = await this.updateFavorites(nextPage, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        if (this.rendering === false) {
+            // console.log(this.page)
+            this.updateFavorites(this.page, this.activePage).then(function (additionalMediaContentList) {
+                // console.log(additionalMediaContentList)
+                this.page++;
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            }.bind(this));
+        }
     }
 
     async updateFavorites(nextPage,activePage) {
@@ -37,7 +40,7 @@ class Favorites {
         }
 
         // Get paged results
-        return $.ajax(ajaxParams)
+        return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating favorites")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -81,20 +84,23 @@ class Favorites {
                                 mediaContentList.push(centeredObj.mediaContent);
 
                                 $(html).insertBefore($(".appendMetadataPhotos").last()).ready(function () {
-                                    this.rendering = false;
-                                });
+                                    $("#spinner").css("display", "none");
 
-                                shashin.setPhotoOverlays(metadata, activePage);
+                                    shashin.setPhotoOverlays(metadata, activePage);
+                                    $("#mediaLink" + metadata.id).attr("tag", metadata.id);
+                                    $("#infoModalEdit" + metadata.id).on("click", function (e) {
+                                        e.preventDefault();
+                                        shashin.openInfoModal(metadata.id);
+                                    });
 
-                                $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                                $("#infoModalEdit" + metadata.id).on("click", function (e) {
-                                    e.preventDefault();
-                                    shashin.openInfoModal(metadata.id);
-                                });
+                                    $("#image" + metadata.id).on('load', function () {
+                                        $(this).css("background-color", "transparent");
+                                    });
 
-                                $("#image" + metadata.id).on('load', function () {
-                                    $(this).css("background-color", "transparent");
-                                });
+                                    if (parseInt(index) === parseInt(metadataList.length) - 1) {
+                                        this.rendering = false;
+                                    }
+                                }.bind(this));
 
                                 html = "";
                             }
@@ -116,6 +122,6 @@ class Favorites {
 
             $("#spinner").css("display","none");
             return mediaContentList;
-        });
+        }.bind(this));
     }
 }

@@ -1,5 +1,7 @@
 class Trash {
     constructor(activePage, metadataList) {
+        this.page = 1;
+        this.rendering = false;
         this.activePage = activePage;
         this.metadataList = metadataList;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
@@ -14,15 +16,18 @@ class Trash {
     }
 
     async loadNextPage() {
-        const currentPage = parseInt($("#currentPage").val());
-        const nextPage = currentPage + 1;
-        $("#currentPage").val(nextPage);
-
-        const additionalMediaContentList = await this.updateTrash(nextPage, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        if (this.rendering === false) {
+            // console.log(this.page)
+            this.updateTrash(this.page, this.activePage).then(function (additionalMediaContentList) {
+                // console.log(additionalMediaContentList)
+                this.page++;
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            }.bind(this));
+        }
     }
 
     async updateTrash(nextPage, activePage) {
+        this.rendering = true;
         $("#spinner").css("display","block");
 
         const ajaxParams = {
@@ -34,7 +39,7 @@ class Trash {
         }
 
         // Get paged results
-        const promise = $.ajax(ajaxParams)
+        return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating trash")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -69,42 +74,43 @@ class Trash {
 
                                 html += '</div>\n';
 
-                                $(html).insertBefore($(".appendMetadataPhotos").last())
+                                $(html).insertBefore($(".appendMetadataPhotos").last()).ready(function () {
+                                    shashin.setPhotoOverlays(metadata, activePage);
 
-                                shashin.setPhotoOverlays(metadata, activePage);
+                                    $("#mediaLink" + metadata.id).attr("tag", metadata.id);
+                                    $("#infoModalEdit"+metadata.id).on("click", function(e) {
+                                        e.preventDefault();
+                                        shashin.openInfoModal(metadata.id);
+                                    });
+                                    $("#image" + metadata.id).on('load', function () {
+                                        $(this).css("background-color", "transparent");
+                                    });
 
-                                $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                                $("#infoModalEdit"+metadata.id).on("click", function(e) {
-                                    e.preventDefault();
-                                    shashin.openInfoModal(metadata.id);
-                                });
-
-                                $("#image" + metadata.id).on('load', function () {
-                                    $(this).css("background-color", "transparent");
-                                });
+                                    if (parseInt(index) === parseInt(metadataList.length) - 1) {
+                                        this.rendering = false;
+                                    }
+                                }.bind(this));
 
                                 html = "";
                             }
                         } else {
+                            this.rendering = false;
                             $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
                         }
                     }
                 } else {
+                    this.rendering = false;
                     $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
+                this.rendering = false;
                 $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
             }
 
             $("#spinner").css("display","none");
             return mediaContentList;
-        });
-
-        return promise.done(function (data) {
-            $("#spinner").css("display","none");
-            return data;
-        });
+        }.bind(this));
     }
 }

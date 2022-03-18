@@ -1,5 +1,6 @@
 (function( albumSettings, $, undefined ) {
     albumSettings.rendering = false;
+    albumSettings.page = 1;
 
     albumSettings.init = async function (albumId, activePage, albumMetadataList) {
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', {
@@ -10,12 +11,12 @@
 
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
-                const currentPage = parseInt($("#currentPage").val());
-                const nextPage = currentPage + 1;
-                $("#currentPage").val(nextPage);
-
-                const additionalMediaContentList = await albumSettings.updateAlbum(albumId, nextPage, activePage);
-                mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+                // console.log(albumSettings.page)
+                albumSettings.updateAlbum(albumId, albumSettings.page, activePage).then(function (additionalMediaContentList) {
+                    // console.log(additionalMediaContentList)
+                    albumSettings.page++;
+                    mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
+                });
             }
         }
 
@@ -61,10 +62,11 @@
             retries: shashin.ajaxRetries
         }
 
-        return $.ajax(ajaxParams)
+        const mediaContentList = [];
+
+        return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album")})
         .then(function (data) {
-            const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";
                 if (data["status"] === "success") {
@@ -155,42 +157,43 @@
 
                                 // Append HTML
                                 $(html).insertBefore($(".appendAlbumPhotos").last()).ready(function () {
-                                    albumSettings.rendering = false;
-                                });
+                                    // Call JS and modal
+                                    shashin.setPhotoOverlays(metadata, activePage);
+                                    albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
+                                    albumSettings.activateAlbumListeners(metadata, albumData);
+                                    $("#mediaLink" + metadata.id).attr("tag", metadata.id);
+                                    $("#infoModalEdit"+metadata.id).on("click", function(e) {
+                                        e.preventDefault();
+                                        shashin.openInfoModal(metadata.id);
+                                    });
 
-                                // Call JS and modal
-                                shashin.setPhotoOverlays(metadata, activePage);
-                                albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
-                                albumSettings.activateAlbumListeners(metadata, albumData);
-                                $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                                $("#infoModalEdit"+metadata.id).on("click", function(e) {
-                                    e.preventDefault();
-                                    shashin.openInfoModal(metadata.id);
+                                    if (parseInt(index) === parseInt(albumMetadataList.length) - 1) {
+                                        $("#spinner").css("display","none");
+                                        albumSettings.rendering = false;
+                                    }
                                 });
                             }
                         } else {
+                            $("#spinner").css("display","none");
                             $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                             albumSettings.rendering = false;
                         }
                     }
                 } else {
+                    $("#spinner").css("display","none");
                     $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                     albumSettings.rendering = false;
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
                 }
             } else {
+                $("#spinner").css("display","none");
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                 albumSettings.rendering = false;
             }
 
-            $("#spinner").css("display","none");
             return mediaContentList;
-        });
-
-        // return promise.done(function(data) {
-        //     return data;
-        // });
+        }.bind(this));
     }
 
     albumSettings.activateAlbumListeners = function(metadata,album) {

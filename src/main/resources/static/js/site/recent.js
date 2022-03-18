@@ -1,6 +1,7 @@
 class Recent {
 
     constructor(metadataList, activePage) {
+        this.page = 1;
         this.rendering = false;
         this.metadataList = metadataList;
         this.activePage = activePage;
@@ -20,12 +21,14 @@ class Recent {
     }
 
     async loadNextPage() {
-        const currentPage = parseInt($("#currentPage").val());
-        const nextPage = currentPage + 1;
-        $("#currentPage").val(nextPage);
-
-        const additionalMediaContentList = await this.updateRecent(nextPage, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        if (this.rendering === false) {
+            // console.log(this.page)
+            this.updateRecent(this.page, this.activePage).then(function (additionalMediaContentList) {
+                // console.log(additionalMediaContentList)
+                this.page++;
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            }.bind(this));
+        }
     }
 
     async updateRecent(nextPage,activePage) {
@@ -40,7 +43,7 @@ class Recent {
             retries: shashin.ajaxRetries
         }
 
-        return $.ajax(ajaxParams)
+        return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating recently added")})
         .then(function (data) {
             const mediaContentList = [];
@@ -95,18 +98,21 @@ class Recent {
                         mediaContentList.push(centeredObj.mediaContent);
 
                         html += '</div>\n<span class="appendRecentPhotos" style="width:0;height:0;padding:0"></span>\n';
+
                         $(html).insertAfter($(".appendRecentPhotos").last()).ready(function () {
-                            this.rendering = false;
-                        });
+                            $("#timelineModalEdit"+metadata.id).attr("tag", metadata.id);
+                            $("#timelineModalEdit"+metadata.id).on("click", function(e) {
+                                e.preventDefault();
+                                shashin.openEditMetadataModal(metadata.id);
+                            });
 
-                        $("#timelineModalEdit"+metadata.id).attr("tag", metadata.id);
-                        $("#timelineModalEdit"+metadata.id).on("click", function(e) {
-                            e.preventDefault();
-                            shashin.openEditMetadataModal(metadata.id);
-                        });
+                            shashin.setPhotoOverlays(metadata, activePage);
+                            Util.activateMetadataListeners(metadata);
 
-                        shashin.setPhotoOverlays(metadata, activePage);
-                        Util.activateMetadataListeners(metadata);
+                            if (parseInt(index) === parseInt(metadataList.length) - 1) {
+                                this.rendering = false;
+                            }
+                        }.bind(this));
 
                         html = "";
                     }
@@ -122,10 +128,6 @@ class Recent {
             $("#spinner").css("display","none");
 
             return mediaContentList;
-        });
-
-        // return promise.done(function(data) {
-        //     return data;
-        // });
+        }.bind(this));
     }
 }

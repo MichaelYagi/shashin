@@ -1,6 +1,7 @@
 class Folder {
 
     constructor(metadataList, activePage, folderName) {
+        this.page = 1;
         this.rendering = false;
         this.metadataList = metadataList;
         this.activePage = activePage;
@@ -21,15 +22,18 @@ class Folder {
     }
 
     async loadNextPage() {
-        const currentPage = parseInt($("#currentPage").val());
-        const nextPage = currentPage + 1;
-        $("#currentPage").val(nextPage);
-
-        const additionalMediaContentList = await this.updateRecent(nextPage, this.folderName, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        if (this.rendering === false) {
+            // console.log(this.page)
+            this.updateRecent(this.page, this.folderName, this.activePage).then(function (additionalMediaContentList) {
+                // console.log(additionalMediaContentList)
+                this.page++;
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            }.bind(this));
+        }
     }
 
     async updateRecent(nextPage,folderName,activePage) {
+        this.rendering = true;
         $("#spinner").css("display","block");
 
         const ajaxParams = {
@@ -40,7 +44,7 @@ class Folder {
             retries: shashin.ajaxRetries
         }
 
-        const promise = $.ajax(ajaxParams)
+        return await $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating recently added")}).then(function (data) {
                 const mediaContentList = [];
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
@@ -84,33 +88,36 @@ class Folder {
                             mediaContentList.push(centeredObj.mediaContent);
 
                             html += '</div>\n<span class="appendFolderPhotos" style="width:0;height:0;padding:0"></span>\n';
-                            $(html).insertAfter($(".appendFolderPhotos").last());
 
-                            $("#timelineModalEdit"+metadata.id).attr("tag", metadata.id);
-                            $("#timelineModalEdit"+metadata.id).on("click", function(e) {
-                                e.preventDefault();
-                                shashin.openEditMetadataModal(metadata.id);
-                            });
+                            $(html).insertAfter($(".appendFolderPhotos").last()).ready(function () {
+                                $("#timelineModalEdit"+metadata.id).attr("tag", metadata.id);
+                                $("#timelineModalEdit"+metadata.id).on("click", function(e) {
+                                    e.preventDefault();
+                                    shashin.openEditMetadataModal(metadata.id);
+                                });
 
-                            shashin.setPhotoOverlays(metadata, activePage);
-                            Util.activateMetadataListeners(metadata);
+                                shashin.setPhotoOverlays(metadata, activePage);
+                                Util.activateMetadataListeners(metadata);
+
+                                if (parseInt(index) === parseInt(metadataList.length) - 1) {
+                                    this.rendering = false;
+                                }
+                            }.bind(this));
 
                             html = "";
                         }
                     } else {
+                        this.rendering = false;
                         $(".appendFolderPhotos").last().text("EOL").css("display","none")
                     }
                 } else {
+                    this.rendering = false;
                     $(".appendFolderPhotos").last().text("EOL").css("display","none")
                 }
 
                 $("#spinner").css("display","none");
 
                 return mediaContentList;
-            });
-
-        return promise.done(function(data) {
-            return data;
-        });
+            }.bind(this));
     }
 }
