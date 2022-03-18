@@ -1,6 +1,7 @@
 class Person {
 
     constructor(metadataList, activePage, personId, canEdit) {
+        this.page = 1;
         this.rendering = false;
         this.metadataList = metadataList;
         this.activePage = activePage;
@@ -23,15 +24,18 @@ class Person {
     }
 
     async loadNextPage() {
-        const currentPage = parseInt($("#currentPage").val());
-        const nextPage = currentPage + 1;
-        $("#currentPage").val(nextPage);
-
-        const additionalMediaContentList = await this.updatePerson(this.personId, nextPage, this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        if (this.rendering === false) {
+            // console.log(this.page)
+            this.updatePerson(this.personId, this.page, this.activePage).then(function (additionalMediaContentList) {
+                // console.log(additionalMediaContentList)
+                this.page++;
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            }.bind(this));
+        }
     }
 
     async updatePerson(personId,nextPage,activePage) {
+        this.rendering = true;
         $("#spinner").css("display","block");
 
         const ajaxParams = {
@@ -43,7 +47,7 @@ class Person {
         }
 
         // Get paged results
-        const promise = $.ajax(ajaxParams)
+        return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating person")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -86,42 +90,44 @@ class Person {
 
                                 html += '</div>\n<span id="personmodal'+metadata.id+'" style="width:0;height:0;padding:0"></span>\n';
 
-                                $(html).insertBefore($(".appendPersonPhotos").last())
+                                $(html).insertBefore($(".appendPersonPhotos").last()).ready(function () {
+                                    shashin.setPhotoOverlays(metadata, activePage);
+                                    personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
+                                    $("#mediaLink" + metadata.id).attr("tag", metadata.id);
+                                    $("#infoModalEdit" + metadata.id).on("click", function (e) {
+                                        e.preventDefault();
+                                        shashin.openInfoModal(metadata.id);
+                                    });
 
-                                shashin.setPhotoOverlays(metadata, activePage);
-                                personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
-                                $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                                $("#infoModalEdit" + metadata.id).on("click", function (e) {
-                                    e.preventDefault();
-                                    shashin.openInfoModal(metadata.id);
-                                });
+                                    $("#image" + metadata.id).on('load', function () {
+                                        $(this).css("background-color", "transparent");
+                                    });
 
-                                $("#image" + metadata.id).on('load', function () {
-                                    $(this).css("background-color", "transparent");
-                                });
+                                    if (parseInt(index) === parseInt(metadataList.length) - 1) {
+                                        this.rendering = false;
+                                    }
+                                }.bind(this));
 
                                 html = "";
                             }
                         } else {
-                            $(".appendPersonPhotos").last().text("EOL").css("display", "none")
+                            $(".appendPersonPhotos").last().text("EOL").css("display", "none");
+                            this.rendering = false;
                         }
                     }
                 } else {
-                    $(".appendPersonPhotos").last().text("EOL").css("display", "none")
+                    $(".appendPersonPhotos").last().text("EOL").css("display", "none");
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
+                    this.rendering = false;
                 }
             } else {
-                $(".appendPersonPhotos").last().text("EOL").css("display", "none")
+                $(".appendPersonPhotos").last().text("EOL").css("display", "none");
+                this.rendering = false;
             }
 
             $("#spinner").css("display","none");
             return mediaContentList;
-        });
-
-        return promise.done(function(data) {
-            $("#spinner").css("display","none");
-            return data;
-        });
+        }.bind(this));
     }
 }

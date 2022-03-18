@@ -1,6 +1,8 @@
 class ShareAlbum {
 
     constructor(shareLink, activePage, albumId, albumMetadataList) {
+        this.page = 1;
+        this.rendering = false;
         this.shareLink = shareLink;
         this.activePage = activePage;
         this.albumId = albumId;
@@ -17,14 +19,16 @@ class ShareAlbum {
     }
 
     async loadNextPage() {
-        const currentPage = parseInt($("#currentPage").val());
-        const nextPage = currentPage + 1;
-        $("#currentPage").val(nextPage);
-
-        if (this.albumId > 0) {
-            const additionalMediaContentList = await this.updateAlbum(this.albumId, nextPage, this.activePage);
-            this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+        if (this.albumId > 0 && this.rendering === false) {
+            // console.log(this.page)
+            this.updateAlbum(this.albumId, this.page, this.activePage).then(function (additionalMediaContentList) {
+                // console.log(additionalMediaContentList)
+                this.page++;
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            }.bind(this));
         }
+
+        return parseInt($("#currentPage").val());
     }
 
     getShareLink() {
@@ -33,6 +37,7 @@ class ShareAlbum {
 
     async updateAlbum(albumId, nextPage, activePage) {
         const self = this;
+        self.rendering = true;
         $("#spinner").css("display","block");
 
         const ajaxParams = {
@@ -42,7 +47,7 @@ class ShareAlbum {
             retries: shashin.ajaxRetries
         }
 
-        const promise = $.ajax(ajaxParams)
+        return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating share album")}).then(function (data) {
             const mediaContentList = [];
 
@@ -79,30 +84,33 @@ class ShareAlbum {
                             mediaContentList.push(centeredObj.mediaContent);
 
                             html += '</div>\n<span class="appendAlbumPhotos" style="width:0;height:0;padding:0"></span>\n';
-                            $(html).insertAfter($(".appendAlbumPhotos").last());
 
-                            // Call JS and modal
-                            shashin.setPhotoOverlays(metadata, activePage);
+                            $(html).insertAfter($(".appendAlbumPhotos").last()).ready(function () {
+                                // Call JS and modal
+                                shashin.setPhotoOverlays(metadata, activePage);
+
+                                if (parseInt(index) === parseInt(albumMetadataList.length) - 1) {
+                                    this.rendering = false;
+                                }
+                            }.bind(this));
                         }
                     } else {
                         $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                        this.rendering = false;
                     }
                 } else {
                     $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
+                    this.rendering = false;
                 }
             } else {
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                this.rendering = false;
             }
 
             $("#spinner").css("display","none");
             return mediaContentList;
-        });
-
-        return promise.done(function(data) {
-            $("#spinner").css("display","none");
-            return data;
-        });
+        }.bind(this));
     }
 }

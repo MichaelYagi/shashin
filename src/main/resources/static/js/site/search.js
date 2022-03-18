@@ -1,6 +1,7 @@
 class Search {
 
     constructor(searchTerm, activePage, metadataSearchList) {
+        this.page = 1;
         this.rendering = false;
         this.searchTerm = searchTerm;
         this.activePage = activePage;
@@ -9,7 +10,7 @@ class Search {
     }
 
     async init() {
-        $(function() {
+        $(function () {
             $('[data-bs-toggle="tooltip"]').tooltip()
         })
 
@@ -21,12 +22,14 @@ class Search {
     }
 
     async loadNextPage() {
-        const currentPage = parseInt($("#currentPage").val());
-        const nextPage = currentPage + 1;
-        $("#currentPage").val(nextPage);
-
-        const additionalMediaContentList = await this.updateSearch(nextPage,this.searchTerm,this.activePage);
-        this.mediaContentList = shashin.updateMediaContent(this.mediaContentList,additionalMediaContentList);
+        if (this.rendering === false) {
+            // console.log(this.page)
+            this.updateSearch(this.page, this.searchTerm, this.activePage).then(function (additionalMediaContentList) {
+                // console.log(additionalMediaContentList)
+                this.page++;
+                this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+            }.bind(this));
+        }
     }
 
     async updateSearch(nextPage,searchTerm,activePage) {
@@ -37,11 +40,11 @@ class Search {
             type: 'get',
             url: "/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm),
             contentType: 'application/json; charset=utf-8',
-            async:true,
+            async: true,
             retries: shashin.ajaxRetries
         }
 
-        return $.ajax(ajaxParams)
+        return await $.ajax(ajaxParams)
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating search")}).then(function (data) {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
@@ -67,7 +70,7 @@ class Search {
 
                         html += '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail" style="width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;">\n';
                         html +=
-                            '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'"></a>\n' +
+                            '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex'+currentMediaLinkIndex+'" id="lightGalleryIndexAnchor_'+currentDate+'"></a>\n' +
                             '   <img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="Util.errorImg(this,\''+metadata.title+'\',Util.thumbnailHeight())">\n' +
                             '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n';
 
@@ -81,31 +84,37 @@ class Search {
                         mediaContentList.push(centeredObj.mediaContent);
 
                         html += '</div>\n<span class="appendSearchPhotos" style="width:0;height:0;padding:0"></span>\n';
-                        $(html).insertAfter($(".appendSearchPhotos").last()).ready(function () {
-                            this.rendering = false;
-                        });
 
-                        shashin.setPhotoOverlays(metadata, activePage);
-                        Util.activateMetadataListeners(metadata);
-                        $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                        $("#infoModalEdit"+metadata.id).on("click", function(e) {
-                            e.preventDefault();
-                            shashin.openInfoModal(metadata.id);
-                        });
+                        $(html).insertAfter($(".appendSearchPhotos").last()).ready(async function () {
+                            $("#spinner").css("display", "none");
+
+                            shashin.setPhotoOverlays(metadata, activePage);
+                            Util.activateMetadataListeners(metadata);
+                            $("#mediaLink" + metadata.id).attr("tag", metadata.id);
+                            $("#infoModalEdit" + metadata.id).on("click", function (e) {
+                                e.preventDefault();
+                                shashin.openInfoModal(metadata.id);
+                            });
+
+                            if (parseInt(index) === parseInt(metadataList.length) - 1) {
+                                this.rendering = false;
+                            }
+                        }.bind(this));
 
                         html = "";
                     }
                 } else {
                     $(".appendSearchPhotos").last().text("EOL").css("display","none")
                     this.rendering = false;
+                    $("#spinner").css("display","none");
                 }
             } else {
                 $(".appendSearchPhotos").last().text("EOL").css("display","none")
                 this.rendering = false;
+                $("#spinner").css("display","none");
             }
 
-            $("#spinner").css("display","none");
             return mediaContentList;
-        });
+        }.bind(this));
     }
 }
