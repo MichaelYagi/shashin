@@ -1075,6 +1075,7 @@ class SettingsController {
                 metadata.setCamera(importedMetadata.getCamera())
                 metadata.setLat(importedMetadata.getLat())
                 metadata.setLng(importedMetadata.getLng())
+                metadata.setModifiedAt(getCurrentTimestamp())
                 if (importedMetadata.getHidden() != null && foundMetadata.getHidden() != null) {
                     metadata.setHidden(importedMetadata.getHidden())
                 }

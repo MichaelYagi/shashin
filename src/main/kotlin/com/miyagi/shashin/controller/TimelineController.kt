@@ -407,6 +407,7 @@ class TimelineController {
 
             if (isHidden) {
                 metadataObj.get().setHidden(true)
+                metadataObj.get().setModifiedAt(getCurrentTimestamp())
                 removeMetadata(metadataId)
             }
 
@@ -762,6 +763,7 @@ class TimelineController {
             }
 
             // Update DB
+            metadataObj.get().setModifiedAt(getCurrentTimestamp())
             metadataRepository.save(metadataObj.get())
             // Update MD file
             //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
@@ -840,6 +842,7 @@ class TimelineController {
                 val metadata = metadataObj.get()
 
                 if (isHidden) {
+                    metadata.setModifiedAt(getCurrentTimestamp())
                     metadata.setHidden(true)
                     removeMetadata(id)
                 }
@@ -1004,6 +1007,7 @@ class TimelineController {
                 val id = StringEscapeUtils.escapeHtml4(idVal)
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
                 val metadata = metadataObj.get()
+                metadata.setModifiedAt(getCurrentTimestamp())
 
                 if (isHidden) {
                     metadata.setHidden(true)
@@ -1153,6 +1157,7 @@ class TimelineController {
                     }
                 }
 
+                metadata.setModifiedAt(getCurrentTimestamp())
                 metadataList.add(metadata)
             }
 

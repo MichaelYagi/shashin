@@ -96,6 +96,7 @@ class TrashController {
                 for (metadataId in metadataIdList) {
                     val metadataObj = metadataRepository.findById(StringEscapeUtils.escapeHtml4(metadataId as String))
                     metadataObj.get().setHidden(false)
+                    metadataObj.get().setModifiedAt(TextUtils.getCurrentTimestamp())
                     metadataRepository.save(metadataObj.get())
                 }
 

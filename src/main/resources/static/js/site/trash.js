@@ -57,6 +57,15 @@ class Trash {
                                 const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
                                 const metadata = metadataList[index];
 
+                                const dateHeadingCount = $(".dateSection").length;
+                                const lastModifiedDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                                const currentModifiedDate = dateFormat(metadata["modifiedAt"], "isoDate");
+                                const displayCurrentModifiedDate = dateFormat(metadata["modifiedAt"], "ddd, mmm d, yyyy");
+
+                                if (lastModifiedDateHeading !== currentModifiedDate) {
+                                    html += '<section class="dateSection" id="'+currentModifiedDate+'"><p><span class="text-muted">Modified </span><strong>' + displayCurrentModifiedDate + '</strong></p></section>\n';
+                                }
+
                                 html += '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
                                     '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
                                     '   <img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="Util.errorImg(this,\''+metadata.title+'\',Util.thumbnailHeight())">\n';

@@ -48,39 +48,8 @@ class BrowseController {
     @RequestMapping(value = ["/recent"], method = [RequestMethod.GET])
     fun getRecentlyAdded(model: Model): String {
         val module = "recent"
-        val page = 0
-        val response = buildRecentlyAdded(model,page)
-        for ((k, v) in response) {
-            model[k] = v!!
-        }
 
-        for ((k, v) in response) {
-            model[k] = v!!
-        }
-
-        model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-        if (recognitionLabels != null && recognitionLabels.count() > 0) {
-            model["recognitionLabels"] = recognitionLabels
-        }
-
-        model["allAlbumList"] = mutableListOf<Album>()
-        val allAlbumList = albumRepository.findAllOrderByAlbumName()
-        if (allAlbumList.count() > 0) {
-            model["allAlbumList"] = allAlbumList
-        }
-
-        model["timeOffsets"] = TextUtils.timeOffsets()
-
-        val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
-        var keywords = ""
-        if (keywordList.count() > 0) {
-            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
-        }
-        model["keywords"] = keywords
-
-        val cameraList = metadataRepository.findByCameraTypeAlphabetical()
-        model["cameras"] = cameraList.joinToString()
+        buildInitialPage(module,model)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -91,10 +60,28 @@ class BrowseController {
     @RequestMapping(value = ["/recent/{page}","/api/v1/recent/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildRecentlyAdded(model,page))
+        return mapper.writeValueAsString(buildBrowseRecord("recent",model,page))
     }
 
-    private fun buildRecentlyAdded(model: Model, page: Int): MutableMap<String, Any?> {
+    @RequestMapping(value = ["/modified"], method = [RequestMethod.GET])
+    fun getModified(model: Model): String {
+        val module = "modified"
+
+        buildInitialPage(module,model)
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/modified/{page}","/api/v1/modified/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedModified(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
+        return mapper.writeValueAsString(buildBrowseRecord("modified",model,page))
+    }
+
+    private fun buildBrowseRecord(module: String, model: Model, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["message"] = "There are no photos. Please setup directories in Settings and scan ."
         response["metadataList"] = mutableListOf<Metadata>()
@@ -116,10 +103,18 @@ class BrowseController {
 
             val favoritesMap = HashMap<String, HashMap<String, Any>>()
 
-            val metadataList: MutableList<Metadata> = metadataRepository.findRecentByOffsetAndLimit(
-                pageValue,
-                model.getAttribute("queryLimit").toString().toInt()
-            ).toMutableList()
+            var metadataList = mutableListOf<Metadata>()
+            if (module == "recent") {
+                metadataList = metadataRepository.findRecentByOffsetAndLimit(
+                    pageValue,
+                    model.getAttribute("queryLimit").toString().toInt()
+                ).toMutableList()
+            } else if (module == "modified") {
+                metadataList = metadataRepository.findModifiedByOffsetAndLimit(
+                    pageValue,
+                    model.getAttribute("queryLimit").toString().toInt()
+                ).toMutableList()
+            }
 
             if (metadataList.isNotEmpty()) {
                 response["metadataList"] = metadataList
@@ -206,6 +201,44 @@ class BrowseController {
         }
 
         return response
+    }
+
+    private fun buildInitialPage(module: String, model: Model): Model {
+        val page = 0
+        val response = buildBrowseRecord(module,model,page)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+        if (recognitionLabels != null && recognitionLabels.count() > 0) {
+            model["recognitionLabels"] = recognitionLabels
+        }
+
+        model["allAlbumList"] = mutableListOf<Album>()
+        val allAlbumList = albumRepository.findAllOrderByAlbumName()
+        if (allAlbumList.count() > 0) {
+            model["allAlbumList"] = allAlbumList
+        }
+
+        model["timeOffsets"] = TextUtils.timeOffsets()
+
+        val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
+        var keywords = ""
+        if (keywordList.count() > 0) {
+            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
+        }
+        model["keywords"] = keywords
+
+        val cameraList = metadataRepository.findByCameraTypeAlphabetical()
+        model["cameras"] = cameraList.joinToString()
+
+        return model
     }
 
     @GetMapping("/folders")

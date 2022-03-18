@@ -43,7 +43,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT camera FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY camera COLLATE NOCASE ASC", nativeQuery = true)
    fun findByCameraTypeAlphabetical(): MutableIterable<String>
 
-   @Query("SELECT * FROM metadata WHERE hidden = true ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
+   @Query("SELECT * FROM metadata WHERE hidden = true ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByHiddenAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE type LIKE %:type% AND hidden = false AND DATE(added_at ) = (SELECT DATE(added_at) FROM metadata ORDER BY added_at DESC LIMIT 1) ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
@@ -51,6 +51,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    @Query("SELECT * FROM metadata WHERE hidden = false AND DATE(added_at ) = (SELECT DATE(added_at) FROM metadata ORDER BY added_at DESC LIMIT 1) ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findMostRecentByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
+
+   @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
+   fun findModifiedByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 
    @Query("SELECT * FROM metadata WHERE hidden = false ORDER BY added_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findRecentByOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>

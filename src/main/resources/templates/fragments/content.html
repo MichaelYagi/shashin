@@ -4,7 +4,7 @@
 <th:block th:if="${activePage == 'settings' or activePage == 'scan' or activePage == 'users' or activePage == 'match' or activePage == 'snapshot' or activePage == 'logs'}">
     <div th:replace="fragments/settingsgroup :: settings(${activePage})"></div>
 </th:block>
-<th:block th:if="${activePage == 'recent' or activePage == 'folders'}">
+<th:block th:if="${activePage == 'recent' or activePage == 'folders' or activePage == 'modified'}">
     <div th:replace="fragments/browsegroup :: browse(${activePage})"></div>
 </th:block>
 <th:block th:if="${authority == 'ROLE_ADMIN' && (activePage == 'person' or activePage == 'matches')}">

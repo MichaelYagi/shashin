@@ -47,6 +47,7 @@
         titleDescriptorLower == 'share' or
         titleDescriptorLower == 'trash' or
         titleDescriptorLower == 'recent' or
+        titleDescriptorLower == 'modified' or
         titleDescriptorLower == 'folder'}">
             <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
@@ -103,6 +104,9 @@
             <th:block th:if="${titleDescriptorLower == 'recent'}">
                 <script src="/js/site/recent.js" th:nonce="${cspNonce}"></script>
             </th:block>
+            <th:block th:if="${titleDescriptorLower == 'modified'}">
+                <script src="/js/site/modified.js" th:nonce="${cspNonce}"></script>
+            </th:block>
             <th:block th:if="${titleDescriptorLower == 'folder'}">
                 <script src="/js/site/folder.js" th:nonce="${cspNonce}"></script>
             </th:block>
@@ -137,6 +141,9 @@
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'recent'}">
                 <script src="/js/site/min/recent.min.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${titleDescriptorLower == 'modified'}">
+                <script src="/js/site/min/modified.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'folder'}">
                 <script src="/js/site/min/folder.min.js" th:nonce="${cspNonce}"></script>
