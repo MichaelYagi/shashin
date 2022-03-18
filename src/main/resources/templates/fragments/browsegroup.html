@@ -6,6 +6,9 @@
         <a th:attr="class='nav-link' + ${activePage=='recent' ? ' active' : ''}" href="/recent">Recently Added</a>
     </li>
     <li class="nav-item">
+        <a th:attr="class='nav-link' + ${activePage=='modified' ? ' active' : ''}" href="/modified">Recently Modified</a>
+    </li>
+    <li class="nav-item">
         <a th:attr="class='nav-link' + ${activePage=='folders' ? ' active' : ''}" href="/folders">Folders</a>
     </li>
 </ul>

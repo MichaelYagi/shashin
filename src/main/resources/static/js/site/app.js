@@ -1040,7 +1040,7 @@
                 $("#appSearch").hide();
                 if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").show();
-                } else if (view === "timeline" || view === "recent" || view === "folder") {
+                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "folder") {
                     $("#timelineAppTools").show();
                     if (view === "timeline") {
                         $("#timelineTools").hide();
@@ -1110,7 +1110,7 @@
                 $("#appSearch").hide();
                 if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").show();
-                } else if (view === "timeline" || view === "recent" || view === "folder") {
+                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "folder") {
                     $("#timelineAppTools").show();
                     if (view === "timeline") {
                         $("#timelineTools").hide();
