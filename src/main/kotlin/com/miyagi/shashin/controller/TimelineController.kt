@@ -1278,6 +1278,7 @@ class TimelineController {
                 metadataObj.setMonth(month)
                 metadataObj.setDay(day)
                 metadataObj.setTimeZone(time)
+                metadataObj.setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadataObj)
 
                 resp["year"] = year.toString()
