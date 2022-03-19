@@ -514,15 +514,18 @@
         $($("#offcanvasTocBody").children().get().reverse()).each(function () {
             if ($(this).attr('class') === 'list-group') {
                 $($(this).children().get().reverse()).each(function () {
-                    const dateParts = $(this).attr("id").split("offcanvas_");
-                    const date = dateParts[1];
-                    if (Util.getDateObject(offCanvasDate) < Util.getDateObject(date)) {
-                        attachAboveArray.unshift(date);
-                        if (dateCount >= depthUp) {
-                            innerLoopBreak = true;
-                            return false;
+                    const attr = $(this).attr("id");
+                    if (typeof attr !== 'undefined' && attr !== false) {
+                        const dateParts = attr.split("offcanvas_");
+                        const date = dateParts[1];
+                        if (Util.getDateObject(offCanvasDate) < Util.getDateObject(date)) {
+                            attachAboveArray.unshift(date);
+                            if (dateCount >= depthUp) {
+                                innerLoopBreak = true;
+                                return false;
+                            }
+                            dateCount++;
                         }
-                        dateCount++;
                     }
                 });
             }
@@ -537,15 +540,18 @@
         $("#offcanvasTocBody").children().each(function () {
             if ($(this).attr('class') === 'list-group') {
                 $(this).children().each(function () {
-                    const dateParts = $(this).attr("id").split("offcanvas_");
-                    const date = dateParts[1];
-                    if (Util.getDateObject(date) < Util.getDateObject(offCanvasDate)) {
-                        attachBelowArray.push(date);
-                        if (dateCount > depthUp) {
-                            innerLoopBreak = true;
-                            return false;
+                    const attr = $(this).attr("id");
+                    if (typeof attr !== 'undefined' && attr !== false) {
+                        const dateParts = attr.split("offcanvas_");
+                        const date = dateParts[1];
+                        if (Util.getDateObject(date) < Util.getDateObject(offCanvasDate)) {
+                            attachBelowArray.push(date);
+                            if (dateCount > depthUp) {
+                                innerLoopBreak = true;
+                                return false;
+                            }
+                            dateCount++;
                         }
-                        dateCount++;
                     }
                 });
             }
@@ -635,15 +641,16 @@
                 let currentId = attachPoint;
                 $("#offcanvasTocBody").children().each(function () {
                     if ($(this).attr('class') === 'list-group') {
-                        $(this).children().each(function () {
-                            const dateParts = $(this).attr("id").split("offcanvas_");
+                        const attr = $(this).attr("id");
+                        if (typeof attr !== 'undefined' && attr !== false) {
+                            const dateParts = attr.split("offcanvas_");
                             const date = dateParts[1];
                             if ($(this).next().length > 0 && currentId === date) {
                                 currentId = $(this).next().attr("id").split("offcanvas_")[1];
                                 dateFound = true;
                                 return false;
                             }
-                        });
+                        }
                     }
                 });
 
