@@ -722,10 +722,9 @@ class TimelineController: BaseController() {
             metadataRepository.save(metadataObj.get())
 
             val attrResponse = getAllAttribueData(model)
-            resp["recognitionLabels"] = attrResponse["recognitionLabels"]
-            resp["allAlbumList"] = attrResponse["allAlbumList"]
-            resp["keywords"] = attrResponse["keywords"]
-            resp["cameras"] = attrResponse["cameras"]
+            for ((k, v) in attrResponse) {
+                resp[k] = v
+            }
 
             return mapper.writeValueAsString(resp)
         }
@@ -1082,10 +1081,9 @@ class TimelineController: BaseController() {
                 metadataRepository.saveAll(metadataList)
 
                 val attrResponse = getAllAttribueData(model)
-                resp["recognitionLabels"] = attrResponse["recognitionLabels"]
-                resp["allAlbumList"] = attrResponse["allAlbumList"]
-                resp["keywords"] = attrResponse["keywords"]
-                resp["cameras"] = attrResponse["cameras"]
+                for ((k, v) in attrResponse) {
+                    resp[k] = v
+                }
 
                 return mapper.writeValueAsString(resp)
             }
