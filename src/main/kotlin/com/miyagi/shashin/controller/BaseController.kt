@@ -1,163 +1,65 @@
 package com.miyagi.shashin.controller
 
-import com.google.javascript.jscomp.jarjar.org.apache.tools.ant.DirectoryScanner
-import com.miyagi.shashin.model.Settings
-import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.SettingsRepository
-import com.miyagi.shashin.repository.UserRepository
-import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import com.miyagi.shashin.model.Album
+import com.miyagi.shashin.model.RecognitionLabel
+import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.info.BuildProperties
-import org.springframework.core.io.FileSystemResource
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.ControllerAdvice
-import org.springframework.web.bind.annotation.ModelAttribute
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
-import java.io.File
-import java.util.*
-import java.util.logging.Level
-import java.util.logging.Logger
-import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletResponse
-import javax.transaction.Transactional
 
-
-@ControllerAdvice
+@Controller
 class BaseController {
 
-    private var logger: Logger = Logger.getLogger(BaseController::class.simpleName)
+    @Autowired
+    private var recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
-    private lateinit var userRepository: UserRepository
+    private var albumRepository: AlbumRepository? = null
 
     @Autowired
-    private var settingsRepository: SettingsRepository? = null
+    private var keywordRepository: KeywordRepository? = null
 
     @Autowired
-    private var buildProperties: BuildProperties? = null
+    private var metadataRepository: MetadataRepository? = null
 
-    @Value("\${app.sidecar.path}")
-    private lateinit var relativeSidecarDir: String
+    protected fun getAllAttribueData(model: Model): MutableMap<String, Any> {
+        val response = mutableMapOf<String,Any>()
 
-    @Value("\${app.api.version}")
-    private lateinit var apiVersion: String
-
-    @Value("\${app.role.admin}")
-    private lateinit var adminRole: String
-
-    @Value("\${app.role.user}")
-    private lateinit var userRole: String
-
-    @Value("\${app.endpoint.url.geocode}")
-    private lateinit var geocodeUrl: String
-
-    @ModelAttribute
-    @Transactional
-    fun addAttributes(model: Model, response: HttpServletResponse) {
-        model["userRole"] = userRole
-        model["adminRole"] = adminRole
-        model["settings"] = Settings()
-
-        var queryLimit = 20
-        var searchHistoryLimit = 15
-
-        val settings = settingsRepository?.findFirstByOrderByIdAsc()
-        if (settings != null) {
-            queryLimit = settings.getQueryLimit()!!
-            searchHistoryLimit = settings.getSearchHistoryLimit()!!
-            model["settings"] = settings
-        } else {
-            val settingsObj = Settings()
-            settingsObj.setQueryLimit(20)
-            settingsObj.setMatchScanLimit(50)
-            settingsObj.setTrainingDataLimit(100)
-            settingsObj.setNotificationLimit(20)
-            settingsObj.setSearchHistoryLimit(15)
-            settingsObj.setPort("6624")
-            settingsObj.setScanAutomatically(false)
-            settingsObj.setRecognitionConfidenceThreshold("0.6")
-            settingsObj.setCreatedAt(getCurrentTimestamp())
-            settingsObj.setModifiedAt(getCurrentTimestamp())
-
-            model["settings"] = settingsObj
+        model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+        if (recognitionLabels != null && recognitionLabels.count() > 0) {
+            model["recognitionLabels"] = recognitionLabels
         }
-        model["searchHistoryLimit"] = searchHistoryLimit
-        model["queryLimit"] = queryLimit
-        model["apiVersion"] = apiVersion
-        model["relativeSidecarDir"] = relativeSidecarDir
-        model["geocodeUrl"] = geocodeUrl
-        model["buildProperties"] = ""
-        if (buildProperties != null) {
-            model["buildProperties"] = buildProperties!!
+
+        model["allAlbumList"] = mutableListOf<Album>()
+        val allAlbumList = albumRepository?.findAllOrderByAlbumName()
+        if (allAlbumList != null && allAlbumList.count() > 0) {
+            model["allAlbumList"] = allAlbumList
         }
-        model["parameter"] = ""
-        model["currentUser"] = User()
 
-        model["authority"] = ""
-        model["username"] = ""
-        val requestAttributes = RequestContextHolder.currentRequestAttributes()
-        val attributes = requestAttributes as ServletRequestAttributes
-        val request = attributes.request
-        val session = request.getSession(true)
-        try {
-            val securityContext: SecurityContext = session.getAttribute("SPRING_SECURITY_CONTEXT") as SecurityContext
-            val authorities = securityContext.authentication.authorities as Collection<GrantedAuthority>
-            model["username"] = securityContext.authentication.name
-            for (authority in authorities) {
-                model["authority"] = authority.authority
-            }
-            val currentUser = userRepository.findByUsername(securityContext.authentication.name)
-            if (currentUser != null && currentUser.getAuthority() == adminRole && (currentUser.getIsAllowed() == false || currentUser.getIsAllowed() == null)) {
-                currentUser.setIsAllowed(true)
-            }
-            if (currentUser == null || currentUser.getIsAllowed() == false) {
-                SecurityContextHolder.clearContext()
-                session?.invalidate()
-                val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
-                cookie.path = "/"
-                cookie.isHttpOnly = true
-                cookie.maxAge = 0
-                response.addCookie(cookie)
-            } else {
-                model["currentUser"] = currentUser
-            }
-        } catch(e: Exception) {
-            model["currentUser"] = User()
-            val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
-            cookie.path = "/"
-            cookie.isHttpOnly = true
-            cookie.maxAge = 0
-            response.addCookie(cookie)
-            logger.log(Level.INFO, "Not logged in." + e.message)
+        model["timeOffsets"] = TextUtils.timeOffsets()
+
+        val keywordList = keywordRepository?.findAllDistinctOrderByKeyword()
+        var keywords = ""
+        if (keywordList != null && keywordList.count() > 0) {
+            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
         }
-        model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
+        model["keywords"] = keywords
 
-        model["operatingSystemInfo"] = ""
-        if (model.getAttribute("authority") ==  adminRole) {
-            model["operatingSystemInfo"] = getOperatingSystemInfo()
+        model["cameras"] = ""
+        val cameraList = metadataRepository?.findByCameraTypeAlphabetical()
+        if (cameraList != null && cameraList.count() > 0) {
+            model["cameras"] = cameraList.joinToString()
         }
-        model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)
-        model["titleDescriptor"] = ""
-        model["message"] = ""
-        model["activePage"] = ""
-        model["activeSidebar"] = ""
-        model["titleDescriptor"] = ""
-    }
 
-    private fun getOperatingSystemInfo(): String {
-        // The key for getting operating system name
-        val name = "os.name"
-        // The key for getting operating system version
-        val version = "os.version"
-        // The key for getting operating system architecture
-        val architecture = "os.arch"
+        response["recognitionLabels"] = model.getAttribute("recognitionLabels") as Any
+        response["allAlbumList"] = model.getAttribute("allAlbumList") as Any
+        response["timeOffsets"] = model.getAttribute("timeOffsets") as Any
+        response["keywords"] = model.getAttribute("keywords") as Any
+        response["cameras"] = model.getAttribute("cameras") as Any
 
-        return System.getProperty(name)+" v"+System.getProperty(version)+" "+System.getProperty(architecture)
+        return response
     }
 }
