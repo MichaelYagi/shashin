@@ -1,6 +1,6 @@
 package com.miyagi.shashin.configuration
 
-import com.miyagi.shashin.controller.BaseController
+import com.miyagi.shashin.controller.AttributeController
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.FileUtils

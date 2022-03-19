@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest
 
 @Controller
 @Secured("ROLE_ADMIN")
-class BrowseController {
+class BrowseController: BaseController() {
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
@@ -214,29 +214,7 @@ class BrowseController {
             model[k] = v!!
         }
 
-        model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-        if (recognitionLabels != null && recognitionLabels.count() > 0) {
-            model["recognitionLabels"] = recognitionLabels
-        }
-
-        model["allAlbumList"] = mutableListOf<Album>()
-        val allAlbumList = albumRepository.findAllOrderByAlbumName()
-        if (allAlbumList.count() > 0) {
-            model["allAlbumList"] = allAlbumList
-        }
-
-        model["timeOffsets"] = TextUtils.timeOffsets()
-
-        val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
-        var keywords = ""
-        if (keywordList.count() > 0) {
-            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
-        }
-        model["keywords"] = keywords
-
-        val cameraList = metadataRepository.findByCameraTypeAlphabetical()
-        model["cameras"] = cameraList.joinToString()
+        getAllAttribueData(model)
 
         return model
     }
@@ -290,29 +268,7 @@ class BrowseController {
             model[k] = v!!
         }
 
-        model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-        if (recognitionLabels != null && recognitionLabels.count() > 0) {
-            model["recognitionLabels"] = recognitionLabels
-        }
-
-        model["allAlbumList"] = mutableListOf<Album>()
-        val allAlbumList = albumRepository.findAllOrderByAlbumName()
-        if (allAlbumList.count() > 0) {
-            model["allAlbumList"] = allAlbumList
-        }
-
-        model["timeOffsets"] = TextUtils.timeOffsets()
-
-        val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
-        var keywords = ""
-        if (keywordList.count() > 0) {
-            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
-        }
-        model["keywords"] = keywords
-
-        val cameraList = metadataRepository.findByCameraTypeAlphabetical()
-        model["cameras"] = cameraList.joinToString()
+        getAllAttribueData(model)
 
         model["activePage"] = module
         model["activeSidebar"] = module

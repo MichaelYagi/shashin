@@ -31,7 +31,7 @@ import kotlin.collections.HashMap
 
 @Controller
 @Secured("ROLE_ADMIN")
-class TimelineController {
+class TimelineController: BaseController() {
 
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
@@ -104,9 +104,9 @@ class TimelineController {
         val dates = getMetadataDates(mediaType)
         model["metadataDates"] = dates["metadataDates"]!!
 
-        val response = buildTimelineDataByDate(model,mediaType,date,false)
+        val timelineData = buildTimelineDataByDate(model,mediaType,date,false)
 
-        for ((k, v) in response) {
+        for ((k, v) in timelineData) {
             model[k] = v!!
         }
 
@@ -114,28 +114,7 @@ class TimelineController {
             model["message"] = "Oops! $mediaType is not a valid media type!"
         }
 
-        model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-        val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-        if (recognitionLabels != null && recognitionLabels.count() > 0) {
-            model["recognitionLabels"] = recognitionLabels
-        }
-
-        model["allAlbumList"] = mutableListOf<Album>()
-        val allAlbumList = albumRepository.findAllOrderByAlbumName()
-        if (allAlbumList.count() > 0) {
-            model["allAlbumList"] = allAlbumList
-        }
-
-        model["timeOffsets"] = timeOffsets()
-        val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
-        var keywords = ""
-        if (keywordList.count() > 0) {
-            keywords = keywordList.map { it.getKeyword() }.joinToString(",")
-        }
-        model["keywords"] = keywords
-
-        val cameraList = metadataRepository.findByCameraTypeAlphabetical()
-        model["cameras"] = cameraList.joinToString()
+        getAllAttribueData(model)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -382,18 +361,7 @@ class TimelineController {
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
         if (metadataMap.containsKey("id") &&
-            metadataMap.containsKey("year") &&
-            metadataMap.containsKey("month") &&
-            metadataMap.containsKey("day") &&
-            metadataMap.containsKey("time") &&
-            metadataMap.containsKey("offset") &&
-            metadataMap.containsKey("keywords") &&
-            metadataMap.containsKey("latlng") &&
-            metadataMap.containsKey("title") &&
-//            metadataMap.containsKey("labelIds") &&
-            metadataMap.containsKey("tagpeople") &&
             metadataMap.containsKey("hidden") &&
-            metadataMap.containsKey("isObject") &&
             metadataMap["id"].toString() == metadataId
         ) {
             val metadataObj = metadataRepository.findById(metadataId)
@@ -411,21 +379,8 @@ class TimelineController {
                 removeMetadata(metadataId)
             }
 
-            // Update DB
+            // Update record
             metadataRepository.save(metadataObj.get())
-            // Update MD file
-            //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-//            val originalImagePath = metadataObj.get().getPath()
-//            var rootDir: String? = null
-//            val rootMediaDirs = mediaDirRepository.findAll()
-//            for (rootmediaDir in rootMediaDirs) {
-//                if (originalImagePath != null && rootmediaDir != null) {
-//                    if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
-//                        rootDir = rootmediaDir.getDirectory()
-//                        break
-//                    }
-//                }
-//            }
 
             resp["msg"] = "Saved!"
             resp["status"] = "success"
@@ -762,44 +717,15 @@ class TimelineController {
                 }
             }
 
-            // Update DB
+            // Update record
             metadataObj.get().setModifiedAt(getCurrentTimestamp())
             metadataRepository.save(metadataObj.get())
-            // Update MD file
-            //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-//            val originalImagePath = metadataObj.get().getPath()
-//            var rootDir: String? = null
-//            val rootMediaDirs = mediaDirRepository.findAll()
-//            for (rootmediaDir in rootMediaDirs) {
-//                if (originalImagePath != null && rootmediaDir != null) {
-//                    if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
-//                        rootDir = rootmediaDir.getDirectory()
-//                        break
-//                    }
-//                }
-//            }
 
-            resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-            val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-            if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                resp["recognitionLabels"] = recognitionLabels
-            }
-
-            resp["allAlbumList"] = mutableListOf<Album>()
-            val allAlbumList = albumRepository.findAllOrderByAlbumName()
-            if (allAlbumList.count() > 0) {
-                resp["allAlbumList"] = allAlbumList
-            }
-
-            val keywordList = keywordRepository.findAllDistinctOrderByKeyword()
-            var keywords = ""
-            if (keywordList.count() > 0) {
-                keywords = keywordList.map { it.getKeyword() }.joinToString(",")
-            }
-            resp["keywords"] = keywords
-
-            val cameraList = metadataRepository.findByCameraTypeAlphabetical()
-            model["cameras"] = cameraList.joinToString()
+            val attrResponse = getAllAttribueData(model)
+            resp["recognitionLabels"] = attrResponse["recognitionLabels"]
+            resp["allAlbumList"] = attrResponse["allAlbumList"]
+            resp["keywords"] = attrResponse["keywords"]
+            resp["cameras"] = attrResponse["cameras"]
 
             return mapper.writeValueAsString(resp)
         }
@@ -851,24 +777,9 @@ class TimelineController {
             }
 
             if (metadataList.isNotEmpty()) {
-                // Update DB
+                // Update record
                 metadataRepository.saveAll(metadataList)
 
-                // Update MD file
-                //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-//                for (metadata in metadataList) {
-//                    val originalImagePath = metadata.getPath()
-//                    var rootDir: String? = null
-//                    val rootMediaDirs = mediaDirRepository.findAll()
-//                    for (rootmediaDir in rootMediaDirs) {
-//                        if (originalImagePath != null && rootmediaDir != null) {
-//                            if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
-//                                rootDir = rootmediaDir.getDirectory()
-//                                break
-//                            }
-//                        }
-//                    }
-//                }
                 resp["msg"] = "Saved!"
                 resp["status"] = "success"
                 return mapper.writeValueAsString(resp)
@@ -1167,46 +1078,14 @@ class TimelineController {
             }
 
             if (metadataList.isNotEmpty()) {
-                // Update DB
+                // Update record
                 metadataRepository.saveAll(metadataList)
 
-                // Update MD file
-                //val mediaProcessingUtils = MediaProcessing(model.getAttribute("apiVersion").toString(),model.getAttribute("geocodeUrl").toString())
-//                for (metadata in metadataList) {
-//                    val originalImagePath = metadata.getPath()
-//                    var rootDir: String? = null
-//                    val rootMediaDirs = mediaDirRepository.findAll()
-//                    for (rootmediaDir in rootMediaDirs) {
-//                        if (originalImagePath != null && rootmediaDir != null) {
-//                            if (originalImagePath.contains(rootmediaDir.getDirectory().toString())) {
-//                                rootDir = rootmediaDir.getDirectory()
-//                                break
-//                            }
-//                        }
-//                    }
-//                }
-
-                val keywordDistinctList = keywordRepository.findAllDistinctOrderByKeyword()
-                var keywordListString = ""
-                if (keywordDistinctList.count() > 0) {
-                    keywordListString = keywordDistinctList.map { it.getKeyword() }.joinToString(",")
-                }
-                resp["keywords"] = keywordListString
-
-                resp["recognitionLabels"] = mutableListOf<RecognitionLabel>()
-                val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-                if (recognitionLabels != null && recognitionLabels.count() > 0) {
-                    resp["recognitionLabels"] = recognitionLabels
-                }
-
-                resp["allAlbumList"] = mutableListOf<Album>()
-                val allAlbumList = albumRepository.findAllOrderByAlbumName()
-                if (allAlbumList.count() > 0) {
-                    resp["allAlbumList"] = allAlbumList
-                }
-
-                val cameraList = metadataRepository.findByCameraTypeAlphabetical()
-                resp["cameras"] = cameraList.joinToString()
+                val attrResponse = getAllAttribueData(model)
+                resp["recognitionLabels"] = attrResponse["recognitionLabels"]
+                resp["allAlbumList"] = attrResponse["allAlbumList"]
+                resp["keywords"] = attrResponse["keywords"]
+                resp["cameras"] = attrResponse["cameras"]
 
                 return mapper.writeValueAsString(resp)
             }
@@ -1309,7 +1188,15 @@ class TimelineController {
             keywordArray.add(keyword.getKeyword()!!)
         }
         response["keywordList"] = keywordArray
-        response["metadata"] = metadataRepository.findById(id).get()
+
+        val emptyJson = "{}"
+        val mapper = ObjectMapper()
+        response["metadata"] = mapper.readTree(emptyJson)
+
+        val metadataRecord = metadataRepository.findById(id)
+        if (metadataRecord.isPresent) {
+            response["metadata"] = metadataRecord.get()
+        }
 
         return mapper.writeValueAsString(response)
     }
@@ -1319,47 +1206,57 @@ class TimelineController {
     fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
         val response = mutableMapOf<String, Any?>()
 
-        response["metadata"] = metadataRepository.findById(id).get()
-
+        response["allAlbumList"] = mutableListOf<Album>()
+        response["allRecognitionLabels"] = mutableListOf<RecognitionLabel>()
+        val albumArray = mutableListOf<String>()
+        response["albumList"] = albumArray
         val labelArray = mutableListOf<String>()
-        val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
-        if (recognitionLabelPhotos != null) {
-            for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
-                if (recognitionLabelObj != null) {
-                    labelArray.add(recognitionLabelObj.get().getName()!!)
-                }
-            }
-        }
         response["taggedPeopleList"] = labelArray
 
-        val albumArray = mutableListOf<String>()
-        val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(id)
-        if (albumPhotos != null) {
-            for (albumPhoto in albumPhotos) {
-                val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
-                albumArray.add(album.get().getName()!!)
+        val emptyJson = "{}"
+        val mapper = ObjectMapper()
+        response["metadata"] = mapper.readTree(emptyJson)
+
+        val metadataRecord = metadataRepository.findById(id)
+        if (metadataRecord.isPresent) {
+            response["metadata"] = metadataRecord.get()
+
+            val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(id)
+            if (recognitionLabelPhotos != null) {
+                for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                    val recognitionLabelObj = recognitionLabelRepository?.findById(recognitionLabelPhoto.getRecognitionLabelId()!!)
+                    if (recognitionLabelObj != null) {
+                        labelArray.add(recognitionLabelObj.get().getName()!!)
+                    }
+                }
             }
-        }
-        response["albumList"] = albumArray
+            response["taggedPeopleList"] = labelArray
 
-        val keywordArray = mutableListOf<String>()
-        val keywords = keywordRepository.findKeywordsByMetadataId(id)
-        for (keyword in keywords) {
-            keywordArray.add(keyword.getKeyword()!!)
-        }
-        response["keywordList"] = keywordArray
+            val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(id)
+            if (albumPhotos != null) {
+                for (albumPhoto in albumPhotos) {
+                    val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
+                    albumArray.add(album.get().getName()!!)
+                }
+            }
+            response["albumList"] = albumArray
 
-        response["allRecognitionLabels"] = mutableListOf<RecognitionLabel>()
-        val allRecognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
-        if (allRecognitionLabels != null && allRecognitionLabels.count() > 0) {
-            response["allRecognitionLabels"] = allRecognitionLabels
-        }
+            val keywordArray = mutableListOf<String>()
+            val keywords = keywordRepository.findKeywordsByMetadataId(id)
+            for (keyword in keywords) {
+                keywordArray.add(keyword.getKeyword()!!)
+            }
+            response["keywordList"] = keywordArray
 
-        response["allAlbumList"] = mutableListOf<Album>()
-        val allAlbumList = albumRepository.findAllOrderByAlbumName()
-        if (allAlbumList.count() > 0) {
-            response["allAlbumList"] = allAlbumList
+            val allRecognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
+            if (allRecognitionLabels != null && allRecognitionLabels.count() > 0) {
+                response["allRecognitionLabels"] = allRecognitionLabels
+            }
+
+            val allAlbumList = albumRepository.findAllOrderByAlbumName()
+            if (allAlbumList.count() > 0) {
+                response["allAlbumList"] = allAlbumList
+            }
         }
 
         return mapper.writeValueAsString(response)
