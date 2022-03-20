@@ -736,12 +736,15 @@
 
     timelineSettings.initializeTimelineSlider = async function (mediaTypeFilter) {
         const dateList = timelineSettings.timelineDates;
+        const dateSliderHeight = $("#dateSliderContainer").height();
+        const containerHeight = $("#container").height();
+        const sliderOffset = containerHeight/dateSliderHeight;
+
         if (dateList.length > 0) {
             // Tooltip for handle
             const handleTooltip = $('<span class="badge bg-secondary" id="tooltip" style="background-color: slategray" />').css({
-                position: 'absolute',
-                right: 17,
-                zIndex: 2000
+                'position': 'absolute',
+                'right': 17
             }).hide();
 
             handleTooltip.text(Util.getShortMonths(dateList[0].month - 1) + ' ' + dateList[0].year);
@@ -761,8 +764,10 @@
 
                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                             handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
+                            $(".monthYearSlider").hide();
                         } else if (prevDateObj) {
                             handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
+                            $(".monthYearSlider").hide();
                         }
                     }
                 },
@@ -772,6 +777,7 @@
                     if (currentDateObj && timelineSettings.enableScrollSpy === true) {
                         timelineSettings.jumpFromTimelineToc(event, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
                     }
+                    $(".monthYearSlider").show();
                 },
                 change: function (event, ui) {
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
@@ -783,31 +789,36 @@
                         } else if (prevDateObj) {
                             handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
                         }
+
                         handleTooltip.show();
                     }
                 }
             }).find(".ui-slider-handle").append(handleTooltip).hover(function () {
                 handleTooltip.show();
-            // }, function () {
-            //     handleTooltip.hide();
             });
+
+            // Handle style
+            $(".ui-slider-handle").css({"z-index": "9999"});
 
             // Render ticks
             let prevEl = null;
             let prevTickEl = null;
+
             for (let i = 0; i < dateList.length; i++) {
                 const timelineDateObj = dateList[i];
-                const tickTopMargin = (i / dateList.length * 100)-0.8;
+                const tickTop = i / dateList.length * 100;
 
                 if (timelineDateObj) {
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
                     if (i === 0 || i === dateList.length-1 || (i < dateList.length && dateList[i + 1].year !== timelineDateObj.year)) {
                         // Label for year
-                        const el = $('<span class="badge rounded-pill bg-secondary" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
+                        const el = $('<span class="badge rounded-pill bg-secondary yearLabel" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
                             'width': '35px',
                             'right': '15px',
+                            'font-size': 'xx-small',
                             'position': 'absolute',
-                            'top': tickTopMargin + '%'
+                            'z-index': '2',
+                            'top': (tickTop-sliderOffset) + '%'
                         });
 
                         $("#dateSlider").append(el);
@@ -828,16 +839,18 @@
                             'width': '10px',
                             'right': '15px',
                             'position': 'absolute',
-                            'top': tickTopMargin + '%'
+                            'z-index': '1',
+                            'bottom': '50%',
+                            'top': (tickTop-sliderOffset) + '%'
                         });
 
                         $("#dateSlider").append(tickEl);
                         setTimeout(function() {
-                            if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
-                                $("#" + tickEl.attr("id")).hide();
-                            } else {
+                            // if (prevTickEl !== null && isOverlap($("#" + prevEl.attr("id")), $("#" + tickEl.attr("id"))) === true) {
+                            //     $("#" + tickEl.attr("id")).hide();
+                            // } else {
                                 prevTickEl = tickEl;
-                            }
+                            // }
                         },0);
                     }
 
@@ -845,19 +858,19 @@
                     const sliderTooltip = $('<span class="badge bg-secondary" style="background-color: slategray" />').css({
                         position: 'absolute',
                         right: 15,
-                        zIndex: 2000
+                        bottom: "50%"
                     }).hide();
 
                     sliderTooltip.text(Util.getShortMonths(timelineDateObj.month - 1) + ' ' + timelineDateObj.year);
 
-                    const sliderEl = $('<span data-slider-id="' + timelineDateObj.year + '-' + timelineDateObj.month + '">&nbsp;</span>').css({
+                    const sliderEl = $('<span class="monthYearSlider" data-slider-id="' + timelineDateObj.year + '-' + timelineDateObj.month + '">&nbsp;</span>').css({
                         'width': '73px',
                         'right': '0px',
                         'margin-right': '-3px',
                         'cursor': 'default',
-                        // 'background-color': 'grey',
+                        'z-index': '3',
                         'position': 'absolute',
-                        'top': tickTopMargin + '%'
+                        'top': tickTop + '%'
                     });
 
                     $(sliderEl).append(sliderTooltip);
