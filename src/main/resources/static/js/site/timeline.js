@@ -736,9 +736,9 @@
 
     timelineSettings.initializeTimelineSlider = async function (mediaTypeFilter) {
         const dateList = timelineSettings.timelineDates;
-        const dateSliderHeight = $("#dateSliderContainer").height();
-        const containerHeight = $("#container").height();
-        const sliderOffset = containerHeight/dateSliderHeight;
+        const dateSliderHeight = $("#dateSlider").height();
+        const containerHeight = $("body").height();
+        const sliderOffset = dateSliderHeight/containerHeight;
 
         if (dateList.length > 0) {
             // Tooltip for handle
