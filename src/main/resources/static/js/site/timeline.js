@@ -738,7 +738,7 @@
         const dateList = timelineSettings.timelineDates;
         const dateSliderHeight = $("#dateSlider").height();
         const containerHeight = $("body").height();
-        const sliderOffset = dateSliderHeight/containerHeight;
+        const sliderOffset = (dateSliderHeight/containerHeight)-0.2;
 
         if (dateList.length > 0) {
             // Tooltip for handle
