@@ -98,7 +98,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT DISTINCT m.id as metadataId,m.type,m.path,m.thumbnail_path_small as thumbnailPathSmall,rlp.recognition_label_id as recognitionLabelId,rl.name as recognitionLabelName FROM metadata m LEFT JOIN recognitionlabelphoto rlp ON rlp.metadata_id = m.id LEFT JOIN recognitionlabel rl ON rlp.recognition_label_id = rl.id WHERE m.hidden = false AND rlp.id IN (SELECT rlp2.id FROM recognitionlabelphoto rlp2 WHERE rlp.recognition_label_id = rlp2.recognition_label_id LIMIT :trainingDataLimit) AND rlp.confidence >= 0.0 AND rlp.confidence <= :recognitionConfidenceThreshold ORDER BY rlp.recognition_label_id, RANDOM()",nativeQuery = true)
    fun findTrainingData(@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String, @Param("trainingDataLimit") trainingDataLimit: Int): MutableIterable<TrainingData>
 
-   @Query("SELECT m.folder, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m.hidden = false) as count FROM metadata m WHERE m.hidden = false GROUP BY m.folder ORDER BY m.folder DESC", nativeQuery = true)
+   @Query("SELECT m.folder, m.thumbnail_url_centered as thumbnailUrlCentered, (SELECT COUNT(*) FROM metadata m1 WHERE m1.folder = m.folder AND m1.hidden = false) as count FROM metadata m WHERE m.hidden = false GROUP BY m.folder ORDER BY m.folder DESC", nativeQuery = true)
    fun findFolders(): MutableIterable<Folder?>?
 
    @Query("SELECT * FROM metadata WHERE folder = :folder AND hidden = false ORDER BY year DESC, month DESC, day DESC, time DESC LIMIT :offset, :limit", nativeQuery = true)
