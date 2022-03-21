@@ -72,7 +72,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             if (currentAuthority != "") {
                 var isAllowed = true
                 val user = userRepository?.findByUsername(authentication.name)
-                if (user != null) {
+                if (user != null && user.getId() > 0) {
                     if (currentAuthority == userRole && user.getIsAllowed() == false) {
                         user.setModifiedAt(getCurrentTimestamp())
                         user.setLoggedIn(false)
@@ -93,7 +93,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 }
 
                 if (isAllowed) {
-                    if (user != null) {
+                    if (user != null && user.getId() > 0) {
                         notifyLogin(user)
                         checkLatestAppVersion(user)
                     }

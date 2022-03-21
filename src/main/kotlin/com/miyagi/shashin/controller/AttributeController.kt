@@ -131,7 +131,7 @@ class AttributeController {
             cookie.isHttpOnly = true
             cookie.maxAge = 0
             response.addCookie(cookie)
-            logger.log(Level.INFO, "Not logged in." + e.message)
+            logger.log(Level.INFO, "Not logged in. " + e.message)
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
 
