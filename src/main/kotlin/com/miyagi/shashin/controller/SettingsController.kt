@@ -392,7 +392,7 @@ class SettingsController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings/content/delete"], method = [RequestMethod.POST], produces = ["application/json"])
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "userByUsername"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     @ResponseBody
     @Transactional
     fun deleteContent(model: Model, @RequestBody requestBody: JsonNode): String? {
@@ -453,7 +453,6 @@ class SettingsController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings/user/delete/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
-    @CacheEvict(value = ["userByUsername"], allEntries = true)
     @ResponseBody
     @Transactional
     fun deleteUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
