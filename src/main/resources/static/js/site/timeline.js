@@ -13,7 +13,7 @@
     timelineSettings.rendered = false;
     timelineSettings.timelineDates = [];
 
-    let isOverlap = function (div1, div2) {
+    const isOverlap = function (div1, div2) {
         if (div1.length > 0 && div2.length > 0) {
             const x1 = div1.offset().left;
             const y1 = div1.offset().top;
@@ -32,6 +32,13 @@
 
         } else {
             return false;
+        }
+    }
+
+    const scrollByOne = function() {
+        document.getElementById("container").scrollBy({top: 1});
+        if (document.getElementsByTagName("MAIN").length > 0) {
+            document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
         }
     }
 
@@ -72,10 +79,7 @@
             let hovered = false;
             $(".photo-thumbnail-image").mousemove(function () {
                 if (hovered === false && timelineSettings.rendered === true && timelineSettings.enableScrollSpy === true) {
-                    document.getElementById("container").scrollBy({top: 1});
-                    if (document.getElementsByTagName("MAIN").length > 0) {
-                        document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-                    }
+                    scrollByOne();
                     hovered = true;
                 }
             });
@@ -117,10 +121,7 @@
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false) {
-                document.getElementById("container").scrollBy({top: 1});
-                if (document.getElementsByTagName("MAIN").length > 0) {
-                    document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-                }
+                scrollByOne();
             }
 
             const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
@@ -967,10 +968,7 @@
                         }
                     }
 
-                    document.getElementById("container").scrollBy({top: 1});
-                    if (document.getElementsByTagName("MAIN").length > 0) {
-                        document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-                    }
+                    scrollByOne();
 
                     // Break if top not in viewport
                     if ($("#" + currentDate).withinviewport().length === 0) {
@@ -996,10 +994,7 @@
                 if ($("#" + firstDate).withinviewport().length > 0 ||
                     $("#br" + firstDate).withinviewport().length > 0 ||
                     $("#row" + firstDate).withinviewport().length > 0) {
-                    document.getElementById("container").scrollBy({top: 1});
-                    if (document.getElementsByTagName("MAIN").length > 0) {
-                        document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
-                    }
+                    scrollByOne();
                 }
             });
         }
