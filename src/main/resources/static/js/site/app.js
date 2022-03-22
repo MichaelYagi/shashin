@@ -1543,6 +1543,102 @@
     shashin.autocompleteExtractLast = function(term) {
         return shashin.autocompleteSplit(term).pop();
     }
+
+    shashin.processAlbumList = function(data, isBatch) {
+        if (data.hasOwnProperty("allAlbumList") && data["allAlbumList"].length > 0) {
+            let renderAlbumList = false;
+            const albumList = data["allAlbumList"];
+
+            let batchHtml =
+                '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
+                '<div class="input-group-append dropdown">\n' +
+                '   <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                '   <div class="dropdown-menu" id="albumNameList">\n';
+
+            for (let index in albumList) {
+                const album = albumList[index];
+
+                if ($("#"+album.id).length === 0) {
+                    renderAlbumList = true;
+                }
+
+                batchHtml +=
+                    '<button class="dropdown-item" type="button">\n' +
+                    '    <input type="checkbox" class="album" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                    '    <label for="'+album.id+'">'+album.name+'</label>\n' +
+                    '</button>\n';
+            }
+
+            batchHtml +=
+                '   </div>\n' +
+                '</div>\n';
+
+            if (true === renderAlbumList) {
+                $("#albumListForModal").html(batchHtml);
+                $(".album").on("click", function (e) {
+                    timelineBatchModal.populateBatchAlbum();
+                });
+
+                let albumDropDownEl = "#tagalbumdropdown";
+                if (isBatch === true) {
+                    albumDropDownEl = ".tagalbumdropdown";
+                }
+                $(albumDropDownEl).on("click", function (e) {
+                    e.preventDefault();
+                    timelineBatchModal.toggleBatchTagAlbumDropdown();
+                });
+            }
+        }
+    }
+
+    shashin.processPeopleList = function(data, isBatch) {
+        if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+            let renderRecognitionLabels = false;
+            const recognitionLabels = data["recognitionLabels"];
+
+            let batchHtml =
+                '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
+                '       <div class="input-group-append">\n' +
+                '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                '           <div class="dropdown-menu" id="peopleNameList">';
+
+            for (let index in recognitionLabels) {
+                const recognitionLabel = recognitionLabels[index];
+
+                if ($("#"+recognitionLabel.id).length === 0) {
+                    renderRecognitionLabels = true;
+                }
+
+                batchHtml +=
+                    '           <button class="dropdown-item" type="button">\n' +
+                    '               <input type="checkbox" class="recognitionLabel" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
+                    '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
+                    '           </button>'
+            }
+            batchHtml +=
+                '   </div>\n' +
+                '</div>\n';
+
+            if (true === renderRecognitionLabels) {
+                $("#batchLabelIds").html(batchHtml);
+                $("#tagBatchDataInput").on("focus", function (e) {
+                    e.preventDefault();
+                    timelineBatchModal.closeBatchTagPeopleDropdown();
+                });
+                let peopleDropDownEl = "#tagpeopledropdown";
+                if (isBatch === true) {
+                    peopleDropDownEl = ".tagpeopledropdown";
+                }
+                $(peopleDropDownEl).on("click", function (e) {
+                    e.preventDefault();
+                    timelineBatchModal.toggleBatchTagPeopleDropdown();
+                });
+                $(".recognitionLabel").on("click", function (e) {
+                    timelineBatchModal.populateBatchLabel();
+                });
+            }
+        }
+    }
 }( window.shashin = window.shashin || {}, jQuery ));
 
 if (typeof module !== 'undefined') {

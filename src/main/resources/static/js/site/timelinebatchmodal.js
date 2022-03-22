@@ -115,7 +115,6 @@ $("#saveBatchMetadata").on("click", function (e) {
             shashin.onFail(xhr, textStatus, ajaxParams, " updating batch timeline modal");
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
                 if (data["status"] === "success") {
                     if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
                         $("#keywordsString").val(data["keywords"]);
@@ -127,88 +126,9 @@ $("#saveBatchMetadata").on("click", function (e) {
                         $("#camerasBatchString").val(data["cameras"]);
                     }
 
-                    if (data.hasOwnProperty("allAlbumList") && data["allAlbumList"].length > 0) {
-                        let renderAlbumList = false;
-                        const albumList = data["allAlbumList"];
+                    shashin.processAlbumList(data, true);
 
-                        let batchHtml =
-                            '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
-                            '<div class="input-group-append dropdown">\n' +
-                            '   <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                            '   <div class="dropdown-menu" id="albumNameList">\n';
-
-                        for (let index in albumList) {
-                            const album = albumList[index];
-
-                            if ($("#"+album.id).length === 0) {
-                                renderAlbumList = true;
-                            }
-
-                            batchHtml +=
-                                '<button class="dropdown-item" type="button">\n' +
-                                '    <input type="checkbox" class="album" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
-                                '    <label for="'+album.id+'">'+album.name+'</label>\n' +
-                                '</button>\n';
-                        }
-
-                        batchHtml +=
-                            '   </div>\n' +
-                            '</div>\n';
-
-                        if (true === renderAlbumList) {
-                            $("#albumListForModal").html(batchHtml);
-                            $(".album").on("click", function (e) {
-                                timelineBatchModal.populateBatchAlbum();
-                            });
-                            $(".tagalbumdropdown").on("click", function (e) {
-                                e.preventDefault();
-                                timelineBatchModal.toggleBatchTagAlbumDropdown();
-                            });
-                        }
-                    }
-
-                    if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
-                        let renderRecognitionLabels = false;
-                        const recognitionLabels = data["recognitionLabels"];
-
-                        let batchHtml =
-                            '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
-                            '       <div class="input-group-append">\n' +
-                            '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                            '           <div class="dropdown-menu" id="peopleNameList">';
-
-                        for (let index in recognitionLabels) {
-                            const recognitionLabel = recognitionLabels[index];
-
-                            if ($("#"+recognitionLabel.id).length === 0) {
-                                renderRecognitionLabels = true;
-                            }
-
-                            batchHtml +=
-                                '           <button class="dropdown-item" type="button">\n' +
-                                '               <input type="checkbox" class="recognitionLabel" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
-                                '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                                '           </button>'
-                        }
-                        batchHtml +=
-                            '   </div>\n' +
-                            '</div>\n';
-
-                        if (true === renderRecognitionLabels) {
-                            $("#batchLabelIds").html(batchHtml);
-                            $(".recognitionLabel").on("click", function (e) {
-                                timelineBatchModal.populateBatchLabel();
-                            });
-                            $(".tagpeopledropdown").on("click", function (e) {
-                                e.preventDefault();
-                                timelineBatchModal.toggleBatchTagPeopleDropdown();
-                            });
-                            $("#tagBatchDataInput").on("focus", function (e) {
-                                e.preventDefault();
-                                timelineBatchModal.closeBatchTagPeopleDropdown();
-                            });
-                        }
-                    }
+                    shashin.processPeopleList(data, true);
 
                     let dateGalleryRemoved = false;
                     for (const index in metadataIds) {
@@ -218,74 +138,55 @@ $("#saveBatchMetadata").on("click", function (e) {
                             $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
                             const metadataObj = {};
-                            //shashin.getMetadata(metadataId).then(function (metadataObj) {
-                            //     if ($("#cameraBatchData").val().trim() !== "") {
-                            //         metadataObj.camera = $("#cameraBatchData").val()
-                            //     }
-                            //
-                            //     if ($("#keywordsBatchData").val().trim() !== "") {
-                            //         metadataObj.keywords = $("#keywordsBatchData").val()
-                            //     }
 
-                                if ($("#latlngBatchData").val().trim() !== "") {
-                                    const latlngArray = $("#latlngBatchData").val().split(",");
-                                    metadataObj.lat = $.trim(latlngArray[0])
-                                    metadataObj.lng = $.trim(latlngArray[1])
-                                    if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
-                                        $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
-                                    }
+                            if ($("#latlngBatchData").val().trim() !== "") {
+                                const latlngArray = $("#latlngBatchData").val().split(",");
+                                metadataObj.lat = $.trim(latlngArray[0])
+                                metadataObj.lng = $.trim(latlngArray[1])
+                                if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
+                                    $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
                                 }
-                                // if ($("#tagBatchDataInput").val().trim() !== "") {
-                                //     metadataObj.tagpeople = $("#tagBatchDataInput").val()
-                                // }
-                                // if ($("#albumNameInput").val().trim() !== "") {
-                                //     metadataObj.albumlist = $("#albumNameInput").val()
-                                // }
-                                metadataObj.hidden = $("#batchhidden").prop("checked")
+                            }
 
-                                if (metadataObj.hidden === false) {
-                                    //Util.populateDetailsInfo(metadataObj, "propTimelineModal")
+                            metadataObj.hidden = $("#batchhidden").prop("checked")
 
-                                    $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
-                                    $("#mediaLink" + metadataId).attr("tag", metadataId);
+                            if (metadataObj.hidden === false) {
+                                $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
+                                $("#mediaLink" + metadataId).attr("tag", metadataId);
 
-                                    if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
-                                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
-                                    }
+                                if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
+                                    $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                                }
 
-                                    if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true && activePage === "timeline") {
-                                        dateGalleryRemoved = shashin.removeThumbnail(metadataId);
-                                    }
-                                } else if (activePage === "timeline") {
+                                if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true && activePage === "timeline") {
                                     dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                                 }
+                            } else if (activePage === "timeline") {
+                                dateGalleryRemoved = shashin.removeThumbnail(metadataId);
+                            }
 
-                                if (parseInt(index) === (metadataIds.length-1)) {
-                                    if ($("#offcanvasToc").length > 0 && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "" || $("#dayTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
-                                        shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
-                                            // If a date section was removed refresh the timeline
-                                            if (dateGalleryRemoved === true) {
-                                                const elements = $(".scrollspy").withinviewport()
-                                                let firstElementId = $(elements[0]).attr("id");
-                                                let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-                                                timelineSettings.jumpFromTimelineToc(null, firstVisibleId, $("#mediaTypeFilter").val());
-                                            }
-                                        });
-                                        if (index === metadataIds.length-1) {
-                                            Util.setMetadataLocalStorage();
+                            if (parseInt(index) === (metadataIds.length-1)) {
+                                if ($("#offcanvasToc").length > 0 && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "" || $("#dayTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
+                                    shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
+                                        // If a date section was removed refresh the timeline
+                                        if (dateGalleryRemoved === true) {
+                                            const elements = $(".scrollspy").withinviewport()
+                                            let firstElementId = $(elements[0]).attr("id");
+                                            let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+                                            timelineSettings.jumpFromTimelineToc(null, firstVisibleId, $("#mediaTypeFilter").val());
                                         }
+                                    });
+                                    if (index === metadataIds.length-1) {
+                                        Util.setMetadataLocalStorage();
                                     }
                                 }
-                            //});
+                            }
                         }
                     }
 
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     $("#timelineBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#timelineBatchModalCancel").prop("disabled", false);
-                    // window.top.location = window.top.location
                 } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                     $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                     $("#timelineBatchModalCancel").prop("disabled", false);
