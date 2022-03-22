@@ -7,7 +7,6 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import com.miyagi.shashin.util.TextUtils.Companion.timeOffsets
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
