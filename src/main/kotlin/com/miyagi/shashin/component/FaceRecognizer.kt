@@ -11,15 +11,10 @@ import com.miyagi.shashin.repository.RecognitionLabelRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
-import org.bytedeco.javacpp.DoublePointer
-import org.bytedeco.javacpp.IntPointer
-import org.bytedeco.opencv.global.opencv_core
 import org.bytedeco.opencv.global.opencv_imgcodecs
 import org.bytedeco.opencv.global.opencv_imgproc
 import org.bytedeco.opencv.opencv_core.*
-import org.bytedeco.opencv.opencv_face.FisherFaceRecognizer
 import org.bytedeco.opencv.opencv_objdetect.CascadeClassifier
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import org.tensorflow.Graph
 import org.tensorflow.Session
@@ -28,16 +23,13 @@ import org.tensorflow.Tensors
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.*
-import java.nio.IntBuffer
 import java.util.ArrayList
 import java.util.Arrays
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
 import kotlin.math.abs
 import kotlin.math.sqrt
-
 
 @Component
 class FaceRecognizer() {
@@ -108,6 +100,8 @@ class FaceRecognizer() {
     }
 
     fun runRecognizer(stopProcesses: Boolean) {
+        logger.log(Level.INFO, "Running face recognizer.")
+
         val tempDir = System.getProperty("java.io.tmpdir")
 
         if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
@@ -118,9 +112,12 @@ class FaceRecognizer() {
 
             Thread {
                 if (threadFile != null) {
+                    logger.log(Level.INFO, "Matching faces.")
                     getPrediction(threadFile)
                 }
             }.start()
+        } else {
+            logger.log(Level.INFO, "Thread exists. Face scanner already running.")
         }
 
         if (stopProcesses) {
@@ -425,6 +422,7 @@ class FaceRecognizer() {
         }
 
         writeToThreadFileAndLogMessage("Matching Complete",threadFile)
+        FileUtils.deleteThreadFiles(threadExtensionName)
     }
 
     private fun writeToThreadFileAndLogMessage(message: String, threadFile: File) {
