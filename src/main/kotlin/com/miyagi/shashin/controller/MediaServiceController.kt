@@ -51,7 +51,7 @@ class MediaServiceController {
                 (metadata.getType()!!.lowercase().contains("mp4") || metadata.getType()!!.lowercase()
                     .contains("quicktime")) &&
                 (
-                        (metadata.getCompressionType() == null && metadata.getExpectedExtension() != null && metadata.getExpectedExtension()!!
+                        ((metadata.getCompressionType() == null || metadata.getCompressionType()!!.lowercase() == "unknown") && metadata.getExpectedExtension() != null && metadata.getExpectedExtension()!!
                             .lowercase() == "mov" && File(metadata.getPath()!!).extension.lowercase() == "mov") ||
                                 (metadata.getCompressionType() != null && metadata.getCompressionType()!!
                                     .lowercase() != "h.264")
