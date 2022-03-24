@@ -56,7 +56,7 @@
 
         let topScroll = true;
         let topOfPage = true;
-        let scrollTimer;
+        let scrollTimer, sliderTimer;
 
         // Initialize
         if (Util.isMobile() === false) {
@@ -102,7 +102,9 @@
                 }
                 hovered = true;
             });
+        });
 
+        $(window).bind("sliderScrollStop", function() {
             if ($("#dateSliderWrapper:not(:hover)").length === 1) {
                 $("#dateSlider").hide();
             }
@@ -131,6 +133,13 @@
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
                 timelineSettings.scrollToTimelineToc(elementsInViewport);
+            }
+
+            if (Util.isMobile() === false) {
+                clearTimeout(sliderTimer);
+                sliderTimer = setTimeout(function () {
+                    $(window).trigger("sliderScrollStop");
+                }, 1000);
             }
 
             if (timelineSettings.enableScrollSpy === true) {
@@ -891,9 +900,9 @@
                 $("#dateSlider").hide();
             });
 
-            setTimeout(function() {
-                $("#dateSlider").hide();
-            },0);
+            // setTimeout(function() {
+            //     $("#dateSlider").hide();
+            // },0);
         }
     }
 
