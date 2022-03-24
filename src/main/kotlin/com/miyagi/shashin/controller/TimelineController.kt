@@ -436,10 +436,9 @@ class TimelineController: BaseController() {
 
                 for (albumNameRaw in albumsArray) {
 
-                    val albumIds = processAlbum(albumNameRaw, currentUserObj, metadataObj.get())
+                    val albumId = processAlbum(albumNameRaw, currentUserObj, metadataObj.get())
 
-                    if (albumIds.count() == 1) {
-                        val albumId = albumIds[0]
+                    if (albumId > 0) {
                         val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
                         if (albumPhotoCount == 0) {
                             val albumPhotoObj = AlbumPhoto()
@@ -669,7 +668,7 @@ class TimelineController: BaseController() {
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
-        // println(requestBody)
+//         println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
 
         val idArray: Array<String>? = batchMetadataMap.batchMetadataIds
@@ -682,6 +681,7 @@ class TimelineController: BaseController() {
         var keywords: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.keywordsBatchData)
         val recognitionLabelNames: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.tagBatchDataInput)
         val albumNames: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.albumNameInput)
+//        println(albumNames)
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
 
@@ -700,7 +700,10 @@ class TimelineController: BaseController() {
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
                 for (albumNameRaw in albumNameList) {
-                    albumIdList = processAlbum(albumNameRaw, currentUserObj, metadataCoverAlbumObj.get())
+                    val albumId = processAlbum(albumNameRaw, currentUserObj, metadataCoverAlbumObj.get())
+                    if (albumId > 0) {
+                        albumIdList.add(albumId)
+                    }
                 }
             }
 
@@ -747,6 +750,7 @@ class TimelineController: BaseController() {
                         albumPhotoRepository.deleteByMetadataId(metadata.getId())
 
                         for (albumId in albumIdList) {
+                            println(albumId)
                             val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadata.getId(), albumId)!!
                             if (albumPhotoCount == 0) {
                                 var albumPhotoObj: AlbumPhoto
@@ -990,14 +994,14 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    private fun processAlbum(albumNameRaw: String, currentUserObj: User?, metadataObj: Metadata?): ArrayList<Int> {
-        val albumIdList: ArrayList<Int> = ArrayList()
+    private fun processAlbum(albumNameRaw: String, currentUserObj: User?, metadataObj: Metadata?): Int {
+//        val albumIdList: ArrayList<Int> = ArrayList()
+        var albumId = 0
 
         if (albumNameRaw.trim().isNotBlank() && currentUserObj != null) {
             val albumName = StringEscapeUtils.escapeHtml4(albumNameRaw).trim().replace(" +".toRegex()," ")
             val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
             var albumObj = Album()
-            val albumId: Int
 
             if (albumObject != null) {
                 albumId = albumObject.getId()
@@ -1013,7 +1017,7 @@ class TimelineController: BaseController() {
             }
 
             if (albumId > 0) {
-                albumIdList.add(albumId)
+//                albumIdList.add(albumId)
 
                 val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj.getId(), albumId)
                 if (userAlbumCount == 0) {
@@ -1027,7 +1031,7 @@ class TimelineController: BaseController() {
             }
         }
 
-        return albumIdList
+        return albumId
     }
 
     private fun processCoordinates(latlngStr: String?): Map<String, String?> {
