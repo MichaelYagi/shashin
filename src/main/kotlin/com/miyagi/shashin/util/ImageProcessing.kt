@@ -232,35 +232,42 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
     private fun grabScreenshot(file: File): BufferedImage? {
         try {
             val frameGrabber = FFmpegFrameGrabber(file.path)
-//            frameGrabber.format = file.extension.lowercase()
             frameGrabber.start()
 
             val aa = Java2DFrameConverter()
 
-            var f = frameGrabber.grabKeyFrame()
-            var bi = aa.convert(f)
+            val f = frameGrabber.grabImage()
+            val bi = aa.convert(f)
 
-            val limit = 1000
-            var count = 0
-            while (bi != null) {
-                if (limit > count) {
-                    break
-                }
-                f = frameGrabber.grabKeyFrame()
-                bi = aa.convert(f)
-                count++
-            }
+            if (bi == null) {
+                
+//            var f = frameGrabber.grabKeyFrame()
+//            var bi = aa.convert(f)
 
-            val rotationStr = frameGrabber.getVideoMetadata("rotate")
-            if (!rotationStr.isNullOrBlank() && bi != null) {
-                val rotation = rotationStr.toDouble()
-                if (rotation > 0) {
-                    bi = rotateImage(bi, rotation)
-                }
+//            if (bi != null) {
+//                val limit = 1000
+//                var count = 0
+//                while (bi != null) {
+//                    if (limit > count) {
+//                        break
+//                    }
+//                    f = frameGrabber.grabKeyFrame()
+//                    bi = aa.convert(f)
+//                    count++
+//                }
+//
+//                val rotationStr = frameGrabber.getVideoMetadata("rotate")
+//                if (!rotationStr.isNullOrBlank() && bi != null) {
+//                    val rotation = rotationStr.toDouble()
+//                    if (rotation > 0) {
+//                        bi = rotateImage(bi, rotation)
+//                    }
+//                }
+//            } else {
+                logger.log(Level.WARNING, "Could not convert video " + file.name + ": null")
             }
 
             frameGrabber.stop()
-
             return bi
         } catch (e: IOException) {
             logger.log(Level.WARNING, "Could not convert video " + file.name + ": " + e.message)
