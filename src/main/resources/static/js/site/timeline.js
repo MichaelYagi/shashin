@@ -12,6 +12,7 @@
     timelineSettings.initialized = false;
     timelineSettings.rendered = false;
     timelineSettings.timelineDates = [];
+    timelineSettings.distanceToFooter = 9999;
 
     const isOverlap = function (div1, div2) {
         if (div1.length > 0 && div2.length > 0) {
@@ -33,6 +34,14 @@
         } else {
             return false;
         }
+    }
+
+    const calculateDistanceToFooter = function() {
+        return $(window).height() - $('#subfooter').offset().top;
+    }
+
+    const closeToFooter = function() {
+        return (timelineSettings.distanceToFooter === 9999 || timelineSettings.distanceToFooter > -100 /*$("#subfooter").withinviewport().length > 0*/);
     }
 
     const scrollByOne = function() {
@@ -112,6 +121,7 @@
 
         // Scroll event handler
         const scrollHandler = function (e) {
+            timelineSettings.distanceToFooter = calculateDistanceToFooter();
             timelineSettings.isScrolling = true;
             let st = $(e.target).scrollTop();
 
@@ -225,8 +235,7 @@
         const timelineDates = timelineSettings.timelineDates;
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-        if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || ($("#"+lastDate).withinviewport().length === 0 && $("#subfooter").withinviewport().length > 0 && Util.atEndOfPage($("#container")[0]))) {
-
+        if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || ($("#"+lastDate).withinviewport().length === 0 && closeToFooter() === true && Util.atEndOfPage($("#container")[0]))) {
             $(".bi-play-circle").css("visibility", "hidden");
             $(".bi-play-btn").css("visibility", "hidden");
             $(".mediaLink").unbind('click');
@@ -444,7 +453,7 @@
                 const timelineDate = timelineArr[index];
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
-                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && $("#subfooter").withinviewport().length > 0) {
+                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
                     if ($("#" + currentDate).length === 0) {
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
@@ -454,7 +463,7 @@
                         }
 
                         // Break if footer not in viewport
-                        if ($("#subfooter").withinviewport().length === 0) {
+                        if (closeToFooter() === true) {
                             break;
                         }
                     }
