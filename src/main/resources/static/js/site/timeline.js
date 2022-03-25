@@ -1421,67 +1421,23 @@
                                         }
                                     }
 
-                                    if (action === "above") {
-                                        htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
-                                            // deferred.resolve(timelineSettings.success);
-                                            ret = timelineSettings.success;
-                                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                if (Util.isSafari() === true) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                } else if (Util.isFirefox() === true) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    htmlEl.show();
-                                                }
-                                            }
-                                        });
-                                    } else if (action === "new") {
-                                        $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                if (Util.isSafari() === true) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                } else if (Util.isFirefox() === true) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    htmlEl.show();
-                                                }
-                                            }
-                                            // deferred.resolve(timelineSettings.success);
-                                            ret = timelineSettings.success;
-                                        });
-                                    } else {
-                                        if (attachToId == null) {
-                                            if ($(".attachMetadataPhotos").length > 0) {
-                                                htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        if (Util.isSafari() === true) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                        } else if (Util.isFirefox() === true) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            htmlEl.show();
-                                                        }
+                                    setTimeout(function () {
+                                        if (action === "above") {
+                                            htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
+                                                // deferred.resolve(timelineSettings.success);
+                                                ret = timelineSettings.success;
+                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                    if (Util.isSafari() === true) {
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                    } else if (Util.isFirefox() === true) {
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                        htmlEl.show();
                                                     }
-                                                    // deferred.resolve(timelineSettings.success);
-                                                    ret = timelineSettings.success;
-                                                });
-                                            } else {
-                                                $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        if (Util.isSafari() === true) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                        } else if (Util.isFirefox() === true) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            htmlEl.show();
-                                                        }
-                                                    }
-                                                    // deferred.resolve(timelineSettings.success);
-                                                    ret = timelineSettings.success;
-                                                });
-                                            }
-                                        } else {
-                                            htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
+                                                }
+                                            });
+                                        } else if (action === "new") {
+                                            $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                     if (Util.isSafari() === true) {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
@@ -1494,8 +1450,54 @@
                                                 // deferred.resolve(timelineSettings.success);
                                                 ret = timelineSettings.success;
                                             });
+                                        } else {
+                                            if (attachToId == null) {
+                                                if ($(".attachMetadataPhotos").length > 0) {
+                                                    htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
+                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                            if (Util.isSafari() === true) {
+                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                            } else if (Util.isFirefox() === true) {
+                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                                htmlEl.show();
+                                                            }
+                                                        }
+                                                        // deferred.resolve(timelineSettings.success);
+                                                        ret = timelineSettings.success;
+                                                    });
+                                                } else {
+                                                    $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
+                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                            if (Util.isSafari() === true) {
+                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                            } else if (Util.isFirefox() === true) {
+                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                                htmlEl.show();
+                                                            }
+                                                        }
+                                                        // deferred.resolve(timelineSettings.success);
+                                                        ret = timelineSettings.success;
+                                                    });
+                                                }
+                                            } else {
+                                                htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
+                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                        if (Util.isSafari() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        } else if (Util.isFirefox() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            htmlEl.show();
+                                                        }
+                                                    }
+                                                    // deferred.resolve(timelineSettings.success);
+                                                    ret = timelineSettings.success;
+                                                });
+                                            }
                                         }
-                                    }
+                                    }, 0);
                                 } else {
                                     // Already attached
                                     // deferred.resolve(timelineSettings.success);
