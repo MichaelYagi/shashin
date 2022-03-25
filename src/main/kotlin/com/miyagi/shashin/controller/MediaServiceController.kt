@@ -78,7 +78,7 @@ class MediaServiceController {
                 /* Step 3. Set Video Attributes for conversion*/
                 val video = VideoAttributes()
                 video.setCodec("h264")
-                video.setX264Profile(X264_PROFILE.BASELINE)
+                // video.setX264Profile(X264_PROFILE.BASELINE)
                 // More the frames and higher bitrate means more quality and size,
                 // keep it low based on devices like mobile
                 // Here 160 kbps video is 160000
