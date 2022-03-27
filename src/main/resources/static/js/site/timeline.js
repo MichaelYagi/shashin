@@ -121,7 +121,7 @@
 
         // Scroll event handler
         const scrollHandler = function (e) {
-            // timelineSettings.distanceToFooter = calculateDistanceToFooter();
+            timelineSettings.distanceToFooter = calculateDistanceToFooter();
             timelineSettings.isScrolling = true;
             let st = $(e.target).scrollTop();
 
