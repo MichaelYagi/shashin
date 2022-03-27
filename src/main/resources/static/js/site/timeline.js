@@ -121,7 +121,7 @@
 
         // Scroll event handler
         const scrollHandler = function (e) {
-            // timelineSettings.distanceToFooter = calculateDistanceToFooter();
+            timelineSettings.distanceToFooter = calculateDistanceToFooter();
             timelineSettings.isScrolling = true;
             let st = $(e.target).scrollTop();
 
@@ -460,7 +460,7 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                            timelineSettings.distanceToFooter = calculateDistanceToFooter();
+                            //timelineSettings.distanceToFooter = calculateDistanceToFooter();
                         }
 
                         // Break if footer not in viewport
