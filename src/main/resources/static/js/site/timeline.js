@@ -83,15 +83,6 @@
             timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
             timelineSettings.reinitLightGalleryInstance();
-
-            // Only show overlays when scrolling stopped for current hovered image
-            let hovered = false;
-            $(".photo-thumbnail-image").mousemove(function () {
-                if (hovered === false && timelineSettings.rendered === true && timelineSettings.enableScrollSpy === true) {
-                    scrollByOne();
-                    hovered = true;
-                }
-            });
         } else {
             timelineSettings.enableScrollSpy = false;
         }
@@ -189,6 +180,15 @@
         scrollTimer = setTimeout(function() {
             $(".photo-thumbnail-image").mousemove();
         }, 1000);
+
+        // Only show overlays when scrolling stopped for current hovered image
+        let hovered = false;
+        $(".photo-thumbnail-image").mousemove(function () {
+            if (hovered === false && timelineSettings.rendered === true && timelineSettings.enableScrollSpy === true) {
+                scrollByOne();
+                hovered = true;
+            }
+        });
     }
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
