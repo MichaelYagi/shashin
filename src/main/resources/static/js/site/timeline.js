@@ -41,7 +41,7 @@
     }
 
     const closeToFooter = function() {
-        return (timelineSettings.distanceToFooter === 9999 || timelineSettings.distanceToFooter > -100 /*$("#subfooter").withinviewport().length > 0*/);
+        return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > -100 && timelineSettings.distanceToFooter < 1) || $("#subfooter").withinviewport().length > 0);
     }
 
     const scrollByOne = function() {
@@ -460,10 +460,11 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                            timelineSettings.distanceToFooter = calculateDistanceToFooter();
                         }
 
                         // Break if footer not in viewport
-                        if (closeToFooter() === true) {
+                        if (closeToFooter() === false) {
                             break;
                         }
                     }
