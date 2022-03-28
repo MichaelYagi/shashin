@@ -34,8 +34,8 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             for (directory in fileMetadata.directories) {
                 for (tag in directory.tags) {
                     when (tag.tagName) {
-                        "Orientation" -> {
-                            if (tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) {
+                        "Orientation", "Rotation" -> {
+                            if ((tag.description.contains("Rotate") && ((!jpegImageHeight && !jpegImageWidth) || directory.name == "Exif IFD0")) || directory.name == "MP4") {
                                 val digit = tag.description.filter { it.isDigit() }
 
                                 if (TextUtils.isInteger(digit)) {
@@ -237,7 +237,15 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
             val aa = Java2DFrameConverter()
 
             val f = frameGrabber.grabImage()
-            val bi = aa.convert(f)
+            var bi = aa.convert(f)
+
+            val rotationStr = frameGrabber.getVideoMetadata("rotate")
+            if (!rotationStr.isNullOrBlank() && bi != null) {
+                val rotation = rotationStr.toDouble()
+                if (rotation > 0) {
+                    bi = rotateImage(bi, rotation)
+                }
+            }
 
             if (bi == null) {
                 
@@ -256,13 +264,6 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 //                    count++
 //                }
 //
-//                val rotationStr = frameGrabber.getVideoMetadata("rotate")
-//                if (!rotationStr.isNullOrBlank() && bi != null) {
-//                    val rotation = rotationStr.toDouble()
-//                    if (rotation > 0) {
-//                        bi = rotateImage(bi, rotation)
-//                    }
-//                }
 //            } else {
                 logger.log(Level.WARNING, "Could not convert video " + file.name + ": null")
             }
