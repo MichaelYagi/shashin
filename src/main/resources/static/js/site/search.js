@@ -51,10 +51,10 @@ class Search {
                     const metadata = metadataList[index];
 
                     let dateHeadingObj = null;
-                    let renderTopRight = null;
-                    let renderTopLeft = null;
-                    let renderBottomLeft = null;
-                    let renderCenter = null;
+                    let renderTopRight = true;
+                    let renderTopLeft = false;
+                    let renderBottomLeft = true;
+                    let renderCenter = true;
 
                     const dateHeadingCount = $(".dateSection").length;
                     const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
@@ -65,15 +65,12 @@ class Search {
                         dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                     }
 
-                    const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                    renderTopRight = {type:metadata.type, id:metadata.id, content:duration, width:metadata.originalImageWidth, height:metadata.originalImageHeight, isTagged:false};
-                    renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:null, onclickFunctionCall:null, editControls: false};
-                    renderCenter = {metadata:metadata,onclickFunctionCall:"shashin.openGallery",index:currentMediaLinkIndex};
+                    const overlayData = shashin.getOverlayData(metadata,{cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex});
 
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const appendClass = "appendSearchPhotos";
-                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter})).insertAfter($("."+appendClass).last());
+                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, overlayData})).insertAfter($("."+appendClass).last());
                 }
 
                 $("#spinner").css("display", "none");

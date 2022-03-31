@@ -91,11 +91,11 @@
                             const metadata = albumMetadataList[index];
 
                             let dateHeadingObj = null;
-                            let renderTopRight = null;
-                            let renderTopLeft = null;
-                            let renderBottomLeft = null;
-                            let renderCenter = null;
-                            let renderBottomRight = null;
+                            let renderTopRight = true;
+                            let renderTopLeft = false;
+                            let renderBottomLeft = true;
+                            let renderCenter = true;
+                            let renderBottomRight = true;
 
                             const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                             const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
@@ -109,24 +109,20 @@
                                 dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                             }
 
-                            const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                            renderTopRight = {type:metadata.type, id:metadata.id, content:duration, width:metadata.originalImageWidth, height:metadata.originalImageHeight, isTagged:false};
+                            let overlayData;
 
                             if (userMap.showControls === true) {
-                                renderTopLeft = {id:metadata.id};
-                                renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:'albumModalEdit', onclickFunctionCall:'albumSettings.openAlbumModal', editControls: false};
+                                overlayData = shashin.getOverlayData(metadata, {blOnClickFunction:"albumSettings.openAlbumModal",cOnClickFunction:"shashin.openGallery",onClickIdPrefix:"albumModalEdit",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,notificationMap:notificationMap});
+                                renderTopLeft = {id:metadata.id, overlays:null, data:null};
                             } else {
-                                renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:null, onclickFunctionCall:null, editControls: false};
+                                overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,notificationMap:notificationMap});
                             }
-
-                            renderBottomRight = {id:metadata.id, favoriteCount:favoriteCount, favoriteIcon:favoriteIcon, albumPhotoCommentsMap:albumPhotoCommentsMap, notificationMap:notificationMap};
-                            renderCenter = {metadata:metadata,onclickFunctionCall:"shashin.openGallery",index:currentMediaLinkIndex};
 
                             mediaContentList.push(shashin.getMediaContent(metadata));
 
                             // Append HTML
                             const appendClass = "appendAlbumPhotos"; //"albummodal" + metadata.id;
-                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, renderBottomRight})).insertBefore($("."+appendClass).last()).ready(function () {
+                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, renderBottomRight, overlayData})).insertBefore($("."+appendClass).last()).ready(function () {
                                 // Call JS and modal
                                 albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
