@@ -51,7 +51,7 @@ class SearchController {
         model["metadataSearchList"] = response["metadataSearchList"]!!
         model["status"] = response["status"]!!
 
-        model["message"] = ""
+        model["msg"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -95,10 +95,11 @@ class SearchController {
             for (keywordGroup in keywordList) {
                 keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
             }
-            model["keywordMap"] = keywordMap
+            response["keywordMap"] = keywordMap
         }
 
         response["status"] = "success"
+        response["msg"] = ""
 
         return response
     }

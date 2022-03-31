@@ -364,9 +364,9 @@ class Util {
         _this.src = "https://via.placeholder.com"+dimensions+"?text="+encodeURI(text);
     }
 
-    static activateMetadataListeners(metadata) {
-        if (metadata && metadata.hasOwnProperty("id")) {
-            $("#image" + metadata.id).on('load', function () {
+    static activateMetadataListeners(metadataId) {
+        if (metadataId.length > 0) {
+            $("#image" + metadataId).on('load', function () {
                 $(this).css("background-color", "transparent");
             });
         }

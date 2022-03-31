@@ -1,8 +1,11 @@
 (function( albumSettings, $, undefined ) {
     albumSettings.rendering = false;
     albumSettings.page = 1;
+    albumSettings.http = null;
 
     albumSettings.init = async function (albumId, activePage, albumMetadataList) {
+        albumSettings.http = new Http(activePage);
+
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', {
             dynamic: true,
             plugins: [lgMetadataDetail],
@@ -54,146 +57,104 @@
         albumSettings.rendering = true;
         $("#spinner").css("display","block");
 
-        const ajaxParams = {
-            type: 'get',
-            url: "/album/"+albumId+"/page/"+nextPage,
-            contentType: 'application/json; charset=utf-8',
-            async: true,
-            retries: shashin.ajaxRetries
-        }
+        const data = await this.http.ajaxGet("/album/"+albumId+"/page/"+nextPage);
 
         const mediaContentList = [];
 
-        return await $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album")})
-        .then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === "success") {
-                    if (data.hasOwnProperty("album") &&
-                        data.hasOwnProperty("albumMetadataList") &&
-                        data.hasOwnProperty("albumPhotoCommentsMap") &&
-                        data.hasOwnProperty("userMap") &&
-                        data.hasOwnProperty("notificationMap")
-                    ) {
-                        const albumData = data["album"];
-                        const albumMetadataList = data["albumMetadataList"];
-                        const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
-                        const userMap = data["userMap"];
-                        const notificationMap = data["notificationMap"];
-                        const favoritesMap = data["favorites"];
-                        const keywordMap = data["keywordMap"];
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            let message = "Error";
+            if (data["status"] === "success") {
+                if (data.hasOwnProperty("album") &&
+                    data.hasOwnProperty("albumMetadataList") &&
+                    data.hasOwnProperty("albumPhotoCommentsMap") &&
+                    data.hasOwnProperty("userMap") &&
+                    data.hasOwnProperty("notificationMap")
+                ) {
+                    const albumData = data["album"];
+                    const albumMetadataList = data["albumMetadataList"];
+                    const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
+                    const userMap = data["userMap"];
+                    const notificationMap = data["notificationMap"];
+                    const favoritesMap = data["favorites"];
 
-                        shashin.printMessageToConsole(albumData);
-                        shashin.printMessageToConsole(albumMetadataList);
-                        shashin.printMessageToConsole(albumPhotoCommentsMap);
-                        shashin.printMessageToConsole(userMap);
-                        shashin.printMessageToConsole(albumMetadataList.length);
+                    shashin.printMessageToConsole(albumData);
+                    shashin.printMessageToConsole(albumMetadataList);
+                    shashin.printMessageToConsole(albumPhotoCommentsMap);
+                    shashin.printMessageToConsole(userMap);
+                    shashin.printMessageToConsole(albumMetadataList.length);
 
-                        if (albumMetadataList.length > 0) {
-                            const mediaLinkLength = $(".mediaLink").length;
+                    if (albumMetadataList.length > 0) {
+                        const mediaLinkLength = $(".mediaLink").length;
 
-                            for (const index in albumMetadataList) {
-                                let html = "";
-                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                                const metadata = albumMetadataList[index];
+                        for (const index in albumMetadataList) {
+                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                            const metadata = albumMetadataList[index];
 
-                                const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+                            let dateHeadingObj = null;
+                            let renderTopRight = null;
+                            let renderTopLeft = null;
+                            let renderBottomLeft = null;
+                            let renderCenter = null;
+                            let renderBottomRight = null;
 
-                                const dateHeadingCount = $(".dateSection").length;
-                                const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                                const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
-                                const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
+                            const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+                            const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
 
-                                if (lastDateHeading !== currentDate) {
-                                    html += '<section class="dateSection" id="'+currentDate+'"><p><strong>' + displayCurrentDate + '</strong></p></section>\n';
-                                }
+                            const dateHeadingCount = $(".dateSection").length;
+                            const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
+                            const currentDate = metadata["year"] +"-"+ metadata["month"] +"-"+ metadata["day"];
+                            const displayCurrentDate = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
 
-                                html +=
-                                    '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
-                                    '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
-                                    '   <img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="Util.errorImg(this,\''+metadata.title+'\',Util.thumbnailHeight())">\n';
-
-                                const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, false);
-
-                                if (userMap.showControls === true) {
-                                    html += shashin.getTopLeftOverlay(metadata.id);
-                                    html += shashin.getBottomLeftOverlay(metadata.id, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText');
-                                } else {
-                                    html += shashin.getBottomLeftOverlay(metadata.id, null, null, null, null);
-                                }
-
-                                html +=
-                                    '   <div class="thumbnail-br" id="tnbr' + metadata.id + '">\n' +
-                                    '       <a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
-                                    '           <span class="overlayIconBackground">\n' +
-                                    '               <span id="briconcount' + metadata.id + '">'+favoriteCount+'</span>&nbsp;<span class="'+favoriteIcon+' overlayIcon" id="brfavoriteicon'+metadata.id+'"></span>\n' +
-                                    '           </span>\n' +
-                                    '       </a>\n' +
-                                    '       <br>' +
-                                    '       <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment' + metadata.id + '" class="overlayCommentIconBackground overlayCommentText">\n' +
-                                    '           <span id="brcommentcount' + metadata.id + '">' + (albumPhotoCommentsMap.hasOwnProperty(metadata.id) ? albumPhotoCommentsMap[metadata.id].length : '0') + '</span> <span id="bricon' + metadata.id + '" class="bi-chat-square position-relative overlayCommentIcon">';
-
-                                if (notificationMap !== null && notificationMap[metadata.id] === true) {
-                                    html +=
-                                        '           <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">\n' +
-                                        '               <span class="visually-hidden">New alerts</span>\n' +
-                                        '           </span>';
-                                }
-                                html +=
-                                    '           </span>\n' +
-                                    '       </a>\n' +
-                                    '   </div>\n';
-
-                                const centeredObj = shashin.getCenteredOverlay(metadata,'shashin.openGallery',currentMediaLinkIndex);
-                                html += centeredObj.html;
-                                mediaContentList.push(centeredObj.mediaContent);
-
-                                html +=
-                                    '</div>\n' +
-                                    '<span id="albummodal' + metadata.id + '" style="width:0;height:0;padding:0"></span>\n';
-
-                                // Append HTML
-                                $(html).insertBefore($(".appendAlbumPhotos").last()).ready(function () {
-                                    // Call JS and modal
-                                    shashin.setPhotoOverlays(metadata, activePage);
-                                    albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
-                                    albumSettings.activateAlbumListeners(metadata, albumData);
-                                    $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                                    $("#infoModalEdit"+metadata.id).on("click", function(e) {
-                                        e.preventDefault();
-                                        shashin.openInfoModal(metadata.id);
-                                    });
-
-                                    if (parseInt(index) === parseInt(albumMetadataList.length) - 1) {
-                                        $("#spinner").css("display","none");
-                                        albumSettings.rendering = false;
-                                    }
-                                });
+                            if (lastDateHeading !== currentDate) {
+                                dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                             }
-                        } else {
-                            $("#spinner").css("display","none");
-                            $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                            albumSettings.rendering = false;
+
+                            const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
+                            renderTopRight = {type:metadata.type, id:metadata.id, content:duration, width:metadata.originalImageWidth, height:metadata.originalImageHeight, isTagged:false};
+
+                            if (userMap.showControls === true) {
+                                renderTopLeft = {id:metadata.id};
+                                renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:'albumModalEdit', onclickFunctionCall:'albumSettings.openAlbumModal', editControls: false};
+                            } else {
+                                renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:null, onclickFunctionCall:null, editControls: false};
+                            }
+
+                            renderBottomRight = {id:metadata.id, favoriteCount:favoriteCount, favoriteIcon:favoriteIcon, albumPhotoCommentsMap:albumPhotoCommentsMap, notificationMap:notificationMap};
+                            renderCenter = {metadata:metadata,onclickFunctionCall:"shashin.openGallery",index:currentMediaLinkIndex};
+
+                            mediaContentList.push(shashin.getMediaContent(metadata));
+
+                            // Append HTML
+                            const appendClass = "appendAlbumPhotos"; //"albummodal" + metadata.id;
+                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, renderBottomRight})).insertBefore($("."+appendClass).last()).ready(function () {
+                                // Call JS and modal
+                                albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
+                                albumSettings.activateAlbumListeners(metadata, albumData);
+                            });
                         }
+
+                        $("#spinner").css("display","none");
+                        albumSettings.rendering = false;
+                    } else {
+                        $("#spinner").css("display","none");
+                        $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+                        albumSettings.rendering = false;
                     }
-                } else {
-                    $("#spinner").css("display","none");
-                    $(".appendAlbumPhotos").last().text("EOL").css("display","none");
-                    albumSettings.rendering = false;
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    $("#msgTimeline").html(message);
                 }
             } else {
                 $("#spinner").css("display","none");
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                 albumSettings.rendering = false;
+                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                $("#msgTimeline").html(message);
             }
+        } else {
+            $("#spinner").css("display","none");
+            $(".appendAlbumPhotos").last().text("EOL").css("display","none");
+            albumSettings.rendering = false;
+        }
 
-            return mediaContentList;
-        }.bind(this));
+        return mediaContentList;
     }
 
     albumSettings.activateAlbumListeners = function(metadata,album) {
@@ -341,12 +302,6 @@
                     .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album photo comment")}).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                             let commentId = data["commentId"];
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
 
                             // Update comment
                             $("#commentcontent"+commentId).text(updatedComment);
@@ -396,12 +351,6 @@
                 .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving album photo comment")}).then(function (data) {
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                         let commentId = data["commentId"];
-                        let message = "Error";
-                        if (data["status"] === "success") {
-                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        } else {
-                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                        }
 
                         // Insert comment at top of list
                         const commentItem = '<li class="list-group-item list-group-item-secondary" id="comment' + commentId + '">\n' +
