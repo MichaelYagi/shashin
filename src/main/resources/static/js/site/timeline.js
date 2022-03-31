@@ -1240,7 +1240,7 @@
                                         if ($("#tntl" + metadata.id + ".thumbnail-tl").length === 0) {
                                             $("#tntl" + metadata.id).addClass("thumbnail-tl");
                                             shashin.setPhotoOverlays(metadata, "timeline")
-                                            timelineSettings.activateMetadataListeners(metadata);
+                                            timelineSettings.activateMetadataListeners(metadata.id);
                                         }
 
                                         if (metadata.type.indexOf("video") >= 0) {
@@ -1504,10 +1504,10 @@
         // });
     }
 
-    timelineSettings.activateMetadataListeners = function(metadata) {
-        Util.activateMetadataListeners(metadata);
+    timelineSettings.activateMetadataListeners = function(metadataId) {
+        Util.activateMetadataListeners(metadataId);
 
-        shashin.updateFavorites("#favorite","#bricon","#briconcount",metadata.id);
+        shashin.updateFavorites("#favorite","#bricon","#briconcount",metadataId);
     }
 
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));

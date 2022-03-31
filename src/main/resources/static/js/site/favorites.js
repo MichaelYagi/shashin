@@ -1,7 +1,7 @@
 class Favorites {
 
     constructor(metadataList, activePage) {
-        this.http = new Http("favorite");
+        this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
         this.metadataList = metadataList;
@@ -32,10 +32,10 @@ class Favorites {
         this.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/favorites/" + nextPage)
+        const data = await this.http.ajaxGet("/favorites/" + nextPage);
 
         const mediaContentList = [];
-        if (data && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
                 if (data.hasOwnProperty("metadataList")) {
@@ -43,7 +43,6 @@ class Favorites {
 
                     if (metadataList.length > 0) {
                         const mediaLinkLength = $(".mediaLink").length;
-                        const renderData = [];
 
                         for (const index in metadataList) {
                             const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
@@ -67,14 +66,13 @@ class Favorites {
                             const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
                             renderTopRight = {type:metadata.type, id:metadata.id, content:duration, width:metadata.originalImageWidth, height:metadata.originalImageHeight, isTagged:false};
                             renderTopLeft = {id:metadata.id};
-                            renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:null, onclickFunctionCall:null};
+                            renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:null, onclickFunctionCall:null, editControls: false};
                             renderCenter = {metadata:metadata,onclickFunctionCall:"shashin.openGallery",index:currentMediaLinkIndex};
 
                             mediaContentList.push(shashin.getMediaContent(metadata));
 
-                            renderData.push({activePage, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter});
-
-                            $(PhotoGalleryItem({activePage, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter})).insertBefore($(".appendMetadataPhotos").last());
+                            const appendClass = "appendMetadataPhotos";
+                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter})).insertBefore($("."+appendClass).last());
                         }
 
                         this.rendering = false;

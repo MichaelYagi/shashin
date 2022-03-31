@@ -17,6 +17,7 @@ class Http {
             const message = " updating" + (this.module && this.module.length > 0 ? " " + this.module : "");
             shashin.onFail(xhr, textStatus, ajaxParams, message);
         }).then(function (data) {
+            // console.log(data)
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 return data;
             }

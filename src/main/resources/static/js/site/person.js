@@ -1,6 +1,7 @@
 class Person {
 
     constructor(metadataList, activePage, personId, canEdit) {
+        this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
         this.metadataList = metadataList;
@@ -38,96 +39,70 @@ class Person {
         this.rendering = true;
         $("#spinner").css("display","block");
 
-        const ajaxParams = {
-            type: 'get',
-            url: "/person/" + personId + "/" + nextPage,
-            contentType: 'application/json; charset=utf-8',
-            async: true,
-            retries: shashin.ajaxRetries
-        }
+        const data = await this.http.ajaxGet("/person/" + personId + "/" + nextPage);
 
-        // Get paged results
-        return await $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating person")}).then(function (data) {
-            const mediaContentList = [];
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === "success") {
-                    if (data.hasOwnProperty("metadataList")) {
-                        const metadataList = data["metadataList"];
-                        const recognitionLabels = data["recognitionLabels"];
-                        const labelPhotoMap = data["labelPhotoMap"];
-                        const currentUser = data["currentUser"];
-                        const keywordMap = data["keywordMap"];
+        const mediaContentList = [];
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            let message = "Error";
+            if (data["status"] === "success") {
+                if (data.hasOwnProperty("metadataList")) {
+                    const metadataList = data["metadataList"];
+                    const recognitionLabels = data["recognitionLabels"];
+                    const labelPhotoMap = data["labelPhotoMap"];
 
-                        let html = "";
+                    if (metadataList.length > 0) {
+                        const mediaLinkLength = $(".mediaLink").length;
+                        for (const index in metadataList) {
+                            const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
+                            const metadata = metadataList[index];
 
-                        if (metadataList.length > 0) {
-                            const mediaLinkLength = $(".mediaLink").length;
-                            for (const index in metadataList) {
-                                const currentMediaLinkIndex = (mediaLinkLength + parseInt(index));
-                                const metadata = metadataList[index];
+                            let dateHeadingObj = null;
+                            let renderTopRight = null;
+                            let renderTopLeft = null;
+                            let renderBottomLeft = null;
+                            let renderCenter = null;
 
-                                html += '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n' +
-                                    '   <a class="lightGalleryIndexAnchor" name="lightGalleryIndex' + currentMediaLinkIndex + '"></a>\n' +
-                                    '   <img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlSmall) + '" class="photo-thumbnail-image" id="image' + metadata.id + '" width="' + metadata.thumbnailSmallWidth + '" height="' + metadata.thumbnailSmallHeight + '" style="background-color:lightgray;" onError="Util.errorImg(this,\'' + metadata.title + '\',Util.thumbnailHeight())">\n' +
-                                    '   <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n' +
-                                    '   <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" th:value="' + metadata.thumbnailUrlCentered + '">\n';
+                            const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
+                            renderTopRight = {type:metadata.type, id:metadata.id, content:duration, width:metadata.originalImageWidth, height:metadata.originalImageHeight, isTagged:(this.canEdit === true && labelPhotoMap[metadata.id]["isTagged"] === true)};
 
-                                const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                html += shashin.getTopRightOverlay(metadata.type, metadata.id, duration, metadata.originalImageWidth, metadata.originalImageHeight, (this.canEdit === true && labelPhotoMap[metadata.id]["isTagged"] === true));
-
-                                if (this.canEdit === true) {
-                                    html += shashin.getTopLeftOverlay(metadata.id);
-                                    html += shashin.getBottomLeftOverlay(metadata.id, 'propperson', null, null, null);
-                                } else {
-                                    html += shashin.getBottomLeftOverlay(metadata.id, null, null, null, null);
-                                }
-
-                                const centeredObj = shashin.getCenteredOverlay(metadata, 'shashin.openGallery', currentMediaLinkIndex);
-                                html += centeredObj.html;
-                                mediaContentList.push(centeredObj.mediaContent);
-
-                                html += '</div>\n<span id="personmodal'+metadata.id+'" style="width:0;height:0;padding:0"></span>\n';
-
-                                $(html).insertBefore($(".appendPersonPhotos").last()).ready(function () {
-                                    shashin.setPhotoOverlays(metadata, activePage);
-                                    personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
-                                    $("#mediaLink" + metadata.id).attr("tag", metadata.id);
-                                    $("#infoModalEdit" + metadata.id).on("click", function (e) {
-                                        e.preventDefault();
-                                        shashin.openInfoModal(metadata.id);
-                                    });
-
-                                    $("#image" + metadata.id).on('load', function () {
-                                        $(this).css("background-color", "transparent");
-                                    });
-
-                                    if (parseInt(index) === parseInt(metadataList.length) - 1) {
-                                        this.rendering = false;
-                                    }
-                                }.bind(this));
-
-                                html = "";
+                            if (this.canEdit === true) {
+                                renderTopLeft = {id:metadata.id};
+                                renderBottomLeft = {id:metadata.id, targetPrefix:'propperson', onclickIdPrefix:null, onclickFunctionCall:null, editControls: false};
+                            } else {
+                                renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:null, onclickFunctionCall:null, editControls: false};
                             }
-                        } else {
-                            $(".appendPersonPhotos").last().text("EOL").css("display", "none");
-                            this.rendering = false;
+
+                            renderCenter = {metadata:metadata,onclickFunctionCall:"shashin.openGallery",index:currentMediaLinkIndex};
+
+                            mediaContentList.push(shashin.getMediaContent(metadata));
+
+                            const appendClass = "appendPersonPhotos";
+                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter})).insertBefore($("."+appendClass).last()).ready(function () {
+                                // Call JS and modal
+                                personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
+                            });
                         }
+
+                        $("#spinner").css("display","none");
+                        this.rendering = false;
+                    } else {
+                        $(".appendPersonPhotos").last().text("EOL").css("display", "none");
+                        this.rendering = false;
                     }
-                } else {
-                    $(".appendPersonPhotos").last().text("EOL").css("display", "none");
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    $("#msgTimeline").html(message);
-                    this.rendering = false;
                 }
             } else {
                 $(".appendPersonPhotos").last().text("EOL").css("display", "none");
+                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                $("#msgTimeline").html(message);
                 this.rendering = false;
             }
+        } else {
+            $(".appendPersonPhotos").last().text("EOL").css("display", "none");
+            this.rendering = false;
+        }
 
-            $("#spinner").css("display","none");
-            return mediaContentList;
-        }.bind(this));
+        $("#spinner").css("display","none");
+
+        return mediaContentList;
     }
 }
