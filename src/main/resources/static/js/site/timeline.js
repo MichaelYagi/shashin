@@ -1118,22 +1118,12 @@
                                 setTimeout(function () {
                                     if ($("#image" + metadata.id).withinviewport()) {
 
-                                        let dateReformatted = "";
-                                        if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
-                                            const dateObj = new Date(metadata.year, metadata.month - 1, metadata.day);
-                                            dateReformatted = dateObj.format("ddd, mmm dd, yyyy");
-                                        }
-
                                         if ($("#tnbr" + metadata.id + ".thumbnail-br").length === 0) {
                                             $("#tnbr" + metadata.id).addClass("thumbnail-br");
                                         }
-                                        let html = '<a href="#" id="favorite' + metadata.id + '" class="text-decoration-none">\n' +
-                                            '       <span class="overlayIconBackground">\n' +
-                                            '           <span id="briconcount' + metadata.id + '"></span> <span id="bricon' + metadata.id + '" class="overlayIcon"></span>\n' +
-                                            '       </span>\n' +
-                                            '   </a>';
+
                                         if ($("#favorite" + metadata.id).length === 0) {
-                                            $("#tnbr" + metadata.id).append(html);
+                                            $("#tnbr" + metadata.id).append(TimelineGalleryBottomRightOverlay({metadata:metadata}));
                                             const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                             const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
                                             $("#bricon" + metadata.id).addClass(favoriteIcon);
@@ -1154,74 +1144,30 @@
                                             $("#tncentered" + metadata.id).addClass("thumbnail-centered");
                                         }
 
-                                        // metadata.keywords = keywordMap.hasOwnProperty(metadata.id) ? keywordMap[metadata.id] : "";
-
                                         const mediaContent = {};
                                         mediaContent.func = shashin.openInfoSidebar;
                                         mediaContent.args = metadata.id;
                                         mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
-                                        //mediaContent.subHtml = (metadata.placeName !== null ? '<a href="/map?lat=' + metadata.lat + '&lng=' + metadata.lng + '" target="_blank">' + metadata.placeName + '</a><br>' : '<br>') + metadata.title + (metadata.year === null || metadata.month === null || metadata.day === null ? '' : ' taken on ' + dateReformatted);
+
                                         if (metadata.type.indexOf("video") >= 0) {
                                             mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}';
                                             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
-                                            html =
-                                                '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
-                                                'data-download-url="' + encodeURI(metadata.videoUrl) + '/download" ' +
-                                                'data-metadataid="' + metadata.id + '" ' +
-                                                'data-video="' + Util.encodeHtml(mediaContent.video) + '" ';
-                                            if (metadata.description != null) {
-                                                html +=
-                                                    'data-sub-html="' + metadata.description + '" ';
-                                            }
-                                            if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
-                                                metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
-                                                html +=
-                                                    'data-lg-size="' + metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight + '-' + metadata.thumbnailSmallWidth + ',' + metadata.originalImageWidth + '-' + metadata.originalImageHeight + '" ' +
-                                                    'data-responsive="' + encodeURI(metadata.thumbnailUrlSmall) + ' ' + metadata.thumbnailSmallWidth + '" ' +
-                                                    'data-thumb="' + encodeURI(metadata.thumbnailUrlSmall) + '" ' +
-                                                    'data-width="' + metadata.originalImageWidth + '"';
-                                            }
-                                            html +=
-                                                '>' +
-                                                '<span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>' +
-                                                '</a>';
-
                                         } else {
                                             mediaContent.src = metadata.thumbnailUrlOriginal;
                                             mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
-                                            html =
-                                                '<a class="mediaLink" id="mediaLink' + metadata.id + '" ' +
-                                                'data-download-url="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ' +
-                                                'data-metadataid="' + metadata.id + '" ' +
-                                                'data-src="' + encodeURI(metadata.thumbnailUrlOriginal) + '" ';
-                                            if (metadata.description != null) {
-                                                html +=
-                                                    'data-sub-html="' + metadata.description + '" ';
-                                            }
-                                            if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
-                                                metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) {
-                                                html +=
-                                                    'data-lg-size="' + metadata.thumbnailSmallWidth + '-' + metadata.thumbnailSmallHeight + '-' + metadata.thumbnailSmallWidth + ',' + metadata.originalImageWidth + '-' + metadata.originalImageHeight + '" ' +
-                                                    'data-responsive="' + encodeURI(metadata.thumbnailUrlSmall) + ' ' + metadata.thumbnailSmallWidth + '" ' +
-                                                    'data-thumb="' + encodeURI(metadata.thumbnailUrlSmall) + '" ' +
-                                                    'data-width="' + metadata.originalImageWidth + '"';
-                                            }
-                                            html +=
-                                                '>' +
-                                                '<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>' +
-                                                '</a>';
                                         }
+
                                         if (metadata.originalImageWidth !== null) {
                                             mediaContent.width = metadata.originalImageWidth;
                                         }
+
                                         if ($("#mediaLink" + metadata.id).length === 0) {
-                                            $("#tncentered" + metadata.id).append(html);
+                                            $("#tncentered" + metadata.id).append(TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent}));
                                         }
 
-                                        const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
-                                        html = '<a href="#" id="timelineModalEdit' + metadata.id + '" data-bs-target="#propTimelinModal"><span class="' + editIcon + '" style="font-size: 1rem;color: lightgray;"></span></a>';
                                         if ($("#timelineModalEdit" + metadata.id).length === 0) {
-                                            $("#tnbl" + metadata.id).append(html);
+                                            const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
+                                            $("#tnbl" + metadata.id).append(TimelineGalleryBottomLeftOverlay({metadata:metadata,editIcon:editIcon}));
                                             $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                             $("#timelineModalEdit" + metadata.id).on("click", function (e) {
                                                 e.preventDefault();
@@ -1229,10 +1175,8 @@
                                             });
                                         }
 
-                                        html = '<a href="#" id="select' + metadata.id + '"><span id="tlicon' + metadata.id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span></a>';
-
                                         if ($("#select" + metadata.id).length === 0) {
-                                            $("#tntl" + metadata.id).append(html).ready(function () {
+                                            $("#tntl" + metadata.id).append(TimelineGalleryTopLeftOverlay({metadata:metadata})).ready(function () {
                                                 timelineSettings.rendered = true;
                                             });
                                         }
@@ -1244,10 +1188,8 @@
                                         }
 
                                         if (metadata.type.indexOf("video") >= 0) {
-                                            const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                                            html = '<span class="overlayIconBackground">' + duration + '&nbsp;<span id="video' + metadata.id + '" class="bi-camera-video overlayIcon"></span></span>';
                                             if ($("#video" + metadata.id).length === 0) {
-                                                $("#tntr" + metadata.id).append(html).ready(function () {
+                                                $("#tntr" + metadata.id).append(TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
                                                     timelineSettings.rendered = true;
                                                 });
                                             }
@@ -1255,9 +1197,8 @@
                                                 $("#tntr" + metadata.id).addClass("thumbnail-tr");
                                             }
                                         } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
-                                            html = '<span id="panorama' + metadata.id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>';
                                             if ($("#panorama" + metadata.id).length === 0) {
-                                                $("#tntr" + metadata.id).append(html).ready(function () {
+                                                $("#tntr" + metadata.id).append(TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
                                                     timelineSettings.rendered = true;
                                                 });
                                             }
@@ -1292,172 +1233,112 @@
             retries: shashin.ajaxRetries
         }
 
-        //const promise =
         return await $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline")}).then(function (data) {
-                // let deferred = new $.Deferred();
-                let ret = "fail";
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    let message = "Error";
-                    if (data["status"] === timelineSettings.success) {
-                        if (data.hasOwnProperty("metadataList")) {
-                            const metadataList = data["metadataList"];
+            let ret = "fail";
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === timelineSettings.success) {
+                    if (data.hasOwnProperty("metadataList")) {
+                        const metadataList = data["metadataList"];
 
-                            if (metadataList.length > 0) {
-                                let html = "";
+                        if (metadataList.length > 0) {
+                            let html = "";
 
-                                let dateString = Util.getDateString(metadataList[0]["year"], metadataList[0]["month"], metadataList[0]["day"]);
+                            let idCheck = "undated";
+                            if (metadataList[0]["year"] === null ||
+                                metadataList[0]["month"] === null ||
+                                metadataList[0]["day"] === null)
+                            {
+                                idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
+                            }
 
-                                let idCheck = "undated";
-                                if (metadataList[0]["year"] === null ||
-                                    metadataList[0]["month"] === null ||
-                                    metadataList[0]["day"] === null)
-                                {
-                                    html += '<span class="dateContainer" id="container_undated">\n' +
-                                        '<br id="brundated"><section class="scrollspy" id="undated"><p><strong class="undatedTimelinePhotos p-1">Undated</strong></p></section>\n' +
-                                        '<div class="row image-group-padding" id="rowundated">\n';
-                                } else {
-                                    idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
-                                    html += '<span class="dateContainer" id="container_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '">\n' +
-                                        '<br id="br' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><section class="scrollspy" id="' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"><p><strong class="dateHeading p-1">' + dateString + '</strong></p></section>\n' +
-                                        '<div class="row image-group-padding" id="row' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '">\n' +
-                                        '<span style="display: none;" class="yearTaken">' + metadataList[0]["year"] + '</span>\n' +
-                                        '<span style="display: none;" class="monthTaken">' + metadataList[0]["month"] + '</span>\n' +
-                                        '<span style="display: none;" class="dayTaken">' + metadataList[0]["day"] + '</span>\n';
+                            html += TimelinePreLoadGalleryHeader({metadata:metadataList[0]});
+
+                            if ($("#"+idCheck).length === 0) {
+                                for (let index in metadataList) {
+                                    index = parseInt(index);
+                                    const metadata = metadataList[index];
+
+                                    const yearTakenCount = $(".yearTaken").length;
+                                    const monthTakenCount = $(".monthTaken").length;
+                                    const dayTakenCount = $(".dayTaken").length;
+                                    let lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0]["year"] === null ? "" : metadataList[0]["year"]) : $(".yearTaken").get(yearTakenCount - 1).innerText;
+                                    let lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0]["month"] === null ? "" : metadataList[0]["month"]) : $(".monthTaken").get(monthTakenCount - 1).innerText;
+                                    let lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0]["day"] === null ? "" : metadataList[0]["day"]) : $(".dayTaken").get(dayTakenCount - 1).innerText;
+                                    lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                                    lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                                    lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+
+                                    html += TimelinePreLoadGalleryBody({metadata:metadata});
+
+                                    $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                 }
 
-                                if ($("#"+idCheck).length === 0) {
-                                    for (let index in metadataList) {
-                                        index = parseInt(index);
-                                        const metadata = metadataList[index];
+                                const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
+                                const lastDate = lastDateParts[1];
 
-                                        const yearTakenCount = $(".yearTaken").length;
-                                        const monthTakenCount = $(".monthTaken").length;
-                                        const dayTakenCount = $(".dayTaken").length;
-                                        let lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0]["year"] === null ? "" : metadataList[0]["year"]) : $(".yearTaken").get(yearTakenCount - 1).innerText;
-                                        let lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0]["month"] === null ? "" : metadataList[0]["month"]) : $(".monthTaken").get(monthTakenCount - 1).innerText;
-                                        let lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0]["day"] === null ? "" : metadataList[0]["day"]) : $(".dayTaken").get(dayTakenCount - 1).innerText;
-                                        lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-                                        lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-                                        lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
+                                html += TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
 
-                                        html += '<div id="photoThumbnailContainer' + metadata.id + '" class="photo-thumbnail-container photo-thumbnail ' + (metadata.type.includes('video') ? 'is-video' : 'is-not-video') + '" style="width:' + metadata.thumbnailSmallWidth + 'px;height:' + metadata.thumbnailSmallHeight + 'px;padding-left:0;padding-right:0;">\n';
-                                        html += '   <a class="lightGalleryIndexAnchor" id="lightGalleryIndex' + metadata.id + '"></a>\n'
-                                        html +=
-                                            '       <input type="hidden" name="filename' + metadata.id + '" id="filename' + metadata.id + '" value="' + metadata.fileName + '">\n' +
-                                            '       <input type="hidden" name="thumbnailCentered' + metadata.id + '" id="thumbnailCentered' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlCentered) + '">\n';
+                                const tempScrollTop = $("#container").scrollTop();
 
-                                        if (metadata.year == null || metadata.month == null || metadata.day == null) {
-                                            html +=
-                                                '   <input type="hidden" name="thumbnailUrl-undated[]" id="thumbnailUrl_' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlSmall) + '">\n' +
-                                                '   <img loading="lazy" class="photo-thumbnail-image thumbnailTag_undated" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'">\n';
+                                let htmlEl = $(html);
 
-                                        } else {
-                                            html +=
-                                                '   <input type="hidden" name="thumbnailUrl-' + metadata.year + '-' + metadata.month + '-' + metadata.day + '[]" id="thumbnailUrl_' + metadata.id + '" value="' + encodeURI(metadata.thumbnailUrlSmall) + '">\n' +
-                                                '   <img loading="lazy" class="photo-thumbnail-image thumbnailTag_'+metadata.year + '-' + metadata.month + '-' + metadata.day+'" id="image'+metadata.id+'" width="'+metadata.thumbnailSmallWidth+'" height="'+metadata.thumbnailSmallHeight+'">\n';
-                                        }
-
-                                        html += '   <div id="tntl' + metadata.id + '"></div>\n' +
-                                            '       <div id="tnbr' + metadata.id + '"></div>\n' +
-                                            '       <div id="tnbl' + metadata.id + '"></div>\n' +
-                                            '       <div id="tntr' + metadata.id + '"></div>\n' +
-                                            '       <div id="tncentered' + metadata.id + '"></div>\n';
-
-                                        html += '   <span id="timelinemodal' + metadata.id + '"></span>' +
-                                            '   </div>\n';
-
-                                        $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
+                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                    if (Util.isSafari() === true) {
+                                        $("#infinite-scroll-gallery").css('visibility', 'hidden');
+                                    } else if (Util.isFirefox() === true) {
+                                        htmlEl.hide();
                                     }
+                                }
 
-                                    const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
-                                    const lastDate = lastDateParts[1];
-
-                                    if (metadataList[0].year == null || metadataList[0].month == null || metadataList[0].day == null) {
-                                        html += '<span class="scrollspy metadataprocessed" id="tail_undated"></span>';
-                                        html += '</div></span><span class="attachMetadataPhotos" id="amp_undated" style="visibility: hidden">EOL</span>';
-                                    } else if (lastDate === (metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day)) {
-                                        html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
-                                        html += '</div></span><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '" style="visibility: hidden">EOL</span>';
+                                setTimeout(function () {
+                                    if (action === "above") {
+                                        htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
+                                            // deferred.resolve(timelineSettings.success);
+                                            ret = timelineSettings.success;
+                                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                if (Util.isSafari() === true) {
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                } else if (Util.isFirefox() === true) {
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                    htmlEl.show();
+                                                }
+                                            }
+                                        });
+                                    } else if (action === "new") {
+                                        $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
+                                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                if (Util.isSafari() === true) {
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                } else if (Util.isFirefox() === true) {
+                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                    htmlEl.show();
+                                                }
+                                            }
+                                            // deferred.resolve(timelineSettings.success);
+                                            ret = timelineSettings.success;
+                                        });
                                     } else {
-                                        html += '<span class="scrollspy metadataprocessed" id="tail_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
-                                        html += '</div></span><span class="attachMetadataPhotos" id="amp_' + metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day + '"></span>';
-                                    }
-
-                                    const tempScrollTop = $("#container").scrollTop();
-
-                                    let htmlEl = $(html);
-
-                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                        if (Util.isSafari() === true) {
-                                            $("#infinite-scroll-gallery").css('visibility', 'hidden');
-                                        } else if (Util.isFirefox() === true) {
-                                            htmlEl.hide();
-                                        }
-                                    }
-
-                                    setTimeout(function () {
-                                        if (action === "above") {
-                                            htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
-                                                // deferred.resolve(timelineSettings.success);
-                                                ret = timelineSettings.success;
-                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                    } else if (Util.isFirefox() === true) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        htmlEl.show();
-                                                    }
-                                                }
-                                            });
-                                        } else if (action === "new") {
-                                            $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                    } else if (Util.isFirefox() === true) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        htmlEl.show();
-                                                    }
-                                                }
-                                                // deferred.resolve(timelineSettings.success);
-                                                ret = timelineSettings.success;
-                                            });
-                                        } else {
-                                            if (attachToId == null) {
-                                                if ($(".attachMetadataPhotos").length > 0) {
-                                                    htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            if (Util.isSafari() === true) {
-                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                            } else if (Util.isFirefox() === true) {
-                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                                htmlEl.show();
-                                                            }
+                                        if (attachToId == null) {
+                                            if ($(".attachMetadataPhotos").length > 0) {
+                                                htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
+                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                        if (Util.isSafari() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        } else if (Util.isFirefox() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            htmlEl.show();
                                                         }
-                                                        // deferred.resolve(timelineSettings.success);
-                                                        ret = timelineSettings.success;
-                                                    });
-                                                } else {
-                                                    $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            if (Util.isSafari() === true) {
-                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                            } else if (Util.isFirefox() === true) {
-                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                                htmlEl.show();
-                                                            }
-                                                        }
-                                                        // deferred.resolve(timelineSettings.success);
-                                                        ret = timelineSettings.success;
-                                                    });
-                                                }
+                                                    }
+                                                    // deferred.resolve(timelineSettings.success);
+                                                    ret = timelineSettings.success;
+                                                });
                                             } else {
-                                                htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
+                                                $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                                     if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
                                                         if (Util.isSafari() === true) {
                                                             $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
@@ -1471,37 +1352,46 @@
                                                     ret = timelineSettings.success;
                                                 });
                                             }
+                                        } else {
+                                            htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
+                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                    if (Util.isSafari() === true) {
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                    } else if (Util.isFirefox() === true) {
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                        htmlEl.show();
+                                                    }
+                                                }
+                                                // deferred.resolve(timelineSettings.success);
+                                                ret = timelineSettings.success;
+                                            });
                                         }
-                                    }, 0);
-                                } else {
-                                    // Already attached
-                                    // deferred.resolve(timelineSettings.success);
-                                    ret = timelineSettings.success;
-                                }
+                                    }
+                                }, 0);
                             } else {
-                                $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
+                                // Already attached
                                 // deferred.resolve(timelineSettings.success);
                                 ret = timelineSettings.success;
                             }
+                        } else {
+                            $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
+                            // deferred.resolve(timelineSettings.success);
                             ret = timelineSettings.success;
                         }
                         ret = timelineSettings.success;
-                    } else {
-                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                        $("#msgTimeline").html(message);
-                        // deferred.resolve("fail");
-                        ret = "fail";
                     }
+                    ret = timelineSettings.success;
+                } else {
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                    $("#msgTimeline").html(message);
+                    // deferred.resolve("fail");
+                    ret = "fail";
                 }
+            }
 
-                //deferred.resolve(timelineSettings.success);
-                // return deferred.promise();
-                return ret;
-            });
-
-        // return promise.done(function(data) {
-        //     return data;
-        // });
+            return ret;
+        });
     }
 
     timelineSettings.activateMetadataListeners = function(metadataId) {
