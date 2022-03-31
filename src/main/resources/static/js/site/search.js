@@ -49,7 +49,6 @@ class Search {
             const mediaContentList = [];
             if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
                 const metadataList = data["metadataSearchList"];
-                const keywordMap = data["keywordMap"];
 
                 if (metadataList !== null && metadataList.length > 0) {
                     let html = "";
