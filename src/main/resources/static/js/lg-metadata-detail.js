@@ -36,12 +36,12 @@
                     if (currentDynamicEl.hasOwnProperty("func")) {
                         $("#metadataId").val(currentDynamicEl.args);
                         currentDynamicEl.func(currentDynamicEl.args);
-                    } else if ($($(".thumbnail-bl")[this.core.index].firstChild).attr("tag")) {
-                        //console.log($($(".thumbnail-bl")[this.core.index].firstChild).attr("tag"))
+                    } else if ($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag")) {
+                        //console.log($($(".thumbnail-bl")[this.core.index]).children('a').attr("tag"))
                         const fn = this.settings.metadataDetailFunc;
                         let id = "";
                         try {
-                            id = $($(".thumbnail-bl")[this.core.index].firstChild).attr("tag");
+                            id = $($(".thumbnail-bl")[this.core.index]).children('a').attr("tag");
                         } catch (e) {}
 
                         if(typeof fn === 'function' && id.length > 0) {
