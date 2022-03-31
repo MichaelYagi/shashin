@@ -19,6 +19,26 @@
         }
     }
 
+    shashin.getMediaContent = function(metadata) {
+        const mediaContent = {};
+
+        mediaContent.func = shashin.openInfoSidebar;
+        mediaContent.args = metadata.id;
+
+        if (metadata.type.includes("video")) {
+            mediaContent.video = {
+                "source": [{"src": metadata.videoUrl, "type": "video/mp4"}],
+                "attributes": {"preload": false, "controls": true}
+            };
+            mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
+        } else {
+            mediaContent.src = metadata.thumbnailUrlOriginal;
+            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
+        }
+
+        return mediaContent;
+    }
+
     shashin.updateFavorites = function(listenerPrefix, iconPrefix, countPrefix, metadataId) {
         $(listenerPrefix+metadataId).on("click", function (e) {
             e.preventDefault();
