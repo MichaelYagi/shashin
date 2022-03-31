@@ -51,21 +51,17 @@ class Folder {
                     const metadata = metadataList[index];
 
                     let dateHeadingObj = null;
-                    let renderTopRight = null;
-                    let renderTopLeft = null;
-                    let renderBottomLeft = null;
-                    let renderCenter = null;
+                    let renderTopRight = true;
+                    let renderTopLeft = true;
+                    let renderBottomLeft = true;
+                    let renderCenter = true;
 
-                    const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                    renderTopRight = {type:metadata.type, id:metadata.id, content:duration, width:metadata.originalImageWidth, height:metadata.originalImageHeight, isTagged:false};
-                    renderCenter = {metadata:metadata,onclickFunctionCall:"shashin.openGallery",index:currentMediaLinkIndex};
-                    renderTopLeft = {id:metadata.id};
-                    renderBottomLeft = {id:metadata.id, targetPrefix:null, onclickIdPrefix:null, onclickFunctionCall:null, editControls: true, editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-pencil-square' : 'bi-pencil')};
+                    const overlayData = shashin.getOverlayData(metadata, {editControls:true,editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-pencil-square' : 'bi-pencil'),cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex});
 
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const appendClass = "appendFolderPhotos";
-                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter})).insertBefore($("."+appendClass).last());
+                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, overlayData})).insertBefore($("."+appendClass).last());
                 }
 
                 this.rendering = false;

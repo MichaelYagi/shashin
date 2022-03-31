@@ -1,4 +1,4 @@
-const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, renderBottomRight}) => `
+const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, renderBottomRight, overlayData}) => `
     ${(typeof dateHeadingObj === "undefined" || dateHeadingObj === null) ? '' : `<section class="dateSection" id="${dateHeadingObj.heading}"><p><strong>${dateHeadingObj.display}</strong></p></section>`}
     <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
         <a class="lightGalleryIndexAnchor" name="lightGalleryIndex${currentMediaLinkIndex}"></a>
@@ -6,15 +6,15 @@ const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, cu
         <input type="hidden" name="filenamee${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
         <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
 
-        ${(typeof renderTopRight === "undefined" || renderTopRight === null) ? '' : getTopRightOverlay(renderTopRight)}
+        ${(typeof renderTopRight === "undefined" || renderTopRight === false) ? '' : getTopRightOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
         
-        ${(typeof renderTopLeft === "undefined" || renderTopLeft === null) ? '' : getTopLeftOverlay(renderTopLeft)}
+        ${(typeof renderTopLeft === "undefined" || renderTopLeft === false) ? '' : getTopLeftOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
         
-        ${(typeof renderBottomLeft === "undefined" || renderBottomLeft === null) ? '' : getBottomLeftOverlay(renderBottomLeft)}
+        ${(typeof renderBottomLeft === "undefined" || renderBottomLeft === false) ? '' : getBottomLeftOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
         
-        ${(typeof renderBottomRight === "undefined" || renderBottomRight === null) ? '' : getBottomRightOverlay(renderBottomRight)}
+        ${(typeof renderBottomRight === "undefined" || renderBottomRight === false) ? '' : getBottomRightOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
         
-        ${(typeof renderCenter === "undefined" || renderCenter === null) ? '' : getCenteredOverlay(renderCenter)}
+        ${(typeof renderCenter === "undefined" || renderCenter === false) ? '' : getCenteredOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
         
     </div>
     ${(activePage === "album") ? `<span id="albummodal${metadata.id}" style="width:0;height:0;padding:0"></span>` : ''}
@@ -26,7 +26,7 @@ const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, cu
         Util.activateMetadataListeners("${metadata.id}");
         $("#mediaLink${metadata.id}").attr("tag", "${metadata.id}");
         
-        ${(typeof renderBottomLeft === "undefined" || renderBottomLeft === null || renderBottomLeft.editControls === false) ?
+        ${(typeof renderBottomLeft === "undefined" || renderBottomLeft === false || $.inArray("isInfo", overlayData.overlays) !== -1) ?
             `
             $("#infoModalEdit${metadata.id}").on("click", function (e) {
                 e.preventDefault();
@@ -48,26 +48,26 @@ const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, cu
     </script>
 `;
 
-const getTopRightOverlay = ({type, id, content, width, height, isTagged}) => `
+const getTopRightOverlay = ({id, overlays, data}) => `
     <div class="thumbnail-tr" id="tntr${id}">
 
-    ${(type.includes("video") === false) ? '' :
+    ${($.inArray("isVideo", overlays) !== -1) ?
         `
-        <span class="overlayIconBackground">${content}&nbsp;
+        <span class="overlayIconBackground">${data.duration}&nbsp;
             <span id="video${id}" class="bi-camera-video overlayIcon"></span>
         </span>
         <br>
-        `
+        ` : ''
     } 
     
-    ${(type.includes("video") === false && width !== null && height !== null && width > height*2) ?
+    ${($.inArray("isPan", overlays) !== -1) ?
         `
         <span id="panorama${id}" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
         <br>
         ` : ''
     }
     
-    ${(isTagged === true) ?
+    ${($.inArray("isTagged", overlays) !== -1) ?
         `
         <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>
         ` : ''
@@ -76,7 +76,7 @@ const getTopRightOverlay = ({type, id, content, width, height, isTagged}) => `
     </div>
 `
 
-const getTopLeftOverlay = ({id}) => `
+const getTopLeftOverlay = ({id, overlays, data}) => `
     <div class="thumbnail-tl" id="tntl${id}">
         <a href="#" id="select${id}">
             <span id="tlicon${id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
@@ -84,98 +84,100 @@ const getTopLeftOverlay = ({id}) => `
     </div>
 `;
 
-const getBottomRightOverlay = ({id, favoriteCount, favoriteIcon, albumPhotoCommentsMap, notificationMap}) => `
+const getBottomRightOverlay = ({id, overlays, data}) => `
     <div class="thumbnail-br" id="tnbr${id}">
+        ${($.inArray("isFavorites", overlays) !== -1) ?
+        `
         <a href="#" id="favorite${id}" class="text-decoration-none">
             <span class="overlayIconBackground">
-                <span id="briconcount${id}">${favoriteCount}</span>&nbsp;<span class="${favoriteIcon} overlayIcon" id="brfavoriteicon${id}"></span>
+                <span id="briconcount${id}">${data.favoriteCount}</span>&nbsp;<span class="${data.favoriteIcon} overlayIcon" id="brfavoriteicon${id}"></span>
             </span>
         </a>
+        ` : ''}
+        
+        ${($.inArray("isComments", overlays) !== -1) ?
+        `
         <br>
         <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment${id}" class="overlayCommentIconBackground overlayCommentText">
-            <span id="brcommentcount${id}">${albumPhotoCommentsMap.hasOwnProperty(id) ? albumPhotoCommentsMap[id].length : `0`}</span> 
+            <span id="brcommentcount${id}">${data.albumPhotoCommentsMap.hasOwnProperty(id) ? data.albumPhotoCommentsMap[id].length : `0`}</span> 
             <span id="bricon${id}" class="bi-chat-square position-relative overlayCommentIcon">
-                ${(notificationMap !== null && notificationMap[id] === true) ? `
+                ${(data.notificationMap !== null && data.notificationMap[id] === true) ? `
                 <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
                     <span class="visually-hidden">New alerts</span>
                 </span>
                 ` : ''}
             </span>
         </a>
+        ` : ''}
     </div>
 `
 
-const getBottomLeftOverlay = ({id, targetPrefix, onclickIdPrefix, onclickFunctionCall, editControls, editIcon}) => `
+const getBottomLeftOverlay = ({id, overlays, data}) => `
     <div class="thumbnail-bl" id="tnbl${id}">
-        ${(editControls === true) ?
+        ${($.inArray("isEditControls", overlays) !== -1) ?
         `
-            <a href="#" id="timelineModalEdit${id}" data-bs-target="#propTimelinModal">
-                <span class="${editIcon}" style="font-size: 1rem;color: lightgray;"></span>
-            </a>
-        ` 
-        :
+        <a href="#" id="timelineModalEdit${id}" data-bs-target="#propTimelinModal">
+            <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
+        </a>
+        ` : ''}
+    
+        ${($.inArray("isInfo", overlays) !== -1) ?
         `
-            <a href="#" id="infoModalEdit${id}">
-                <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
-            </a>
+        <a href="#" id="infoModalEdit${id}">
+            <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
+        </a>
+        `: ''}
         
-            ${(onclickFunctionCall === null && targetPrefix === null) ? '' :
-                `
-                <br>
+        ${($.inArray("isBlOnClickFunction", overlays) !== -1) ?
+        `
+        <br>
+        <a href="#" id="${data.onClickIdPrefix}${id}">
+            <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+        </a>
+
+        <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')}>
+            $("#${data.onClickIdPrefix}${id}").on("click", function (e) {
+                e.preventDefault();
+                ${data.blOnClickFunction}(e,"${id}");
+            });
+        </script>
+        `: ''}
         
-                    ${(onclickFunctionCall !== null) ?
-                        `
-                        <a href="#" id="${onclickIdPrefix}${id}">
-                            <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
-                        </a>
-            
-                        <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')}>
-                            $("#${onclickIdPrefix}${id}").on("click", function (e) {
-                                e.preventDefault();
-                                ${onclickFunctionCall}(e,"${id}");
-                            });
-                        </script>
-                        ` : ''
-                    }
-                    
-                    ${(onclickFunctionCall === null && targetPrefix !== null) ?
-                        `
-                        <a href="#" data-bs-toggle="modal" data-bs-target="#${targetPrefix}${id}">
-                            <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
-                        </a>
-                        ` : ''
-                    }
-                `
-            }
-        `}
+        ${($.inArray("isOnClickIdPrefix", overlays) !== -1) ?
+        `
+        <br>
+        <a href="#" data-bs-toggle="modal" data-bs-target="#${data.onClickIdPrefix}${id}">
+            <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
+        </a>
+        `: ''}
     </div>
 `;
 
-const getCenteredOverlay = ({metadata,onclickFunctionCall,index}) => `
-    <div class="thumbnail-centered" id="tncentered${metadata.id}">
+const getCenteredOverlay = ({id, overlays, data}) => `
+    <div class="thumbnail-centered" id="tncentered${id}">
 
-        ${(metadata.type.includes("video") === true) ? 
-            `
-            <a class="mediaLink" id="mediaLink${metadata.id}" data-download-url="${encodeURI(metadata.videoUrl)}/download" 
-                ${metadata.description !== null ?? ` data-sub-html="${metadata.description}" `}
-                data-video=\'{"source": [{"src":"${metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'>
-                <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
-            </a>
-            `
+        ${($.inArray("isVideo", overlays) !== -1) ?
+        `
+        <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
+            ${data.metadata.description !== null ?? ` data-sub-html="${data.metadata.description}" `}
+            data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'>
+            <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
+        </a>
+        `
         :
-            `
-            <a class="mediaLink" id="mediaLink${metadata.id}" data-src="${metadata.thumbnailUrlOriginal}" href="${metadata.thumbnailUrlOriginal}"
-                data-download-url="${encodeURI(metadata.thumbnailUrlOriginal)}"
-                ${metadata.description !== null ?? ` data-sub-html="${metadata.description}" `}>
-                <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
-            </a>
-            `
+        `
+        <a class="mediaLink" id="mediaLink${id}" data-src="${data.metadata.thumbnailUrlOriginal}" href="${data.metadata.thumbnailUrlOriginal}"
+            data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal)}"
+            ${data.metadata.description !== null ?? ` data-sub-html="${data.metadata.description}" `}>
+            <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
+        </a>
+        `
         }
 
         <script type="text/javascript"${(shashin.nonce.length > 0 ? ` nonce="${shashin.nonce}"` : '')}>
-            $("#mediaLink${metadata.id}").on("click", function (e) {
+            $("#mediaLink${id}").on("click", function (e) {
                 e.preventDefault();
-                ${onclickFunctionCall}(e,${index});
+                ${data.cOnClickFunction}(e,${data.galleryIndex});
             });
         </script>
 

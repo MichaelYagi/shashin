@@ -1335,6 +1335,75 @@
         });
     }
 
+    shashin.getOverlayData = function(metadata, args) {
+        const overlays = [];
+        const data = {};
+
+        data["metadata"] = metadata;
+
+        const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
+        if (metadata.type.includes("video")) {
+            overlays.push("isVideo");
+            data["duration"] = duration;
+        } else if (metadata.width !== null && metadata.height !== null && metadata.width > metadata.height*2) {
+            overlays.push("isPan");
+        }
+
+        if (typeof args !== "undefined") {
+            if (args.hasOwnProperty("galleryIndex")) {
+                data["galleryIndex"] = args.galleryIndex;
+            }
+
+            if (args.hasOwnProperty("labelPhotoMap")) {
+                const labelPhotoMap = args.labelPhotoMap;
+                if (labelPhotoMap.hasOwnProperty(metadata.id) === true && labelPhotoMap[metadata.id].hasOwnProperty("isTagged") === true && labelPhotoMap[metadata.id]["isTagged"] === true) {
+                    overlays.push("isTagged");
+                }
+            }
+
+            if (args.hasOwnProperty("editControls") && args["editControls"] === true) {
+                overlays.push("isEditControls");
+            } else {
+                overlays.push("isInfo");
+            }
+
+            if (args.hasOwnProperty("editIcon")) {
+                data["editIcon"] = args["editIcon"];
+            }
+
+            if (args.hasOwnProperty("blOnClickFunction") && args.hasOwnProperty("onClickIdPrefix")) {
+                overlays.push("isBlOnClickFunction");
+                data["blOnClickFunction"] = args["blOnClickFunction"];
+                data["onClickIdPrefix"] = args["onClickIdPrefix"];
+            } else if (args.hasOwnProperty("onClickIdPrefix")) {
+                overlays.push("isOnClickIdPrefix");
+                data["onClickIdPrefix"] = args["onClickIdPrefix"];
+            } else if (args.hasOwnProperty("blOnClickFunction")) {
+                data["blOnClickFunction"] = args["blOnClickFunction"];
+            }
+
+            if (args.hasOwnProperty("cOnClickFunction")) {
+                data["cOnClickFunction"] = args["cOnClickFunction"];
+            }
+
+            if (args.hasOwnProperty("favoriteCount")) {
+                overlays.push("isFavorites");
+                data["favoriteCount"] = args["favoriteCount"];
+                data["favoriteIcon"] = args["favoriteIcon"];
+            }
+
+            if (args.hasOwnProperty("albumPhotoCommentsMap")) {
+                overlays.push("isComments");
+                data["albumPhotoCommentsMap"] = args["albumPhotoCommentsMap"];
+                data["notificationMap"] = args["notificationMap"];
+            }
+        } else {
+            overlays.push("isInfo");
+        }
+
+        return {overlays:overlays,data:data};
+    }
+
     shashin.getTopRightOverlay = function (type, id, content, width, height, isTagged) {
         let html = '<div class="thumbnail-tr" id="tntr' + id + '">\n';
 

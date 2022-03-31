@@ -57,10 +57,10 @@ class ShareAlbum {
                         const metadata = albumMetadataList[index];
 
                         let dateHeadingObj = null;
-                        let renderTopRight = null;
-                        let renderTopLeft = null;
-                        let renderBottomLeft = null;
-                        let renderCenter = null;
+                        let renderTopRight = true;
+                        let renderTopLeft = false;
+                        let renderBottomLeft = false;
+                        let renderCenter = true;
 
                         const dateHeadingCount = $(".dateSection").length;
                         const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
@@ -71,14 +71,12 @@ class ShareAlbum {
                             dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                         }
 
-                        const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
-                        renderTopRight = {type:metadata.type, id:metadata.id, content:duration, width:metadata.originalImageWidth, height:metadata.originalImageHeight, isTagged:false};
-                        renderCenter = {metadata:metadata,onclickFunctionCall:"shashin.openGallery",index:currentMediaLinkIndex};
+                        const overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex});
 
                         mediaContentList.push(shashin.getMediaContent(metadata));
 
                         const appendClass = "appendAlbumPhotos";
-                        $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter})).insertBefore($("."+appendClass).last());
+                        $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, overlayData})).insertBefore($("."+appendClass).last());
                     }
 
                     this.rendering = false;
