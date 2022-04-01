@@ -190,7 +190,7 @@
                 $("#camerasString").val(camerasList);
 
                 if (metadata.thumbnailUrlCentered !== null) {
-                    $("#propTimelineModalThumbnail").html('<img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" height="100" width="100" onError="Util.errorImg(this,\'' + metadata.title + '\',100)">');
+                    $("#propTimelineModalThumbnail").html(HeaderThumbnail({metadata:metadata}));
                 }
 
                 if (metadata.title !== null) {
@@ -258,9 +258,10 @@
                     $("#recognitionLabelInput").remove();
                 }
                 if (recognitionLabels !== null && recognitionLabels.length > 0) {
-                    let html = '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
-                        '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                        '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
+                    let html = PersonModalDropdownHead({metadata:metadata});
+                        // '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
+                        // '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                        // '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
 
                     for (index in recognitionLabels) {
                         const recognitionLabel = recognitionLabels[index];
@@ -270,14 +271,15 @@
                             checkedString = " checked";
                         }
 
-                        html +=
-                            '           <button class="dropdown-item" type="button">\n' +
-                            '               <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
-                            '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
-                            '           </button>\n';
+                        html += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
+                            // '           <button class="dropdown-item" type="button">\n' +
+                            // '               <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
+                            // '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
+                            // '           </button>\n';
                     }
-                    html += '   </div>\n' +
-                        '</div>\n';
+                    html += PersonModalDropdownFooter();
+                        // '   </div>\n' +
+                        // '</div>\n';
 
                     $(html).insertAfter($("#labelIdData"));
                     $("#tagpeopledropdown" + metadata.id).on("click", function (e) {
@@ -309,10 +311,10 @@
                 }
 
                 if (allAlbumList !== null && allAlbumList.length > 0) {
-                    let html =
-                        '<div class="input-group-append dropdown" id="albumListInput">\n' +
-                        '   <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                        '   <div class="dropdown-menu" id="albumsList">\n';
+                    let html = AlbumModalDropdownHeader({metadata:metadata});
+                        // '<div class="input-group-append dropdown" id="albumListInput">\n' +
+                        // '   <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                        // '   <div class="dropdown-menu" id="albumsList">\n';
 
                     for (index in allAlbumList) {
                         const eachAlbum = allAlbumList[index];
@@ -322,14 +324,15 @@
                             checkedString = " checked";
                         }
 
-                        html +=
-                            '   <button class="dropdown-item" type="button">\n' +
-                            '       <input type="checkbox" class="album" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
-                            '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + Util.escapeHtml(eachAlbum.name) + '</label>\n' +
-                            '   </button>\n';
+                        html += AlbumModalDropDown({metadata:metadata,album:eachAlbum,checkedString:checkedString});
+                            // '   <button class="dropdown-item" type="button">\n' +
+                            // '       <input type="checkbox" class="album" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
+                            // '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + Util.escapeHtml(eachAlbum.name) + '</label>\n' +
+                            // '   </button>\n';
                     }
-                    html += '</div>\n' +
-                        '</div>\n';
+                    html += AlbumModalDropdownFooter();
+                        // '</div>\n' +
+                        // '</div>\n';
 
                     $(html).insertAfter($("#albumNameData"))
                     $("#albumdropdown" + metadata.id).on("click", function (e) {
@@ -582,28 +585,29 @@
                     const month = metadataDate["month"];
                     const day = metadataDate["day"];
 
-                    if (index === 0 || (index > 0 && metadataDates[index-1].year !== year)) {
-                        html += "<strong>"+year+"</strong>";
-                        html += "<div class='list-group'>";
-                    }
-
-                    if (index > 0 && metadataDates[index-1].year === year && metadataDates[index-1].month === month) {
-                        html += '<a style="display:none" id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" href="#'+year+'-'+month+'-'+day+'"></a>';
-                    } else {
-                        const dateObj = new Date(year, month-1, day);
-                        html += '<a id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" href="#'+year+'-'+month+'-'+day+'">'+dateObj.format("mmm yyyy")+'</a>';
-                    }
-
-                    html += '<script type="text/javascript"'+(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')+ '>\n' +
-                            '   $("#offcanvas_'+year+'-'+month+'-'+day+'").on("click", function (e) {\n' +
-                            '       e.preventDefault();\n' +
-                            '       timelineSettings.jumpFromTimelineToc(e,"'+year+'-'+month+'-'+day+'"'+',"'+mediaTypeFilter+'");\n' +
-                            '   });\n' +
-                            '</script>\n';
-
-                    if (index > 0 && index < metadataDates.length-1 && metadataDates[index+1].year !== year) {
-                        html += "</div><br>";
-                    }
+                    html += TimelineToc({index:index,mediaTypeFilter:mediaTypeFilter,metadataDates:metadataDates,year:year,month:month,day:day});
+                    // if (index === 0 || (index > 0 && metadataDates[index-1].year !== year)) {
+                    //     html += "<strong>"+year+"</strong>";
+                    //     html += "<div class='list-group'>";
+                    // }
+                    //
+                    // if (index > 0 && metadataDates[index-1].year === year && metadataDates[index-1].month === month) {
+                    //     html += '<a style="display:none" id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" href="#'+year+'-'+month+'-'+day+'"></a>';
+                    // } else {
+                    //     const dateObj = new Date(year, month-1, day);
+                    //     html += '<a id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" href="#'+year+'-'+month+'-'+day+'">'+dateObj.format("mmm yyyy")+'</a>';
+                    // }
+                    //
+                    // html += '<script type="text/javascript"'+(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')+ '>\n' +
+                    //         '   $("#offcanvas_'+year+'-'+month+'-'+day+'").on("click", function (e) {\n' +
+                    //         '       e.preventDefault();\n' +
+                    //         '       timelineSettings.jumpFromTimelineToc(e,"'+year+'-'+month+'-'+day+'"'+',"'+mediaTypeFilter+'");\n' +
+                    //         '   });\n' +
+                    //         '</script>\n';
+                    //
+                    // if (index > 0 && index < metadataDates.length-1 && metadataDates[index+1].year !== year) {
+                    //     html += "</div><br>";
+                    // }
                 }
 
                 $("#offcanvasTocBody").append(html);
@@ -624,9 +628,7 @@
         ) {
             $("#map").css("display","block");
             $("#mapTabMessage").css("display","block");
-            const linkHtml = '<a href="/map?lat='+metadata.lat+'&lng='+metadata.lng+'" target="_blank" class="bi-pin-fill" style="text-decoration: none;">&nbsp;'+metadata.placeName+'</a><br>' +
-                '<a href="https://www.google.com/maps/search/?api=1&query='+metadata.lat+'%2C'+metadata.lng+'" target="_blank" class="bi-google" style="text-decoration: none;">&nbsp;Google Maps link</a>';
-            $("#mapTabMessage").html(linkHtml);
+            $("#mapTabMessage").html(MapLinks({metadata:metadata}));
 
             if (shashin.map === null) {
                 shashin.map = new ol.Map({
@@ -704,7 +706,7 @@
             $("#metadataId").val(metadata.id);
 
             if (metadata.thumbnailUrlCentered !== null) {
-                $("#propInfoModalThumbnail").html('<img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" height="100" width="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)">');
+                $("#propInfoModalThumbnail").html(HeaderThumbnail({metadata:metadata}));
             }
 
             Util.populateDetailsInfo(metadata,"propInfoModal");
@@ -726,7 +728,7 @@
             $("#metadataId").val(metadata.id);
 
             if (metadata.thumbnailUrlCentered !== null) {
-                $("#propInfoSidebarThumbnail").html('<img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" height="100" width="100" onError="Util.errorImg(this,\'' + metadata.title + '\',100)">');
+                $("#propInfoSidebarThumbnail").html(HeaderThumbnail({metadata:metadata}));
             }
 
             Util.populateDetailsInfo(metadata, "propInfoSidebar");
@@ -860,27 +862,6 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
-
-        // Show caption on slide change
-        // if (shashin.infiniteScrollGallery) {
-        //     shashin.lgSubHtmlTimeout = null;
-        //     shashin.infiniteScrollGallery.addEventListener('lgBeforeSlide', (event) => {
-        //         if (parseInt($(".lg-toolbar").css('opacity')) === 1) {
-        //             $(".lg-sub-html").show();
-        //         } else {
-        //             $(".lg-sub-html").hide();
-        //         }
-        //         shashin.mouseMoveListener();
-        //     });
-        //     shashin.infiniteScrollGallery.addEventListener('lgDragStart', (event) => {
-        //         if (parseInt($(".lg-toolbar").css('opacity')) === 1) {
-        //             $(".lg-sub-html").show();
-        //         } else {
-        //             $(".lg-sub-html").hide();
-        //         }
-        //         shashin.mouseMoveListener();
-        //     });
-        // }
     }
 
     shashin.mouseMoveListener = function () {
@@ -1408,126 +1389,6 @@
         return {overlays:overlays,data:data};
     }
 
-    shashin.getTopRightOverlay = function (type, id, content, width, height, isTagged) {
-        let html = '<div class="thumbnail-tr" id="tntr' + id + '">\n';
-
-        if (type.includes("video")) {
-            html +=
-                '       <span class="overlayIconBackground">'+content+'&nbsp;<span id="video' + id + '" class="bi-camera-video overlayIcon"></span></span><br>\n';
-        } else if (width !== null && height !== null && width > height*2) {
-            html +=
-                '       <span id="panorama' + id + '" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span><br>\n';
-        }
-        if (isTagged === true) {
-            html +=
-                '       <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>\n';
-        }
-
-        html += '</div>\n';
-
-        return html;
-    }
-
-    shashin.getTopLeftOverlay = function (id) {
-        return '<div class="thumbnail-tl" id="tntl' + id + '">\n' +
-            '   <a href="#" id="select' + id + '">\n' +
-            '       <span id="tlicon' + id + '" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-            '   </a>\n' +
-            '</div>\n';
-    }
-
-    shashin.getBottomLeftOverlay = function (id, targetPrefix, onclickIdPrefix, onclickFunctionCall, editClass) {
-        let html = "";
-
-        html =
-            '<div class="thumbnail-bl" id="tnbl'+id+'">\n' +
-            '   <a href="#" id="infoModalEdit'+id+'">\n' +
-            '       <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>\n' +
-            '   </a>\n';
-
-        if (onclickFunctionCall != null || targetPrefix != null) {
-            html +=
-                '<br>\n';
-
-            if (onclickFunctionCall != null) {
-                html +=
-                '<a href="#" id="'+onclickIdPrefix+id+'"\n' +
-                '   <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                '</a>\n';
-
-                html += '<script type="text/javascript"'+(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')+ '>\n' +
-                    '   $("#'+onclickIdPrefix+id+'").on("click", function (e) {\n' +
-                    '       e.preventDefault();\n' +
-                    '      '+onclickFunctionCall+'(e,"'+id+'");\n' +
-                    '   });\n' +
-                    '</script>\n';
-            } else if (targetPrefix != null) {
-                html +=
-                '<a href="#" data-bs-toggle="modal" data-bs-target="#'+targetPrefix+id+'">\n' +
-                '   <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>\n' +
-                '</a>\n';
-            }
-        }
-
-        html += '</div>\n';
-
-        return html;
-    }
-
-    shashin.getCenteredOverlay = function (metadata,onclickFunctionCall,index) {
-        let html = "";
-        const dateString = Util.getDateString(metadata["year"], metadata["month"], metadata["day"]);
-        const mediaContent = {};
-
-        mediaContent.func = shashin.openInfoSidebar;
-        mediaContent.args = metadata.id;
-
-        html +=
-            '   <div class="thumbnail-centered" id="tncentered' + metadata.id + '">\n';
-
-        //mediaContent.subHtml = (metadata.placeName !== null ? '<a href=\'/map?lat='+metadata.lat+'&lng='+metadata.lng+'\' target=\'_blank\'>'+metadata.placeName+'</a><br>' : "<br>") + metadata.fileName + (dateString !== "" ? ' taken on ' + dateString : '');
-        if (metadata.type.includes("video")) {
-            mediaContent.video = {"source":[{"src":metadata.videoUrl,"type":"video/mp4"}],"attributes":{"preload":false,"controls":true}};
-            mediaContent.downloadUrl = encodeURI(metadata.videoUrl)+"/download";
-            html +=
-                '   <a class="mediaLink" id="mediaLink'+metadata.id+'"\n' +
-                '       data-download-url="'+encodeURI(metadata.videoUrl)+'/download" \n';
-            if (metadata.description !== null) {
-                html +=
-                '       data-sub-html="'+metadata.description+'" \n';
-            }
-            html +=
-                '       data-video=\'{"source": [{"src":"' + metadata.videoUrl + '", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'>\n' +
-                '       <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                '   </a>\n';
-        } else {
-            mediaContent.src = metadata.thumbnailUrlOriginal;
-            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
-            html +=
-                '   <a class="mediaLink" id="mediaLink'+metadata.id+'" data-src="' + metadata.thumbnailUrlOriginal + '" href="' + metadata.thumbnailUrlOriginal + '"' +
-                '       data-download-url="'+encodeURI(metadata.thumbnailUrlOriginal)+'" \n';
-            if (metadata.description !== null) {
-                html +=
-                '       data-sub-html="'+metadata.description+'" \n';
-            }
-            html +=
-                '> \n<span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>\n' +
-                '   </a>\n';
-        }
-
-        html += '<script type="text/javascript"'+(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')+ '>\n' +
-            '   $("#mediaLink'+metadata.id+'").on("click", function (e) {\n' +
-            '       e.preventDefault();\n' +
-            '       '+(onclickFunctionCall === null ? 'false':(onclickFunctionCall+'(event,'+index+');'))+'\n' +
-            '   });\n' +
-            '</script>\n';
-
-        html +=
-            '   </div>\n';
-
-        return {html:html,mediaContent:mediaContent}
-    }
-
     shashin.clearTimelineSelection = function () {
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
@@ -1576,7 +1437,7 @@
             $('.bi-circle-fill').each(function(i, obj) {
                 const metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                thumbnailList += '<img loading="lazy" src="'+$("#thumbnailCentered"+metadataId).val()+'" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="'+$("#filename"+metadataId).val().trim()+'" onError="Util.errorImg(this,\''+$("#filename"+metadataId).val().trim()+'\',75)">';
+                thumbnailList += BatchHeaderThumbnail({thumbnailImage:$("#thumbnailCentered"+metadataId).val(),title:$("#filename"+metadataId).val().trim()});
             });
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));
