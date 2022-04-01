@@ -3,28 +3,22 @@
 <body th:fragment="topnav(currentUser,activePage,searchTerm)">
 
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-    /*<![CDATA[*/
-    shashin.darkMode = /*[[${currentUser.darkMode}]]*/ true;
-    const userId = /*[[${currentUser.id}]]*/ 0;
-    /*]]>*/
-
-    $(window).bind("load", function() {
+    $(window).bind("load", function () {
         $("header .placeholder").removeClass("placeholder");
     });
 
-    let ajaxParams = {
-        type: "get",
-        url: "/notifications/check/" + userId,
-        contentType: 'application/json; charset=utf-8',
-        retries: shashin.ajaxRetries
-    };
+    $(document).ready(async function () {
+        /*<![CDATA[*/
+        shashin.darkMode = /*[[${currentUser.darkMode}]]*/ true;
+        const userId = /*[[${currentUser.id}]]*/ 0;
+        /*]]>*/
 
-    $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting notification")}).then(function (data) {
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications")) {
-            if (data["hasNotifications"] === true) {
-                $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
-            }
+        const http = new Http("check notifications");
+        const data = await http.ajax("get", "/notifications/check/" + userId);
+
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications") && data["hasNotifications"] === true) {
+            $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+            $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
         }
     })
 </script>
@@ -61,36 +55,29 @@
                 <input id="appSearchInput" name="appSearchInput" class="form-control" type="text" placeholder="Search" aria-label="Search" th:value="${searchTerm}">
                 <input type="submit" style="position: absolute; left: -9999px"/>
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                    $(document).ready(function () {
-                        const ajaxParams = {
-                            type: "get",
-                            url: "/api/v1/search/history",
-                            contentType: 'application/json; charset=utf-8',
-                            retries: shashin.ajaxRetries
-                        }
+                    $(document).ready(async function () {
+                        const http = new Http("search history");
+                        const data = await http.ajax("get", "/api/v1/search/history");
 
-                        $.ajax(ajaxParams)
-                            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting search history")}).then(function (data) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                if (data["status"] === "success") {
-                                    if (data.hasOwnProperty("searchHistoryList")) {
-                                        const searchHistoryList = data["searchHistoryList"];
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            if (data["status"] === "success") {
+                                if (data.hasOwnProperty("searchHistoryList")) {
+                                    const searchHistoryList = data["searchHistoryList"];
 
-                                        if (searchHistoryList.length > 0) {
-                                            let searchHistoryData = [];
-                                            for (const index in searchHistoryList) {
-                                                const searchHistoryObj = searchHistoryList[index];
-                                                searchHistoryData.push(searchHistoryObj.term)
-                                            }
-
-                                            /*<![CDATA[*/
-                                            shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, /*[[${searchHistoryLimit}]]*/15);
-                                            /*]]>*/
+                                    if (searchHistoryList.length > 0) {
+                                        let searchHistoryData = [];
+                                        for (const index in searchHistoryList) {
+                                            const searchHistoryObj = searchHistoryList[index];
+                                            searchHistoryData.push(searchHistoryObj.term)
                                         }
+
+                                        /*<![CDATA[*/
+                                        shashin.createAutocomplete("#appSearchInput", searchHistoryData, false, /*[[${searchHistoryLimit}]]*/15);
+                                        /*]]>*/
                                     }
                                 }
                             }
-                        });
+                        }
                     });
                 </script>
             </form>
@@ -144,36 +131,27 @@
                 <a class="dropdown-item" href="/users/update">Change password</a>
                 <a class="dropdown-item" href="/users/logout">Sign out</a>
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                    $("#darkModeSwitch").change(function() {
+                    $("#darkModeSwitch").change(async function () {
                         const darkMode = this.checked;
                         shashin.darkMode = darkMode;
+                        const http = new Http("dark mode");
+                        const json = {darkMode: darkMode};
+                        const data = await http.ajax("post", "/users/darkmode", JSON.stringify(json));
 
-                        let json = {darkMode: darkMode};
-                        const ajaxParams = {
-                            type: "post",
-                            url: "/users/darkmode",
-                            data: JSON.stringify(json),
-                            contentType: 'application/json; charset=utf-8',
-                            retries: shashin.ajaxRetries
-                        }
-
-                        $.ajax(ajaxParams)
-                            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting search history")}).then(function (data) {
-                            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                                if (data["status"] === "success") {
-                                    let html = $("html");
-                                    html.hide();
-                                    if (darkMode === true) {
-                                        $("LINK[href='/css/bootstrap.min.css']").attr("href","/css/bootstrap-night.min.css");
-                                        $(".darkIcons").addClass("lightIcons").removeClass("darkIcons");
-                                    } else {
-                                        $("LINK[href='/css/bootstrap-night.min.css']").attr("href","/css/bootstrap.min.css");
-                                        $(".lightIcons").addClass("darkIcons").removeClass("lightIcons");
-                                    }
-                                    html.show();
+                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                            if (data["status"] === "success") {
+                                let html = $("html");
+                                html.hide();
+                                if (darkMode === true) {
+                                    $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
+                                    $(".darkIcons").addClass("lightIcons").removeClass("darkIcons");
+                                } else {
+                                    $("LINK[href='/css/bootstrap-night.min.css']").attr("href", "/css/bootstrap.min.css");
+                                    $(".lightIcons").addClass("darkIcons").removeClass("lightIcons");
                                 }
+                                html.show();
                             }
-                        });
+                        }
                     });
                 </script>
             </div>

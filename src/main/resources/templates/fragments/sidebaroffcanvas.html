@@ -71,40 +71,27 @@
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">
-    greeting();
-    $("#offcanvasMenu").on("hidden.bs.offcanvas", function() {
+    $(document).ready(async function () {
         greeting();
-    });
-    function greeting() {
-        const greetings = [
-            "Hi",
-            "Hiya",
-            "Hey",
-            "Hello",
-            "Sup",
-            "Heyyy",
-            "Ahoy",
-            "Howdy",
-            "Hola",
-            "G'day"
-        ];
-        const randGreeting = greetings[Math.floor(Math.random() * greetings.length)];
-        $("#sidebarGreeting").text(randGreeting);
-    }
+        $("#offcanvasMenu").on("hidden.bs.offcanvas", function () {
+            greeting();
+        });
 
-    const aParams = {
-        type: "get",
-        url: "/notifications/check/" + userId,
-        contentType: 'application/json; charset=utf-8',
-        retries: shashin.ajaxRetries
-    };
-
-    $.ajax(aParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting notification")}).then(function (data) {
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications")) {
-            if (data["hasNotifications"] === true) {
-                $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
-            }
+        function greeting() {
+            const greetings = [
+                "Hi",
+                "Hiya",
+                "Hey",
+                "Hello",
+                "Sup",
+                "Heyyy",
+                "Ahoy",
+                "Howdy",
+                "Hola",
+                "G'day"
+            ];
+            const randGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+            $("#sidebarGreeting").text(randGreeting);
         }
     })
 </script>

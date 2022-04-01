@@ -37,7 +37,7 @@ class Folder {
         this.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/folder/"+nextPage+"/"+encodeURI(encodeURIComponent(folderName)));
+        const data = await this.http.ajax("get","/folder/"+nextPage+"/"+encodeURI(encodeURIComponent(folderName)));
 
         const mediaContentList = [];
         if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {

@@ -40,7 +40,7 @@
     }
 
     shashin.updateFavorites = function(listenerPrefix, iconPrefix, countPrefix, metadataId) {
-        $(listenerPrefix+metadataId).on("click", function (e) {
+        $(listenerPrefix+metadataId).on("click", async function (e) {
             e.preventDefault();
 
             if ($(iconPrefix + metadataId).hasClass("bi-suit-heart")) {
@@ -51,30 +51,21 @@
 
             const isFavorite = ($(iconPrefix + metadataId).hasClass("bi-suit-heart-fill"));
 
+            const http = new Http("favorite");
             const json = {metadataId: metadataId, isFavorite: isFavorite};
 
-            let posting;
+            let data;
 
             if (isFavorite === true) {
-                posting = $.post({
-                    url: "/favorite/save",
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
-                });
+                data = await http.ajax("post", "/favorite/save", JSON.stringify(json));
             } else {
-                posting = $.post({
-                    url: "/favorite/delete",
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8'
-                });
+                data = await http.ajax("post", "/favorite/delete", JSON.stringify(json));
             }
 
-            posting.done(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
-                    Util.setMetadataLocalStorage();
-                    $(countPrefix + metadataId).text(data["count"]);
-                }
-            });
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("count")) {
+                Util.setMetadataLocalStorage();
+                $(countPrefix + metadataId).text(data["count"]);
+            }
         });
     }
 

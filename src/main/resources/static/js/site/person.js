@@ -39,7 +39,7 @@ class Person {
         this.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/person/" + personId + "/" + nextPage);
+        const data = await this.http.ajax("get","/person/" + personId + "/" + nextPage);
 
         const mediaContentList = [];
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {

@@ -37,7 +37,7 @@ class Search {
         this.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm));
+        const data = await this.http.ajax("get","/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm));
 
         const mediaContentList = [];
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {

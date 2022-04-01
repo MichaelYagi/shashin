@@ -32,7 +32,7 @@ class Favorites {
         this.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/favorites/" + nextPage);
+        const data = await this.http.ajax("get","/favorites/" + nextPage);
 
         const mediaContentList = [];
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {

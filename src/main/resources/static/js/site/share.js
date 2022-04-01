@@ -41,7 +41,7 @@ class ShareAlbum {
         self.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage);
+        const data = await this.http.ajax("get","/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage);
 
         const mediaContentList = [];
 

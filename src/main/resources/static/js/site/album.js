@@ -57,7 +57,7 @@
         albumSettings.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/album/"+albumId+"/page/"+nextPage);
+        const data = await this.http.ajax("get","/album/"+albumId+"/page/"+nextPage);
 
         const mediaContentList = [];
 
