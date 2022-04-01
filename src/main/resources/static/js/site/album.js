@@ -206,9 +206,7 @@
         .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " deleting album photo comment")}).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                 let commentId = data["commentId"];
-                let message = "Error";
                 if (data["status"] === "success") {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
                     // Delete comment
                     $("#comment" + commentId).remove();
                     let currentCount = parseInt($("#brcommentcount"+metadata.id).text());
@@ -216,8 +214,6 @@
                         currentCount--;
                     }
                     $("#brcommentcount"+metadata.id).text(currentCount);
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 }
             }
         });
@@ -349,12 +345,8 @@
                         let commentId = data["commentId"];
 
                         // Insert comment at top of list
-                        const commentItem = '<li class="list-group-item list-group-item-secondary" id="comment' + commentId + '">\n' +
-                            '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
-                            '<small>' + userMap.username + '<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
-                            '<span id="textareacontainer' + commentId + '"></span></li>';
                         $("#commentText"+metadata.id).val("")
-                        $("#commentList"+metadata.id).prepend(commentItem);
+                        $("#commentList"+metadata.id).prepend(AlbumComment({commentId:commentId,commentText:comment,userId:userMap.id,commentUserId:userMap.id,username:userMap.username}));
 
                         $("#deletecomment" + commentId).on("click", function (e) {
                             e.preventDefault();
@@ -378,54 +370,17 @@
 (function( albumModal, $, undefined ) {
     albumModal.renderAlbumCommentsModal = function (albumData,metadata,userMap,albumPhotoCommentsMap) {
         let index;
-        let html =
-            '<div class="modal fade" id="propalbumphotocomment' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true">\n' +
-            '    <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">\n' +
-            '        <div class="modal-content">\n' +
-            '            <div class="modal-header">\n' +
-            '                <h5 class="modal-title" id="commentModalLabel"><div id="propalbumphotocomment' + metadata.id + '"><img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" width="100" height="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)"></div>Comments for ' + metadata.fileName + '</h5>\n' +
-            '                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>\n' +
-            '            </div>\n' +
-            '            <div class="modal-body">\n' +
-            '                <input type="hidden" id="currentCommentId' + metadata.id + '" name="currentCommentId' + metadata.id + '">\n' +
-            '                <ul class="list-group" id="commentList' + metadata.id + '">\n';
+        let html = AlbumCommentsModalHead({metadata:metadata});
 
         const commentIdArray = [];
         for (index in albumPhotoCommentsMap[metadata.id]) {
             const comments = albumPhotoCommentsMap[metadata.id][index];
             commentIdArray.push(comments["commentId"]);
 
-            html +=
-                '       <li id="comment'+comments["commentId"]+'" class="list-group-item'+(comments['userId'] === userMap.id ? ' list-group-item-secondary' : '')+'">\n' +
-                '           <span id="commentcontainer'+comments["commentId"]+'">\n' +
-                '               <p id="commentcontent'+comments["commentId"]+'">'+comments["comment"]+'</p>\n' +
-                '               <small><strong>'+comments["username"]+'</strong><span> on '+comments["createdAt"]+'</span></small>';
-            if (comments["userId"] === userMap.id) {
-                html +=
-                    '       <small><span style="float: right">\n' +
-                    '           <a href="#" id="deletecomment'+comments["commentId"]+'"><span class="bi-trash"></span></a>&nbsp;&nbsp;\n' +
-                    '           <a href="#" id="editcomment'+comments["commentId"]+'"><span class="bi-pencil"></span></a>\n' +
-                    '       </span></small>\n';
-            }
-            html +=
-                '       </span>\n' +
-                '       <span id="textareacontainer'+comments["commentId"]+'"></span>\n' +
-                '   </li>';
+            html += AlbumComment({commentId:comments["commentId"],commentText:comments["comment"],userId:userMap.id,commentUserId:comments['userId'],username:comments["username"]});
         }
 
-        html +=
-            '             </ul>\n' +
-            '           </div>\n' +
-            '           <div class="modal-footer">\n' +
-            '               <textarea class="form-control" id="commentText'+metadata.id+'" rows="2"></textarea>\n' +
-            '               <button type="button" class="btn btn-primary" id="saveCommentMetadata'+metadata.id+'">Save</button>\n' +
-            '               <button type="button" class="btn btn-primary" id="updateCommentMetadata'+metadata.id+'">Update</button>\n' +
-            '               <button type="button" class="btn btn-secondary" id="dismissModalCommentMetadata'+metadata.id+'" data-bs-dismiss="modal">Cancel</button>\n' +
-            '               <button type="button" class="btn btn-secondary" id="cancelEditCommentMetadata'+metadata.id+'" data-bs-dismiss="modal">Cancel</button>\n' +
-            '           </div>\n' +
-            '       </div>\n' +
-            '   </div>\n' +
-            '</div>';
+        html += AlbumCommentsModalFooter({metadata:metadata});
 
         $("#albummodal"+metadata.id).after(html);
         for (index in commentIdArray) {
