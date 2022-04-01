@@ -57,24 +57,24 @@ class Person {
                             const metadata = metadataList[index];
 
                             let dateHeadingObj = null;
-                            let renderTopRight = true;
-                            let renderTopLeft = false;
-                            let renderBottomLeft = true;
-                            let renderCenter = true;
+                            const overlayFlags = {};
+                            overlayFlags.renderTopRight = true;
+                            overlayFlags.renderTopLeft = true;
+                            overlayFlags.renderBottomLeft = true;
+                            overlayFlags.renderCenter = true;
 
                             let overlayData;
 
                             if (this.canEdit === true) {
-                                overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,onClickIdPrefix:"propperson",cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex});
-                                renderTopLeft = {id:metadata.id, overlays:null, data:null};
+                                overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,onClickIdPrefix:"propperson",cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
                             } else {
-                                overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex});
+                                overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
                             }
 
                             mediaContentList.push(shashin.getMediaContent(metadata));
 
                             const appendClass = "appendPersonPhotos";
-                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, overlayData})).insertBefore($("."+appendClass).last()).ready(function () {
+                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last()).ready(function () {
                                 // Call JS and modal
                                 personModalSettings.renderPersonModal(metadata, recognitionLabels, labelPhotoMap[metadata.id]["labels"]);
                             });

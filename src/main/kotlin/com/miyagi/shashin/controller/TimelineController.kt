@@ -1084,7 +1084,7 @@ class TimelineController: BaseController() {
     }
 
     private fun processPeople(metadataObj: Metadata?, taggedPeople: String?, isObject: Boolean) {
-        if (metadataObj != null && metadataObj.getId() != null) {
+        if (metadataObj != null) {
             val metadataId = metadataObj.getId()
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
             if (recognitionLabelPhotos != null) {
