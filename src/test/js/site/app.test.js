@@ -60,49 +60,6 @@ describe('#shashin app tests', function() {
         expect(source.urls.join('|')).to.include('maptiler')
     })
 
-    it('Overlay tests', function() {
-        const overlayId = "someId"
-
-        $("body").append($("<div/>", {
-            id: 'diva'
-        }))
-
-        $("body").append($("<div/>", {
-            id: 'divb'
-        }))
-
-        $("#diva").append($("<div/>", {
-            class: 'thumbnail-tl',
-            id: 'tntl'+overlayId
-        }).append(
-            $("<a/>", {
-                href: '#',
-                id: 'select'+overlayId
-            }).append(
-                $("<span/>", {
-                    class: 'bi-circle',
-                    id: 'tlicon'+overlayId,
-                    style: 'font-size: 1rem;color: lightgray;'
-                })
-            )
-        ))
-
-        let tntlElA = $("#diva div")
-
-        const topLeftOverlayHtml = shashin.getTopLeftOverlay(overlayId)
-        $("#divb").append(topLeftOverlayHtml)
-        let tntlElB = $("#divb div")
-
-        assert.equal(tntlElA.attr("id"),tntlElB.attr("id"))
-        assert.equal(tntlElA.attr("class"),tntlElB.attr("class"))
-        assert.equal(tntlElA.children("a").attr("id"),tntlElB.children("a").attr("id"))
-        assert.equal(tntlElA.children("a").attr("href"),tntlElB.children("a").attr("href"))
-        assert.equal(tntlElA.children("a").children("span").attr("id"),tntlElB.children("a").children("span").attr("id"))
-        assert.equal(tntlElA.children("a").children("span").attr("class"),tntlElB.children("a").children("span").attr("class"))
-        assert.equal(tntlElA.children("a").children("span").attr("style"),tntlElB.children("a").children("span").attr("style"))
-
-    })
-
     it('gallery element', function () {
         $("body").append($("<div/>", {
             id: 'someelelement'

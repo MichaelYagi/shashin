@@ -40,6 +40,24 @@ const AlbumCommentsModalFooter = ({metadata}) => `
     </div>
 `
 
+const AlbumModalDropdownHeader = ({metadata}) => `
+    <div class="input-group-append dropdown" id="albumListInput">
+        <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>
+        <div class="dropdown-menu" id="albumsList">
+`
+
+const AlbumModalDropDown = ({metadata,album,checkedString}) => `
+            <button class="dropdown-item" type="button">
+                <input type="checkbox" class="album" value="${album.name}" name="album${metadata.id}[]" id="${metadata.id}-${album.id}"${checkedString}>
+                <label for="${metadata.id}-${album.id}" id="album-${metadata.id}-${album.id}">${Util.escapeHtml(album.name)}</label>
+            </button>
+`
+
+const AlbumModalDropdownFooter = () => `
+        </div>
+    </div>
+`
+
 const PersonModalHead = ({module,metadata,recognitionLabels,taggedPeopleList}) => `
     <div class="modal fade" id="prop${module}${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}" aria-hidden="true">
         <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
@@ -67,11 +85,22 @@ const PersonModalHead = ({module,metadata,recognitionLabels,taggedPeopleList}) =
                                     ` : ''}
 `
 
+const PersonModalDropdownHead = ({metadata}) => `
+    <div class="input-group-append dropdown" id="recognitionLabelInput">
+        <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+        <div class="dropdown-menu" id="recognitionLabelsList">
+`
+
 const PersonModalDropDown = ({metadata,recognitionLabel,checkedString}) => `
                                             <button class="dropdown-item" type="button">
                                                 <input type="checkbox" class="recognitionLabel" value="${recognitionLabel.name}" name="recognitionLabel${metadata.id}[]" id="${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}"${(checkedString.length > 0) ? `${checkedString}` : ''}>
                                                 <label for="${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}" id="label${metadata.id.length > 0 ? `-${metadata.id}-` : ''}${recognitionLabel.id}">${recognitionLabel.name}</label>
                                             </button>
+`
+
+const PersonModalDropdownFooter = () => `
+        </div>
+    </div>
 `
 
 const PersonModalFooter = ({module,metadata,recognitionLabels}) => `
