@@ -51,10 +51,11 @@ class Search {
                     const metadata = metadataList[index];
 
                     let dateHeadingObj = null;
-                    let renderTopRight = true;
-                    let renderTopLeft = false;
-                    let renderBottomLeft = true;
-                    let renderCenter = true;
+                    const overlayFlags = {};
+                    overlayFlags.renderTopRight = true;
+                    overlayFlags.renderTopLeft = false;
+                    overlayFlags.renderBottomLeft = true;
+                    overlayFlags.renderCenter = true;
 
                     const dateHeadingCount = $(".dateSection").length;
                     const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
@@ -65,12 +66,12 @@ class Search {
                         dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
                     }
 
-                    const overlayData = shashin.getOverlayData(metadata,{cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex});
+                    const overlayData = shashin.getOverlayData(metadata,{cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
 
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const appendClass = "appendSearchPhotos";
-                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, overlayData})).insertAfter($("."+appendClass).last());
+                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertAfter($("."+appendClass).last());
                 }
 
                 $("#spinner").css("display", "none");

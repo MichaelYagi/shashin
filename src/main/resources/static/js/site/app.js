@@ -1350,6 +1350,10 @@
         }
 
         if (typeof args !== "undefined") {
+            if (args.hasOwnProperty("overlayFlags")) {
+                data["overlayFlags"] = args.overlayFlags;
+            }
+
             if (args.hasOwnProperty("galleryIndex")) {
                 data["galleryIndex"] = args.galleryIndex;
             }

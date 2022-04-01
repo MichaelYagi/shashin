@@ -1,4 +1,4 @@
-const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, renderBottomRight, overlayData}) => `
+const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData}) => `
     ${(typeof dateHeadingObj === "undefined" || dateHeadingObj === null) ? '' : `<section class="dateSection" id="${dateHeadingObj.heading}"><p><strong>${dateHeadingObj.display}</strong></p></section>`}
     <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
         <a class="lightGalleryIndexAnchor" name="lightGalleryIndex${currentMediaLinkIndex}"></a>
@@ -6,15 +6,15 @@ const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, cu
         <input type="hidden" name="filenamee${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
         <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
 
-        ${(typeof renderTopRight === "undefined" || renderTopRight === false) ? '' : getTopRightOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
+        ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderTopRight") && overlayData["data"]["overlayFlags"]["renderTopRight"] === true) ? getTopRightOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data}) : ''}
         
-        ${(typeof renderTopLeft === "undefined" || renderTopLeft === false) ? '' : getTopLeftOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
+        ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderTopLeft") && overlayData["data"]["overlayFlags"]["renderTopLeft"] === true) ? getTopLeftOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data}) : ''}
         
-        ${(typeof renderBottomLeft === "undefined" || renderBottomLeft === false) ? '' : getBottomLeftOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
+        ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderBottomLeft") && overlayData["data"]["overlayFlags"]["renderBottomLeft"] === true) ? getBottomLeftOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data}) : ''}
         
-        ${(typeof renderBottomRight === "undefined" || renderBottomRight === false) ? '' : getBottomRightOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
+        ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderBottomRight") && overlayData["data"]["overlayFlags"]["renderBottomRight"] === true) ? getBottomRightOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data}) : ''}
         
-        ${(typeof renderCenter === "undefined" || renderCenter === false) ? '' : getCenteredOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data})}
+        ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderCenter") && overlayData["data"]["overlayFlags"]["renderCenter"] === true) ? getCenteredOverlay({id:metadata.id, overlays:overlayData.overlays, data:overlayData.data}) : ''}
         
     </div>
     ${(activePage === "album") ? `<span id="albummodal${metadata.id}" style="width:0;height:0;padding:0"></span>` : ''}
@@ -26,7 +26,7 @@ const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, cu
         Util.activateMetadataListeners("${metadata.id}");
         $("#mediaLink${metadata.id}").attr("tag", "${metadata.id}");
         
-        ${(typeof renderBottomLeft === "undefined" || renderBottomLeft === false || $.inArray("isInfo", overlayData.overlays) !== -1) ?
+        ${(overlayData.hasOwnProperty("data") === false || overlayData["data"].hasOwnProperty("overlayFlags") === false || overlayData["data"]["overlayFlags"].hasOwnProperty("renderBottomLeft") === false || overlayData["data"]["overlayFlags"]["renderBottomLeft"] === false || $.inArray("isInfo", overlayData.overlays) !== -1) ?
             `
             $("#infoModalEdit${metadata.id}").on("click", function (e) {
                 e.preventDefault();

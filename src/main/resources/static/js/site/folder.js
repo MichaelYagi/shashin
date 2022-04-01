@@ -51,17 +51,18 @@ class Folder {
                     const metadata = metadataList[index];
 
                     let dateHeadingObj = null;
-                    let renderTopRight = true;
-                    let renderTopLeft = true;
-                    let renderBottomLeft = true;
-                    let renderCenter = true;
+                    const overlayFlags = {};
+                    overlayFlags.renderTopRight = true;
+                    overlayFlags.renderTopLeft = true;
+                    overlayFlags.renderBottomLeft = true;
+                    overlayFlags.renderCenter = true;
 
-                    const overlayData = shashin.getOverlayData(metadata, {editControls:true,editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-pencil-square' : 'bi-pencil'),cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex});
+                    const overlayData = shashin.getOverlayData(metadata, {editControls:true,editIcon: ((metadata.lat === null || metadata.lng === null) ? 'bi-pencil-square' : 'bi-pencil'),cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
 
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const appendClass = "appendFolderPhotos";
-                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, renderTopRight, renderTopLeft, renderBottomLeft, renderCenter, overlayData})).insertBefore($("."+appendClass).last());
+                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
                 }
 
                 this.rendering = false;
