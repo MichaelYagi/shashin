@@ -56,7 +56,6 @@ $("#saveBatchMetadata").on("click", function (e) {
         shashin.onFail(xhr, textStatus, ajaxParams, " saving persons matches");
     }).then(function (data) {
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            let message = "Error";
             if (data["status"] === "success") {
                 if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
                     $("#keywordsString").val(data["keywords"]);
@@ -73,6 +72,9 @@ $("#saveBatchMetadata").on("click", function (e) {
                     let batchHtml = "";
                     const recognitionLabels = data["recognitionLabels"];
 
+                    const dummyMetadata = {};
+                    dummyMetadata.id = "";
+
                     for (let index in recognitionLabels) {
                         const recognitionLabel = recognitionLabels[index];
 
@@ -80,11 +82,7 @@ $("#saveBatchMetadata").on("click", function (e) {
                             renderRecognitionLabels = true;
                         }
 
-                        batchHtml +=
-                            '           <button class="dropdown-item" type="button">\n' +
-                            '               <input type="checkbox" class="recognitionLabel" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
-                            '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                            '           </button>'
+                        batchHtml += PersonModalDropDown({metadata:dummyMetadata,recognitionLabel:recognitionLabel,checkedString:""});
                     }
 
                     if (true === renderRecognitionLabels) {
@@ -95,19 +93,13 @@ $("#saveBatchMetadata").on("click", function (e) {
                     }
                 }
 
-                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                // window.top.location = window.top.location
-
                 $("#matchesBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 $("#matchesBatchModalCancel").prop('disabled', false);
             } else {
-                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#matchesBatchModalCancel").prop('disabled', false);
             }
-            //$("#msgBatchMetadata").html(message);
-            //shashin.clearTimelineSelection();
         } else {
             $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
@@ -160,21 +152,9 @@ $('#propBatchMetadata').bind('keypress', function () {
         taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
         shashin.printMessageToConsole('taggedPeopleList:'+taggedPeopleList)
 
-        let html = '<div class="modal fade" id="propmatches' + metadata.id + '" tabindex="-1" role="dialog" aria-labelledby="label' + metadata.id + '" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable modal-lg" role="document"><div class="modal-content">\n' +
-            '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit "' + metadata.title + '"<div id="propmatchesThumbnail' + metadata.id + '"><img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" width="100" height="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)"></div></h5>\n' +
-            '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n' +
-            '<div class="modal-body">\n' +
-            '   <form th:id="saveData' + metadata.id + '">\n' +
-            '       <input type="hidden" name="id" value="' + metadata.id + '">\n' +
-            '       <div class="form-group row">\n' +
-            '           <div class="col-sm">\n' +
-            '               <label for="tagpeople' + metadata.id + '" class="col-form-label">Tag People (comma separated)</label>\n' +
-            '               <div class="input-group">\n' +
-            '                   <input type="text" class="form-control" aria-label="Tag People" id="tagpeople' + metadata.id + '" name="tagpeople" value="' + taggedPeopleList + '">\n';
+        let html = PersonModalHead({module:"matches",metadata:metadata,recognitionLabels:recognitionLabels,taggedPeopleList:taggedPeopleList});
+
         if (recognitionLabels.length > 0) {
-            html += '           <div class="input-group-append">\n' +
-                '                   <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                '                   <div class="dropdown-menu personDropdown" id="recognitionLabelsList' + metadata.id + '">\n';
             for (const index in recognitionLabels) {
                 const recognitionLabel = recognitionLabels[index];
                 const taggedPeopleArray = taggedPeopleList.split(",");
@@ -182,36 +162,10 @@ $('#propBatchMetadata').bind('keypress', function () {
                 if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                     checkedString = " checked";
                 }
-                html += '               <button class="dropdown-item" type="button">\n' +
-                    '                       <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
-                    '                       <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
-                    '                   </button>\n';
+                html += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
             }
-            html += '               </div>\n' +
-                '               </div>\n';
-
         }
-        html +=
-            '               </div>\n' +
-            '           </div>\n' +
-            '       </div>\n' +
-            '       <div class="form-group row">\n' +
-            '           <div class="col-sm">\n' +
-            '               <input type="checkbox" name="isobject' + metadata.id + '" id="isobject' + metadata.id + '">\n' +
-            '               <label class="form-check-label" for="isobject' + metadata.id + '">This is not a person</label>\n' +
-            '           </div>\n' +
-            '       </div>\n' +
-            '   </form>\n';
-        html +=
-            '   <div class="col-sm">\n' +
-            '       <span id="msg' + metadata.id + '"></span>\n' +
-            '   </div>\n' +
-            '</div>\n' +
-            '<div class="modal-footer">\n' +
-            '   <div id="matchesModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>' +
-            '   <button type="button" class="btn btn-primary" id="saveMetadata' + metadata.id + '">Save</button>\n' +
-            '   <button id="matchesModalCancel'+metadata.id+'" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
-            '</div></div></div></div>';
+        html += PersonModalFooter({module:"person",metadata:metadata,recognitionLabels:recognitionLabels});
 
         $("#matchesmodal" + metadata.id).after(html);
 
@@ -267,7 +221,6 @@ $('#propBatchMetadata').bind('keypress', function () {
                 shashin.onFail(xhr, textStatus, ajaxParams, " saving person matches");
             }).then(function (data) {
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    let message = "Error";
                     if (data["status"] === "success") {
                         if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
                             let renderRecognitionLabels = false;
@@ -287,11 +240,7 @@ $('#propBatchMetadata').bind('keypress', function () {
                                 if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                                     checkedString = " checked";
                                 }
-                                batchHtml +=
-                                    '           <button class="dropdown-item" type="button">\n' +
-                                    '               <input type="checkbox" class="recognitionLabel" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
-                                    '               <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                                    '           </button>'
+                                batchHtml += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
                             }
 
                             if (true === renderRecognitionLabels) {
@@ -302,17 +251,13 @@ $('#propBatchMetadata').bind('keypress', function () {
                             }
                         }
 
-                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        // window.top.location = window.top.location
                         $("#matchesModalStatus"+metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
                         $("#matchesModalCancel"+metadata.id).prop('disabled', false);
                     } else {
-                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                         $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
                         $("#matchesModalCancel"+metadata.id).prop('disabled', false);
                     }
-                    //$("#msg" + metadata.id).html(message);
                 } else {
                     $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                     $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());

@@ -194,7 +194,7 @@
             taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
             shashin.printMessageToConsole('taggedPeopleList:'+taggedPeopleList)
 
-            let html = PersonModalHead({metadata:metadata,recognitionLabels:recognitionLabels,taggedPeopleList:taggedPeopleList});
+            let html = PersonModalHead({module:"person",metadata:metadata,recognitionLabels:recognitionLabels,taggedPeopleList:taggedPeopleList});
 
             if (recognitionLabels.length > 0) {
                 for (const index in recognitionLabels) {
@@ -207,7 +207,7 @@
                     html += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
                 }
             }
-            html += PersonModalFooter({metadata:metadata,recognitionLabels:recognitionLabels})
+            html += PersonModalFooter({module:"person",metadata:metadata,recognitionLabels:recognitionLabels});
 
             $("#personmodal"+metadata.id).after(html);
 
