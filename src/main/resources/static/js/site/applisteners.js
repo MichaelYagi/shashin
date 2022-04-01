@@ -57,42 +57,34 @@ $("#appToolsAddAlbum").on("click", function(e) {
     $("#propAddAlbum").modal('show');
 });
 
-$("#albumAppToolsRemoveAlbum").on("click", function(e) {
+$("#albumAppToolsRemoveAlbum").on("click", async function (e) {
     e.preventDefault();
 
     let metadataIdList = [];
-    $('.bi-circle-fill').each(function(i, obj) {
+    $('.bi-circle-fill').each(function (i, obj) {
         metadataIdList.push(obj.id.substring(6, obj.id.length));
     });
 
     let albumId = $('#albumId').val();
     if (metadataIdList.length > 0 && albumId.length > 0) {
+        const http = new Http("album batch delete");
         let json = {metadataIdList: metadataIdList, albumId: parseInt(albumId)}
-        const ajaxParams = {
-            type: "post",
-            url: "/album/delete/batch",
-            data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8',
-            retries: shashin.ajaxRetries
-        }
+        const data = await http.ajax("post", "/album/delete/batch", JSON.stringify(json));
 
-        $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " removing from album")}).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "redirect") {
-                    window.location.replace(data["msg"]);
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            if (data["status"] === "redirect") {
+                window.location.replace(data["msg"]);
+            } else {
+                let message = "Error";
+                if (data["status"] === "success") {
+                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                    window.top.location = window.top.location
                 } else {
-                    let message = "Error";
-                    if (data["status"] === "success") {
-                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        window.top.location = window.top.location
-                    } else {
-                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    }
-                    $("#albumMessage").html(message);
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 }
+                $("#albumMessage").html(message);
             }
-        });
+        }
     }
 });
 

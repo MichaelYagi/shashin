@@ -31,7 +31,7 @@ class Trash {
         this.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/trash/" + nextPage);
+        const data = await this.http.ajax("get","/trash/" + nextPage);
 
         const mediaContentList = [];
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {

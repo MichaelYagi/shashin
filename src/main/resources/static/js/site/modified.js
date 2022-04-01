@@ -36,7 +36,7 @@ class Modified {
         this.rendering = true;
         $("#spinner").css("display","block");
 
-        const data = await this.http.ajaxGet("/modified/"+nextPage);
+        const data = await this.http.ajax("get","/modified/"+nextPage);
 
         const mediaContentList = [];
         if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
