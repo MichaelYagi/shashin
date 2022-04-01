@@ -125,24 +125,18 @@
                         shashin.onFail(xhr, textStatus, ajaxParams, " saving batch modal for person");
                     }).then(function (data) {
                         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
                             if (data["status"] === "success") {
                                 if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
                                     $("#keywordsString").val(data["keywords"]);
                                     $("#keywordsBatchString").val(data["keywords"]);
                                 }
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                // window.top.location = window.top.location
                                 $("#personBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                                 $("#personBatchModalCancel").prop('disabled', false);
                             } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                                 $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                                 $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                                 $("#personBatchModalCancel").prop('disabled', false);
                             }
-                            //$("#msgBatchMetadata").html(message);
-                            //shashin.clearTimelineSelection();
                         } else {
                             $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                             $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
@@ -200,21 +194,9 @@
             taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
             shashin.printMessageToConsole('taggedPeopleList:'+taggedPeopleList)
 
-            let html = '<div class="modal fade" id="propperson'+metadata.id+'" tabindex="-1" role="dialog" aria-labelledby="label'+metadata.id+'" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable modal-lg" role="document"><div class="modal-content">\n' +
-                '<div class="modal-header"><h5 class="modal-title" id="exampleModalLabel">Edit "'+metadata.title+'"<div id="proppersonThumbnail'+metadata.id+'"><img loading="lazy" src="'+encodeURI(metadata.thumbnailUrlCentered)+'" width="100" height="100" onError="Util.errorImg(this,\''+metadata.title+'\',100)"></div></h5>\n' +
-                '<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>\n' +
-                '<div class="modal-body">\n' +
-                '   <form th:id="saveData'+metadata.id+'">\n' +
-                '       <input type="hidden" name="id" value="'+metadata.id+'">\n' +
-                '       <div class="form-group row">\n' +
-                '           <div class="col-sm">\n' +
-                '               <label for="tagpeople'+metadata.id+'" class="col-form-label">Tag People (comma separated)</label>\n' +
-                '               <div class="input-group" id="batchLabelIds'+metadata.id+'">\n' +
-                '                   <input type="text" class="form-control" aria-label="Tag People" id="tagpeople'+metadata.id+'" name="tagpeople" value="'+taggedPeopleList+'">\n';
+            let html = PersonModalHead({metadata:metadata,recognitionLabels:recognitionLabels,taggedPeopleList:taggedPeopleList});
+
             if (recognitionLabels.length > 0) {
-                html += '           <div class="input-group-append">\n' +
-                    '                   <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown'+metadata.id+'" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                    '                   <div class="dropdown-menu personDropdown" id="recognitionLabelsList'+metadata.id+'">\n';
                 for (const index in recognitionLabels) {
                     const recognitionLabel = recognitionLabels[index];
                     const taggedPeopleArray = taggedPeopleList.split(",");
@@ -222,36 +204,10 @@
                     if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                         checkedString = " checked";
                     }
-                    html += '               <button class="dropdown-item" type="button">\n' +
-                        '                       <input type="checkbox" class="recognitionLabel" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
-                        '                       <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                        '                   </button>\n';
+                    html += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
                 }
-                html += '               </div>\n' +
-                    '               </div>\n';
-
             }
-            html +=
-                '               </div>\n' +
-                '           </div>\n' +
-                '       </div>\n' +
-                '       <div class="form-group row">\n' +
-                '           <div class="col-sm">\n' +
-                '               <input type="checkbox" name="isobject'+metadata.id+'" id="isobject'+metadata.id+'">\n' +
-                '               <label class="form-check-label" for="isobject'+metadata.id+'">This is not a person</label>\n' +
-                '           </div>\n' +
-                '       </div>\n' +
-                '   </form>\n';
-            html +=
-                '   <div class="col-sm">\n' +
-                '       <span id="msg'+metadata.id+'"></span>\n' +
-                '   </div>\n' +
-                '</div>\n' +
-                '<div class="modal-footer">\n' +
-                '   <div id="personModalStatus'+metadata.id+'" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>' +
-                '   <button type="button" class="btn btn-primary" id="saveMetadata'+metadata.id+'">Save</button>\n' +
-                '   <button id="personModalCancel'+metadata.id+'" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>\n' +
-                '</div></div></div></div>';
+            html += PersonModalFooter({metadata:metadata,recognitionLabels:recognitionLabels})
 
             $("#personmodal"+metadata.id).after(html);
 
@@ -327,11 +283,7 @@
                                     if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                                         checkedString = " checked";
                                     }
-                                    batchHtml +=
-                                        '           <button class="dropdown-item" type="button">\n' +
-                                        '               <input type="checkbox" class="recognitionLabel" value="'+recognitionLabel.name+'" name="recognitionLabel'+metadata.id+'[]" id="'+metadata.id+'-'+recognitionLabel.id+'"'+checkedString+'>\n' +
-                                        '               <label for="'+metadata.id+'-'+recognitionLabel.id+'" id="label-'+metadata.id+'-'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                                        '           </button>'
+                                    batchHtml += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
                                 }
 
                                 if (true === renderRecognitionLabels) {
