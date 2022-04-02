@@ -3,7 +3,7 @@ class Http {
         this.action = action;
     }
 
-    async ajax(type,url,data,subroutine) {
+    async ajax(type,url,data,failFunction) {
 
         const ajaxParams = {
             type: type,
@@ -19,7 +19,7 @@ class Http {
 
         return await $.ajax(ajaxParams).fail(function(xhr, textStatus) {
             const message = " executing " + (this.action && this.action.length > 0 ? this.action : "unknown.");
-            shashin.onFail(xhr, textStatus, ajaxParams, message, subroutine);
+            shashin.onFail(xhr, textStatus, ajaxParams, message, failFunction);
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 return data;
