@@ -1,6 +1,6 @@
 class Http {
-    constructor(module) {
-        this.module = module;
+    constructor(action) {
+        this.action = action;
     }
 
     async ajax(type,url,data,subroutine) {
@@ -18,7 +18,7 @@ class Http {
         }
 
         return await $.ajax(ajaxParams).fail(function(xhr, textStatus) {
-            const message = " updating" + (this.module && this.module.length > 0 ? " " + this.module : "");
+            const message = " executing " + (this.action && this.action.length > 0 ? this.action : "unknown.");
             shashin.onFail(xhr, textStatus, ajaxParams, message, subroutine);
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
