@@ -73,17 +73,17 @@
         return "Something went wrong. Please try again.";
     }
 
-    shashin.onFail = function(xhr, textStatus, ajaxParams, description, subroutine) {
+    shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
         if (xhr.status === 403 || xhr.status === 401) {
             $(location).prop('href', '/users/login');
         } else if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
             $.ajax(ajaxParams).fail(function(xhr, textStatus) {
-                shashin.onFail(xhr, textStatus, ajaxParams, description, subroutine)
+                shashin.onFail(xhr, textStatus, ajaxParams, description, failFunction)
             });
-        } else if (typeof subroutine !== "undefined" && typeof subroutine === "function") {
-            subroutine();
+        } else if (typeof failFunction !== "undefined" && typeof failFunction === "function") {
+            failFunction();
         }
     }
 
