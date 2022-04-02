@@ -1091,18 +1091,9 @@
     timelineSettings.attachAssociatedMetadata = function(date,mediaTypeFilter) {
         timelineSettings.rendered = false;
 
+        const http = new Http("attaching associated metadata");
         const version = Util.getMetadataLocalStorage();
-
-        const ajaxParams = {
-            type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version),
-            contentType: 'application/json; charset=utf-8',
-            async: true,
-            retries: shashin.ajaxRetries
-        }
-
-        $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " attaching associated metadata");timelineSettings.rendered = true;}).then(function(data) {
+        http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === timelineSettings.success) {
                     if (data.hasOwnProperty("metadataList") &&
