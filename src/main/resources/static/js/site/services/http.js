@@ -3,7 +3,7 @@ class Http {
         this.module = module;
     }
 
-    async ajax(type,url,data) {
+    async ajax(type,url,data,subroutine) {
 
         const ajaxParams = {
             type: type,
@@ -19,7 +19,7 @@ class Http {
 
         return await $.ajax(ajaxParams).fail(function(xhr, textStatus) {
             const message = " updating" + (this.module && this.module.length > 0 ? " " + this.module : "");
-            shashin.onFail(xhr, textStatus, ajaxParams, message);
+            shashin.onFail(xhr, textStatus, ajaxParams, message, subroutine);
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 return data;

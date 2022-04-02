@@ -16,34 +16,25 @@
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#deleteUser[[${user.id}]]").on("click", function(e) {
+                $("#deleteUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";
 
+                    const http = new Http("marking notification saving album");
                     let json = {userId: userId, delete: true}
-                    const ajaxParams = {
-                        type: "post",
-                        url: "/settings/user/delete/"+userId,
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8',
-                        retries: shashin.ajaxRetries
-                    }
+                    const data = await http.ajax("post", "/settings/user/delete/" + userId, JSON.stringify(json));
 
-                    $.ajax(ajaxParams)
-                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving album")}).then(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                window.location.replace("/settings/users");
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            $("#usersSettingsMessage").html(message);
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            window.location.replace("/settings/users");
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
-                    });
-
+                        $("#usersSettingsMessage").html(message);
+                    }
                 });
                 /*]]>*/
             </script>
@@ -70,49 +61,40 @@
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#resetPasswordUser[[${user.id}]]").on("click", function(e) {
+                $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
                     $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                    $("#resetPasswordUserStatus[[${user.id}]]").css("visibility","visible");
+                    $("#resetPasswordUserStatus[[${user.id}]]").css("visibility", "visible");
                     $("#resetPasswordUserStatus[[${user.id}]]").attr("title", "");
                     $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', true);
 
                     let userId = "[[${user.id}]]";
 
+                    const http = new Http("marking notification saving user");
                     let json = {userId: userId, password: $("#password[[${user.id}]]").val()}
-                    const ajaxParams = {
-                        type: "post",
-                        url: "/settings/user/changepassword/"+userId,
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8',
-                        retries: shashin.ajaxRetries
-                    }
+                    const data = await http.ajax("post", "/settings/user/changepassword/" + userId, JSON.stringify(json), function () {
+                        $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                        $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
+                        $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
+                    });
 
-                    $.ajax(ajaxParams)
-                        .fail(function(xhr, textStatus) {
-                            $("#resetPasswordUserStatus[[${user.id}]]").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                            $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-check-circle').removeClass('spinner-grow');
                             $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
-                            shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving user");
-                        }).then(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-check-circle').removeClass('spinner-grow');
-                                $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
-                                window.location.replace("/settings/users");
-                            } else {
-                                $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
-                                $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
-                                $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
-                            }
+                            window.location.replace("/settings/users");
                         } else {
                             $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
                             $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
                             $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
                         }
-                    });
+                    } else {
+                        $("#resetPasswordUserStatus[[${user.id}]]").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#resetPasswordUserStatus[[${user.id}]]").attr("title", shashin.modalStatusFailMessage());
+                        $("#resetPasswordUserCancel[[${user.id}]]").prop('disabled', false);
+                    }
                 });
 
                 $('#propresetpassworduser[[${user.id}]]').on('hide.bs.modal', function () {
@@ -140,36 +122,27 @@
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#roleUser[[${user.id}]]").on("click", function(e) {
+                $("#roleUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";
                     let currentRole = "[[${user.authority}]]";
                     let changeTo = currentRole === "ROLE_USER" ? "ROLE_ADMIN" : "ROLE_USER";
 
+                    const http = new Http("setting user");
                     let json = {userId: userId, changeTo: changeTo}
-                    const ajaxParams = {
-                        type: "post",
-                        url: "/settings/user/role/"+userId,
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8',
-                        retries: shashin.ajaxRetries
-                    }
+                    const data = await http.ajax("post", "/settings/user/role/" + userId, JSON.stringify(json));
 
-                    $.ajax(ajaxParams)
-                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " setting user")}).then(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                window.location.replace("/settings/users");
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            $("#usersSettingsMessage").html(message);
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            window.location.replace("/settings/users");
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
-                    });
-
+                        $("#usersSettingsMessage").html(message);
+                    }
                 });
                 /*]]>*/
             </script>
@@ -191,36 +164,27 @@
             </div>
             <script type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#allowUser[[${user.id}]]").on("click", function(e) {
+                $("#allowUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";
                     let currentPermission = [[${user.isAllowed}]];
                     let changeTo = currentPermission !== true;
 
+                    const http = new Http("allowing user registration");
                     let json = {userId: userId, changeTo: changeTo}
-                    const ajaxParams = {
-                        type: "post",
-                        url: "/settings/user/permission/"+userId,
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8',
-                        retries: shashin.ajaxRetries
-                    }
+                    const data = await http.ajax("post", "/settings/user/permission/" + userId, JSON.stringify(json));
 
-                    $.ajax(ajaxParams)
-                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " allowing user registration")}).then(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                                window.location.replace("/settings/users");
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            $("#usersSettingsMessage").html(message);
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message;
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                            window.location.replace("/settings/users");
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
-                    });
-
+                        $("#usersSettingsMessage").html(message);
+                    }
                 });
                 /*]]>*/
             </script>

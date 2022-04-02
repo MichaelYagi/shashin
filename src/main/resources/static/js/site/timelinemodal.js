@@ -47,11 +47,11 @@
 
 }( window.timelineModal = window.timelineModal || {}, jQuery ));
 
-$("#saveMetadata").on("click", function (e) {
+$("#saveMetadata").on("click", async function (e) {
     e.preventDefault();
     $("#timelineModalMsg").html("");
     $("#timelineModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-    $("#timelineModalStatus").css("visibility","visible");
+    $("#timelineModalStatus").css("visibility", "visible");
     $("#timelineModalStatus").attr("title", "");
     $("#timelineModalCancel").prop('disabled', true);
     const metadataId = $("#metadataId").val();
@@ -85,130 +85,119 @@ $("#saveMetadata").on("click", function (e) {
         "timelineModalMsg"
     ) === true) {
         const json = {
-            id:metadataId,
-            title:Util.decodeHtml($("#title").val().trim()),
-            description:Util.decodeHtml($("#description").val().trim()),
-            camera:Util.decodeHtml($("#camera").val().trim()),
-            year:$("#yearTaken").val(),
-            month:$("#monthTaken").val(),
-            day:$("#dayTaken").val(),
-            time:$("#timeTaken").val(),
-            offset:$("#offsetTaken").val() === null ? "" : $("#offsetTaken").val(),
-            latlng:Util.decodeHtml($("#latlng").val()),
-            keywords:Util.decodeHtml($("#keywords").val()),
-            tagpeople:Util.decodeHtml($("#tagpeople").val()),
-            albumnames:Util.decodeHtml($("#albumnames").val()),
-            hidden:$("#hidden").prop("checked"),
-            isObject:$("#isobject").prop("checked")
+            id: metadataId,
+            title: Util.decodeHtml($("#title").val().trim()),
+            description: Util.decodeHtml($("#description").val().trim()),
+            camera: Util.decodeHtml($("#camera").val().trim()),
+            year: $("#yearTaken").val(),
+            month: $("#monthTaken").val(),
+            day: $("#dayTaken").val(),
+            time: $("#timeTaken").val(),
+            offset: $("#offsetTaken").val() === null ? "" : $("#offsetTaken").val(),
+            latlng: Util.decodeHtml($("#latlng").val()),
+            keywords: Util.decodeHtml($("#keywords").val()),
+            tagpeople: Util.decodeHtml($("#tagpeople").val()),
+            albumnames: Util.decodeHtml($("#albumnames").val()),
+            hidden: $("#hidden").prop("checked"),
+            isObject: $("#isobject").prop("checked")
         }
 
-        let ajaxParams = {}
+        const http = new Http("save timeline");
+        let data;
 
-        if($("#hidden").is(':checked')) {
-            ajaxParams = {
-                type: "post",
-                url: "/timeline/remove/" + metadataId,
-                data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8',
-                retries: shashin.ajaxRetries
-            }
+        if ($("#hidden").is(':checked')) {
+            data = await http.ajax("post", "/timeline/remove/" + metadataId, JSON.stringify(json), function () {
+                $("#timelineModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#timelineModalCancel").prop('disabled', false);
+            });
         } else {
-            ajaxParams = {
-                type: "post",
-                url: "/timeline/update/" + metadataId,
-                data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8',
-                retries: shashin.ajaxRetries
-            }
+            data = await http.ajax("post", "/timeline/update/" + metadataId, JSON.stringify(json), function () {
+                $("#timelineModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#timelineModalCancel").prop('disabled', false);
+            });
         }
 
-        $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {
-            $("#timelineModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-            $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
-            $("#timelineModalCancel").prop('disabled', false);
-            shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline data");
-        }).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "success") {
-                    if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
-                        $("#keywordsString").val(data["keywords"]);
-                        $("#keywordsBatchString").val(data["keywords"]);
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            if (data["status"] === "success") {
+                if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
+                    $("#keywordsString").val(data["keywords"]);
+                    $("#keywordsBatchString").val(data["keywords"]);
+                }
+
+                if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
+                    $("#camerasString").val(data["cameras"]);
+                    $("#camerasBatchString").val(data["cameras"]);
+                }
+
+                shashin.processAlbumList(data, false);
+
+                shashin.processPeopleList(data, false);
+
+                // Update tag
+                const metadataObj = {};
+                let dateGalleryRemoved = false;
+
+                if (captionUpdated === true) {
+                    $("#mediaLink" + metadataId).attr("data-sub-html", $("#description").val());
+                }
+
+                const latlngArray = $("#latlng").val().split(",");
+                metadataObj.lat = $.trim(latlngArray[0])
+                metadataObj.lng = $.trim(latlngArray[1])
+
+                metadataObj.hidden = $("#hidden").prop("checked")
+
+                if (metadataObj.hidden === false) {
+                    $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
+                    $("#mediaLink" + metadataId).attr("tag", metadataId);
+
+                    $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
+                    if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
+                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                     }
 
-                    if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
-                        $("#camerasString").val(data["cameras"]);
-                        $("#camerasBatchString").val(data["cameras"]);
-                    }
-
-                    shashin.processAlbumList(data, false);
-
-                    shashin.processPeopleList(data, false);
-
-                    // Update tag
-                    const metadataObj = {};
-                    let dateGalleryRemoved = false;
-
-                    if (captionUpdated === true) {
-                        $("#mediaLink" + metadataId).attr("data-sub-html", $("#description").val());
-                    }
-
-                    const latlngArray = $("#latlng").val().split(",");
-                    metadataObj.lat = $.trim(latlngArray[0])
-                    metadataObj.lng = $.trim(latlngArray[1])
-
-                    metadataObj.hidden = $("#hidden").prop("checked")
-
-                    if (metadataObj.hidden === false) {
-                        $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
-                        $("#mediaLink" + metadataId).attr("tag", metadataId);
-
-                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
-                        if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
-                            $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
-                        }
-
-                        if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
-                            dateGalleryRemoved = shashin.removeThumbnail(metadataId);
-                        }
-                    } else if (($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folders") || $("#activePage").length === 0) {
+                    if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
                         dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                     }
-
-                    if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
-                        shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
-                            // If a date section was removed refresh the timeline
-                            if (dateGalleryRemoved === true) {
-                                const elements = $(".scrollspy").withinviewport()
-                                let firstElementId = $(elements[0]).attr("id");
-                                let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-                                timelineSettings.jumpFromTimelineToc(e, firstVisibleId, $("#mediaTypeFilter").val());
-                            }
-                        });
-                    }
-
-                    if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || metadataObj.time !== timeTakenPrev)) {
-                        Util.setMetadataLocalStorage();
-                    }
-
-                    if (typeof timelineSettings !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
-                        // Refresh gallery if caption updated
-                        timelineSettings.reinitLightGalleryInstance();
-                    }
-
-                    $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                    $("#timelineModalCancel").prop('disabled', false);
-                } else {
-                    $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                    $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
-                    $("#timelineModalCancel").prop('disabled', false);
+                } else if (($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folders") || $("#activePage").length === 0) {
+                    dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                 }
+
+                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
+                    shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
+                        // If a date section was removed refresh the timeline
+                        if (dateGalleryRemoved === true) {
+                            const elements = $(".scrollspy").withinviewport()
+                            let firstElementId = $(elements[0]).attr("id");
+                            let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+                            timelineSettings.jumpFromTimelineToc(e, firstVisibleId, $("#mediaTypeFilter").val());
+                        }
+                    });
+                }
+
+                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || metadataObj.time !== timeTakenPrev)) {
+                    Util.setMetadataLocalStorage();
+                }
+
+                if (typeof timelineSettings !== "undefined" && dateGalleryRemoved === false && captionUpdated === true) {
+                    // Refresh gallery if caption updated
+                    timelineSettings.reinitLightGalleryInstance();
+                }
+
+                $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                $("#timelineModalCancel").prop('disabled', false);
             } else {
                 $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#timelineModalCancel").prop('disabled', false);
             }
-        });
+        } else {
+            $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+            $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
+            $("#timelineModalCancel").prop('disabled', false);
+        }
     } else {
         $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
     }

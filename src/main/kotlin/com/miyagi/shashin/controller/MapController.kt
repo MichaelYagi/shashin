@@ -45,6 +45,8 @@ class MapController {
             model["keywordMap"] = keywordMap
         }
 
+        model["msg"] = ""
+        model["status"] = "success"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

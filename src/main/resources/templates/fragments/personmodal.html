@@ -98,52 +98,41 @@
                     }
                 });
 
-                $("#saveBatchMetadata").on("click", function (e) {
+                $("#saveBatchMetadata").on("click", async function (e) {
                     e.preventDefault();
 
                     personModalBatchSettings.closeBatchTagPeopleDropdown();
                     $("#personBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                    $("#personBatchModalStatus").css("visibility","visible");
+                    $("#personBatchModalStatus").css("visibility", "visible");
                     $("#personBatchModalStatus").attr("title", "");
                     $("#personBatchModalCancel").prop('disabled', true);
 
+                    const http = new Http("saving batch modal for person");
                     const batchObj = Util.serializeObject($('#saveBatchData'));
-
-                    const ajaxParams = {
-                        type: "post",
-                        url: "/timeline/update/batch",
-                        data: JSON.stringify(Util.getBatchData(batchObj)),
-                        contentType: 'application/json; charset=utf-8',
-                        retries: shashin.ajaxRetries
-                    }
-
-                    $.ajax(ajaxParams)
-                    .fail(function(xhr, textStatus) {
+                    const data = await http.ajax("post", "/timeline/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
                         $("#personBatchModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                         $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                         $("#personBatchModalCancel").prop('disabled', false);
-                        shashin.onFail(xhr, textStatus, ajaxParams, " saving batch modal for person");
-                    }).then(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            if (data["status"] === "success") {
-                                if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
-                                    $("#keywordsString").val(data["keywords"]);
-                                    $("#keywordsBatchString").val(data["keywords"]);
-                                }
-                                $("#personBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                                $("#personBatchModalCancel").prop('disabled', false);
-                            } else {
-                                $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                                $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-                                $("#personBatchModalCancel").prop('disabled', false);
+                    });
+
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        if (data["status"] === "success") {
+                            if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
+                                $("#keywordsString").val(data["keywords"]);
+                                $("#keywordsBatchString").val(data["keywords"]);
                             }
+                            $("#personBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                            $("#personBatchModalCancel").prop('disabled', false);
                         } else {
                             $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                             $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                             $("#personBatchModalCancel").prop('disabled', false);
                         }
-                    });
-
+                    } else {
+                        $("#personBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#personBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+                        $("#personBatchModalCancel").prop('disabled', false);
+                    }
                 });
 
                 // Clear message on modal close
@@ -233,84 +222,74 @@
                 }
             });
 
-            $("#saveMetadata"+metadata.id).on("click", function (e) {
+            $("#saveMetadata"+metadata.id).on("click", async function (e) {
                 e.preventDefault();
 
                 personModalSettings.closeTagPeopleDropdown(metadata.id);
                 $("#personModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-                $("#personModalStatus" + metadata.id).css("visibility","visible");
+                $("#personModalStatus" + metadata.id).css("visibility", "visible");
                 $("#personModalStatus" + metadata.id).attr("title", "");
                 $("#personModalCancel" + metadata.id).prop('disabled', true);
 
+                const http = new Http("saving person");
                 const json = {
                     metadataId: metadata.id,
                     tagpeople: $("#tagpeople" + metadata.id).val(),
                     isObject: $("#isobject" + metadata.id).prop("checked")
                 };
-                const ajaxParams = {
-                    type: "post",
-                    url: "/person/update",
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8',
-                    retries: shashin.ajaxRetries
-                }
-
-                $.ajax(ajaxParams)
-                .fail(function(xhr, textStatus) {
+                const data = await http.ajax("post", "/person/update", JSON.stringify(json), function () {
                     $("#personModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                     $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                     $("#personModalCancel" + metadata.id).prop('disabled', false);
-                    shashin.onFail(xhr, textStatus, ajaxParams, " saving person");
-                }).then(function (data) {
-                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                        let message = "Error";
-                        if (data["status"] === "success") {
-                            if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
-                                let renderRecognitionLabels = false;
-                                const recognitionLabels = data["recognitionLabels"];
+                });
 
-                                let batchHtml = "";
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    if (data["status"] === "success") {
+                        if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+                            let renderRecognitionLabels = false;
+                            const recognitionLabels = data["recognitionLabels"];
 
-                                for (let index in recognitionLabels) {
-                                    const recognitionLabel = recognitionLabels[index];
+                            let batchHtml = "";
 
-                                    if ($("#"+metadata.id+'-'+recognitionLabel.id).length === 0) {
-                                        renderRecognitionLabels = true;
-                                    }
+                            for (let index in recognitionLabels) {
+                                const recognitionLabel = recognitionLabels[index];
 
-                                    const taggedPeopleArray = $("#tagpeople" + metadata.id).val().split(",");
-                                    let checkedString = "";
-                                    if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
-                                        checkedString = " checked";
-                                    }
-                                    batchHtml += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
+                                if ($("#" + metadata.id + '-' + recognitionLabel.id).length === 0) {
+                                    renderRecognitionLabels = true;
                                 }
 
-                                if (true === renderRecognitionLabels) {
-                                    $(".dropdown-menu, .personDropdown").html(batchHtml);
-                                    $(".recognitionLabel").on("click", function (e) {
-                                        personModalSettings.populateLabel(metadata.id);
-                                    });
+                                const taggedPeopleArray = $("#tagpeople" + metadata.id).val().split(",");
+                                let checkedString = "";
+                                if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                                    checkedString = " checked";
                                 }
+                                batchHtml += PersonModalDropDown({
+                                    metadata: metadata,
+                                    recognitionLabel: recognitionLabel,
+                                    checkedString: checkedString
+                                });
                             }
 
-                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            // window.top.location = window.top.location
-                            $("#personModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
-                            $("#personModalCancel" + metadata.id).prop('disabled', false);
-                        } else {
-                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
-                            $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
-                            $("#personModalCancel" + metadata.id).prop('disabled', false);
+                            if (true === renderRecognitionLabels) {
+                                $(".dropdown-menu, .personDropdown").html(batchHtml);
+                                $(".recognitionLabel").on("click", function (e) {
+                                    personModalSettings.populateLabel(metadata.id);
+                                });
+                            }
                         }
-                        //$("#msg"+metadata.id).html(message);
+
+                        $("#personModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#personModalCancel" + metadata.id).prop('disabled', false);
                     } else {
                         $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                         $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                         $("#personModalCancel" + metadata.id).prop('disabled', false);
                     }
-                });
+                } else {
+                    $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
+                    $("#personModalCancel" + metadata.id).prop('disabled', false);
+                }
 
                 return false;
             });

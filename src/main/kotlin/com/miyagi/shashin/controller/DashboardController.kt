@@ -211,6 +211,8 @@ class DashboardController {
         response["keywordTotalCount"] = keywordCount
 
         response["message"] = ""
+        response["msg"] = ""
+        response["status"] = "success"
 
         return response
     }

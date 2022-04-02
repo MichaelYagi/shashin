@@ -73,13 +73,17 @@
         return "Something went wrong. Please try again.";
     }
 
-    shashin.onFail = function(xhr, textStatus, ajaxParams, description) {
+    shashin.onFail = function(xhr, textStatus, ajaxParams, description, subroutine) {
         $("#spinner").hide();
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
         if (xhr.status === 403 || xhr.status === 401) {
             $(location).prop('href', '/users/login');
         } else if ((textStatus === 'timeout' || textStatus === 'error' || xhr.status !== 200) && ajaxParams.retries-- > 0) {
-            $.ajax(ajaxParams).fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, description)});
+            $.ajax(ajaxParams).fail(function(xhr, textStatus) {
+                shashin.onFail(xhr, textStatus, ajaxParams, description, subroutine)
+            });
+        } else if (typeof subroutine !== "undefined" && typeof subroutine === "function") {
+            subroutine();
         }
     }
 
@@ -102,48 +106,28 @@
     }
 
     shashin.getTimelineMetadata = async function(metadataId) {
-        const ajaxParams = {
-            type: 'get',
-            url: "/api/v1/timeline/metadata/"+metadataId,
-            contentType: 'application/json; charset=utf-8',
-            async:true,
-            retries: shashin.ajaxRetries
+        const http = new Http("get timeline metadata");
+        const data = await http.ajax("get", "/api/v1/timeline/metadata/"+metadataId);
+
+        let ret = {};
+        if (data.hasOwnProperty("metadata")) {
+            ret = data;
         }
 
-        return await $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing timeline TOC")})
-            .then(function(data)
-            {
-                let ret = {};
-                if (data.hasOwnProperty("metadata")) {
-                    ret = data;
-                }
-
-                return ret;
-            });
+        return ret;
     }
 
     shashin.getMetadata = async function(metadataId) {
-        const ajaxParams = {
-            type: 'get',
-            url: "/api/v1/metadata/"+metadataId,
-            contentType: 'application/json; charset=utf-8',
-            async:true,
-            retries: shashin.ajaxRetries
+        const http = new Http("get metadata");
+        const data = await http.ajax("get", "/api/v1/metadata/"+metadataId);
+
+        let metadata = {};
+        if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList")) {
+            metadata = data["metadata"];
+            metadata["keywords"] = data["keywordList"];
         }
 
-        return await $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " getting metadata")})
-            .then(function(data)
-            {
-                let metadata = {};
-                if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList")) {
-                    metadata = data["metadata"];
-                    metadata["keywords"] = data["keywordList"];
-                }
-
-                return metadata;
-            });
+        return metadata;
     }
 
     shashin.openEditMetadataModal = function (metadataId) {
@@ -543,73 +527,43 @@
     }
 
     shashin.refreshTimeline = async function (mediaTypeFilter) {
-        const ajaxParams = {
-            type: 'get',
-            url: "/timeline/dates/"+mediaTypeFilter,
-            contentType: 'application/json; charset=utf-8',
-            async:true,
-            retries: shashin.ajaxRetries
-        }
+        const http = new Http("refreshing timeline TOC");
+        const data = await http.ajax("get", "/timeline/dates/"+mediaTypeFilter);
 
-        return await $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " refreshing timeline TOC")}).then(function(data) {
-            if (data.hasOwnProperty("metadataDates")) {
-                const metadataDates = data["metadataDates"];
-                timelineSettings.timelineDates = metadataDates;
+        if (data.hasOwnProperty("metadataDates")) {
+            const metadataDates = data["metadataDates"];
+            timelineSettings.timelineDates = metadataDates;
 
-                // Rebuild slider
-                if (Util.isMobile() === false) {
-                    $("#dateSlider").empty();
-                    $("#dateSlider").show();
-                    timelineSettings.initializeTimelineSlider(mediaTypeFilter);
-                }
-
-                // Clear offcanvas TOC and rebuild
-                $("#timelineTocToggle").show();
-                $("#offcanvasTocBody").empty();
-
-                let html = "";
-
-                for (let index = 0; index < metadataDates.length; index++) {
-                    const metadataDate = metadataDates[index];
-                    const year = metadataDate["year"];
-                    const month = metadataDate["month"];
-                    const day = metadataDate["day"];
-
-                    html += TimelineToc({index:index,mediaTypeFilter:mediaTypeFilter,metadataDates:metadataDates,year:year,month:month,day:day});
-                    // if (index === 0 || (index > 0 && metadataDates[index-1].year !== year)) {
-                    //     html += "<strong>"+year+"</strong>";
-                    //     html += "<div class='list-group'>";
-                    // }
-                    //
-                    // if (index > 0 && metadataDates[index-1].year === year && metadataDates[index-1].month === month) {
-                    //     html += '<a style="display:none" id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" href="#'+year+'-'+month+'-'+day+'"></a>';
-                    // } else {
-                    //     const dateObj = new Date(year, month-1, day);
-                    //     html += '<a id="offcanvas_'+year+'-'+month+'-'+day+'" class="list-group-item list-group-item-action'+(index === 0 ? ' active' : '')+'" href="#'+year+'-'+month+'-'+day+'">'+dateObj.format("mmm yyyy")+'</a>';
-                    // }
-                    //
-                    // html += '<script type="text/javascript"'+(shashin.nonce.length > 0 ? ' nonce="'+shashin.nonce+'"' : '')+ '>\n' +
-                    //         '   $("#offcanvas_'+year+'-'+month+'-'+day+'").on("click", function (e) {\n' +
-                    //         '       e.preventDefault();\n' +
-                    //         '       timelineSettings.jumpFromTimelineToc(e,"'+year+'-'+month+'-'+day+'"'+',"'+mediaTypeFilter+'");\n' +
-                    //         '   });\n' +
-                    //         '</script>\n';
-                    //
-                    // if (index > 0 && index < metadataDates.length-1 && metadataDates[index+1].year !== year) {
-                    //     html += "</div><br>";
-                    // }
-                }
-
-                $("#offcanvasTocBody").append(html);
-
-                if (Util.isMobile() === false) {
-                    setTimeout(function() {
-                        $("#timelineTocToggle").hide();
-                    },0);
-                }
+            // Rebuild slider
+            if (Util.isMobile() === false) {
+                $("#dateSlider").empty();
+                $("#dateSlider").show();
+                timelineSettings.initializeTimelineSlider(mediaTypeFilter);
             }
-        });
+
+            // Clear offcanvas TOC and rebuild
+            $("#timelineTocToggle").show();
+            $("#offcanvasTocBody").empty();
+
+            let html = "";
+
+            for (let index = 0; index < metadataDates.length; index++) {
+                const metadataDate = metadataDates[index];
+                const year = metadataDate["year"];
+                const month = metadataDate["month"];
+                const day = metadataDate["day"];
+
+                html += TimelineToc({index:index,mediaTypeFilter:mediaTypeFilter,metadataDates:metadataDates,year:year,month:month,day:day});
+            }
+
+            $("#offcanvasTocBody").append(html);
+
+            if (Util.isMobile() === false) {
+                setTimeout(function() {
+                    $("#timelineTocToggle").hide();
+                },0);
+            }
+        }
     }
 
     shashin.openMap = function (metadata) {

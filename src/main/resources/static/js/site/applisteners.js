@@ -88,73 +88,57 @@ $("#albumAppToolsRemoveAlbum").on("click", async function (e) {
     }
 });
 
-$("#albumAppToolsRemoveFavorites").on("click", function(e) {
+$("#albumAppToolsRemoveFavorites").on("click", async function (e) {
     e.preventDefault();
 
     let metadataIdList = [];
-    $('.bi-circle-fill').each(function(i, obj) {
+    $('.bi-circle-fill').each(function (i, obj) {
         metadataIdList.push(obj.id.substring(6, obj.id.length));
     });
 
     if (metadataIdList.length > 0) {
+        const http = new Http("album remove favorites");
         let json = {metadataIdList: metadataIdList}
-        const ajaxParams = {
-            type: "post",
-            url: "/favorites/delete",
-            data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8',
-            retries: shashin.ajaxRetries
-        }
+        const data = await http.ajax("post", "/favorites/delete", JSON.stringify(json));
 
-        $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " removing favorites")}).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === "success") {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    location.reload();
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                }
-                $("#favoritesMessage").html(message);
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            let message = "Error";
+            if (data["status"] === "success") {
+                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                location.reload();
+            } else {
+                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
             }
-        });
+            $("#favoritesMessage").html(message);
+        }
     }
 
     return false;
 });
 
-$("#albumAppToolsRestore").on("click", function(e) {
+$("#albumAppToolsRestore").on("click", async function (e) {
     e.preventDefault();
 
     let metadataIdList = [];
-    $('.bi-circle-fill').each(function(i, obj) {
+    $('.bi-circle-fill').each(function (i, obj) {
         metadataIdList.push(obj.id.substring(6, obj.id.length));
     });
 
     if (metadataIdList.length > 0) {
+        const http = new Http("trash restore");
         let json = {metadataIdList: metadataIdList}
-        const ajaxParams = {
-            type: "post",
-            url: "/trash/unhide",
-            data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8',
-            retries: shashin.ajaxRetries
-        }
+        const data = await http.ajax("post", "/trash/unhide", JSON.stringify(json));
 
-        $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " restore")}).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === "success") {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                    window.top.location = window.top.location
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                }
-                $("#trashMessage").html(message);
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            let message = "Error";
+            if (data["status"] === "success") {
+                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                window.top.location = window.top.location
+            } else {
+                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
             }
-        });
+            $("#trashMessage").html(message);
+        }
     }
 
     return false;

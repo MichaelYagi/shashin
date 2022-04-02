@@ -42,13 +42,13 @@
 
 }( window.timelineBatchModal = window.timelineBatchModal || {}, jQuery ));
 
-$("#saveBatchMetadata").on("click", function (e) {
+$("#saveBatchMetadata").on("click", async function (e) {
     e.preventDefault();
 
     $("#timelineBatchModalCancel").prop("disabled", true);
     $("#msgBatchMetadata").html("");
     $("#timelineBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-    $("#timelineBatchModalStatus").css("visibility","visible");
+    $("#timelineBatchModalStatus").css("visibility", "visible");
     $("#timelineBatchModalStatus").attr("title", "");
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
@@ -57,7 +57,7 @@ $("#saveBatchMetadata").on("click", function (e) {
     const metadataIds = JSON.parse($("#batchMetadataIds").val());
 
     const metadataChangeMap = {};
-    if ($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== ""|| $("#dayTakenBatchData").val().trim() !== "") {
+    if ($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "" || $("#dayTakenBatchData").val().trim() !== "") {
         for (const index in metadataIds) {
             const metadataId = metadataIds[index];
 
@@ -78,125 +78,113 @@ $("#saveBatchMetadata").on("click", function (e) {
         $("#latlngBatchData").val(),
         "msgBatchMetadata"
     ) === true) {
-        if($("#batchisobject").is(':checked')) {
+        if ($("#batchisobject").is(':checked')) {
             $("#batchisobject").val("on");
         }
-        if($("#batchhidden").is(':checked')) {
+        if ($("#batchhidden").is(':checked')) {
             $("#batchhidden").val("on");
         }
 
-        let ajaxParams = {};
-
+        const http = new Http("batch save timeline");
         const batchObj = Util.serializeObject($('#saveBatchData'));
+        let data;
 
         if ($("#batchhidden").is(':checked')) {
-            ajaxParams = {
-                type: "post",
-                url: "/timeline/remove/batch",
-                data: JSON.stringify(batchObj),
-                contentType: 'application/json; charset=utf-8',
-                retries: shashin.ajaxRetries
-            }
+            data = await http.ajax("post", "/timeline/remove/batch", JSON.stringify(batchObj), function () {
+                $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#timelineBatchModalCancel").prop("disabled", false);
+            });
         } else {
-            ajaxParams = {
-                type: "post",
-                url: "/timeline/update/batch",
-                data: JSON.stringify(Util.getBatchData(batchObj)),
-                contentType: 'application/json; charset=utf-8',
-                retries: shashin.ajaxRetries
-            }
+            data = await http.ajax("post", "/timeline/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
+                $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#timelineBatchModalCancel").prop("disabled", false);
+            });
         }
 
-        $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {
-            $("#timelineBatchModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-            $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-            $("#timelineBatchModalCancel").prop("disabled", false);
-            shashin.onFail(xhr, textStatus, ajaxParams, " updating batch timeline modal");
-        }).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "success") {
-                    if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
-                        $("#keywordsString").val(data["keywords"]);
-                        $("#keywordsBatchString").val(data["keywords"]);
-                    }
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            if (data["status"] === "success") {
+                if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
+                    $("#keywordsString").val(data["keywords"]);
+                    $("#keywordsBatchString").val(data["keywords"]);
+                }
 
-                    if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
-                        $("#camerasString").val(data["cameras"]);
-                        $("#camerasBatchString").val(data["cameras"]);
-                    }
+                if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
+                    $("#camerasString").val(data["cameras"]);
+                    $("#camerasBatchString").val(data["cameras"]);
+                }
 
-                    shashin.processAlbumList(data, true);
+                shashin.processAlbumList(data, true);
 
-                    shashin.processPeopleList(data, true);
+                shashin.processPeopleList(data, true);
 
-                    let dateGalleryRemoved = false;
-                    for (const index in metadataIds) {
-                        const metadataId = metadataIds[index];
+                let dateGalleryRemoved = false;
+                for (const index in metadataIds) {
+                    const metadataId = metadataIds[index];
 
-                        if ($("#image" + metadataId).length > 0) {
-                            $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
+                    if ($("#image" + metadataId).length > 0) {
+                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
-                            const metadataObj = {};
+                        const metadataObj = {};
 
-                            if ($("#latlngBatchData").val().trim() !== "") {
-                                const latlngArray = $("#latlngBatchData").val().split(",");
-                                metadataObj.lat = $.trim(latlngArray[0])
-                                metadataObj.lng = $.trim(latlngArray[1])
-                                if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
-                                    $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
-                                }
+                        if ($("#latlngBatchData").val().trim() !== "") {
+                            const latlngArray = $("#latlngBatchData").val().split(",");
+                            metadataObj.lat = $.trim(latlngArray[0])
+                            metadataObj.lng = $.trim(latlngArray[1])
+                            if (metadataObj.lat !== null && metadataObj.lng !== null && metadataObj.lat !== "" && metadataObj.lng !== "") {
+                                $("#latlng").val(metadataObj.lat + "," + metadataObj.lng)
+                            }
+                        }
+
+                        metadataObj.hidden = $("#batchhidden").prop("checked")
+
+                        if (metadataObj.hidden === false) {
+                            $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
+                            $("#mediaLink" + metadataId).attr("tag", metadataId);
+
+                            if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
+                                $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                             }
 
-                            metadataObj.hidden = $("#batchhidden").prop("checked")
-
-                            if (metadataObj.hidden === false) {
-                                $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
-                                $("#mediaLink" + metadataId).attr("tag", metadataId);
-
-                                if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
-                                    $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
-                                }
-
-                                if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true && activePage === "timeline") {
-                                    dateGalleryRemoved = shashin.removeThumbnail(metadataId);
-                                }
-                            } else if (activePage === "timeline") {
+                            if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true && activePage === "timeline") {
                                 dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                             }
+                        } else if (activePage === "timeline") {
+                            dateGalleryRemoved = shashin.removeThumbnail(metadataId);
+                        }
 
-                            if (parseInt(index) === (metadataIds.length-1)) {
-                                if ($("#offcanvasToc").length > 0 && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "" || $("#dayTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
-                                    shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
-                                        // If a date section was removed refresh the timeline
-                                        if (dateGalleryRemoved === true) {
-                                            const elements = $(".scrollspy").withinviewport()
-                                            let firstElementId = $(elements[0]).attr("id");
-                                            let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
-                                            timelineSettings.jumpFromTimelineToc(null, firstVisibleId, $("#mediaTypeFilter").val());
-                                        }
-                                    });
-                                    if (index === metadataIds.length-1) {
-                                        Util.setMetadataLocalStorage();
+                        if (parseInt(index) === (metadataIds.length - 1)) {
+                            if ($("#offcanvasToc").length > 0 && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "" || $("#dayTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
+                                shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
+                                    // If a date section was removed refresh the timeline
+                                    if (dateGalleryRemoved === true) {
+                                        const elements = $(".scrollspy").withinviewport()
+                                        let firstElementId = $(elements[0]).attr("id");
+                                        let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+                                        timelineSettings.jumpFromTimelineToc(null, firstVisibleId, $("#mediaTypeFilter").val());
                                     }
+                                });
+                                if (index === metadataIds.length - 1) {
+                                    Util.setMetadataLocalStorage();
                                 }
                             }
                         }
                     }
-
-                    $("#timelineBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                    $("#timelineBatchModalCancel").prop("disabled", false);
-                } else {
-                    $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                    $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-                    $("#timelineBatchModalCancel").prop("disabled", false);
                 }
+
+                $("#timelineBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                $("#timelineBatchModalCancel").prop("disabled", false);
             } else {
-                $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#timelineBatchModalCancel").prop("disabled", false);
             }
-        });
+        } else {
+            $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+            $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+            $("#timelineBatchModalCancel").prop("disabled", false);
+        }
     } else {
         $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
     }

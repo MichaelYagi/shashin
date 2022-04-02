@@ -750,7 +750,6 @@ class TimelineController: BaseController() {
                         albumPhotoRepository.deleteByMetadataId(metadata.getId())
 
                         for (albumId in albumIdList) {
-                            println(albumId)
                             val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadata.getId(), albumId)!!
                             if (albumPhotoCount == 0) {
                                 var albumPhotoObj: AlbumPhoto
@@ -930,6 +929,9 @@ class TimelineController: BaseController() {
             response["metadata"] = metadataRecord.get()
         }
 
+        response["msg"] = ""
+        response["status"] = "success"
+
         return mapper.writeValueAsString(response)
     }
 
@@ -990,6 +992,9 @@ class TimelineController: BaseController() {
                 response["allAlbumList"] = allAlbumList
             }
         }
+
+        response["msg"] = ""
+        response["status"] = "success"
 
         return mapper.writeValueAsString(response)
     }

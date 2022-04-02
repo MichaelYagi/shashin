@@ -12,10 +12,10 @@ $(document).ready(function () {
         }
     });
 
-    $('#saveAlbumModal').on("click", function (e) {
+    $('#saveAlbumModal').on("click", async function (e) {
         e.preventDefault();
         $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-        $("#albumsModalStatus").css("visibility","visible");
+        $("#albumsModalStatus").css("visibility", "visible");
         $("#albumsModalStatus").attr("title", "");
         $("#albumsModalCancel").prop('disabled', true);
 
@@ -23,51 +23,38 @@ $(document).ready(function () {
         const metadataId = $("#metadataId").val();
 
         let requestJson = {
-            removeFromAlbum:$('#removeFromAlbum').prop("checked"),
-            setCoverAlbum:$('#setCoverAlbum').prop("checked"),
-            metadataId:metadataId,
-            albumId:albumId
+            removeFromAlbum: $('#removeFromAlbum').prop("checked"),
+            setCoverAlbum: $('#setCoverAlbum').prop("checked"),
+            metadataId: metadataId,
+            albumId: albumId
         }
 
-        const ajaxParams = {
-            type: "post",
-            url: "/album/update",
-            data: JSON.stringify(requestJson),
-            contentType: 'application/json; charset=utf-8',
-            retries: shashin.ajaxRetries
-        }
-
-        $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {
-                $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
-                $("#albumsModalCancel").prop('disabled', false);
-                shashin.onFail(xhr, textStatus, ajaxParams, " saving album");
-            }).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                if (data["status"] === "redirect") {
-                    window.location.replace(data["msg"]);
-                } else {
-                    let message = "Error";
-                    if (data["status"] === "success") {
-                        message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        // window.top.location = window.top.location;
-                        $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                        $("#albumsModalCancel").prop('disabled', false);
-                    } else {
-                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                        $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                        $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
-                        $("#albumsModalCancel").prop('disabled', false);
-                    }
-                    //$('#albumModalMsg').html(message);
-                }
-            } else {
-                $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
-                $("#albumsModalCancel").prop('disabled', false);
-            }
+        const http = new Http("updating album");
+        const data = await http.ajax("post", "/album/update", JSON.stringify(requestJson), function () {
+            $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+            $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
+            $("#albumsModalCancel").prop('disabled', false);
         });
+
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+            if (data["status"] === "redirect") {
+                window.location.replace(data["msg"]);
+            } else {
+                if (data["status"] === "success") {
+                    $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                    $("#albumsModalCancel").prop('disabled', false);
+                } else {
+                    $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
+                    $("#albumsModalCancel").prop('disabled', false);
+                }
+            }
+        } else {
+            $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+            $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
+            $("#albumsModalCancel").prop('disabled', false);
+        }
+
         return false;
     });
 

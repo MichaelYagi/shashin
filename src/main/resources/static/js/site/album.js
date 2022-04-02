@@ -167,16 +167,9 @@
             }
         });
 
-        $('#propalbumphotocomment'+metadata.id).on('show.bs.modal', function () {
-            const ajaxParams = {
-                type: 'get',
-                url: "/notifications/markread/metadata/"+metadata.id,
-                contentType: 'application/json; charset=utf-8',
-                async:true,
-                retries: shashin.ajaxRetries
-            }
-
-            $.ajax(ajaxParams).fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating photo comment")});
+        $('#propalbumphotocomment'+metadata.id).on('show.bs.modal', async function () {
+            const http = new Http("mark comment read");
+            const data = await http.ajax("get", "/notifications/markread/metadata/" + metadata.id);
         });
 
         shashin.updateFavorites("#favorite","#brfavoriteicon","#briconcount",metadata.id);
@@ -192,31 +185,23 @@
         });
     }
 
-    albumSettings.deleteComment = function(commentId, metadata) {
-        const json = {commentId: commentId, metadataId: metadata.id}
-        const ajaxParams = {
-            type: "post",
-            url: "/comment/albumphoto/delete/",
-            data: JSON.stringify(json),
-            contentType: 'application/json; charset=utf-8',
-            retries: shashin.ajaxRetries
-        }
+    albumSettings.deleteComment = async function (commentId, metadata) {
+        const http = new Http("delete comment");
+        const json = {commentId: commentId, metadataId: metadata.id};
+        const data = await http.ajax("post", "/comment/albumphoto/delete/", JSON.stringify(json));
 
-        $.ajax(ajaxParams)
-        .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " deleting album photo comment")}).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                let commentId = data["commentId"];
-                if (data["status"] === "success") {
-                    // Delete comment
-                    $("#comment" + commentId).remove();
-                    let currentCount = parseInt($("#brcommentcount"+metadata.id).text());
-                    if (currentCount > 0) {
-                        currentCount--;
-                    }
-                    $("#brcommentcount"+metadata.id).text(currentCount);
+        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+            let commentId = data["commentId"];
+            if (data["status"] === "success") {
+                // Delete comment
+                $("#comment" + commentId).remove();
+                let currentCount = parseInt($("#brcommentcount" + metadata.id).text());
+                if (currentCount > 0) {
+                    currentCount--;
                 }
+                $("#brcommentcount" + metadata.id).text(currentCount);
             }
-        });
+        }
 
         $("#currentCommentId" + metadata.id).val("");
     }
@@ -272,7 +257,7 @@
             }
         });
 
-        $("#updateCommentMetadata"+metadata.id).on("click", function (e) {
+        $("#updateCommentMetadata"+metadata.id).on("click", async function (e) {
             e.preventDefault();
 
             const currentCommentId = $("#currentCommentId" + metadata.id).val();
@@ -281,87 +266,77 @@
                 const updatedComment = $.trim($("#commenttext" + currentCommentId).val());
 
                 if (updatedComment.length > 0) {
+                    const http = new Http("updating album photo comment");
                     const json = {commentId: currentCommentId, comment: updatedComment}
-                    const ajaxParams = {
-                        type: "post",
-                        url: "/comment/update",
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8',
-                        retries: shashin.ajaxRetries
+                    const data = await http.ajax("post", "/comment/update", JSON.stringify(json));
+
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                        let commentId = data["commentId"];
+
+                        // Update comment
+                        $("#commentcontent" + commentId).text(updatedComment);
+
+                        $("#saveCommentMetadata" + metadata.id).show();
+                        $("#dismissModalCommentMetadata" + metadata.id).show();
+                        $("#updateCommentMetadata" + metadata.id).hide();
+                        $("#cancelEditCommentMetadata" + metadata.id).hide();
+
+                        $("#commentcontainer" + commentId).show();
+                        $("#textareacontainer" + commentId).html('');
+                        $("#textareacontainer" + commentId).hide();
+                        $("#commenttext" + commentId).val("");
                     }
-
-                    $.ajax(ajaxParams)
-                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating album photo comment")}).then(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                            let commentId = data["commentId"];
-
-                            // Update comment
-                            $("#commentcontent"+commentId).text(updatedComment);
-
-                            $("#saveCommentMetadata"+metadata.id).show();
-                            $("#dismissModalCommentMetadata"+metadata.id).show();
-                            $("#updateCommentMetadata"+metadata.id).hide();
-                            $("#cancelEditCommentMetadata"+metadata.id).hide();
-
-                            $("#commentcontainer" + commentId).show();
-                            $("#textareacontainer" + commentId).html('');
-                            $("#textareacontainer" + commentId).hide();
-                            $("#commenttext"+commentId).val("");
-                        }
-                    });
                 }
 
-                $("#saveCommentMetadata"+metadata.id).show();
-                $("#dismissModalCommentMetadata"+metadata.id).show();
-                $("#updateCommentMetadata"+metadata.id).hide();
-                $("#cancelEditCommentMetadata"+metadata.id).hide();
+                $("#saveCommentMetadata" + metadata.id).show();
+                $("#dismissModalCommentMetadata" + metadata.id).show();
+                $("#updateCommentMetadata" + metadata.id).hide();
+                $("#cancelEditCommentMetadata" + metadata.id).hide();
 
                 $("#commentcontainer" + currentCommentId).show();
                 $("#textareacontainer" + currentCommentId).html('');
                 $("#textareacontainer" + currentCommentId).hide();
 
-                $("#currentCommentId"+metadata.id).val("");
+                $("#currentCommentId" + metadata.id).val("");
             }
         });
 
-        $("#saveCommentMetadata"+metadata.id).on("click", function(e) {
+        $("#saveCommentMetadata"+metadata.id).on("click", async function (e) {
             e.preventDefault();
 
-            let comment = $.trim($("#commentText"+metadata.id).val());
+            let comment = $.trim($("#commentText" + metadata.id).val());
 
             if (comment.length > 0) {
+                const http = new Http("saving album photo comment");
                 const json = {metadataId: metadata.id, albumId: album.id, comment: comment};
-                const ajaxParams = {
-                    type: "post",
-                    url: "/comment/albumphoto/save/",
-                    data: JSON.stringify(json),
-                    contentType: 'application/json; charset=utf-8',
-                    retries: shashin.ajaxRetries
+                const data = await http.ajax("post", "/comment/albumphoto/save/", JSON.stringify(json));
+
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
+                    let commentId = data["commentId"];
+
+                    // Insert comment at top of list
+                    $("#commentText" + metadata.id).val("")
+                    $("#commentList" + metadata.id).prepend(AlbumComment({
+                        commentId: commentId,
+                        commentText: comment,
+                        userId: userMap.id,
+                        commentUserId: userMap.id,
+                        username: userMap.username
+                    }));
+
+                    $("#deletecomment" + commentId).on("click", function (e) {
+                        e.preventDefault();
+                        albumSettings.deleteComment(commentId, metadata);
+                    });
+
+                    $("#editcomment" + commentId).on("click", function (e) {
+                        e.preventDefault();
+                        albumSettings.editComment(commentId, metadata);
+                    });
+
+                    let currentCount = parseInt($("#brcommentcount" + metadata.id).text());
+                    $("#brcommentcount" + metadata.id).text(currentCount + 1)
                 }
-
-                $.ajax(ajaxParams)
-                .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " saving album photo comment")}).then(function (data) {
-                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
-                        let commentId = data["commentId"];
-
-                        // Insert comment at top of list
-                        $("#commentText"+metadata.id).val("")
-                        $("#commentList"+metadata.id).prepend(AlbumComment({commentId:commentId,commentText:comment,userId:userMap.id,commentUserId:userMap.id,username:userMap.username}));
-
-                        $("#deletecomment" + commentId).on("click", function (e) {
-                            e.preventDefault();
-                            albumSettings.deleteComment(commentId, metadata);
-                        });
-
-                        $("#editcomment" + commentId).on("click", function (e) {
-                            e.preventDefault();
-                            albumSettings.editComment(commentId, metadata);
-                        });
-
-                        let currentCount = parseInt($("#brcommentcount"+metadata.id).text());
-                        $("#brcommentcount"+metadata.id).text(currentCount+1)
-                    }
-                });
             }
         });
     }
