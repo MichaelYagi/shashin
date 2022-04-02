@@ -230,6 +230,8 @@ class PeopleController {
             model["keywordMap"] = keywordMap
         }
 
+        model["msg"] = ""
+        model["status"] = "success"
         model["counts"] = counts
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -272,6 +274,8 @@ class PeopleController {
             }
         }
 
+        model["msg"] = ""
+        model["status"] = "success"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -288,6 +292,8 @@ class PeopleController {
             model[k] = v!!
         }
 
+        model["msg"] = ""
+        model["status"] = "success"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

@@ -138,6 +138,8 @@ class SearchController {
         }
 
         val module = "search"
+        model["msg"] = ""
+        model["status"] = "success"
         model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module

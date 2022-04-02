@@ -49,6 +49,8 @@ class TrashController {
             model["message"] = ""
         }
 
+        model["msg"] = ""
+        model["status"] = "success"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

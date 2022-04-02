@@ -74,7 +74,7 @@
         }
     });
 
-    function markNotificationRead(notificationIds) {
+    async function markNotificationRead(notificationIds) {
         if (notificationIds.length > 0) {
             for (let index in notificationIds) {
                 let notificationId = notificationIds[index];
@@ -83,21 +83,12 @@
                 }
             }
 
-            let data = {
-                "notificationIds":notificationIds
+            const http = new Http("marking notification saving album");
+            let json = {
+                "notificationIds": notificationIds
             }
-            const ajaxParams = {
-                type: "post",
-                url: "/notifications/markread/notification",
-                data: JSON.stringify(data),
-                contentType: 'application/json; charset=utf-8',
-                retries: shashin.ajaxRetries
-            }
-
-            $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " marking notification saving album")}).then(function(data) {
-                toggleNotificationBadge();
-            });
+            const data = await http.ajax("post", "/notifications/markread/notification", JSON.stringify(json));
+            toggleNotificationBadge();
         }
     }
 

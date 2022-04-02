@@ -237,6 +237,8 @@ class SettingsController {
             model.addAttribute("settings", settings)
         }
 
+        model["msg"] = ""
+        model["status"] = "success"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -359,6 +361,8 @@ class SettingsController {
         }
 
         val module = "settings"
+        model["msg"] = ""
+        model["status"] = "success"
         model["message"] = ""
         model["mediaDirList"] = mediaDirList.trim()
         model["activePage"] = module
@@ -383,6 +387,8 @@ class SettingsController {
             model["users"] = users
         }
 
+        model["msg"] = ""
+        model["status"] = "success"
         model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -576,6 +582,8 @@ class SettingsController {
             lineLimit = request.getParameter("lines").toString().toInt()
         }
         val module = "logs"
+        model["msg"] = ""
+        model["status"] = "success"
         model["message"] = "No log file present"
         model["logList"] = mutableListOf<String>()
         model["activePage"] = module
@@ -642,6 +650,8 @@ class SettingsController {
     @GetMapping("/settings/match")
     fun getMatchScan(model: Model): String {
         val module = "match"
+        model["msg"] = ""
+        model["status"] = "success"
         model["message"] = "Click scan to start finding people"
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -653,6 +663,8 @@ class SettingsController {
     @GetMapping("/settings/scan")
     fun getScan(model: Model): String {
         val module = "scan"
+        model["msg"] = ""
+        model["status"] = "success"
         model["message"] = "Click scan to scan photo directories"
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -701,6 +713,8 @@ class SettingsController {
     @GetMapping("/settings/snapshot")
     fun getSnapshot(model: Model): String {
         val module = "snapshot"
+        model["msg"] = ""
+        model["status"] = "success"
         model["message"] = "Export or import metadata zip file"
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -873,7 +887,7 @@ class SettingsController {
 
             val mapper = ObjectMapper(YAMLFactory())
             mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-            var entries: Enumeration<out ZipEntry> = zipFile.entries()
+            val entries: Enumeration<out ZipEntry> = zipFile.entries()
 
             val albumPhotoList = mutableListOf<AlbumPhoto>()
             val albumList = mutableListOf<Album>()
@@ -1032,6 +1046,8 @@ class SettingsController {
             tempFile.delete();
         }
 
+        model["msg"] = ""
+        model["status"] = "success"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

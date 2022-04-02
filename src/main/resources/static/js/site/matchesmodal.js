@@ -29,84 +29,77 @@ $("#batchisobject").on("click", function (e) {
     }
 });
 
-$("#saveBatchMetadata").on("click", function (e) {
+$("#saveBatchMetadata").on("click", async function (e) {
     e.preventDefault();
 
     matchModalBatchSettings.closeBatchTagPeopleDropdown();
     $("#matchesBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-    $("#matchesBatchModalStatus").css("visibility","visible");
+    $("#matchesBatchModalStatus").css("visibility", "visible");
     $("#matchesBatchModalStatus").attr("title", "");
     $("#matchesBatchModalCancel").prop('disabled', true);
 
+    const http = new Http("saving persons matches");
     const batchObj = Util.serializeObject($('#saveBatchData'));
-
-    const ajaxParams = {
-        type: "post",
-        url: "/timeline/update/batch",
-        data: JSON.stringify(Util.getBatchData(batchObj)),
-        contentType: 'application/json; charset=utf-8',
-        retries: shashin.ajaxRetries
-    }
-
-    $.ajax(ajaxParams)
-    .fail(function(xhr, textStatus) {
+    const data = await http.ajax("post", "/timeline/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
         $("#matchesBatchModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
         $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
         $("#matchesBatchModalCancel").prop('disabled', false);
-        shashin.onFail(xhr, textStatus, ajaxParams, " saving persons matches");
-    }).then(function (data) {
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "success") {
-                if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
-                    $("#keywordsString").val(data["keywords"]);
-                    $("#keywordsBatchString").val(data["keywords"]);
-                }
+    });
 
-                if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
-                    $("#camerasString").val(data["cameras"]);
-                    $("#camerasBatchString").val(data["cameras"]);
-                }
-
-                if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
-                    let renderRecognitionLabels = false;
-                    let batchHtml = "";
-                    const recognitionLabels = data["recognitionLabels"];
-
-                    const dummyMetadata = {};
-                    dummyMetadata.id = "";
-
-                    for (let index in recognitionLabels) {
-                        const recognitionLabel = recognitionLabels[index];
-
-                        if ($("#"+recognitionLabel.id).length === 0) {
-                            renderRecognitionLabels = true;
-                        }
-
-                        batchHtml += PersonModalDropDown({metadata:dummyMetadata,recognitionLabel:recognitionLabel,checkedString:""});
-                    }
-
-                    if (true === renderRecognitionLabels) {
-                        $("#peopleNameList").html(batchHtml);
-                        $(".recognitionLabel").on("click", function (e) {
-                            matchModalBatchSettings.populateBatchLabel();
-                        });
-                    }
-                }
-
-                $("#matchesBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                $("#matchesBatchModalCancel").prop('disabled', false);
-            } else {
-                $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-                $("#matchesBatchModalCancel").prop('disabled', false);
+    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+        if (data["status"] === "success") {
+            if (data.hasOwnProperty("keywords") && data["keywords"] !== "") {
+                $("#keywordsString").val(data["keywords"]);
+                $("#keywordsBatchString").val(data["keywords"]);
             }
+
+            if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
+                $("#camerasString").val(data["cameras"]);
+                $("#camerasBatchString").val(data["cameras"]);
+            }
+
+            if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+                let renderRecognitionLabels = false;
+                let batchHtml = "";
+                const recognitionLabels = data["recognitionLabels"];
+
+                const dummyMetadata = {};
+                dummyMetadata.id = "";
+
+                for (let index in recognitionLabels) {
+                    const recognitionLabel = recognitionLabels[index];
+
+                    if ($("#" + recognitionLabel.id).length === 0) {
+                        renderRecognitionLabels = true;
+                    }
+
+                    batchHtml += PersonModalDropDown({
+                        metadata: dummyMetadata,
+                        recognitionLabel: recognitionLabel,
+                        checkedString: ""
+                    });
+                }
+
+                if (true === renderRecognitionLabels) {
+                    $("#peopleNameList").html(batchHtml);
+                    $(".recognitionLabel").on("click", function (e) {
+                        matchModalBatchSettings.populateBatchLabel();
+                    });
+                }
+            }
+
+            $("#matchesBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+            $("#matchesBatchModalCancel").prop('disabled', false);
         } else {
             $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#matchesBatchModalCancel").prop('disabled', false);
         }
-    });
-
+    } else {
+        $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+        $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+        $("#matchesBatchModalCancel").prop('disabled', false);
+    }
 });
 
 // Clear message on modal close
@@ -191,79 +184,74 @@ $('#propBatchMetadata').bind('keypress', function () {
             }
         });
 
-        $("#saveMetadata" + metadata.id).on("click", function (e) {
+        $("#saveMetadata" + metadata.id).on("click", async function (e) {
             e.preventDefault();
 
             matchModalSettings.closeTagPeopleDropdown(metadata.id);
-            $("#matchesModalStatus"+metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#matchesModalStatus"+metadata.id).css("visibility","visible");
-            $("#matchesModalStatus"+metadata.id).attr("title", "");
-            $("#matchesModalCancel"+metadata.id).prop('disabled', true);
+            $("#matchesModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+            $("#matchesModalStatus" + metadata.id).css("visibility", "visible");
+            $("#matchesModalStatus" + metadata.id).attr("title", "");
+            $("#matchesModalCancel" + metadata.id).prop('disabled', true);
 
+            const http = new Http("saving person matches");
             const json = {
                 metadataId: metadata.id,
                 tagpeople: $("#tagpeople" + metadata.id).val(),
                 isObject: $("#isobject" + metadata.id).prop("checked")
             };
-            const ajaxParams = {
-                type: "post",
-                url: "/person/update",
-                data: JSON.stringify(json),
-                contentType: 'application/json; charset=utf-8',
-                retries: shashin.ajaxRetries
-            }
+            const data = await http.ajax("post", "/person/update", JSON.stringify(json), function () {
+                $("#matchesModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                $("#matchesModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
+                $("#matchesModalCancel" + metadata.id).prop('disabled', false);
+            });
 
-            $.ajax(ajaxParams)
-            .fail(function(xhr, textStatus) {
-                $("#matchesModalStatus"+metadata.id).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
-                $("#matchesModalCancel"+metadata.id).prop('disabled', false);
-                shashin.onFail(xhr, textStatus, ajaxParams, " saving person matches");
-            }).then(function (data) {
-                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                    if (data["status"] === "success") {
-                        if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
-                            let renderRecognitionLabels = false;
-                            const recognitionLabels = data["recognitionLabels"];
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                if (data["status"] === "success") {
+                    if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
+                        let renderRecognitionLabels = false;
+                        const recognitionLabels = data["recognitionLabels"];
 
-                            let batchHtml = "";
+                        let batchHtml = "";
 
-                            for (let index in recognitionLabels) {
-                                const recognitionLabel = recognitionLabels[index];
+                        for (let index in recognitionLabels) {
+                            const recognitionLabel = recognitionLabels[index];
 
-                                if ($("#"+metadata.id+'-'+recognitionLabel.id).length === 0) {
-                                    renderRecognitionLabels = true;
-                                }
-
-                                const taggedPeopleArray = $("#tagpeople" + metadata.id).val().split(",");
-                                let checkedString = "";
-                                if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
-                                    checkedString = " checked";
-                                }
-                                batchHtml += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
+                            if ($("#" + metadata.id + '-' + recognitionLabel.id).length === 0) {
+                                renderRecognitionLabels = true;
                             }
 
-                            if (true === renderRecognitionLabels) {
-                                $(".dropdown-menu, .personDropdown").html(batchHtml);
-                                $(".recognitionLabel").on("click", function (e) {
-                                    personModalSettings.populateLabel(metadata.id);
-                                });
+                            const taggedPeopleArray = $("#tagpeople" + metadata.id).val().split(",");
+                            let checkedString = "";
+                            if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
+                                checkedString = " checked";
                             }
+                            batchHtml += PersonModalDropDown({
+                                metadata: metadata,
+                                recognitionLabel: recognitionLabel,
+                                checkedString: checkedString
+                            });
                         }
 
-                        $("#matchesModalStatus"+metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
-                        $("#matchesModalCancel"+metadata.id).prop('disabled', false);
-                    } else {
-                        $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
-                        $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
-                        $("#matchesModalCancel"+metadata.id).prop('disabled', false);
+                        if (true === renderRecognitionLabels) {
+                            $(".dropdown-menu, .personDropdown").html(batchHtml);
+                            $(".recognitionLabel").on("click", function (e) {
+                                personModalSettings.populateLabel(metadata.id);
+                            });
+                        }
                     }
+
+                    $("#matchesModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
+                    $("#matchesModalCancel" + metadata.id).prop('disabled', false);
                 } else {
-                    $("#matchesModalStatus"+metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
-                    $("#matchesModalStatus"+metadata.id).attr("title", shashin.modalStatusFailMessage());
-                    $("#matchesModalCancel"+metadata.id).prop('disabled', false);
+                    $("#matchesModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#matchesModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
+                    $("#matchesModalCancel" + metadata.id).prop('disabled', false);
                 }
-            });
+            } else {
+                $("#matchesModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#matchesModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
+                $("#matchesModalCancel" + metadata.id).prop('disabled', false);
+            }
 
             return false;
         });

@@ -73,7 +73,6 @@ class UserController {
     fun getUpdateUser(model: Model): String {
         model["message"] = ""
         model["user"] = User()
-        model["message"] = ""
         model["alertClass"] = ""
 
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -82,6 +81,8 @@ class UserController {
         }
 
         val module = "update"
+        model["msg"] = ""
+        model["status"] = "success"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -112,6 +113,8 @@ class UserController {
         }
 
         val module = "update"
+        model["msg"] = ""
+        model["status"] = "success"
         model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -130,6 +133,8 @@ class UserController {
         }
 
         val module = "register"
+        model["msg"] = ""
+        model["status"] = "success"
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -201,6 +206,8 @@ class UserController {
             }
         }
 
+        model["msg"] = ""
+        model["status"] = "fail"
         model["message"] = "Something went wrong"
         return module
     }
@@ -225,6 +232,8 @@ class UserController {
             } else if (message == "loginfail") {
                 model["message"] = "Login failed"
             }
+            model["msg"] = ""
+            model["status"] = "fail"
             model["activePage"] = module
             model["activeSidebar"] = module
             model["titleDescriptor"] = TextUtils.capitalized(module)

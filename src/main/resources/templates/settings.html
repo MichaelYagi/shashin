@@ -103,34 +103,25 @@
             </div>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
-                $("#deleteAllContent").on("click", function(e) {
+                $("#deleteAllContent").on("click", async function (e) {
                     e.preventDefault();
 
-                    $("#deleteContentModalStatus").css("visibility","visible");
+                    $("#deleteContentModalStatus").css("visibility", "visible");
 
+                    const http = new Http("deleting all content");
                     let json = {deleteContent: true}
-                    const ajaxParams = {
-                        type: "post",
-                        url: "/settings/content/delete",
-                        data: JSON.stringify(json),
-                        contentType: 'application/json; charset=utf-8',
-                        retries: shashin.ajaxRetries
-                    }
+                    const data = await http.ajax("post", "/settings/content/delete", JSON.stringify(json));
 
-                    $.ajax(ajaxParams)
-                    .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " deleting all content")}).then(function (data) {
-                        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                            let message = "Error";
-                            if (data["status"] === "success") {
-                                message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                            } else {
-                                message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                            }
-                            $("#msgDeleteContent").html(message);
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        let message = "Error";
+                        if (data["status"] === "success") {
+                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                        } else {
+                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                         }
-                        $("#deleteContentModalStatus").css("visibility","hidden");
-                    });
-
+                        $("#msgDeleteContent").html(message);
+                    }
+                    $("#deleteContentModalStatus").css("visibility", "hidden");
                 });
                 /*]]>*/
             </script>
