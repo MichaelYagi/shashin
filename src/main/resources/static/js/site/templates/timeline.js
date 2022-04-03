@@ -96,7 +96,7 @@ const TimelinePreLoadGalleryFooter = ({metadata, lastDate}) => `
     :
     `
         ${(lastDate === (metadata.year + '-' + metadata.month + '-' + metadata.day)) ? `
-                <span class="scrollspy metadataprocessed" id="tail_${metadata.year}-${metadata.month}-${metadata.day}"></span>';
+                <span class="scrollspy metadataprocessed" id="tail_${metadata.year}-${metadata.month}-${metadata.day}"></span>
             </div>
         </span>
         <span class="attachMetadataPhotos" id="amp_${metadata.year}-${metadata.month}-${metadata.day}" style="visibility: hidden">EOL</span>
@@ -156,8 +156,8 @@ const TimelineGalleryCenterOverlay = ({metadata,mediaContent}) => `
         ${(metadata.description != null) ? `data-sub-html="${metadata.description}"` : ''}
 
         ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null &&
-    metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
-    `
+        metadata.thumbnailSmallWidth !== null && metadata.thumbnailSmallHeight !== null) ?
+        `
         data-lg-size="${metadata.thumbnailSmallWidth}-${metadata.thumbnailSmallHeight}-${metadata.thumbnailSmallWidth},${metadata.originalImageWidth}-${metadata.originalImageHeight}"
         data-responsive="${encodeURI(metadata.thumbnailUrlSmall)} ${metadata.thumbnailSmallWidth}"
         data-thumb="${encodeURI(metadata.thumbnailUrlSmall)}"
