@@ -343,9 +343,10 @@
                 $("#row" + element.id).withinviewport().length === 0 &&
                 $("#amp_" + element.id).withinviewport().length === 0 &&
                 $("#tail_" + element.id).withinviewport().length === 0 &&
+                $("#container_" + element.id).withinviewport().length === 0 &&
                 $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0 &&
                 ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
-                    (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
+                (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
                 Util.removeDateGallery(element.id);
             }
