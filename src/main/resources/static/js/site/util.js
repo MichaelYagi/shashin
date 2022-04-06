@@ -393,10 +393,18 @@ class Util {
             return 0;
         }
 
+        // console.log("$(\"#br\" + id).outerHeight(true):" + $("#br" + id).outerHeight(true))
+        // console.log("$(\"#row\" + id).outerHeight(true):"+$("#row" + id).outerHeight(true))
+        // console.log("$(\"#amp_\" + id).outerHeight(true):"+$("#amp_" + id).outerHeight(true))
+        // console.log("$(\"#container_\" + id).outerHeight(true):"+$("#amp_" + id).outerHeight(true))
+        // console.log("$(\"#tail_\" + id).outerHeight(true):"+$("#tail_" + id).outerHeight(true))
+        // console.log("$(\"#\" + id).outerHeight(true):"+$("#" + id).outerHeight(true))
+
+
         return $("#br" + id).outerHeight(true) +
             $("#row" + id).outerHeight(true) +
-            $("#amp_" + id).outerHeight(true) +
-            $("#tail_" + id).outerHeight(true) +
+            // $("#amp_" + id).outerHeight(true) +
+            // $("#tail_" + id).outerHeight(true) +
             $("#" + id).outerHeight(true);
     }
 
