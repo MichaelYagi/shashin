@@ -132,7 +132,7 @@ describe('#Util tests', function() {
             })
         )
 
-        assert.equal(Util.getDateGalleryHeight("metadataelement"),57)
+        assert.equal(Util.getDateGalleryHeight("metadataelement"),31)
         Util.removeDateGallery("metadataelement")
         assert.equal(Util.getDateGalleryHeight("metadataelement"),0)
     })
