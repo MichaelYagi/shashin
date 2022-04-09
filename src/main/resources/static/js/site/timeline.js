@@ -346,7 +346,9 @@
                 ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
                 (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
-                section.hide();
+                if (Util.isSafari() === true || Util.isFirefox() === true) {
+                    section.css('visibility', 'hidden');
+                }
                 count++;
                 topHeight += Util.getDateGalleryHeight(element.id);
                 Util.removeDateGallery(element.id);
@@ -355,10 +357,8 @@
 
         if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
             content.scrollTop(tempScrollTop - topHeight);
-            section.hide();
+            section.css('visibility', 'visible');
         }
-
-        console.log("================")
 
         // Get list of visible elements
         const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
