@@ -159,7 +159,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                                 shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
                                     // If a date section was removed refresh the timeline
                                     if (dateGalleryRemoved === true) {
-                                        const elements = $(".scrollspy").withinviewport()
+                                        const elements = Util.elementsInViewport($(".scrollspy"));
                                         let firstElementId = $(elements[0]).attr("id");
                                         let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
                                         timelineSettings.jumpFromTimelineToc(null, firstVisibleId, $("#mediaTypeFilter").val());

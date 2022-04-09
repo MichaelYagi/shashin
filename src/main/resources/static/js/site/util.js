@@ -1,5 +1,32 @@
 class Util {
 
+    static isInViewport(element) {
+        if (element.length > 0) {
+            const elementTop = element.offset().top;
+            const elementBottom = elementTop + element.outerHeight();
+
+            const viewportTop = $(window).scrollTop();
+            const viewportBottom = viewportTop + $(window).height();
+
+            return elementBottom > viewportTop && elementTop < viewportBottom;
+        }
+
+        return false;
+    };
+
+    static elementsInViewport(element) {
+        const elementsArray = [];
+        if (element.length > 0) {
+            element.each(function () {
+                if (Util.isInViewport($(this))) {
+                    elementsArray.push(this);
+                }
+            });
+        }
+
+        return $(elementsArray);
+    };
+
     static isOverlap(div1, div2) {
         if (div1.length > 0 && div2.length > 0) {
             const x1 = div1.offset().left;
@@ -402,10 +429,11 @@ class Util {
 
 
         return $("#br" + id).outerHeight(true) +
-            $("#row" + id).outerHeight(true) +
-            // $("#amp_" + id).outerHeight(true) +
-            // $("#tail_" + id).outerHeight(true) +
-            $("#" + id).outerHeight(true);
+        $("#row" + id).outerHeight(true) +
+        $("#" + id).outerHeight(true);
+
+        // $("#amp_" + id).outerHeight(true) +
+        // $("#container_" + id).outerHeight(true);
     }
 
     static getBatchData(batchObj) {
