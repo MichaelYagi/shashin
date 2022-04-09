@@ -81,8 +81,6 @@
                     display: none;  /* Safari and Chrome */
                 }
             </style>
-            <script src="/js/withinviewport.js" th:nonce="${cspNonce}"></script>
-            <script src="/js/jquery.withinviewport.js" th:nonce="${cspNonce}"></script>
         </th:block>
         <th:block th:if="${titleDescriptorLower == 'scan' or titleDescriptorLower == 'match' or titleDescriptorLower == 'dashboard'}">
             <script src="/js/stomp.min.js" th:nonce="${cspNonce}"></script>

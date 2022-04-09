@@ -19,7 +19,7 @@
     }
 
     const closeToFooter = function() {
-        return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > -100 && timelineSettings.distanceToFooter < 1) || $("#subfooter").withinviewport().length > 0);
+        return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > -100 && timelineSettings.distanceToFooter < 1) || Util.elementsInViewport($("#subfooter")).length > 0);
     }
 
     const scrollByOne = function() {
@@ -55,7 +55,7 @@
 
         if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
-            const elementsInViewport = $(".scrollspy").withinviewport();
+            const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
 
             timelineSettings.attachAssociatedMetadata(firstElem.id, mediaTypeFilter);
             timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
@@ -106,7 +106,7 @@
             }
 
             const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
-            const elementsInViewport = $(".scrollspy").withinviewport()
+            const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
             topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
 
             // Scroll to the timeline TOC
@@ -135,7 +135,7 @@
 
         $("#offcanvasToc").on('show.bs.offcanvas', function () {
             if (timelineSettings.enableScrollSpy === true) {
-                timelineSettings.scrollToTimelineToc($(".scrollspy").withinviewport());
+                timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
             }
         });
 
@@ -213,14 +213,14 @@
         const timelineDates = timelineSettings.timelineDates;
         const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-        if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || ($("#"+lastDate).withinviewport().length === 0 && closeToFooter() === true && Util.atEndOfPage($("#container")[0]))) {
+        if (prevElements === null || (elements.length > 0 && Util.arraysEqual(elements, prevElements) === false) || (Util.elementsInViewport($("#"+lastDate)).length === 0 && closeToFooter() === true && Util.atEndOfPage($("#container")[0]))) {
             $(".bi-play-circle").css("visibility", "hidden");
             $(".bi-play-btn").css("visibility", "hidden");
             $(".mediaLink").unbind('click');
             reinitGalleryFlag = false;
 
             if (elements.length === 0) {
-                const thumbnailsInViewport = $(".photo-thumbnail-container").withinviewport();
+                const thumbnailsInViewport = Util.elementsInViewport($(".photo-thumbnail-container"));
                 elements = $(thumbnailsInViewport.parent().prevAll(".scrollspy")[0])
             }
 
@@ -251,11 +251,6 @@
 
                 if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
                     if (Util.isSafari() === true || Util.isFirefox() === true) {
-                        timelineSettings.renderThumbnails(id, mediaTypeFilter).then(function (msg) {
-                            if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
-                                timelineSettings.setScrollSpyActive(id);
-                            }
-                        });
                         timelineSettings.prevAnchor = id;
                     }
 
@@ -271,27 +266,25 @@
                 }
             });
 
-            if (Util.isSafari() === false && Util.isFirefox() === false) {
-                timelineSettings.renderThumbnailsSimple(elements, mediaTypeFilter, timelineDates).then(function (msg) {
-                    if (msg === timelineSettings.success) {
-                        // Set TOC active element
-                        const elementsInViewport = $(".scrollspy").withinviewport();
-                        elementsInViewport.each(function (index) {
-                            let id = $(this).attr("id");
-                            if (id.indexOf("tail_") === -1 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                                timelineSettings.setScrollSpyActive(id);
-                                return false;
-                            } else if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                if (id.indexOf("tail_") > -1) {
-                                    id = id.split("tail_")[1];
-                                }
-                                timelineSettings.setScrollSpyActive(id);
-                                return false;
+            timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
+                if (msg === timelineSettings.success) {
+                    // Set TOC active element
+                    const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+                    elementsInViewport.each(function (index) {
+                        let id = $(this).attr("id");
+                        if (id.indexOf("tail_") === -1 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                            timelineSettings.setScrollSpyActive(id);
+                            return false;
+                        } else if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                            if (id.indexOf("tail_") > -1) {
+                                id = id.split("tail_")[1];
                             }
-                        });
-                    }
-                });
-            }
+                            timelineSettings.setScrollSpyActive(id);
+                            return false;
+                        }
+                    });
+                }
+            });
 
             $("img").hover(function () {
                 if (reinitGalleryFlag === false && timelineSettings.enableScrollSpy === true) {
@@ -305,7 +298,7 @@
         }
     }
 
-    timelineSettings.renderThumbnailsSimple = async function(elements,mediaTypeFilter,timelineDates) {
+    timelineSettings.renderThumbnails = async function(elements,mediaTypeFilter,timelineDates) {
         timelineSettings.enableScrollSpy = false;
 
         if ($(".attachMetadataPhotos").last().text() !== "EOL") {
@@ -336,21 +329,36 @@
         }
 
         // Remove elements not visible in viewport
+        let topHeight = 0;
+        const content = $('#container');
+        let tempScrollTop = content.scrollTop();
         const section = $('section');
+        let count = 0;
         section.each(function (index, element) {
-            if ($("#" + element.id).withinviewport().length === 0 &&
-                $("#br" + element.id).withinviewport().length === 0 &&
-                $("#row" + element.id).withinviewport().length === 0 &&
-                $("#amp_" + element.id).withinviewport().length === 0 &&
-                $("#tail_" + element.id).withinviewport().length === 0 &&
-                $("#container_" + element.id).withinviewport().length === 0 &&
-                $(".photo-thumbnail-image.thumbnailTag_" + element.id).withinviewport().length === 0 &&
+            if (Util.isInViewport($("#" + element.id)) === false &&
+                Util.isInViewport($("#br" + element.id)) === false &&
+                Util.isInViewport($("#row" + element.id)) === false &&
+                Util.isInViewport($("#amp_" + element.id)) === false &&
+                Util.isInViewport($("#tail_" + element.id)) === false &&
+                Util.isInViewport($("#container_" + element.id)) === false &&
+                ((Util.isSafari() === false && Util.isFirefox() === false) || ((Util.isSafari() === true || Util.isFirefox() === true) && count < 1)) &&
+                Util.isInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)) === false &&
                 ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
                 (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
+                section.hide();
+                count++;
+                topHeight += Util.getDateGalleryHeight(element.id);
                 Util.removeDateGallery(element.id);
             }
         });
+
+        if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+            content.scrollTop(tempScrollTop - topHeight);
+            section.hide();
+        }
+
+        console.log("================")
 
         // Get list of visible elements
         const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
@@ -409,7 +417,7 @@
                         }
 
                         // Break if top not in viewport
-                        if ($("#" + currentDate).withinviewport().length === 0) {
+                        if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
                             break;
                         }
                     }
@@ -467,271 +475,6 @@
         timelineSettings.enableScrollSpy = true;
 
         return timelineSettings.success;
-    }
-
-    // Render only what's needed
-    timelineSettings.renderThumbnails = async function(id,mediaTypeFilter) {
-        if (timelineSettings.initialized === false) {
-            timelineSettings.initialized = true;
-        } else {
-            $("#spinner_top").css("display", "block");
-        }
-        if ($(".attachMetadataPhotos").last().text() !== "EOL") {
-            $("#spinner_bottom").css("display", "block");
-        }
-
-        timelineSettings.enableScrollSpy = false;
-        //let deferred = new $.Deferred();
-
-        // Depth of results in section of page above and below anchor
-        // Dynamic depending on current number of results on page
-        const idsInView = $(".scrollspy").withinviewport().map(function() {
-            let id = $(this).attr('id');
-            if (id.indexOf("tail_") > -1) {
-                id = id.split("tail_")[1];
-            }
-            return id;
-        }).get().filter(
-            function(a){if (!this[a]) {this[a] = 1; return a;}},
-            {}
-        );
-
-        let depth = (Util.isSafari() === true || Util.isFirefox() === true) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
-        let depthDown = depth-1;
-        let depthUp = depth;
-
-        shashin.printMessageToConsole("depthDown:"+depthDown);
-        shashin.printMessageToConsole("depthUp:"+depthUp);
-        shashin.printMessageToConsole("renderThumbnails id:"+id);
-
-        let offCanvasId = $("#offcanvas_"+id);
-
-        let dateCount = 0;
-
-        const attachAboveArray = [];
-        let innerLoopBreak = false;
-        let offCanvasDate = offCanvasId.attr("id").split("_")[1];
-        $($("#offcanvasTocBody").children().get().reverse()).each(function () {
-            if ($(this).attr('class') === 'list-group') {
-                $($(this).children().get().reverse()).each(function () {
-                    const attr = $(this).attr("id");
-                    if (typeof attr !== 'undefined' && attr !== false) {
-                        const dateParts = attr.split("offcanvas_");
-                        const date = dateParts[1];
-                        if (Util.getDateObject(offCanvasDate) < Util.getDateObject(date)) {
-                            attachAboveArray.unshift(date);
-                            if (dateCount >= depthUp) {
-                                innerLoopBreak = true;
-                                return false;
-                            }
-                            dateCount++;
-                        }
-                    }
-                });
-            }
-            if (innerLoopBreak === true) {
-                return false;
-            }
-        });
-
-        const attachBelowArray = [];
-        dateCount = 0;
-        innerLoopBreak = false;
-        $("#offcanvasTocBody").children().each(function () {
-            if ($(this).attr('class') === 'list-group') {
-                $(this).children().each(function () {
-                    const attr = $(this).attr("id");
-                    if (typeof attr !== 'undefined' && attr !== false) {
-                        const dateParts = attr.split("offcanvas_");
-                        const date = dateParts[1];
-                        if (Util.getDateObject(date) < Util.getDateObject(offCanvasDate)) {
-                            attachBelowArray.push(date);
-                            if (dateCount > depthUp) {
-                                innerLoopBreak = true;
-                                return false;
-                            }
-                            dateCount++;
-                        }
-                    }
-                });
-            }
-            if (innerLoopBreak === true) {
-                return false;
-            }
-        });
-
-
-        // Remove elements that are not visible
-        let prevElementId = "";
-        let topHeight = 0;
-        let tempScrollTop = $("#container").scrollTop();
-        $('section').each(function (index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove end");
-            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
-
-                // Get height to set scrollTop for non chrome browsers
-                if (Util.getDateObject(id) < Util.getDateObject(element.id)) {
-                    topHeight += Util.getDateGalleryHeight(element.id);
-                }
-
-                shashin.printMessageToConsole(element.id + " removed end");
-                Util.removeDateGallery(element.id);
-            }
-            prevElementId = element.id;
-        });
-
-        // Smooth scrolling when element is removed for non chrome browsers
-        if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
-            $("#container").scrollTop(tempScrollTop - topHeight);
-        }
-
-        shashin.printMessageToConsole("attachAboveArray");
-        shashin.printMessageToConsole(attachAboveArray);
-        shashin.printMessageToConsole("attachBelowArray");
-        shashin.printMessageToConsole(attachBelowArray);
-
-        // Render top
-        let action = "new";
-        let attachPoint = id;
-        for (let index in attachAboveArray) {
-            const currentId = attachAboveArray[index];
-            shashin.printMessageToConsole("attempting to attaching id above:" + currentId);
-            if ($("#" + currentId).length === 0) {
-                if (action === "new") {
-                    attachPoint = null;
-                }
-                shashin.printMessageToConsole("attaching above attachPoint:" + attachPoint);
-                shashin.printMessageToConsole("attaching id:" + currentId);
-                shashin.printMessageToConsole("actionAbove:" + action)
-                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
-                $("#container_"+currentId).outerHeight(true);
-                if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
-                }
-
-                action = "below";
-            }
-            attachPoint = currentId;
-        }
-
-        // Render bottom
-        action = "below"
-        if (attachAboveArray.length === 0 && $("#"+id).length === 0) {
-            attachPoint = null
-        }
-        for (let index in attachBelowArray) {
-            const currentId = attachBelowArray[index];
-            shashin.printMessageToConsole("attempting to attaching id below:" + currentId);
-            if ($("#"+currentId).length === 0) {
-                shashin.printMessageToConsole("attaching below attachPoint:" + attachPoint);
-                shashin.printMessageToConsole("attaching id:" + currentId);
-                shashin.printMessageToConsole("actionBelow:"+action)
-                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
-                if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
-                }
-            }
-            attachPoint = currentId;
-        }
-
-        if (Util.isSafari() === false) {
-            let rendered = false;
-            while (true) {
-                let dateFound = false;
-                let currentId = attachPoint;
-                $("#offcanvasTocBody").children().each(function () {
-                    if ($(this).attr('class') === 'list-group') {
-                        const attr = $(this).attr("id");
-                        if (typeof attr !== 'undefined' && attr !== false) {
-                            const dateParts = attr.split("offcanvas_");
-                            const date = dateParts[1];
-                            if ($(this).next().length > 0 && currentId === date) {
-                                currentId = $(this).next().attr("id").split("offcanvas_")[1];
-                                dateFound = true;
-                                return false;
-                            }
-                        }
-                    }
-                });
-
-                if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
-                    if (action === "new") {
-                        attachPoint = null;
-                    }
-
-                    const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
-                    if (msg === timelineSettings.success && $("#" + currentId).length === 1) {
-                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
-                    }
-
-                    action = "below";
-                    attachPoint = currentId;
-                    attachBelowArray.push(currentId);
-
-                    if (
-                        rendered === false &&
-                        //($("footer").withinviewport().length === 0) &&
-                        (//$("#br" + currentId).withinviewport().length === 0 ||
-                            //$("#row" + currentId).withinviewport().length === 0 ||
-                            $("#amp_" + currentId).withinviewport().length === 0 //||
-                            //$("#tail_" + currentId).withinviewport().length === 0 ||
-                            //$("#" + currentId).withinviewport().length === 0 ||
-                            //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
-                        )
-                    ) {
-                        rendered = true;
-                        continue;
-                    }
-                }
-
-                if (dateFound === false || rendered === true) {
-                    break;
-                }
-
-                attachPoint = currentId;
-            }
-        }
-
-        // Render mid
-        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-            action = "new";
-            if (attachAboveArray.length > 0) {
-                attachPoint = attachAboveArray[attachAboveArray.length - 1];
-                action = "below";
-            } else if (attachBelowArray.length > 0) {
-                attachPoint = attachBelowArray[0];
-                action = "above";
-            }
-
-            shashin.printMessageToConsole("attempting to attaching id mid " + id + " " + action + " " + attachPoint + " length " + $("#" + id).length)
-
-            // Hack for attaching mid point
-            if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length - 1].id === id && $("#" + id).length === 1) {
-                shashin.printMessageToConsole("removing already existing id " + id + " for mid point")
-                Util.removeDateGallery(id);
-            }
-
-            // Render mid
-            if ($("#" + id).length === 0) {
-                shashin.printMessageToConsole("attaching mid attachPoint:" + attachPoint)
-                shashin.printMessageToConsole("attaching id:" + id);
-                shashin.printMessageToConsole("attaching mid action:" + action)
-                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
-                if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                }
-            }
-        }
-
-        shashin.printMessageToConsole("==============================================");
-        //deferred.resolve(timelineSettings.successMidMsg);
-        //return deferred.promise();
-
-        $("#spinner_top").css("display", "none");
-        $("#spinner_bottom").css("display", "none");
-        timelineSettings.enableScrollSpy = true;
-
-        return timelineSettings.successMidMsg;
     }
 
     timelineSettings.initializeTimelineSlider = async function (mediaTypeFilter) {
@@ -930,7 +673,7 @@
                     }
 
                     // Break if top not in viewport
-                    if ($("#" + currentDate).withinviewport().length === 0) {
+                    if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
                         //Util.removeDateGallery(currentDate);
                         break;
                     }
@@ -966,7 +709,7 @@
                     scrollByOne();
 
                     // Break if top not in viewport
-                    if ($("#" + currentDate).withinviewport().length === 0) {
+                    if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
                         //Util.removeDateGallery(currentDate);
                         currentDate = prevDate;
                         break;
@@ -984,11 +727,11 @@
             }
 
             timelineSettings.setScrollSpyActive(anchor);
-            timelineSettings.scrollToTimelineToc($(".scrollspy").withinviewport());
-            timelineSettings.renderThumbnailsSimple($(".scrollspy").withinviewport(), mediaTypeFilter, timelineDates).then(function () {
-                if ($("#" + firstDate).withinviewport().length > 0 ||
-                    $("#br" + firstDate).withinviewport().length > 0 ||
-                    $("#row" + firstDate).withinviewport().length > 0) {
+            timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
+            timelineSettings.renderThumbnails(Util.elementsInViewport($(".scrollspy")), mediaTypeFilter, timelineDates).then(function () {
+                if (Util.elementsInViewport($("#" + firstDate)).length > 0 ||
+                    Util.elementsInViewport($("#br" + firstDate)).length > 0 ||
+                    Util.elementsInViewport($("#row" + firstDate)).length > 0) {
                     scrollByOne();
                 }
             });
@@ -1109,7 +852,7 @@
                                 const metadata = metadataList[index];
 
                                 setTimeout(function () {
-                                    if ($("#image" + metadata.id).withinviewport()) {
+                                    if (Util.elementsInViewport($("#image" + metadata.id))) {
 
                                         if ($("#tnbr" + metadata.id + ".thumbnail-br").length === 0) {
                                             $("#tnbr" + metadata.id).addClass("thumbnail-br");
