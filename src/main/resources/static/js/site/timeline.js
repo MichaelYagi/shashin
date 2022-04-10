@@ -253,8 +253,12 @@
                 let id = $(this).attr("id");
 
                 if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
-                    if (Util.isSafari() === true || Util.isFirefox() === true) {
-                        timelineSettings.prevAnchor = id;
+                    if (Util.isSafari() === true) {
+                        timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
+                            if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
+                                timelineSettings.setScrollSpyActive(id);
+                            }
+                        });
                     }
 
                     // Set the timeline slider while scrolling
@@ -269,25 +273,27 @@
                 }
             });
 
-            timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
-                if (msg === timelineSettings.success) {
-                    // Set TOC active element
-                    const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
-                    elementsInViewport.each(function (index) {
-                        let id = $(this).attr("id");
-                        if (id.indexOf("tail_") === -1 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                            timelineSettings.setScrollSpyActive(id);
-                            return false;
-                        } else if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                            if (id.indexOf("tail_") > -1) {
-                                id = id.split("tail_")[1];
+            if (Util.isSafari() === false || Util.isFirefox() === true) {
+                timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
+                    if (msg === timelineSettings.success) {
+                        // Set TOC active element
+                        const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+                        elementsInViewport.each(function (index) {
+                            let id = $(this).attr("id");
+                            if (id.indexOf("tail_") === -1 && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                                timelineSettings.setScrollSpyActive(id);
+                                return false;
+                            } else if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                if (id.indexOf("tail_") > -1) {
+                                    id = id.split("tail_")[1];
+                                }
+                                timelineSettings.setScrollSpyActive(id);
+                                return false;
                             }
-                            timelineSettings.setScrollSpyActive(id);
-                            return false;
-                        }
-                    });
-                }
-            });
+                        });
+                    }
+                });
+            }
 
             $("img").hover(function () {
                 if (reinitGalleryFlag === false && timelineSettings.enableScrollSpy === true) {
@@ -299,6 +305,273 @@
 
             prevElements = elements;
         }
+    }
+
+    // Render only what's needed
+    timelineSettings.renderThumbnailsAlt = async function(id,mediaTypeFilter) {
+        if (timelineSettings.initialized === false) {
+            timelineSettings.initialized = true;
+        } else {
+            $("#spinner_top").css("display", "block");
+        }
+        if ($(".attachMetadataPhotos").last().text() !== "EOL") {
+            $("#spinner_bottom").css("display", "block");
+        }
+
+        timelineSettings.enableScrollSpy = false;
+        //let deferred = new $.Deferred();
+
+        // Depth of results in section of page above and below anchor
+        // Dynamic depending on current number of results on page
+        const idsInView = Util.elementsInViewport($(".scrollspy")).map(function() {
+            let id = $(this).attr('id');
+            if (id.indexOf("tail_") > -1) {
+                id = id.split("tail_")[1];
+            }
+            return id;
+        }).get().filter(
+            function(a){if (!this[a]) {this[a] = 1; return a;}},
+            {}
+        );
+
+        let depth = (Util.isSafari() === true || Util.isFirefox() === true) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
+        let depthDown = depth-1;
+        let depthUp = depth;
+
+        shashin.printMessageToConsole("depthDown:"+depthDown);
+        shashin.printMessageToConsole("depthUp:"+depthUp);
+        shashin.printMessageToConsole("renderThumbnails id:"+id);
+
+        let offCanvasId = $("#offcanvas_"+id);
+
+        let dateCount = 0;
+
+        const attachAboveArray = [];
+        let innerLoopBreak = false;
+        let offCanvasDate = offCanvasId.attr("id").split("_")[1];
+        $($("#offcanvasTocBody").children().get().reverse()).each(function () {
+            if ($(this).attr('class') === 'list-group') {
+                $($(this).children().get().reverse()).each(function () {
+                    const attr = $(this).attr("id");
+                    if (typeof attr !== 'undefined' && attr !== false) {
+                        const dateParts = attr.split("offcanvas_");
+                        const date = dateParts[1];
+                        if (Util.getDateObject(offCanvasDate) < Util.getDateObject(date)) {
+                            attachAboveArray.unshift(date);
+                            if (dateCount >= depthUp) {
+                                innerLoopBreak = true;
+                                return false;
+                            }
+                            dateCount++;
+                        }
+                    }
+                });
+            }
+            if (innerLoopBreak === true) {
+                return false;
+            }
+        });
+
+        const attachBelowArray = [];
+        dateCount = 0;
+        innerLoopBreak = false;
+        $("#offcanvasTocBody").children().each(function () {
+            if ($(this).attr('class') === 'list-group') {
+                $(this).children().each(function () {
+                    const attr = $(this).attr("id");
+                    if (typeof attr !== 'undefined' && attr !== false) {
+                        const dateParts = attr.split("offcanvas_");
+                        const date = dateParts[1];
+                        if (Util.getDateObject(date) < Util.getDateObject(offCanvasDate)) {
+                            attachBelowArray.push(date);
+                            if (dateCount > depthUp) {
+                                innerLoopBreak = true;
+                                return false;
+                            }
+                            dateCount++;
+                        }
+                    }
+                });
+            }
+            if (innerLoopBreak === true) {
+                return false;
+            }
+        });
+
+        // Remove elements that are not visible
+        let prevElementId = "";
+        let topHeight = 0;
+        let tempScrollTop = $("#container").scrollTop();
+        $('section').each(function (index, element) {
+            shashin.printMessageToConsole(element.id + " checking to remove end");
+            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
+
+                // Get height to set scrollTop for non chrome browsers
+                if (Util.getDateObject(id) < Util.getDateObject(element.id)) {
+                    topHeight += Util.getDateGalleryHeight(element.id);
+                }
+
+                shashin.printMessageToConsole(element.id + " removed end");
+                Util.removeDateGallery(element.id);
+            }
+            prevElementId = element.id;
+        });
+
+        // Smooth scrolling when element is removed for non chrome browsers
+        if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
+            $("#container").scrollTop(tempScrollTop - topHeight);
+        }
+
+        shashin.printMessageToConsole("attachAboveArray");
+        shashin.printMessageToConsole(attachAboveArray);
+        shashin.printMessageToConsole("attachBelowArray");
+        shashin.printMessageToConsole(attachBelowArray);
+
+        // Render top
+        let action = "new";
+        let attachPoint = id;
+        for (let index in attachAboveArray) {
+            const currentId = attachAboveArray[index];
+            shashin.printMessageToConsole("attempting to attaching id above:" + currentId);
+            if ($("#" + currentId).length === 0) {
+                if (action === "new") {
+                    attachPoint = null;
+                }
+                shashin.printMessageToConsole("attaching above attachPoint:" + attachPoint);
+                shashin.printMessageToConsole("attaching id:" + currentId);
+                shashin.printMessageToConsole("actionAbove:" + action)
+                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                $("#container_"+currentId).outerHeight(true);
+                if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
+                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                }
+
+                action = "below";
+            }
+            attachPoint = currentId;
+        }
+
+        // Render bottom
+        action = "below"
+        if (attachAboveArray.length === 0 && $("#"+id).length === 0) {
+            attachPoint = null
+        }
+        for (let index in attachBelowArray) {
+            const currentId = attachBelowArray[index];
+            shashin.printMessageToConsole("attempting to attaching id below:" + currentId);
+            if ($("#"+currentId).length === 0) {
+                shashin.printMessageToConsole("attaching below attachPoint:" + attachPoint);
+                shashin.printMessageToConsole("attaching id:" + currentId);
+                shashin.printMessageToConsole("actionBelow:"+action)
+                const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
+                if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
+                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                }
+            }
+            attachPoint = currentId;
+        }
+
+        if (Util.isSafari() === false) {
+            let rendered = false;
+            while (true) {
+                let dateFound = false;
+                let currentId = attachPoint;
+                $("#offcanvasTocBody").children().each(function () {
+                    if ($(this).attr('class') === 'list-group') {
+                        $(this).children().each(function () {
+                            const attr = $(this).attr("id");
+                            if (typeof attr !== 'undefined' && attr !== false) {
+                                const dateParts = attr.split("offcanvas_");
+                                const date = dateParts[1];
+                                const nextattr = $(this).next().attr("id");
+                                if (typeof nextattr !== 'undefined' && nextattr !== false && $(this).next().length > 0 && currentId === date) {
+                                    currentId = nextattr.split("offcanvas_")[1];
+                                    dateFound = true;
+                                    return false;
+                                }
+                            }
+                        });
+                    }
+                });
+
+                if (dateFound === true && currentId !== null && $("#" + currentId).length === 0) {
+                    if (action === "new") {
+                        attachPoint = null;
+                    }
+
+                    const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
+                    if (msg === timelineSettings.success && $("#" + currentId).length === 1) {
+                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    }
+
+                    action = "below";
+                    attachPoint = currentId;
+                    attachBelowArray.push(currentId);
+
+                    if (
+                        rendered === false &&
+                        //($("footer").withinviewport().length === 0) &&
+                        (//$("#br" + currentId).withinviewport().length === 0 ||
+                            //$("#row" + currentId).withinviewport().length === 0 ||
+                            $("#amp_" + currentId).withinviewport().length === 0 //||
+                            //$("#tail_" + currentId).withinviewport().length === 0 ||
+                            //$("#" + currentId).withinviewport().length === 0 ||
+                            //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
+                        )
+                    ) {
+                        rendered = true;
+                        continue;
+                    }
+                }
+
+                if (dateFound === false || rendered === true) {
+                    break;
+                }
+
+                attachPoint = currentId;
+            }
+        }
+
+        // Render mid
+        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+            action = "new";
+            if (attachAboveArray.length > 0) {
+                attachPoint = attachAboveArray[attachAboveArray.length - 1];
+                action = "below";
+            } else if (attachBelowArray.length > 0) {
+                attachPoint = attachBelowArray[0];
+                action = "above";
+            }
+
+            shashin.printMessageToConsole("attempting to attaching id mid " + id + " " + action + " " + attachPoint + " length " + $("#" + id).length)
+
+            // Hack for attaching mid point
+            if (attachAboveArray.length > 0 && attachBelowArray.length > 0 && $('section')[$('section').length - 1].id === id && $("#" + id).length === 1) {
+                shashin.printMessageToConsole("removing already existing id " + id + " for mid point")
+                Util.removeDateGallery(id);
+            }
+
+            // Render mid
+            if ($("#" + id).length === 0) {
+                shashin.printMessageToConsole("attaching mid attachPoint:" + attachPoint)
+                shashin.printMessageToConsole("attaching id:" + id);
+                shashin.printMessageToConsole("attaching mid action:" + action)
+                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
+                if (msg === timelineSettings.success && $("#" + id).length === 1) {
+                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                }
+            }
+        }
+
+        shashin.printMessageToConsole("==============================================");
+        //deferred.resolve(timelineSettings.successMidMsg);
+        //return deferred.promise();
+
+        $("#spinner_top").css("display", "none");
+        $("#spinner_bottom").css("display", "none");
+        timelineSettings.enableScrollSpy = true;
+
+        return timelineSettings.successMidMsg;
     }
 
     timelineSettings.renderThumbnails = async function(elements,mediaTypeFilter,timelineDates) {
@@ -612,7 +885,7 @@
 
                         $("#dateSlider").append(tickEl);
                         setTimeout(function() {
-                                prevTickEl = tickEl;
+                            prevTickEl = tickEl;
                         },0);
                     }
 
@@ -994,90 +1267,143 @@
 
         return await $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline")}).then(function (data) {
-            let ret = "fail";
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === timelineSettings.success) {
-                    if (data.hasOwnProperty("metadataList")) {
-                        const metadataList = data["metadataList"];
+                let ret = "fail";
+                if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    let message = "Error";
+                    if (data["status"] === timelineSettings.success) {
+                        if (data.hasOwnProperty("metadataList")) {
+                            const metadataList = data["metadataList"];
 
-                        if (metadataList.length > 0) {
-                            let html = "";
+                            if (metadataList.length > 0) {
+                                let html = "";
 
-                            let idCheck = "undated";
-                            if (metadataList[0]["year"] === null ||
-                                metadataList[0]["month"] === null ||
-                                metadataList[0]["day"] === null)
-                            {
-                                idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
-                            }
-
-                            html += TimelinePreLoadGalleryHeader({metadata:metadataList[0]});
-
-                            if ($("#"+idCheck).length === 0) {
-                                for (let index in metadataList) {
-                                    index = parseInt(index);
-                                    const metadata = metadataList[index];
-
-                                    const yearTakenCount = $(".yearTaken").length;
-                                    const monthTakenCount = $(".monthTaken").length;
-                                    const dayTakenCount = $(".dayTaken").length;
-                                    let lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0]["year"] === null ? "" : metadataList[0]["year"]) : $(".yearTaken").get(yearTakenCount - 1).innerText;
-                                    let lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0]["month"] === null ? "" : metadataList[0]["month"]) : $(".monthTaken").get(monthTakenCount - 1).innerText;
-                                    let lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0]["day"] === null ? "" : metadataList[0]["day"]) : $(".dayTaken").get(dayTakenCount - 1).innerText;
-                                    lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
-                                    lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
-                                    lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
-
-                                    html += TimelinePreLoadGalleryBody({metadata:metadata});
-
-                                    $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
+                                let idCheck = "undated";
+                                if (metadataList[0]["year"] === null ||
+                                    metadataList[0]["month"] === null ||
+                                    metadataList[0]["day"] === null)
+                                {
+                                    idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
                                 }
 
-                                const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
-                                const lastDate = lastDateParts[1];
+                                html += TimelinePreLoadGalleryHeader({metadata:metadataList[0]});
 
-                                html += TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
+                                if ($("#"+idCheck).length === 0) {
+                                    for (let index in metadataList) {
+                                        index = parseInt(index);
+                                        const metadata = metadataList[index];
 
-                                let htmlEl = $(html);
+                                        const yearTakenCount = $(".yearTaken").length;
+                                        const monthTakenCount = $(".monthTaken").length;
+                                        const dayTakenCount = $(".dayTaken").length;
+                                        let lastYearTaken = $(".yearTaken").length === 0 ? (metadataList[0]["year"] === null ? "" : metadataList[0]["year"]) : $(".yearTaken").get(yearTakenCount - 1).innerText;
+                                        let lastMonthTaken = $(".monthTaken").length === 0 ? (metadataList[0]["month"] === null ? "" : metadataList[0]["month"]) : $(".monthTaken").get(monthTakenCount - 1).innerText;
+                                        let lastDayTaken = $(".dayTaken").length === 0 ? (metadataList[0]["day"] === null ? "" : metadataList[0]["day"]) : $(".dayTaken").get(dayTakenCount - 1).innerText;
+                                        lastYearTaken = lastYearTaken !== "" ? parseInt(lastYearTaken) : 0;
+                                        lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
+                                        lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
-                                setTimeout(function () {
-                                    if (action === "above") {
-                                        htmlEl.insertBefore($("#container_" + attachToId));
-                                    } else if (action === "new") {
-                                        $("#infinite-scroll-gallery").prepend(htmlEl);
-                                    } else {
-                                        if (attachToId == null) {
-                                            if ($(".attachMetadataPhotos").length > 0) {
-                                                htmlEl.insertAfter($(".attachMetadataPhotos").last());
-                                            } else {
-                                                $("#infinite-scroll-gallery").prepend(htmlEl);
-                                            }
-                                        } else {
-                                            htmlEl.insertAfter($("#amp_" + attachToId));
+                                        html += TimelinePreLoadGalleryBody({metadata:metadata});
+
+                                        $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
+                                    }
+
+                                    const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
+                                    const lastDate = lastDateParts[1];
+
+                                    html += TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
+
+                                    const tempScrollTop = $("#container").scrollTop();
+
+                                    let htmlEl = $(html);
+
+                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                        if (Util.isSafari() === true) {
+                                            $("#infinite-scroll-gallery").css('visibility', 'hidden');
                                         }
                                     }
-                                }, 0);
+
+                                    setTimeout(function () {
+                                        if (action === "above") {
+                                            htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
+                                                // deferred.resolve(timelineSettings.success);
+                                                ret = timelineSettings.success;
+                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                    if (Util.isSafari() === true) {
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                    }
+                                                }
+                                            });
+                                        } else if (action === "new") {
+                                            $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
+                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                    if (Util.isSafari() === true) {
+                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                    }
+                                                }
+                                                // deferred.resolve(timelineSettings.success);
+                                                ret = timelineSettings.success;
+                                            });
+                                        } else {
+                                            if (attachToId == null) {
+                                                if ($(".attachMetadataPhotos").length > 0) {
+                                                    htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
+                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                            if (Util.isSafari() === true) {
+                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                            }
+                                                        }
+                                                        // deferred.resolve(timelineSettings.success);
+                                                        ret = timelineSettings.success;
+                                                    });
+                                                } else {
+                                                    $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
+                                                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                            if (Util.isSafari() === true) {
+                                                                $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                                $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                            }
+                                                        }
+                                                        // deferred.resolve(timelineSettings.success);
+                                                        ret = timelineSettings.success;
+                                                    });
+                                                }
+                                            } else {
+                                                htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
+                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
+                                                        if (Util.isSafari() === true) {
+                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
+                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
+                                                        }
+                                                    }
+                                                    // deferred.resolve(timelineSettings.success);
+                                                    ret = timelineSettings.success;
+                                                });
+                                            }
+                                        }
+                                    }, 0);
+                                } else {
+                                    // Already attached
+                                    ret = timelineSettings.success;
+                                }
                             } else {
-                                // Already attached
+                                $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
                                 ret = timelineSettings.success;
                             }
-                        } else {
-                            $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
                             ret = timelineSettings.success;
                         }
                         ret = timelineSettings.success;
+                    } else {
+                        message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                        $("#msgTimeline").html(message);
+                        ret = "fail";
                     }
-                    ret = timelineSettings.success;
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                    $("#msgTimeline").html(message);
-                    ret = "fail";
                 }
-            }
 
-            return ret;
-        });
+                return ret;
+            });
     }
 
     timelineSettings.activateMetadataListeners = function(metadataId) {
