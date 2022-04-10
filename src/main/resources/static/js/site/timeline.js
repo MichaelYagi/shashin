@@ -233,16 +233,19 @@
             const firstWithoutTail = firstElement.indexOf("tail_") > -1 ? firstElement.split("tail_")[1] : firstElement;
             const prevLastWithoutTail = (prevElements !== null && prevLastElement.indexOf("tail_") > -1) ? prevLastElement.split("tail_")[1] : prevLastElement;
             const lastWithoutTail = lastElement.indexOf("tail_") > -1 ? lastElement.split("tail_")[1] : lastElement;
-
             if (prevElements !== null) {
-                if ((Util.getDateObject(prevFirstWithoutTail) > Util.getDateObject(firstWithoutTail)) ||
-                    (Util.getDateObject(prevLastWithoutTail) > Util.getDateObject(lastWithoutTail))
-                ) {
-                    timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
-                } else if ((Util.getDateObject(prevFirstWithoutTail) < Util.getDateObject(firstWithoutTail)) ||
-                    (Util.getDateObject(prevLastWithoutTail) < Util.getDateObject(lastWithoutTail))
-                ) {
+                if (Util.isInViewport($("#tail_"+lastDate)) === true) {
                     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
+                } else {
+                    if ((Util.getDateObject(prevFirstWithoutTail) > Util.getDateObject(firstWithoutTail)) ||
+                        (Util.getDateObject(prevLastWithoutTail) > Util.getDateObject(lastWithoutTail))
+                    ) {
+                        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
+                    } else if ((Util.getDateObject(prevFirstWithoutTail) < Util.getDateObject(firstWithoutTail)) ||
+                        (Util.getDateObject(prevLastWithoutTail) < Util.getDateObject(lastWithoutTail))
+                    ) {
+                        timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.up;
+                    }
                 }
             }
 
@@ -307,6 +310,8 @@
 
         let firstElementId = $(elements[0]).attr("id");
         let firstVisibleId = firstElementId.indexOf("tail_") === -1 ? firstElementId : firstElementId.substring(5, firstElementId.length);
+        let lastElementId = $(elements[elements.length-1]).attr("id");
+        let lastVisibleId = lastElementId.indexOf("tail_") === -1 ? lastElementId : lastElementId.substring(5, lastElementId.length);
         let ignoreTimelineDate = firstVisibleId;
 
         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
@@ -329,36 +334,49 @@
         }
 
         // Remove elements not visible in viewport
+        let removeHeight = 0;
         let topHeight = 0;
         const content = $('#container');
         let tempScrollTop = content.scrollTop();
         const section = $('section');
-        let count = 0;
+
+        const removedElements = [];
         section.each(function (index, element) {
             if (Util.isInViewport($("#" + element.id)) === false &&
                 Util.isInViewport($("#br" + element.id)) === false &&
                 Util.isInViewport($("#row" + element.id)) === false &&
-                Util.isInViewport($("#amp_" + element.id)) === false &&
                 Util.isInViewport($("#tail_" + element.id)) === false &&
                 Util.isInViewport($("#container_" + element.id)) === false &&
-                ((Util.isSafari() === false && Util.isFirefox() === false) || ((Util.isSafari() === true || Util.isFirefox() === true) && count < 1)) &&
-                Util.isInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)) === false &&
+                Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0 &&
+                ((Util.isSafari() === false && Util.isFirefox() === false) ||
+                    ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id) || Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id))) ||
+                        (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)))
+                ) &&
                 ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
-                (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
+                    (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
                 if (Util.isSafari() === true || Util.isFirefox() === true) {
                     section.css('visibility', 'hidden');
                 }
-                count++;
-                topHeight += Util.getDateGalleryHeight(element.id);
+
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)) {
+                    topHeight += Util.getDateGalleryHeight(element.id);
+                }
+
+                removeHeight += Util.getDateGalleryHeight(element.id);
                 Util.removeDateGallery(element.id);
+                removedElements.push(element.id);
             }
         });
 
-        if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-            content.scrollTop(tempScrollTop - topHeight);
-            section.css('visibility', 'visible');
+        if (Util.isSafari() === true || Util.isFirefox() === true) {
+            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                content.scrollTop(tempScrollTop - removeHeight);
+            } else {
+                content.scrollTop(tempScrollTop - topHeight);
+            }
         }
+        section.css('visibility', 'visible');
 
         // Get list of visible elements
         const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
@@ -408,7 +426,9 @@
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                    if ($("#" + currentDate).length === 0) {
+                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false) ||
+                        ((Util.isSafari() === true || Util.isFirefox() === true) && $.inArray(currentDate, removedElements) === -1))) {
+
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
@@ -442,7 +462,8 @@
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
-                    if ($("#" + currentDate).length === 0) {
+                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false) || ((Util.isSafari() === true || Util.isFirefox() === true) && $.inArray(currentDate, removedElements) === -1))) {
+
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
@@ -468,6 +489,11 @@
                 }
             }
         }
+
+console.log("section after")
+console.log(section)
+console.log("removing after direction:"+timelineSettings.currentScrollDirection)
+console.log("===========================")
 
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
@@ -1016,103 +1042,31 @@
 
                                 html += TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
 
-                                const tempScrollTop = $("#container").scrollTop();
-
                                 let htmlEl = $(html);
-
-                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                    if (Util.isSafari() === true) {
-                                        $("#infinite-scroll-gallery").css('visibility', 'hidden');
-                                    } else if (Util.isFirefox() === true) {
-                                        htmlEl.hide();
-                                    }
-                                }
 
                                 setTimeout(function () {
                                     if (action === "above") {
-                                        htmlEl.insertBefore($("#container_" + attachToId)).ready(function () {
-                                            // deferred.resolve(timelineSettings.success);
-                                            ret = timelineSettings.success;
-                                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                if (Util.isSafari() === true) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                } else if (Util.isFirefox() === true) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    htmlEl.show();
-                                                }
-                                            }
-                                        });
+                                        htmlEl.insertBefore($("#container_" + attachToId));
                                     } else if (action === "new") {
-                                        $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                            if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                if (Util.isSafari() === true) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                } else if (Util.isFirefox() === true) {
-                                                    $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                    htmlEl.show();
-                                                }
-                                            }
-                                            // deferred.resolve(timelineSettings.success);
-                                            ret = timelineSettings.success;
-                                        });
+                                        $("#infinite-scroll-gallery").prepend(htmlEl);
                                     } else {
                                         if (attachToId == null) {
                                             if ($(".attachMetadataPhotos").length > 0) {
-                                                htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
-                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        if (Util.isSafari() === true) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                        } else if (Util.isFirefox() === true) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            htmlEl.show();
-                                                        }
-                                                    }
-                                                    // deferred.resolve(timelineSettings.success);
-                                                    ret = timelineSettings.success;
-                                                });
+                                                htmlEl.insertAfter($(".attachMetadataPhotos").last());
                                             } else {
-                                                $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
-                                                    if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        if (Util.isSafari() === true) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                        } else if (Util.isFirefox() === true) {
-                                                            $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                            htmlEl.show();
-                                                        }
-                                                    }
-                                                    // deferred.resolve(timelineSettings.success);
-                                                    ret = timelineSettings.success;
-                                                });
+                                                $("#infinite-scroll-gallery").prepend(htmlEl);
                                             }
                                         } else {
-                                            htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
-                                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        $("#infinite-scroll-gallery").css('visibility', 'visible');
-                                                    } else if (Util.isFirefox() === true) {
-                                                        $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
-                                                        htmlEl.show();
-                                                    }
-                                                }
-                                                // deferred.resolve(timelineSettings.success);
-                                                ret = timelineSettings.success;
-                                            });
+                                            htmlEl.insertAfter($("#amp_" + attachToId));
                                         }
                                     }
                                 }, 0);
                             } else {
                                 // Already attached
-                                // deferred.resolve(timelineSettings.success);
                                 ret = timelineSettings.success;
                             }
                         } else {
                             $(".attachMetadataPhotos").last().text("EOL").css("display", "none")
-                            // deferred.resolve(timelineSettings.success);
                             ret = timelineSettings.success;
                         }
                         ret = timelineSettings.success;
@@ -1121,7 +1075,6 @@
                 } else {
                     message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                     $("#msgTimeline").html(message);
-                    // deferred.resolve("fail");
                     ret = "fail";
                 }
             }
