@@ -336,8 +336,7 @@
         // Remove elements not visible in viewport
         let removeHeight = 0;
         let topHeight = 0;
-        const content = $('#container');
-        let tempScrollTop = content.scrollTop();
+        let tempScrollTop = $('#container').scrollTop();
         const section = $('section');
 
         const removedElements = [];
@@ -359,21 +358,28 @@
                     section.css('visibility', 'hidden');
                 }
 
-                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)) {
+                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                    removeHeight += Util.getDateGalleryHeight(element.id);
+                    Util.removeDateGallery(element.id);
+                    removedElements.push(element.id);
+                } else if (Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)) {
                     topHeight += Util.getDateGalleryHeight(element.id);
+                    // removeHeight += Util.getDateGalleryHeight(element.id);
+                    Util.removeDateGallery(element.id);
+                    //removedElements.push(element.id);
+                } else if (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id)) {
+                    // removeHeight += Util.getDateGalleryHeight(element.id);
+                    Util.removeDateGallery(element.id);
+                    //removedElements.push(element.id);
                 }
-
-                removeHeight += Util.getDateGalleryHeight(element.id);
-                Util.removeDateGallery(element.id);
-                removedElements.push(element.id);
             }
         });
 
         if (Util.isSafari() === true || Util.isFirefox() === true) {
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                content.scrollTop(tempScrollTop - removeHeight);
-            } else {
-                content.scrollTop(tempScrollTop - topHeight);
+                $('#container').scrollTop(tempScrollTop - removeHeight);
+            } else if (topHeight > 0) {
+                $('#container').scrollTop(tempScrollTop - topHeight);
             }
         }
         section.css('visibility', 'visible');
@@ -489,11 +495,6 @@
                 }
             }
         }
-
-console.log("section after")
-console.log(section)
-console.log("removing after direction:"+timelineSettings.currentScrollDirection)
-console.log("===========================")
 
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
