@@ -363,14 +363,10 @@
                     Util.removeDateGallery(element.id);
                     removedElements.push(element.id);
                 } else if (Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)) {
-                    topHeight += Util.getDateGalleryHeight(element.id);
-                    // removeHeight += Util.getDateGalleryHeight(element.id);
+                    topHeight += $("#container_"+element.id).outerHeight(true) + $("#amp_"+element.id).outerHeight(true);
                     Util.removeDateGallery(element.id);
-                    //removedElements.push(element.id);
                 } else if (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id)) {
-                    // removeHeight += Util.getDateGalleryHeight(element.id);
                     Util.removeDateGallery(element.id);
-                    //removedElements.push(element.id);
                 }
             }
         });
