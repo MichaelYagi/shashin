@@ -58,8 +58,8 @@ class Recent {
 
                     const dateHeadingCount = $(".dateSection").length;
                     const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                    const currentDate = dateFormat(metadata["addedAt"], "isoDate");
-                    const displayCurrentDate = dateFormat(metadata["addedAt"], "ddd, mmm d, yyyy");
+                    const currentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "isoDate");
+                    const displayCurrentDate = dateFormat(metadata["addedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
                     if (lastDateHeading !== currentDate) {
                         dateHeadingObj = {heading: currentDate, display: displayCurrentDate};

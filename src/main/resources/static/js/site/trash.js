@@ -56,8 +56,8 @@ class Trash {
 
                             const dateHeadingCount = $(".dateSection").length;
                             const lastModifiedDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                            const currentModifiedDate = dateFormat(metadata["modifiedAt"], "isoDate");
-                            const displayCurrentModifiedDate = dateFormat(metadata["modifiedAt"], "ddd, mmm d, yyyy");
+                            const currentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "isoDate");
+                            const displayCurrentModifiedDate = dateFormat(metadata["modifiedAt"].replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
                             if (lastModifiedDateHeading !== currentModifiedDate) {
                                 dateHeadingObj = {heading: currentModifiedDate, display: displayCurrentModifiedDate};
