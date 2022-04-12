@@ -80,7 +80,7 @@ class NotificationsController {
             }
         }
 
-        return "{msg:\"\",status:\"success\"}"
+        return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
     @GetMapping("/notifications/markread/album/{albumId}", produces = ["application/json"])
@@ -105,7 +105,7 @@ class NotificationsController {
             }
         }
 
-        return "{msg:\"\",status:\"success\"}"
+        return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
     @GetMapping("/notifications/markread/metadata/{metadataId}", produces = ["application/json"])
@@ -130,7 +130,7 @@ class NotificationsController {
             }
         }
 
-        return "{msg:\"\",status:\"success\"}"
+        return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
     @GetMapping("/notifications/markread/favorites", produces = ["application/json"])
@@ -155,7 +155,7 @@ class NotificationsController {
             }
         }
 
-        return "{msg:\"\",status:\"success\"}"
+        return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
     @GetMapping("/notifications/markread/users", produces = ["application/json"])
@@ -180,7 +180,7 @@ class NotificationsController {
             }
         }
 
-        return "{msg:\"\",status:\"success\"}"
+        return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 
     @GetMapping("/notifications/check/{userId}", produces = ["application/json"])
@@ -224,6 +224,6 @@ class NotificationsController {
                 notificationRepository.saveAll(notificationObjList)
             }
         }
-        return "{msg:\"\",status:\"success\"}"
+        return "{\"msg\":\"\",\"status\":\"success\"}"
     }
 }

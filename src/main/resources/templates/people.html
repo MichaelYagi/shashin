@@ -17,7 +17,7 @@
                     <th:block th:each="person, iterStat: ${peopleList}">
                         <div class="card" style="width:235px;padding-top:10px;">
                             <a th:href="'/person/'+${person.id}"  style="text-decoration: none !important;color: #777777;" th:id="'person'+${person.id}">
-                                <img loading="lazy" class="card-img-top" th:src="${person.thumbnailUrlCentered}" width="209" height="209" th:onError="Util.errorImg(this,[[${person.name}]],209)">
+                                <img loading="lazy" class="card-img-top" th:src="${person.thumbnailUrlCentered}" width="209" height="209">
                             </a>
                             <div class="card-body">
                                 <p class="card-text"><strong th:text="${person.name}"></strong></p>
