@@ -45,6 +45,8 @@ const PhotoGalleryItem = ({activePage, appendClass, dateHeadingObj, metadata, cu
         $("#image${metadata.id}").on('load', function () {
             $(this).css("background-color", "transparent");
         });
+        
+        Util.checkErrorImage();
     </script>
 `;
 

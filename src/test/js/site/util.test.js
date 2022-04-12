@@ -70,30 +70,6 @@ describe('#Util tests', function() {
         assert.equal(decodedString,'{"a":"b"}')
     })
 
-    it('Img error test', function() {
-        $("body").append($("<img/>", {
-            id: 'someid',
-            src: 'http://asdfasdfasdf.com/'
-        }))
-
-        let imgEl = document.getElementById("someid")
-
-        assert.equal(imgEl.src,'http://asdfasdfasdf.com/')
-
-        Util.errorImg(imgEl,'Some Title',199)
-        assert.equal(imgEl.src,'https://via.placeholder.com/199?text=Some%20Title')
-
-        Util.errorImg(imgEl,'Some Title')
-        assert.equal(imgEl.src,'https://via.placeholder.com/'+Util.thumbnailHeight()+'?text=Some%20Title')
-
-        $("#someid").attr("height","100")
-        $("#someid").attr("width","200")
-
-        imgEl = document.getElementById("someid")
-        Util.errorImg(imgEl,'Some Title')
-        assert.equal(imgEl.src,'https://via.placeholder.com/200x100?text=Some%20Title')
-    })
-
     it('Validate metadata inputs test', function () {
         $("body").append($("<div/>", {
             id: 'someelement'
