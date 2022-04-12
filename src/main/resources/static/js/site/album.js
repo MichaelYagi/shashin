@@ -44,7 +44,7 @@
 
                 $("#metadataId").val(metadata.id);
                 if (metadata.thumbnailUrlCentered !== null) {
-                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" height="100" width="100" onError="Util.errorImg(this,\'' + metadata.title + '\',100)">');
+                    $("#propAlbumModalThumbnail").html('<img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" height="100" width="100">');
                 }
 
                 // Open modal window

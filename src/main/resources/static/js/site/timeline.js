@@ -1165,7 +1165,7 @@
                                         if ($("#image" + metadata.id).length === 1) {
                                             $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall));
                                             $("#image" + metadata.id).css("background-color", "lightgray");
-                                            $("#image" + metadata.id).attr("onError", "Util.errorImg(this,\'" + metadata.title + "\',Util.thumbnailHeight())");
+                                            // $("#image" + metadata.id).attr("onError", "Util.errorImg(this,\'" + metadata.title + "\',Util.thumbnailHeight())");
                                         }
 
                                         if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {

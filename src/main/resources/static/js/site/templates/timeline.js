@@ -33,11 +33,11 @@ const MapLinks = ({metadata}) => `
 `
 
 const HeaderThumbnail = ({metadata}) => `
-    <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" height="100" width="100" onError="Util.errorImg(this,\\'${metadata.title}\\',100)">
+    <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" height="100" width="100">
 `
 
 const BatchHeaderThumbnail = ({thumbnailImage,title}) => `
-    <img loading="lazy" src="${thumbnailImage}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}" onError="Util.errorImg(this,\'${title}\',75)">
+    <img loading="lazy" src="${thumbnailImage}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
 `
 
 const TimelinePreLoadGalleryHeader = ({metadata}) => `

@@ -5,7 +5,7 @@ const AlbumCommentsModalHead = ({metadata}) => `
                 <div class="modal-header">
                     <h5 class="modal-title" id="commentModalLabel">
                         <div id="propalbumphotocomment${metadata.id}">
-                            <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" width="100" height="100" onError="Util.errorImg(this,\\'${metadata.title}\\',100)">
+                            <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" width="100" height="100">
                         </div>Comments for ${metadata.fileName}
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -65,7 +65,7 @@ const PersonModalHead = ({module,metadata,recognitionLabels,taggedPeopleList}) =
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit "${metadata.title}"
                         <div id="prop${module}Thumbnail${metadata.id}">
-                            <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" width="100" height="100" onError="Util.errorImg(this,\'${metadata.title}\',100)">
+                            <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" width="100" height="100">
                         </div>
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
