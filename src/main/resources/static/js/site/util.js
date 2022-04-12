@@ -380,15 +380,18 @@ class Util {
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
-    static errorImg(_this,text,defaulWidthtHeight) {
-        let dimensions = "/" + Util.thumbnailHeight();
-        if (defaulWidthtHeight != null) {
-            dimensions = "/"+defaulWidthtHeight;
-        }
-        if (_this.width != null && _this.width > 0 && _this.height != null && _this.height > 0) {
-            dimensions = "/"+_this.width+"x"+_this.height;
-        }
-        _this.src = "https://via.placeholder.com"+dimensions+"?text="+encodeURI(text);
+    static checkErrorImage() {
+        $("img").on('error', function() {
+            const width = $(this).attr('width');
+            const height = $(this).attr('width');
+            let dimensions = "/" + Util.thumbnailHeight();
+
+            if (typeof width !== 'undefined' && width !== false && typeof height !== 'undefined' && height !== false) {
+                dimensions = "/"+width+"x"+height;
+            }
+            const imagePlaceholder = "https://via.placeholder.com"+dimensions+"?text="+encodeURI($(this).attr('src'));
+            $(this).attr("src", imagePlaceholder);
+        });
     }
 
     static activateMetadataListeners(metadataId) {

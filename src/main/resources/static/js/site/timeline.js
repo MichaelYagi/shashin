@@ -257,6 +257,7 @@
                         timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                             if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                 timelineSettings.setScrollSpyActive(id);
+                                Util.checkErrorImage();
                             }
                         });
                     }
@@ -291,6 +292,7 @@
                                 return false;
                             }
                         });
+                        Util.checkErrorImage();
                     }
                 });
             }
@@ -301,7 +303,6 @@
                     timelineSettings.reinitLightGalleryInstance();
                 }
             });
-
 
             prevElements = elements;
         }
@@ -1165,7 +1166,6 @@
                                         if ($("#image" + metadata.id).length === 1) {
                                             $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall));
                                             $("#image" + metadata.id).css("background-color", "lightgray");
-                                            // $("#image" + metadata.id).attr("onError", "Util.errorImg(this,\'" + metadata.title + "\',Util.thumbnailHeight())");
                                         }
 
                                         if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {
