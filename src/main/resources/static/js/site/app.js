@@ -592,7 +592,7 @@
                     view: new ol.View({
                         center: ol.proj.fromLonLat([metadata.lng, metadata.lat]),
                         maxZoom: 19,
-                        zoom: 15
+                        zoom: 19
                     })
                 });
             }
