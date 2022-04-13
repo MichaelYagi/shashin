@@ -1412,6 +1412,46 @@
         shashin.updateFavorites("#favorite","#bricon","#briconcount",metadataId);
     }
 
+    timelineSettings.refreshTimeline = async function (mediaTypeFilter) {
+        const http = new Http("refreshing timeline TOC");
+        const data = await http.ajax("get", "/timeline/dates/"+mediaTypeFilter);
+
+        if (data.hasOwnProperty("metadataDates")) {
+            const metadataDates = data["metadataDates"];
+            timelineSettings.timelineDates = metadataDates;
+
+            // Rebuild slider
+            if (Util.isMobile() === false) {
+                $("#dateSlider").empty();
+                $("#dateSlider").show();
+                timelineSettings.initializeTimelineSlider(mediaTypeFilter);
+            }
+
+            // Clear offcanvas TOC and rebuild
+            $("#timelineTocToggle").show();
+            $("#offcanvasTocBody").empty();
+
+            let html = "";
+
+            for (let index = 0; index < metadataDates.length; index++) {
+                const metadataDate = metadataDates[index];
+                const year = metadataDate["year"];
+                const month = metadataDate["month"];
+                const day = metadataDate["day"];
+
+                html += TimelineToc({index:index,mediaTypeFilter:mediaTypeFilter,metadataDates:metadataDates,year:year,month:month,day:day});
+            }
+
+            $("#offcanvasTocBody").append(html);
+
+            if (Util.isMobile() === false) {
+                setTimeout(function() {
+                    $("#timelineTocToggle").hide();
+                },0);
+            }
+        }
+    }
+
 }( window.timelineSettings = window.timelineSettings || {}, jQuery ));
 
 // Hack to close TOC canvas
