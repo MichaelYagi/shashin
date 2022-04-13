@@ -166,7 +166,7 @@ $("#saveMetadata").on("click", async function (e) {
                 }
 
                 if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
-                    shashin.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
+                    timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function (data) {
                         // If a date section was removed refresh the timeline
                         if (dateGalleryRemoved === true) {
                             const elements = Util.elementsInViewport($(".scrollspy"));

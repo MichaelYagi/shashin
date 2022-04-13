@@ -253,12 +253,17 @@ class TimelineController: BaseController() {
         val response = mutableMapOf<String, Any?>()
 
         response["metadataDates"] = mutableListOf<MetadataDate>()
+        response["msg"] = "Could not get results"
+        response["status"] = "fail"
+
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
         } else {
             metadataRepository.findAllYearMonthDayByMediaType(mediaType)
         }
         if (metadataDates != null) {
+            response["msg"] = "Success"
+            response["status"] = "success"
             response["metadataDates"] = metadataDates
         }
 
