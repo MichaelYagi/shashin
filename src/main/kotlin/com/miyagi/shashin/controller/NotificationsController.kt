@@ -44,7 +44,7 @@ class NotificationsController {
                 var notificationList = mutableListOf<Notification>()
                 if (allNotificationList.count() > notificationLimit!!) {
                     for ((index, notification) in allNotificationList.withIndex()) {
-                        if (index > notificationLimit && notification != null) {
+                        if (index > (notificationLimit-1) && notification != null) {
                             notificationRepository.deleteById(notification.getId())
                         } else {
                             notificationList.add(notification!!)
