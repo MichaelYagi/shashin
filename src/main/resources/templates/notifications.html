@@ -17,7 +17,7 @@
 
                 <ul class="list-group list-group-hover" id="notificationList">
                 <th:block th:each="notification, iterStat: ${notificationList}">
-                    <li th:id="${notification.id}" class="list-group-item"><th:block th:remove="tag" th:utext="${notification.message}"></th:block> <th:block th:unless="${notification.read}"><span th:id="${'newNotification'+notification.id}" class="badge rounded-pill bg-danger">New</span></th:block></li>
+                    <li th:id="${notification.id}" class="list-group-item"><th:block th:unless="${notification.read}"><span th:id="${'newNotification'+notification.id}" style="color: darkred;" class="notification">&bull;&nbsp;</span></th:block><th:block th:if="${notification.read}">&nbsp;&nbsp;</th:block><th:block th:remove="tag" th:utext="${notification.message}"></th:block></li>
                 </th:block>
                 </ul>
             </th:block>
@@ -79,7 +79,8 @@
             for (let index in notificationIds) {
                 let notificationId = notificationIds[index];
                 if ($('#newNotification' + notificationId).length) {
-                    $('#newNotification' + notificationId).remove();
+                    $('#newNotification' + notificationId).removeClass("notification");
+                    $('#newNotification' + notificationId).html("&nbsp;&nbsp;");
                 }
             }
 
@@ -94,7 +95,7 @@
 
     function toggleNotificationBadge() {
         // Check all rows and remove badge if all read
-        if ($(".badge.rounded-pill.bg-danger").length === 0) {
+        if ($(".notification").length === 0) {
             if ($("#topNavAlertBadge").length > 0) {
                 $("#topNavAlertBadge").remove();
             }

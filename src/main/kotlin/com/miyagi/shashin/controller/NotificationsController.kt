@@ -35,18 +35,23 @@ class NotificationsController {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val notificationList = notificationRepository.findAllByUserIdOrderByCreatedAtDesc(currentUserObj.getId())
-            if (notificationList != null && notificationList.count() > 0) {
+            val allNotificationList = notificationRepository.findAllByUserIdOrderByCreatedAtDesc(currentUserObj.getId())
+            if (allNotificationList != null && allNotificationList.count() > 0) {
                 model["message"] = ""
                 val settings = model.getAttribute("settings") as Settings
                 val notificationLimit = settings.getNotificationLimit()
 
-                if (notificationList.count() > notificationLimit!!) {
-                    // Delete last entry
-                    val lastEntry = notificationList.last()
-                    if (lastEntry != null) {
-                        notificationRepository.deleteById(lastEntry.getId())
+                var notificationList = mutableListOf<Notification>()
+                if (allNotificationList.count() > notificationLimit!!) {
+                    for ((index, notification) in allNotificationList.withIndex()) {
+                        if (index > notificationLimit && notification != null) {
+                            notificationRepository.deleteById(notification.getId())
+                        } else {
+                            notificationList.add(notification!!)
+                        }
                     }
+                } else {
+                    notificationList = allNotificationList as MutableList<Notification>
                 }
                 model["notificationList"] = notificationList
             }
