@@ -109,6 +109,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     private fun checkLatestAppVersion(user: User) {
         // Check app version
+        val logger: Logger = Logger.getLogger(AuthSuccessHandler::class.simpleName)
         val client = HttpClient.newBuilder().build()
         val httpRequest = HttpRequest.newBuilder()
             .uri(URI.create("https://shashin.jfrog.io/artifactory/api/search/aql"))
@@ -120,27 +121,31 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
         val httpResponse = client.send(httpRequest, HttpResponse.BodyHandlers.ofString())
         val jsonResult = httpResponse.body()
         val mapper = ObjectMapper()
-        val jsonObj = mapper.readTree(jsonResult)
-        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
-        val resultList = resultMap["results"] as ArrayList<Map<String, Any>>
-
-        var lastMinVersion = DefaultArtifactVersion(appVersion)
-        var latestVersion = appVersion
-        for (result in resultList) {
-            val propName = result["name"].toString()
-            if (propName.startsWith("shashin-") && propName.endsWith(".tar")) {
-                var parsedVersion = propName.substringAfter("shashin-")
-                parsedVersion = parsedVersion.substringBefore(".tar")
-                val checkedVersion = DefaultArtifactVersion(parsedVersion)
-                if (checkedVersion > lastMinVersion) {
-                    lastMinVersion = checkedVersion
-                    latestVersion = parsedVersion
+        try {
+            val jsonObj = mapper.readTree(jsonResult)
+            val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+            val resultList = resultMap["results"] as ArrayList<Map<String, Any>>
+    
+            var lastMinVersion = DefaultArtifactVersion(appVersion)
+            var latestVersion = appVersion
+            for (result in resultList) {
+                val propName = result["name"].toString()
+                if (propName.startsWith("shashin-") && propName.endsWith(".tar")) {
+                    var parsedVersion = propName.substringAfter("shashin-")
+                    parsedVersion = parsedVersion.substringBefore(".tar")
+                    val checkedVersion = DefaultArtifactVersion(parsedVersion)
+                    if (checkedVersion > lastMinVersion) {
+                        lastMinVersion = checkedVersion
+                        latestVersion = parsedVersion
+                    }
                 }
             }
-        }
-        
-        if (latestVersion!!.isNotBlank() && appVersion!!.isNotBlank() && latestVersion != appVersion) {
-            notifyLatestVersion(user, latestVersion)
+            
+            if (latestVersion!!.isNotBlank() && appVersion!!.isNotBlank() && latestVersion != appVersion) {
+                notifyLatestVersion(user, latestVersion)
+            }
+        } catch (e: Exception) {
+            logger.log(Level.SEVERE, "Could not read latest version: " + e.message)
         }
     }
 

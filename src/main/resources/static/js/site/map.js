@@ -194,7 +194,7 @@ async function showMap(mapdata,keywordMap,showControls) {
             } else if (featureProperties.type.includes("video")) {
                 mediaContent.video = {
                     "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
-                    "attributes": {"preload": true, "controls": true}
+                    "attributes": {"preload": "auto", "controls": true}
                 }
                 mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl)+"/download";
             }
