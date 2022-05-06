@@ -30,7 +30,7 @@
                 <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                    th:data-download-url="${metadata.videoUrl+'/download'}"
                    th:data-sub-html="${metadata.description}"
-                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: true, &quot;controls&quot;: true}}'}">
+                   th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true}}'}">
                     <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
                 </a>
             </th:block>
@@ -39,7 +39,7 @@
             <a class="mediaLink" th:id="'mediaLink'+${metadata.id}"
                th:data-download-url="${metadata.videoUrl+'/download'}"
                th:data-sub-html="${metadata.description}"
-               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: true, &quot;controls&quot;: true}}'}">
+               th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadata.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true}}'}">
                 <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
             </a>
         </th:block>
