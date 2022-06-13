@@ -272,9 +272,10 @@ $("#exifTabLink").on("click", async function (e) {
     const modal = bootstrap.Modal.getInstance(propTimelineModal);
     modal.handleUpdate();
     $("#exifInfo").val("");
-    const metadataId = $("#metadataId").val();
+    $("#saveMetadata").prop('disabled', true);
 
     // Get exif yaml data and display
+    const metadataId = $("#metadataId").val();
     const http = new Http("get exif");
     const data = await http.ajax("get", "/api/v1/exif/metadata/" + metadataId);
 
