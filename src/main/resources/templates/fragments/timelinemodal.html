@@ -19,6 +19,9 @@
                         <a class="nav-link" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" id="exifTabLink" href="#exifTab">EXIF data</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" id="mapTabLink" href="#mapTab">Map</a>
                     </li>
                 </ul>
@@ -127,6 +130,9 @@
                     </div>
                     <div class="tab-pane container fade" id="detailsTab">
                         <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
+                    </div>
+                    <div class="tab-pane container fade" id="exifTab">
+                        <textarea class="form-control" id="exifInfo" rows="20" readonly></textarea>
                     </div>
                     <div class="tab-pane container fade" id="mapTab">
                         <br>

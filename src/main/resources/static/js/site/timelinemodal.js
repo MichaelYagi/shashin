@@ -265,6 +265,26 @@ $("#mapTabLink").on("click", function (e) {
     });
 });
 
+$("#exifTabLink").on("click", async function (e) {
+    e.preventDefault();
+
+    const propTimelineModal = document.getElementById('propTimelineModal');
+    const modal = bootstrap.Modal.getInstance(propTimelineModal);
+    modal.handleUpdate();
+    $("#exifInfo").val("");
+    const metadataId = $("#metadataId").val();
+
+    // Get exif yaml data and display
+    const http = new Http("get exif");
+    const data = await http.ajax("get", "/api/v1/exif/metadata/" + metadataId);
+
+    let exif = "";
+    if (data.hasOwnProperty("exif")) {
+        exif = JSON.stringify(data["exif"], null, 2);
+    }
+    $("#exifInfo").val(exif);
+});
+
 $("#generalTabLink").on("click", function (e) {
     e.preventDefault();
 
