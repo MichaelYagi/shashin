@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.TextUtils
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
+import org.springframework.core.io.FileSystemResource
 import org.springframework.http.CacheControl
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
@@ -20,13 +22,17 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.io.File
+import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.transaction.Transactional
-import kotlin.collections.HashMap
+
 
 @Controller
 @Secured("ROLE_ADMIN")
@@ -70,6 +76,9 @@ class TimelineController: BaseController() {
 
     @Value("\${app.endpoint.url.geocode}")
     private var geocodeUrl: String? = null
+
+    @Value("\${app.sidecar.path}")
+    private var relativeSidecarDir: String? = null
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
@@ -1002,6 +1011,52 @@ class TimelineController: BaseController() {
         response["status"] = "success"
 
         return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/api/v1/exif/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getExifData(model: Model, @PathVariable(required = true) id: String): String {
+        val response = mutableMapOf<String, Any?>()
+
+        val metadataRecord = metadataRepository.findById(id)
+        if (metadataRecord.isPresent) {
+            val metadata = metadataRecord.get()
+
+            var json = "{}"
+            val mapper = ObjectMapper()
+
+            // metadata/<folder>/<fileName>.exif.yaml
+            val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+            val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
+            val exifFilePath = sidecarDir.dropLast(1) + "/metadata" + metadata.getFolder() + "/" + metadata.getFileName() + ".exif.yaml"
+            val exifFile = File(exifFilePath)
+
+            response["msg"] = "Could not get EXIF file"
+            response["status"] = "fail"
+
+            if (exifFile.exists()) {
+                val content = Files.readString(exifFile.toPath())
+                json = convertYamlToJson(content)
+
+                if (json.isNotEmpty()) {
+                    response["exif"] = mapper.readTree(json)
+                    response["msg"] = ""
+                    response["status"] = "success"
+                }
+            }
+        } else {
+            response["msg"] = "Could not get record"
+            response["status"] = "fail"
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
+    private fun convertYamlToJson(yaml: String?): String {
+        val yamlReader = ObjectMapper(YAMLFactory())
+        val obj = yamlReader.readValue(yaml, Any::class.java)
+        val jsonWriter = ObjectMapper()
+        return jsonWriter.writeValueAsString(obj)
     }
 
     private fun processAlbum(albumNameRaw: String, currentUserObj: User?, metadataObj: Metadata?): Int {
