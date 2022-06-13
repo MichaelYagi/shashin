@@ -17,12 +17,18 @@
                         <a class="nav-link active" data-bs-toggle="tab" id="detailsTabLinkInfo" href="#detailsTab">Details</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" id="exifTabLinkInfo" href="#exifTab">EXIF data</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" id="mapTabLinkInfo" href="#mapTab">Map</a>
                     </li>
                 </ul>
                 <div class="tab-content">
                     <div class="tab-pane container show active" id="detailsTab">
                         <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
+                    </div>
+                    <div class="tab-pane container fade" id="exifTab">
+                        <textarea class="form-control" id="exifInfo" rows="20" readonly></textarea>
                     </div>
                     <div class="tab-pane container fade" id="mapTab">
                         <br>
@@ -58,6 +64,23 @@
             });
         }
     })
+
+    $("#exifTabLinkInfo").on("click", async function (e) {
+        e.preventDefault();
+
+        $("#exifInfo").val("");
+
+        // Get exif yaml data and display
+        const metadataId = $("#metadataId").val();
+        const http = new Http("get exif");
+        const data = await http.ajax("get", "/api/v1/exif/metadata/" + metadataId);
+
+        let exif = "";
+        if (data.hasOwnProperty("exif")) {
+            exif = JSON.stringify(data["exif"], null, 2);
+        }
+        $("#exifInfo").val(exif);
+    });
 </script>
 
 </body>
