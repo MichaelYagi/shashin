@@ -96,4 +96,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Prevent multiple downloads
+- Prevent multiple downloads while downloading
