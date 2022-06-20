@@ -1069,8 +1069,6 @@ class TimelineController: BaseController() {
     )
     @ResponseBody
     fun downloadBatchMetadata(model: Model, @RequestParam paramMap: Map<String, String>): ResponseEntity<InputStreamResource>? {
-        resp["msg"] = "Success"
-        resp["status"] = "success"
 
         if (paramMap.containsKey("batchMetadataIds")) {
             val idArray: Array<String>? = mapper.readValue(paramMap["batchMetadataIds"], object : TypeReference<Array<String>>() {})
@@ -1109,13 +1107,7 @@ class TimelineController: BaseController() {
                             .body(resource)
                     }
                 }
-            } else {
-                resp["msg"] = "Could not download"
-                resp["status"] = "fail"
             }
-        } else {
-            resp["msg"] = "Could not download"
-            resp["status"] = "fail"
         }
 
         return null
