@@ -745,9 +745,16 @@
                 span.addClass('spinner-grow').removeClass('bi-download');
             }
 
+            let metadataIdList = shashin.getMetdataIdList();
+            if (shashin.getMetdataIdList().length === 0) {
+                $('.bi-circle-fill').each(function (i, obj) {
+                    metadataIdList.push(obj.id.substring(6, obj.id.length));
+                });
+            }
+
             $.fileDownload("/timeline/download/batch", {
                 httpMethod: "POST",
-                data: "batchMetadataIds=" + JSON.stringify(shashin.getMetdataIdList()),
+                data: "batchMetadataIds=" + JSON.stringify(metadataIdList),
                 successCallback: function (url) {
                     shashin.printMessageToConsole("Media ZIP download success");
                     shashin.printMessageToConsole(url);
