@@ -752,27 +752,59 @@
                 });
             }
 
-            $.fileDownload("/timeline/download/batch", {
-                httpMethod: "POST",
-                data: "batchMetadataIds=" + JSON.stringify(metadataIdList),
-                successCallback: function (url) {
-                    shashin.printMessageToConsole("Media ZIP download success");
-                    shashin.printMessageToConsole(url);
+            const endpoint = "/timeline/download/batch";
 
-                    if (span !== null) {
-                        span.addClass('bi-download').removeClass('spinner-grow');
-                    }
-                },
-                failCallback: function (html, url) {
-                    shashin.printMessageToConsole("Media ZIP download fail");
-                    shashin.printMessageToConsole(url);
-                    shashin.printMessageToConsole(html);
+            if (Util.isMobile() === false) {
+                $.fileDownload(endpoint, {
+                    httpMethod: "POST",
+                    data: "batchMetadataIds=" + JSON.stringify(metadataIdList),
+                    successCallback: function (url) {
+                        shashin.printMessageToConsole("Media ZIP download success");
+                        shashin.printMessageToConsole(url);
 
-                    if (span !== null) {
-                        span.addClass('bi-download').removeClass('spinner-grow');
+                        if (span !== null) {
+                            span.addClass('bi-download').removeClass('spinner-grow');
+                        }
+                    },
+                    failCallback: function (html, url) {
+                        shashin.printMessageToConsole("Media ZIP download fail");
+                        shashin.printMessageToConsole(url);
+                        shashin.printMessageToConsole(html);
+
+                        if (span !== null) {
+                            span.addClass('bi-download').removeClass('spinner-grow');
+                        }
                     }
-                }
-            });
+                });
+            } else {
+                fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: "batchMetadataIds=" + JSON.stringify(metadataIdList)
+                })
+                    .then(response => response.blob())
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        const d = new Date();
+                        a.download = "shashin_download_"+d.getFullYear()+("0" + (d.getMonth() + 1)).slice(-2)+("0" + d.getDate()).slice(-2)+"_"+("0" + d.getHours()).slice(-2)+d.getMinutes()+("0" + d.getSeconds()).slice(-2)+".zip";
+                        document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
+                        a.click();
+                        a.remove();  //afterwards we remove the element again
+                        shashin.printMessageToConsole("Media ZIP download success using fetch()");
+                        if (span !== null) {
+                            span.addClass('bi-download').removeClass('spinner-grow');
+                        }
+                    }).catch(() => {
+                        shashin.printMessageToConsole("Media ZIP download fail using fetch()");
+                        if (span !== null) {
+                            span.addClass('bi-download').removeClass('spinner-grow');
+                        }
+                    });
+            }
         }
     }
 
