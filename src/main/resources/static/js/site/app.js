@@ -733,6 +733,22 @@
         return [];
     }
 
+    shashin.downloadSelected = async function () {
+        $.fileDownload('/api/v1/download/metadata/batch', {
+            httpMethod: "POST",
+            data: "batchMetadataIds="+JSON.stringify(shashin.getMetdataIdList()),
+            successCallback: function (url) {
+                shashin.printMessageToConsole("Media ZIP download success");
+                shashin.printMessageToConsole(url);
+            },
+            failCallback: function (html, url) {
+                shashin.printMessageToConsole("Media ZIP download fail")
+                shashin.printMessageToConsole(url)
+                shashin.printMessageToConsole(html)
+            }
+        });
+    }
+
     shashin.removeAllMetadataIdList = function () {
         if ($("#multiSelectMetadataIds").length > 0) {
             $("#multiSelectMetadataIds").val(JSON.stringify([]));

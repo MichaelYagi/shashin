@@ -26,6 +26,27 @@ $("#appToolsBatchEdit").on("click", function(e) {
     $("#propBatchMetadata").modal('show');
 });
 
+$("#appToolsBatchDownload").on("click", function(e) {
+    e.preventDefault();
+
+    // Download items
+    shashin.downloadSelected();
+});
+
+$("#matchToolsBatchDownload").on("click", function(e) {
+    e.preventDefault();
+
+    // Download items
+    shashin.downloadSelected();
+});
+
+$("#albumAppToolsBatchDownload").on("click", function(e) {
+    e.preventDefault();
+
+    // Download items
+    shashin.downloadSelected();
+});
+
 $("#appToolsDeselectAll").on("click", function(e) {
     e.preventDefault();
 
