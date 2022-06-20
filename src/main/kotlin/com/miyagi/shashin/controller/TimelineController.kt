@@ -1063,7 +1063,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/timeline/download/batch","/api/v1/download/metadata/batch"],
+    @RequestMapping(value = ["/timeline/download/batch"],
         method = [RequestMethod.POST],
         consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE]
     )

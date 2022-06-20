@@ -75,3 +75,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Firefox scroll jumping
+
+## [2.2.0] - 2022-03-18
+### Added
+
+- Added ability to download selected files in various views
+
+### Changed
+
+### Fixed
