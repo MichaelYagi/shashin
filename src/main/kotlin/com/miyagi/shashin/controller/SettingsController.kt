@@ -830,8 +830,8 @@ class SettingsController {
 
             if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
                 val tempDir = tempExportBaseDir.toFile()
-                val outputZipFile = zipFolder(tempDir,appName?.lowercase()+"_backup")
-                deleteDirectory(tempDir)
+                val outputZipFile = FileUtils.zipFolder(tempDir,appName?.lowercase()+"_backup")
+                FileUtils.deleteDirectory(tempDir)
 
                 if (outputZipFile != null) {
                     outputZipFile.deleteOnExit()
@@ -854,16 +854,6 @@ class SettingsController {
         }
 
         return null
-    }
-
-    private fun deleteDirectory(directoryToBeDeleted: File): Boolean {
-        val allContents = directoryToBeDeleted.listFiles()
-        if (allContents != null) {
-            for (file in allContents) {
-                deleteDirectory(file)
-            }
-        }
-        return directoryToBeDeleted.delete()
     }
 
     @Secured("ROLE_ADMIN")
@@ -1102,64 +1092,6 @@ class SettingsController {
         }
 
         return false
-    }
-
-    /**
-     * Zips a Folder to "[Folder].zip"
-     * @param toZipFolder Folder to be zipped
-     * @return the resulting ZipFile
-     */
-    fun zipFolder(toZipFolder: File, fileName: String): File? {
-        val dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
-        val now = LocalDateTime.now()
-        val zipFile = File(toZipFolder.parent, format("%s.zip", fileName+dtf.format(now)))
-        return try {
-            val out = ZipOutputStream(FileOutputStream(zipFile))
-            zipSubFolder(out, toZipFolder, toZipFolder.path.length)
-            out.close()
-            zipFile
-        } catch (ex: java.lang.Exception) {
-            ex.printStackTrace()
-            null
-        }
-    }
-
-    /**
-     * Main zip Function
-     * @param out Target ZipStream
-     * @param folder Folder to be zipped
-     * @param basePathLength Length of original Folder Path (for recursion)
-     */
-    @Throws(IOException::class)
-    private fun zipSubFolder(out: ZipOutputStream, folder: File, basePathLength: Int) {
-        val buffer = 2048
-        val fileList = folder.listFiles()
-        var origin: BufferedInputStream?
-
-        if (fileList != null) {
-            for (file in fileList) {
-                if (file.isDirectory) {
-                    zipSubFolder(out, file, basePathLength)
-                } else {
-                    if (!file.path.endsWith(".exif.yaml")) {
-                        val data = ByteArray(buffer)
-                        val unmodifiedFilePath = file.path
-                        val relativePath = unmodifiedFilePath.substring(basePathLength + 1)
-                        val fi = FileInputStream(unmodifiedFilePath)
-                        origin = BufferedInputStream(fi, buffer)
-                        val entry = ZipEntry(relativePath)
-                        entry.time = file.lastModified() // to keep modification time after unzipping
-                        out.putNextEntry(entry)
-                        var count: Int
-                        while (origin.read(data, 0, buffer).also { count = it } != -1) {
-                            out.write(data, 0, count)
-                        }
-                        origin.close()
-                        out.closeEntry()
-                    }
-                }
-            }
-        }
     }
 
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)

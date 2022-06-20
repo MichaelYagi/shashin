@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import net.iakovlev.timeshape.TimeZoneEngine
@@ -15,7 +17,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
+import org.springframework.core.io.InputStreamResource
 import org.springframework.http.CacheControl
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -23,15 +28,21 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.io.File
+import java.io.FileInputStream
 import java.nio.charset.Charset
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.logging.Level
 import javax.transaction.Transactional
+import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
+import kotlin.io.path.pathString
 
 
 @Controller
@@ -1050,6 +1061,63 @@ class TimelineController: BaseController() {
         }
 
         return mapper.writeValueAsString(response)
+    }
+
+    @RequestMapping(value = ["/timeline/download/batch","/api/v1/download/metadata/batch"],
+        method = [RequestMethod.POST],
+        consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE]
+    )
+    @ResponseBody
+    fun downloadBatchMetadata(model: Model, @RequestParam paramMap: Map<String, String>): ResponseEntity<InputStreamResource>? {
+        resp["msg"] = "Success"
+        resp["status"] = "success"
+
+        if (paramMap.containsKey("batchMetadataIds")) {
+            val idArray: Array<String>? = mapper.readValue(paramMap["batchMetadataIds"], object : TypeReference<Array<String>>() {})
+            if (idArray != null && idArray.isNotEmpty()) {
+                val metadatas = metadataRepository.findAllByMetadataIds(idArray).toMutableList()
+                val tempDownloadDir = Files.createTempDirectory("shashin_download")
+
+                for (metadata in metadatas) {
+                    val tempFile = File(tempDownloadDir.pathString + "/" + metadata.getId() + "." + metadata.getExpectedExtension())
+                    if (tempFile.createNewFile()) {
+                        Files.copy(Path(metadata.getPath()!!), tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                    }
+                }
+
+                if (tempDownloadDir.isDirectory() && tempDownloadDir.toList().isNotEmpty()) {
+                    val tempDir = tempDownloadDir.toFile()
+                    val outputZipFile = FileUtils.zipFolder(tempDir, "shashin_download")
+
+                    if (outputZipFile != null) {
+                        FileUtils.deleteDirectory(tempDir)
+
+                        val headers = HttpHeaders()
+                        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
+                        headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                        headers.add("Pragma", "no-cache")
+                        headers.add("Expires", "0")
+
+                        val resource = InputStreamResource(FileInputStream(outputZipFile))
+                        val contentLength = outputZipFile.length()
+
+                        return ResponseEntity.ok()
+                            .headers(headers)
+                            .contentLength(contentLength)
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                            .body(resource)
+                    }
+                }
+            } else {
+                resp["msg"] = "Could not download"
+                resp["status"] = "fail"
+            }
+        } else {
+            resp["msg"] = "Could not download"
+            resp["status"] = "fail"
+        }
+
+        return null
     }
 
     private fun convertYamlToJson(yaml: String?): String {
