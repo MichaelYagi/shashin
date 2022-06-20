@@ -734,7 +734,7 @@
     }
 
     shashin.downloadSelected = async function () {
-        $.fileDownload('/api/v1/download/metadata/batch', {
+        $.fileDownload("/timeline/download/batch", {
             httpMethod: "POST",
             data: "batchMetadataIds="+JSON.stringify(shashin.getMetdataIdList()),
             successCallback: function (url) {
