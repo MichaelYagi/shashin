@@ -734,32 +734,39 @@
     }
 
     shashin.downloadSelected = async function (buttonId) {
-        console.log("test1")
+
+        let span = null;
         if (typeof buttonId !== 'undefined') {
-            $("#" + buttonId).find("span").addClass('spinner-grow').removeClass('bi-download');
+            span = $("#" + buttonId).find("span");
         }
-        console.log("test2")
-        $.fileDownload("/timeline/download/batch", {
-            httpMethod: "POST",
-            data: "batchMetadataIds="+JSON.stringify(shashin.getMetdataIdList()),
-            successCallback: function (url) {
-                shashin.printMessageToConsole("Media ZIP download success");
-                shashin.printMessageToConsole(url);
 
-                if (typeof buttonId !== 'undefined') {
-                    $("#" + buttonId).find("span").addClass('bi-download').removeClass('spinner-grow');
-                }
-            },
-            failCallback: function (html, url) {
-                shashin.printMessageToConsole("Media ZIP download fail");
-                shashin.printMessageToConsole(url);
-                shashin.printMessageToConsole(html);
-
-                if (typeof buttonId !== 'undefined') {
-                    $("#" + buttonId).find("span").addClass('bi-download').removeClass('spinner-grow');
-                }
+        if (typeof buttonId === 'undefined' || (span !== null && span.hasClass('bi-download'))) {
+            if ((span !== null && span.hasClass('bi-download'))) {
+                span.addClass('spinner-grow').removeClass('bi-download');
             }
-        });
+
+            $.fileDownload("/timeline/download/batch", {
+                httpMethod: "POST",
+                data: "batchMetadataIds=" + JSON.stringify(shashin.getMetdataIdList()),
+                successCallback: function (url) {
+                    shashin.printMessageToConsole("Media ZIP download success");
+                    shashin.printMessageToConsole(url);
+
+                    if (span !== null) {
+                        span.addClass('bi-download').removeClass('spinner-grow');
+                    }
+                },
+                failCallback: function (html, url) {
+                    shashin.printMessageToConsole("Media ZIP download fail");
+                    shashin.printMessageToConsole(url);
+                    shashin.printMessageToConsole(html);
+
+                    if (span !== null) {
+                        span.addClass('bi-download').removeClass('spinner-grow');
+                    }
+                }
+            });
+        }
     }
 
     shashin.removeAllMetadataIdList = function () {
