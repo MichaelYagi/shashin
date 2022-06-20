@@ -1097,6 +1097,7 @@ class TimelineController: BaseController() {
                         headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
                         headers.add("Pragma", "no-cache")
                         headers.add("Expires", "0")
+                        headers.add("Set-Cookie", "fileDownload=true; path=/")
 
                         val resource = InputStreamResource(FileInputStream(outputZipFile))
                         val contentLength = outputZipFile.length()

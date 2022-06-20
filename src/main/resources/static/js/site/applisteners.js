@@ -30,21 +30,21 @@ $("#appToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
 
     // Download items
-    shashin.downloadSelected();
+    shashin.downloadSelected("appToolsBatchDownload");
 });
 
 $("#matchToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
 
     // Download items
-    shashin.downloadSelected();
+    shashin.downloadSelected("matchToolsBatchDownload");
 });
 
 $("#albumAppToolsBatchDownload").on("click", function(e) {
     e.preventDefault();
 
     // Download items
-    shashin.downloadSelected();
+    shashin.downloadSelected("albumAppToolsBatchDownload");
 });
 
 $("#appToolsDeselectAll").on("click", function(e) {

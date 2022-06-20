@@ -733,18 +733,31 @@
         return [];
     }
 
-    shashin.downloadSelected = async function () {
+    shashin.downloadSelected = async function (buttonId) {
+        console.log("test1")
+        if (typeof buttonId !== 'undefined') {
+            $("#" + buttonId).find("span").addClass('spinner-grow').removeClass('bi-download');
+        }
+        console.log("test2")
         $.fileDownload("/timeline/download/batch", {
             httpMethod: "POST",
             data: "batchMetadataIds="+JSON.stringify(shashin.getMetdataIdList()),
             successCallback: function (url) {
                 shashin.printMessageToConsole("Media ZIP download success");
                 shashin.printMessageToConsole(url);
+
+                if (typeof buttonId !== 'undefined') {
+                    $("#" + buttonId).find("span").addClass('bi-download').removeClass('spinner-grow');
+                }
             },
             failCallback: function (html, url) {
-                shashin.printMessageToConsole("Media ZIP download fail")
-                shashin.printMessageToConsole(url)
-                shashin.printMessageToConsole(html)
+                shashin.printMessageToConsole("Media ZIP download fail");
+                shashin.printMessageToConsole(url);
+                shashin.printMessageToConsole(html);
+
+                if (typeof buttonId !== 'undefined') {
+                    $("#" + buttonId).find("span").addClass('bi-download').removeClass('spinner-grow');
+                }
             }
         });
     }
