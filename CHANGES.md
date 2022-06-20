@@ -95,3 +95,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Minor file naming change for downloaded files
 
 ### Fixed
+
+- Prevent multiple downloads
