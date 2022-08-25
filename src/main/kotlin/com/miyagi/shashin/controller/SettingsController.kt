@@ -42,24 +42,21 @@ import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.*
-import java.lang.String.format
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
-import java.util.zip.ZipOutputStream
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
-import kotlin.io.path.deleteExisting
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 
@@ -836,6 +833,7 @@ class SettingsController {
                 if (outputZipFile != null) {
                     outputZipFile.deleteOnExit()
                     val headers = HttpHeaders()
+                    headers.add(HttpHeaders.SET_COOKIE, "ShashinSnapshotName=" + outputZipFile.name)
                     headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
                     headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
                     headers.add("Pragma", "no-cache")
