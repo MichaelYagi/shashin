@@ -88,7 +88,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.2.1] - 2022-06-20
 ### Added
 
-- Spinner on download icon while making AJAX call for downloads
+- Spinner on download icon while making AJAX call for timeline media downloads
+- UX improvements for backup exports
 
 ### Changed
 
