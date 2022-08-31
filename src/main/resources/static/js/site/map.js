@@ -294,10 +294,14 @@ async function showMap(mapdata,keywordMap,showControls) {
             })
         ],
         view: mapView,
-        controls: new ol.control.defaults({attributionOptions: {collapsible: true}})
+        controls: []
     });
+
     const zoomSlider = new ol.control.ZoomSlider();
+    const attributions = new ol.control.Attribution({collapsible: true});
+
     map.addControl(zoomSlider);
+    map.addControl(attributions);
 
     // After closing lightgallery, clear select interaction
     $dynamicGallery.addEventListener('lgAfterClose', function (event) {
