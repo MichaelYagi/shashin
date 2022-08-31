@@ -113,6 +113,9 @@ class AttributeController {
             if (currentUser != null && currentUser.getAuthority() == adminRole && (currentUser.getIsAllowed() == false || currentUser.getIsAllowed() == null)) {
                 currentUser.setIsAllowed(true)
             }
+            if (currentUser != null && currentUser.getDarkMode() == null) {
+                currentUser.setDarkMode(false)
+            }
             if (currentUser == null || currentUser.getIsAllowed() == false) {
                 SecurityContextHolder.clearContext()
                 session?.invalidate()

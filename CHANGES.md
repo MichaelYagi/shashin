@@ -94,6 +94,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Minor file naming change for downloaded files
+- Updated OpenLayers to 7.0.0
 
 ### Fixed
 
