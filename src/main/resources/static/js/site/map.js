@@ -297,9 +297,11 @@ async function showMap(mapdata,keywordMap,showControls) {
         controls: []
     });
 
+    const zoom = new ol.control.Zoom();
     const zoomSlider = new ol.control.ZoomSlider();
     const attributions = new ol.control.Attribution({collapsible: true});
 
+    map.addControl(zoom);
     map.addControl(zoomSlider);
     map.addControl(attributions);
 
