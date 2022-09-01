@@ -48,16 +48,16 @@ describe('#shashin app tests', function() {
     })
 
 
-    // it('Map sources', function() {
-    //     let source = shashin.getMapSource()
-    //     expect(source.urls.join('|')).to.include('openstreetmap')
-    //
-    //     source = shashin.getMapSource("invalidSourceAndDefaultingToOSM")
-    //     expect(source.urls.join('|')).to.include('openstreetmap')
-    //
-    //     source = shashin.getMapSource("maptiler")
-    //     expect(source.urls.join('|')).to.include('maptiler')
-    // })
+    it('Map sources', function() {
+        let source = shashin.getMapSource()
+        expect(source.urls.join('|')).to.include('openstreetmap')
+
+        source = shashin.getMapSource("invalidSourceAndDefaultingToOSM")
+        expect(source.urls.join('|')).to.include('openstreetmap')
+
+        source = shashin.getMapSource("maptiler")
+        expect(source.urls.join('|')).to.include('maptiler')
+    })
 
     it('gallery element', function () {
         $("body").append($("<div/>", {

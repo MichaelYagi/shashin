@@ -24,7 +24,6 @@ import java.io.File
 import java.net.URL
 import java.util.logging.Level
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class AlbumSeleniumTest: BaseSeleniumTests() {
@@ -106,7 +105,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Photos scanned.")
@@ -144,7 +143,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         startTime = System.currentTimeMillis()
         var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("timelineModalStatus")),"bi-check-circle")
-        while (!elementHasClass || (System.currentTimeMillis()-startTime)<1000) {
+        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("timelineModalStatus")),"bi-check-circle")
         }
 
@@ -194,7 +193,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         editAlbumEl.click()
         var startTime = System.currentTimeMillis()
         var scanBeforeAfter: WebElement? = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -205,7 +204,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus$albumId")),"bi-check-circle")
         val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum$albumId"))
         albumEditNameButton.click()
-        while (!elementHasClass || (System.currentTimeMillis()-startTime)<1000) {
+        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus$albumId")),"bi-check-circle")
         }
         this.driver?.get("http://localhost:$port/albums")
@@ -218,7 +217,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         shareAlbumEl.click()
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -226,7 +225,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         startTime = System.currentTimeMillis()
         elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus$albumId")),"bi-check-circle")
         generateShareAlbumEl.click()
-        while (!elementHasClass || (System.currentTimeMillis()-startTime)<1000) {
+        while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus$albumId")),"bi-check-circle")
         }
 
@@ -250,7 +249,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         deleteAlbumButton.click()
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
-        while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody == scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -299,7 +298,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -327,7 +326,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         editCommentEl.click()
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         val editCommentTextArea = this.driver!!.findElement(By.id("commenttext$commentId"))
@@ -340,7 +339,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         scanBeforeAfter = null
         startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -352,7 +351,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         deleteCommentEl.click()
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
