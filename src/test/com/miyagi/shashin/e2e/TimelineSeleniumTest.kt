@@ -114,14 +114,14 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         val startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         this.logger.log(Level.INFO, "TimelineSeleniumTest - Photos scanned.")
 
         // Check if UUID present
         this.driver!!.get("http://localhost:$port/timeline")
-//         println(this.driver?.pageSource)
+        //println(this.driver?.pageSource)
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfAllElements(scrollContainer.findElement(By.xpath("./span[1]"))))
         val spanContainerEl = scrollContainer.findElement(By.xpath("./span[1]"))

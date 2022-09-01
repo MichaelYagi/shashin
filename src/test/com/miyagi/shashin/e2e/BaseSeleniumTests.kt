@@ -118,8 +118,8 @@ abstract class BaseSeleniumTests {
         val classLoader = javaClass.classLoader
 
         val chromeDriver = when {
-            os.contains("windows", ignoreCase = true) -> "cdwindows/chromedriver_windows.exe"
-            os.contains("mac", ignoreCase = true) -> "cdmac64/chromedriver_mac64"
+            os.contains("windows", ignoreCase = true) -> "cdwindows/chromedriver.exe"
+            os.contains("mac", ignoreCase = true) -> "cdmac64/chromedriver"
             os.contains("linux", ignoreCase = true) -> "cdlinux/chromedriver"
             else -> "chromedriver_linux"
         }
