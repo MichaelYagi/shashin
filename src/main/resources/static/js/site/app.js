@@ -537,11 +537,7 @@
 
             if (shashin.map === null) {
                 shashin.map = new ol.Map({
-                    controls: new ol.control.defaults({
-                        attributionOptions: {
-                            collapsible: true
-                        }
-                    }),
+                    controls: [],
                     layers: [
                         new ol.layer.Tile({
                             visible: true,
@@ -555,6 +551,9 @@
                         zoom: 19
                     })
                 });
+
+                const attributions = new ol.control.Attribution({collapsible: true});
+                shashin.map.addControl(attributions);
             }
 
             if (shashin.layer !== null && shashin.feature !== null) {
