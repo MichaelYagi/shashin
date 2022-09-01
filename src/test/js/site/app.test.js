@@ -1,5 +1,4 @@
-const {assert} = require("chai")
-const { expect } = require('chai')
+const {assert,expect} = require("chai")
 require('../helper.js')
 
 const shashin = require('../../../main/resources/static/js/site/app')
@@ -9,7 +8,7 @@ global.lgVideo = require('../../../main/resources/static/js/lg-video.min')
 global.lgRelativeCaption = require('../../../main/resources/static/js/lg-relative-caption.min')
 global.lgFullscreen = require('../../../main/resources/static/js/lg-fullscreen.min')
 global.lgRotate = require('../../../main/resources/static/js/lg-rotate.min')
-//global.ol = require('../../../main/resources/static/js/ol.min')
+global.ol = require('../../../main/resources/static/js/ol.min')
 
 describe('#shashin app tests', function() {
     it('enable debug console output', function() {

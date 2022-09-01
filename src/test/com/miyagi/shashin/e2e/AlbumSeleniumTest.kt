@@ -106,7 +106,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<2000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         this.logger.log(Level.INFO, "AlbumSeleniumTest - Photos scanned.")
@@ -194,7 +194,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         editAlbumEl.click()
         var startTime = System.currentTimeMillis()
         var scanBeforeAfter: WebElement? = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -218,7 +218,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         shareAlbumEl.click()
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -299,7 +299,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         var scanBeforeAfter: WebElement? = null
         var startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -327,7 +327,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         editCommentEl.click()
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         val editCommentTextArea = this.driver!!.findElement(By.id("commenttext$commentId"))
@@ -340,7 +340,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         scanBeforeAfter = null
         startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
@@ -352,7 +352,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         deleteCommentEl.click()
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<1000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
