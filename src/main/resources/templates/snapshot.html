@@ -55,6 +55,7 @@
         });
 
         const tokenName = "ShashinSnapshotName";
+        const tokenSize = "ShashinSnapshotSize";
         let attempts = 120;
         let downloadTimer;
 
@@ -64,14 +65,17 @@
             setTimeout(function () { $("#export").prop("disabled", true); }, 0);
 
             setCookie(tokenName, "", "/settings/snapshot");
+            setCookie(tokenSize, "", "/settings/snapshot");
 
             downloadTimer = window.setInterval( function() {
-                const token = getCookie(tokenName);
+                const tokenCookieValue = getCookie(tokenName);
+                const tokenCookieSize = getCookie(tokenSize);
 
-                if (token !== "" || attempts === 0) {
-                    $("#msg").text("Export file " + token + " completing.");
+                if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
+                    $("#msg").text("File name: " + tokenCookieValue + ". File size: " + (tokenCookieSize/1000) + " kb.");
                     $("#export").prop("disabled", false);
                     deleteCookie(tokenName, "/settings/snapshot");
+                    deleteCookie(tokenSize, "/settings/snapshot");
                     window.clearInterval(downloadTimer);
                 }
 
