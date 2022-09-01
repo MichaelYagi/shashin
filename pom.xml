@@ -65,7 +65,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
-            <version>2.5.5</version>
+            <version>2.7.3</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -98,7 +98,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-            <version>2.5.3</version>
+            <version>2.7.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -137,7 +137,7 @@
         <dependency>
             <groupId>ws.schild</groupId>
             <artifactId>jave-all-deps</artifactId>
-            <version>3.2.0</version>
+            <version>3.3.1</version>
         </dependency>
         <!-- Thumbnail processing -->
         <dependency>
@@ -153,7 +153,7 @@
         <dependency>
             <groupId>com.twelvemonkeys.imageio</groupId>
             <artifactId>imageio-jpeg</artifactId>
-            <version>3.7.0</version>
+            <version>3.8.3</version>
         </dependency>
         <!-- EXIF Extractor -->
         <dependency>
