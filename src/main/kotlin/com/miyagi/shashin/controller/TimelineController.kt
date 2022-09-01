@@ -1029,7 +1029,7 @@ class TimelineController: BaseController() {
         if (metadataRecord.isPresent) {
             val metadata = metadataRecord.get()
 
-            var json = "{}"
+            val json: String
             val mapper = ObjectMapper()
 
             // metadata/<folder>/<fileName>.exif.yaml
