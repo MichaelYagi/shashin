@@ -1,8 +1,6 @@
 package com.miyagi.shashin.e2e
 
-import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.*
-import com.miyagi.shashin.util.TextUtils
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.openqa.selenium.WebDriver
@@ -17,10 +15,10 @@ import java.net.URL
 import java.util.logging.Logger
 import javax.transaction.Transactional
 
-
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
     protected var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
+    protected var elementScanTimeoutMillis = 2000
     private val os = System.getProperty("os.name")
 
     @Autowired

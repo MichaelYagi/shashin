@@ -22,9 +22,7 @@ import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.net.URL
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.logging.Level
-
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -114,7 +112,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         // Indicates scanning something
         var scanBeforeAfter: WebElement? = null
         val startTime = System.currentTimeMillis()
-        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<10000) {
+        while (scanBeforeBody != scanBeforeAfter || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
         this.logger.log(Level.INFO, "TimelineSeleniumTest - Photos scanned.")
