@@ -22,10 +22,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -123,7 +120,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
         val mapper = ObjectMapper()
         try {
             val jsonObj = mapper.readTree(jsonResult)
-            val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+            val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
             val resultList = resultMap["results"] as ArrayList<Map<String, Any>>
     
             var lastMinVersion = DefaultArtifactVersion(appVersion)

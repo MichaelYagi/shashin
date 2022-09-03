@@ -41,7 +41,7 @@ class NotificationsController {
                 val settings = model.getAttribute("settings") as Settings
                 val notificationLimit = settings.getNotificationLimit()
 
-                var notificationList = mutableListOf<Notification>()
+                var notificationList = mutableListOf<Notification?>()
                 if (allNotificationList.count() > notificationLimit!!) {
                     for ((index, notification) in allNotificationList.withIndex()) {
                         if (index > (notificationLimit-1) && notification != null) {
@@ -51,7 +51,7 @@ class NotificationsController {
                         }
                     }
                 } else {
-                    notificationList = allNotificationList as MutableList<Notification>
+                    notificationList = allNotificationList.toMutableList()
                 }
                 model["notificationList"] = notificationList
             }
