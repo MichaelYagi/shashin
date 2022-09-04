@@ -215,4 +215,59 @@ describe('#Util tests', function() {
         let month = Util.getShortMonths(1)
         assert.equal(month, 'Feb')
     })
+
+    it('Cookie tests', function() {
+        let aCookie = Util.getCookie("somecookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("somecookiename","somecookievalue");
+        aCookie = Util.getCookie("somecookiename");
+        assert.equal(aCookie, "somecookievalue");
+
+        Util.deleteCookie("somecookiename");
+        aCookie = Util.getCookie("somecookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue");
+
+        Util.deleteCookie("someothercookiename");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue");
+
+        Util.deleteCookie("someothercookiename", "/unknowncookiepath");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue"); //Not deleted
+
+        Util.deleteCookie("someothercookiename", "/", "unknowncookiedomain");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue"); //Not deleted
+
+        Util.deleteCookie("someothercookiename", "/", "localhost");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("someothercookiename","someothercookievalue", "/", "localhost");
+
+        Util.deleteCookie("someothercookiename", "/asdf");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue");
+
+        Util.deleteCookie("someothercookiename", "/");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "");
+
+        Util.setCookie("someothercookiename","someothercookievalue", "/");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "someothercookievalue");
+
+        Util.deleteCookie("someothercookiename", "/");
+        aCookie = Util.getCookie("someothercookiename");
+        assert.equal(aCookie, "");
+    })
 })
