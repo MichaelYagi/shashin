@@ -418,6 +418,35 @@ class Util {
         $("#container_"+id).remove();
     }
 
+    static getCookie(name) {
+        const parts = document.cookie.split(name + "=");
+
+        if (parts.length === 2) {
+            return parts.pop().split(";").shift();
+        }
+
+        return "";
+    }
+
+    static setCookie(name, value, path, domain) {
+        const d = new Date();
+        d.setTime(d.getTime() + (3600*1000));
+        document.cookie = name + "=" +
+            ((value !== "") ? value : "") +
+            ((path) ? ";path=" + path : "") +
+            ((domain) ? ";domain=" + domain : "") +
+            ";expires=" + d.toUTCString();
+    }
+
+    static deleteCookie( name, path, domain ) {
+        if (Util.getCookie(name)) {
+            document.cookie = name + "=" +
+                ((path) ? ";path=" + path : "") +
+                ((domain) ? ";domain=" + domain : "") +
+                ";expires=Thu, 01 Jan 1970 00:00:01 GMT";
+        }
+    }
+
     static getDateGalleryHeight(id) {
         if ($("#br" + id).length === 0 && $("#row" + id).length === 0 && $("#amp_" + id).length === 0 && $("#tail_" + id).length === 0 && $("#" + id).length === 0) {
             return 0;
