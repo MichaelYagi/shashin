@@ -1,5 +1,4 @@
-const {assert} = require("chai")
-const { expect } = require('chai')
+const {assert,expect} = require("chai")
 require('../helper.js')
 
 const Util = require('../../../main/resources/static/js/site/util')
