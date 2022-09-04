@@ -2,7 +2,7 @@ const {JSDOM} = require("jsdom")
 const cfg = { url: "http://localhost" }
 const dom = new JSDOM( "", cfg )
 require('jsdom-global')()
-const { Blob } = require('blob-polyfill')
+const {Blob} = require('blob-polyfill')
 
 global.window = dom.window
 global.document = dom.window.document
