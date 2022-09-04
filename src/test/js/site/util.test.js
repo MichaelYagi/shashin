@@ -2,7 +2,6 @@ const {assert,expect} = require("chai")
 require('../helper.js')
 
 const Util = require('../../../main/resources/static/js/site/util')
-const shashin = require("../../../main/resources/static/js/site/app");
 
 describe('#Util tests', function() {
     it('seriarlize form test', function() {
