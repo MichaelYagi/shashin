@@ -86,7 +86,7 @@
                         unit = "kb";
                     }
 
-                    $("#msg").text("File name: " + tokenCookieValue + ". File size: " + fileSize + " " + unit + ".");
+                    $("#msg").text("File name: " + tokenCookieValue + ". File size: " + fileSize.toFixed(2) + " " + unit + ".");
                     $("#export").prop("disabled", false);
                     deleteCookie(tokenName, "/settings/snapshot");
                     deleteCookie(tokenSize, "/settings/snapshot");
