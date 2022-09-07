@@ -99,3 +99,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Prevent multiple downloads while downloading
+- Redirect to referer after login

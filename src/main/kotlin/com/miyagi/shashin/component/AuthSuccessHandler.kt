@@ -28,7 +28,6 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import kotlin.collections.ArrayList
 
 
 @Component
@@ -53,6 +52,14 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     @Throws(IOException::class)
     override fun handle(request: HttpServletRequest?, response: HttpServletResponse?, authentication: Authentication?) {
         val logger: Logger = Logger.getLogger(AuthSuccessHandler::class.simpleName)
+
+        var uriPath = request!!.session.getAttribute("ShashinReferer")
+        if (uriPath == null) {
+            uriPath = ""
+        } else {
+            uriPath = uriPath.toString()
+        }
+        request.session.removeAttribute("ShashinReferer")
 
         if (authentication != null) {
             var currentAuthority = ""
@@ -94,7 +101,10 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         notifyLogin(user)
                         checkLatestAppVersion(user)
                     }
-                    if (currentAuthority == adminRole) {
+
+                    if (uriPath.isNotEmpty()) {
+                        redirectStrategy.sendRedirect(request, response, uriPath)
+                    } else if (currentAuthority == adminRole) {
                         redirectStrategy.sendRedirect(request, response, "/timeline")
                     } else {
                         redirectStrategy.sendRedirect(request, response, "/albums")
