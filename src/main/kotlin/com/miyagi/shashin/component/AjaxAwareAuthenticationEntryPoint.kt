@@ -19,6 +19,9 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, private var apiVe
         response: HttpServletResponse,
         authException: AuthenticationException?
     ) {
+        val uriPath = request.requestURI.toString()
+        request.session.setAttribute("ShashinReferer",uriPath)
+
         val ajaxHeader = request.getHeader("X-Requested-With")
         if ("XMLHttpRequest" == ajaxHeader || request.requestURI.startsWith("/api/$apiVersion/")) {
             response.contentType = "application/json"
