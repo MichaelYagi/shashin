@@ -90,6 +90,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Spinner on download icon while making AJAX call for timeline media downloads
 - UX improvements for backup exports
+- File browser for media directories
 
 ### Changed
 

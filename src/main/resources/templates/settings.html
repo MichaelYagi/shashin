@@ -20,9 +20,19 @@
                         </div>
                     </th:block>
                     <div class="row">
+                        <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></strong></label>
                         <div class="col-12">
-                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></strong></label>
-                            <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                            <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                            <div class="card" style="height: 300px">
+                                <div class="card-header">
+                                    <div id="selectedPath">Select Folder</div>
+                                    <span id="dirListUpButton"></span><span id="dirListSelect"></span>
+                                </div>
+                                <div class="card-body scroll">
+                                    <ul class="card-body list-group list-group-flush" id="dirList" style="list-style-type: none;">
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <th:block th:if="${settings != null}">
@@ -106,36 +116,13 @@
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">
-    $(document).ready(function () {
+    $(document).ready(async function () {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         /*]]>*/
 
-        $("#deleteContent").on("click", function(e) {
-            e.preventDefault();
-            $("#propDeleteContent").modal('show');
-        });
-
-        $("#deleteContentConfirm").on("click", async function (e) {
-            e.preventDefault();
-
-            $("#deleteContentModalStatus").css("visibility", "visible");
-
-            const http = new Http("deleting all content");
-            let json = {deleteContent: true}
-            const data = await http.ajax("post", "/settings/content/delete", JSON.stringify(json));
-
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                let message = "Error";
-                if (data["status"] === "success") {
-                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                } else {
-                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                }
-                $("#msgDeleteContent").html(message);
-            }
-            $("#deleteContentModalStatus").css("visibility", "hidden");
-        });
+        const settingsInstance = new Settings();
+        settingsInstance.init();
     });
 </script>
 

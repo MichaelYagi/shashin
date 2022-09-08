@@ -41,13 +41,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.awt.Component
-import java.awt.Container
-import java.awt.Dialog
-import java.awt.HeadlessException
-import java.awt.event.WindowEvent
-import java.awt.event.WindowFocusListener
-import java.awt.image.BufferedImage
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
@@ -61,7 +54,6 @@ import java.util.zip.ZipFile
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
-import javax.swing.*
 import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -860,6 +852,48 @@ class SettingsController {
         }
 
         return null
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/directorytree"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun getDirectoryTree(model: Model, @RequestBody requestBody: JsonNode): String? {
+        val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+        val dirs = mutableMapOf<String, Any>()
+        dirs["status"] = ""
+        dirs["msg"] = ""
+        dirs["dirs"] = mutableMapOf<String, MutableList<String>>()
+        val dirMap = mutableMapOf<String, MutableList<String>>()
+
+        if (metadataMap.containsKey("path")) {
+            val path = metadataMap["path"].toString()
+
+            if (path.isNotEmpty()) {
+                val file = File(path)
+                val directories = file.list { current, name -> File(current, name).isDirectory }
+
+                if (directories != null) {
+                    val dirNames = mutableListOf<String>()
+                    for (i in directories.indices) {
+                        dirNames.add(directories[i])
+                    }
+
+                    dirMap[path] = dirNames
+                }
+            } else {
+                val directories = File.listRoots()
+                val dirNames = mutableListOf<String>()
+                for (i in directories.indices) {
+                    dirNames.add(directories[i].toString())
+                }
+
+                dirMap["roots"] = dirNames
+            }
+
+            dirs["dirs"] = dirMap
+        }
+
+        return mapper.writeValueAsString(dirs)
     }
 
     @Secured("ROLE_ADMIN")
