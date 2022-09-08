@@ -23,9 +23,6 @@
                         <div class="col-12">
                             <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></strong></label>
                             <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
-                            <div class="mt-1">
-                                <button id="choosedirectory" class="btn btn-outline-secondary btn-sm">Choose Folder</button>
-                            </div>
                         </div>
                     </div>
                     <th:block th:if="${settings != null}">
@@ -113,25 +110,6 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         /*]]>*/
-
-        $("#choosedirectory").on("click", async function (e) {
-            e.preventDefault();
-
-            $("#choosedirectory").addClass('disabled');
-            const mediaDirectories = $("#mediaDirTextArea").val().split(',');
-            for (let i = 0; i < mediaDirectories.length; i++) {
-                mediaDirectories[i] = mediaDirectories[i].trim();
-            }
-            const http = new Http("settings");
-            const data = await http.ajax("post", "/settings/dirchooser");
-
-            if (data && data.hasOwnProperty("directory") && data.hasOwnProperty("status") && data["status"] === 0) {
-                mediaDirectories.push(data["directory"]);
-                $("#mediaDirTextArea").val(mediaDirectories.join(', '));
-            }
-
-            $("#choosedirectory").removeClass('disabled');
-        });
 
         $("#deleteContent").on("click", function(e) {
             e.preventDefault();
