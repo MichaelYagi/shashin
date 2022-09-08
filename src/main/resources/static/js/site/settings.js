@@ -8,6 +8,10 @@ class Settings {
         // Populate dirs
         const http = new Http("settings");
         let data = await http.ajax("post", "/settings/directorytree", '{"path":""}');
+        let os = ""
+        if (data.hasOwnProperty("os")) {
+            os = data["os"];
+        }
         populateDirs(data);
 
         listClick();
@@ -36,10 +40,10 @@ class Settings {
         async function selectPath(e) {
             e.preventDefault();
             const selectedPath = $("#selectedPath").text() === "Select Folder" ? "" : $("#selectedPath").text().trim();
-            const seperator = (Util.getOS() === "Windows" ? "\\" : "/");
+            const seperator = (os.toLowerCase().indexOf('windows') !== -1 ? "\\" : "/");
             const listText = $(e.target).text();
             let path = (selectedPath.length > 0 && selectedPath !== listText) ? selectedPath + seperator + $(e.target).text() : $(e.target).text();
-            let pathArr = path.split("\\");
+            let pathArr = path.split(seperator);
             pathArr = pathArr.filter(e => e);
 
             if (pathArr.length > 1) {
