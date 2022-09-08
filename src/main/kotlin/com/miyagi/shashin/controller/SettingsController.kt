@@ -863,63 +863,6 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/dirchooser"], method = [RequestMethod.POST], produces = ["application/json"])
-    @ResponseBody
-    fun postFileChooser(model: Model): String {
-        System.setProperty("java.awt.headless", "false");
-
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-        } catch (ex: java.lang.Exception) {
-            ex.printStackTrace()
-        }
-
-        val chooser: JFileChooser = object : JFileChooser() {
-            @Throws(HeadlessException::class)
-            override fun createDialog(parent: Component?): JDialog? {
-                // intercept the dialog created by JFileChooser
-                val dialog = super.createDialog(parent)
-                val image = BufferedImage(16, 16, BufferedImage.TYPE_3BYTE_BGR)
-                dialog.setIconImage(image)
-                dialog.isModal = true // set modality (or setModalityType)
-                dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
-                dialog.isAlwaysOnTop = true
-                dialog.requestFocus()
-                dialog.requestFocusInWindow()
-                dialog.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
-                dialog.setLocationRelativeTo(null)
-
-                dialog.addWindowFocusListener(object : WindowFocusListener {
-                    override fun windowGainedFocus(e: WindowEvent?) {
-                        // println("JFileChooser focus gained")
-                    }
-
-                    override fun windowLostFocus(e: WindowEvent?) {
-                        // println("JFileChooser focus lost")
-                        dialog.dispose()
-                    }
-                })
-
-                return dialog
-            }
-        }
-
-        chooser.currentDirectory = File("/")
-        chooser.dialogTitle = "Choose Folder"
-        chooser.dialogType = 0
-        chooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
-        chooser.isAcceptAllFileFilterUsed = false
-
-        val result: Int = chooser.showDialog(chooser, "Select")
-
-        if (result == JFileChooser.APPROVE_OPTION) {
-            return "{\"status\":$result,\"msg\":\"\",\"directory\":\""+TextUtils.escape(chooser.selectedFile.absolutePath)+"\"}"
-        }
-
-        return "{\"status\":$result,\"msg\":\"\",\"directory\":\"\"}"
-    }
-
-    @Secured("ROLE_ADMIN")
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     @PostMapping("/settings/snapshot")
     @Transactional
