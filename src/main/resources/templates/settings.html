@@ -23,6 +23,9 @@
                         <div class="col-12">
                             <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></strong></label>
                             <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="3"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                            <div class="mt-1">
+                                <button id="choosedirectory" class="btn btn-outline-secondary btn-sm">Choose Folder</button>
+                            </div>
                         </div>
                     </div>
                     <th:block th:if="${settings != null}">
@@ -98,45 +101,63 @@
             </div>
             <div class="modal-footer">
                 <div id="deleteContentModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
-                <button type="button" class="btn btn-primary" id="deleteAllContent">Confirm</button>
+                <button type="button" class="btn btn-primary" id="deleteContentConfirm">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                /*<![CDATA[*/
-                $("#deleteAllContent").on("click", async function (e) {
-                    e.preventDefault();
-
-                    $("#deleteContentModalStatus").css("visibility", "visible");
-
-                    const http = new Http("deleting all content");
-                    let json = {deleteContent: true}
-                    const data = await http.ajax("post", "/settings/content/delete", JSON.stringify(json));
-
-                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-                        let message = "Error";
-                        if (data["status"] === "success") {
-                            message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
-                        } else {
-                            message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
-                        }
-                        $("#msgDeleteContent").html(message);
-                    }
-                    $("#deleteContentModalStatus").css("visibility", "hidden");
-                });
-                /*]]>*/
-            </script>
         </div>
     </div>
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">
-    /*<![CDATA[*/
-    shashin.nonce = /*[[${cspNonce}]]*/ '';
-    /*]]>*/
+    $(document).ready(function () {
+        /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
+        /*]]>*/
 
-    $("#deleteContent").on("click", function(e) {
-        e.preventDefault();
-        $("#propDeleteContent").modal('show');
+        $("#choosedirectory").on("click", async function (e) {
+            e.preventDefault();
+
+            $("#choosedirectory").addClass('disabled');
+            const mediaDirectories = $("#mediaDirTextArea").val().split(',');
+            for (let i = 0; i < mediaDirectories.length; i++) {
+                mediaDirectories[i] = mediaDirectories[i].trim();
+            }
+            const http = new Http("settings");
+            const data = await http.ajax("post", "/settings/dirchooser");
+
+            if (data && data.hasOwnProperty("directory") && data.hasOwnProperty("status") && data["status"] === 0) {
+                mediaDirectories.push(data["directory"]);
+                $("#mediaDirTextArea").val(mediaDirectories.join(', '));
+            }
+
+            $("#choosedirectory").removeClass('disabled');
+        });
+
+        $("#deleteContent").on("click", function(e) {
+            e.preventDefault();
+            $("#propDeleteContent").modal('show');
+        });
+
+        $("#deleteContentConfirm").on("click", async function (e) {
+            e.preventDefault();
+
+            $("#deleteContentModalStatus").css("visibility", "visible");
+
+            const http = new Http("deleting all content");
+            let json = {deleteContent: true}
+            const data = await http.ajax("post", "/settings/content/delete", JSON.stringify(json));
+
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                let message = "Error";
+                if (data["status"] === "success") {
+                    message = '<div class="alert alert-success" role="alert">' + data["msg"] + '</div>';
+                } else {
+                    message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
+                }
+                $("#msgDeleteContent").html(message);
+            }
+            $("#deleteContentModalStatus").css("visibility", "hidden");
+        });
     });
 </script>
 

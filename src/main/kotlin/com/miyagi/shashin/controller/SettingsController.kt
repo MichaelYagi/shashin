@@ -41,6 +41,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
+import java.awt.Component
+import java.awt.Container
+import java.awt.Dialog
+import java.awt.HeadlessException
+import java.awt.event.WindowEvent
+import java.awt.event.WindowFocusListener
+import java.awt.image.BufferedImage
 import java.io.*
 import java.nio.file.Files
 import java.nio.file.Path
@@ -54,6 +61,7 @@ import java.util.zip.ZipFile
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
+import javax.swing.*
 import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
@@ -852,6 +860,63 @@ class SettingsController {
         }
 
         return null
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/dirchooser"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun postFileChooser(model: Model): String {
+        System.setProperty("java.awt.headless", "false");
+
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+        } catch (ex: java.lang.Exception) {
+            ex.printStackTrace()
+        }
+
+        val chooser: JFileChooser = object : JFileChooser() {
+            @Throws(HeadlessException::class)
+            override fun createDialog(parent: Component?): JDialog? {
+                // intercept the dialog created by JFileChooser
+                val dialog = super.createDialog(parent)
+                val image = BufferedImage(16, 16, BufferedImage.TYPE_3BYTE_BGR)
+                dialog.setIconImage(image)
+                dialog.isModal = true // set modality (or setModalityType)
+                dialog.modalityType = Dialog.ModalityType.APPLICATION_MODAL
+                dialog.isAlwaysOnTop = true
+                dialog.requestFocus()
+                dialog.requestFocusInWindow()
+                dialog.defaultCloseOperation = JFrame.DISPOSE_ON_CLOSE
+                dialog.setLocationRelativeTo(null)
+
+                dialog.addWindowFocusListener(object : WindowFocusListener {
+                    override fun windowGainedFocus(e: WindowEvent?) {
+                        // println("JFileChooser focus gained")
+                    }
+
+                    override fun windowLostFocus(e: WindowEvent?) {
+                        // println("JFileChooser focus lost")
+                        dialog.dispose()
+                    }
+                })
+
+                return dialog
+            }
+        }
+
+        chooser.currentDirectory = File("/")
+        chooser.dialogTitle = "Choose Folder"
+        chooser.dialogType = 0
+        chooser.fileSelectionMode = JFileChooser.DIRECTORIES_ONLY
+        chooser.isAcceptAllFileFilterUsed = false
+
+        val result: Int = chooser.showDialog(chooser, "Select")
+
+        if (result == JFileChooser.APPROVE_OPTION) {
+            return "{\"status\":$result,\"msg\":\"\",\"directory\":\""+TextUtils.escape(chooser.selectedFile.absolutePath)+"\"}"
+        }
+
+        return "{\"status\":$result,\"msg\":\"\",\"directory\":\"\"}"
     }
 
     @Secured("ROLE_ADMIN")
