@@ -223,6 +223,31 @@ class Util {
         return isChrome;
     }
 
+    static getOS() {
+        let userAgent = window.navigator.userAgent,
+          platform =
+            window.navigator?.userAgentData?.platform ||
+            window.navigator.platform,
+          macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"],
+          windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"],
+          iosPlatforms = ["iPhone", "iPad", "iPod"],
+          os = null;
+
+        if (macosPlatforms.indexOf(platform) !== -1) {
+          os = "Mac OS";
+        } else if (iosPlatforms.indexOf(platform) !== -1) {
+          os = "iOS";
+        } else if (windowsPlatforms.indexOf(platform) !== -1) {
+          os = "Windows";
+        } else if (/Android/.test(userAgent)) {
+          os = "Android";
+        } else if (/Linux/.test(platform)) {
+          os = "Linux";
+        }
+
+        return os;
+    }
+
     static isSafari() {
         return navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
             navigator.userAgent &&
@@ -380,6 +405,13 @@ class Util {
         return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
 
+    static stringEscape(s) {
+        return s ? s.replace(/\\/g,'\\\\').replace(/\n/g,'\\n').replace(/\t/g,'\\t').replace(/\v/g,'\\v').replace(/'/g,"\\'").replace(/"/g,'\\"').replace(/[\x00-\x1F\x80-\x9F]/g,hex) : s;
+        function hex(c) {
+            const v = "0" + c.charCodeAt(0).toString(16);
+            return "\\x" + v.substr(v.length - 2); }
+    }
+    
     static checkErrorImage() {
         $("img").on('error', function() {
             const width = $(this).attr('width');

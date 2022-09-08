@@ -134,6 +134,9 @@
             <th:block th:if="${titleDescriptorLower == 'snapshot'}">
                 <script src="/js/site/snapshot.js" th:nonce="${cspNonce}"></script>
             </th:block>
+            <th:block th:if="${titleDescriptorLower == 'settings'}">
+                <script src="/js/site/settings.js" th:nonce="${cspNonce}"></script>
+            </th:block>
         </th:block>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
@@ -178,6 +181,9 @@
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'snapshot'}">
                 <script src="/js/site/min/snapshot.min.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${titleDescriptorLower == 'settings'}">
+                <script src="/js/site/min/settings.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
         </th:block>
     </th:block>
