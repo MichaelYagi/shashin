@@ -12,8 +12,53 @@ class Settings {
         if (data.hasOwnProperty("os")) {
             os = data["os"];
         }
-        populateDirs(data);
+        const seperator = (os.toLowerCase().indexOf('windows') !== -1 ? "\\" : "/");
+        $("#selectFolder").hide();
 
+        $("#selectFolder").on("click", function (e) {
+            e.preventDefault();
+            const path = $("#selectedPath").text().trim();
+            if (path.length > 0) {
+                const mediaDirArray = $("#mediaDirTextArea").val().split(",").map(element => element.trim());
+                if (mediaDirArray.indexOf(path) === -1) {
+                    mediaDirArray.push(path);
+                }
+                $("#mediaDirTextArea").val(mediaDirArray.join(', '));
+            }
+        });
+
+        $("#parentFolder").on("click", function (e) {
+            e.preventDefault();
+
+            let path = $("#pathInput").val();
+
+            let pathArr = path.split(seperator);
+            pathArr = pathArr.filter(e => e);
+
+            pathArr.pop();
+
+            path = pathArr.join(seperator);
+
+            const selectedPath = $("#selectedPathInput").val();
+
+            if (selectedPath.slice(-1) === seperator) {
+                path = path + (os.toLowerCase().indexOf('windows') !== -1 ? "" : "/");
+            }
+
+            if (pathArr.length === 1 && os.toLowerCase().indexOf('windows') !== -1) {
+                path = path + seperator;
+            }
+
+            if (os.toLowerCase().indexOf('windows') === -1) {
+                path = "/" + path;
+            }
+
+            $("#pathInput").val(path);
+
+            getSubdirs(path);
+        })
+
+        populateDirs(data);
         listClick();
 
         function populateDirs(data) {
@@ -40,27 +85,17 @@ class Settings {
         async function selectPath(e) {
             e.preventDefault();
             const selectedPath = $("#selectedPath").text() === "Select Folder" ? "" : $("#selectedPath").text().trim();
-            const seperator = (os.toLowerCase().indexOf('windows') !== -1 ? "\\" : "/");
-            const listText = $(e.target).text();
-            let path = (selectedPath.length > 0 && selectedPath !== listText) ? selectedPath + seperator + $(e.target).text() : $(e.target).text();
-            let pathArr = path.split(seperator);
-            pathArr = pathArr.filter(e => e);
-
-            if (pathArr.length > 1) {
-                $("#dirListUpButton").html('<button id="parentFolder" type="button" class="btn btn-secondary btn-sm"><i class="bi-arrow-90deg-up"></i></button>&nbsp;');
-                $("#parentFolder").on("click", function (e) {
-                    e.preventDefault();
-
-                    pathArr.pop();
-                    path = pathArr.join(seperator);
-                    if ((path.match(/,/g) || []).length === 0) {
-                        path = path + seperator;
-                    }
-                    getSubdirs(path);
-                })
+            if (selectedPath.length > 0) {
+                $("#selectFolder").show();
             } else {
-                $("#dirListUpButton").html("");
+                $("#selectFolder").hide();
             }
+            $("#selectedPathInput").val(selectedPath);
+
+            const listText = $(e.target).text();
+
+            let path = (selectedPath.length > 0 && selectedPath !== listText) ? selectedPath + ((selectedPath.slice(-1) === seperator) ? "" : seperator) + listText : listText;
+            $("#pathInput").val(path);
 
             await getSubdirs(path);
         }
@@ -68,18 +103,6 @@ class Settings {
         async function getSubdirs(path) {
             // Display path
             $("#selectedPath").text(path);
-            $("#dirListSelect").html('<button type="button" id="selectFolder" class="btn btn-primary btn-sm">Select Folder</button>');
-            $("#selectFolder").on("click", function (e) {
-                e.preventDefault();
-                const path = $("#selectedPath").text().trim();
-                if (path.length > 0) {
-                    const mediaDirArray = $("#mediaDirTextArea").val().split(",").map(element => element.trim());
-                    if (mediaDirArray.indexOf(path) === -1) {
-                        mediaDirArray.push(path);
-                    }
-                    $("#mediaDirTextArea").val(mediaDirArray.join(', '));
-                }
-            });
 
             // Get sub directories
             data = await http.ajax("post", "/settings/directorytree", '{"path":"' + Util.stringEscape(path) + '"}');

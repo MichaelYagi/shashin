@@ -14,6 +14,8 @@
 
                 <br>
                 <form id="saveSettingsForm" method="post" action="/settings">
+                    <input type="hidden" id="pathInput" value="">
+                    <input type="hidden" id="selectedPathInput" value="">
                     <th:block th:if="${statusMessage != '' and alertClass != ''}">
                         <div class="col-12">
                             <div th:if="${statusMessage}" th:text="${statusMessage}" th:class="${'alert ' + alertClass}"/>
@@ -26,7 +28,7 @@
                             <div class="card" style="height: 300px">
                                 <div class="card-header">
                                     <div id="selectedPath">Select Folder</div>
-                                    <span id="dirListUpButton"></span><span id="dirListSelect"></span>
+                                    <button id="parentFolder" type="button" class="btn btn-secondary btn-sm"><i class="bi-arrow-90deg-up"></i></button>&nbsp;<button type="button" id="selectFolder" class="btn btn-primary btn-sm">Select Folder</button>
                                 </div>
                                 <div class="card-body scroll">
                                     <ul class="card-body list-group list-group-flush" id="dirList" style="list-style-type: none;">
