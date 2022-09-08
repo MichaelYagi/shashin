@@ -49,7 +49,7 @@ class Settings {
                 path = path + seperator;
             }
 
-            if (os.toLowerCase().indexOf('windows') === -1) {
+            if (os.toLowerCase().indexOf('windows') === -1 && pathArr.length > 0) {
                 path = "/" + path;
             }
 
