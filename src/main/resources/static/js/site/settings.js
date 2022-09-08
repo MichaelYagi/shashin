@@ -17,7 +17,7 @@ class Settings {
 
         $("#selectFolder").on("click", function (e) {
             e.preventDefault();
-            const path = $("#selectedPath").text().trim();
+            const path = $("#selectedPath").val().trim();
             if (path.length > 0) {
                 const mediaDirArray = $("#mediaDirTextArea").val().split(",").map(element => element.trim());
                 if (mediaDirArray.indexOf(path) === -1) {
@@ -84,7 +84,7 @@ class Settings {
 
         async function selectPath(e) {
             e.preventDefault();
-            const selectedPath = $("#selectedPath").text() === "Select Folder" ? "" : $("#selectedPath").text().trim();
+            const selectedPath = $("#selectedPath").val() === "Select Folder" ? "" : $("#selectedPath").val().trim();
             if (selectedPath.length > 0) {
                 $("#selectFolder").show();
             } else {
@@ -102,7 +102,7 @@ class Settings {
 
         async function getSubdirs(path) {
             // Display path
-            $("#selectedPath").text(path);
+            $("#selectedPath").val(path);
 
             // Get sub directories
             data = await http.ajax("post", "/settings/directorytree", '{"path":"' + Util.stringEscape(path) + '"}');
