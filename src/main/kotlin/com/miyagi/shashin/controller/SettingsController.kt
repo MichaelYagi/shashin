@@ -864,6 +864,8 @@ class SettingsController {
         dirs["msg"] = ""
         dirs["dirs"] = mutableMapOf<String, MutableList<String>>()
         val dirMap = mutableMapOf<String, MutableList<String>>()
+        val os = System.getProperty("os.name")
+        dirs["os"] = os
 
         if (metadataMap.containsKey("path")) {
             val path = metadataMap["path"].toString()
