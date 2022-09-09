@@ -18,7 +18,7 @@ import javax.transaction.Transactional
 abstract class BaseSeleniumTests {
     protected var driver: WebDriver? = null
     protected var logger: Logger = Logger.getLogger(BaseSeleniumTests::class.simpleName)
-    protected var elementScanTimeoutMillis = 3000
+    protected var elementScanTimeoutMillis = 4000
     private val os = System.getProperty("os.name")
 
     @Autowired
