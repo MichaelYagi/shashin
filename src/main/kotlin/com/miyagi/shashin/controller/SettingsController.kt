@@ -46,6 +46,7 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.nio.file.attribute.DosFileAttributes
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
@@ -874,7 +875,16 @@ class SettingsController {
             if (path.isNotEmpty()) {
                 val filePath = File(path)
 
-                val directories = filePath.listFiles { file -> file.isDirectory && !file.isHidden }
+                val directories = filePath.listFiles(FileFilter { file ->
+                    val absPath = Paths.get(file.absolutePath)
+                    val dfa: DosFileAttributes = try {
+                        Files.readAttributes(absPath, DosFileAttributes::class.java)
+                    } catch (e: IOException) {
+                        // bad practice
+                        return@FileFilter false
+                    }
+                    !dfa.isHidden && !dfa.isSystem && dfa.isDirectory
+                })
 
                 if (directories != null) {
                     val dirNames = mutableListOf<String>()
