@@ -391,12 +391,16 @@
                         <configuration>
 
                             <webappSourceDir>${project.basedir}/src/main/resources/static/css</webappSourceDir>
-                            <webappTargetDir>${project.basedir}/src/main/resources/static/css</webappTargetDir>
+                            <webappTargetDir>${project.basedir}/src/main/resources/static/css/site</webappTargetDir>
 
                             <cssSourceDir>site</cssSourceDir>
-                            <cssSourceFiles>
-                                <cssSourceFile>style.css</cssSourceFile>
-                            </cssSourceFiles>
+                            <cssTargetDir>min</cssTargetDir>
+
+                            <cssIncludes>
+                                <include>
+                                    style.css
+                                </include>
+                            </cssIncludes>
 
                             <cssEngine>YUI</cssEngine>
 
