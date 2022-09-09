@@ -902,21 +902,6 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/changelog"], method = [RequestMethod.GET])
-    fun getChangelog(model: Model): String {
-        val module = "changelog"
-
-        val root = FileSystemResource("").file.absolutePath.replace('\\', '/')
-
-        model["changelogContent"] = Files.readString(Paths.get("$root/CHANGES.md"), StandardCharsets.UTF_8)
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-
-        return module
-    }
-
-    @Secured("ROLE_ADMIN")
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     @PostMapping("/settings/snapshot")
     @Transactional
