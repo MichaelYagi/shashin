@@ -70,7 +70,7 @@
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
     <script src="/js/site/min/applisteners.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
-<script type="text/javascript" th:nonce="${cspNonce}">
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     $(document).ready(function () {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';

@@ -14,7 +14,7 @@
                 <button type="button" class="btn btn-primary" th:id="'deleteUser'+${user.id}">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript" th:nonce="${cspNonce}">
+            <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
                 $("#deleteUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
@@ -59,7 +59,7 @@
                 <button type="button" class="btn btn-primary" th:id="'resetPasswordUser'+${user.id}">Confirm</button>
                 <button th:id="'resetPasswordUserCancel'+${user.id}" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript" th:nonce="${cspNonce}">
+            <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
                 $("#resetPasswordUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
@@ -120,7 +120,7 @@
                 <button type="button" class="btn btn-primary" th:id="'roleUser'+${user.id}">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript" th:nonce="${cspNonce}">
+            <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
                 $("#roleUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
@@ -162,7 +162,7 @@
                 <button type="button" class="btn btn-primary" th:id="'allowUser'+${user.id}">Confirm</button>
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
-            <script type="text/javascript" th:nonce="${cspNonce}">
+            <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
                 $("#allowUser[[${user.id}]]").on("click", async function (e) {
                     e.preventDefault();
