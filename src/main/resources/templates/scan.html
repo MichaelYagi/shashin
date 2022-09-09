@@ -15,7 +15,7 @@
             <button class="btn btn-danger" id="cancelScan">Cancel</button>
             <input type="checkbox" id="reindexFiles" name="reindexFiles">
             <label for="reindexFiles">Recheck All Files</label>
-            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
+            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
     </div>
 </div>

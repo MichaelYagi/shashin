@@ -43,7 +43,7 @@
             <div id="rnRoot"></div>
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
-            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties})"></div>
+            <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
     </div>
 </div>
