@@ -8,11 +8,13 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
+import org.springframework.core.env.Environment
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.util.StringUtils.capitalize
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.context.request.RequestContextHolder
@@ -29,6 +31,9 @@ import javax.transaction.Transactional
 class AttributeController {
 
     private var logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
+
+    @Autowired
+    private val environment: Environment? = null
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -60,6 +65,13 @@ class AttributeController {
         model["userRole"] = userRole
         model["adminRole"] = adminRole
         model["settings"] = Settings()
+        model["activeProfile"] = ""
+        if (environment != null && environment.activeProfiles.isNotEmpty()) {
+            val profile = environment.activeProfiles[0]
+            if (profile != "prod") {
+                model["activeProfile"] = capitalize(profile)
+            }
+        }
 
         var queryLimit = 20
         var searchHistoryLimit = 15
