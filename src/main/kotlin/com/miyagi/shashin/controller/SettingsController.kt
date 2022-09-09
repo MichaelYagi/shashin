@@ -875,16 +875,7 @@ class SettingsController {
             if (path.isNotEmpty()) {
                 val filePath = File(path)
 
-                val directories = filePath.listFiles(FileFilter { file ->
-                    val absPath = Paths.get(file.absolutePath)
-                    val dfa: DosFileAttributes = try {
-                        Files.readAttributes(absPath, DosFileAttributes::class.java)
-                    } catch (e: IOException) {
-                        // bad practice
-                        return@FileFilter false
-                    }
-                    !dfa.isHidden && !dfa.isSystem && dfa.isDirectory
-                })
+                val directories = filePath.listFiles { file -> file.isDirectory && !file.isHidden }
 
                 if (directories != null) {
                     val dirNames = mutableListOf<String>()
