@@ -19,10 +19,17 @@ class Settings {
             e.preventDefault();
             const path = $("#selectedPath").val().trim();
             if (path.length > 0) {
-                const mediaDirArray = $("#mediaDirTextArea").val().split(",").map(element => element.trim());
+                let mediaDirStr = $("#mediaDirTextArea").val().trim();
+                let mediaDirArray = [];
+
+                if (mediaDirStr.length > 0) {
+                    mediaDirArray = mediaDirStr.split(",").map(element => element.trim());
+                }
+
                 if (mediaDirArray.indexOf(path) === -1) {
                     mediaDirArray.push(path);
                 }
+
                 $("#mediaDirTextArea").val(mediaDirArray.join(', '));
             }
         });
