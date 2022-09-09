@@ -90,6 +90,9 @@
         <th:block th:if="${titleDescriptorLower == 'dashboard'}">
             <script src="/js/chart.min.js" th:nonce="${cspNonce}"></script>
         </th:block>
+        <th:block th:if="${titleDescriptorLower == 'changelog'}">
+            <script src="/js/showdown.min.js" th:nonce="${cspNonce}"></script>
+        </th:block>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
             <script src="/js/site/util.js" th:nonce="${cspNonce}"></script>

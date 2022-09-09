@@ -42,6 +42,7 @@ import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.*
+import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -896,6 +897,21 @@ class SettingsController {
         }
 
         return mapper.writeValueAsString(dirs)
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/settings/changelog"], method = [RequestMethod.GET])
+    fun getChangelog(model: Model): String {
+        val module = "changelog"
+
+        val root = FileSystemResource("").file.absolutePath.replace('\\', '/')
+
+        model["changelogContent"] = Files.readString(Paths.get("$root/CHANGES.md"), StandardCharsets.UTF_8)
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
     }
 
     @Secured("ROLE_ADMIN")
