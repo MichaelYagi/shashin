@@ -872,13 +872,14 @@ class SettingsController {
             val path = metadataMap["path"].toString()
 
             if (path.isNotEmpty()) {
-                val file = File(path)
-                val directories = file.list { current, name -> File(current, name).isDirectory }
+                val filePath = File(path)
+
+                val directories = filePath.listFiles { file -> file.isDirectory && !file.isHidden }
 
                 if (directories != null) {
                     val dirNames = mutableListOf<String>()
                     for (i in directories.indices) {
-                        dirNames.add(directories[i])
+                        dirNames.add(directories[i].name)
                     }
 
                     dirMap[path] = dirNames
