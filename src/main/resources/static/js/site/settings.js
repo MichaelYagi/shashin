@@ -77,7 +77,7 @@ class Settings {
         }
 
         function listClick() {
-            $('li').click(async function (e) {
+            $('#dirList li').click(async function (e) {
                 await selectPath(e);
             });
         }
