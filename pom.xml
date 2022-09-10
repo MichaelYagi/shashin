@@ -382,7 +382,6 @@
                 <artifactId>minify-maven-plugin</artifactId>
                 <version>1.7.6</version>
                 <configuration>
-                    <charset>UTF-8</charset>
                     <webappSourceDir>${project.basedir}/src/main/resources/static/css</webappSourceDir>
                     <webappTargetDir>${project.basedir}/src/main/resources/static/css/site</webappTargetDir>
                 </configuration>
@@ -395,6 +394,7 @@
                         </goals>
                         <configuration>
 
+                            <charset>UTF-8</charset>
                             <cssSourceDir>site</cssSourceDir>
                             <cssTargetDir>min</cssTargetDir>
                             <cssIncludes>
