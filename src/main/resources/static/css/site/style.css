@@ -46,7 +46,7 @@ body {
 .sidebar-sticky {
   position: -webkit-sticky;
   position: sticky;
-  top: 0px; /* Height of navbar */
+  top: 0; /* Height of navbar */
   height: calc(100vh - 0px);
   padding-top: .5rem;
   overflow-x: hidden;
@@ -84,10 +84,6 @@ body {
   z-index: 1000;
   bottom:0;
   margin-bottom: 3px;
-  /*min-height: 93.5%;*/
-  /*max-height: 93.5%;*/
-  /*height: 93.5%;*/
-  /*overflow: auto;*/
   right: 0;
   width: 80px;
 }
@@ -117,7 +113,7 @@ body {
 
 #appSearchInput {
   border: 0;
-  outline:0px !important;
+  outline:0 !important;
   -webkit-appearance:none;
   box-shadow: none !important;
 }
@@ -204,7 +200,7 @@ body {
 }
 
 .photo-thumbnail {
-  margin: 0px 4px 4px 0px;
+  margin: 0 4px 4px 0;
   background-color: rgba(0,0,0,0.5);
 }
 
@@ -341,7 +337,6 @@ footer {
   text-align: left;
   background-color: #ffffff;
   border: 1px solid #cccccc;
-  border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 4px;
   -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
