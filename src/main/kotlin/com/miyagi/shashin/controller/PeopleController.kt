@@ -8,6 +8,7 @@ import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -148,12 +149,12 @@ class PeopleController {
             shouldStop.set(false)
         } else {
             resp["msg"] = "Training data not detected."
-            resp["status"] = "fail"
+            resp["status"] = ApiResponse.FAIL.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Start Matching"
-        resp["status"] = "success"
+        resp["status"] = ApiResponse.SUCCESS.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -231,7 +232,7 @@ class PeopleController {
         }
 
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["counts"] = counts
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -275,7 +276,7 @@ class PeopleController {
         }
 
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -293,7 +294,7 @@ class PeopleController {
         }
 
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -323,7 +324,7 @@ class PeopleController {
         response["canEdit"] = model.getAttribute("authority") == adminRole
 
         response["msg"] = "Could not get results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
 
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -402,7 +403,7 @@ class PeopleController {
             response["counts"] = counts
 
             response["msg"] = "Results"
-            response["status"] = "success"
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
         return response
@@ -460,7 +461,7 @@ class PeopleController {
                 }
 
                 resp["msg"] = "Saved"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             } else if (isObject) {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
@@ -488,7 +489,7 @@ class PeopleController {
                 }
 
                 resp["msg"] = "Saved"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             } else if (personMap["tagpeople"].toString().isBlank()) {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
@@ -500,13 +501,13 @@ class PeopleController {
                 }
 
                 resp["msg"] = "Saved"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 

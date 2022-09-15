@@ -1,6 +1,7 @@
 package com.miyagi.shashin.component
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.util.ApiResponse
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.actuate.endpoint.ApiVersion
@@ -28,7 +29,7 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, private var apiVe
             val payload: MutableMap<String, Any> = HashMap()
             payload["msg"] = "Unauthorized"
             payload["statusCode"] = HttpServletResponse.SC_UNAUTHORIZED
-            payload["status"] = "fail"
+            payload["status"] = ApiResponse.FAIL.status
             val json = ObjectMapper().writeValueAsString(payload)
             response.writer.append(json)
             response.status = HttpServletResponse.SC_UNAUTHORIZED

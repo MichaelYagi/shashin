@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
@@ -91,7 +92,7 @@ class BrowseController: BaseController() {
         response["keywordMap"] = mutableMapOf<String, Any>()
 
         response["msg"] = "Could not get results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
 
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -194,7 +195,7 @@ class BrowseController: BaseController() {
             }
 
             response["msg"] = "Results"
-            response["status"] = "success"
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
         return response
@@ -293,7 +294,7 @@ class BrowseController: BaseController() {
         response["folder"] = folder
 
         response["msg"] = "Could not get results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
 
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -389,7 +390,7 @@ class BrowseController: BaseController() {
             }
 
             response["msg"] = "Results"
-            response["status"] = "success"
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
         return response

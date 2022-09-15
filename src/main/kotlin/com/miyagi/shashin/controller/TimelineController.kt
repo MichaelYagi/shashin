@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -181,7 +182,7 @@ class TimelineController: BaseController() {
         response["mediaTypeFilter"] = mediaTypeFilter
 
         response["msg"] = "Could not get results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
 
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         if (model.getAttribute("currentUser") != "") {
@@ -220,7 +221,7 @@ class TimelineController: BaseController() {
             response["metadataList"] = metadataList
             response["favorites"] = favoritesMap
             response["msg"] = "Results"
-            response["status"] = "success"
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
         return response
@@ -270,7 +271,7 @@ class TimelineController: BaseController() {
 
         response["metadataDates"] = mutableListOf<MetadataDate>()
         response["msg"] = "Could not get results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
 
         val metadataDates = if (mediaType == "all") {
             metadataRepository.findAllYearMonthDay()
@@ -279,7 +280,7 @@ class TimelineController: BaseController() {
         }
         if (metadataDates != null) {
             response["msg"] = "Success"
-            response["status"] = "success"
+            response["status"] = ApiResponse.SUCCESS.status
             response["metadataDates"] = metadataDates
         }
 
@@ -299,7 +300,7 @@ class TimelineController: BaseController() {
         response["mediaTypeFilter"] = mediaTypeFilter
 
         response["msg"] = "Could not get results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
 
         if (date != null && date.isNotBlank()) {
             var year: Int? = null
@@ -365,7 +366,7 @@ class TimelineController: BaseController() {
                 }
 
                 response["msg"] = "Results"
-                response["status"] = "success"
+                response["status"] = ApiResponse.SUCCESS.status
             }
         }
 
@@ -403,11 +404,11 @@ class TimelineController: BaseController() {
             metadataRepository.save(metadataObj.get())
 
             resp["msg"] = "Saved!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -436,7 +437,7 @@ class TimelineController: BaseController() {
             metadataMap["id"].toString() == metadataId
         ) {
             resp["msg"] = "Saved!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
 
             val metadataObj = metadataRepository.findById(metadataId)
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -625,7 +626,7 @@ class TimelineController: BaseController() {
             return mapper.writeValueAsString(resp)
         }
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -676,12 +677,12 @@ class TimelineController: BaseController() {
                 metadataRepository.saveAll(metadataList)
 
                 resp["msg"] = "Saved!"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -708,7 +709,7 @@ class TimelineController: BaseController() {
 
         if (!idArray.isNullOrEmpty()) {
             resp["msg"] = "Saved!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
 
             val firstAvailableMetadataId = StringEscapeUtils.escapeHtml4(idArray[0])
             val metadataCoverAlbumObj = metadataRepository.findById(firstAvailableMetadataId)
@@ -843,7 +844,7 @@ class TimelineController: BaseController() {
             }
         }
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -918,14 +919,14 @@ class TimelineController: BaseController() {
                 resp["time"] = time
 
                 resp["msg"] = "Saved"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -951,7 +952,7 @@ class TimelineController: BaseController() {
         }
 
         response["msg"] = ""
-        response["status"] = "success"
+        response["status"] = ApiResponse.SUCCESS.status
 
         return mapper.writeValueAsString(response)
     }
@@ -1015,7 +1016,7 @@ class TimelineController: BaseController() {
         }
 
         response["msg"] = ""
-        response["status"] = "success"
+        response["status"] = ApiResponse.SUCCESS.status
 
         return mapper.writeValueAsString(response)
     }
@@ -1039,7 +1040,7 @@ class TimelineController: BaseController() {
             val exifFile = File(exifFilePath)
 
             response["msg"] = "Could not get EXIF file"
-            response["status"] = "fail"
+            response["status"] = ApiResponse.FAIL.status
 
             if (exifFile.exists()) {
                 val content = Files.readString(exifFile.toPath())
@@ -1048,12 +1049,12 @@ class TimelineController: BaseController() {
                 if (json.isNotEmpty()) {
                     response["exif"] = mapper.readTree(json)
                     response["msg"] = ""
-                    response["status"] = "success"
+                    response["status"] = ApiResponse.SUCCESS.status
                 }
             }
         } else {
             response["msg"] = "Could not get record"
-            response["status"] = "fail"
+            response["status"] = ApiResponse.FAIL.status
         }
 
         return mapper.writeValueAsString(response)

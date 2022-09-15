@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -119,7 +120,7 @@ class CommentsController {
                 val comments = commentRepository.findCommentsByAlbumId(albumId)
                 resp["commentCount"] = comments.count()
                 resp["msg"] = "Comment saved!"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
                 return mapper.writeValueAsString(resp)
             }
@@ -127,7 +128,7 @@ class CommentsController {
 
         resp["commentCount"] = 0
         resp["msg"] = "Could not save to comment"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
@@ -196,14 +197,14 @@ class CommentsController {
                 notificationRepository.saveAll(notificationObjList)
 
                 resp["msg"] = "Comment saved!"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
                 return mapper.writeValueAsString(resp)
             }
         }
 
         resp["msg"] = "Could not save to comment"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
@@ -227,7 +228,7 @@ class CommentsController {
                     commentRepository.save(commentObj.get())
 
                     resp["msg"] = "Comment saved!"
-                    resp["status"] = "success"
+                    resp["status"] = ApiResponse.SUCCESS.status
                     resp["commentId"] = commentObj.get().getId().toString()
                     return mapper.writeValueAsString(resp)
                 }
@@ -235,7 +236,7 @@ class CommentsController {
         }
 
         resp["msg"] = "Could not update comment"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
@@ -257,7 +258,7 @@ class CommentsController {
                     commentRepository.deleteById(commentId)
 
                     resp["msg"] = "Comment deleted"
-                    resp["status"] = "success"
+                    resp["status"] = ApiResponse.SUCCESS.status
                     resp["commentId"] = commentId.toString()
                     return mapper.writeValueAsString(resp)
                 }
@@ -265,7 +266,7 @@ class CommentsController {
         }
 
         resp["msg"] = "Could not delete comment"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }
@@ -290,7 +291,7 @@ class CommentsController {
                     val comments = commentRepository.findCommentsByAlbumId(albumId)
                     resp["commentCount"] = comments.count()
                     resp["msg"] = "Comment deleted"
-                    resp["status"] = "success"
+                    resp["status"] = ApiResponse.SUCCESS.status
                     resp["commentId"] = commentId.toString()
                     return mapper.writeValueAsString(resp)
                 }
@@ -299,7 +300,7 @@ class CommentsController {
 
         resp["commentCount"] = 0
         resp["msg"] = "Could not delete comment"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         resp["commentId"] = 0
         return mapper.writeValueAsString(resp)
     }

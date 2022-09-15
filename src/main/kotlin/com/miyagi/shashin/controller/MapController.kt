@@ -3,6 +3,7 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
@@ -46,7 +47,7 @@ class MapController {
         }
 
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

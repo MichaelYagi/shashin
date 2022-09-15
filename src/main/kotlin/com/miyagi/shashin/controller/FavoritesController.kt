@@ -8,6 +8,7 @@ import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
@@ -98,7 +99,7 @@ class FavoritesController {
                 response["keywordMap"] = keywordMap
                 response["message"] = ""
                 response["msg"] = "Results"
-                response["status"] = "success"
+                response["status"] = ApiResponse.SUCCESS.status
                 return response
             }
         }
@@ -162,13 +163,13 @@ class FavoritesController {
 
                 resp["count"] = favoriteRepository.countAllByMetadataId(metadataId)
                 resp["msg"] = "Saved!"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
         resp["msg"] = "Could not save to favorites"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -205,7 +206,7 @@ class FavoritesController {
 
                 resp["count"] = favoriteRepository.countAllByMetadataId(metadataId)
                 resp["msg"] = "Saved!"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
 
@@ -213,7 +214,7 @@ class FavoritesController {
         }
 
         resp["msg"] = "Could not save to favorites"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -233,7 +234,7 @@ class FavoritesController {
                 }
 
                 resp["msg"] = "Removed from favorites"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
 
@@ -241,7 +242,7 @@ class FavoritesController {
         }
 
         resp["msg"] = "Could not remove from favorites"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 }

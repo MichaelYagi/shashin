@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
@@ -167,7 +168,7 @@ class AlbumsController {
         }
 
         response["msg"] = "Success!"
-        response["status"] = "success"
+        response["status"] = ApiResponse.SUCCESS.status
         response["activePage"] = module
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)
@@ -208,12 +209,12 @@ class AlbumsController {
             }
 
             resp["msg"] = "Success!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -273,12 +274,12 @@ class AlbumsController {
             }
 
             resp["msg"] = "Saved!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -353,12 +354,12 @@ class AlbumsController {
             }
 
             resp["msg"] = "Saved!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -383,7 +384,7 @@ class AlbumsController {
                     albumRepository.save(albumObj.get())
 
                     resp["relativeShareUrl"] = relativeShareUrl
-                    resp["status"] = "success"
+                    resp["status"] = ApiResponse.SUCCESS.status
                     return mapper.writeValueAsString(resp)
                 }
             }
@@ -391,7 +392,7 @@ class AlbumsController {
 
         resp["relativeShareLink"] = ""
         resp["msg"] = "Could not generate link"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -432,7 +433,7 @@ class AlbumsController {
         response["albumMetadataList"] = mutableListOf<Metadata>()
         response["shareLink"] = ""
         response["msg"] = "No results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
 
         val photoObj = albumRepository.findById(albumId)
         if (photoObj.get().getShareUrl() == shareLink) {
@@ -454,7 +455,7 @@ class AlbumsController {
                     response["albumMetadataList"] = albumMetadataList
                     response["shareLink"] = shareLink
                     response["msg"] = "Results"
-                    response["status"] = "success"
+                    response["status"] = ApiResponse.SUCCESS.status
                 }
             }
         }
@@ -501,12 +502,12 @@ class AlbumsController {
             }
 
             resp["msg"] = "Shared!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -629,7 +630,7 @@ class AlbumsController {
                         response["userMap"] = userMap
                         response["albumMetadataList"] = albumMetadataList
                         response["msg"] = "Results retrieved"
-                        response["status"] = "success"
+                        response["status"] = ApiResponse.SUCCESS.status
                         response["message"] = ""
                     }
                 }
@@ -654,13 +655,13 @@ class AlbumsController {
                 albumRepository.save(albumObj)
 
                 resp["msg"] = "Saved"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 }

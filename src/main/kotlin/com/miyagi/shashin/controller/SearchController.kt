@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -98,7 +99,7 @@ class SearchController {
             response["keywordMap"] = keywordMap
         }
 
-        response["status"] = "success"
+        response["status"] = ApiResponse.SUCCESS.status
         response["msg"] = ""
 
         return response
@@ -139,7 +140,7 @@ class SearchController {
 
         val module = "search"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -153,12 +154,12 @@ class SearchController {
         val response = mutableMapOf<String, Any?>()
         response["searchHistoryList"] = mutableListOf<SearchHistory>()
         response["msg"] = "Not authorized"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
             response["msg"] = "Success!"
-            response["status"] = "success"
+            response["status"] = ApiResponse.SUCCESS.status
 
             val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
             val searchHistoryList =
