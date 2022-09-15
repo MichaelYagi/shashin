@@ -11,10 +11,7 @@ import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
-import com.miyagi.shashin.util.FileUtils
-import com.miyagi.shashin.util.ImageProcessing
-import com.miyagi.shashin.util.MetadataProcessing
-import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -235,7 +232,7 @@ class SettingsController {
         }
 
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -359,7 +356,7 @@ class SettingsController {
 
         val module = "settings"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = ""
         model["mediaDirList"] = mediaDirList.trim()
         model["activePage"] = module
@@ -385,7 +382,7 @@ class SettingsController {
         }
 
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -435,22 +432,22 @@ class SettingsController {
                     } else {
                         resp["msg"] = "Success, but could not delete sidecar files."
                     }
-                    resp["status"] = "success"
+                    resp["status"] = ApiResponse.SUCCESS.status
                     return mapper.writeValueAsString(resp)
                 }
 
                 resp["msg"] = "Success!"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
 
             resp["msg"] = "Something went wrong."
-            resp["status"] = "fail"
+            resp["status"] = ApiResponse.FAIL.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Something went wrong."
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -472,12 +469,12 @@ class SettingsController {
             }
 
             resp["msg"] = "Success!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -499,14 +496,14 @@ class SettingsController {
                     userObj.setPassword(bcrypt.encode(password))
                     userRepository?.save(userObj)
                     resp["msg"] = "Success!"
-                    resp["status"] = "success"
+                    resp["status"] = ApiResponse.SUCCESS.status
                     return mapper.writeValueAsString(resp)
                 }
             }
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -533,12 +530,12 @@ class SettingsController {
             }
 
             resp["msg"] = "Success!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -562,12 +559,12 @@ class SettingsController {
             }
 
             resp["msg"] = "Success!"
-            resp["status"] = "success"
+            resp["status"] = ApiResponse.SUCCESS.status
             return mapper.writeValueAsString(resp)
         }
 
         resp["msg"] = "Could not save"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -580,7 +577,7 @@ class SettingsController {
         }
         val module = "logs"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = "No log file present"
         model["logList"] = mutableListOf<String>()
         model["activePage"] = module
@@ -648,7 +645,7 @@ class SettingsController {
     fun getMatchScan(model: Model): String {
         val module = "match"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = "Click scan to start finding people"
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -661,7 +658,7 @@ class SettingsController {
     fun getScan(model: Model): String {
         val module = "scan"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = "Click scan to scan photo directories"
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -711,7 +708,7 @@ class SettingsController {
     fun getSnapshot(model: Model): String {
         val module = "snapshot"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = "Export or import metadata zip file"
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -1082,7 +1079,7 @@ class SettingsController {
         }
 
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)

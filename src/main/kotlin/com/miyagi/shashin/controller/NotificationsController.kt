@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
@@ -194,12 +195,12 @@ class NotificationsController {
         val response = mutableMapOf<String, Any?>()
 
         response["msg"] = "No results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
         response["hasNotifications"] = false
 
         if (userId > 0) {
             response["msg"] = "Results"
-            response["status"] = "success"
+            response["status"] = ApiResponse.SUCCESS.status
 
             val notificationCount = notificationRepository.countAllByUserIdAndReadIsFalse(userId)
             response["hasNotifications"] = notificationCount > 0

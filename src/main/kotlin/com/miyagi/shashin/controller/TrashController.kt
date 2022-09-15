@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -50,7 +51,7 @@ class TrashController {
         }
 
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -75,13 +76,13 @@ class TrashController {
                 }
                 response["keywordMap"] = keywordMap
                 response["msg"] = ""
-                response["status"] = "success"
+                response["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(response)
             }
         }
 
         response["msg"] = "Could not get results"
-        response["status"] = "fail"
+        response["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(response)
     }
 
@@ -103,13 +104,13 @@ class TrashController {
                 }
 
                 resp["msg"] = "Restored photos"
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
             }
         }
 
         resp["msg"] = "Could not restore"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 }

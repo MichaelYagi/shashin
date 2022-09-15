@@ -2,6 +2,7 @@ package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.*
+import com.miyagi.shashin.util.ApiResponse
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -34,7 +35,7 @@ class ToolsController {
 //
 //        println(compiled)
 
-        response["msg"] = "success"
+        response["msg"] = ApiResponse.SUCCESS.status
         response["message"] = "Success"
 
         return mapper.writeValueAsString(response)

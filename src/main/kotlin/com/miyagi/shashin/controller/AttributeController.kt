@@ -4,6 +4,7 @@ import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -160,6 +161,8 @@ class AttributeController {
         model["activePage"] = ""
         model["activeSidebar"] = ""
         model["titleDescriptor"] = ""
+        model["msg"] = "Response status not set. Defaulting to status fail."
+        model["status"] = ApiResponse.FAIL.status
     }
 
     private fun getOperatingSystemInfo(): String {

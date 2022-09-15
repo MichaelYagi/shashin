@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
@@ -82,7 +83,7 @@ class UserController {
 
         val module = "update"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -114,7 +115,7 @@ class UserController {
 
         val module = "update"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -134,7 +135,7 @@ class UserController {
 
         val module = "register"
         model["msg"] = ""
-        model["status"] = "success"
+        model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -207,7 +208,7 @@ class UserController {
         }
 
         model["msg"] = ""
-        model["status"] = "fail"
+        model["status"] = ApiResponse.FAIL.status
         model["message"] = "Something went wrong"
         return module
     }
@@ -233,7 +234,7 @@ class UserController {
                 model["message"] = "Login failed"
             }
             model["msg"] = ""
-            model["status"] = "fail"
+            model["status"] = ApiResponse.FAIL.status
             model["activePage"] = module
             model["activeSidebar"] = module
             model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -295,7 +296,7 @@ class UserController {
                             response.addCookie(cookie)
 
                             resp["msg"] = "Logged in!"
-                            resp["status"] = "success"
+                            resp["status"] = ApiResponse.SUCCESS.status
                             resp["sessionid"] = session.id
                             resp["id"] = userObj.getId()
                             resp["username"] = userObj.getUsername()
@@ -309,7 +310,7 @@ class UserController {
         }
 
         resp["msg"] = "Could not login"
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
     }
 
@@ -324,7 +325,7 @@ class UserController {
         response.addCookie(cookie)
 
         resp["msg"] = "Logged out!"
-        resp["status"] = "success"
+        resp["status"] = ApiResponse.SUCCESS.status
 
         return mapper.writeValueAsString(resp)
     }
@@ -365,7 +366,7 @@ class UserController {
     fun toggleDarkmode(model: Model, @RequestBody requestBody: JsonNode): String? {
         val userMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
 
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
         resp["msg"] = "Darkmode not toggled"
 
         if (userMap.containsKey("darkMode")) {
@@ -375,7 +376,7 @@ class UserController {
             if (currentUserObj != null) {
                 currentUserObj.setDarkMode(darkMode)
                 userRepository?.save(currentUserObj)
-                resp["status"] = "success"
+                resp["status"] = ApiResponse.SUCCESS.status
                 resp["msg"] = "Darkmode toggled"
             }
         }
@@ -387,7 +388,7 @@ class UserController {
     @ResponseBody
     @Secured("ROLE_ADMIN")
     fun deleteUser(model: Model, @ModelAttribute user: @Valid User?): String? {
-        resp["status"] = "fail"
+        resp["status"] = ApiResponse.FAIL.status
 
         if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
 
@@ -399,7 +400,7 @@ class UserController {
                         userRepository?.delete(user)
 
                         resp["msg"] = "Deleted user " + user.getUsername()
-                        resp["status"] = "success"
+                        resp["status"] = ApiResponse.SUCCESS.status
                         return mapper.writeValueAsString(resp)
                     }
                 }
@@ -409,7 +410,7 @@ class UserController {
             if (user != null) {
                 resp["msg"] = "Could not delete user " + user.getUsername()
             }
-            resp["status"] = "fail"
+            resp["status"] = ApiResponse.FAIL.status
         }
         return mapper.writeValueAsString(resp)
     }

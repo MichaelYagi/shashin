@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.StatMessage
 import com.miyagi.shashin.repository.*
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -213,7 +214,7 @@ class DashboardController {
 
         response["message"] = ""
         response["msg"] = ""
-        response["status"] = "success"
+        response["status"] = ApiResponse.SUCCESS.status
 
         return response
     }
