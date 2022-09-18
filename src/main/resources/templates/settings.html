@@ -24,10 +24,14 @@
                     <div class="row">
                         <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></strong></label>
                         <div class="col-12">
-                            <div class="card" style="height: 300px">
+                            <div>
+                                <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
+                            </div>
+                            <div class="card mt-2" style="height: 300px">
                                 <div class="card-header">
                                     <div class="col-12">
-                                        <input class="form-control" type="text" id="selectedPath" placeholder="Select Folder" readonly>
+                                        <label for="selectedPath" class="form-label">Browse Directories</label>
+                                        <input class="form-control" type="text" id="selectedPath" placeholder="Select Directory" readonly>
                                     </div>
                                     <button id="parentFolder" type="button" class="btn btn-secondary btn-sm mt-1"><i class="bi-arrow-90deg-up"></i></button>&nbsp;<button type="button" id="selectFolder" class="btn btn-primary btn-sm mt-1">Select Folder</button>
                                 </div>
@@ -35,9 +39,6 @@
                                     <ul class="card-body list-group list-group-flush" id="dirList" style="list-style-type: none;">
                                     </ul>
                                 </div>
-                            </div>
-                            <div>
-                                <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
                             </div>
                         </div>
                     </div>
