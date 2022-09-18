@@ -260,7 +260,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/timeline/dates/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/dates/{mediaType}","/api/v1/timeline/dates/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getTimelineDates(model: Model, @PathVariable mediaType: String): String {
         return mapper.writeValueAsString(getMetadataDates(mediaType))
