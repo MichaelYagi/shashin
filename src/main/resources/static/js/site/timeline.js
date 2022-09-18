@@ -1414,7 +1414,7 @@
 
     timelineSettings.refreshTimeline = async function (mediaTypeFilter) {
         const http = new Http("refreshing timeline TOC");
-        const data = await http.ajax("get", "/timeline/dates/"+mediaTypeFilter);
+        const data = await http.ajax("get", "/api/v1/timeline/dates/"+mediaTypeFilter);
 
         if (data.hasOwnProperty("metadataDates")) {
             const metadataDates = data["metadataDates"];
