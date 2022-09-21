@@ -519,6 +519,13 @@ async function showMap(mapdata,keywordMap,showControls) {
         }
     });
 
+    $("#clearDateInputsButton").on("click", function(e) {
+        e.preventDefault();
+
+        startDateField.val("");
+        endDateField.val("");
+    });
+
     map.on("pointermove", function (evt) {
         const hit = this.forEachFeatureAtPixel(evt.pixel, function () {
             return true;
