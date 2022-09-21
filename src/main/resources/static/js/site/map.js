@@ -515,7 +515,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         // Validate fields
         if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
             // Filter results
-            //setLayer(startDateField.val(),endDateField.val());
+            setLayer(startDateField.val(),endDateField.val());
         }
     });
 
