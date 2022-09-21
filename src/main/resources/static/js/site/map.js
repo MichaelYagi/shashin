@@ -96,6 +96,7 @@ async function showMap(mapdata,keywordMap,showControls) {
     }
 
     function setLayer(startDate, endDate) {
+        map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
         for (let index in mapdata) {
@@ -193,7 +194,6 @@ async function showMap(mapdata,keywordMap,showControls) {
         $("#progressBarWrapper").css("visibility", "hidden");
 
         if (iconFeatures.length > 0) {
-            map.removeLayer(vectorLayer);
 
             const vectorSource = new ol.source.Vector({
                 features: iconFeatures //add an array of features
