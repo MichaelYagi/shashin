@@ -15,6 +15,147 @@ async function showMap(mapdata,keywordMap,showControls) {
         color: 'rgba(255, 255, 255, 0.01)',
     });
 
+    let initialCoord = [-73.1234, 45.678];
+    let initialZoom = 2;
+    if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
+        initialCoord = [qslng, qslat];
+        initialZoom = 20;
+    } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
+        initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
+        initialZoom = 20;
+        localStorage.removeItem('lat');
+        localStorage.removeItem('lng');
+    }
+
+    function validateDate(d) {
+        if (Object.prototype.toString.call(d) === "[object Date]") {
+            // it is a date
+            if (isNaN(d)) { // d.getTime() or d.valueOf() will also work
+                // date object is not valid
+                return null;
+            } else {
+                // date object is valid
+                return d;
+            }
+        } else {
+            // not a date object
+            return null;
+        }
+    }
+
+    function checkDates(takenAtDateFormat,startDate,endDate) {
+
+        let startDateFormat = null;
+        let endDateFormat = null;
+
+        if (startDate && endDate) {
+            startDateFormat = validateDate(startDate);
+            endDateFormat = validateDate(endDate);
+        } else if (startDate) {
+            startDateFormat = validateDate(startDate);
+        }
+
+        return !!(validateDate(takenAtDateFormat) &&
+            ((startDateFormat === null && endDateFormat === null) ||
+            (startDateFormat !== null && endDateFormat !== null && takenAtDateFormat >= startDateFormat && takenAtDateFormat <= endDateFormat) ||
+            (startDateFormat !== null && takenAtDateFormat >= startDateFormat) ||
+            (endDateFormat !== null && takenAtDateFormat <= endDateFormat)));
+    }
+
+    function setLayer(startDate, endDate) {
+        const iconFeatures = [];
+
+        for (let index in mapdata) {
+            const data = mapdata[index];
+
+            if (data["lat"] !== null && data["lng"] !== null &&
+                data["lat"] !== "" && data["lng"] !== "") {
+
+                if (true === checkDates(new Date(data["takenAt"]),new Date(startDate),new Date(endDate))) {
+
+                    const keywords = keywordMap.hasOwnProperty(data["id"]) ? keywordMap[data["id"]] : "";
+
+                    const mapMarkerIcon = new ol.style.Style({
+                        //geometry: feature.getGeometry(),
+                        image: new ol.style.Icon(({
+                            anchor: [0.5, 46],
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'pixels',
+                            opacity: 1.0,
+                            src: encodeURI(data["mapMarkerUrl"])
+                        }))
+                    });
+
+                    const iconFeature = new ol.Feature({
+                        geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
+                        fileName: data["fileName"],
+                        compressionType: data["compressionType"],
+                        thumbnailUrlSmall: data["thumbnailUrlSmall"],
+                        thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
+                        mapMarkerUrl: data["mapMarkerUrl"],
+                        mapMarkerIcon: mapMarkerIcon,
+                        videoUrl: data["videoUrl"],
+                        year: data["year"],
+                        month: data["month"],
+                        day: data["day"],
+                        placeName: data["placeName"],
+                        metadataId: data["id"],
+                        title: data["title"],
+                        lat: data["lat"],
+                        lng: data["lng"],
+                        type: data["type"],
+                        path: data["path"],
+                        iso: data["iso"],
+                        exposure: data["exposure"],
+                        fstopNumber: data["fstopNumber"],
+                        camera: data["camera"],
+                        lens: data["lens"],
+                        quality: data["quality"],
+                        createdAt: data["createdAt"],
+                        modifiedAt: data["modifiedAt"],
+                        takenAt: data["takenAt"],
+                        time: data["time"],
+                        timeZone: data["timeZone"],
+                        keywords: keywords,
+                        description: data["description"]
+                    });
+
+                    iconFeature.setStyle(data["mapMarkerIcon"]);
+                    iconFeatures.push(iconFeature);
+                }
+            }
+
+            const currentProgress = (index + 1) / mapdata.length * 100;
+            $("#progressBar").attr("aria-valuenow", String(parseInt(currentProgress)));
+            const width = String(parseInt(currentProgress)) + "%";
+            $("#progressBar").css("width", width);
+            shashin.printMessageToConsole(currentProgress);
+        }
+
+        $("#progressBarWrapper").css("visibility", "hidden");
+
+        if (iconFeatures.length > 0) {
+            map.removeLayer(vectorLayer);
+
+            const vectorSource = new ol.source.Vector({
+                features: iconFeatures //add an array of features
+            });
+
+            const clusterSource = new ol.source.Cluster({
+                distance: 40,
+                source: vectorSource,
+            });
+
+            vectorLayer = new ol.layer.Vector({
+                source: clusterSource,
+                style: styleFunction
+            });
+
+            map.addLayer(vectorLayer);
+            map.getView().setZoom(initialZoom);
+        }
+    }
+
     function editLocation(...args) {
         const locationArgs = [].concat(...args);
         let metadataId = "";
@@ -67,10 +208,10 @@ async function showMap(mapdata,keywordMap,showControls) {
     }
 
     let maxFeatureCount;
-    let vector = null;
+    let vectorLayer = null;
     const calculateClusterInfo = function (resolution) {
         maxFeatureCount = 0;
-        const features = vector.getSource().getFeatures();
+        const features = vectorLayer.getSource().getFeatures();
         let feature, radius;
 
         // Sort by number of features for radius calculation
@@ -108,8 +249,8 @@ async function showMap(mapdata,keywordMap,showControls) {
     let currentResolution;
 
     function styleFunction(feature, resolution) {
+        calculateClusterInfo(resolution);
         if (resolution !== currentResolution) {
-            calculateClusterInfo(resolution);
             currentResolution = resolution;
         }
 
@@ -225,18 +366,6 @@ async function showMap(mapdata,keywordMap,showControls) {
         return styles;
     }
 
-    let initialCoord = [-73.1234, 45.678];
-    let initialZoom = 2;
-    if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
-        initialCoord = [qslng, qslat];
-        initialZoom = 20;
-    } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
-        initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
-        initialZoom = 20;
-        localStorage.removeItem('lat');
-        localStorage.removeItem('lng');
-    }
-
     const mapView = new ol.View({
         center: ol.proj.fromLonLat(initialCoord),
         zoom: initialZoom
@@ -314,86 +443,13 @@ async function showMap(mapdata,keywordMap,showControls) {
         });
     });
 
-    const iconFeatures = [];
-    for (let index in mapdata) {
-        const data = mapdata[index];
+    setLayer();
 
-        if (data["lat"] !== null && data["lng"] !== null &&
-            data["lat"] !== "" && data["lng"] !== "") {
+    $("#dateInputButton").on("click", function(e) {
+        e.preventDefault();
 
-            const keywords = keywordMap.hasOwnProperty(data["id"]) ? keywordMap[data["id"]] : "";
-
-            const mapMarkerIcon = new ol.style.Style({
-                //geometry: feature.getGeometry(),
-                image: new ol.style.Icon(({
-                    anchor: [0.5, 46],
-                    anchorXUnits: 'fraction',
-                    anchorYUnits: 'pixels',
-                    opacity: 1.0,
-                    src: encodeURI(data["mapMarkerUrl"])
-                }))
-            });
-
-            const iconFeature = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
-                fileName: data["fileName"],
-                compressionType: data["compressionType"],
-                thumbnailUrlSmall: data["thumbnailUrlSmall"],
-                thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
-                mapMarkerUrl: data["mapMarkerUrl"],
-                mapMarkerIcon: mapMarkerIcon,
-                videoUrl: data["videoUrl"],
-                year: data["year"],
-                month: data["month"],
-                day: data["day"],
-                placeName: data["placeName"],
-                metadataId: data["id"],
-                title: data["title"],
-                lat: data["lat"],
-                lng: data["lng"],
-                type: data["type"],
-                path: data["path"],
-                iso: data["iso"],
-                exposure: data["exposure"],
-                fstopNumber: data["fstopNumber"],
-                camera: data["camera"],
-                lens: data["lens"],
-                quality: data["quality"],
-                createdAt: data["createdAt"],
-                modifiedAt: data["modifiedAt"],
-                takenAt: data["takenAt"],
-                time: data["time"],
-                timeZone: data["timeZone"],
-                keywords: keywords,
-                description: data["description"]
-            });
-
-            iconFeature.setStyle(data["mapMarkerIcon"]);
-            iconFeatures.push(iconFeature);
-        }
-
-        const currentProgress = (index + 1) / mapdata.length * 100;
-        $("#progressBar").attr("aria-valuenow", String(parseInt(currentProgress)));
-        const width = String(parseInt(currentProgress)) + "%";
-        $("#progressBar").css("width", width);
-        shashin.printMessageToConsole(currentProgress);
-    }
-    $("#progressBarWrapper").css("visibility", "hidden");
-
-    if (iconFeatures.length > 0) {
-        const vectorSource = new ol.source.Vector({
-            features: iconFeatures //add an array of features
-        });
-        const clusterSource = new ol.source.Cluster({
-            distance: 40,
-            source: vectorSource,
-        });
-        vector = new ol.layer.Vector({
-            source: clusterSource,
-            style: styleFunction
-        });
-        map.addLayer(vector);
-    }
+        setLayer($("#startDateInput").val(),$("#endDateInput").val());
+    });
 
     map.on("pointermove", function (evt) {
         const hit = this.forEachFeatureAtPixel(evt.pixel, function () {
