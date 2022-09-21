@@ -35,7 +35,7 @@ async function showMap(mapdata,keywordMap,showControls) {
                 return null;
             } else {
                 // date object is valid
-                return d;
+                return new Date(d.toDateString());
             }
         } else {
             // not a date object
@@ -48,18 +48,20 @@ async function showMap(mapdata,keywordMap,showControls) {
         let startDateFormat = null;
         let endDateFormat = null;
 
-        if (startDate && endDate) {
+        if (validateDate(takenAtDateFormat) !== null) {
             startDateFormat = validateDate(startDate);
             endDateFormat = validateDate(endDate);
-        } else if (startDate) {
-            startDateFormat = validateDate(startDate);
+
+            if (startDateFormat && endDateFormat) {
+                return takenAtDateFormat >= startDateFormat && takenAtDateFormat <= endDateFormat;
+            } else if (endDateFormat) {
+                return takenAtDateFormat <= endDateFormat;
+            } else if (startDateFormat) {
+                return takenAtDateFormat >= startDateFormat;
+            } else return startDateFormat === null && endDateFormat === null;
         }
 
-        return !!(validateDate(takenAtDateFormat) &&
-            ((startDateFormat === null && endDateFormat === null) ||
-            (startDateFormat !== null && endDateFormat !== null && takenAtDateFormat >= startDateFormat && takenAtDateFormat <= endDateFormat) ||
-            (startDateFormat !== null && takenAtDateFormat >= startDateFormat) ||
-            (endDateFormat !== null && takenAtDateFormat <= endDateFormat)));
+        return false;
     }
 
     function setLayer(startDate, endDate) {
@@ -71,7 +73,32 @@ async function showMap(mapdata,keywordMap,showControls) {
             if (data["lat"] !== null && data["lng"] !== null &&
                 data["lat"] !== "" && data["lng"] !== "") {
 
-                if (true === checkDates(new Date(data["takenAt"]),new Date(startDate),new Date(endDate))) {
+                let dateTakenObj = new Date(data["year"],parseInt(data["month"])-1,data["day"]);
+
+                let startDateObj = null;
+                let dateArray = null;
+                let year = null;
+                let month = null;
+                let day = null;
+
+                if (startDate) {
+                    dateArray = startDate.split("-");
+                    year = dateArray[0];
+                    month = parseInt(dateArray[1], 10) - 1;
+                    day = dateArray[2];
+                    startDateObj = new Date(year, month, day);
+                }
+
+                let endDateObj = null;
+                if (endDate) {
+                    dateArray = endDate.split("-");
+                    year = dateArray[0];
+                    month = parseInt(dateArray[1], 10) - 1;
+                    day = dateArray[2];
+                    endDateObj = new Date(year, month, day);
+                }
+
+                if (true === checkDates(dateTakenObj,startDateObj,endDateObj)) {
 
                     const keywords = keywordMap.hasOwnProperty(data["id"]) ? keywordMap[data["id"]] : "";
 
@@ -447,7 +474,6 @@ async function showMap(mapdata,keywordMap,showControls) {
 
     $("#dateInputButton").on("click", function(e) {
         e.preventDefault();
-
         setLayer($("#startDateInput").val(),$("#endDateInput").val());
     });
 
