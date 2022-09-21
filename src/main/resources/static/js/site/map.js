@@ -2,6 +2,10 @@ async function showMap(mapdata,keywordMap,showControls) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
 
+    const startDateField = $("#startDateInput");
+    const endDateField = $("#endDateInput");
+    const dateInputs = $("#dateInputs");
+
     shashin.mouseMoveListener();
 
     const textFill = new ol.style.Fill({
@@ -59,6 +63,33 @@ async function showMap(mapdata,keywordMap,showControls) {
             } else if (startDateFormat) {
                 return takenAtDateFormat >= startDateFormat;
             } else return startDateFormat === null && endDateFormat === null;
+        }
+
+        return false;
+    }
+
+    function checkDateInputs(startDate,endDate) {
+
+        let startDateFormat = validateDate(startDate);
+        let endDateFormat = validateDate(endDate);
+        const dateValidationMessage = $("#dateValidationMessage");
+
+        if (startDateField.val() === "" && endDateField.val() === "") {
+            return true;
+        } else if (startDateField.val() !== "" && startDateFormat == null && endDateField.val() !== "" && endDateFormat === null) {
+            dateValidationMessage.text("Invalid dates.");
+            return false;
+        } else if (startDateFormat && endDateFormat) {
+            if (endDateFormat < startDateFormat) {
+                dateValidationMessage.text("Start date must be before end date.");
+            }
+            return endDateFormat >= startDateFormat;
+        } else if (startDateField.val() !== "" && startDateFormat === null) {
+            dateValidationMessage.text("Invalid start date.");
+            return false;
+        } else if (endDateField.val() !== "" && endDateFormat === null) {
+            dateValidationMessage.text("Invalid end date.");
+            return false;
         }
 
         return false;
@@ -461,6 +492,10 @@ async function showMap(mapdata,keywordMap,showControls) {
     map.addControl(zoomSlider);
     map.addControl(attributions);
 
+    map.once("postrender", function() {
+        dateInputs.css("visibility", "visible");
+    });
+
     // After closing lightgallery, clear select interaction
     $dynamicGallery.addEventListener('lgAfterClose', function (event) {
         map.getInteractions().forEach(function (interaction) {
@@ -474,7 +509,14 @@ async function showMap(mapdata,keywordMap,showControls) {
 
     $("#dateInputButton").on("click", function(e) {
         e.preventDefault();
-        setLayer($("#startDateInput").val(),$("#endDateInput").val());
+
+        $("#dateValidationMessage").text("");
+
+        // Validate fields
+        if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
+            // Filter results
+            //setLayer(startDateField.val(),endDateField.val());
+        }
     });
 
     map.on("pointermove", function (evt) {
