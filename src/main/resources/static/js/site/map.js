@@ -31,8 +31,12 @@ async function showMap(mapdata,keywordMap,showControls) {
     let initialCoord = [-73.1234, 45.678];
     let initialZoom = 2;
     if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
-        initialCoord = [qslng, qslat];
-        initialZoom = 20;
+        if (true === isValidQsLatLon(qslat,qslng)) {
+            initialCoord = [qslng, qslat];
+            initialZoom = 20;
+        } else {
+            dateValidationMessage.text("Invalid lat/lng format.");
+        }
     } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
         initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
         initialZoom = 20;
@@ -87,6 +91,15 @@ async function showMap(mapdata,keywordMap,showControls) {
         }
         // NaN value, Invalid date
         return d.toISOString().slice(0, 10) === dateString;
+    }
+
+    function isValidQsLatLon(lat, lon) {
+        const regexLat = /^(-?[1-8]?\d(?:\.\d{1,18})?|90(?:\.0{1,18})?)$/;
+        const regexLon = /^(-?(?:1[0-7]|[1-9])?\d(?:\.\d{1,18})?|180(?:\.0{1,18})?)$/;
+
+        let validLat = regexLat.test(lat);
+        let validLon = regexLon.test(lon);
+        return validLat && validLon;
     }
     
     function validateDate(d) {
