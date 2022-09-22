@@ -233,6 +233,7 @@ async function showMap(mapdata,keywordMap,showControls) {
 
             map.addLayer(vectorLayer);
             map.getView().setZoom(initialZoom);
+            initialZoom = 20;
         }
     }
 
