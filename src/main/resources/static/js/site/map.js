@@ -609,6 +609,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         startDateField.val("");
         endDateField.val("");
         dateValidationMessage.text("");
+        setLayer(startDateField.val(),endDateField.val());
     });
 
     map.on("pointermove", function (evt) {
