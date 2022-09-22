@@ -1,6 +1,8 @@
 async function showMap(mapdata,keywordMap,showControls) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
+    const qssd = Util.getParameterByName("sd");
+    const qsed = Util.getParameterByName("ed");
 
     const startDateField = $("#startDateInput");
     const endDateField = $("#endDateInput");
@@ -31,6 +33,28 @@ async function showMap(mapdata,keywordMap,showControls) {
         localStorage.removeItem('lng');
     }
 
+    if ((qssd !== null && qssd !== '') || (qsed !== null && qsed !== '')) {
+        if (qssd !== '') {
+            startDateField.val(qssd);
+        }
+        if (qsed !== '') {
+            endDateField.val(qsed);
+        }
+    } else if (Util.localStorageAvailable() === true && "sd" in localStorage && "ed" in localStorage) {
+        const sd = localStorage.getItem("sd");
+        const ed = localStorage.getItem("ed");
+
+        if (sd !== '') {
+            startDateField.val(sd);
+        }
+        if (ed !== '') {
+            endDateField.val(ed);
+        }
+
+        localStorage.removeItem('sd');
+        localStorage.removeItem('ed');
+    }
+
     function validateDate(d) {
         if (Object.prototype.toString.call(d) === "[object Date]") {
             // it is a date
@@ -39,7 +63,7 @@ async function showMap(mapdata,keywordMap,showControls) {
                 return null;
             } else {
                 // date object is valid
-                return new Date(d.toDateString());
+                return new Date(d.getTime() - d.getTimezoneOffset() * -60000);
             }
         } else {
             // not a date object
@@ -48,7 +72,6 @@ async function showMap(mapdata,keywordMap,showControls) {
     }
 
     function checkDates(takenAtDateFormat,startDate,endDate) {
-
         let startDateFormat = null;
         let endDateFormat = null;
 
@@ -69,7 +92,6 @@ async function showMap(mapdata,keywordMap,showControls) {
     }
 
     function checkDateInputs(startDate,endDate) {
-
         let startDateFormat = validateDate(startDate);
         let endDateFormat = validateDate(endDate);
         const dateValidationMessage = $("#dateValidationMessage");
@@ -92,7 +114,7 @@ async function showMap(mapdata,keywordMap,showControls) {
             return false;
         }
 
-        return false;
+        return true;
     }
 
     function setLayer(startDate, endDate) {
@@ -591,6 +613,8 @@ async function showMap(mapdata,keywordMap,showControls) {
                 if (Util.localStorageAvailable() === true) {
                     localStorage.setItem("lat", lat);
                     localStorage.setItem("lng", lng);
+                    localStorage.setItem("sd", startDateField.val());
+                    localStorage.setItem("ed", endDateField.val());
                 }
 
                 $("#metadataLocationModalCancel").prop('disabled', false);
