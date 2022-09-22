@@ -1,6 +1,7 @@
 async function showMap(mapdata,keywordMap,showControls) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
+    // Must be of format yyyy-mm-dd
     const qssd = Util.getParameterByName("sd");
     const qsed = Util.getParameterByName("ed");
 
@@ -40,6 +41,7 @@ async function showMap(mapdata,keywordMap,showControls) {
 
     if ((qssd !== null && qssd !== '') || (qsed !== null && qsed !== '')) {
         if (qssd !== '') {
+            console.log(qssd)
             startDateField.val(qssd);
         }
         if (qsed !== '') {
