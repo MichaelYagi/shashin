@@ -96,6 +96,11 @@ async function showMap(mapdata,keywordMap,showControls) {
         let endDateFormat = validateDate(endDate);
         const dateValidationMessage = $("#dateValidationMessage");
 
+        shashin.printMessageToConsole("startDate input checkDateInputs:" + startDate);
+        shashin.printMessageToConsole("endDate input checkDateInputs:" + endDate);
+        shashin.printMessageToConsole("startDateFormat formatted date checkDateInputs:" + startDateFormat);
+        shashin.printMessageToConsole("endDateFormat formatted date checkDateInputs:" + endDateFormat);
+
         if (startDateField.val() === "" && endDateField.val() === "") {
             return true;
         } else if (startDateField.val() !== "" && startDateFormat == null && endDateField.val() !== "" && endDateFormat === null) {
