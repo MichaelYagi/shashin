@@ -1,7 +1,7 @@
 async function showMap(mapdata,keywordMap,showControls) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
-    // Must be of format yyyy-mm-dd
+    // Must be format yyyy-mm-dd
     const qssd = Util.getParameterByName("sd");
     const qsed = Util.getParameterByName("ed");
 
@@ -40,28 +40,55 @@ async function showMap(mapdata,keywordMap,showControls) {
         localStorage.removeItem('lng');
     }
 
-    if ((qssd !== null && qssd !== '') || (qsed !== null && qsed !== '')) {
-        if (qssd !== '') {
-            startDateField.val(qssd);
+    if ((qssd !== null && qssd !== "") || (qsed !== null && qsed !== "")) {
+        if (qssd !== "") {
+            if (true === isValidQsDate(qssd)) {
+                startDateField.val(qssd);
+            } else {
+                dateValidationMessage.text("Date format must be yyyy-mm-dd.");
+            }
         }
-        if (qsed !== '') {
-            endDateField.val(qsed);
+        if (qsed !== "") {
+            if (true === isValidQsDate(qsed)) {
+                endDateField.val(qsed);
+            } else {
+                dateValidationMessage.text("Date format must be yyyy-mm-dd.");
+            }
         }
-    } else if (Util.localStorageAvailable() === true && "sd" in localStorage && "ed" in localStorage) {
+    } else if (
+      Util.localStorageAvailable() === true &&
+      "sd" in localStorage &&
+      "ed" in localStorage
+    ) {
         const sd = localStorage.getItem("sd");
         const ed = localStorage.getItem("ed");
 
-        if (sd !== '') {
+        if (sd !== "") {
             startDateField.val(sd);
         }
-        if (ed !== '') {
+        if (ed !== "") {
             endDateField.val(ed);
         }
 
-        localStorage.removeItem('sd');
-        localStorage.removeItem('ed');
+        localStorage.removeItem("sd");
+        localStorage.removeItem("ed");
     }
 
+    function isValidQsDate(dateString) {
+        const regEx = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateString.match(regEx)) {
+            return false;
+        }
+        // Invalid format
+        const d = new Date(dateString);
+        const dNum = d.getTime();
+        if (!dNum && dNum !== 0) {
+            return false;
+        }
+        // NaN value, Invalid date
+        return d.toISOString().slice(0, 10) === dateString;
+    }
+    
     function validateDate(d) {
         if (Object.prototype.toString.call(d) === "[object Date]") {
             // it is a date
@@ -227,8 +254,8 @@ async function showMap(mapdata,keywordMap,showControls) {
             }
 
             const currentProgress = (index + 1) / mapdata.length * 100;
-            progressBar.attr("aria-valuenow", String(parseInt(currentProgress)));
-            const width = String(parseInt(currentProgress)) + "%";
+            progressBar.attr("aria-valuenow", currentProgress.toString());
+            const width = currentProgress.toString() + "%";
             progressBar.css("width", width);
             shashin.printMessageToConsole(currentProgress);
         }
