@@ -77,13 +77,17 @@ async function showMap(mapdata,keywordMap,showControls) {
     }
 
     function checkDates(takenAtDateFormat,startDateFormat,endDateFormat) {
+        shashin.printMessageToConsole("startDateFormat before validateDate reformatted: " + startDateFormat);
+        shashin.printMessageToConsole("endDateFormat before validateDate reformatted: " + endDateFormat);
+        shashin.printMessageToConsole("takenAtDateFormat before validateDate reformatted: " + takenAtDateFormat);
+
         startDateFormat = validateDate(startDateFormat);
         endDateFormat = validateDate(endDateFormat);
         takenAtDateFormat = validateDate(takenAtDateFormat);
 
-        shashin.printMessageToConsole("startDateFormat validateDate reformatted: " + startDateFormat);
-        shashin.printMessageToConsole("endDateFormat validateDate reformatted: " + endDateFormat);
-        shashin.printMessageToConsole("takenAtDateFormat validateDate reformatted: " + takenAtDateFormat);
+        shashin.printMessageToConsole("startDateFormat after validateDate reformatted: " + startDateFormat);
+        shashin.printMessageToConsole("endDateFormat after validateDate reformatted: " + endDateFormat);
+        shashin.printMessageToConsole("takenAtDateFormat after validateDate reformatted: " + takenAtDateFormat);
         shashin.printMessageToConsole("-----------");
 
         if (takenAtDateFormat !== null) {
