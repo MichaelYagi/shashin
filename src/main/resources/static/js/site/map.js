@@ -99,9 +99,9 @@ async function showMap(mapdata,keywordMap,showControls) {
         return false;
     }
 
-    function checkDateInputs(startDate,endDate) {
-        let startDateFormat = validateDate(startDate);
-        let endDateFormat = validateDate(endDate);
+    function checkDateInputs(startDateFormat,endDateFormat) {
+        startDateFormat = validateDate(startDateFormat);
+        endDateFormat = validateDate(endDateFormat);
         const dateValidationMessage = $("#dateValidationMessage");
 
         shashin.printMessageToConsole("startDate input date obj: " + startDate);
