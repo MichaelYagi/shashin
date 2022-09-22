@@ -100,14 +100,15 @@ async function showMap(mapdata,keywordMap,showControls) {
     }
 
     function checkDateInputs(startDateFormat,endDateFormat) {
+        shashin.printMessageToConsole("startDateFormat before processing: " + startDateFormat);
+        shashin.printMessageToConsole("endDateFormat before processing: " + endDateFormat);
+
         startDateFormat = validateDate(startDateFormat);
         endDateFormat = validateDate(endDateFormat);
         const dateValidationMessage = $("#dateValidationMessage");
 
-        shashin.printMessageToConsole("startDate input date obj: " + startDate);
-        shashin.printMessageToConsole("endDate input date obj: " + endDate);
-        shashin.printMessageToConsole("startDateFormat validateDate reformatted: " + startDateFormat);
-        shashin.printMessageToConsole("endDateFormat validateDate reformatted: " + endDateFormat);
+        shashin.printMessageToConsole("startDateFormat after processing: " + startDateFormat);
+        shashin.printMessageToConsole("endDateFormat after processing: " + endDateFormat);
         shashin.printMessageToConsole("-----------");
 
         if (startDateField.val() === "" && endDateField.val() === "") {
