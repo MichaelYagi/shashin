@@ -71,14 +71,17 @@ async function showMap(mapdata,keywordMap,showControls) {
         }
     }
 
-    function checkDates(takenAtDateFormat,startDate,endDate) {
-        let startDateFormat = null;
-        let endDateFormat = null;
+    function checkDates(takenAtDateFormat,startDateFormat,endDateFormat) {
+        startDateFormat = validateDate(startDateFormat);
+        endDateFormat = validateDate(endDateFormat);
+        takenAtDateFormat = validateDate(takenAtDateFormat);
 
-        if (validateDate(takenAtDateFormat) !== null) {
-            startDateFormat = validateDate(startDate);
-            endDateFormat = validateDate(endDate);
+        shashin.printMessageToConsole("startDateFormat validateDate reformatted: " + startDateFormat);
+        shashin.printMessageToConsole("endDateFormat validateDate reformatted: " + endDateFormat);
+        shashin.printMessageToConsole("takenAtDateFormat validateDate reformatted: " + takenAtDateFormat);
+        shashin.printMessageToConsole("-----------");
 
+        if (takenAtDateFormat !== null) {
             if (startDateFormat && endDateFormat) {
                 return takenAtDateFormat >= startDateFormat && takenAtDateFormat <= endDateFormat;
             } else if (endDateFormat) {
@@ -100,6 +103,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         shashin.printMessageToConsole("endDate input date obj: " + endDate);
         shashin.printMessageToConsole("startDateFormat validateDate reformatted: " + startDateFormat);
         shashin.printMessageToConsole("endDateFormat validateDate reformatted: " + endDateFormat);
+        shashin.printMessageToConsole("-----------");
 
         if (startDateField.val() === "" && endDateField.val() === "") {
             return true;
