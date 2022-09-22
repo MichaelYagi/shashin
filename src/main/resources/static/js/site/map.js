@@ -13,6 +13,7 @@ async function showMap(mapdata,keywordMap,showControls) {
     const propMetadataLocation = $("#propMetadataLocation");
     const metadataLocationModalStatus = $("#metadataLocationModalStatus");
     const metadataLocationModalCancel = $("#metadataLocationModalCancel");
+    const dateValidationMessage = $("#dateValidationMessage");
 
     shashin.mouseMoveListener();
 
@@ -41,7 +42,6 @@ async function showMap(mapdata,keywordMap,showControls) {
 
     if ((qssd !== null && qssd !== '') || (qsed !== null && qsed !== '')) {
         if (qssd !== '') {
-            console.log(qssd)
             startDateField.val(qssd);
         }
         if (qsed !== '') {
@@ -111,7 +111,6 @@ async function showMap(mapdata,keywordMap,showControls) {
 
         startDateFormat = validateDate(startDateFormat);
         endDateFormat = validateDate(endDateFormat);
-        const dateValidationMessage = $("#dateValidationMessage");
 
         shashin.printMessageToConsole("startDateFormat after processing: " + startDateFormat);
         shashin.printMessageToConsole("endDateFormat after processing: " + endDateFormat);
@@ -549,12 +548,13 @@ async function showMap(mapdata,keywordMap,showControls) {
         });
     });
 
+    checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
     setLayer(startDateField.val(),endDateField.val());
 
     $("#dateInputButton").on("click", function(e) {
         e.preventDefault();
 
-        $("#dateValidationMessage").text("");
+        dateValidationMessage.text("");
 
         // Validate fields
         if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
@@ -568,6 +568,7 @@ async function showMap(mapdata,keywordMap,showControls) {
 
         startDateField.val("");
         endDateField.val("");
+        dateValidationMessage.text("");
     });
 
     map.on("pointermove", function (evt) {
