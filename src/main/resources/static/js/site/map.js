@@ -527,7 +527,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         });
     });
 
-    setLayer();
+    setLayer(startDateField.val(),endDateField.val());
 
     $("#dateInputButton").on("click", function(e) {
         e.preventDefault();
