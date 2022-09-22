@@ -7,6 +7,11 @@ async function showMap(mapdata,keywordMap,showControls) {
     const startDateField = $("#startDateInput");
     const endDateField = $("#endDateInput");
     const dateInputs = $("#dateInputs");
+    const progressBar = $("#progressBar");
+    const locationDataInput = $("#locationDataInput");
+    const propMetadataLocation = $("#propMetadataLocation");
+    const metadataLocationModalStatus = $("#metadataLocationModalStatus");
+    const metadataLocationModalCancel = $("#metadataLocationModalCancel");
 
     shashin.mouseMoveListener();
 
@@ -216,9 +221,9 @@ async function showMap(mapdata,keywordMap,showControls) {
             }
 
             const currentProgress = (index + 1) / mapdata.length * 100;
-            $("#progressBar").attr("aria-valuenow", String(parseInt(currentProgress)));
+            progressBar.attr("aria-valuenow", String(parseInt(currentProgress)));
             const width = String(parseInt(currentProgress)) + "%";
-            $("#progressBar").css("width", width);
+            progressBar.css("width", width);
             shashin.printMessageToConsole(currentProgress);
         }
 
@@ -288,13 +293,13 @@ async function showMap(mapdata,keywordMap,showControls) {
         $("#mapMetadataId").val(metadataId);
         $("#metadataId").val(metadataId);
         if (metadata.lat && metadata.lng) {
-            $("#locationDataInput").val(metadata.lat + "," + metadata.lng);
+            locationDataInput.val(metadata.lat + "," + metadata.lng);
         }
-        $("#propMetadataLocation").css('z-index', 9999);
+        propMetadataLocation.css('z-index', 9999);
 
         Util.populateDetailsInfo(metadata);
 
-        $("#propMetadataLocation").modal('show');
+        propMetadataLocation.modal('show');
     }
 
     let maxFeatureCount;
@@ -529,7 +534,7 @@ async function showMap(mapdata,keywordMap,showControls) {
     });
 
     // After closing lightgallery, clear select interaction
-    $dynamicGallery.addEventListener('lgAfterClose', function (event) {
+    $dynamicGallery.addEventListener('lgAfterClose', function () {
         map.getInteractions().forEach(function (interaction) {
             if (interaction instanceof ol.interaction.Select) {
                 interaction.getFeatures().clear();
@@ -572,8 +577,8 @@ async function showMap(mapdata,keywordMap,showControls) {
     $('#propMetadataLocation').on('hide.bs.modal', function () {
         $("#locationMapResponseMsg").html("");
         $("#saveMetadata").prop('disabled', false);
-        $("#metadataLocationModalStatus").attr("class","spinner-grow me-auto");
-        $("#metadataLocationModalStatus").css("visibility","hidden");
+        metadataLocationModalStatus.attr("class","spinner-grow me-auto");
+        metadataLocationModalStatus.css("visibility","hidden");
         $(this).find(':input').val('');
 
         const tab = new bootstrap.Tab($("#locationTabLink"));
@@ -594,28 +599,28 @@ async function showMap(mapdata,keywordMap,showControls) {
     $("#saveMetadata").on("click", async function (e) {
         e.preventDefault();
 
-        $("#metadataLocationModalStatus").css("visibility", "visible");
-        $("#metadataLocationModalStatus").attr("title", "");
-        $("#metadataLocationModalCancel").prop('disabled', true);
+        metadataLocationModalStatus.css("visibility", "visible");
+        metadataLocationModalStatus.attr("title", "");
+        metadataLocationModalCancel.prop('disabled', true);
         let metadataIdList = [];
         metadataIdList.push($("#mapMetadataId").val());
 
         const http = new Http("saving map location data");
         const json = {
             "batchMetadataIds": metadataIdList,
-            "latlngBatchData": $("#locationDataInput").val()
+            "latlngBatchData": locationDataInput.val()
         };
         const data = await http.ajax("post", "/timeline/update/batch", JSON.stringify(json), function () {
-            $("#metadataLocationModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-            $("#metadataLocationModalStatus").attr("title", shashin.modalStatusFailMessage());
-            $("#metadataLocationModalCancel").prop('disabled', false);
+            metadataLocationModalStatus.removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+            metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
+            metadataLocationModalCancel.prop('disabled', false);
         });
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "success") {
-                $("#metadataLocationModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                metadataLocationModalStatus.addClass('bi-check-circle').removeClass('spinner-grow');
 
-                const latlng = $("#locationDataInput").val();
+                const latlng = locationDataInput.val();
                 const latlngArray = latlng.split(",");
                 const lat = latlngArray[0].trim();
                 const lng = latlngArray[1].trim();
@@ -627,17 +632,17 @@ async function showMap(mapdata,keywordMap,showControls) {
                     localStorage.setItem("ed", endDateField.val());
                 }
 
-                $("#metadataLocationModalCancel").prop('disabled', false);
+                metadataLocationModalCancel.prop('disabled', false);
                 window.top.location = window.location.href.split("?")[0];
             } else {
-                $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#metadataLocationModalStatus").attr("title", shashin.modalStatusFailMessage());
-                $("#metadataLocationModalCancel").prop('disabled', false);
+                metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
+                metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
+                metadataLocationModalCancel.prop('disabled', false);
             }
         } else {
-            $("#metadataLocationModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-            $("#metadataLocationModalStatus").attr("title", shashin.modalStatusFailMessage());
-            $("#metadataLocationModalCancel").prop('disabled', false);
+            metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
+            metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
+            metadataLocationModalCancel.prop('disabled', false);
         }
     });
 }
