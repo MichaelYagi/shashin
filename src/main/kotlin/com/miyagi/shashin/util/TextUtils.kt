@@ -124,6 +124,10 @@ class TextUtils {
                 }
             }
 
+            if (buildPlace.isBlank()) {
+                buildPlace = "Unknown location name"
+            }
+
             return buildPlace
         }
 
