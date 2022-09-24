@@ -4,7 +4,6 @@ import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
 import org.springframework.stereotype.Controller
@@ -133,12 +132,23 @@ class MediaServiceController {
     @RequestMapping(value = ["/api/v1/video/{metadataId}/download"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(java.io.IOException::class)
-    fun getVideoDownload(response: HttpServletResponse?, @PathVariable metadataId: String): FileSystemResource? {
+    fun getVideoDownload(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
         val metadataCount = metadataRepository.countMetadataById(metadataId)
-        return if (metadataCount > 0) {
+        if (metadataCount > 0) {
             val metadataObj = metadataRepository.findById(metadataId)
             val path = metadataObj.get().getPath()!!
-            FileSystemResource(path)
+            val resource = FileSystemResource(path)
+            val headers = HttpHeaders()
+            headers.contentLength = resource.contentLength()
+            if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
+                val typeList = metadataObj.get().getType()!!.split("/")
+                if (typeList.count() == 2) {
+                    headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
+                }
+            }
+            response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename);
+            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
             throw IOException("File Not Found");
         }
@@ -175,6 +185,31 @@ class MediaServiceController {
                     headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
                 }
             }
+            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+            ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+        } else {
+            throw IOException("File Not Found")
+        }
+    }
+
+    @RequestMapping(value = ["/api/v1/image/{metadataId}/download"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
+    @ResponseBody
+    @Throws(java.io.IOException::class)
+    fun getImageDownload(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
+        val metadataCount = metadataRepository.countMetadataById(metadataId)
+        return if (metadataCount > 0) {
+            val metadataObj = metadataRepository.findById(metadataId)
+            val path = metadataObj.get().getPath()!!
+            val resource = FileSystemResource(path)
+            val headers = HttpHeaders()
+            headers.contentLength = resource.contentLength()
+            if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
+                val typeList = metadataObj.get().getType()!!.split("/")
+                if (typeList.count() == 2) {
+                    headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
+                }
+            }
+            response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename);
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
