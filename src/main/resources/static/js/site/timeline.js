@@ -1186,7 +1186,7 @@
                                             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
                                         } else {
                                             mediaContent.src = metadata.thumbnailUrlOriginal;
-                                            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
+                                            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal) + "/download";
                                         }
 
                                         if (metadata.originalImageWidth !== null) {

@@ -33,7 +33,7 @@
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;
-            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal);
+            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal) + "/download";
         }
 
         return mediaContent;
@@ -422,7 +422,7 @@
             }
             if ($(this).attr("data-src")) {
                 mediaContent.src = $(this).attr("data-src");
-                mediaContent.downloadUrl = $(this).attr("data-src");
+                mediaContent.downloadUrl = $(this).attr("data-src")+"/download";
             } else if ($(this).attr("data-video")) {
                 mediaContent.video = $(this).attr("data-video");
                 mediaContent.downloadUrl = $(this).attr("data-video")+"/download";

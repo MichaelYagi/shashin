@@ -11,23 +11,76 @@
         body {
             background: black;
         }
-        video {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            max-height: 100%;
-            max-width: 100%;
-            margin: auto;
-        }
     </style>
+    <script src="/js/jquery-3.5.1.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/jquery-ui.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-fullscreen.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-relative-caption.min.js" th:nonce="${cspNonce}"></script>
+    <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+        <script src="/js/site/util.js" th:nonce="${cspNonce}"></script>
+    </th:block>
+    <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+        <script src="/js/site/min/util.min.js" th:nonce="${cspNonce}"></script>
+    </th:block>
+    <link rel="stylesheet" href="/css/lightgallery.min.css">
+    <link rel="stylesheet" href="/css/lg-fullscreen.min.css">
+    <link rel="stylesheet" href="/css/lg-video.min.css">
+    <link rel="stylesheet" href="/css/lg-relative-caption.min.css">
     <title th:text="${metadataObj.title}"></title>
 </head>
 <body>
-    <video controls name="media">
-        <source th:src="${metadataObj.videoUrl}" type="video/mp4">
-        Your browser does not support the video tag.
-    </video>
+<div id="video" style="display: none;">
+    <a
+            th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadataObj.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true}}'}"
+            th:data-poster="${metadataObj.thumbnailUrlOriginal}"
+            th:data-sub-html="${metadataObj.description}"
+            th:data-download-url="${metadataObj.videoUrl + '/download'}"
+    >
+        <img id="photoImage" th:src="${metadataObj.thumbnailUrlSmall}" />
+    </a>
+</div>
+
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+    (function() {
+        let lgSubHtmlTimeout = null;
+
+        // Hide caption when showing lg gallery
+        $("html").mousemove(function() {
+            clearTimeout(lgSubHtmlTimeout);
+            $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+            lgSubHtmlTimeout = setTimeout(function () {
+                $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
+            }, 5000);
+        });
+
+        const photoImageEl = $("#photoImage");
+
+        lightGallery(document.getElementById("video"), {
+            plugins: [lgVideo, lgRelativeCaption, lgFullscreen],
+            counter: false,
+            swipeToClose: false,
+            closeOnTap: false,
+            closable: false,
+            allowMediaOverlap: true,
+            fullScreen: true,
+            download: true,
+            hideBarsDelay: 5000,
+            rotate: false,
+            rotateLeft: false,
+            rotateRight: false,
+            flipHorizontal: false,
+            flipVertical: false,
+            licenseKey: Util.lgApiKey()
+        });
+
+        photoImageEl.click();
+        photoImageEl.attr("style", "display:block");
+        photoImageEl.on("click", function(e) {
+            e.preventDefault();
+        });
+    })();
+</script>
 </body>
 </html>
