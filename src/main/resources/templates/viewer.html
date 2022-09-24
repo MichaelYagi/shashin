@@ -23,7 +23,7 @@
     <title th:text="${metadataObj.title}"></title>
 </head>
 <body>
-<div id="photo">
+<div id="photo" style="display: none;">
     <a th:href="${metadataObj.thumbnailUrlOriginal}" th:data-sub-html="${metadataObj.description}">
         <img id="photoImage" th:src="${metadataObj.thumbnailUrlSmall}" />
     </a>
@@ -45,15 +45,15 @@
             flipVertical: false,
             licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
         });
+
+        document.getElementById("photoImage").click();
+
+        document.getElementById("photoImage").style.display = "block";
+
+        document.getElementById("photoImage").addEventListener("click", function(e) {
+            e.preventDefault();
+        });
     })();
-
-    document.getElementById("photoImage").click();
-
-    document.getElementById("photoImage").addEventListener("click", function(e) {
-        e.preventDefault();
-    });
-
-
 </script>
 </body>
 </html>
