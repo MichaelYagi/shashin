@@ -31,6 +31,8 @@
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     (function() {
+        const photoImageEl = document.getElementById("photoImage");
+
         lightGallery(document.getElementById("photo"), {
             plugins: [lgZoom, lgFullscreen, lgRotate],
             counter: false,
@@ -46,11 +48,9 @@
             licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
         });
 
-        document.getElementById("photoImage").click();
-
-        document.getElementById("photoImage").style.display = "block";
-
-        document.getElementById("photoImage").addEventListener("click", function(e) {
+        photoImageEl.click();
+        photoImageEl.style.display = "block";
+        photoImageEl.addEventListener("click", function(e) {
             e.preventDefault();
         });
     })();
