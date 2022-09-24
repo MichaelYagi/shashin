@@ -686,7 +686,12 @@ class Util {
             const baseUrl = getUrl.protocol + "//" + getUrl.host;
             const shareUrl = baseUrl + relativeShareLink;
             $(".shareUrlLabel").show();
-            $(".shareUrlDetails").html("<a href='"+relativeShareLink+"' target='_blank'>Share Link</a>&nbsp;<span class='copyLink bi-clipboard-plus' data-clipboard-text='"+shareUrl+"'></span>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
+
+            if (metadata.videoUrl != null) {
+                $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download'></a>&nbsp;<a href='" + relativeShareLink + "/player' target='_blank'>Share Link</a>&nbsp;<span class='copyLink bi-clipboard-plus' data-clipboard-text='" + shareUrl + "/player'></span>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
+            } else {
+                $(".shareUrlDetails").html("<a href='" + relativeShareLink + "' target='_blank'>Share Link</a>&nbsp;<span class='copyLink bi-clipboard-plus' data-clipboard-text='" + shareUrl + "'></span>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
+            }
 
             const clipboard = new ClipboardJS(".copyLink.bi-clipboard-plus",{container: document.getElementById(containerModalId)});
             clipboard.on('success', function (e) {
