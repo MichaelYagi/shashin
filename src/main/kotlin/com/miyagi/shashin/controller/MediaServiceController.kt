@@ -2,11 +2,14 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
 import org.springframework.stereotype.Controller
+import org.springframework.ui.Model
+import org.springframework.ui.set
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
@@ -139,6 +142,20 @@ class MediaServiceController {
         } else {
             throw IOException("File Not Found");
         }
+    }
+
+    @RequestMapping(value = ["/api/v1/video/{metadataId}/player"], method = [RequestMethod.GET])
+    fun getVideoPlayer(model: Model, @PathVariable metadataId: String): String {
+        val module = "player"
+
+        val metadataObj = metadataRepository.findById(metadataId)
+
+        model["metadataObj"] = metadataObj.get()
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return module
     }
 
     @RequestMapping(value = ["/api/v1/image/{metadataId}"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
