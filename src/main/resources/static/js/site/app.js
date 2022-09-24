@@ -893,7 +893,7 @@
             rotateRight: true,
             flipHorizontal: false,
             flipVertical: false,
-            licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
+            licenseKey: Util.lgApiKey()
         }
 
         for (const key in additionalConfigs) {

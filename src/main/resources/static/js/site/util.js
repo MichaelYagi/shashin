@@ -1,5 +1,9 @@
 class Util {
 
+    static lgApiKey() {
+        return "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3";
+    }
+
     static isInViewport(element) {
         if (element.length > 0) {
             const header = $('header');
