@@ -156,8 +156,15 @@ class MediaServiceController {
 
     @RequestMapping(value = ["/api/v1/video/{metadataId}/player"], method = [RequestMethod.GET])
     fun getVideoPlayer(model: Model, @PathVariable metadataId: String): String {
-        val module = "player"
+        return setModel(metadataId,model,"player")
+    }
 
+    @RequestMapping(value = ["/api/v1/image/{metadataId}/viewer"], method = [RequestMethod.GET])
+    fun getImageViewer(model: Model, @PathVariable metadataId: String): String {
+        return setModel(metadataId,model,"viewer")
+    }
+
+    private fun setModel(metadataId: String,model: Model,module: String): String {
         val metadataObj = metadataRepository.findById(metadataId)
 
         model["metadataObj"] = metadataObj.get()

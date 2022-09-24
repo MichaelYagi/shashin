@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
+    <style>
+        body {
+            background: black;
+        }
+    </style>
+    <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-rotate.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-fullscreen.min.js" th:nonce="${cspNonce}"></script>
+    <link rel="stylesheet" href="/css/lightgallery.min.css">
+    <link rel="stylesheet" href="/css/lg-zoom.min.css">
+    <link rel="stylesheet" href="/css/lg-rotate.min.css">
+    <link rel="stylesheet" href="/css/lg-fullscreen.min.css">
+    <title th:text="${metadataObj.title}"></title>
+</head>
+<body>
+<div id="photo">
+    <a th:href="${metadataObj.thumbnailUrlOriginal}" th:data-sub-html="${metadataObj.description}">
+        <img id="photoImage" th:src="${metadataObj.thumbnailUrlSmall}" />
+    </a>
+</div>
+
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+    (function() {
+        lightGallery(document.getElementById("photo"), {
+            plugins: [lgZoom, lgFullscreen, lgRotate],
+            counter: false,
+            allowMediaOverlap: true,
+            fullScreen: true,
+            download: true,
+            hideBarsDelay: 5000,
+            rotate: true,
+            rotateLeft: true,
+            rotateRight: true,
+            flipHorizontal: false,
+            flipVertical: false,
+            licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
+        });
+    })();
+
+    document.getElementById("photoImage").click();
+
+    document.getElementById("photoImage").addEventListener("click", function(e) {
+        e.preventDefault();
+    });
+
+
+</script>
+</body>
+</html>
