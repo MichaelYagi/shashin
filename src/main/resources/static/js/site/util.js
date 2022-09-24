@@ -686,7 +686,8 @@ class Util {
             const baseUrl = getUrl.protocol + "//" + getUrl.host;
             const shareUrl = baseUrl + relativeShareLink;
             $(".shareUrlLabel").show();
-            let page = ""
+
+            let page = "/viewer"
             if (metadata.videoUrl != null) {
                 page = "/player"
             }
