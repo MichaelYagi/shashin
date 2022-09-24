@@ -150,7 +150,7 @@ const TimelineGalleryBottomRightOverlay = ({metadata}) => `
 const TimelineGalleryCenterOverlay = ({metadata,mediaContent}) => `
     <a class="mediaLink" 
         id="mediaLink${metadata.id}"
-        data-download-url="${encodeURI(metadata.thumbnailUrlOriginal)}"
+        data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : encodeURI(metadata.thumbnailUrlOriginal)}/download"
         data-metadataid="${metadata.id}"
         ${(metadata.type.indexOf("video") >= 0) ? `data-video="${Util.encodeHtml(mediaContent.video)}"` : `data-src="${encodeURI(metadata.thumbnailUrlOriginal)}"`}
         ${(metadata.description != null) ? `data-sub-html="${metadata.description}"` : ''}

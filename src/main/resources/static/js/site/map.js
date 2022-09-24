@@ -472,7 +472,7 @@ async function showMap(mapdata,keywordMap,showControls) {
             };
             if (featureProperties.type.includes("image")) {
                 mediaContent.src = featureProperties.thumbnailUrlOriginal;
-                mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal);
+                mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal)+"/download";
             } else if (featureProperties.type.includes("video")) {
                 mediaContent.video = {
                     "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],

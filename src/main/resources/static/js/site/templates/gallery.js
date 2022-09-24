@@ -169,7 +169,7 @@ const getCenteredOverlay = ({id, overlays, data}) => `
         :
         `
         <a class="mediaLink" id="mediaLink${id}" data-src="${data.metadata.thumbnailUrlOriginal}" href="${data.metadata.thumbnailUrlOriginal}"
-            data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal)}"
+            data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal)}/download"
             ${data.metadata.description !== null ?? ` data-sub-html="${data.metadata.description}" `}>
             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
         </a>
