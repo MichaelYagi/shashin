@@ -24,7 +24,7 @@
 </head>
 <body>
 <div id="photo" style="display: none;">
-    <a th:href="${metadataObj.thumbnailUrlOriginal}" th:data-sub-html="${metadataObj.description}">
+    <a th:href="${metadataObj.thumbnailUrlOriginal}" th:data-sub-html="${metadataObj.description}" th:data-download-url="${metadataObj.thumbnailUrlOriginal}">
         <img id="photoImage" th:src="${metadataObj.thumbnailUrlSmall}" />
     </a>
 </div>
