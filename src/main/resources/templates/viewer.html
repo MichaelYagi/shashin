@@ -12,10 +12,18 @@
             background: black;
         }
     </style>
+    <script src="/js/jquery-3.5.1.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/jquery-ui.min.js" th:nonce="${cspNonce}"></script>
     <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
     <script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
     <script src="/js/lg-rotate.min.js" th:nonce="${cspNonce}"></script>
     <script src="/js/lg-fullscreen.min.js" th:nonce="${cspNonce}"></script>
+    <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+        <script src="/js/site/util.js" th:nonce="${cspNonce}"></script>
+    </th:block>
+    <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+        <script src="/js/site/min/util.min.js" th:nonce="${cspNonce}"></script>
+    </th:block>
     <link rel="stylesheet" href="/css/lightgallery.min.css">
     <link rel="stylesheet" href="/css/lg-zoom.min.css">
     <link rel="stylesheet" href="/css/lg-rotate.min.css">
@@ -31,7 +39,18 @@
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     (function() {
-        const photoImageEl = document.getElementById("photoImage");
+        let lgSubHtmlTimeout = null;
+
+        // Hide caption when showing lg gallery
+        $("html").mousemove(function() {
+            clearTimeout(lgSubHtmlTimeout);
+            $(".lg-sub-html").show('slide', {direction: 'down'}, 200);
+            lgSubHtmlTimeout = setTimeout(function () {
+                $(".lg-sub-html").hide('slide', {direction: 'down'}, 200);
+            }, 5000);
+        });
+
+        const photoImageEl = $("#photoImage");
 
         lightGallery(document.getElementById("photo"), {
             plugins: [lgZoom, lgFullscreen, lgRotate],
@@ -48,12 +67,12 @@
             rotateRight: true,
             flipHorizontal: false,
             flipVertical: false,
-            licenseKey: "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3"
+            licenseKey: Util.lgApiKey()
         });
 
         photoImageEl.click();
-        photoImageEl.style.display = "block";
-        photoImageEl.addEventListener("click", function(e) {
+        photoImageEl.attr("style", "display:block");
+        photoImageEl.on("click", function(e) {
             e.preventDefault();
         });
     })();

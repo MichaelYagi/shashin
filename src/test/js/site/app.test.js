@@ -9,6 +9,7 @@ global.lgRelativeCaption = require('../../../main/resources/static/js/lg-relativ
 global.lgFullscreen = require('../../../main/resources/static/js/lg-fullscreen.min')
 global.lgRotate = require('../../../main/resources/static/js/lg-rotate.min')
 global.ol = require('../../../main/resources/static/js/ol.min')
+global.Util = require('../../../main/resources/static/js/site/util')
 
 describe('#shashin app tests', function() {
     it('enable debug console output', function() {
