@@ -19,7 +19,7 @@ import org.springframework.context.event.EventListener
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
-import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -119,7 +119,7 @@ class PeopleController {
     }
 
     @RequestMapping(value = ["/person/matches/start"], method = [RequestMethod.POST], produces = ["application/json"])
-    @PreAuthorize("hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN")
     @ResponseBody
     fun startPredictions(model: Model,@RequestParam cancelScan: Boolean): String {
         val settings = model.getAttribute("settings") as Settings
@@ -159,7 +159,7 @@ class PeopleController {
     }
 
     @GetMapping("/person/matches/{personId}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN")
     fun getPredictions(model: Model, @PathVariable personId: Int): String {
         val module = "matches"
         model["message"] = "There are no photos."
@@ -241,7 +241,7 @@ class PeopleController {
     }
 
     @GetMapping("/people")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN", "ROLE_USER")
     fun getPeople(model: Model): String {
         val module = "people"
         model["message"] = "There are no people tagged."
@@ -284,7 +284,7 @@ class PeopleController {
     }
 
     @RequestMapping(value = ["/person/{personId}"], method = [RequestMethod.GET])
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN", "ROLE_USER")
     fun getPerson(model: Model, @PathVariable personId: Int): String {
         val module = "person"
         val page = 0
@@ -410,7 +410,7 @@ class PeopleController {
     }
 
     @RequestMapping(value = ["/person/update"], method = [RequestMethod.POST], produces = ["application/json"])
-    @PreAuthorize("hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN")
     @ResponseBody
     fun postPersonUpdate(model: Model, @RequestBody requestBody: JsonNode): String {
         val personMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
