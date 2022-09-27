@@ -436,7 +436,7 @@ class AlbumsController {
         response["status"] = ApiResponse.FAIL.status
 
         val photoObj = albumRepository.findById(albumId)
-        if (photoObj.get().getShareUrl() == shareLink) {
+        if (photoObj.isPresent && photoObj.get().getShareUrl() == shareLink) {
             val resultPage = page*queryLimit
             val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,resultPage,queryLimit)
             val albumMetadataList = ArrayList<Metadata>()
