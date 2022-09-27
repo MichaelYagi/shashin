@@ -12,7 +12,6 @@ import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.annotation.Secured
-import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -64,7 +63,7 @@ class AlbumsController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN", "ROLE_USER")
     @GetMapping("/albums")
     fun getAlbums(model: Model): String {
         val response = buildAlbums(model)
@@ -74,7 +73,7 @@ class AlbumsController {
         return model.getAttribute("activePage").toString()
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albums"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getAlbumsApi(model: Model): String {
@@ -511,7 +510,7 @@ class AlbumsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}"], method = [RequestMethod.GET])
     fun getAlbum(model: Model, @PathVariable albumId: Int): String {
         val response = buildAlbum(model,albumId,0)
@@ -522,7 +521,7 @@ class AlbumsController {
         return model.getAttribute("activePage").toString()
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
