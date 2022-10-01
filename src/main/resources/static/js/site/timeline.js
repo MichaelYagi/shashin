@@ -253,7 +253,8 @@
                 let id = $(this).attr("id");
 
                 if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
-                    if (Util.isSafari() === true) {
+                    // Scrolling behavior different on Chrome iOS
+                    if (Util.isSafari() === true || Util.getOS() === "iOS") {
                         timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                             if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                 timelineSettings.setScrollSpyActive(id);
