@@ -235,7 +235,7 @@ class Util {
           macosPlatforms = ["Macintosh", "MacIntel", "MacPPC", "Mac68K"],
           windowsPlatforms = ["Win32", "Win64", "Windows", "WinCE"],
           iosPlatforms = ["iPhone", "iPad", "iPod"],
-          os = null;
+          os = "";
 
         if (macosPlatforms.indexOf(platform) !== -1) {
           os = "Mac OS";
