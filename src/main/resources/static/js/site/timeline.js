@@ -274,7 +274,8 @@
                 }
             });
 
-            if (Util.isSafari() === false || Util.isFirefox() === true) {
+            // Scrolling behavior different on Chrome iOS
+            if ((Util.isSafari() === false || Util.isFirefox() === true) && Util.getOS() !== "iOS") {
                 timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                     if (msg === timelineSettings.success) {
                         // Set TOC active element
@@ -472,7 +473,7 @@
             attachPoint = currentId;
         }
 
-        if (Util.isSafari() === false) {
+        if (Util.isSafari() === false && Util.getOS() !== "iOS") {
             let rendered = false;
             while (true) {
                 let dateFound = false;
@@ -621,7 +622,7 @@
                 Util.isInViewport($("#tail_" + element.id)) === false &&
                 Util.isInViewport($("#container_" + element.id)) === false &&
                 Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0 &&
-                ((Util.isSafari() === false && Util.isFirefox() === false) ||
+                ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") ||
                     ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id) || Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id))) ||
                         (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)))
                 ) &&
@@ -702,7 +703,7 @@
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false) ||
+                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") ||
                         ((Util.isSafari() === true || Util.isFirefox() === true) && $.inArray(currentDate, removedElements) === -1))) {
 
                         // Render currentDate
@@ -738,7 +739,7 @@
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
-                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false) || ((Util.isSafari() === true || Util.isFirefox() === true) && $.inArray(currentDate, removedElements) === -1))) {
+                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") || ((Util.isSafari() === true || Util.isFirefox() === true) && $.inArray(currentDate, removedElements) === -1))) {
 
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
