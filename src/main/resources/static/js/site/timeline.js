@@ -337,7 +337,7 @@
             {}
         );
 
-        let depth = (Util.isSafari() === true || Util.isFirefox() === true) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
+        let depth = (Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
         let depthDown = depth-1;
         let depthUp = depth;
 
@@ -421,7 +421,7 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if ((Util.isSafari() === true || Util.isFirefox() === true) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
+        if ((Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
             $("#container").scrollTop(tempScrollTop - topHeight);
         }
 
@@ -630,7 +630,7 @@
                 ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
                     (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
-                if (Util.isSafari() === true || Util.isFirefox() === true) {
+                if (Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") {
                     section.css('visibility', 'hidden');
                 }
 
@@ -647,7 +647,7 @@
             }
         });
 
-        if (Util.isSafari() === true || Util.isFirefox() === true) {
+        if (Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") {
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                 $('#container').scrollTop(tempScrollTop - removeHeight);
             } else if (topHeight > 0) {
@@ -705,7 +705,7 @@
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
                     if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") ||
-                        ((Util.isSafari() === true || Util.isFirefox() === true) && $.inArray(currentDate, removedElements) === -1))) {
+                        ((Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") && $.inArray(currentDate, removedElements) === -1))) {
 
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
@@ -740,7 +740,7 @@
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
-                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") || ((Util.isSafari() === true || Util.isFirefox() === true) && $.inArray(currentDate, removedElements) === -1))) {
+                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") || ((Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") && $.inArray(currentDate, removedElements) === -1))) {
 
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
@@ -1319,7 +1319,7 @@
                                     let htmlEl = $(html);
 
                                     if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                        if (Util.isSafari() === true) {
+                                        if (Util.isSafari() === true || Util.getOS() === "iOS") {
                                             $("#infinite-scroll-gallery").css('visibility', 'hidden');
                                         }
                                     }
@@ -1330,7 +1330,7 @@
                                                 // deferred.resolve(timelineSettings.success);
                                                 ret = timelineSettings.success;
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true) {
+                                                    if (Util.isSafari() === true || Util.getOS() === "iOS") {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
@@ -1339,7 +1339,7 @@
                                         } else if (action === "new") {
                                             $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true) {
+                                                    if (Util.isSafari() === true || Util.getOS() === "iOS") {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
@@ -1352,7 +1352,7 @@
                                                 if ($(".attachMetadataPhotos").length > 0) {
                                                     htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
                                                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            if (Util.isSafari() === true) {
+                                                            if (Util.isSafari() === true || Util.getOS() === "iOS") {
                                                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                             }
@@ -1363,7 +1363,7 @@
                                                 } else {
                                                     $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            if (Util.isSafari() === true) {
+                                                            if (Util.isSafari() === true || Util.getOS() === "iOS") {
                                                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                             }
@@ -1375,7 +1375,7 @@
                                             } else {
                                                 htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
                                                     if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        if (Util.isSafari() === true) {
+                                                        if (Util.isSafari() === true || Util.getOS() === "iOS") {
                                                             $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                             $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                         }
