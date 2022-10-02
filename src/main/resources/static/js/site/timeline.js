@@ -254,7 +254,7 @@
 
                 if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
                     // Scrolling behavior different on Chrome iOS
-                    if (Util.isSafari() === true || Util.getOS() === "iOS") {
+                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                         timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                             if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                 timelineSettings.setScrollSpyActive(id);
@@ -276,7 +276,7 @@
             });
 
             // Scrolling behavior different on Chrome iOS
-            if ((Util.isSafari() === false || Util.isFirefox() === true) && Util.getOS() !== "iOS") {
+            if ((Util.isSafari() === false || Util.isFirefox() === true) && (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                 timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                     if (msg === timelineSettings.success) {
                         // Set TOC active element
@@ -337,7 +337,7 @@
             {}
         );
 
-        let depth = (Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
+        let depth = (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
         let depthDown = depth-1;
         let depthUp = depth;
 
@@ -421,7 +421,7 @@
         });
 
         // Smooth scrolling when element is removed for non chrome browsers
-        if ((Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
+        if ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
             $("#container").scrollTop(tempScrollTop - topHeight);
         }
 
@@ -474,7 +474,7 @@
             attachPoint = currentId;
         }
 
-        if (Util.isSafari() === false && Util.getOS() !== "iOS") {
+        if (Util.isSafari() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
             let rendered = false;
             while (true) {
                 let dateFound = false;
@@ -623,14 +623,14 @@
                 Util.isInViewport($("#tail_" + element.id)) === false &&
                 Util.isInViewport($("#container_" + element.id)) === false &&
                 Util.elementsInViewport($(".photo-thumbnail-image.thumbnailTag_" + element.id)).length === 0 &&
-                ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") ||
+                ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
                     ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && (Util.getDateObject(lastVisibleId) > Util.getDateObject(element.id) || Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id))) ||
                         (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && Util.getDateObject(firstVisibleId) < Util.getDateObject(element.id)))
                 ) &&
                 ((timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && element.id !== $(section[section.length-1]).attr("id")) ||
                     (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up && element.id !== ignoreTimelineDate))
             ) {
-                if (Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") {
+                if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                     section.css('visibility', 'hidden');
                 }
 
@@ -647,7 +647,7 @@
             }
         });
 
-        if (Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") {
+        if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
                 $('#container').scrollTop(tempScrollTop - removeHeight);
             } else if (topHeight > 0) {
@@ -704,8 +704,8 @@
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") ||
-                        ((Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") && $.inArray(currentDate, removedElements) === -1))) {
+                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
+                        ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
 
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
@@ -740,7 +740,7 @@
                 let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
                 if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
-                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && Util.getOS() !== "iOS") || ((Util.isSafari() === true || Util.isFirefox() === true || Util.getOS() === "iOS") && $.inArray(currentDate, removedElements) === -1))) {
+                    if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
 
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
@@ -1319,7 +1319,7 @@
                                     let htmlEl = $(html);
 
                                     if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                        if (Util.isSafari() === true || Util.getOS() === "iOS") {
+                                        if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                             $("#infinite-scroll-gallery").css('visibility', 'hidden');
                                         }
                                     }
@@ -1330,7 +1330,7 @@
                                                 // deferred.resolve(timelineSettings.success);
                                                 ret = timelineSettings.success;
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true || Util.getOS() === "iOS") {
+                                                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
@@ -1339,7 +1339,7 @@
                                         } else if (action === "new") {
                                             $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                    if (Util.isSafari() === true || Util.getOS() === "iOS") {
+                                                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                         $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                         $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                     }
@@ -1352,7 +1352,7 @@
                                                 if ($(".attachMetadataPhotos").length > 0) {
                                                     htmlEl.insertAfter($(".attachMetadataPhotos").last()).ready(function () {
                                                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            if (Util.isSafari() === true || Util.getOS() === "iOS") {
+                                                            if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                             }
@@ -1363,7 +1363,7 @@
                                                 } else {
                                                     $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                                         if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                            if (Util.isSafari() === true || Util.getOS() === "iOS") {
+                                                            if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                                 $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                                 $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                             }
@@ -1375,7 +1375,7 @@
                                             } else {
                                                 htmlEl.insertAfter($("#amp_" + attachToId)).ready(function () {
                                                     if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
-                                                        if (Util.isSafari() === true || Util.getOS() === "iOS") {
+                                                        if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                                                             $("#container").scrollTop(tempScrollTop + Util.getDateGalleryHeight(date));
                                                             $("#infinite-scroll-gallery").css('visibility', 'visible');
                                                         }
