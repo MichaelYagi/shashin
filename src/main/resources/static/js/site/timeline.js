@@ -276,7 +276,7 @@
             });
 
             // Scrolling behavior different on Chrome iOS
-            if ((Util.isSafari() === false || Util.isFirefox() === true) && (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+            if ((Util.isSafari() === false || Util.isFirefox() === true) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
                 timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                     if (msg === timelineSettings.success) {
                         // Set TOC active element
@@ -405,20 +405,23 @@
         let prevElementId = "";
         let topHeight = 0;
         let tempScrollTop = $("#container").scrollTop();
-        $('section').each(function (index, element) {
-            shashin.printMessageToConsole(element.id + " checking to remove end");
-            if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
 
-                // Get height to set scrollTop for non chrome browsers
-                if (Util.getDateObject(id) < Util.getDateObject(element.id)) {
-                    topHeight += Util.getDateGalleryHeight(element.id);
+        if (Util.isSafari() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+            $('section').each(function (index, element) {
+                shashin.printMessageToConsole(element.id + " checking to remove end");
+                if (($.inArray(element.id, attachAboveArray) === -1 && $.inArray(element.id, attachBelowArray) === -1 && element.id !== id) || ($("#" + element.id).length > 1 || prevElementId === element.id)) {
+
+                    // Get height to set scrollTop for non chrome browsers
+                    if (Util.getDateObject(id) < Util.getDateObject(element.id)) {
+                        topHeight += Util.getDateGalleryHeight(element.id);
+                    }
+
+                    shashin.printMessageToConsole(element.id + " removed end");
+                    Util.removeDateGallery(element.id);
                 }
-
-                shashin.printMessageToConsole(element.id + " removed end");
-                Util.removeDateGallery(element.id);
-            }
-            prevElementId = element.id;
-        });
+                prevElementId = element.id;
+            });
+        }
 
         // Smooth scrolling when element is removed for non chrome browsers
         if ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down && topHeight > 0) {
