@@ -44,6 +44,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.attribute.DosFileAttributes
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
@@ -124,6 +125,9 @@ class SettingsController {
     @Autowired
     private val restartService: RestartService? = null
 
+    @Value("\${app.role.admin}")
+    private var adminRole: String? = null
+
     private var bcrypt = BCryptPasswordEncoder()
 
     private var shouldStop = AtomicBoolean(false)
@@ -131,6 +135,8 @@ class SettingsController {
     private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     private var alreadyScannedFilepaths = mutableListOf<String>()
+
+    private var scanCount: Int = 0
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, String?>()
@@ -1138,6 +1144,8 @@ class SettingsController {
 
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
     fun scanMediaDirectories(reindexFiles: Boolean): String {
+        scanCount = 0
+        val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
         val sidecarDir = rootPath + relativeSidecarDir
         var threadFileContent = FileUtils.readThreadFile("shashinscan")
@@ -1368,6 +1376,28 @@ class SettingsController {
 
                             // Delete thread file
                             if (threadFile.delete()) {
+                                if (scanCount > 0) {
+                                    // Set notification for scanCount and date and link to /recent
+                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                                    val msg =
+                                        "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a> at " + sdtf.format(Date()) + "."
+                                    if (admins != null) {
+                                        val notificationObjList = mutableListOf<Notification>()
+                                        for (admin in admins) {
+                                            val notificationObj = Notification()
+                                            notificationObj.setUserId(admin.getId())
+                                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                                            notificationObj.setRead(false)
+                                            notificationObj.setMessage(msg)
+                                            notificationObjList.add(notificationObj)
+                                        }
+                                        if (notificationObjList.isNotEmpty()) {
+                                            notificationRepository?.saveAll(notificationObjList)
+                                        }
+                                    }
+                                }
+
                                 logger.log(Level.FINE, "Thread file deleted: " + threadFile.name)
                             } else {
                                 logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
@@ -1461,6 +1491,7 @@ class SettingsController {
                                         try {
                                             metadataRepository?.save(metadataObj)
                                             threadText = file.path + " indexed"
+                                            scanCount++
                                         } catch (e: Exception) {
                                             logger.log(
                                                 Level.SEVERE,
