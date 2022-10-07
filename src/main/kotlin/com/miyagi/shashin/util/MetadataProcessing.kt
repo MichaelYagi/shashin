@@ -6,9 +6,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.Metadata
 import net.iakovlev.timeshape.TimeZoneEngine
+import org.apache.commons.lang3.StringUtils
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.attribute.BasicFileAttributes
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -16,6 +18,7 @@ import java.time.ZonedDateTime
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+
 
 class MetadataProcessing() {
 
@@ -385,13 +388,17 @@ class MetadataProcessing() {
                                 val durationParts = tag.description.split(":")
                                 val hours = durationParts[0].toInt()
                                 val minutes = durationParts[1].toInt()
-                                val seconds = durationParts[2]
+                                val seconds = StringUtils.substring(durationParts[2], 0, 2).toInt()
 
-                                val hoursToMinutes = hours * 60
-                                val totalMinutes = minutes + hoursToMinutes
-                                val duration = "$totalMinutes:$seconds"
+                                this.metadataObj.setDuration(setDuration(this.metadataObj, hours, minutes, seconds))
+                            }
+                            "Duration" -> {
+                                val milliseconds = tag.description.toInt()
+                                val hours = (milliseconds / (1000 * 60 * 60) % 24)
+                                val minutes = (milliseconds / (1000 * 60) % 60)
+                                val seconds = (milliseconds / 1000) % 60
 
-                                this.metadataObj.setDuration(duration)
+                                this.metadataObj.setDuration(setDuration(this.metadataObj, hours, minutes, seconds))
                             }
                         }
                     } else {
@@ -513,5 +520,15 @@ class MetadataProcessing() {
                 om.writeValue(exifFile, exifMap)
             }
         }
+    }
+
+    private fun setDuration(metadata: Metadata, hours: Int, minutes: Int, seconds: Int): String {
+        val f = DecimalFormat("00")
+        var duration = "$minutes:${f.format(seconds)}"
+        if (hours > 0) {
+            duration = "$hours:$minutes:${f.format(seconds)}"
+        }
+
+        return duration
     }
 }
