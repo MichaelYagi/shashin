@@ -1203,8 +1203,16 @@ class SettingsController {
                                                 threadFile
                                             )
 
+                                            // Check if metadata path still exists, if not, delete media
+                                            var basePathExists = false
+                                            for (mediaDir in mediaDirs) {
+                                                basePathExists = metadata.getPath()!!.startsWith(mediaDir!!.getDirectory().toString())
+                                                if (basePathExists) {
+                                                    break
+                                                }
+                                            }
                                             val checkFile = File(metadata.getPath()!!)
-                                            if (!checkFile.exists()) {
+                                            if (!checkFile.exists() || !basePathExists) {
                                                 // Delete side car and metadata files
                                                 if (!metadata.getThumbnailPathCentered().isNullOrBlank()) {
                                                     val fileObj = File(metadata.getThumbnailPathCentered()!!)
