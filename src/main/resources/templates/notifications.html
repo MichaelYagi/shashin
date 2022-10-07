@@ -13,7 +13,7 @@
 
             <th:block th:if="${not #lists.isEmpty(notificationList)}">
                 <h1>Notifications</h1>
-                <small class="text-muted">Click/Shift-Click rows to mark read</small>
+<!--                <small class="text-muted">Click/Shift-Click rows to mark read</small>-->
 
                 <ul class="list-group list-group-hover" id="notificationList">
                 <th:block th:each="notification, iterStat: ${notificationList}">
@@ -38,41 +38,47 @@
         contentType: 'application/json; charset=utf-8'
     }).then(function (data) {
         toggleNotificationBadge();
+        markAllNotificationRead();
     });
 
-    const listItems = $('.list-group-item');
-    let lastSelected = null;
+    async function markAllNotificationRead() {
+        const http = new Http("marking all notifications read");
+        const data = await http.ajax("get", "/notifications/markallread/notification");
+    }
 
-    listItems.on("click", function(e) {
-        if (e.shiftKey) {
-            if (!lastSelected) {
-                lastSelected = this;
-                $(this).addClass('list-group-select');
-                return;
-            }
-
-            const start = listItems.index(this);
-            const end = listItems.index(lastSelected);
-
-            const list = listItems.slice(Math.min(start, end), Math.max(start, end) + 1);
-            list.addClass('list-group-select');
-            const notificationIdList = []
-            for (let index in list) {
-                const notificationId = list[index].id;
-                if (notificationId) {
-                    notificationIdList.push(parseInt(notificationId));
-                }
-            }
-            markNotificationRead(notificationIdList);
-        } else {
-            const notificationId = $(this).attr("id");
-            if (notificationId !== null) {
-                markNotificationRead([parseInt(notificationId)]);
-            }
-            listItems.removeClass('list-group-select');
-            lastSelected = null;
-        }
-    });
+    // const listItems = $('.list-group-item');
+    // let lastSelected = null;
+    //
+    // listItems.on("click", function(e) {
+    //     if (e.shiftKey) {
+    //         if (!lastSelected) {
+    //             lastSelected = this;
+    //             $(this).addClass('list-group-select');
+    //             return;
+    //         }
+    //
+    //         const start = listItems.index(this);
+    //         const end = listItems.index(lastSelected);
+    //
+    //         const list = listItems.slice(Math.min(start, end), Math.max(start, end) + 1);
+    //         list.addClass('list-group-select');
+    //         const notificationIdList = []
+    //         for (let index in list) {
+    //             const notificationId = list[index].id;
+    //             if (notificationId) {
+    //                 notificationIdList.push(parseInt(notificationId));
+    //             }
+    //         }
+    //         markNotificationRead(notificationIdList);
+    //     } else {
+    //         const notificationId = $(this).attr("id");
+    //         if (notificationId !== null) {
+    //             markNotificationRead([parseInt(notificationId)]);
+    //         }
+    //         listItems.removeClass('list-group-select');
+    //         lastSelected = null;
+    //     }
+    // });
 
     async function markNotificationRead(notificationIds) {
         if (notificationIds.length > 0) {

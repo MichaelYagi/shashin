@@ -232,4 +232,27 @@ class NotificationsController {
         }
         return "{\"msg\":\"\",\"status\":\"success\"}"
     }
+
+    @RequestMapping(value = ["/notifications/markallread/notification"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    @Transactional
+    fun markAllNotificationsReadByUsers(model: Model): String? {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        val notificationList = notificationRepository.findAllByUserIdAndReadIsFalse(currentUserObj!!.getId())
+
+        if (notificationList != null && notificationList.count() > 0) {
+            val notificationObjList = mutableListOf<Notification>()
+            for (notificationObj in notificationList) {
+                if (notificationObj != null) {
+                    notificationObj.setRead(true)
+                    notificationObjList.add(notificationObj)
+                }
+            }
+            if (notificationObjList.isNotEmpty()) {
+                notificationRepository.saveAll(notificationObjList)
+            }
+        }
+
+        return "{\"msg\":\"\",\"status\":\"success\"}"
+    }
 }
