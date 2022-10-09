@@ -951,6 +951,21 @@
         $('section').each(function (index, element) {
             Util.removeDateGallery(element.id);
         });
+
+        const idsInView = Util.elementsInViewport($(".scrollspy")).map(function() {
+            let id = $(this).attr('id');
+            if (id.indexOf("tail_") > -1) {
+                id = id.split("tail_")[1];
+            }
+            return id;
+        }).get().filter(
+            function(a){if (!this[a]) {this[a] = 1; return a;}},
+            {}
+        );
+
+        let depth = (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) ? 5 : (idsInView.length < 3 ? 3 : idsInView.length);
+        let counter = 0;
+
         const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null)
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
@@ -975,7 +990,7 @@
                     }
 
                     // Break if top not in viewport
-                    if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
+                    if (Util.elementsInViewport($("#" + currentDate)).length === 0 || counter > depth) {
                         //Util.removeDateGallery(currentDate);
                         break;
                     }
@@ -988,6 +1003,8 @@
                             timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
                         }
                     }
+
+                    counter++;
                 }
             }
 
@@ -995,6 +1012,7 @@
             let prevDate = "";
             currentDate = anchor;
             const timelineDatesReverse = timelineDates.slice().reverse();
+            counter = 0;
             for (const [index, timelineDate] of timelineDatesReverse.entries()) {
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
@@ -1011,7 +1029,7 @@
                     scrollByOne();
 
                     // Break if top not in viewport
-                    if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
+                    if (Util.elementsInViewport($("#" + currentDate)).length === 0 || counter > depth) {
                         //Util.removeDateGallery(currentDate);
                         currentDate = prevDate;
                         break;
@@ -1025,6 +1043,7 @@
                             timelineSettings.attachAssociatedMetadata(firstDate, mediaTypeFilter);
                         }
                     }
+                    counter++;
                 }
             }
 
@@ -1037,6 +1056,12 @@
                     scrollByOne();
                 }
             });
+
+            // Jump to anchor after rendering
+            if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                location.href = "#"+anchor;
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
         }
     }
 
