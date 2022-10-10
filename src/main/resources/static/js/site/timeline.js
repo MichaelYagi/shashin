@@ -145,11 +145,8 @@
         if (window.location.hash) {
             //Puts hash in variable, and removes the # character
             const hash = window.location.hash.substring(1);
-            history.pushState("", document.title, window.location.pathname + window.location.search);
 
             if ($("#offcanvas_"+hash).length > 0) {
-
-                // Remove hash
                 timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
             }
         }
@@ -1060,6 +1057,7 @@
             // Jump to anchor after rendering
             if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                 location.href = "#"+anchor;
+                // Remove hash from URL
                 history.pushState("", document.title, window.location.pathname + window.location.search);
             }
         }
