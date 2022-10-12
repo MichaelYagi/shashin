@@ -1055,11 +1055,9 @@
             });
 
             // Jump to anchor after rendering
-            if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                location.href = "#"+anchor;
-                // Remove hash from URL
-                history.pushState("", document.title, window.location.pathname + window.location.search);
-            }
+            location.href = "#"+anchor;
+            // Remove hash from URL
+            history.pushState("", document.title, window.location.pathname + window.location.search);
         }
     }
 
