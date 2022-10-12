@@ -1056,8 +1056,11 @@
 
             // Jump to anchor after rendering
             location.href = "#"+anchor;
-            // Remove hash from URL
-            history.pushState("", document.title, window.location.pathname + window.location.search);
+
+            if (window.location.hash) {
+                // Remove hash from URL
+                history.pushState("", document.title, window.location.pathname + window.location.search);
+            }
         }
     }
 
