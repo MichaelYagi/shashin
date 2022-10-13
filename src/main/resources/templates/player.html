@@ -15,6 +15,7 @@
     <script src="/js/jquery-3.5.1.min.js" th:nonce="${cspNonce}"></script>
     <script src="/js/jquery-ui.min.js" th:nonce="${cspNonce}"></script>
     <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
+    <script src="/js/lg-rotate.min.js" th:nonce="${cspNonce}"></script>
     <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
     <script src="/js/lg-relative-caption.min.js" th:nonce="${cspNonce}"></script>
     <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
@@ -24,6 +25,7 @@
         <script src="/js/site/min/util.min.js" th:nonce="${cspNonce}"></script>
     </th:block>
     <link rel="stylesheet" href="/css/lightgallery.min.css">
+    <link rel="stylesheet" href="/css/lg-rotate.min.css">
     <link rel="stylesheet" href="/css/lg-video.min.css">
     <link rel="stylesheet" href="/css/lg-relative-caption.min.css">
     <title th:text="${metadataObj.title}"></title>
@@ -56,7 +58,7 @@
         const photoImageEl = $("#photoImage");
 
         lightGallery(document.getElementById("video"), {
-            plugins: [lgVideo, lgRelativeCaption],
+            plugins: [lgVideo, lgRelativeCaption, lgRotate],
             counter: false,
             swipeToClose: false,
             closeOnTap: false,
@@ -64,9 +66,9 @@
             allowMediaOverlap: true,
             download: true,
             hideBarsDelay: 5000,
-            rotate: false,
-            rotateLeft: false,
-            rotateRight: false,
+            rotate: true,
+            rotateLeft: true,
+            rotateRight: true,
             flipHorizontal: false,
             flipVertical: false,
             licenseKey: Util.lgApiKey()
