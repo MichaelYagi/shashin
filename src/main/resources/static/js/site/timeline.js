@@ -166,7 +166,9 @@
             }
         }
 
-        clearTimeout(scrollTimer);
+        if (scrollTimer !== null) {
+            clearTimeout(scrollTimer);
+        }
         scrollTimer = setTimeout(function() {
             //$(".photo-thumbnail-image").mousemove();
 
