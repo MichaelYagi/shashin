@@ -43,7 +43,8 @@
 
         let topScroll = true;
         let topOfPage = true;
-        let scrollTimer, sliderTimer;
+        let scrollTimer = null;
+        // let sliderTimer = null;
 
         // Initialize
         if (Util.isMobile() === false) {
@@ -68,25 +69,35 @@
         $('[data-bs-toggle="tooltip"]').tooltip();
 
         $(window).bind("scrollStop", function() {
-            timelineSettings.isScrolling = false;
+            if (timelineSettings.enableScrollSpy === true) {
+                topScroll = false;
+                const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+                timelineSettings.isScrolling = false;
 
-            // Only show overlays when scrolling stopped for current hovered image
-            let hovered = false;
-            $(".photo-thumbnail-image").mousemove(function () {
-                if (hovered === false) {
-                    const attrId = $(this).attr("id");
-                    const metadataId = attrId.substring(5, attrId.length);
-                    shashin.imageHover(this, metadataId);
-                }
-                hovered = true;
-            });
-        });
+                // Only show overlays when scrolling stopped for current hovered image
+                let hovered = false;
+                $(".photo-thumbnail-image").mousemove(function () {
+                    if (hovered === false) {
+                        const attrId = $(this).attr("id");
+                        const metadataId = attrId.substring(5, attrId.length);
+                        shashin.imageHover(this, metadataId);
+                    }
+                    hovered = true;
+                });
+            }
 
-        $(window).bind("sliderScrollStop", function() {
-            if ($("#dateSliderWrapper:not(:hover)").length === 1) {
+            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length === 1) {
                 $("#dateSlider").hide();
             }
         });
+
+        // $(window).bind("sliderScrollStop", function() {
+        //     if ($("#dateSliderWrapper:not(:hover)").length === 1) {
+        //         console.log("sliderScrollStop");
+        //         $("#dateSlider").hide();
+        //     }
+        // });
 
         // Scroll event handler
         const scrollHandler = function (e) {
@@ -114,18 +125,22 @@
                 timelineSettings.scrollToTimelineToc(elementsInViewport);
             }
 
-            if (Util.isMobile() === false) {
-                clearTimeout(sliderTimer);
-                sliderTimer = setTimeout(function () {
-                    $(window).trigger("sliderScrollStop");
-                }, 1000);
-            }
+            // if (Util.isMobile() === false) {
+            //     if (sliderTimer !== null) {
+            //         clearTimeout(sliderTimer);
+            //     }
+            //     sliderTimer = setTimeout(function () {
+            //         $(window).trigger("sliderScrollStop");
+            //     }, 1000);
+            // }
 
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
 
-                clearTimeout(scrollTimer);
+                if (scrollTimer !== null) {
+                    clearTimeout(scrollTimer);
+                }
                 scrollTimer = setTimeout(function() {
                     $(window).trigger("scrollStop");
                 }, 1000);
