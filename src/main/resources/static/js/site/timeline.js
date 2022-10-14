@@ -137,14 +137,14 @@
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
-
-                if (scrollTimer !== null) {
-                    clearTimeout(scrollTimer);
-                }
-                scrollTimer = setTimeout(function() {
-                    $(window).trigger("scrollStop");
-                }, 1000);
             }
+
+            if (scrollTimer !== null) {
+                clearTimeout(scrollTimer);
+            }
+            scrollTimer = setTimeout(function() {
+                $(window).trigger("scrollStop");
+            }, 1000);
         };
         $("#container").on('scroll', scrollHandler);
 
