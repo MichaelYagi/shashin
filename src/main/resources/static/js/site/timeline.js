@@ -106,7 +106,7 @@
             }
             scrollTimer = setTimeout(function() {
                 $(window).trigger("scrollStop");
-            }, 1000);
+            }, 200);
 
             timelineSettings.distanceToFooter = calculateDistanceToFooter();
             timelineSettings.isScrolling = true;
