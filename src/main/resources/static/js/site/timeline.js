@@ -87,7 +87,7 @@
                 });
             }
 
-            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length === 1) {
+            if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
                 $("#dateSlider").hide();
             }
         });
@@ -101,6 +101,13 @@
 
         // Scroll event handler
         const scrollHandler = function (e) {
+            if (scrollTimer !== null) {
+                clearTimeout(scrollTimer);
+            }
+            scrollTimer = setTimeout(function() {
+                $(window).trigger("scrollStop");
+            }, 1000);
+
             timelineSettings.distanceToFooter = calculateDistanceToFooter();
             timelineSettings.isScrolling = true;
             let st = $(e.target).scrollTop();
@@ -138,13 +145,6 @@
                 topScroll = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             }
-
-            if (scrollTimer !== null) {
-                clearTimeout(scrollTimer);
-            }
-            scrollTimer = setTimeout(function() {
-                $(window).trigger("scrollStop");
-            }, 1000);
         };
         $("#container").on('scroll', scrollHandler);
 
