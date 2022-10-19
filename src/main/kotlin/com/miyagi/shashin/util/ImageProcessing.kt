@@ -6,6 +6,9 @@ import net.coobird.thumbnailator.Thumbnails
 import net.coobird.thumbnailator.geometry.Positions
 import org.bytedeco.javacv.FFmpegFrameGrabber
 import org.bytedeco.javacv.Java2DFrameConverter
+import java.awt.BasicStroke
+import java.awt.Color
+import java.awt.Graphics2D
 import java.awt.RenderingHints
 import java.awt.geom.AffineTransform
 import java.awt.image.BufferedImage
@@ -17,6 +20,7 @@ import java.io.IOException
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.imageio.ImageIO
+
 
 class ImageProcessing(private var apiVersion: String?, private var file: File, private var sidecarDir: String, private var metadataObj: Metadata?) {
 
@@ -210,9 +214,11 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
                     .outputQuality(1.0)
                     .toFile(tempFile)
 
-                val scaledImage: BufferedImage?
+                var scaledImage: BufferedImage?
                 try {
-                    scaledImage = sharpenAndBrightenImage(ImageIO.read(tempFile))
+                    scaledImage = ImageIO.read(tempFile)
+                    scaledImage = sharpenAndBrightenImage(scaledImage)
+                    scaledImage = borderImage(scaledImage)
                     tempFile.delete()
                     ImageIO.write(scaledImage, "jpg", tnFile)
                     _metadataObj?.setMapMarkerPath(thumbnailFileStr)
@@ -360,5 +366,14 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
         val op: BufferedImageOp = ConvolveOp(kernel, ConvolveOp.EDGE_NO_OP, null)
         return op.filter(bufferedImage, null)
+    }
+
+    private fun borderImage(bufferedImage: BufferedImage): BufferedImage {
+        val g: Graphics2D = bufferedImage.graphics as Graphics2D
+        g.stroke = BasicStroke(3f)
+        g.color = Color.WHITE
+        g.drawRect(0, 0, bufferedImage.width, bufferedImage.height)
+
+        return bufferedImage
     }
 }
