@@ -25,10 +25,12 @@ class SQLiteDialect : Dialect() {
     val identitySelectString: String
         get() = "select last_insert_rowid()"
 
+    @Deprecated("This declaration overrides deprecated member", ReplaceWith("true"))
     override fun supportsLimit(): Boolean {
         return true
     }
 
+    @Deprecated("This declaration overrides deprecated member", ReplaceWith("true"))
     override fun getLimitString(query: String, hasOffset: Boolean): String {
         return StringBuffer(query.length + 20).append(query).append(if (hasOffset) " limit ? offset ?" else " limit ?")
             .toString()
