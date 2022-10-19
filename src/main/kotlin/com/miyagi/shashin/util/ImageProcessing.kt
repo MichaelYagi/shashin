@@ -370,7 +370,7 @@ class ImageProcessing(private var apiVersion: String?, private var file: File, p
 
     private fun borderImage(bufferedImage: BufferedImage): BufferedImage {
         val g: Graphics2D = bufferedImage.graphics as Graphics2D
-        g.stroke = BasicStroke(3f)
+        g.stroke = BasicStroke(4f)
         g.color = Color.WHITE
         g.drawRect(0, 0, bufferedImage.width, bufferedImage.height)
 
