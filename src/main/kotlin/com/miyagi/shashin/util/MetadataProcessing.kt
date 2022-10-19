@@ -390,7 +390,7 @@ class MetadataProcessing() {
                                 val minutes = durationParts[1].toInt()
                                 val seconds = StringUtils.substring(durationParts[2], 0, 2).toInt()
 
-                                this.metadataObj.setDuration(setDuration(this.metadataObj, hours, minutes, seconds))
+                                this.metadataObj.setDuration(formatDuration(hours, minutes, seconds))
                             }
                             "Duration" -> {
                                 val milliseconds = tag.description.toInt()
@@ -398,7 +398,7 @@ class MetadataProcessing() {
                                 val minutes = (milliseconds / (1000 * 60) % 60)
                                 val seconds = (milliseconds / 1000) % 60
 
-                                this.metadataObj.setDuration(setDuration(this.metadataObj, hours, minutes, seconds))
+                                this.metadataObj.setDuration(formatDuration(hours, minutes, seconds))
                             }
                         }
                     } else {
@@ -522,7 +522,7 @@ class MetadataProcessing() {
         }
     }
 
-    private fun setDuration(metadata: Metadata, hours: Int, minutes: Int, seconds: Int): String {
+    private fun formatDuration(hours: Int, minutes: Int, seconds: Int): String {
         val f = DecimalFormat("00")
         var duration = "$minutes:${f.format(seconds)}"
         if (hours > 0) {
