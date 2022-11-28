@@ -161,7 +161,7 @@ const getCenteredOverlay = ({id, overlays, data}) => `
         ${($.inArray("isVideo", overlays) !== -1) ?
         `
         <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
-            ${data.metadata.description !== null ?? ` data-sub-html="${data.metadata.description}" `}
+            ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
             data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true}}\'>
             <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
         </a>
@@ -170,7 +170,7 @@ const getCenteredOverlay = ({id, overlays, data}) => `
         `
         <a class="mediaLink" id="mediaLink${id}" data-src="${data.metadata.thumbnailUrlOriginal}" href="${data.metadata.thumbnailUrlOriginal}"
             data-download-url="${encodeURI(data.metadata.thumbnailUrlOriginal)}/download"
-            ${data.metadata.description !== null ?? ` data-sub-html="${data.metadata.description}" `}>
+            ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}>
             <span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span>
         </a>
         `
