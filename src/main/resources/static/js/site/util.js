@@ -536,6 +536,7 @@ class Util {
         }
 
         // Clear data
+        $(".descriptionDetails").text("");
         $(".pathDetails").text("");
         $(".timelineLink").html("");
         $(".typeDetails").text("");
