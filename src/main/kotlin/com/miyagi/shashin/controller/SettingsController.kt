@@ -715,7 +715,7 @@ class SettingsController {
         val module = "snapshot"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
-        model["message"] = "Export or import metadata zip file"
+        model["message"] = "Export or import metadata zip file. People and keywords will not be exported."
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -1003,6 +1003,8 @@ class SettingsController {
 
             saveImportedFavorites(favoriteList)
 
+            val albumPhotoListInsert = mutableListOf<AlbumPhoto>()
+
             if (albumList.isNotEmpty() && albumPhotoList.isNotEmpty()) {
                 for (albumPhoto in albumPhotoList) {
                     for (importedAlbum in albumList) {
@@ -1073,10 +1075,26 @@ class SettingsController {
                                     albumPhotoObj.setMetadataId(albumPhoto.getMetadataId())
                                     albumPhotoObj.setCreatedAt(getCurrentTimestamp())
                                     albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-                                    albumPhotoRepository?.save(albumPhotoObj)
+//                                    albumPhotoRepository?.save(albumPhotoObj)
+                                    albumPhotoListInsert.add(albumPhotoObj)
                                 }
                             }
                         }
+                    }
+                }
+            }
+
+            if (albumPhotoListInsert.size > 0) {
+                albumPhotoRepository?.saveAll(albumPhotoListInsert)
+            }
+
+            val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
+            if (albumPhotoCounts != null) {
+                for (albumPhotoCount in albumPhotoCounts) {
+                    if (albumPhotoCount != null && albumPhotoCount.getPhotoCount() == 0) {
+                        // Delete the album
+                        albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
+                        userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
                     }
                 }
             }
