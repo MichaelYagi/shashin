@@ -36,6 +36,10 @@
             mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal) + "/download";
         }
 
+        if (metadata.description !== null && metadata.description !== "") {
+            mediaContent.subHtml = metadata.description;
+        }
+
         return mediaContent;
     }
 
