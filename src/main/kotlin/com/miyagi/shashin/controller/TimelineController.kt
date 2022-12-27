@@ -1045,27 +1045,15 @@ class TimelineController: BaseController() {
         if (metadataRecord.isPresent) {
             val metadata = metadataRecord.get()
 
-            val json: String
-            val mapper = ObjectMapper()
-
-            // metadata/<folder>/<fileName>.exif.yaml
-            val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-            val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
-            val exifFilePath = sidecarDir.dropLast(1) + "/metadata" + metadata.getFolder() + "/" + metadata.getFileName() + ".exif.yaml"
-            val exifFile = File(exifFilePath)
+            val jsonNode = FileUtils.convertExifToJsonNode(metadata.getFolder()!!, metadata.getFileName()!!, relativeSidecarDir!!)
 
             response["msg"] = "Could not get EXIF file"
             response["status"] = ApiResponse.FAIL.status
 
-            if (exifFile.exists()) {
-                val content = Files.readString(exifFile.toPath())
-                json = convertYamlToJson(content)
-
-                if (json.isNotEmpty()) {
-                    response["exif"] = mapper.readTree(json)
-                    response["msg"] = ""
-                    response["status"] = ApiResponse.SUCCESS.status
-                }
+            if (jsonNode != null) {
+                response["exif"] = jsonNode
+                response["msg"] = ""
+                response["status"] = ApiResponse.SUCCESS.status
             }
         } else {
             response["msg"] = "Could not get record"
@@ -1123,13 +1111,6 @@ class TimelineController: BaseController() {
         }
 
         return null
-    }
-
-    private fun convertYamlToJson(yaml: String?): String {
-        val yamlReader = ObjectMapper(YAMLFactory())
-        val obj = yamlReader.readValue(yaml, Any::class.java)
-        val jsonWriter = ObjectMapper()
-        return jsonWriter.writeValueAsString(obj)
     }
 
     private fun processAlbum(albumNameRaw: String, currentUserObj: User?, metadataObj: Metadata?): Int {
