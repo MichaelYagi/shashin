@@ -1,9 +1,13 @@
 package com.miyagi.shashin.controller
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
 import org.springframework.stereotype.Controller
@@ -36,6 +40,9 @@ class MediaServiceController {
     @Autowired
     private lateinit var metadataRepository: MetadataRepository
 
+    @Value("\${app.sidecar.path}")
+    private var relativeSidecarDir: String? = null
+
     private var logger: Logger = Logger.getLogger(MediaServiceController::class.simpleName)
 
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
@@ -48,14 +55,25 @@ class MediaServiceController {
             var path = metadataObj.get().getPath()!!
             val metadata = metadataObj.get()
 
+            var mp4MajorBrand = ""
+
+            // metadata/<folder>/<fileName>.exif.yaml
+            val jsonNode = FileUtils.convertExifToJsonNode(metadata.getFolder()!!, metadata.getFileName()!!, relativeSidecarDir!!)
+
+            if (jsonNode != null && jsonNode.has("MP4-MajorBrand")) {
+                mp4MajorBrand = jsonNode.get("MP4-MajorBrand").textValue()
+            }
+
             if (metadata.getType() != null &&
-                (metadata.getType()!!.lowercase().contains("mp4") || metadata.getType()!!.lowercase()
-                    .contains("quicktime")) &&
+                (metadata.getType()!!.lowercase().contains("mp4") || metadata.getType()!!.lowercase().contains("quicktime")) &&
                 (
-                        ((metadata.getCompressionType() == null || metadata.getCompressionType()!!.lowercase() == "unknown") && metadata.getExpectedExtension() != null && metadata.getExpectedExtension()!!
-                            .lowercase() == "mov" && File(metadata.getPath()!!).extension.lowercase() == "mov") ||
-                                (metadata.getCompressionType() != null && metadata.getCompressionType()!!.lowercase() != "h.264")
-                        )
+                        ((metadata.getCompressionType() == null || metadata.getCompressionType()!!.lowercase() == "unknown") &&
+                            metadata.getExpectedExtension() != null &&
+                            metadata.getExpectedExtension()!!.lowercase() == "mov" &&
+                            File(metadata.getPath()!!).extension.lowercase() == "mov") ||
+                        (metadata.getCompressionType() != null && metadata.getCompressionType()!!.lowercase() != "h.264") &&
+                        (mp4MajorBrand.lowercase().contains("mpeg"))
+                )
             ) {
                 logger.log(Level.INFO, "Converting video " + metadata.getPath() + " to h.264.")
                 /* Step 1. Declaring source file and Target file */

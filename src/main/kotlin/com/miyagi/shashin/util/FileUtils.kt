@@ -1,6 +1,11 @@
 package com.miyagi.shashin.util
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.model.Folder
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
 import java.io.*
 import java.nio.file.Files
@@ -15,6 +20,9 @@ import java.util.zip.ZipOutputStream
 class FileUtils {
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
+
+        @Value("\${app.sidecar.path}")
+        private var relativeSidecarDir: String? = null
 
         fun thumbnailHeight(): Int {
             return 225
@@ -165,6 +173,36 @@ class FileUtils {
                 }
             }
             return directoryToBeDeleted.delete()
+        }
+
+        fun convertYamlToJson(yaml: String?): String {
+            val yamlReader = ObjectMapper(YAMLFactory())
+            val obj = yamlReader.readValue(yaml, Any::class.java)
+            val jsonWriter = ObjectMapper()
+            return jsonWriter.writeValueAsString(obj)
+        }
+
+        fun convertExifToJsonNode(folder: String, fileName: String, relativeSidecarDir: String): JsonNode? {
+            // metadata/<folder>/<fileName>.exif.yaml
+            val json: String
+            var jsonNode: JsonNode? = null
+            val mapper = ObjectMapper()
+
+            val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+            val sidecarDir = rootPath + relativeSidecarDir
+            val exifFilePath = sidecarDir.dropLast(1) + "/metadata" + folder + "/" + fileName + ".exif.yaml"
+            val exifFile = File(exifFilePath)
+
+            if (exifFile.exists()) {
+                val content = Files.readString(exifFile.toPath())
+                json = convertYamlToJson(content)
+
+                if (json.isNotEmpty()) {
+                    jsonNode = mapper.readTree(json)
+                }
+            }
+
+            return jsonNode
         }
 
         /**
