@@ -1,7 +1,7 @@
 [![CircleCI](https://circleci.com/gh/MichaelYagi/shashin/tree/main.svg?style=shield&circle-token=6dc6f05ef637006f89e253fe7e3eb3d58047d173)](https://circleci.com/gh/MichaelYagi/shashin/tree/main)
 
 # Shashin
-An Image Gallery
+An Image Gallery inspired by Google Photos
 
 # Version
 Must be updated in POM file and git tag with format v[Major][Minor][Patch].
