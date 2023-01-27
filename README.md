@@ -4,7 +4,7 @@
 An Image Gallery
 
 # Version
-Must be updated in POM file and git tag with format v<Major><Minor><patch>.
+Must be updated in POM file and git tag with format v[Major][Minor][Patch].
 
 # Maven Install
 Run ```mvn clean install``` with unminified JS assets. Run ```mvn -Pprod clean install``` to run with minified JS assets.
