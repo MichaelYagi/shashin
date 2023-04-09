@@ -43,7 +43,8 @@ class Folders {
                     let appendClass = "appendFoldersPhotos";
 
                     let html = '<div class="card" style="width:235px;padding-top:10px;">';
-                    html += '<a href="/folder/'+encodeURIComponent(folder.folder)+'" style="text-decoration: none !important;color: #777777;">';
+
+                    html += '<a href="/folder/'+encodeURIComponent(encodeURIComponent(folder.folder))+'" style="text-decoration: none !important;color: #777777;">';
                     html += '<img loading="lazy" class="card-img-top" src="'+folder.thumbnailUrlCentered+'" width="209" height="209" style="width: 209px;height: 209px;"></a>';
                     html += '<div class="card-body"><p class="card-text"><strong>'+folder.folder+'</strong></p>';
                     html += '<p class="card-text"><small class="text-muted">'+folder.count+' items</small></p></div></div>';
