@@ -11,6 +11,8 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
             <div id="foldersMessage"></div>
+            <input type="hidden" id="currentPage" name="currentPage" value="0">
+            <input type="hidden" id="activePage" th:value="${activePage}">
 
             <th:block th:if="${not #lists.isEmpty(foldersList)}">
                 <div class="row image-group-padding">
@@ -25,8 +27,13 @@
                             </div>
                         </div>
 
+                        <span class="appendFoldersPhotos" style="width:0;height:0;padding:0"></span>
+
                     </th:block>
                 </div>
+            </th:block>
+            <th:block th:if="${#lists.isEmpty(foldersList)}">
+                <span class="appendFoldersPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
             </th:block>
 
             <!-- Back to top button -->
@@ -34,28 +41,41 @@
                 <i class="bi-arrow-up-circle"></i>
             </button>
 
+            <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
     </div>
 </div>
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
-    /*<![CDATA[*/
-    shashin.nonce = /*[[${cspNonce}]]*/ '';
-    /*]]>*/
+    // /*<![CDATA[*/
+    // shashin.nonce = /*[[${cspNonce}]]*/ '';
+    // /*]]>*/
+    //
+    // $("#container").scroll(function () {
+    //     //set scroll position in session storage
+    //     sessionStorage.scrollPos = $("#container").scrollTop();
+    // });
+    // const init = function () {
+    //     //get scroll position in session storage
+    //     $("#container").scrollTop(sessionStorage.scrollPos || 0)
+    // };
+    // window.onload = init;
+    //
+    // shashin.activateScrollToTop();
+    // Util.checkErrorImage();
 
-    $("#container").scroll(function () {
-        //set scroll position in session storage
-        sessionStorage.scrollPos = $("#container").scrollTop();
+    $(document).ready(function() {
+        /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const activePage = /*[[${activePage}]]*/ 'folders';
+        const foldersList = /*[[${foldersList}]]*/ '[]';
+        /*]]>*/
+
+        const foldersInstance = new Folders(foldersList, activePage);
+        foldersInstance.init();
+        Util.checkErrorImage();
     });
-    const init = function () {
-        //get scroll position in session storage
-        $("#container").scrollTop(sessionStorage.scrollPos || 0)
-    };
-    window.onload = init;
-
-    shashin.activateScrollToTop();
-    Util.checkErrorImage();
 </script>
 
 </body>

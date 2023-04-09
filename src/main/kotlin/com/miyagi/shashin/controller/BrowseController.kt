@@ -201,6 +201,22 @@ class BrowseController: BaseController() {
         return response
     }
 
+    private fun buildInitialFoldersPage(model: Model): Model {
+        val page = 0
+        val response = buildPagedFolders(model,page)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        getAllAttribueData(model)
+
+        return model
+    }
+
     private fun buildInitialPage(module: String, model: Model): Model {
         val page = 0
         val response = buildBrowseRecord(module,model,page)
@@ -219,20 +235,22 @@ class BrowseController: BaseController() {
 
     @GetMapping("/folders")
     fun getFolders(model: Model): String {
-        val response = buildFolders(model)
-        for ((k, v) in response) {
-            model[k] = v!!
-        }
-        return model.getAttribute("activePage").toString()
+        val module = "folders"
+        buildInitialFoldersPage(model)
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
     }
 
     @RequestMapping(value = ["api/v1/folders"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getFoldersApi(model: Model): String {
-        return mapper.writeValueAsString(buildFolders(model))
+        return mapper.writeValueAsString(buildAllFolders(model))
     }
 
-    private fun buildFolders(model: Model): MutableMap<String, Any?> {
+    private fun buildAllFolders(model: Model): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "folders"
@@ -254,6 +272,43 @@ class BrowseController: BaseController() {
         response["titleDescriptor"] = TextUtils.capitalized(module)
 
         return response
+    }
+
+    private fun buildPagedFolders(model: Model, page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
+        response["status"] = ApiResponse.FAIL.status
+
+        val module = "folders"
+        response["msg"] = "There are no folders."
+        response["message"] = "There are no folders."
+        response["foldersList"] = mutableListOf<Folder>()
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page*queryLimit
+            val folderObj = metadataRepository.findFoldersOffsetAndLimit(pageValue, queryLimit)
+
+            if (folderObj != null && folderObj.count() > 0) {
+                response["foldersList"] = folderObj
+                response["status"] = ApiResponse.SUCCESS.status
+                response["message"] = ""
+            }
+        }
+
+        response["msg"] = ""
+        response["activePage"] = module
+        response["activeSidebar"] = module
+        response["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return response
+    }
+
+    @RequestMapping(value = ["/folders/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedFolders(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
+        return mapper.writeValueAsString(buildPagedFolders(model,page))
     }
 
     @RequestMapping(value = ["/folder/{folder}"], method = [RequestMethod.GET])
@@ -306,7 +361,7 @@ class BrowseController: BaseController() {
             val metadataList: MutableList<Metadata> = metadataRepository.findAllByFolderOffsetAndLimit(
                 folder,
                 pageValue,
-                model.getAttribute("queryLimit").toString().toInt()
+                queryLimit
             ).toMutableList()
 
             if (metadataList.isNotEmpty()) {

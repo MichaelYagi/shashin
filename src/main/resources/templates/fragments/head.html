@@ -107,6 +107,9 @@
             <th:block th:if="${titleDescriptorLower == 'recent'}">
                 <script src="/js/site/recent.js" th:nonce="${cspNonce}"></script>
             </th:block>
+            <th:block th:if="${titleDescriptorLower == 'folders'}">
+                <script src="/js/site/folders.js" th:nonce="${cspNonce}"></script>
+            </th:block>
             <th:block th:if="${titleDescriptorLower == 'modified'}">
                 <script src="/js/site/modified.js" th:nonce="${cspNonce}"></script>
             </th:block>
@@ -154,6 +157,9 @@
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'recent'}">
                 <script src="/js/site/min/recent.min.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${titleDescriptorLower == 'folders'}">
+                <script src="/js/site/min/folders.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'modified'}">
                 <script src="/js/site/min/modified.min.js" th:nonce="${cspNonce}"></script>
