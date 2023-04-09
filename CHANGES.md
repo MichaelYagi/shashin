@@ -102,3 +102,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Prevent multiple downloads while downloading
 - Redirect to referer after login
+
+## [2.2.2] - 2023-04-09
+### Added
+
+### Changed
+
+- Paginated "Folders" view
+
+### Fixed
