@@ -12,13 +12,7 @@ Run ```mvn clean install``` with unminified JS assets. Run ```mvn -Pprod clean i
 # Pipeline
 Built on CircleCI with every push to master at:
 
-https://app.circleci.com/pipelines/github/MichaelYagi/shashin?filter=all
-
-Artifacts with new tags will be published to artifactory at:
-
-https://shashin.jfrog.io/ui/native/shashin/
-
-JAR, EXE and test output published.
+https://app.circleci.com/pipelines/github/MichaelYagi/shashin
 
 # Docker
 ```mvn -Pprod clean install```
