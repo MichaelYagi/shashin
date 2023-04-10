@@ -30,13 +30,18 @@ JAR, EXE and test output published.
 Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
 
 # Development
-Tech Stack
-* Kotlin
-* Javascript/JQuery
-* Spring Boot/Thymeleaf
+Framework
+* [Spring Boot](https://spring.io/)
+* [Thymeleaf](https://www.thymeleaf.org/)
 
-3rd Party Tools used:
+Tech Stack
+* [Kotlin](https://kotlinlang.org/)
+* Javascript
+
+3rd Party Libraries used:
 * Heavily modified [LightGallery](https://www.lightgalleryjs.com/)
 * [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor)
+* [TensorFlow](https://www.tensorflow.org/)
+* [JQuery](https://jquery.com/)
 
 See src\main\resources\static\js\site\folders.js for an example of JS templating and pagination.
