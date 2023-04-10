@@ -185,3 +185,17 @@ const getCenteredOverlay = ({id, overlays, data}) => `
 
     </div>
 `;
+
+const getFoldersCard = ({folder, thumbnailUrlCentered, count, appendClass}) => `
+    <div class="card" style="width:235px;padding-top:10px;">
+        <a href="/folder/${encodeURIComponent(encodeURIComponent(folder))}" style="text-decoration: none !important;color: #777777;">
+            <img loading="lazy" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
+        </a>
+        <div class="card-body">
+            <p class="card-text"><strong>${folder}</strong></p>
+            <p class="card-text"><small class="text-muted">${count} items</small></p>
+        </div>
+    </div>
+    
+    <span class="${appendClass}" style="width:0;height:0;padding:0"></span>
+`;

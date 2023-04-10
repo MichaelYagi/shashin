@@ -28,3 +28,15 @@ JAR, EXE and test output published.
 ```docker run -d -p 6624:6624 michaeltyagi/shashin```
 
 Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
+
+# Development
+Tech Stack
+* Kotlin
+* Javascript/JQuery
+* Spring Boot/Thymeleaf
+
+3rd Party Tools used:
+* Heavily modified [LightGallery](https://www.lightgalleryjs.com/)
+* [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor)
+
+See src\main\resources\static\js\site\folders.js for an example of JS templating and pagination.
