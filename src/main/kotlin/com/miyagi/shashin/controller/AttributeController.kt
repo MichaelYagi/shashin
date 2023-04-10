@@ -60,6 +60,27 @@ class AttributeController {
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
 
+    @Value("\${app.config.default.querylimit}")
+    private var queryLimitProperty: Int = 20
+
+    @Value("\${app.config.default.matchscanlimit}")
+    private var matchScanLimitProperty: Int = 50
+
+    @Value("\${app.config.default.trainingdatalimit}")
+    private var trainingDataLimitProperty: Int = 100
+
+    @Value("\${app.config.default.notificationlimit}")
+    private var notificationLimitProperty: Int = 20
+
+    @Value("\${app.config.default.searchhistorylimit}")
+    private var searchHistoryLimitProperty: Int = 15
+
+    @Value("\${app.config.default.recognitionConfidenceThreshold}")
+    private lateinit var recognitionConfidenceThresholdProperty: String
+
+    @Value("\${server.port}")
+    private lateinit var portProperty: String
+
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, response: HttpServletResponse) {
@@ -74,8 +95,8 @@ class AttributeController {
             }
         }
 
-        var queryLimit = 20
-        var searchHistoryLimit = 15
+        var queryLimit = queryLimitProperty
+        var searchHistoryLimit = searchHistoryLimitProperty
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
         if (settings != null) {
@@ -84,14 +105,14 @@ class AttributeController {
             model["settings"] = settings
         } else {
             val settingsObj = Settings()
-            settingsObj.setQueryLimit(20)
-            settingsObj.setMatchScanLimit(50)
-            settingsObj.setTrainingDataLimit(100)
-            settingsObj.setNotificationLimit(20)
-            settingsObj.setSearchHistoryLimit(15)
-            settingsObj.setPort("6624")
+            settingsObj.setQueryLimit(queryLimitProperty)
+            settingsObj.setMatchScanLimit(matchScanLimitProperty)
+            settingsObj.setTrainingDataLimit(trainingDataLimitProperty)
+            settingsObj.setNotificationLimit(notificationLimitProperty)
+            settingsObj.setSearchHistoryLimit(searchHistoryLimitProperty)
+            settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
-            settingsObj.setRecognitionConfidenceThreshold("0.6")
+            settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
 
