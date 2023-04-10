@@ -39,11 +39,11 @@ class Folders {
             if (foldersList !== null && foldersList.length > 0) {
 
                 for (const index in foldersList) {
-                    let folderObj = foldersList[index];
-                    let appendClass = "appendFoldersPhotos";
-                    let folder = folderObj.folder;
-                    let thumbnailUrlCentered = folderObj.thumbnailUrlCentered;
-                    let count = folderObj.count;
+                    const folderObj = foldersList[index];
+                    const appendClass = "appendFoldersPhotos";
+                    const folder = folderObj.folder;
+                    const thumbnailUrlCentered = folderObj.thumbnailUrlCentered;
+                    const count = folderObj.count;
 
                     $(getFoldersCard({folder, thumbnailUrlCentered, count, appendClass})).insertBefore($("."+appendClass).last());
                 }
