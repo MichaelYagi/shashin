@@ -39,17 +39,13 @@ class Folders {
             if (foldersList !== null && foldersList.length > 0) {
 
                 for (const index in foldersList) {
-                    let folder = foldersList[index];
+                    let folderObj = foldersList[index];
                     let appendClass = "appendFoldersPhotos";
+                    let folder = folderObj.folder;
+                    let thumbnailUrlCentered = folderObj.thumbnailUrlCentered;
+                    let count = folderObj.count;
 
-                    let html = '<div class="card" style="width:235px;padding-top:10px;">';
-
-                    html += '<a href="/folder/'+encodeURIComponent(encodeURIComponent(folder.folder))+'" style="text-decoration: none !important;color: #777777;">';
-                    html += '<img loading="lazy" class="card-img-top" src="'+folder.thumbnailUrlCentered+'" width="209" height="209" style="width: 209px;height: 209px;"></a>';
-                    html += '<div class="card-body"><p class="card-text"><strong>'+folder.folder+'</strong></p>';
-                    html += '<p class="card-text"><small class="text-muted">'+folder.count+' items</small></p></div></div>';
-                    html += '<span class="'+appendClass+'" style="width:0;height:0;padding:0"></span>';
-                    $(html).insertBefore($("."+appendClass).last());
+                    $(getFoldersCard({folder, thumbnailUrlCentered, count, appendClass})).insertBefore($("."+appendClass).last());
                 }
 
                 this.rendering = false;
