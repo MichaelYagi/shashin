@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/MichaelYagi/shashin/tree/main.svg?style=shield&circle-token=6dc6f05ef637006f89e253fe7e3eb3d58047d173)](https://circleci.com/gh/MichaelYagi/shashin/tree/main)
+[![CircleCI](https://circleci.com/gh/MichaelYagi/shashin/tree/main.svg?style=shield&circle-token=a7f7505f8d0357fbae3ca5be7a41ff8debed1d1d)](https://circleci.com/gh/MichaelYagi/shashin/tree/main)
 
 # Shashin
 An Image Gallery inspired by Google Photos
