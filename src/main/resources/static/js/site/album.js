@@ -122,7 +122,7 @@
 
                             // Append HTML
                             const appendClass = "appendAlbumPhotos"; //"albummodal" + metadata.id;
-                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last()).ready(function () {
+                            $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last()).ready(function () {
                                 // Call JS and modal
                                 albumModal.renderAlbumCommentsModal(albumData, metadata, userMap, albumPhotoCommentsMap);
                                 albumSettings.activateAlbumListeners(metadata, albumData);
@@ -316,7 +316,7 @@
 
                     // Insert comment at top of list
                     $("#commentText" + metadata.id).val("")
-                    $("#commentList" + metadata.id).prepend(AlbumComment({
+                    $("#commentList" + metadata.id).prepend(ModalTemplates.AlbumComment({
                         commentId: commentId,
                         commentText: comment,
                         userId: userMap.id,
@@ -345,17 +345,17 @@
 (function( albumModal, $, undefined ) {
     albumModal.renderAlbumCommentsModal = function (albumData,metadata,userMap,albumPhotoCommentsMap) {
         let index;
-        let html = AlbumCommentsModalHead({metadata:metadata});
+        let html = ModalTemplates.AlbumCommentsModalHead({metadata:metadata});
 
         const commentIdArray = [];
         for (index in albumPhotoCommentsMap[metadata.id]) {
             const comments = albumPhotoCommentsMap[metadata.id][index];
             commentIdArray.push(comments["commentId"]);
 
-            html += AlbumComment({commentId:comments["commentId"],commentText:comments["comment"],userId:userMap.id,commentUserId:comments['userId'],username:comments["username"]});
+            html += ModalTemplates.AlbumComment({commentId:comments["commentId"],commentText:comments["comment"],userId:userMap.id,commentUserId:comments['userId'],username:comments["username"]});
         }
 
-        html += AlbumCommentsModalFooter({metadata:metadata});
+        html += ModalTemplates.AlbumCommentsModalFooter({metadata:metadata});
 
         $("#albummodal"+metadata.id).after(html);
         for (index in commentIdArray) {

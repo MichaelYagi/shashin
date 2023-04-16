@@ -70,7 +70,7 @@ class Recent {
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const appendClass = "appendRecentPhotos";
-                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
+                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
                 }
 
                 this.rendering = false;

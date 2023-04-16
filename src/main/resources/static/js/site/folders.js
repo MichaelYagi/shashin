@@ -45,7 +45,7 @@ class Folders {
                     const thumbnailUrlCentered = folderObj.thumbnailUrlCentered;
                     const count = folderObj.count;
 
-                    $(getFoldersCard({folder, thumbnailUrlCentered, count, appendClass})).insertBefore($("."+appendClass).last());
+                    $(GalleryTemplates.getFoldersCard({folder, thumbnailUrlCentered, count, appendClass})).insertBefore($("."+appendClass).last());
                 }
 
                 this.rendering = false;

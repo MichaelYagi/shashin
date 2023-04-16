@@ -183,7 +183,7 @@
             taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
             shashin.printMessageToConsole('taggedPeopleList:'+taggedPeopleList)
 
-            let html = PersonModalHead({module:"person",metadata:metadata,recognitionLabels:recognitionLabels,taggedPeopleList:taggedPeopleList});
+            let html = ModalTemplates.PersonModalHead({module:"person",metadata:metadata,recognitionLabels:recognitionLabels,taggedPeopleList:taggedPeopleList});
 
             if (recognitionLabels.length > 0) {
                 for (const index in recognitionLabels) {
@@ -193,10 +193,10 @@
                     if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                         checkedString = " checked";
                     }
-                    html += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
+                    html += ModalTemplates.PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
                 }
             }
-            html += PersonModalFooter({module:"person",metadata:metadata,recognitionLabels:recognitionLabels});
+            html += ModalTemplates.PersonModalFooter({module:"person",metadata:metadata,recognitionLabels:recognitionLabels});
 
             $("#personmodal"+metadata.id).after(html);
 
@@ -263,7 +263,7 @@
                                 if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                                     checkedString = " checked";
                                 }
-                                batchHtml += PersonModalDropDown({
+                                batchHtml += ModalTemplates.PersonModalDropDown({
                                     metadata: metadata,
                                     recognitionLabel: recognitionLabel,
                                     checkedString: checkedString
