@@ -33,7 +33,7 @@ Tech Stack
 * Javascript
 
 3rd Party Libraries used:
-* Heavily modified [LightGallery](https://www.lightgalleryjs.com/)
+* Modified [LightGallery](https://www.lightgalleryjs.com/)
 * [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor)
 * [TensorFlow](https://www.tensorflow.org/)
 * [JQuery](https://jquery.com/)
