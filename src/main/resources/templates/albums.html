@@ -33,7 +33,7 @@
                                     </span>
                                 </a>
                                 <form method="post" th:action="'/album/download/'+${album.id}" style="display: inline-block;white-space: nowrap;">
-                                    <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-dark' : ' link-button'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}"></button>
+                                    <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}"></button>
                                 </form>
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
                                     <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil"></span></a>

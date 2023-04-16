@@ -380,23 +380,19 @@ footer {
   display: none;
 }
 
-.lightIcons {
+.darkmodeIcons {
   color: white;
 }
 
-.darkIcons {
+.lightmodeIcons {
   color: black;
 }
 
-.darkIcons:hover, .lightIcons:hover {
+.darkmodeIcons:hover, .lightmodeIcons:hover {
   color: slategray;
 }
 
-.lg-components {
-  background-image:linear-gradient(0deg,rgba(0,0,0,.4),rgba(0,0,0,0))
-}
-
-.link-button {
+.link-button-lightmode {
   background: none;
   border: none;
   color: #0d6efd;
@@ -404,11 +400,11 @@ footer {
   cursor: pointer;
 }
 
-.link-button:hover {
+.link-button-lightmode:hover {
   color: #0A58CA;
 }
 
-.link-button-dark {
+.link-button-darkmode {
   background: none;
   border: none;
   color: #5F7B99;
@@ -416,6 +412,10 @@ footer {
   cursor: pointer;
 }
 
-.link-button-dark:hover {
+.link-button-darkmode:hover {
   color: #4B6B8C;
+}
+
+.lg-components {
+  background-image:linear-gradient(0deg,rgba(0,0,0,.4),rgba(0,0,0,0))
 }
