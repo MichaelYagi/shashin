@@ -45,46 +45,55 @@
             <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="editPhotoModalLabel">Edit Location <span id="editPhotoLocationModalLabel"></span></h5>
+                        <h5 class="modal-title" id="editPhotoModalLabel"><th:block th:text="${{currentUser.authority == 'ROLE_ADMIN'}?'Edit Location ':'View Details '}"></th:block><span id="editPhotoLocationModalLabel"></span></h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="metadataId" id="metadataId" value="">
-                        <ul class="nav nav-tabs">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" id="locationTabLink" href="#locationTab">Location</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
-                            </li>
-                        </ul>
+                        <th:block th:if="${currentUser.authority == 'ROLE_ADMIN'}">
+                            <ul class="nav nav-tabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" id="locationTabLink" href="#locationTab">Location</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
+                                </li>
+                            </ul>
+                        </th:block>
                         <div class="tab-content">
-                            <div class="tab-pane container show active" id="locationTab">
-                                <form id="saveData">
-                                    <div class="form-group row">
-                                        <div class="col-sm">
-                                            <label for="locationDataInput" class="col-form-label">Edit Location</label>
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" aria-label="Tag Location" id="locationDataInput" name="locationDataInput" value="">
-                                                <input type="hidden" id="mapMetadataId" name="mapMetadataId" value="">
+                            <th:block th:if="${currentUser.authority == 'ROLE_ADMIN'}">
+                                <div class="tab-pane container show active" id="locationTab">
+                                    <form id="saveData">
+                                        <div class="form-group row">
+                                            <div class="col-sm">
+                                                <label for="locationDataInput" class="col-form-label">Edit Location</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" aria-label="Tag Location" id="locationDataInput" name="locationDataInput" value="">
+                                                    <input type="hidden" id="mapMetadataId" name="mapMetadataId" value="">
+                                                </div>
                                             </div>
                                         </div>
+                                    </form>
+                                    <br>
+                                    <div class="col-sm">
+                                        <span id="locationMapResponseMsg"></span>
                                     </div>
-                                </form>
-                                <br>
-                                <div class="col-sm">
-                                    <span id="locationMapResponseMsg"></span>
                                 </div>
-                            </div>
-                            <div class="tab-pane container fade" id="detailsTab">
+                            </th:block>
+                            <div th:class="'tab-pane container ' + ${currentUser.authority == 'ROLE_ADMIN' ? 'fade' : 'show active'}" id="detailsTab">
                                 <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <div id="metadataLocationModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
-                        <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
-                        <button id="metadataLocationModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <th:block th:if="${currentUser.authority == 'ROLE_ADMIN'}">
+                            <div id="metadataLocationModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                            <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
+                            <button id="metadataLocationModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        </th:block>
+                        <th:block th:if="${currentUser.authority == 'ROLE_USER'}">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </th:block>
                     </div>
                 </div>
             </div>

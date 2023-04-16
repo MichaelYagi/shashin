@@ -513,9 +513,7 @@ async function showMap(mapdata,keywordMap,showControls) {
     });
 
     const lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    if (showControls === true) {
-        lightGalleryConfigs["plugins"].push(lgEditLocation);
-    }
+    lightGalleryConfigs["plugins"].push(lgEditLocation);
     lightGalleryConfigs["controls"] = true;
     lightGalleryConfigs["dynamic"] = true;
     lightGalleryConfigs["counter"] = true;
@@ -630,8 +628,10 @@ async function showMap(mapdata,keywordMap,showControls) {
         metadataLocationModalStatus.css("visibility","hidden");
         $(this).find(':input').val('');
 
-        const tab = new bootstrap.Tab($("#locationTabLink"));
-        tab.show();
+        if (true === showControls) {
+            const tab = new bootstrap.Tab($("#locationTabLink"));
+            tab.show();
+        }
     });
 
     $("#detailsTabLink").on("click", function (e) {
