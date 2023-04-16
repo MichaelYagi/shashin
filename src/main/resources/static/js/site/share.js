@@ -77,7 +77,7 @@ class ShareAlbum {
                         mediaContentList.push(shashin.getMediaContent(metadata));
 
                         const appendClass = "appendAlbumPhotos";
-                        $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
+                        $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
                     }
 
                     this.rendering = false;

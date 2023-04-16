@@ -70,7 +70,7 @@ class Modified {
                     mediaContentList.push(shashin.getMediaContent(metadata));
 
                     const appendClass = "appendModifiedPhotos";
-                    $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
+                    $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
                 }
 
                 this.rendering = false;

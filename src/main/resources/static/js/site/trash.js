@@ -68,7 +68,7 @@ class Trash {
                             mediaContentList.push(shashin.getMediaContent(metadata));
 
                             const appendClass = "appendMetadataPhotos";
-                            $(PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
+                            $(GalleryTemplates.PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData})).insertBefore($("."+appendClass).last());
                         }
 
                         this.rendering = false;

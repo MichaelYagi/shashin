@@ -173,7 +173,7 @@
                 $("#camerasString").val(camerasList);
 
                 if (metadata.thumbnailUrlCentered !== null) {
-                    $("#propTimelineModalThumbnail").html(HeaderThumbnail({metadata:metadata}));
+                    $("#propTimelineModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
                 }
 
                 if (metadata.title !== null) {
@@ -241,7 +241,7 @@
                     $("#recognitionLabelInput").remove();
                 }
                 if (recognitionLabels !== null && recognitionLabels.length > 0) {
-                    let html = PersonModalDropdownHead({metadata:metadata});
+                    let html = ModalTemplates.PersonModalDropdownHead({metadata:metadata});
                         // '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
                         // '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                         // '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
@@ -254,13 +254,13 @@
                             checkedString = " checked";
                         }
 
-                        html += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
+                        html += ModalTemplates.PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
                             // '           <button class="dropdown-item" type="button">\n' +
                             // '               <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
                             // '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
                             // '           </button>\n';
                     }
-                    html += PersonModalDropdownFooter();
+                    html += ModalTemplates.PersonModalDropdownFooter();
                         // '   </div>\n' +
                         // '</div>\n';
 
@@ -294,7 +294,7 @@
                 }
 
                 if (allAlbumList !== null && allAlbumList.length > 0) {
-                    let html = AlbumModalDropdownHeader({metadata:metadata});
+                    let html = ModalTemplates.AlbumModalDropdownHeader({metadata:metadata});
                         // '<div class="input-group-append dropdown" id="albumListInput">\n' +
                         // '   <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                         // '   <div class="dropdown-menu" id="albumsList">\n';
@@ -307,13 +307,13 @@
                             checkedString = " checked";
                         }
 
-                        html += AlbumModalDropDown({metadata:metadata,album:eachAlbum,checkedString:checkedString});
+                        html += ModalTemplates.AlbumModalDropDown({metadata:metadata,album:eachAlbum,checkedString:checkedString});
                             // '   <button class="dropdown-item" type="button">\n' +
                             // '       <input type="checkbox" class="album" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
                             // '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + Util.escapeHtml(eachAlbum.name) + '</label>\n' +
                             // '   </button>\n';
                     }
-                    html += AlbumModalDropdownFooter();
+                    html += ModalTemplates.AlbumModalDropdownFooter();
                         // '</div>\n' +
                         // '</div>\n';
 
@@ -541,7 +541,7 @@
         ) {
             $("#map").css("display","block");
             $("#mapTabMessage").css("display","block");
-            $("#mapTabMessage").html(MapLinks({metadata:metadata}));
+            $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata}));
 
             if (shashin.map === null) {
                 shashin.map = new ol.Map({
@@ -618,7 +618,7 @@
             $("#metadataId").val(metadata.id);
 
             if (metadata.thumbnailUrlCentered !== null) {
-                $("#propInfoModalThumbnail").html(HeaderThumbnail({metadata:metadata}));
+                $("#propInfoModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
             }
 
             Util.populateDetailsInfo(metadata,"propInfoModal");
@@ -640,7 +640,7 @@
             $("#metadataId").val(metadata.id);
 
             if (metadata.thumbnailUrlCentered !== null) {
-                $("#propInfoSidebarThumbnail").html(HeaderThumbnail({metadata:metadata}));
+                $("#propInfoSidebarThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
             }
 
             Util.populateDetailsInfo(metadata, "propInfoSidebar");
@@ -1424,7 +1424,7 @@
             $('.bi-circle-fill').each(function(i, obj) {
                 const metadataId = obj.id.substring(6, obj.id.length);
                 metadataIdList.push(metadataId);
-                thumbnailList += BatchHeaderThumbnail({thumbnailImage:$("#thumbnailCentered"+metadataId).val(),title:$("#filename"+metadataId).val().trim()});
+                thumbnailList += TimelineTemplates.BatchHeaderThumbnail({thumbnailImage:$("#thumbnailCentered"+metadataId).val(),title:$("#filename"+metadataId).val().trim()});
             });
 
             $("#batchMetadataIds").val(JSON.stringify(metadataIdList));

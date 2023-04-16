@@ -73,7 +73,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                         renderRecognitionLabels = true;
                     }
 
-                    batchHtml += PersonModalDropDown({
+                    batchHtml += ModalTemplates.PersonModalDropDown({
                         metadata: dummyMetadata,
                         recognitionLabel: recognitionLabel,
                         checkedString: ""
@@ -145,7 +145,7 @@ $('#propBatchMetadata').bind('keypress', function () {
         taggedPeopleList = taggedPeopleList.replaceAll("&quot;", "");
         shashin.printMessageToConsole('taggedPeopleList:'+taggedPeopleList)
 
-        let html = PersonModalHead({module:"matches",metadata:metadata,recognitionLabels:recognitionLabels,taggedPeopleList:taggedPeopleList});
+        let html = ModalTemplates.PersonModalHead({module:"matches",metadata:metadata,recognitionLabels:recognitionLabels,taggedPeopleList:taggedPeopleList});
 
         if (recognitionLabels.length > 0) {
             for (const index in recognitionLabels) {
@@ -155,10 +155,10 @@ $('#propBatchMetadata').bind('keypress', function () {
                 if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                     checkedString = " checked";
                 }
-                html += PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
+                html += ModalTemplates.PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
             }
         }
-        html += PersonModalFooter({module:"person",metadata:metadata,recognitionLabels:recognitionLabels});
+        html += ModalTemplates.PersonModalFooter({module:"person",metadata:metadata,recognitionLabels:recognitionLabels});
 
         $("#matchesmodal" + metadata.id).after(html);
 
@@ -225,7 +225,7 @@ $('#propBatchMetadata').bind('keypress', function () {
                             if ($.inArray(recognitionLabel.name, taggedPeopleArray) !== -1) {
                                 checkedString = " checked";
                             }
-                            batchHtml += PersonModalDropDown({
+                            batchHtml += ModalTemplates.PersonModalDropDown({
                                 metadata: metadata,
                                 recognitionLabel: recognitionLabel,
                                 checkedString: checkedString

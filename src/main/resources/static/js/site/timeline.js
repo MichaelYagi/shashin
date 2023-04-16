@@ -1202,7 +1202,7 @@
                                         }
 
                                         if ($("#favorite" + metadata.id).length === 0) {
-                                            $("#tnbr" + metadata.id).append(TimelineGalleryBottomRightOverlay({metadata:metadata}));
+                                            $("#tnbr" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomRightOverlay({metadata:metadata}));
                                             const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
                                             const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
                                             $("#bricon" + metadata.id).addClass(favoriteIcon);
@@ -1240,12 +1240,12 @@
                                         }
 
                                         if ($("#mediaLink" + metadata.id).length === 0) {
-                                            $("#tncentered" + metadata.id).append(TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent}));
+                                            $("#tncentered" + metadata.id).append(TimelineTemplates.TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent}));
                                         }
 
                                         if ($("#timelineModalEdit" + metadata.id).length === 0) {
                                             const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
-                                            $("#tnbl" + metadata.id).append(TimelineGalleryBottomLeftOverlay({metadata:metadata,editIcon:editIcon}));
+                                            $("#tnbl" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomLeftOverlay({metadata:metadata,editIcon:editIcon}));
                                             $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                             $("#timelineModalEdit" + metadata.id).on("click", function (e) {
                                                 e.preventDefault();
@@ -1254,7 +1254,7 @@
                                         }
 
                                         if ($("#select" + metadata.id).length === 0) {
-                                            $("#tntl" + metadata.id).append(TimelineGalleryTopLeftOverlay({metadata:metadata})).ready(function () {
+                                            $("#tntl" + metadata.id).append(TimelineTemplates.TimelineGalleryTopLeftOverlay({metadata:metadata})).ready(function () {
                                                 timelineSettings.rendered = true;
                                             });
                                         }
@@ -1267,7 +1267,7 @@
 
                                         if (metadata.type.indexOf("video") >= 0) {
                                             if ($("#video" + metadata.id).length === 0) {
-                                                $("#tntr" + metadata.id).append(TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
+                                                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
                                                     timelineSettings.rendered = true;
                                                 });
                                             }
@@ -1276,7 +1276,7 @@
                                             }
                                         } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
                                             if ($("#panorama" + metadata.id).length === 0) {
-                                                $("#tntr" + metadata.id).append(TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
+                                                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
                                                     timelineSettings.rendered = true;
                                                 });
                                             }
@@ -1331,7 +1331,7 @@
                                     idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
                                 }
 
-                                html += TimelinePreLoadGalleryHeader({metadata:metadataList[0]});
+                                html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0]});
 
                                 if ($("#"+idCheck).length === 0) {
                                     for (let index in metadataList) {
@@ -1348,7 +1348,7 @@
                                         lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                                         lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
-                                        html += TimelinePreLoadGalleryBody({metadata:metadata});
+                                        html += TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata});
 
                                         $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                     }
@@ -1356,7 +1356,7 @@
                                     const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
                                     const lastDate = lastDateParts[1];
 
-                                    html += TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
+                                    html += TimelineTemplates.TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
 
                                     const tempScrollTop = $("#container").scrollTop();
 
@@ -1485,7 +1485,7 @@
                 const month = metadataDate["month"];
                 const day = metadataDate["day"];
 
-                html += TimelineToc({index:index,mediaTypeFilter:mediaTypeFilter,metadataDates:metadataDates,year:year,month:month,day:day});
+                html += TimelineTemplates.TimelineToc({index:index,mediaTypeFilter:mediaTypeFilter,metadataDates:metadataDates,year:year,month:month,day:day});
             }
 
             $("#offcanvasTocBody").append(html);
