@@ -40,8 +40,9 @@
         const tokenSize = "ShashinAlbumSize";
         const configuredAttempts = 120;
         const downloadLocation = $("#download"+albumId).attr("href");
+        const albumName = $("#albumName"+albumId).text();
 
-        $("#albumsMessage").html("<span class='spinner-grow spinner-grow-sm'></span> <strong>Exporting album. Downloading photos only.</strong>").animate({opacity: 100}, 0);
+        $("#albumsMessage").html("<span class='spinner-grow spinner-grow-sm'></span> <strong>Exporting album \""+albumName+"\". Downloading photos only.</strong>").animate({opacity: 100}, 0);
         setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
 
         Util.setCookie(tokenName, "", "/");
