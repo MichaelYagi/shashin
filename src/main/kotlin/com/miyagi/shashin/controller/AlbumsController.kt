@@ -716,7 +716,9 @@ class AlbumsController {
                             val contentLength = outputZipFile.length()
 
                             val headers = HttpHeaders()
-                            headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumName",outputZipFile.name.replace("\\s".toRegex(), "_").toLowerCase()).path("/").build().toString())
+                            headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumName",
+                                outputZipFile.name.replace("\\s".toRegex(), "_").lowercase(Locale.getDefault())
+                            ).path("/").build().toString())
                             headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumSize",contentLength.toString()).path("/").build().toString())
                             headers.add(
                                 HttpHeaders.CONTENT_DISPOSITION,

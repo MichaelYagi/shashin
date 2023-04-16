@@ -32,9 +32,14 @@
                                         </th:block>
                                     </span>
                                 </a>
-                                <form method="post" th:action="'/album/download/'+${album.id}" style="display: inline-block;white-space: nowrap;">
-                                    <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}" title="Download album photos"></button>
-                                </form>
+                                <th:block th:if="${album.albumPhotoCount > 0}">
+                                    <form method="post" th:action="'/album/download/'+${album.id}" style="display: inline-block;white-space: nowrap;">
+                                        <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}" title="Download album photos"></button>
+                                    </form>
+                                </th:block>
+                                <th:block th:if="${album.albumPhotoCount == 0}">
+                                    &nbsp;
+                                </th:block>
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
                                     <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil" title="Edit album"></span></a>
                                     &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}" title="Share with other users"></span></a>
