@@ -57,7 +57,7 @@
                 if (attempts === 0) {
                     $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
                 } else {
-                    $("#albumsMessage").html("<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize)).animate({opacity: 0}, 5000);
+                    $("#albumsMessage").html("<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize)).animate({opacity: 0}, 10000);
                     $("#download" + albumId).attr("href", downloadLocation);
                     Util.deleteCookie(tokenName, "/");
                     Util.deleteCookie(tokenSize, "/");
@@ -67,10 +67,6 @@
 
             attempts--;
         }, 1000);
-
-        // window.setInterval( function() {
-        //     $("#albumsMessage").animate({opacity: 0}, 1000);
-        // }, 10000);
     });
     /*]]>*/
 </script>
