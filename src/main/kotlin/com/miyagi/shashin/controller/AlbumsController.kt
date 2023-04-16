@@ -673,15 +673,26 @@ class AlbumsController {
                     for (albumPhoto in albumPhotos) {
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
-                            val tempFile = File(metadata.get().getPath())
-                            if (tempFile.exists()) {
-                                val tempFileTo =
-                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
-                                Files.copy(tempFile.toPath(), tempFileTo.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                            if (!metadata.get().getType()?.contains("video", ignoreCase = true)!!) {
+                                val tempFile = File(metadata.get().getPath())
+                                if (tempFile.exists()) {
+                                    val tempFileTo =
+                                        File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
+                                    Files.copy(
+                                        tempFile.toPath(),
+                                        tempFileTo.toPath(),
+                                        StandardCopyOption.REPLACE_EXISTING
+                                    )
+                                } else {
+                                    logger.log(
+                                        Level.INFO,
+                                        "Exporting album photo. File does not exist: " + tempFile.absolutePath
+                                    )
+                                }
                             } else {
                                 logger.log(
                                     Level.INFO,
-                                    "Exporting album photo. File does not exist: " + tempFile.absolutePath
+                                    "Ignoring album video: " + metadata.get().getPath()
                                 )
                             }
                         }
