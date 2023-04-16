@@ -22,7 +22,7 @@
                             <div class="card-body">
                                 <strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong><br>
 
-                                <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;">
+                                <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;" title="Comments">
                                     <span th:id="'commentcount'+${album.id}"><th:block th:text="${albumsCommentsMap.containsKey(album.id) ? #lists.size(albumsCommentsMap.get(album.id)) : '0'}"></th:block></span>
                                     <span class="bi-chat-square position-relative">
                                         <th:block th:if="${notificationMap.get(album.id)}">
@@ -33,12 +33,12 @@
                                     </span>
                                 </a>
                                 <form method="post" th:action="'/album/download/'+${album.id}" style="display: inline-block;white-space: nowrap;">
-                                    <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}"></button>
+                                    <button th:class="'bi-download'+${currentUser.darkMode ? ' link-button-darkmode' : ' link-button-lightmode'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}" title="Download album photos"></button>
                                 </form>
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                    <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil"></span></a>
-                                    &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}"></span></a>
-                                    &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>
+                                    <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil" title="Edit album"></span></a>
+                                    &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}" title="Share with other users"></span></a>
+                                    &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}" title="Delete album"><span class="bi-trash"></span></a>
                                 </th:block>
                                 <p class="card-text"><small class="text-muted" th:text="${album.albumPhotoCount + (album.albumPhotoCount == 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount == 1 ? ' video':' videos')}"></small></p>
                             </div>
