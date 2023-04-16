@@ -37,5 +37,6 @@ Tech Stack
 * [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor)
 * [TensorFlow](https://www.tensorflow.org/)
 * [JQuery](https://jquery.com/)
+* [OpenLayers](https://openlayers.org/) with [OpenStreetMap](https://www.openstreetmap.org/)
 
 See [folders.js](https://github.com/MichaelYagi/shashin/blob/main/src/main/resources/static/js/site/folders.js) for an example of JS templating and pagination.
