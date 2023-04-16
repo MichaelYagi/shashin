@@ -118,23 +118,29 @@ class AlbumsController {
 
                 val notificationMap = HashMap<Int, Boolean>()
                 val albums = ArrayList<HashMap<String, Any>>()
-                var albumCount: Int
+                var albumVideoCount: Int?
+                var albumPhotoCount: Int?
+
                 for (userAlbum in userAlbums) {
 
                     val albumCommentsList = ArrayList<HashMap<String, Any>>()
                     if (userAlbum?.getAlbumId() != null) {
-                        albumCount = 0
                         val albumMap = HashMap<String, Any>()
                         val albumObj = albumRepository.findById(userAlbum.getAlbumId()!!)
-                        val albumPhotoCount = albumPhotoRepository.countByAlbumId(userAlbum.getAlbumId()!!)
-                        if (albumPhotoCount != null) {
-                            albumCount = albumPhotoCount
+                        albumPhotoCount = albumPhotoRepository.countPhotosByAlbumId(userAlbum.getAlbumId()!!)
+                        if (albumPhotoCount == null) {
+                            albumPhotoCount = 0
+                        }
+                        albumVideoCount = albumPhotoRepository.countVideosByAlbumId(userAlbum.getAlbumId()!!)
+                        if (albumVideoCount == null) {
+                            albumVideoCount = 0
                         }
                         albumMap["id"] = albumObj.get().getId()
                         albumMap["name"] = if (albumObj.get().getName() == null) "" else albumObj.get().getName()!!
                         albumMap["coverUrl"] = if (albumObj.get().getCoverUrl() == null) "" else albumObj.get().getCoverUrl()!!
                         albumMap["shareUrl"] = if (albumObj.get().getShareUrl() == null) "" else albumObj.get().getShareUrl()!!
-                        albumMap["albumCount"] = albumCount
+                        albumMap["albumPhotoCount"] = albumPhotoCount
+                        albumMap["albumVideoCount"] = albumVideoCount
                         albums.add(albumMap)
 
                         val notificationCount = notificationRepository.countAllByAlbumIdAndUserIdAndMetadataIdIsNullAndReadIsFalse(userAlbum.getAlbumId()!!,currentUserObj.getId())

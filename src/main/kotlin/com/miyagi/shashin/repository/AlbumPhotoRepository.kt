@@ -13,6 +13,10 @@ import javax.transaction.Transactional
 interface AlbumPhotoRepository : CrudRepository<AlbumPhoto?, Int?> {
     fun countByMetadataIdAndAlbumId(metadataId: String?, albumId: Int?): Int?
     fun countByAlbumId(albumId: Int?): Int?
+    @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId  AND ap.metadata_id = m.id AND m.type NOT LIKE '%video%'", nativeQuery = true)
+    fun countPhotosByAlbumId(albumId: Int?): Int?
+    @Query("SELECT COUNT(DISTINCT ap.metadata_id) FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId  AND ap.metadata_id = m.id AND m.type LIKE '%video%'", nativeQuery = true)
+    fun countVideosByAlbumId(albumId: Int?): Int?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId  AND ap.metadata_id = m.id ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC", nativeQuery = true)
     fun findAllByAlbumId(@Param("albumId") albumId: Int): MutableIterable<AlbumPhoto?>?
     @Query("SELECT DISTINCT ap.* FROM albumphoto ap, metadata m WHERE ap.album_id = :albumId  AND ap.metadata_id = m.id ORDER BY m.year DESC, m.month DESC, m.day DESC, m.time DESC LIMIT :offset, :limit", nativeQuery = true)

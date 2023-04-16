@@ -40,7 +40,7 @@
                                     &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}"></span></a>
                                     &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>
                                 </th:block>
-                                <p class="card-text"><small class="text-muted" th:text="${album.albumCount + ' items'}"></small></p>
+                                <p class="card-text"><small class="text-muted" th:text="${album.albumPhotoCount + (album.albumPhotoCount == 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount == 1 ? ' video':' videos')}"></small></p>
                             </div>
                         </div>
 
