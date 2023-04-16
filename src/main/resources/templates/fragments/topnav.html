@@ -149,9 +149,11 @@
                                 if (darkMode === true) {
                                     $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
                                     $(".darkIcons").addClass("lightIcons").removeClass("darkIcons");
+                                    $(".link-button").addClass("link-button-dark").removeClass("link-button");
                                 } else {
                                     $("LINK[href='/css/bootstrap-night.min.css']").attr("href", "/css/bootstrap.min.css");
                                     $(".lightIcons").addClass("darkIcons").removeClass("lightIcons");
+                                    $(".link-button-dark").addClass("link-button").removeClass("link-button-dark");
                                 }
                                 html.show();
                             }
