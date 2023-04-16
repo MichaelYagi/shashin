@@ -27,25 +27,25 @@
     <div class="container-fluid align-items-center d-flex">
         <div class="flex-shrink-0">
             <a class="align-items-center mb-lg-0 link-dark text-decoration-none" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasMenu" aria-controls="offcanvasMenu" title="Show Menu">
-                <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;">
+                <span id="sidebarMenuDrawer" th:class="'bi-list placeholder position-relative'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;">
                 </span>
             </a>
             <th:block th:if="${activePage == 'timeline'}">
                 <span id="timelineTools">
                     &nbsp;
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineTocToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasToc" aria-controls="offcanvasToc" title="Show timeline" style="display: none">
-                        <span th:class="'bi-calendar3 placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem"></span>
+                        <span th:class="'bi-calendar3 placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem"></span>
                     </a>
                     &nbsp;
                     <a class="align-items-center mb-lg-0 link-dark text-decoration-none" id="timelineMediaTypeToggle" data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#mediaTypeToggle" aria-controls="mediaTypeToggle" title="Toggle media type">
-                        <span id="timelineMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span>
+                        <span id="timelineMediaTypeToggleIcon" th:class="'bi-camera-video placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
                     </a>
                 </span>
             </th:block>
             <th:block th:if="${activePage == 'logs'}">
                 &nbsp;&nbsp;
                 <a class="align-items-center mb-lg-0 link-dark text-decoration-none" href="/settings/logs/download" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download logs">
-                    <span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span>
+                    <span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span>
                 </a>
             </th:block>
         </div>
@@ -82,45 +82,45 @@
                 </script>
             </form>
             <div id="timelineAppTools">
-                <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                <a href="#" id="appToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                <a href="#" id="appToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>
+                <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                <a href="#" id="appToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                <a href="#" id="appToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                 &nbsp;&nbsp;<span id="timelineNumberSelected"></span>
             </div>
             <th:block th:if="${activePage == 'matches' or activePage == 'person'}">
                 <div id="matchesAppTools">
-                    <a href="#" id="matchToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="matchToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="matchToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="matchToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="matchToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="matchToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="matchesNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'favorites'}">
                 <div id="albumAppTools">
-                    <a href="#" id="albumAppToolsRemoveFavorites" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Favorites"><span th:class="'bi-heart placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="albumAppToolsRemoveFavorites" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Favorites"><span th:class="'bi-heart placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="favoritesNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'trash'}">
                 <div id="albumAppTools">
-                    <a href="#" id="albumAppToolsRestore" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore"><span th:class="'bi-arrow-repeat placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="albumAppToolsRestore" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore"><span th:class="'bi-arrow-repeat placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="trashNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:unless="${activePage == 'favorites'}">
                 <div id="albumAppTools">
-                    <a href="#" id="albumAppToolsRemoveAlbum" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Album"><span th:class="'bi-bookmark-x placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="albumAppToolsRemoveAlbum" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Album"><span th:class="'bi-bookmark-x placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="albumNumberSelected"></span>
                 </div>
             </th:block>
         </div>
         <div class="flex-shrink-0 dropdown" style="margin-left: 10px;">
-            <a id="dLabel" th:class="'d-block link-dark text-decoration-none dropdown-toggle placeholder'+${currentUser.darkMode ? ' lightIcons' : ' darkIcons'}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
+            <a id="dLabel" th:class="'d-block link-dark text-decoration-none dropdown-toggle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">
                 <span class="bi-person-circle" style="font-size: 1.5rem;"></span>
                 <span class="caret"></span>
             </a>
