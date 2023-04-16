@@ -106,7 +106,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.2.2] - 2023-04-09
 ### Added
 
-- Ability to download albums
+- Ability to download album photos
 
 ### Changed
 
