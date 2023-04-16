@@ -16,9 +16,11 @@
                     <li class="nav-item">
                         <a class="nav-link active" data-bs-toggle="tab" id="detailsTabLinkInfo" href="#detailsTab">Details</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" id="exifTabLinkInfo" href="#exifTab">EXIF data</a>
-                    </li>
+                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                        <li class="nav-item">
+                            <a class="nav-link" data-bs-toggle="tab" id="exifTabLinkInfo" href="#exifTab">EXIF data</a>
+                        </li>
+                    </th:block>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" id="mapTabLinkInfo" href="#mapTab">Map</a>
                     </li>
