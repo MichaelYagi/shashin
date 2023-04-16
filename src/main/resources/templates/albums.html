@@ -10,7 +10,7 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
-            <div id="albumsMessage"></div>
+            <div id="albumsMessage">&nbsp;</div><br>
 
             <th:block th:if="${not #lists.isEmpty(albumsList)}">
                 <div class="row image-group-padding">
@@ -20,25 +20,26 @@
                                 <img loading="lazy" class="card-img-top" th:src="${#uris.escapePath(album.coverUrl)}" width="209" height="209" style="width: 209px;height: 209px;">
                             </a>
                             <div class="card-body">
-                                <p class="card-text">
-                                    <strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong><br>
+                                <strong th:id="'albumName'+${album.id}" th:text="${album.name}"></strong><br>
 
-                                    <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;">
-                                        <span th:id="'commentcount'+${album.id}"><th:block th:text="${albumsCommentsMap.containsKey(album.id) ? #lists.size(albumsCommentsMap.get(album.id)) : '0'}"></th:block></span>
-                                        <span class="bi-chat-square position-relative">
-                                            <th:block th:if="${notificationMap.get(album.id)}">
-                                                <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                                    <span class="visually-hidden">New alerts</span>
-                                                </span>
-                                            </th:block>
-                                        </span>
-                                    </a>
-                                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                        &nbsp;&nbsp;<a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil"></span></a>
-                                        &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}"></span></a>
-                                        &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>
-                                    </th:block>
-                                </p>
+                                <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;">
+                                    <span th:id="'commentcount'+${album.id}"><th:block th:text="${albumsCommentsMap.containsKey(album.id) ? #lists.size(albumsCommentsMap.get(album.id)) : '0'}"></th:block></span>
+                                    <span class="bi-chat-square position-relative">
+                                        <th:block th:if="${notificationMap.get(album.id)}">
+                                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
+                                                <span class="visually-hidden">New alerts</span>
+                                            </span>
+                                        </th:block>
+                                    </span>
+                                </a>
+                                <form method="post" th:action="'/album/download/'+${album.id}" style="display: inline-block;white-space: nowrap;">
+                                    <button th:class="'bi-download '+${currentUser.darkMode ? ' link-button-dark' : ' link-button'}" type="submit" th:id="'download'+${album.id}" name="download" th:value="${album.id}"></button>
+                                </form>
+                                <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                    <a href="#" th:id="'edit'+${album.id}"><span class="bi-pencil"></span></a>
+                                    &nbsp;&nbsp;<a href="#" th:id="'share'+${album.id}"><span th:class="${album.shareUrl != null and album.shareUrl != '' ? 'bi-share-fill' : 'bi-share'}"></span></a>
+                                    &nbsp;&nbsp;<a href="#" th:id="'trash'+${album.id}"><span class="bi-trash"></span></a>
+                                </th:block>
                                 <p class="card-text"><small class="text-muted" th:text="${album.albumCount + ' items'}"></small></p>
                             </div>
                         </div>

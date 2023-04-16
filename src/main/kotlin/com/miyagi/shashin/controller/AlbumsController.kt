@@ -3,22 +3,37 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
+import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.InputStreamResource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseCookie
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.io.File
+import java.io.FileInputStream
+import java.nio.file.Files
 import java.util.*
+import java.util.logging.Level
+import java.util.logging.Logger
+import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 import kotlin.collections.HashMap
+import kotlin.io.path.isDirectory
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -59,6 +74,8 @@ class AlbumsController {
 
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
+
+    private var logger: Logger = Logger.getLogger(AlbumsController::class.simpleName)
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
@@ -637,6 +654,72 @@ class AlbumsController {
         }
 
         return response
+    }
+
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @PostMapping("/album/download/{albumId}")
+    fun postAlbumDownload(model: Model, @RequestParam download: Int, @PathVariable albumId: Int, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && albumId > 0 && download == albumId) {
+            val userAlbums = userAlbumRepository.findByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+            if (userAlbums != null) {
+                // Get album photos
+                val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
+                if (albumPhotos != null) {
+                    val albumObj = albumRepository.findAlbumById(albumId)
+                    val tempExportBaseDir = Files.createTempDirectory(albumId.toString())
+
+                    for (albumPhoto in albumPhotos) {
+                        if (albumPhoto != null) {
+                            val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                            val tempFile = File(metadata.get().getPath())
+                            if (tempFile.exists()) {
+                                val tempFileTo =
+                                    File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
+                                tempFile.copyTo(tempFileTo)
+                            } else {
+                                logger.log(
+                                    Level.INFO,
+                                    "Exporting album photo. File does not exist: " + tempFile.absolutePath
+                                )
+                            }
+                        }
+                    }
+
+                    if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
+                        val tempDir = tempExportBaseDir.toFile()
+                        val outputZipFile = FileUtils.zipFolder(tempDir, albumObj?.getName()!!)
+                        FileUtils.deleteDirectory(tempDir)
+
+                        if (outputZipFile != null) {
+                            outputZipFile.deleteOnExit()
+
+                            val resource = InputStreamResource(FileInputStream(outputZipFile))
+                            val contentLength = outputZipFile.length()
+
+                            val headers = HttpHeaders()
+                            headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumName",outputZipFile.name).path("/").build().toString())
+                            headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumSize",contentLength.toString()).path("/").build().toString())
+                            headers.add(
+                                HttpHeaders.CONTENT_DISPOSITION,
+                                "attachment; filename=" + outputZipFile.name
+                            )
+                            headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
+                            headers.add("Pragma", "no-cache")
+                            headers.add("Expires", "0")
+
+                            return ResponseEntity.ok()
+                                .headers(headers)
+                                .contentLength(contentLength)
+                                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                                .body(resource)
+                        }
+                    }
+                }
+            }
+        }
+
+        return null
     }
 
     @Secured("ROLE_ADMIN")
