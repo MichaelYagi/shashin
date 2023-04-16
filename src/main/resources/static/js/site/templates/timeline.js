@@ -1,5 +1,5 @@
 class TimelineTemplates {
-    TimelineToc({index, mediaTypeFilter, metadataDates, year, month, day}) { `
+    static TimelineToc({index, mediaTypeFilter, metadataDates, year, month, day}) { return `
         ${(index === 0 || (index > 0 && metadataDates[index - 1].year !== year)) ? `
             <strong>${year}</strong>
             <div class='list-group'>
@@ -27,21 +27,21 @@ class TimelineTemplates {
         ` : ''}
     `};
 
-    MapLinks({metadata}) { `
+    static MapLinks({metadata}) { return `
         <a href="/map?lat=${metadata.lat}&lng=${metadata.lng}" target="_blank" class="bi-pin-fill" style="text-decoration: none;">&nbsp;${metadata.placeName}</a>
         <br>
         <a href="https://www.google.com/maps/search/?api=1&query=${metadata.lat}%2C${metadata.lng}" target="_blank" class="bi-google" style="text-decoration: none;">&nbsp;Google Maps link</a>
     `};
 
-    HeaderThumbnail({metadata}) { `
+    static HeaderThumbnail({metadata}) { return `
         <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" height="100" width="100">
     `};
 
-    BatchHeaderThumbnail({thumbnailImage, title}) { `
+    static BatchHeaderThumbnail({thumbnailImage, title}) { return `
         <img loading="lazy" src="${thumbnailImage}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
     `};
 
-    TimelinePreLoadGalleryHeader({metadata}) { `
+    static TimelinePreLoadGalleryHeader({metadata}) { return `
         ${(metadata["year"] === null || metadata["month"] === null || metadata["day"] === null) ?
             `
         <span class="dateContainer" id="container_undated">
@@ -61,7 +61,7 @@ class TimelineTemplates {
         `}
     `};
 
-    TimelinePreLoadGalleryBody({metadata}) { `
+    static TimelinePreLoadGalleryBody({metadata}) { return `
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail ${(metadata.type.includes('video') ? `is-video` : `is-not-video`)}" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" id="lightGalleryIndex${metadata.id}"></a>
             <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
@@ -86,7 +86,7 @@ class TimelineTemplates {
         </div>
     `};
 
-    TimelinePreLoadGalleryFooter({metadata, lastDate}) { `
+    static TimelinePreLoadGalleryFooter({metadata, lastDate}) { return `
         ${(metadata["year"] === null || metadata["month"] === null || metadata["day"] === null) ?
             `
                 <span class="scrollspy metadataprocessed" id="tail_undated"></span>
@@ -112,19 +112,19 @@ class TimelineTemplates {
         `}
     `};
 
-    TimelineGalleryBottomLeftOverlay({metadata, editIcon}) { `
+    static TimelineGalleryBottomLeftOverlay({metadata, editIcon}) { return `
         <a href="#" id="timelineModalEdit${metadata.id}" data-bs-target="#propTimelinModal">
             <span class="${editIcon}" style="font-size: 1rem;color: lightgray;"></span>
         </a>
     `};
 
-    TimelineGalleryTopLeftOverlay({metadata}) { `
+    static TimelineGalleryTopLeftOverlay({metadata}) { return `
         <a href="#" id="select${metadata.id}">
             <span id="tlicon${metadata.id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
         </a>
     `};
 
-    TimelineGalleryTopRightOverlay({metadata}) { `
+    static TimelineGalleryTopRightOverlay({metadata}) { return `
         ${metadata.type.indexOf("video") >= 0 ?
             `
         <span class="overlayIconBackground">${(metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00"}&nbsp;<span id="video${metadata.id}" class="bi-camera-video overlayIcon"></span></span>
@@ -140,7 +140,7 @@ class TimelineTemplates {
         }
     `};
 
-    TimelineGalleryBottomRightOverlay({metadata}) { `
+    static TimelineGalleryBottomRightOverlay({metadata}) { return `
         <a href="#" id="favorite${metadata.id}" class="text-decoration-none">
             <span class="overlayIconBackground">
                 <span id="briconcount${metadata.id}"></span> <span id="bricon${metadata.id}" class="overlayIcon"></span>
@@ -148,7 +148,7 @@ class TimelineTemplates {
         </a>
     `};
 
-    TimelineGalleryCenterOverlay({metadata, mediaContent}) { `
+    static TimelineGalleryCenterOverlay({metadata, mediaContent}) { return `
         <a class="mediaLink" 
             id="mediaLink${metadata.id}"
             data-download-url="${(metadata.type.indexOf("video") >= 0) ? encodeURI(metadata.videoUrl) : encodeURI(metadata.thumbnailUrlOriginal)}/download"

@@ -1,5 +1,5 @@
 class ModalTemplates {
-    AlbumCommentsModalHead({metadata}) { `
+    static AlbumCommentsModalHead({metadata}) { return `
         <div class="modal fade" id="propalbumphotocomment${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}" aria-hidden="true">
             <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
                 <div class="modal-content">
@@ -16,7 +16,7 @@ class ModalTemplates {
                         <ul class="list-group" id="commentList${metadata.id}">
     `};
 
-    AlbumComment({commentId, commentText, userId, commentUserId, username}) { `
+    static AlbumComment({commentId, commentText, userId, commentUserId, username}) { return `
         <li class="list-group-item${(commentUserId === userId) ? ` list-group-item-secondary` : ''}" id="comment${commentId}">
             <span id="commentcontainer${commentId}">
                 <p id="commentcontent${commentId}">${commentText}</p>
@@ -26,7 +26,7 @@ class ModalTemplates {
         </li>
     `};
 
-    AlbumCommentsModalFooter({metadata}) { `
+    static AlbumCommentsModalFooter({metadata}) { return `
                         </ul>
                     </div>
                     <div class="modal-footer">
@@ -41,25 +41,25 @@ class ModalTemplates {
         </div>
     `};
 
-    AlbumModalDropdownHeader({metadata}) { `
+    static AlbumModalDropdownHeader({metadata}) { return `
         <div class="input-group-append dropdown" id="albumListInput">
             <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>
             <div class="dropdown-menu" id="albumsList">
     `};
 
-    AlbumModalDropDown({metadata, album, checkedString}) { `
+    static AlbumModalDropDown({metadata, album, checkedString}) { return `
                 <button class="dropdown-item" type="button">
                     <input type="checkbox" class="album" value="${album.name}" name="album${metadata.id}[]" id="${metadata.id}-${album.id}"${checkedString}>
                     <label for="${metadata.id}-${album.id}" id="album-${metadata.id}-${album.id}">${Util.escapeHtml(album.name)}</label>
                 </button>
     `};
 
-    AlbumModalDropdownFooter() { `
+    static AlbumModalDropdownFooter() { return `
             </div>
         </div>
     `};
 
-    PersonModalHead({module, metadata, recognitionLabels, taggedPeopleList}) { `
+    static PersonModalHead({module, metadata, recognitionLabels, taggedPeopleList}) { return `
         <div class="modal fade" id="prop${module}${metadata.id}" tabindex="-1" role="dialog" aria-labelledby="label${metadata.id}" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                 <div class="modal-content">
@@ -86,25 +86,25 @@ class ModalTemplates {
                                         ` : ''}
     `};
 
-    PersonModalDropdownHead({metadata}) { `
+    static PersonModalDropdownHead({metadata}) { return `
         <div class="input-group-append dropdown" id="recognitionLabelInput">
             <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown${metadata.id}" type="button" aria-haspopup="true" aria-expanded="false">People</button>
             <div class="dropdown-menu" id="recognitionLabelsList">
     `};
 
-    PersonModalDropDown({metadata, recognitionLabel, checkedString}) { `
+    static PersonModalDropDown({metadata, recognitionLabel, checkedString}) { return `
                                                 <button class="dropdown-item" type="button">
                                                     <input type="checkbox" class="recognitionLabel" value="${recognitionLabel.name}" name="recognitionLabel${metadata.id}[]" id="${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}"${(checkedString.length > 0) ? `${checkedString}` : ''}>
                                                     <label for="${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}" id="label${metadata.id.length > 0 ? `-${metadata.id}-` : ''}${recognitionLabel.id}">${recognitionLabel.name}</label>
                                                 </button>
     `};
 
-    PersonModalDropdownFooter() { `
+    static PersonModalDropdownFooter() { return `
             </div>
         </div>
     `};
 
-    PersonModalFooter({module, metadata, recognitionLabels}) { `
+    static PersonModalFooter({module, metadata, recognitionLabels}) { return `
                                         ${(recognitionLabels.length > 0) ? `
                                             </div>
                                         </div>

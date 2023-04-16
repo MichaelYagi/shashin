@@ -1,5 +1,5 @@
 class GalleryTemplates {
-    PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData}) { `
+    static PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData}) { return `
         ${(typeof dateHeadingObj === "undefined" || dateHeadingObj === null) ? '' : `<section class="dateSection" id="${dateHeadingObj.heading}"><p><strong>${dateHeadingObj.display}</strong></p></section>`}
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" name="lightGalleryIndex${currentMediaLinkIndex}"></a>
@@ -71,7 +71,7 @@ class GalleryTemplates {
         </script>
     `};
 
-    getTopRightOverlay({id, overlays, data}) { `
+    static getTopRightOverlay({id, overlays, data}) { return `
         <div class="thumbnail-tr" id="tntr${id}">
     
         ${($.inArray("isVideo", overlays) !== -1) ?
@@ -99,7 +99,7 @@ class GalleryTemplates {
         </div>
     `};
 
-    getTopLeftOverlay({id, overlays, data}) { `
+    static getTopLeftOverlay({id, overlays, data}) { return `
         <div class="thumbnail-tl" id="tntl${id}">
             <a href="#" id="select${id}">
                 <span id="tlicon${id}" class="bi-circle" style="font-size: 1rem;color: lightgray;"></span>
@@ -107,7 +107,7 @@ class GalleryTemplates {
         </div>
     `};
 
-    getBottomRightOverlay({id, overlays, data}) { `
+    static getBottomRightOverlay({id, overlays, data}) { return `
         <div class="thumbnail-br" id="tnbr${id}">
             ${($.inArray("isFavorites", overlays) !== -1) ?
             `
@@ -135,7 +135,7 @@ class GalleryTemplates {
         </div>
     `};
 
-    getBottomLeftOverlay({id, overlays, data}) { `
+    static getBottomLeftOverlay({id, overlays, data}) { return `
         <div class="thumbnail-bl" id="tnbl${id}">
             ${($.inArray("isEditControls", overlays) !== -1) ?
             `
@@ -176,7 +176,7 @@ class GalleryTemplates {
         </div>
     `};
 
-    getCenteredOverlay({id, overlays, data}) { `
+    static getCenteredOverlay({id, overlays, data}) { return `
         <div class="thumbnail-centered" id="tncentered${id}">
     
             ${($.inArray("isVideo", overlays) !== -1) ?
@@ -207,7 +207,7 @@ class GalleryTemplates {
         </div>
     `};
 
-    getFoldersCard({folder, thumbnailUrlCentered, count, appendClass}) { `
+    static getFoldersCard({folder, thumbnailUrlCentered, count, appendClass}) { return `
         <div class="card" style="width:235px;padding-top:10px;">
             <a href="/folder/${encodeURIComponent(encodeURIComponent(folder))}" style="text-decoration: none !important;color: #777777;">
                 <img loading="lazy" class="card-img-top" src="${thumbnailUrlCentered}" width="209" height="209" style="width: 209px;height: 209px;">
