@@ -46,21 +46,7 @@ class Snapshot {
                     if (attempts === 0) {
                         $("#msg").html("&nbsp;");
                     } else {
-                        let fileSize = 0;
-                        let unit = "kb";
-
-                        if (tokenCookieSize > 100000000) {
-                            fileSize = tokenCookieSize / 10000000;
-                            unit = "gb";
-                        } else if (tokenCookieSize > 10000000) {
-                            fileSize = tokenCookieSize / 1000000;
-                            unit = "mb";
-                        } else {
-                            fileSize = tokenCookieSize / 1000;
-                            unit = "kb";
-                        }
-
-                        $("#msg").text("File name: " + tokenCookieValue + ". File size: " + fileSize.toFixed(2) + " " + unit + ".");
+                        $("#msg").text("File name: " + tokenCookieValue + ". File size: " + Util.formatBytes(tokenCookieSize) + ".");
                         $("#export").prop("disabled", false);
                         Util.deleteCookie(tokenName, "/settings/snapshot");
                         Util.deleteCookie(tokenSize, "/settings/snapshot");
