@@ -78,16 +78,16 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null && user.getId() > 0) {
                     if (currentAuthority == userRole && user.getIsAllowed() == false) {
-                        user.setModifiedAt(getCurrentTimestamp())
                         user.setLoggedIn(false)
+                        user.setModifiedAt(getCurrentTimestamp())
                         userRepository?.save(user)
                         SecurityContextLogoutHandler().logout(request, response, authentication)
                         SecurityContextHolder.getContext().authentication = null
                         redirectStrategy.sendRedirect(request, response, "/users/login?msg=loginfail")
                         isAllowed = false
                     } else {
-                        user.setModifiedAt(getCurrentTimestamp())
                         user.setLoggedIn(true)
+                        user.setModifiedAt(getCurrentTimestamp())
                         try {
                             userRepository?.save(user)
                         } catch(e: Exception) {
