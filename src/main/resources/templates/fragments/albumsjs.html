@@ -55,7 +55,7 @@
 
             if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
                 if (attempts === 0) {
-                    $("#albumsMessage").html("<strong>Exporting failed</strong>").animate({opacity: 0}, 5000);
+                    $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
                 } else {
                     let fileSize = 0;
                     let unit = "kb";

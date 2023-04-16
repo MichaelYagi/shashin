@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -676,7 +677,7 @@ class AlbumsController {
                             if (tempFile.exists()) {
                                 val tempFileTo =
                                     File(tempExportBaseDir.toString() + "/" + metadata.get().getFileName())
-                                tempFile.copyTo(tempFileTo)
+                                Files.copy(tempFile.toPath(), tempFileTo.toPath(), StandardCopyOption.REPLACE_EXISTING)
                             } else {
                                 logger.log(
                                     Level.INFO,
@@ -698,7 +699,7 @@ class AlbumsController {
                             val contentLength = outputZipFile.length()
 
                             val headers = HttpHeaders()
-                            headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumName",outputZipFile.name).path("/").build().toString())
+                            headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumName",outputZipFile.name.replace("\\s".toRegex(), "_").toLowerCase()).path("/").build().toString())
                             headers.add(HttpHeaders.SET_COOKIE, ResponseCookie.from("ShashinAlbumSize",contentLength.toString()).path("/").build().toString())
                             headers.add(
                                 HttpHeaders.CONTENT_DISPOSITION,

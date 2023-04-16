@@ -44,7 +44,7 @@ class Snapshot {
 
                 if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
                     if (attempts === 0) {
-                        $("#msg").text("Export failed.");
+                        $("#msg").html("&nbsp;");
                     } else {
                         let fileSize = 0;
                         let unit = "kb";
