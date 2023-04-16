@@ -395,3 +395,27 @@ footer {
 .lg-components {
   background-image:linear-gradient(0deg,rgba(0,0,0,.4),rgba(0,0,0,0))
 }
+
+.link-button {
+  background: none;
+  border: none;
+  color: #0d6efd;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: #0A58CA;
+}
+
+.link-button-dark {
+  background: none;
+  border: none;
+  color: #5F7B99;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-button-dark:hover {
+  color: #4B6B8C;
+}

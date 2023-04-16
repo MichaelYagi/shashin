@@ -43,25 +43,29 @@ class Snapshot {
                 const tokenCookieSize = Util.getCookie(tokenSize);
 
                 if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
-                    let fileSize = 0;
-                    let unit = "kb";
-
-                    if (tokenCookieSize > 100000000) {
-                        fileSize = tokenCookieSize/10000000;
-                        unit = "gb";
-                    } else if (tokenCookieSize > 10000000) {
-                        fileSize = tokenCookieSize/1000000;
-                        unit = "mb";
+                    if (attempts === 0) {
+                        $("#msg").text("Export failed.");
                     } else {
-                        fileSize = tokenCookieSize/1000;
-                        unit = "kb";
-                    }
+                        let fileSize = 0;
+                        let unit = "kb";
 
-                    $("#msg").text("File name: " + tokenCookieValue + ". File size: " + fileSize.toFixed(2) + " " + unit + ".");
-                    $("#export").prop("disabled", false);
-                    Util.deleteCookie(tokenName, "/settings/snapshot");
-                    Util.deleteCookie(tokenSize, "/settings/snapshot");
-                    window.clearInterval(downloadTimer);
+                        if (tokenCookieSize > 100000000) {
+                            fileSize = tokenCookieSize / 10000000;
+                            unit = "gb";
+                        } else if (tokenCookieSize > 10000000) {
+                            fileSize = tokenCookieSize / 1000000;
+                            unit = "mb";
+                        } else {
+                            fileSize = tokenCookieSize / 1000;
+                            unit = "kb";
+                        }
+
+                        $("#msg").text("File name: " + tokenCookieValue + ". File size: " + fileSize.toFixed(2) + " " + unit + ".");
+                        $("#export").prop("disabled", false);
+                        Util.deleteCookie(tokenName, "/settings/snapshot");
+                        Util.deleteCookie(tokenSize, "/settings/snapshot");
+                        window.clearInterval(downloadTimer);
+                    }
                 }
 
                 attempts--;

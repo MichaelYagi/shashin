@@ -31,6 +31,61 @@
 
         $("#propcommentalbums[[${album.id}]]").modal('show');
     });
+
+    $("#download[[${album.id}]]").on("click", function() {
+        const albumId = "[[${album.id}]]";
+
+        let downloadTimer;
+        const tokenName = "ShashinAlbumName";
+        const tokenSize = "ShashinAlbumSize";
+        const configuredAttempts = 120;
+        const downloadLocation = $("#download"+albumId).attr("href");
+
+        $("#albumsMessage").html("<span class='spinner-grow spinner-grow-sm'></span> <strong>Exporting album</strong>").animate({opacity: 100}, 0);
+        setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
+
+        Util.setCookie(tokenName, "", "/");
+        Util.setCookie(tokenSize, "", "/");
+
+        let attempts = configuredAttempts;
+
+        downloadTimer = window.setInterval( function() {
+            const tokenCookieValue = Util.getCookie(tokenName);
+            const tokenCookieSize = Util.getCookie(tokenSize);
+
+            if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
+                if (attempts === 0) {
+                    $("#albumsMessage").html("<strong>Exporting failed</strong>").animate({opacity: 0}, 5000);
+                } else {
+                    let fileSize = 0;
+                    let unit = "kb";
+
+                    if (tokenCookieSize > 100000000) {
+                        fileSize = tokenCookieSize / 10000000;
+                        unit = "gb";
+                    } else if (tokenCookieSize > 10000000) {
+                        fileSize = tokenCookieSize / 1000000;
+                        unit = "mb";
+                    } else {
+                        fileSize = tokenCookieSize / 1000;
+                        unit = "kb";
+                    }
+
+                    $("#albumsMessage").html("<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + fileSize.toFixed(2) + " " + unit).animate({opacity: 0}, 5000);
+                    $("#download" + albumId).attr("href", downloadLocation);
+                    Util.deleteCookie(tokenName, "/");
+                    Util.deleteCookie(tokenSize, "/");
+                    window.clearInterval(downloadTimer);
+                }
+            }
+
+            attempts--;
+        }, 1000);
+
+        // window.setInterval( function() {
+        //     $("#albumsMessage").animate({opacity: 0}, 1000);
+        // }, 10000);
+    });
     /*]]>*/
 </script>
 
