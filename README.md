@@ -38,4 +38,4 @@ Tech Stack
 * [TensorFlow](https://www.tensorflow.org/)
 * [JQuery](https://jquery.com/)
 
-See src\main\resources\static\js\site\folders.js for an example of JS templating and pagination.
+See [folders.js](https://github.com/MichaelYagi/shashin/blob/main/src/main/resources/static/js/site/folders.js) for an example of JS templating and pagination.
