@@ -263,6 +263,7 @@ class UserController {
                     if (other != null) {
                         if (other.equals(userObj) && bcrypt.matches(password, other.getPassword()) && userObj.getIsAllowed() == true) {
                             userObj.setLoggedIn(true)
+                            userObj.setModifiedAt(getCurrentTimestamp())
                             userRepository?.save(userObj)
 
                             val authReq = UsernamePasswordAuthenticationToken(username, password)
