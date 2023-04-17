@@ -24,9 +24,9 @@ https://app.circleci.com/pipelines/github/MichaelYagi/shashin
 Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
 
 # Development
-Framework
-* [Spring Boot](https://spring.io/)
-* [Thymeleaf](https://www.thymeleaf.org/)
+Frameworks
+* [Spring Boot](https://spring.io/) - Java framework to create micro services and web apps
+* [Thymeleaf](https://www.thymeleaf.org/) - Server-side Java template engine for both web and standalone environments
 
 Tech Stack
 * [Kotlin](https://kotlinlang.org/)
