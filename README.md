@@ -33,11 +33,11 @@ Tech Stack
 * Javascript
 
 3rd Party Libraries used:
-* Modified [LightGallery](https://www.lightgalleryjs.com/)
-* [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor)
-* [TensorFlow](https://www.tensorflow.org/)
-* [JQuery](https://jquery.com/)
-* [OpenLayers](https://openlayers.org/) with [OpenStreetMap](https://www.openstreetmap.org/)
-* [Bootstrap](https://getbootstrap.com/)
+* Modified [LightGallery](https://www.lightgalleryjs.com/) - Image and video lightbox
+* [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor) - Extracts Exif, IPTC, XMP, ICC and other metadata from image, video and audio files
+* [TensorFlow](https://www.tensorflow.org/) - Build machine learning applications
+* [JQuery](https://jquery.com/) - JavaScript library
+* [OpenLayers](https://openlayers.org/) with [OpenStreetMap](https://www.openstreetmap.org/) - Display map tiles, vector data and markers loaded from any source, like Open Street Maps
+* [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
 
 See [folders.js](https://github.com/MichaelYagi/shashin/blob/main/src/main/resources/static/js/site/folders.js) for an example of JS templating and pagination.
