@@ -54,7 +54,22 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
         val logger: Logger = Logger.getLogger(AuthSuccessHandler::class.simpleName)
 
         var uriPath = request!!.session.getAttribute("ShashinReferer")
-        if (uriPath == null) {
+        if (uriPath == null || (!uriPath.toString().lowercase().contains("timeline") &&
+            !uriPath.toString().lowercase().contains("albums") &&
+            !uriPath.toString().lowercase().contains("album") &&
+            !uriPath.toString().lowercase().contains("recent") &&
+            !uriPath.toString().lowercase().contains("modified") &&
+            !uriPath.toString().lowercase().contains("folders") &&
+            !uriPath.toString().lowercase().contains("folder") &&
+            !uriPath.toString().lowercase().contains("people") &&
+            !uriPath.toString().lowercase().contains("person") &&
+            !uriPath.toString().lowercase().contains("matches") &&
+            !uriPath.toString().lowercase().contains("favorites") &&
+            !uriPath.toString().lowercase().contains("map") &&
+            !uriPath.toString().lowercase().contains("notifications") &&
+            !uriPath.toString().lowercase().contains("settings") &&
+            !uriPath.toString().lowercase().contains("dashboard") &&
+            !uriPath.toString().lowercase().contains("trash"))) {
             uriPath = ""
         } else {
             uriPath = uriPath.toString()
