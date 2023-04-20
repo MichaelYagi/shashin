@@ -55,6 +55,27 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
     @Value("\${app.rememberme.expiration.seconds}")
     private var expirationSeconds: Int? = null
 
+    companion object {
+        val validWebSubPaths = arrayOf(
+            "timeline",
+            "albums",
+            "album",
+            "recent",
+            "modified",
+            "folders",
+            "folder",
+            "people",
+            "person",
+            "matches",
+            "favorites",
+            "map",
+            "notifications",
+            "settings",
+            "dashboard",
+            "trash"
+        )
+    }
+
     @Bean
     fun passwordEncoder(): PasswordEncoder? {
         return BCryptPasswordEncoder()
