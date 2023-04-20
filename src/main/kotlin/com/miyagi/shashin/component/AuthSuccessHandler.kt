@@ -2,6 +2,7 @@ package com.miyagi.shashin.component
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.configuration.WebSecurityConfig
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
@@ -54,22 +55,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
         val logger: Logger = Logger.getLogger(AuthSuccessHandler::class.simpleName)
 
         var uriPath = request!!.session.getAttribute("ShashinReferer")
-        if (uriPath == null || (!uriPath.toString().lowercase().contains("timeline") &&
-            !uriPath.toString().lowercase().contains("albums") &&
-            !uriPath.toString().lowercase().contains("album") &&
-            !uriPath.toString().lowercase().contains("recent") &&
-            !uriPath.toString().lowercase().contains("modified") &&
-            !uriPath.toString().lowercase().contains("folders") &&
-            !uriPath.toString().lowercase().contains("folder") &&
-            !uriPath.toString().lowercase().contains("people") &&
-            !uriPath.toString().lowercase().contains("person") &&
-            !uriPath.toString().lowercase().contains("matches") &&
-            !uriPath.toString().lowercase().contains("favorites") &&
-            !uriPath.toString().lowercase().contains("map") &&
-            !uriPath.toString().lowercase().contains("notifications") &&
-            !uriPath.toString().lowercase().contains("settings") &&
-            !uriPath.toString().lowercase().contains("dashboard") &&
-            !uriPath.toString().lowercase().contains("trash"))) {
+        if (uriPath == null || !validSubPaths(uriPath.toString())) {
             uriPath = ""
         } else {
             uriPath = uriPath.toString()
@@ -127,6 +113,17 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 }
             }
         }
+    }
+
+    private fun validSubPaths(pathToCompare: String): Boolean {
+        val validWebSubPaths = WebSecurityConfig.validWebSubPaths
+        for (path in validWebSubPaths) {
+            if (pathToCompare.lowercase().contains(path)) {
+                return true
+            }
+        }
+
+        return false
     }
 
     private fun checkLatestAppVersion(user: User) {
