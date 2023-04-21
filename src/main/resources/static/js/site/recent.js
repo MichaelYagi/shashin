@@ -6,6 +6,7 @@ class Recent {
         this.rendering = false;
         this.metadataList = metadataList;
         this.activePage = activePage;
+        this.eol = false;
         this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
@@ -34,12 +35,16 @@ class Recent {
 
     async updateRecent(nextPage,activePage) {
         this.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/recent/"+nextPage);
+        let data = null
+
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/recent/" + nextPage);
+        }
 
         const mediaContentList = [];
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
             const metadataList = data["metadataList"];
 
             if (metadataList !== null && metadataList.length > 0) {
@@ -78,10 +83,12 @@ class Recent {
             } else {
                 $(".appendRecentPhotos").last().text("EOL").css("display","none");
                 this.rendering = false;
+                this.eol = true;
             }
         } else {
             $(".appendRecentPhotos").last().text("EOL").css("display","none");
             this.rendering = false;
+            this.eol = true;
         }
 
         $("#spinner").css("display","none");

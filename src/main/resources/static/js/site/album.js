@@ -2,6 +2,7 @@
     albumSettings.rendering = false;
     albumSettings.page = 1;
     albumSettings.http = null;
+    albumSettings.eol = false;
 
     albumSettings.init = async function (albumId, activePage, albumMetadataList) {
         albumSettings.http = new Http(activePage);
@@ -55,9 +56,13 @@
 
     albumSettings.updateAlbum = async function(albumId,nextPage,activePage) {
         albumSettings.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/album/"+albumId+"/page/"+nextPage);
+        let data = null
+
+        if (false === albumSettings.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get","/album/"+albumId+"/page/"+nextPage);
+        }
 
         const mediaContentList = [];
 
@@ -132,12 +137,14 @@
                         $("#spinner").css("display","none");
                         albumSettings.rendering = false;
                     } else {
+                        albumSettings.eol = true;
                         $("#spinner").css("display","none");
                         $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                         albumSettings.rendering = false;
                     }
                 }
             } else {
+                albumSettings.eol = true;
                 $("#spinner").css("display","none");
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                 albumSettings.rendering = false;
@@ -145,6 +152,7 @@
                 $("#msgTimeline").html(message);
             }
         } else {
+            albumSettings.eol = true;
             $("#spinner").css("display","none");
             $(".appendAlbumPhotos").last().text("EOL").css("display","none");
             albumSettings.rendering = false;

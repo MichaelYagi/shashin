@@ -5,6 +5,7 @@ class Trash {
         this.rendering = false;
         this.activePage = activePage;
         this.metadataList = metadataList;
+        this.eol = false;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
@@ -29,12 +30,16 @@ class Trash {
 
     async updateTrash(nextPage, activePage) {
         this.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/trash/" + nextPage);
+        let data = null
+
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/trash/" + nextPage);
+        }
 
         const mediaContentList = [];
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
                 if (data.hasOwnProperty("metadataList")) {
@@ -75,12 +80,14 @@ class Trash {
                         $("#spinner").css("display", "none");
                     } else {
                         this.rendering = false;
-                        $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                        this.eol = true;
+                        $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
                     }
                 }
             } else {
                 this.rendering = false;
-                $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
+                this.eol = true;
+                $(".appendMetadataPhotos").last().text("EOL").css("display", "none");
                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 $("#msgTimeline").html(message);
             }

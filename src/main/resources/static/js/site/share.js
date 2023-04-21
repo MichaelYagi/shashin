@@ -8,6 +8,7 @@ class ShareAlbum {
         this.activePage = activePage;
         this.albumId = albumId;
         this.albumMetadataList = albumMetadataList;
+        this.eol = false;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true},'.mediaLink');
     }
 
@@ -39,13 +40,17 @@ class ShareAlbum {
     async updateAlbum(albumId, nextPage, activePage) {
         const self = this;
         self.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/share/"+self.getShareLink()+"/album/"+albumId+"/"+nextPage);
+        let data = null
+
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/share/" + self.getShareLink() + "/album/" + albumId + "/" + nextPage);
+        }
 
         const mediaContentList = [];
 
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
                 if (data.hasOwnProperty("albumMetadataList")) {
@@ -85,16 +90,19 @@ class ShareAlbum {
                 } else {
                     $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                     this.rendering = false;
+                    this.eol = true;
                 }
             } else {
                 $(".appendAlbumPhotos").last().text("EOL").css("display","none");
                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 $("#msgTimeline").html(message);
                 this.rendering = false;
+                this.eol = true;
             }
         } else {
             $(".appendAlbumPhotos").last().text("EOL").css("display","none");
             this.rendering = false;
+            this.eol = true;
         }
 
         $("#spinner").css("display","none");
