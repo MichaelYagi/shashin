@@ -13,16 +13,10 @@ class Person {
     }
 
     async init() {
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList);
 
         shashin.matchingListeners();
         shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     async loadNextPage() {

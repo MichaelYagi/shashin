@@ -12,15 +12,8 @@ class Search {
     }
 
     async init() {
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList);
-
         shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     async loadNextPage() {

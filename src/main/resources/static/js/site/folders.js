@@ -10,13 +10,7 @@ class Folders {
     }
 
     async init() {
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFoldersPhotos", this.foldersList);
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     async loadNextPage() {

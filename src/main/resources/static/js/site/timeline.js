@@ -66,8 +66,6 @@
             timelineSettings.enableScrollSpy = false;
         }
 
-        $('[data-bs-toggle="tooltip"]').tooltip();
-
         $(window).bind("scrollStop", function() {
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
