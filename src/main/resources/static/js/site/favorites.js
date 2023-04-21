@@ -14,8 +14,6 @@ class Favorites {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
 
         shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     async loadNextPage() {

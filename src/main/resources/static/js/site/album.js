@@ -27,8 +27,6 @@
         shashin.pageLoader(await loadNextPage, ".appendAlbumPhotos", albumMetadataList);
 
         shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     albumSettings.openAlbumModal = function (e,metadataId) {

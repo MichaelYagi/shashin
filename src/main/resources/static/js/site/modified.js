@@ -11,15 +11,9 @@ class Modified {
     }
 
     async init() {
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendModifiedPhotos", this.metadataList);
 
         shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     async loadNextPage() {

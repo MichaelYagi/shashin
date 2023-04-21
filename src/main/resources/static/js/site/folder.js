@@ -12,15 +12,9 @@ class Folder {
     }
 
     async init() {
-        $(function () {
-            $('[data-bs-toggle="tooltip"]').tooltip()
-        })
-
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendFolderPhotos", this.metadataList);
 
         shashin.mouseMoveListener();
-
-        $('[data-bs-toggle="tooltip"]').tooltip();
     }
 
     async loadNextPage() {
