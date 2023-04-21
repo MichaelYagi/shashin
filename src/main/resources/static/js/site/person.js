@@ -8,6 +8,7 @@ class Person {
         this.activePage = activePage;
         this.personId = personId;
         this.canEdit = canEdit;
+        this.eol = false;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
@@ -37,12 +38,16 @@ class Person {
 
     async updatePerson(personId,nextPage,activePage) {
         this.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/person/" + personId + "/" + nextPage);
+        let data = null
+
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/person/" + personId + "/" + nextPage);
+        }
 
         const mediaContentList = [];
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+        if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             let message = "Error";
             if (data["status"] === "success") {
                 if (data.hasOwnProperty("metadataList")) {
@@ -85,6 +90,7 @@ class Person {
                     } else {
                         $(".appendPersonPhotos").last().text("EOL").css("display", "none");
                         this.rendering = false;
+                        this.eol = true;
                     }
                 }
             } else {
@@ -92,10 +98,12 @@ class Person {
                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 $("#msgTimeline").html(message);
                 this.rendering = false;
+                this.eol = true;
             }
         } else {
             $(".appendPersonPhotos").last().text("EOL").css("display", "none");
             this.rendering = false;
+            this.eol = true;
         }
 
         $("#spinner").css("display","none");

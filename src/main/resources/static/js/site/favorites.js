@@ -6,6 +6,7 @@ class Favorites {
         this.rendering = false;
         this.metadataList = metadataList;
         this.activePage = activePage;
+        this.eol = false;
         this.mediaContentList = shashin.initLightGallery('infinite-scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
@@ -30,9 +31,13 @@ class Favorites {
 
     async updateFavorites(nextPage,activePage) {
         this.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/favorites/" + nextPage);
+        let data = null
+
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/favorites/" + nextPage);
+        }
 
         const mediaContentList = [];
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -76,17 +81,20 @@ class Favorites {
                     } else {
                         $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
                         this.rendering = false;
+                        this.eol = true;
                     }
                 }
             } else {
                 $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
                 this.rendering = false;
+                this.eol = true;
                 message = '<div class="alert alert-danger" role="alert">' + data["msg"] + '</div>';
                 $("#msgTimeline").html(message);
             }
         } else {
             $(".appendMetadataPhotos").last().text("EOL").css("display", "none")
             this.rendering = false;
+            this.eol = true;
         }
 
         $("#spinner").css("display","none");

@@ -7,6 +7,7 @@ class Folder {
         this.metadataList = metadataList;
         this.activePage = activePage;
         this.folderName = folderName;
+        this.eol = false;
         this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
@@ -35,12 +36,16 @@ class Folder {
 
     async updateRecent(nextPage,folderName,activePage) {
         this.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/folder/"+nextPage+"/"+encodeURI(encodeURIComponent(folderName)));
+        let data = null
+
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/folder/" + nextPage + "/" + encodeURI(encodeURIComponent(folderName)));
+        }
 
         const mediaContentList = [];
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
+        if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataList") && data["status"] === "success") {
             const metadataList = data["metadataList"];
 
             if (metadataList !== null && metadataList.length > 0) {
@@ -69,10 +74,12 @@ class Folder {
                 $("#spinner").css("display", "none");
             } else {
                 this.rendering = false;
+                this.eol = true;
                 $(".appendFolderPhotos").last().text("EOL").css("display","none")
             }
         } else {
             this.rendering = false;
+            this.eol = true;
             $(".appendFolderPhotos").last().text("EOL").css("display","none")
         }
 

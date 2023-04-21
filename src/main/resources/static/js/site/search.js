@@ -7,6 +7,7 @@ class Search {
         this.searchTerm = searchTerm;
         this.activePage = activePage;
         this.metadataSearchList = metadataSearchList;
+        this.eol = false;
         this.mediaContentList = shashin.initLightGallery('scroll-gallery',{dynamic:true,plugins:[lgMetadataDetail],metadataDetail:true},'.mediaLink');
     }
 
@@ -35,9 +36,13 @@ class Search {
 
     async updateSearch(nextPage,searchTerm,activePage) {
         this.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/search/"+nextPage+"?searchTerm="+encodeURIComponent(searchTerm));
+        let data = null
+
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/search/" + nextPage + "?searchTerm=" + encodeURIComponent(searchTerm));
+        }
 
         const mediaContentList = [];
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("metadataSearchList") && data["status"] === "success") {
@@ -79,11 +84,13 @@ class Search {
             } else {
                 $(".appendSearchPhotos").last().text("EOL").css("display","none")
                 this.rendering = false;
+                this.eol = true;
                 $("#spinner").css("display","none");
             }
         } else {
             $(".appendSearchPhotos").last().text("EOL").css("display","none")
             this.rendering = false;
+            this.eol = true;
             $("#spinner").css("display","none");
         }
 

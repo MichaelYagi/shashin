@@ -5,6 +5,7 @@ class Folders {
         this.page = 1;
         this.rendering = false;
         this.foldersList = foldersList;
+        this.eol = false;
         this.activePage = activePage;
     }
 
@@ -29,9 +30,13 @@ class Folders {
 
     async updateFolders(nextPage,activePage) {
         this.rendering = true;
-        $("#spinner").css("display","block");
 
-        const data = await this.http.ajax("get","/"+activePage+"/"+nextPage);
+        let data = null
+
+        if (false === this.eol) {
+            $("#spinner").css("display", "block");
+            data = await this.http.ajax("get", "/" + activePage + "/" + nextPage);
+        }
 
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("foldersList") && data["status"] === "success") {
             const foldersList = data["foldersList"];
@@ -53,10 +58,12 @@ class Folders {
             } else {
                 $(".appendFoldersPhotos").last().text("EOL").css("display","none");
                 this.rendering = false;
+                this.eol = true;
             }
         } else {
             $(".appendFoldersPhotos").last().text("EOL").css("display","none");
             this.rendering = false;
+            this.eol = true;
         }
 
         $("#spinner").css("display","none");
