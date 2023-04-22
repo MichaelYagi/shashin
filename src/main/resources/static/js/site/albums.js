@@ -61,7 +61,7 @@ class Albums {
                     //     html += '<span class="visually-hidden">New alerts</span>';
                     //     html += '</span>';
                     // }
-                    html += '</span>';
+                    html += '</span></a>';
 
                     if (album.albumPhotoCount > 0) {
                         html += '&nbsp;<form method="post" action="/album/download/'+album.id+'" style="display: inline-block;white-space: nowrap;">';
@@ -77,8 +77,6 @@ class Albums {
                         html += '&nbsp;&nbsp;&nbsp;<a href="#" id="trash'+album.id+'" title="Delete album"><span class="bi-trash"></span></a>';
                     }
 
-                    // Fix spacings for each card - TODO: Figure out the spacing issue and get rid of this hack
-                    html += '<a href="#" id="noop'+album.id+'"></a>';
                     html += '<p class="card-text"><small class="text-muted">'+album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video':' videos')+'</small></p>';
                     html += '</div></div>';
 
@@ -86,9 +84,6 @@ class Albums {
                     html += '<span class="'+appendClass+'" style="width:0;height:0;padding:0"></span>';
 
                     $(html).insertBefore($("."+appendClass).last());
-
-                    $("#noop"+album.id).removeAttr('href');
-                    $("#noop"+album.id).hide();
                 });
 
                 this.rendering = false;
