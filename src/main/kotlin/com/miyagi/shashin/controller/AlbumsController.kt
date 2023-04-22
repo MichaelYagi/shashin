@@ -466,6 +466,7 @@ class AlbumsController {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/{albumId}/save/sharelink","/api/v1/album/{albumId}/save/sharelink"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @Transactional
     fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
@@ -823,6 +824,7 @@ class AlbumsController {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @Transactional
     fun updateAlbumName(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
         val albumPayload = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumPayload.containsKey("albumId") && albumPayload.containsKey("albumName")) {
