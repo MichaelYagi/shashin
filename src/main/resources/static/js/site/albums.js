@@ -34,6 +34,7 @@ class Albums {
         let cspNonce = this.cspNonce;
         let baseUrl = this.baseUrl;
         let darkMode = this.darkMode;
+        const appendClass = "appendAlbumsPhotos";
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
@@ -46,10 +47,8 @@ class Albums {
             if (albumsList !== null && albumsList.length > 0) {
 
                 albumsList.forEach(function(album) {
-                    const appendClass = "appendAlbumsPhotos";
-
                     let html = '<div class="card" style="width:235px;padding-top:10px;">';
-                    html += '<a href="album'+album.id+'" style="text-decoration: none !important;color: #777777;" id="album'+album.id+'">';
+                    html += '<a href="/album/'+album.id+'" style="text-decoration: none !important;color: #777777;" id="album'+album.id+'">';
                     html += '<img loading="lazy" class="card-img-top" src="'+album.coverUrl+'" width="209" height="209" style="width: 209px;height: 209px;">';
                     html += '</a>';
                     html += '<div class="card-body">';
@@ -72,32 +71,35 @@ class Albums {
                         html += '&nbsp;&nbsp;&nbsp;';
                     }
 
-                    if (album.albumPhotoCount === 0) {
-
-                    }
                     if (true === showControls) {
                         html += '<a href="#" id="edit'+album.id+'"><span class="bi-pencil" title="Edit album"></span></a>';
                         html += '&nbsp;&nbsp;&nbsp;<a href="#" id="share'+album.id+'"><span class="'+(album.shareUrl != null && album.shareUrl !== '' ? 'bi-share-fill' : 'bi-share')+'" title="Share with other users"></span></a>';
                         html += '&nbsp;&nbsp;&nbsp;<a href="#" id="trash'+album.id+'" title="Delete album"><span class="bi-trash"></span></a>';
                     }
+
+                    // Fix spacings for each card - TODO: Figure out the spacing issue and get rid of this hack
+                    html += '<a href="#" id="noop'+album.id+'"></a>';
                     html += '<p class="card-text"><small class="text-muted">'+album.albumPhotoCount + (album.albumPhotoCount === 1 ? ' photo':' photos') + '&nbsp;&nbsp;&nbsp;&nbsp;' + album.albumVideoCount + (album.albumVideoCount === 1 ? ' video':' videos')+'</small></p>';
                     html += '</div></div>';
 
                     html += '<script type="text/javascript" nonce="'+cspNonce+'">Albums.setAlbumsEventListeners('+album.id+', "'+baseUrl+'", '+showControls+', "'+cspNonce+'");<\/script>';
-                    html += '<span class="appendAlbumsPhotos" style="width:0;height:0;padding:0"></span>';
+                    html += '<span class="'+appendClass+'" style="width:0;height:0;padding:0"></span>';
 
                     $(html).insertBefore($("."+appendClass).last());
+
+                    $("#noop"+album.id).removeAttr('href');
+                    $("#noop"+album.id).hide();
                 });
 
                 this.rendering = false;
                 $("#spinner").css("display", "none");
             } else {
-                $(".appendAlbumsPhotos").last().text("EOL").css("display","none");
+                $("."+appendClass).last().text("EOL").css("display","none");
                 this.rendering = false;
                 this.eol = true;
             }
         } else {
-            $(".appendAlbumsPhotos").last().text("EOL").css("display","none");
+            $("."+appendClass).last().text("EOL").css("display","none");
             this.rendering = false;
             this.eol = true;
         }
