@@ -164,10 +164,10 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val userShareCheckbox = this.driver!!.findElement(By.id("id-$userId-$albumId"))
         userShareCheckbox.click()
 
-        val saveUserShare = this.driver!!.findElement(By.id("saveUserShare$albumId"))
+        val saveUserShare = this.driver!!.findElement(By.id("saveUserShare"))
         saveUserShare.click()
 
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus$albumId")))
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("albumsModalStatus")))
     }
 
     @Test
@@ -197,15 +197,15 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
-        val albumEditName = this.driver!!.findElement(By.id("albumEditName$albumId"))
+        val albumEditName = this.driver!!.findElement(By.id("albumEditName"))
         albumEditName.clear()
         albumEditName.sendKeys("Album name update")
         startTime = System.currentTimeMillis()
-        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus$albumId")),"bi-check-circle")
-        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum$albumId"))
+        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
+        val albumEditNameButton = this.driver!!.findElement(By.id("editAlbum"))
         albumEditNameButton.click()
         while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus$albumId")),"bi-check-circle")
+            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("editAlbumNameStatus")),"bi-check-circle")
         }
         this.driver?.get("http://localhost:$port/albums")
         val albumNameEl = this.driver!!.findElement(By.id("albumName$albumId"))
@@ -221,15 +221,15 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
             scanBeforeAfter = this.driver!!.findElement(By.tagName("body"))
         }
 
-        val generateShareAlbumEl = this.driver!!.findElement(By.id("generateLink$albumId"))
+        val generateShareAlbumEl = this.driver!!.findElement(By.id("generateLink"))
         startTime = System.currentTimeMillis()
-        elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus$albumId")),"bi-check-circle")
+        elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
         generateShareAlbumEl.click()
         while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus$albumId")),"bi-check-circle")
+            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("albumsModalStatus")),"bi-check-circle")
         }
 
-        val fullShareLink = this.driver!!.findElement(By.id("fullShareLink$albumId"))
+        val fullShareLink = this.driver!!.findElement(By.id("fullShareLink"))
         val linkEl = fullShareLink.findElement(By.xpath("./a[1]"))
         this.driver?.get(linkEl.text)
 
@@ -245,7 +245,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Delete')]")))
         scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
 
-        val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum$albumId"))
+        val deleteAlbumButton = this.driver!!.findElement(By.id("deleteAlbum"))
         deleteAlbumButton.click()
         startTime = System.currentTimeMillis()
         scanBeforeAfter = null
@@ -289,11 +289,11 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         postCommentElement[0].click()
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
         var scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
-        val commentTextArea = this.driver!!.findElement(By.id("commentText$albumId"))
+        val commentTextArea = this.driver!!.findElement(By.id("commentText"))
         commentTextArea.click()
         commentTextArea.sendKeys("Test comment")
 
-        val saveComment = this.driver!!.findElement(By.id("saveCommentAlbum$albumId"))
+        val saveComment = this.driver!!.findElement(By.id("saveCommentAlbum"))
         saveComment.click()
 
         var scanBeforeAfter: WebElement? = null
@@ -312,7 +312,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[contains(text(),'Comments for')]")))
 
         // Check comment
-        val commentList = this.driver!!.findElement(By.id("commentList$albumId"))
+        val commentList = this.driver!!.findElement(By.id("commentList"))
         val commentEl = commentList.findElement(By.xpath("./li[1]"))
         val commentId = commentEl.getAttribute("id").substringAfter("comment")
 
@@ -333,7 +333,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         editCommentTextArea.click()
         editCommentTextArea.sendKeys("Test update")
 
-        val updateComment = this.driver!!.findElement(By.id("updateCommentAlbum$albumId"))
+        val updateComment = this.driver!!.findElement(By.id("updateCommentAlbum"))
         scanBeforeBody = this.driver!!.findElement(By.tagName("body"))
         updateComment.click()
 
