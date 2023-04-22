@@ -38,7 +38,17 @@
     albumsModalListeners.setDeleteAlbumsListeners = function (albumId) {
         $("#deleteAlbum").on("click", async function (e) {
             e.preventDefault();
+            await deleteAlbum();
+        });
 
+        $(document).keypress(async function (e) {
+            const key = e.which;
+            if(key === 13) {
+                await deleteAlbum();
+            }
+        });
+
+        async function deleteAlbum() {
             const http = new Http("delete album");
             let json = {albumId: albumId, delete: true}
             const data = await http.ajax("post", "/album/delete/" + albumId, JSON.stringify(json));
@@ -53,13 +63,23 @@
                 }
                 $("#albumsMessage").html(message);
             }
-        });
+        }
     }
 
     albumsModalListeners.setEditAlbumsListeners = function (albumId) {
         $("#editAlbum").on("click", async function (e) {
             e.preventDefault();
+            await editAlbum();
+        });
 
+        $(document).keypress(async function (e) {
+            const key = e.which;
+            if(key === 13) {
+                await editAlbum();
+            }
+        });
+
+        async function editAlbum() {
             $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#editAlbumNameStatus").css("visibility", "visible");
             $("#editAlbumNameStatus").attr("title", "");
@@ -77,25 +97,15 @@
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
                 $("#albumName").text(albumName);
                 $("#albumNameEdit").text(albumName);
-                $("#albumName"+albumId).text(albumName);
+                $("#albumName" + albumId).text(albumName);
                 $("#editAlbumNameStatus").addClass('bi-check-circle').removeClass('spinner-grow');
             } else {
                 $("#editAlbumNameStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#editAlbumNameStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#editAlbumNameStatus").attr("title", data["msg"]);
             }
 
             $("#cancelAlbum").prop('disabled', false);
-        });
-
-        $('#propeditalbums').on('hide.bs.modal', function () {
-            $("#editAlbumNameStatus").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
-            $("#editAlbumNameStatus").css("visibility","hidden");
-            $("#albumEditName").val("");
-        });
-
-        $('#propeditalbums').on('show.bs.modal', function () {
-            $("#albumEditName").val($("#albumName").text());
-        });
+        }
     }
 
     albumsModalListeners.setAlbumModalListeners = function (albumId, baseUrl) {
@@ -141,7 +151,17 @@
 
         $("#saveUserShare").on("click", async function (e) {
             e.preventDefault();
+            await saveUserShare();
+        });
 
+        $(document).keypress(async function (e) {
+            const key = e.which;
+            if(key === 13) {
+                await saveUserShare();
+            }
+        });
+
+        async function saveUserShare() {
             $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
             $("#albumsModalStatus").css("visibility", "visible");
             $("#albumsModalStatus").attr("title", "");
@@ -179,7 +199,7 @@
                 $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#cancelUserShare").prop('disabled', false);
             }
-        });
+        }
     }
 
     albumsModalListeners.setCommentModalListeners = function (albumId, username) {
