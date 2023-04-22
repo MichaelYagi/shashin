@@ -59,6 +59,7 @@ class CommentsController {
 
     @RequestMapping(value = ["/comment/album/save"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @Transactional
     fun postSaveComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment")) {
@@ -97,7 +98,7 @@ class CommentsController {
 //                        if (user.getAuthority() == adminRole) {
 //                            createEntry = true
 //                        } else {
-                            val album = userAlbumRepository.findByUserIdAndAlbumId(user.getId(),albumId)
+                            val album = userAlbumRepository.findDistinctByUserIdAndAlbumId(user.getId(),albumId)
                             if (album != null) {
                                 createEntry = true
                             }
@@ -175,7 +176,7 @@ class CommentsController {
 //                        if (user.getAuthority() == adminRole) {
 //                            createEntry = true
 //                        } else {
-                            val album = userAlbumRepository.findByUserIdAndAlbumId(user.getId(),albumId)
+                            val album = userAlbumRepository.findDistinctByUserIdAndAlbumId(user.getId(),albumId)
                             if (album != null) {
                                 createEntry = true
                             }
