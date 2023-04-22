@@ -84,7 +84,7 @@ class AlbumsController {
     @Secured("ROLE_ADMIN", "ROLE_USER")
     @GetMapping("/albums")
     fun getAlbums(model: Model): String {
-        val response = buildAlbums(model)
+        val response = buildAlbums(model, 0)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -92,13 +92,13 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/albums"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/albums/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAlbumsApi(model: Model): String {
-        return mapper.writeValueAsString(buildAlbums(model))
+    fun getAlbumsApi(model: Model, @PathVariable page: Int): String {
+        return mapper.writeValueAsString(buildAlbums(model, page))
     }
 
-    private fun buildAlbums(model: Model): MutableMap<String, Any?> {
+    private fun buildAlbums(model: Model, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "albums"
@@ -115,7 +115,8 @@ class AlbumsController {
             if (currentUserObj.getAuthority() != null && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
                 showControls = true
             }
-            val userAlbums = userAlbumRepository.findAllByUserId(currentUserObj.getId())
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val userAlbums = userAlbumRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page*queryLimit), queryLimit)
 
             if (userAlbums != null && userAlbums.count() > 0) {
                 val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
@@ -246,10 +247,10 @@ class AlbumsController {
     @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albumcomments/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getAlbumCommentsApi(model: Model, @PathVariable albumId: Int): String {
-        return mapper.writeValueAsString(buildAlbumComments(model, albumId))
+    fun getAlbumCommentsApi(@PathVariable albumId: Int): String {
+        return mapper.writeValueAsString(buildAlbumComments(albumId))
     }
-    private fun buildAlbumComments(model: Model, albumId: Int): MutableMap<String, Any?> {
+    private fun buildAlbumComments(albumId: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["status"] = ""
         response["msg"] = "No results"

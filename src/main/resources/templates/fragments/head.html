@@ -140,6 +140,9 @@
             <th:block th:if="${titleDescriptorLower == 'settings'}">
                 <script src="/js/site/settings.js" th:nonce="${cspNonce}"></script>
             </th:block>
+            <th:block th:if="${titleDescriptorLower == 'albums'}">
+                <script src="/js/site/albums.js" th:nonce="${cspNonce}"></script>
+            </th:block>
         </th:block>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
@@ -190,6 +193,9 @@
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'settings'}">
                 <script src="/js/site/min/settings.min.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${titleDescriptorLower == 'albums'}">
+                <script src="/js/site/min/albums.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
         </th:block>
     </th:block>
