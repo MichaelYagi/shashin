@@ -14,17 +14,17 @@
             }
         }
 
-        $("#currentCommentId" + albumId).val("");
+        $("#currentCommentId").val("");
     }
 
     albumsCommentsSettings.editComment = function(albumId,commentId) {
-        if ($("#currentCommentId"+albumId).val() === "") {
-            $("#currentCommentId"+albumId).val(commentId);
+        if ($("#currentCommentId").val() === "") {
+            $("#currentCommentId").val(commentId);
 
-            $("#saveCommentAlbum"+albumId).hide();
-            $("#dismissModalCommentAlbum"+albumId).hide();
-            $("#updateCommentAlbum"+albumId).show();
-            $("#cancelEditCommentAlbum"+albumId).show();
+            $("#saveCommentAlbum").hide();
+            $("#dismissModalCommentAlbum").hide();
+            $("#updateCommentAlbum").show();
+            $("#cancelEditCommentAlbum").show();
 
             $("#commentcontainer"+commentId).hide();
             $("#textareacontainer"+commentId).show();
@@ -36,7 +36,7 @@
 
 (function (albumsModalListeners, $, undefined) {
     albumsModalListeners.setDeleteAlbumsListeners = function (albumId) {
-        $("#deleteAlbum"+albumId).on("click", async function (e) {
+        $("#deleteAlbum").on("click", async function (e) {
             e.preventDefault();
 
             const http = new Http("delete album");
@@ -57,93 +57,95 @@
     }
 
     albumsModalListeners.setEditAlbumsListeners = function (albumId) {
-        $("#editAlbum"+albumId).on("click", async function (e) {
+        $("#editAlbum").on("click", async function (e) {
             e.preventDefault();
 
-            $("#editAlbumNameStatus" + albumId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#editAlbumNameStatus" + albumId).css("visibility", "visible");
-            $("#editAlbumNameStatus" + albumId).attr("title", "");
-            $("#cancelAlbum" + albumId).prop('disabled', true);
+            $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+            $("#editAlbumNameStatus").css("visibility", "visible");
+            $("#editAlbumNameStatus").attr("title", "");
+            $("#cancelAlbum").prop('disabled', true);
 
             const http = new Http("edit album");
-            const albumName = $("#albumEditName" + albumId).val();
+            const albumName = $("#albumEditName").val();
             let json = {albumId: albumId, albumName: Util.htmlDecode(albumName)}
             const data = await http.ajax("post", "/album/updatename/" + albumId, JSON.stringify(json), function () {
-                $("#editAlbumNameStatus" + albumId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                $("#editAlbumNameStatus" + albumId).attr("title", shashin.modalStatusFailMessage());
-                $("#cancelAlbum" + albumId).prop('disabled', false);
+                $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                $("#editAlbumNameStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#cancelAlbum").prop('disabled', false);
             });
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data["status"] === "success") {
-                $("#albumName" + albumId).text(albumName);
-                $("#editAlbumNameStatus" + albumId).addClass('bi-check-circle').removeClass('spinner-grow');
+                $("#albumName").text(albumName);
+                $("#albumNameEdit").text(albumName);
+                $("#albumName"+albumId).text(albumName);
+                $("#editAlbumNameStatus").addClass('bi-check-circle').removeClass('spinner-grow');
             } else {
-                $("#editAlbumNameStatus" + albumId).addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#editAlbumNameStatus" + albumId).attr("title", shashin.modalStatusFailMessage());
+                $("#editAlbumNameStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#editAlbumNameStatus").attr("title", shashin.modalStatusFailMessage());
             }
 
-            $("#cancelAlbum" + albumId).prop('disabled', false);
+            $("#cancelAlbum").prop('disabled', false);
         });
 
-        $('#propeditalbums'+albumId).on('hide.bs.modal', function () {
-            $("#editAlbumNameStatus"+albumId).addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
-            $("#editAlbumNameStatus"+albumId).css("visibility","hidden");
-            $("#albumEditName"+albumId).val("");
+        $('#propeditalbums').on('hide.bs.modal', function () {
+            $("#editAlbumNameStatus").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
+            $("#editAlbumNameStatus").css("visibility","hidden");
+            $("#albumEditName").val("");
         });
 
-        $('#propeditalbums'+albumId).on('show.bs.modal', function () {
-            $("#albumEditName"+albumId).val($("#albumName"+albumId).text());
+        $('#propeditalbums').on('show.bs.modal', function () {
+            $("#albumEditName").val($("#albumName").text());
         });
     }
 
     albumsModalListeners.setAlbumModalListeners = function (albumId, baseUrl) {
-        if ($("#shareLink"+albumId).val() === "") {
-            $("#copyLink"+albumId).prop('disabled', true);
+        if ($("#shareLink").val() === "") {
+            $("#copyLink").prop('disabled', true);
         }
 
-        $("#clearLink"+albumId).on("click", function (e) {
+        $("#clearLink").on("click", function (e) {
             e.preventDefault();
             albumsModalSettings.updateShareLink(baseUrl, albumId, "clear");
         });
 
-        $("#generateLink"+albumId).on("click", function (e) {
+        $("#generateLink").on("click", function (e) {
             e.preventDefault();
             albumsModalSettings.updateShareLink(baseUrl, albumId, "generate");
         });
 
-        $("#propsharealbums"+albumId).on('hide.bs.modal', function () {
-            $("#albumsModalStatus"+albumId).attr("class","spinner-grow me-auto");
-            $("#albumsModalStatus"+albumId).css("visibility","hidden");
-            $("#msg"+albumId).html("");
+        $("#propsharealbums").on('hide.bs.modal', function () {
+            $("#albumsModalStatus").attr("class","spinner-grow me-auto");
+            $("#albumsModalStatus").css("visibility","hidden");
+            $("#msg").html("");
         })
 
-        $("#copyLink"+albumId).on("click", function (e) {
+        $("#copyLink").on("click", function (e) {
             e.preventDefault();
 
-            const shareLink = $("#copyLink"+albumId).attr("data-clipboard-text");
+            const shareLink = $("#copyLink").attr("data-clipboard-text");
 
             if (shareLink !== null && shareLink !== "") {
-                const clipboard = new ClipboardJS("#copyLink" + albumId,{container: document.getElementById("propsharealbums"+albumId)});
+                const clipboard = new ClipboardJS("#copyLink",{container: document.getElementById("propsharealbums")});
 
                 clipboard.on('success', function (e) {
-                    $("#msg" + albumId).html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+                    $("#msg").html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
                 });
 
                 clipboard.on('error', function (e) {
-                    $("#msg" + albumId).html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
+                    $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
                 });
             } else {
-                $("#msg"+albumId).html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+                $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
             }
         });
 
-        $("#saveUserShare"+albumId).on("click", async function (e) {
+        $("#saveUserShare").on("click", async function (e) {
             e.preventDefault();
 
-            $("#albumsModalStatus" + albumId).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-            $("#albumsModalStatus" + albumId).css("visibility", "visible");
-            $("#albumsModalStatus" + albumId).attr("title", "");
-            $("#cancelUserShare" + albumId).prop('disabled', true);
+            $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+            $("#albumsModalStatus").css("visibility", "visible");
+            $("#albumsModalStatus").attr("title", "");
+            $("#cancelUserShare").prop('disabled', true);
 
             let userShareMap = {};
             $('input[name^="userShare' + albumId + '"]').each(function () {
@@ -158,60 +160,60 @@
             const http = new Http("share album");
             let json = {albumId: albumId, userShareMap: JSON.stringify(userShareMap)}
             const data = await http.ajax("post", "/album/share/" + albumId, JSON.stringify(json), function () {
-                $("#albumsModalStatus" + albumId).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-                $("#albumsModalStatus" + albumId).attr("title", shashin.modalStatusFailMessage());
-                $("#cancelUserShare" + albumId).prop('disabled', false);
+                $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#cancelUserShare").prop('disabled', false);
             });
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === "success") {
-                    $("#albumsModalStatus" + albumId).addClass('bi-check-circle').removeClass('spinner-grow');
-                    $("#cancelUserShare" + albumId).prop('disabled', false);
+                    $("#albumsModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                    $("#cancelUserShare").prop('disabled', false);
                 } else {
-                    $("#albumsModalStatus" + albumId).addClass('bi-x-circle').removeClass('spinner-grow');
-                    $("#albumsModalStatus" + albumId).attr("title", shashin.modalStatusFailMessage());
-                    $("#cancelUserShare" + albumId).prop('disabled', false);
+                    $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
+                    $("#cancelUserShare").prop('disabled', false);
                 }
             } else {
-                $("#albumsModalStatus" + albumId).addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#albumsModalStatus" + albumId).attr("title", shashin.modalStatusFailMessage());
-                $("#cancelUserShare" + albumId).prop('disabled', false);
+                $("#albumsModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#cancelUserShare").prop('disabled', false);
             }
         });
     }
 
     albumsModalListeners.setCommentModalListeners = function (albumId, username) {
-        $("#propcommentalbums" + albumId).on('show.bs.modal', async function () {
+        $("#propcommentalbums").on('show.bs.modal', async function () {
             const http = new Http("album notification read");
             const data = await http.ajax("get", "/notifications/markread/album/" + albumId);
         })
 
-        $("#updateCommentAlbum" + albumId).hide();
-        $("#cancelEditCommentAlbum" + albumId).hide();
+        $("#updateCommentAlbum").hide();
+        $("#cancelEditCommentAlbum").hide();
 
-        $("#cancelEditCommentAlbum" + albumId).on("click", function (e) {
+        $("#cancelEditCommentAlbum").on("click", function (e) {
             e.preventDefault();
 
-            const currentCommentId = $("#currentCommentId" + albumId).val();
+            const currentCommentId = $("#currentCommentId").val();
 
             if (currentCommentId !== "") {
-                $("#saveCommentAlbum" + albumId).show();
-                $("#dismissModalCommentAlbum" + albumId).show();
-                $("#updateCommentAlbum" + albumId).hide();
-                $("#cancelEditCommentAlbum" + albumId).hide();
+                $("#saveCommentAlbum").show();
+                $("#dismissModalCommentAlbum").show();
+                $("#updateCommentAlbum").hide();
+                $("#cancelEditCommentAlbum").hide();
 
                 $("#commentcontainer" + currentCommentId).show();
                 $("#textareacontainer" + currentCommentId).html('');
                 $("#textareacontainer" + currentCommentId).hide();
 
-                $("#currentCommentId" + albumId).val("");
+                $("#currentCommentId").val("");
             }
         });
 
-        $("#updateCommentAlbum" + albumId).on("click", async function (e) {
+        $("#updateCommentAlbum").on("click", async function (e) {
             e.preventDefault();
 
-            const currentCommentId = $("#currentCommentId" + albumId).val();
+            const currentCommentId = $("#currentCommentId").val();
 
             if (currentCommentId !== "") {
                 const updatedComment = $.trim($("#commenttext" + currentCommentId).val());
@@ -227,10 +229,10 @@
                         // Update comment
                         $("#commentcontent" + commentId).text(updatedComment);
 
-                        $("#saveCommentAlbum" + albumId).show();
-                        $("#dismissModalCommentAlbum" + albumId).show();
-                        $("#updateCommentAlbum" + albumId).hide();
-                        $("#cancelEditCommentAlbum" + albumId).hide();
+                        $("#saveCommentAlbum").show();
+                        $("#dismissModalCommentAlbum").show();
+                        $("#updateCommentAlbum").hide();
+                        $("#cancelEditCommentAlbum").hide();
 
                         $("#commentcontainer" + commentId).show();
                         $("#textareacontainer" + commentId).html('');
@@ -239,23 +241,23 @@
                     }
                 }
 
-                $("#saveCommentAlbum" + albumId).show();
-                $("#dismissModalCommentAlbum" + albumId).show();
-                $("#updateCommentAlbum" + albumId).hide();
-                $("#cancelEditCommentAlbum" + albumId).hide();
+                $("#saveCommentAlbum").show();
+                $("#dismissModalCommentAlbum").show();
+                $("#updateCommentAlbum").hide();
+                $("#cancelEditCommentAlbum").hide();
 
                 $("#commentcontainer" + currentCommentId).show();
                 $("#textareacontainer" + currentCommentId).html('');
                 $("#textareacontainer" + currentCommentId).hide();
 
-                $("#currentCommentId" + albumId).val("");
+                $("#currentCommentId").val("");
             }
         });
 
-        $("#saveCommentAlbum" + albumId).on("click", async function (e) {
+        $("#saveCommentAlbum").on("click", async function (e) {
             e.preventDefault();
 
-            let comment = $.trim($("#commentText" + albumId).val());
+            let comment = $.trim($("#commentText").val());
 
             if (comment.length > 0) {
                 const http = new Http("save comment");
@@ -274,8 +276,8 @@
                             '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
                             '<small>' + username + '<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
                             '<span id="textareacontainer' + commentId + '"></span></li>';
-                        $("#commentText" + albumId).val("")
-                        $("#commentList" + albumId).prepend(commentItem);
+                        $("#commentText").val("")
+                        $("#commentList").prepend(commentItem);
 
                         $("#deletecomment" + commentId).on("click", function (e) {
                             e.preventDefault();
@@ -300,6 +302,7 @@
 
         $("#editcomment"+commentId).on("click", function (e) {
             e.preventDefault();
+            $("#currentCommentId").val("");
             albumsCommentsSettings.editComment(albumId, commentId);
         });
     }
