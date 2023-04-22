@@ -28,11 +28,11 @@
                                 <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;" title="Comments">
                                     <span th:id="'commentcount'+${album.id}"><th:block th:text="${albumsCommentsMap.containsKey(album.id) ? #lists.size(albumsCommentsMap.get(album.id)) : '0'}"></th:block></span>
                                     <span class="bi-chat-square position-relative">
-                                        <th:block th:if="${notificationMap.get(album.id)}">
-                                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                                                <span class="visually-hidden">New alerts</span>
-                                            </span>
-                                        </th:block>
+<!--                                        <th:block th:if="${notificationMap.get(album.id)}">-->
+<!--                                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">-->
+<!--                                                <span class="visually-hidden">New alerts</span>-->
+<!--                                            </span>-->
+<!--                                        </th:block>-->
                                     </span>
                                 </a>
                                 <th:block th:if="${album.albumPhotoCount > 0}">
@@ -52,9 +52,11 @@
                             </div>
                         </div>
 
-                        <div th:replace="fragments/albumsjs :: albumsjs(${album},${authority},${baseUrl})"></div>
+                        <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+                            Albums.setAlbumsEventListeners(/*[[${album.id}]]*/ 0, /*[[${baseUrl}]]*/ '', /*[[${showControls}]]*/ false, /*[[${cspNonce}]]*/ '');
+                        </script>
 
-                        <span class="appendFoldersPhotos" style="width:0;height:0;padding:0"></span>
+                        <span class="appendAlbumsPhotos" style="width:0;height:0;padding:0"></span>
                     </th:block>
                 </div>
             </th:block>
@@ -184,19 +186,15 @@
     $(document).ready(function() {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const activePage = /*[[${activePage}]]*/ 'albums';
+        const albumsList = /*[[${albumsList}]]*/ '[]';
+        const showControls = /*[[${showControls}]]*/ false;
+        const baseUrl = /*[[${baseUrl}]]*/ '';
+        const darkMode = /*[[${currentUser.darkMode}]]*/ false;
         /*]]>*/
 
-        $("#container").scroll(function () {
-            //set scroll position in session storage
-            sessionStorage.scrollPos = $("#container").scrollTop();
-        });
-        const init = function () {
-            //get scroll position in session storage
-            $("#container").scrollTop(sessionStorage.scrollPos || 0)
-        };
-        window.onload = init;
-
-        shashin.activateScrollToTop();
+        const albumsInstance = new Albums(albumsList, activePage, showControls, baseUrl, shashin.nonce, darkMode);
+        albumsInstance.init();
         Util.checkErrorImage();
     });
 </script>
