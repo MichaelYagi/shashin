@@ -110,6 +110,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Paginated "Folders" view
+- Paginated "Folders" and "Albums" view
 
 ### Fixed
