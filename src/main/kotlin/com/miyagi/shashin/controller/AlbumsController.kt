@@ -832,13 +832,22 @@ class AlbumsController {
             val albumName = StringEscapeUtils.escapeHtml4(albumPayload["albumName"].toString())
 
             if (postAlbumId == albumId && albumName.isNotEmpty()) {
-                val albumObj = albumRepository.findById(albumId).get()
-                albumObj.setName(albumName)
-                albumRepository.save(albumObj)
+                val foundAlbumRecord = albumRepository.findAlbumByNameIgnoreCase(albumName)
 
-                resp["msg"] = "Saved"
-                resp["status"] = ApiResponse.SUCCESS.status
-                return mapper.writeValueAsString(resp)
+                return if (foundAlbumRecord == null) {
+                    val albumObj = albumRepository.findById(albumId).get()
+                    albumObj.setName(albumName)
+                    albumRepository.save(albumObj)
+
+                    resp["msg"] = "Saved"
+                    resp["status"] = ApiResponse.SUCCESS.status
+                    mapper.writeValueAsString(resp)
+                } else {
+                    resp["msg"] = "Album name \"$albumName\" already exists"
+                    resp["status"] = ApiResponse.WARN.status
+                    mapper.writeValueAsString(resp)
+                }
+
             }
         }
 

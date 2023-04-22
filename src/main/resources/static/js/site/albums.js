@@ -168,24 +168,23 @@ class Albums {
             $("#edit" + albumId).on("click", async function (e) {
                 e.preventDefault();
 
+                $("#editAlbumNameStatus").addClass('spinner-grow').removeClass('bi-check-circle').removeClass('bi-x-circle');
+                $("#editAlbumNameStatus").css("visibility","hidden");
+                $("#albumEditName").val("");
+
                 let http = new Http("sharealbums");
                 let data = await http.ajax("get", "/api/v1/album/" + albumId + "/page/0");
 
-                if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
-                    if (data["status"] === "success") {
-                        let album = data["album"];
+                if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === "success") {
+                    let album = data["album"];
+                    $("#albumNameEdit").text(album["name"]);
+                    $("#albumEditName").val(album["name"]);
+                    $("#albumCoverEditThumb").attr("src", album["coverUrl"]);
 
-                        $("#albumNameEdit").text(album["name"]);
-                        $("#albumEditName").val(album["name"]);
-                        $("#albumCoverEditThumb").attr("src", album["coverUrl"]);
+                    $("#propeditalbums").modal('show');
 
-                        $("#propeditalbums").modal('show');
-
-                        albumsModalListeners.setEditAlbumsListeners(albumId);
-                    }
+                    albumsModalListeners.setEditAlbumsListeners(albumId);
                 }
-
-
             });
 
             $("#trash" + albumId).on("click", async function (e) {
