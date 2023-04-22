@@ -115,8 +115,7 @@ class AlbumsController {
             if (currentUserObj.getAuthority() != null && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
                 showControls = true
             }
-            var queryLimit = model.getAttribute("queryLimit").toString().toInt()
-            queryLimit = 1
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val userAlbums = userAlbumRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page*queryLimit), queryLimit)
 
             if (userAlbums != null && userAlbums.count() > 0) {
