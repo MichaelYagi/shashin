@@ -60,6 +60,13 @@
                 <i class="bi-arrow-up-circle"></i>
             </button>
 
+            <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+                <script src="/js/site/albumsmodal.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+                <script src="/js/site/min/albumsmodal.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+            </th:block>
+
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
     </div>
