@@ -231,8 +231,6 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         val fullShareLink = this.driver!!.findElement(By.id("fullShareLink"))
         val linkEl = fullShareLink.findElement(By.xpath("./a[1]"))
-        println(linkEl)
-        println(linkEl.text)
         this.driver?.get(linkEl.text)
 
         val scrollContainer = this.driver!!.findElement(By.id("infinite-scroll-gallery"))
