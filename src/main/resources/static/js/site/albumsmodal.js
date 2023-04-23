@@ -36,7 +36,7 @@
             $("#fullShareLink").text("");
 
             if (relativeShareUrlData !== "") {
-                const fullShareLink = baseUrl + "share/" + relativeShareUrlData + "/album/"+albumId;
+                const fullShareLink = baseUrl + "/share/" + relativeShareUrlData + "/album/"+albumId;
                 $("#fullShareLinkContainer").css("display", "block");
                 $("#fullShareLink").html("<a target='_blank' href='" + fullShareLink + "'>" + fullShareLink + "</a>");
                 $("#copyLink").attr("data-clipboard-text", fullShareLink);

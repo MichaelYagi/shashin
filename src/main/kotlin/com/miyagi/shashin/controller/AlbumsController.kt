@@ -24,6 +24,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
@@ -201,6 +202,7 @@ class AlbumsController {
         response["activePage"] = module
         response["activeSidebar"] = module
         response["titleDescriptor"] = TextUtils.capitalized(module)
+        response["baseUrl"] = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
 
         return response
     }
