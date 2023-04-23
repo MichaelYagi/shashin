@@ -126,7 +126,7 @@ class Albums {
                         let shareUrl = album["shareUrl"];
 
                         if (shareUrl !== null && "" !== shareUrl) {
-                            const fullShareLink = baseUrl + "share/" + shareUrl + "/album/" + albumId;
+                            const fullShareLink = baseUrl + "/share/" + shareUrl + "/album/" + albumId;
                             $("#shareLink").val(shareUrl);
                             $("#fullShareLinkContainer").css("display", "block");
                             $("#fullShareLink").html("<a target='_blank' href='" + fullShareLink + "'>" + fullShareLink + "</a>");
@@ -155,7 +155,7 @@ class Albums {
                             $("#shareUserList").html(html);
                         }
 
-                        albumsModalListeners.setAlbumModalListeners(albumId, /*[[${baseUrl}]]*/ '');
+                        albumsModalListeners.setAlbumModalListeners(albumId, baseUrl);
 
                         $("#propsharealbums").modal('show');
                     }
