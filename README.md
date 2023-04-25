@@ -34,6 +34,7 @@ Tech Stack
 
 3rd Party Libraries used:
 * Modified [lightGallery](https://www.lightgalleryjs.com/) - Image and video lightbox
+  * [lightGallery Plugins](https://cdnjs.com/libraries/lightgallery)
 * [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor) - Extracts Exif, IPTC, XMP, ICC and other metadata from image, video and audio files
 * [TensorFlow](https://www.tensorflow.org/) - Build machine learning applications
 * [JQuery](https://jquery.com/) - JavaScript library

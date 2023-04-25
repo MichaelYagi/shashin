@@ -33,7 +33,7 @@
 <body>
 <div id="video" style="display: none;">
     <a
-            th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadataObj.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true}}'}"
+            th:data-video="${'{&quot;source&quot;: [{&quot;src&quot;:&quot;'+metadataObj.videoUrl+'&quot;, &quot;type&quot;:&quot;video/mp4&quot;}], &quot;attributes&quot;: {&quot;preload&quot;: &quot;auto&quot;, &quot;controls&quot;: true, &quot;autoplay&quot;: true}}'}"
             th:data-poster="${metadataObj.thumbnailUrlOriginal}"
             th:data-sub-html="${metadataObj.description}"
             th:data-download-url="${metadataObj.videoUrl + '/download'}"

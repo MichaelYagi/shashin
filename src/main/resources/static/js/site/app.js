@@ -28,7 +28,7 @@
         if (metadata.type.includes("video")) {
             mediaContent.video = {
                 "source": [{"src": metadata.videoUrl, "type": "video/mp4"}],
-                "attributes": {"preload": "auto", "controls": true}
+                "attributes": {"preload": "auto", "controls": true, "autoplay": true}
             };
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
         } else {
