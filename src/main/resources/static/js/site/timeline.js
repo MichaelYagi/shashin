@@ -769,6 +769,7 @@
                         }
 
                         // Render currentDate
+                        // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
                         if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
                             anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
@@ -778,10 +779,12 @@
                             $("<div id='placeholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
                         }
 
+                        // Stage 2 - network call to create image placeholders and UI skeleton for month
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
 
                         $("#placeholder").remove();
 
+                        // Stage 3 - network call to embed the image URL and complete the process
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
