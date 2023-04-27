@@ -13,6 +13,8 @@
     timelineSettings.rendered = false;
     timelineSettings.timelineDates = [];
     timelineSettings.distanceToFooter = 9999;
+    timelineSettings.metadataYearMonthCount = [];
+    timelineSettings.thumbnailsPerRow = 4;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -29,8 +31,9 @@
         }
     }
 
-    timelineSettings.init = function(mediaTypeFilter, metadataDates) {
+    timelineSettings.init = function(mediaTypeFilter, metadataDates, metadataYearMonthCount) {
         timelineSettings.timelineDates = metadataDates;
+        timelineSettings.metadataYearMonthCount = metadataYearMonthCount;
 
         Util.setMetadataLocalStorage();
 
@@ -724,7 +727,9 @@
 
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
+
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
@@ -757,9 +762,26 @@
                 if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
                     if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
 
+                        const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
+                        let sectionHeight = 0;
+                        if (numberOfPhotos !== null && numberOfPhotos > 0) {
+                            sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
+                        }
+
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+                        if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
+                            anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
+                            anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
+                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
+                        ) {
+                            $("<div id='placeholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
+                        }
+
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
+
+                        $("#placeholder").remove();
+
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
@@ -1445,6 +1467,8 @@
                         ret = "fail";
                     }
                 }
+
+                //$("#placeholder").remove();
 
                 return ret;
             });

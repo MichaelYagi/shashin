@@ -126,6 +126,15 @@ class TimelineController: BaseController() {
             model[k] = v!!
         }
 
+        val countByYearAndMonthList = metadataRepository.countByYearAndMonth()
+        val countByYearAndMonthMap = mutableMapOf<String, Int>()
+        if (countByYearAndMonthList.count() > 0) {
+            for (yearMonthCount in countByYearAndMonthList) {
+                countByYearAndMonthMap[yearMonthCount.getYear().toString() + "-" + yearMonthCount.getMonth().toString()] = yearMonthCount.getCount()!!
+            }
+        }
+        model["metadataYearMonthCount"] = countByYearAndMonthMap
+
         if (!validMediaTypes.contains(mediaType)) {
             model["message"] = "Oops! $mediaType is not a valid media type!"
         }

@@ -113,3 +113,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Paginated "Folders" and "Albums" view
 
 ### Fixed
+
+## [2.2.3] - 2023-04-26
+### Added
+
+### Changed
+
+- Use placeholder divs during timeline loading
+
+### Fixed

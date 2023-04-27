@@ -112,4 +112,7 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    @Query("SELECT MAX(thumbnail_small_width) AS maxWidth FROM metadata", nativeQuery = true)
    fun findMaxThumbnailWidth(): Int
+
+   @Query("SELECT year, month, COUNT(*) as count FROM metadata group by year, month order by year DESC, month DESC", nativeQuery = true)
+   fun countByYearAndMonth(): MutableIterable<MetadataYearMonthCount>
 }
