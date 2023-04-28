@@ -15,7 +15,6 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
-    timelineSettings.lastYearMonth = "";
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -759,7 +758,6 @@
             // Render below visibleContainers going from top down
             currentDate = $(lastVisibleContainer).attr("id");
             timelineArr = timelineDates.reverse();
-            let yearMonthChanged = false;
 
             for (let index = startingIndexBottom; index < timelineArr.length; index ++) {
                 const timelineDate = timelineArr[index];
@@ -768,19 +766,13 @@
                 if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
                     if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
 
-                        yearMonthChanged = false;
-
-                        if (timelineSettings.lastYearMonth !== (timelineDate.year + "-" + timelineDate.month)) {
-                            timelineSettings.lastYearMonth = (timelineDate.year + "-" + timelineDate.month);
-                            yearMonthChanged = true;
-                        }
-
                         const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
                         let sectionHeight = 0;
 
-                        if (numberOfPhotos !== null && numberOfPhotos > 0 && true === yearMonthChanged) {
-                            sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
+                        if (numberOfPhotos !== null && numberOfPhotos > 0) {
+                            // sectionHeight = (Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + ((Math.ceil(numberOfPhotos / timelineSettings.thumbnailsPerRow) * Util.thumbnailHeight()) + 5)
+                            sectionHeight = 11705;
                         }
 
                         // Render currentDate
@@ -789,8 +781,7 @@
                         if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
                             anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
                             anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
-                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day) &&
-                            true === yearMonthChanged
+                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
                         ) {
                             $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
                         }
@@ -801,8 +792,7 @@
                         if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
                             anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
                             anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
-                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day) &&
-                            true === yearMonthChanged
+                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
                         ) {
                             $("#shashinplaceholder").remove();
                         }
