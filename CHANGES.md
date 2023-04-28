@@ -122,3 +122,5 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Use placeholder divs during timeline loading
 
 ### Fixed
+
+- Timeline play photo/video button misfiring
