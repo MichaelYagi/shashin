@@ -789,11 +789,7 @@
                         // Stage 2 - network call to create image placeholders and UI skeleton for month
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
 
-                        if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
-                            anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
-                            anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
-                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
-                        ) {
+                        if ($("#shashinplaceholder").length) {
                             $("#shashinplaceholder").remove();
                         }
 
