@@ -91,6 +91,8 @@
             if (Util.isMobile() === false && $("#dateSliderWrapper:not(:hover)").length > 0) {
                 $("#dateSlider").hide();
             }
+
+            timelineSettings.reinitLightGalleryInstance();
         });
 
         // $(window).bind("sliderScrollStop", function() {
@@ -776,13 +778,19 @@
                             anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
                             anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
                         ) {
-                            $("<div id='placeholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
+                            $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
                         }
 
                         // Stage 2 - network call to create image placeholders and UI skeleton for month
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
 
-                        $("#placeholder").remove();
+                        if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
+                            anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
+                            anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
+                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
+                        ) {
+                            $("#shashinplaceholder").remove();
+                        }
 
                         // Stage 3 - network call to embed the image URL and complete the process
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
