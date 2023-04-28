@@ -31,7 +31,7 @@ workflows:
                 paths:
                   - target/test-results/mocha
       - maven/test: # checkout, build, test, and upload test results
-          name: Run junit tests, package to tar and store artifacts
+          name: Run junit tests and package to tar # and store artifacts
           requires:
             - Run node tests
           filters: # job runs for all branches and all tags
