@@ -92,7 +92,9 @@
                 $("#dateSlider").hide();
             }
 
-            timelineSettings.reinitLightGalleryInstance();
+            setTimeout(() => {
+                timelineSettings.reinitLightGalleryInstance();
+            }, 500);
         });
 
         // $(window).bind("sliderScrollStop", function() {
