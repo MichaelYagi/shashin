@@ -775,6 +775,8 @@
                             sectionHeight = 11705;
                         }
 
+                        let action = "below";
+
                         // Render currentDate
                         // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
@@ -783,15 +785,15 @@
                             anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
                             anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
                         ) {
-                            $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
+                            // Stage 1 - create an empty block
+                            await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
+                            action = "emptyContainer";
+                        } else {
+                            action = "below";
                         }
 
                         // Stage 2 - network call to create image placeholders and UI skeleton for month
-                        const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
-
-                        if ($("#shashinplaceholder").length) {
-                            $("#shashinplaceholder").remove();
-                        }
+                        const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
 
                         // Stage 3 - network call to embed the image URL and complete the process
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
@@ -1330,6 +1332,23 @@
         });
     }
 
+    timelineSettings.createEmptyContainer = async function(date, attachToId, height) {
+        $("#msgTimeline").html("");
+        let ret = "fail";
+        const dateArray = date.split("-");
+
+        if (dateArray.length > 0) {
+            const year = dateArray[0];
+            const month = dateArray[1];
+            const day = dateArray[2];
+
+            $('<span class="dateContainer" id="container_'+year+'-'+month+'-'+day+'" style="display: block;height: '+height+'px;"></span>').insertAfter($("#amp_" + attachToId))
+            ret = timelineSettings.success;
+        }
+
+        return ret
+    }
+
     timelineSettings.updateTimeline = async function(date,mediaTypeFilter,action,attachToId) {
         $("#msgTimeline").html("");
 
@@ -1354,6 +1373,7 @@
 
                             if (metadataList.length > 0) {
                                 let html = "";
+                                let internalHtml = "";
 
                                 let idCheck = "undated";
                                 if (metadataList[0]["year"] === null ||
@@ -1364,6 +1384,12 @@
                                 }
 
                                 html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0]});
+                                internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
+                                    '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"><p><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong></p></section>' +
+                                    '<div class="row image-group-padding" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
+                                    '<span style="display: none;" class="yearTaken">'+metadataList[0].year+'</span>' +
+                                    '<span style="display: none;" class="monthTaken">'+metadataList[0].month+'</span>' +
+                                    '<span style="display: none;" class="dayTaken">'+metadataList[0].day+'</span>';
 
                                 if ($("#"+idCheck).length === 0) {
                                     for (let index in metadataList) {
@@ -1380,7 +1406,9 @@
                                         lastMonthTaken = lastMonthTaken !== "" ? parseInt(lastMonthTaken) : 0;
                                         lastDayTaken = lastDayTaken !== "" ? parseInt(lastDayTaken) : 0;
 
-                                        html += TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata});
+                                        let loopedHtml = TimelineTemplates.TimelinePreLoadGalleryBody({metadata:metadata});
+                                        html += loopedHtml;
+                                        internalHtml += loopedHtml;
 
                                         $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
                                     }
@@ -1389,6 +1417,7 @@
                                     const lastDate = lastDateParts[1];
 
                                     html += TimelineTemplates.TimelinePreLoadGalleryFooter({metadata:metadataList[0],lastDate:lastDate});
+                                    internalHtml += '<span class="scrollspy metadataprocessed" id="tail_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"></span></div>';
 
                                     const tempScrollTop = $("#container").scrollTop();
 
@@ -1412,6 +1441,10 @@
                                                     }
                                                 }
                                             });
+                                        } else if (action === "emptyContainer") {
+                                            $("#container_"+date).removeAttr("style");
+                                            $("#container_"+date).html(internalHtml);
+                                            $('<span class="attachMetadataPhotos" id="amp_'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'" style="visibility: hidden"></span>').insertAfter($("#container_"+date));
                                         } else if (action === "new") {
                                             $("#infinite-scroll-gallery").prepend(htmlEl).ready(function () {
                                                 if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.up) {
