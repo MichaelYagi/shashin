@@ -786,9 +786,10 @@
                             anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
                             anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
                         ) {
-                            // Stage 1 - create an empty block
-                            $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
                             if (!Util.isMobile()) {
+                                // Stage 1 - create an empty block
+                                $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
+
                                 await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
                                 action = "emptyContainer";
                             } else {
@@ -802,13 +803,7 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
 
                         if ($("#shashinplaceholder").length) {
-                            if (Util.isMobile()) {
-                                setTimeout(function() {
-                                    $("#shashinplaceholder").remove();
-                                },500);
-                            } else {
-                                $("#shashinplaceholder").remove();
-                            }
+                            $("#shashinplaceholder").remove();
                         }
 
                         // Stage 3 - network call to embed the image URL and complete the process
