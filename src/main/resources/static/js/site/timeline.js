@@ -802,7 +802,13 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
 
                         if ($("#shashinplaceholder").length) {
-                            $("#shashinplaceholder").remove();
+                            if (Util.isMobile()) {
+                                setTimeout(function() {
+                                    $("#shashinplaceholder").remove();
+                                },200);
+                            } else {
+                                $("#shashinplaceholder").remove();
+                            }
                         }
 
                         // Stage 3 - network call to embed the image URL and complete the process
