@@ -784,7 +784,8 @@
                         if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
                             anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
                             anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
-                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
+                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day) &&
+                            !Util.isMobile()
                         ) {
                             // Stage 1 - create an empty block
                             $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
