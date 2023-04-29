@@ -781,20 +781,16 @@
                         // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
 
-                        if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
+                        if (!Util.isMobile() && anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
                             anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
                             anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
                             anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
                         ) {
-                            if (!Util.isMobile()) {
-                                // Stage 1 - create an empty block
-                                $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
+                            // Stage 1 - create an empty block
+                            $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
 
-                                await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
-                                action = "emptyContainer";
-                            } else {
-                                action = "below";
-                            }
+                            await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
+                            action = "emptyContainer";
                         } else {
                             action = "below";
                         }
