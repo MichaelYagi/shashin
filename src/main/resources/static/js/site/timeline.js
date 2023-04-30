@@ -800,9 +800,17 @@
 
                         // Stage 3 - network call to embed the image URL and complete the process
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            setTimeout(function() {
+                            if (!Util.isMobile() && anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
+                                anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
+                                anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
+                                anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
+                            ) {
                                 timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                            },0);
+                            } else {
+                                setTimeout(function () {
+                                    timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                                }, 0);
+                            }
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
                         }
 
