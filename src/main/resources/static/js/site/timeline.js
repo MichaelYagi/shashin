@@ -798,14 +798,16 @@
                         // Stage 2 - network call to create image placeholders and UI skeleton for month
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
 
-                        if ($("#shashinplaceholder").length) {
-                            $("#shashinplaceholder").remove();
-                        }
-
                         // Stage 3 - network call to embed the image URL and complete the process
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                            setTimeout(function() {
+                                timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                            },200);
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
+                        }
+
+                        if ($("#shashinplaceholder").length) {
+                            $("#shashinplaceholder").remove();
                         }
 
                         // Break if footer not in viewport
