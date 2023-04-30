@@ -802,7 +802,7 @@
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             setTimeout(function() {
                                 timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                            },200);
+                            },0);
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
                         }
 
