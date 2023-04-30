@@ -805,11 +805,11 @@
                                 anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
                                 anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
                             ) {
-                                timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                            } else {
                                 setTimeout(function () {
                                     timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                                 }, 0);
+                            } else {
+                                timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                             }
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
                         }
