@@ -740,6 +740,7 @@
 
                         // Break if top not in viewport
                         if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
+                            scrollByOne();
                             break;
                         }
                     }
@@ -780,15 +781,12 @@
                         // Render currentDate
                         // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
-
-                        if (!Util.isMobile() && anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
+                        if (anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
                             anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
                             anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
                             anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
                         ) {
                             // Stage 1 - create an empty block
-                            $("<div id='shashinplaceholder' style='height: " + sectionHeight + "px;'></div>").insertAfter($("#container_" + anchorPoint));
-
                             await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
                             action = "emptyContainer";
                         } else {
@@ -800,16 +798,8 @@
 
                         // Stage 3 - network call to embed the image URL and complete the process
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            (function (currentDate) {
-                                setTimeout(function () {
-                                    timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                                }, 0);
-                            })(currentDate);
+                            timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
-                        }
-
-                        if ($("#shashinplaceholder").length) {
-                            $("#shashinplaceholder").remove();
                         }
 
                         // Break if footer not in viewport
