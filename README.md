@@ -24,6 +24,9 @@ https://app.circleci.com/pipelines/github/MichaelYagi/shashin
 Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
 
 # Development
+To use unminified JS assets, set the following VM options:
+```-Dspring.profiles.active=dev```
+
 Frameworks
 * [Spring Boot](https://spring.io/) - Java framework to create micro services and web apps
 * [Thymeleaf](https://www.thymeleaf.org/) - Server-side Java template engine for both web and standalone environments
