@@ -856,12 +856,27 @@
                     if (currentDateObj) {
                         const prevDateObj = dateList.length > 1 ? dateList[Math.round((dateList.length - 2) - ui.value)] : currentDateObj;
 
-                        if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                            handleTooltip.text(Util.getShortMonths(currentDateObj.month - 1) + ' ' + currentDateObj.day + ', ' + currentDateObj.year);
-                            $(".monthYearSlider").hide();
+                        if (
+                          timelineSettings.currentScrollDirection ===
+                          timelineSettings.ScrollDirection.down
+                        ) {
+                          handleTooltip.text(
+                            Util.getShortMonths(currentDateObj.month - 1) +
+                              " " +
+                              currentDateObj.day +
+                              ", " +
+                              currentDateObj.year
+                          );
+                          $(".monthYearSlider").hide();
                         } else if (prevDateObj) {
-                            handleTooltip.text(Util.getShortMonths(prevDateObj.month - 1) + ' ' + prevDateObj.day + ', ' + prevDateObj.year);
-                            $(".monthYearSlider").hide();
+                          handleTooltip.text(
+                            Util.getShortMonths(prevDateObj.month - 1) +
+                              " " +
+                              prevDateObj.day +
+                              ", " +
+                              prevDateObj.year
+                          );
+                          $(".monthYearSlider").hide();
                         }
                     }
                 },
@@ -869,7 +884,8 @@
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     if (currentDateObj && timelineSettings.enableScrollSpy === true) {
-                        timelineSettings.jumpFromTimelineToc(event, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
+                        timelineSettings.jumpFromTimelineToc(null, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
+                        timelineSettings.enableScrollSpy = true;
                     }
                     $(".monthYearSlider").show();
                 },
@@ -1107,31 +1123,30 @@
             //     }
             // });
 
-            $(".scrollspy").each(function (index) {
-                let id = $(this).attr("id");
-
-                if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
-                    // Scrolling behavior different on Chrome iOS
-                    if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
-                        timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
-                            if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
-                                timelineSettings.setScrollSpyActive(id);
-                                Util.checkErrorImage();
-                            }
-                        });
-                    }
-
-                    // Set the timeline slider while scrolling
-                    if (Util.isMobile() === false) {
-                        timelineDates.forEach(function (timelineDate, i) {
-                            if (id === timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day) {
-                                $("#dateSlider").slider("option", "value", timelineDates.length - i - 1);
-                                return false;
-                            }
-                        });
-                    }
-                }
-            });
+            // $(".scrollspy").each(function (index) {
+            //     let id = $(this).attr("id");
+            //     if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
+            //         // Scrolling behavior different on Chrome iOS
+            //         if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+            //             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
+            //                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
+            //                     timelineSettings.setScrollSpyActive(id);
+            //                     Util.checkErrorImage();
+            //                 }
+            //             });
+            //         }
+            //
+            //         // Set the timeline slider while scrolling
+            //         if (Util.isMobile() === false) {
+            //             timelineDates.forEach(function (timelineDate, i) {
+            //                 if (id === timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day) {
+            //                     $("#dateSlider").slider("option", "value", timelineDates.length - i - 1);
+            //                     return false;
+            //                 }
+            //             });
+            //         }
+            //     }
+            // });
 
             // Jump to anchor after rendering
             location.href = "#" + anchor;
