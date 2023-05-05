@@ -1115,13 +1115,15 @@
             timelineSettings.setScrollSpyActive(anchor);
             timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
 
-            // timelineSettings.renderThumbnails(Util.elementsInViewport($(".scrollspy")), mediaTypeFilter, timelineDates).then(function (msg) {
-            //     if (Util.elementsInViewport($("#" + firstDate)).length > 0 ||
-            //         Util.elementsInViewport($("#br" + firstDate)).length > 0 ||
-            //         Util.elementsInViewport($("#row" + firstDate)).length > 0) {
-            //         scrollByOne();
-            //     }
-            // });
+            if (Util.isMobile() === true) {
+                timelineSettings.renderThumbnails(Util.elementsInViewport($(".scrollspy")), mediaTypeFilter, timelineDates).then(function (msg) {
+                    if (Util.elementsInViewport($("#" + firstDate)).length > 0 ||
+                        Util.elementsInViewport($("#br" + firstDate)).length > 0 ||
+                        Util.elementsInViewport($("#row" + firstDate)).length > 0) {
+                        scrollByOne();
+                    }
+                });
+            }
 
             // $(".scrollspy").each(function (index) {
             //     let id = $(this).attr("id");
