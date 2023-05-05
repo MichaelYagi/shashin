@@ -1037,87 +1037,88 @@
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
 
-            // Render below visibleContainers going from top down
             const timelineDates = timelineSettings.timelineDates;
-            let currentDate = anchor;
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
-            const lastDate = timelineDates[timelineDates.length-1].year + "-" + timelineDates[timelineDates.length-1].month + "-" + timelineDates[timelineDates.length-1].day;
 
-            for (const [index, timelineDate] of timelineDates.entries()) {
-                let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+            if (Util.isMobile() === false) {
+                // Render below visibleContainers going from top down
+                let currentDate = anchor;
+                const lastDate = timelineDates[timelineDates.length - 1].year + "-" + timelineDates[timelineDates.length - 1].month + "-" + timelineDates[timelineDates.length - 1].day;
 
-                if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate)) {
-                    if ($("#" + currentDate).length === 0) {
-                        // Render currentDate
-                        const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
-                        const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
-                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                for (const [index, timelineDate] of timelineDates.entries()) {
+                    let prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+
+                    if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate)) {
+                        if ($("#" + currentDate).length === 0) {
+                            // Render currentDate
+                            const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
+                            const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "below", anchorPoint);
+                            if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                                timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                            }
                         }
-                    }
 
-                    // Break if top not in viewport
-                    if (Util.elementsInViewport($("#" + currentDate)).length === 0 || counter > depth) {
-                        //Util.removeDateGallery(currentDate);
-                        break;
-                    }
-
-                    if (prevDate !== lastDate) {
-                        currentDate = prevDate;
-                    } else {
-                        const msg = await timelineSettings.updateTimeline(lastDate, mediaTypeFilter, "below", currentDate);
-                        if (msg === timelineSettings.success && $("#" + lastDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
+                        // Break if top not in viewport
+                        if (Util.elementsInViewport($("#" + currentDate)).length === 0 || counter > depth) {
+                            //Util.removeDateGallery(currentDate);
+                            break;
                         }
-                    }
 
-                    counter++;
+                        if (prevDate !== lastDate) {
+                            currentDate = prevDate;
+                        } else {
+                            const msg = await timelineSettings.updateTimeline(lastDate, mediaTypeFilter, "below", currentDate);
+                            if (msg === timelineSettings.success && $("#" + lastDate).length === 1) {
+                                timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
+                            }
+                        }
+
+                        counter++;
+                    }
                 }
-            }
 
-            // Render above visibleContainers going from bottom up
-            let prevDate = "";
-            currentDate = anchor;
-            const timelineDatesReverse = timelineDates.slice().reverse();
-            counter = 0;
-            for (const [index, timelineDate] of timelineDatesReverse.entries()) {
-                prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+                // Render above visibleContainers going from bottom up
+                let prevDate = "";
+                currentDate = anchor;
+                const timelineDatesReverse = timelineDates.slice().reverse();
+                counter = 0;
+                for (const [index, timelineDate] of timelineDatesReverse.entries()) {
+                    prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
-                if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
-                    if ($("#" + currentDate).length === 0) {
-                        // Render currentDate
-                        const anchorPoint = timelineDatesReverse[index - 2].year + "-" + timelineDatesReverse[index - 2].month + "-" + timelineDatesReverse[index - 2].day;
-                        const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
-                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                    if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
+                        if ($("#" + currentDate).length === 0) {
+                            // Render currentDate
+                            const anchorPoint = timelineDatesReverse[index - 2].year + "-" + timelineDatesReverse[index - 2].month + "-" + timelineDatesReverse[index - 2].day;
+                            const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
+                            if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                                timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                            }
                         }
-                    }
 
-                    scrollByOne();
+                        scrollByOne();
 
-                    // Break if top not in viewport
-                    if (Util.elementsInViewport($("#" + currentDate)).length === 0 || counter > depth) {
-                        //Util.removeDateGallery(currentDate);
-                        currentDate = prevDate;
-                        break;
-                    }
-
-                    if (prevDate !== firstDate) {
-                        currentDate = prevDate;
-                    } else {
-                        const msg = await timelineSettings.updateTimeline(firstDate, mediaTypeFilter, "above", currentDate);
-                        if (msg === timelineSettings.success && $("#" + firstDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(firstDate, mediaTypeFilter);
+                        // Break if top not in viewport
+                        if (Util.elementsInViewport($("#" + currentDate)).length === 0 || counter > depth) {
+                            //Util.removeDateGallery(currentDate);
+                            currentDate = prevDate;
+                            break;
                         }
+
+                        if (prevDate !== firstDate) {
+                            currentDate = prevDate;
+                        } else {
+                            const msg = await timelineSettings.updateTimeline(firstDate, mediaTypeFilter, "above", currentDate);
+                            if (msg === timelineSettings.success && $("#" + firstDate).length === 1) {
+                                timelineSettings.attachAssociatedMetadata(firstDate, mediaTypeFilter);
+                            }
+                        }
+                        counter++;
                     }
-                    counter++;
                 }
-            }
 
-            timelineSettings.setScrollSpyActive(anchor);
-            timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
-
-            if (Util.isMobile() === true) {
+                timelineSettings.setScrollSpyActive(anchor);
+                timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
+            } else {
                 timelineSettings.renderThumbnails(Util.elementsInViewport($(".scrollspy")), mediaTypeFilter, timelineDates).then(function (msg) {
                     if (Util.elementsInViewport($("#" + firstDate)).length > 0 ||
                         Util.elementsInViewport($("#br" + firstDate)).length > 0 ||
