@@ -740,7 +740,9 @@
 
                         // Break if top not in viewport
                         if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
-                            scrollByOne();
+                            if (Util.isMobile() === false) {
+                                scrollByOne();
+                            }
                             break;
                         }
                     }
