@@ -25,9 +25,9 @@
     }
 
     const scrollByOne = function() {
-        document.getElementById("container").scrollBy({top: 1});
+        document.getElementById("container").scrollBy({top: 1, behavior: "smooth"});
         if (document.getElementsByTagName("MAIN").length > 0) {
-            document.getElementsByTagName("MAIN")[0].scrollBy({top: 1});
+            document.getElementsByTagName("MAIN")[0].scrollBy({top: 1, behavior: "smooth"});
         }
     }
 
