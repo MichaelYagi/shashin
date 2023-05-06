@@ -1005,68 +1005,26 @@
             Util.removeDateGallery(element.id);
         });
 
-        let depth = 6;
+        const timelineDates = timelineSettings.timelineDates;
 
-        const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null)
+        const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
+        }
 
-            const timelineDates = timelineSettings.timelineDates;
+        await timelineSettings.renderThumbnails(Util.elementsInViewport($(".scrollspy")),mediaTypeFilter,timelineDates);
 
-            let currAnchor = anchor;
-            for (const [index, timelineDate] of timelineDates.entries()) {
-                let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-                if (anchor === currTimelineDate) {
-                    let limit = index-depth;
-                    for (let i = index-1; i > limit; i--) {
-                        if (timelineDates[i] !== undefined) {
-                            let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
-                            if ($("#" + id).length === 0) {
-                                // Render currentDate
-                                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
-                                if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                                }
-                                currAnchor = id;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
+        timelineSettings.enableScrollSpy = true;
 
-                    currAnchor = anchor;
-                    limit = index+depth;
-                    for (let i = index+1; i < limit; i++) {
-                        if (timelineDates[i] !== undefined) {
-                            let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
-                            if ($("#" + id).length === 0) {
-                                // Render currentDate
-                                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
-                                if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                                }
-                                currAnchor = id;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
+        timelineSettings.setScrollSpyActive(anchor);
+        timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
 
-            timelineSettings.setScrollSpyActive(anchor);
-            timelineSettings.scrollToTimelineToc(Util.elementsInViewport($(".scrollspy")));
+        // Jump to anchor after rendering
+        location.href = "#" + anchor;
 
-            // Jump to anchor after rendering
-            location.href = "#" + anchor;
-
-            if (window.location.hash) {
-                // Remove hash from URL
-                history.pushState("", document.title, window.location.pathname + window.location.search);
-            }
-
-            timelineSettings.enableScrollSpy = true;
+        if (window.location.hash) {
+            // Remove hash from URL
+            history.pushState("", document.title, window.location.pathname + window.location.search);
         }
     }
 
