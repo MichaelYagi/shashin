@@ -24,10 +24,13 @@
         return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > -100 && timelineSettings.distanceToFooter < 1) || Util.elementsInViewport($("#subfooter")).length > 0);
     }
 
-    const scrollByOne = function() {
-        document.getElementById("container").scrollBy({top: 1, behavior: "smooth"});
+    const scrollByN = function(scrollBy) {
+        if (!scrollBy) {
+            scrollBy = 1;
+        }
+        document.getElementById("container").scrollBy({top: scrollBy, behavior: "smooth"});
         if (document.getElementsByTagName("MAIN").length > 0) {
-            document.getElementsByTagName("MAIN")[0].scrollBy({top: 1, behavior: "smooth"});
+            document.getElementsByTagName("MAIN")[0].scrollBy({top: scrollBy, behavior: "smooth"});
         }
     }
 
@@ -70,6 +73,13 @@
         }
 
         $(window).bind("scrollStop", function() {
+            // Prevent getting stuck scrolling up
+            if ($("#container").position().top === $("#infinite-scroll-gallery").position().top) {
+                setTimeout(() => {
+                    scrollByN(1);
+                }, 500);
+            }
+
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
@@ -118,7 +128,7 @@
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false && Util.isMobile() === false) {
-                scrollByOne();
+                scrollByN(1);
             }
 
             const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
@@ -165,7 +175,7 @@
             let hovered = false;
             $(".photo-thumbnail-image").mousemove(function () {
                 if (hovered === false && timelineSettings.rendered === true && timelineSettings.enableScrollSpy === true) {
-                    scrollByOne();
+                    scrollByN(1);
                     hovered = true;
                 }
             });
@@ -707,6 +717,7 @@
             }
 
             let timelineArr = timelineDates.reverse();
+            let counter = 0;
             for (let index = startingIndexTop; index < timelineArr.length; index++) {
                 const timelineDate = timelineArr[index];
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
@@ -724,8 +735,12 @@
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
 
-                        if (Util.isMobile() === false && Util.getOS() !== "Mac OS") {
-                            scrollByOne();
+                        // Prevent auto scrolling
+                        if ($("#container").position().top === $("#infinite-scroll-gallery").position().top && counter > 1) {
+                            scrollByN(1);
+                            break;
+                        } else if (Util.isMobile() === false && Util.getOS() !== "Mac OS") {
+                            scrollByN(1);
                         }
 
                         // Break if top not in viewport
@@ -743,6 +758,7 @@
                         }
                     }
                 }
+                counter++;
             }
 
             // Render below visibleContainers going from top down
