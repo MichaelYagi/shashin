@@ -37,15 +37,17 @@
                                         </button>
                                         <div class="dropdown-menu" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
-                                                <button class="dropdown-item" type="button">
-                                                    <input type="checkbox"
-\                                                           th:id="${recognitionLabel.id}"
-                                                           class="recognitionLabel"
-                                                           th:value="${recognitionLabel.name}"
-                                                           name="recognitionLabel[]">
-                                                    <label th:for="${recognitionLabel.id}"
-                                                           th:text="${recognitionLabel.name}"></label>
-                                                </button>
+                                                <th:block th:if="${recognitionLabel.name != null and recognitionLabel.name != 'null'}">
+                                                    <button class="dropdown-item" type="button">
+                                                        <input type="checkbox"
+                                                               th:id="${recognitionLabel.id}"
+                                                               class="recognitionLabel"
+                                                               th:value="${recognitionLabel.name}"
+                                                               name="recognitionLabel[]">
+                                                        <label th:for="${recognitionLabel.id}"
+                                                               th:text="${recognitionLabel.name}"></label>
+                                                    </button>
+                                                </th:block>
                                             </th:block>
                                         </div>
                                         <script type="text/javascript" th:nonce="${cspNonce}">
