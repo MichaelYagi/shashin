@@ -93,11 +93,11 @@ class ModalTemplates {
     `};
 
     static PersonModalDropDown({metadata, recognitionLabel, checkedString}) { return `
-                                                ${(recognitionLabel.name !== "null") ? `
+                                                ${(recognitionLabel.name === null || recognitionLabel.name === "null") ? ``: `
                                                 <button class="dropdown-item" type="button">
                                                     <input type="checkbox" class="recognitionLabel" value="${recognitionLabel.name}" name="recognitionLabel${metadata.id}[]" id="${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}"${(checkedString.length > 0) ? `${checkedString}` : ''}>
                                                     <label for="${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}" id="label${metadata.id.length > 0 ? `-${metadata.id}-` : ''}${recognitionLabel.id}">${recognitionLabel.name}</label>
-                                                </button>`:``}
+                                                </button>`}
     `};
 
     static PersonModalDropdownFooter() { return `

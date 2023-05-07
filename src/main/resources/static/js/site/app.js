@@ -1550,11 +1550,13 @@
                     renderRecognitionLabels = true;
                 }
 
-                batchHtml +=
-                    '           <button class="dropdown-item" type="button">\n' +
-                    '               <input type="checkbox" class="recognitionLabel" id="'+recognitionLabel.id+'" value="'+recognitionLabel.name+'" name="recognitionLabel[]">\n' +
-                    '               <label for="'+recognitionLabel.id+'">'+recognitionLabel.name+'</label>\n' +
-                    '           </button>'
+                if (recognitionLabel.name !== null && recognitionLabel.name !== "null") {
+                    batchHtml +=
+                        '           <button class="dropdown-item" type="button">\n' +
+                        '               <input type="checkbox" class="recognitionLabel" id="' + recognitionLabel.id + '" value="' + recognitionLabel.name + '" name="recognitionLabel[]">\n' +
+                        '               <label for="' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
+                        '           </button>'
+                }
             }
             batchHtml +=
                 '   </div>\n' +
