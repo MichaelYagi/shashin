@@ -721,18 +721,15 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
 
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            if (Util.isMobile() === false && Util.getOS() !== "Mac OS") {
-                                // Prevent auto scrolling
-                                scrollByOne();
-                            }
                             timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                        }
+
+                        if (Util.isMobile() === false && Util.getOS() !== "Mac OS") {
+                            scrollByOne();
                         }
 
                         // Break if top not in viewport
                         if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
-                            if (Util.isMobile() === false && Util.getOS() !== "Mac OS") {
-                                scrollByOne();
-                            }
                             break;
                         }
                     }
