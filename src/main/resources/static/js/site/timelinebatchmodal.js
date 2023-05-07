@@ -115,9 +115,9 @@ $("#saveBatchMetadata").on("click", async function (e) {
                     $("#camerasBatchString").val(data["cameras"]);
                 }
 
-                shashin.processAlbumList(data, true);
+                shashin.processAlbumList(data);
 
-                shashin.processPeopleList(data, true);
+                shashin.processPeopleList(data);
 
                 let dateGalleryRemoved = false;
                 for (const index in metadataIds) {

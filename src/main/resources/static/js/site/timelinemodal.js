@@ -131,9 +131,9 @@ $("#saveMetadata").on("click", async function (e) {
                     $("#camerasBatchString").val(data["cameras"]);
                 }
 
-                shashin.processAlbumList(data, false);
+                shashin.processAlbumList(data);
 
-                shashin.processPeopleList(data, false);
+                shashin.processPeopleList(data);
 
                 // Update tag
                 const metadataObj = {};
