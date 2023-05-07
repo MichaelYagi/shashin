@@ -1485,7 +1485,7 @@
         return shashin.autocompleteSplit(term).pop();
     }
 
-    shashin.processAlbumList = function(data, isBatch) {
+    shashin.processAlbumList = function(data) {
         if (data.hasOwnProperty("allAlbumList") && data["allAlbumList"].length > 0) {
             let renderAlbumList = false;
             const albumList = data["allAlbumList"];
@@ -1520,11 +1520,7 @@
                     timelineBatchModal.populateBatchAlbum();
                 });
 
-                let albumDropDownEl = "#tagalbumdropdown";
-                if (isBatch === true) {
-                    albumDropDownEl = ".tagalbumdropdown";
-                }
-                $(albumDropDownEl).on("click", function (e) {
+                $("#tagalbumdropdown").on("click", function (e) {
                     e.preventDefault();
                     timelineBatchModal.toggleBatchTagAlbumDropdown();
                 });
@@ -1532,7 +1528,7 @@
         }
     }
 
-    shashin.processPeopleList = function(data, isBatch) {
+    shashin.processPeopleList = function(data) {
         if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
             let renderRecognitionLabels = false;
             const recognitionLabels = data["recognitionLabels"];
@@ -1568,11 +1564,7 @@
                     e.preventDefault();
                     timelineBatchModal.closeBatchTagPeopleDropdown();
                 });
-                let peopleDropDownEl = "#tagpeopledropdown";
-                if (isBatch === true) {
-                    peopleDropDownEl = ".tagpeopledropdown";
-                }
-                $(peopleDropDownEl).on("click", function (e) {
+                $("#tagpeopledropdown").on("click", function (e) {
                     e.preventDefault();
                     timelineBatchModal.toggleBatchTagPeopleDropdown();
                 });
