@@ -737,12 +737,11 @@
 
                         // Prevent auto scrolling
                         if ($("#container").position().top === $("#infinite-scroll-gallery").position().top && counter > 1) {
-                            scrollByN(1);
+                            if (Util.getOS() !== "MacOS") {
+                                scrollByN(1);
+                            }
                             break;
                         }
-                        // else if (Util.isMobile() === false && Util.getOS() !== "Mac OS") {
-                        //     scrollByN(1);
-                        // }
 
                         // Break if top not in viewport
                         if (Util.elementsInViewport($("#" + currentDate)).length === 0) {

@@ -124,3 +124,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Timeline play photo/video button misfiring
+- Bulk edit Albums and People dropdown list population
