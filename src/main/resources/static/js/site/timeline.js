@@ -740,9 +740,6 @@
                             scrollByN(1);
                             break;
                         }
-                        // else if (Util.isMobile() === false && Util.getOS() !== "Mac OS") {
-                        //     scrollByN(1);
-                        // }
 
                         // Break if top not in viewport
                         if (Util.elementsInViewport($("#" + currentDate)).length === 0) {
