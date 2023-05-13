@@ -24,7 +24,7 @@ https://app.circleci.com/pipelines/github/MichaelYagi/shashin
 Published to https://hub.docker.com/repository/docker/michaeltyagi/shashin
 
 # Development
-To use unminified JS assets, set the following VM options:
+To use unminified JS assets, set the following VM options/Profile:
 ```-Dspring.profiles.active=dev```
 
 Frameworks
