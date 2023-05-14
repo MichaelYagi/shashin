@@ -599,6 +599,8 @@ async function showMap(mapdata,keywordMap,showControls) {
         });
     });
 
+    // Temporary measure to not have multiple videos stacked up for a slide
+    // TODO: Look into why selectStyleFunction gets fired off multiple times for a cluster of photos the first time
     $dynamicGallery.addEventListener("lgAfterSlide", function(e) {
         const lgItems = $(".lg-item div.lg-video-cont");
         lgItems.each(function(i, obj) {
