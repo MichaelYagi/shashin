@@ -586,6 +586,14 @@ async function showMap(mapdata,keywordMap,showControls) {
         });
     });
 
+    $dynamicGallery.addEventListener('lgAfterOpen', function () {
+        // Hack to remove duplicate videos
+        // This is an issue when creating the style for a select interaction firing twice for the first time
+        $dynamicGallery.addEventListener("lgAfterAppendSlide", function(e) {
+            $("video").not(':first').remove();
+        });
+    });
+
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
     setLayer(startDateField.val(),endDateField.val());
 
