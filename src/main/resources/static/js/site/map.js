@@ -473,10 +473,10 @@ async function showMap(mapdata,keywordMap,showControls) {
             if (featureProperties.type.includes("image")) {
                 mediaContent.src = featureProperties.thumbnailUrlOriginal;
                 mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal)+"/download";
-            } else if (featureProperties.type.includes("video")) {
+            } else if ($("#"+featureProperties.metadataId).length === 0 && featureProperties.type.includes("video")) {
                 mediaContent.video = {
                     "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
-                    "attributes": {"preload": "auto", "controls": true, "autoplay": true}
+                    "attributes": {"preload": "auto", "controls": true, "autoplay": true, "id": featureProperties.metadataId}
                 }
                 mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl)+"/download";
             }

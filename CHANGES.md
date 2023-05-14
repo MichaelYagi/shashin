@@ -125,3 +125,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Timeline play photo/video button misfiring
 - Bulk edit Albums and People dropdown list population
+- Work around for duplicate video html on map view
