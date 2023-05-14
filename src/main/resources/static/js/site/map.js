@@ -604,7 +604,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         lgItems.each(function(i, obj) {
             const content = $(obj).children();
             if (content.length > 0 && $(content[0]).prop("tagName") !== undefined && $(content[0]).prop("tagName").toLowerCase() === "video") {
-                content.length = 1;
+                $(content).not(':first').remove();
             }
         });
     });
