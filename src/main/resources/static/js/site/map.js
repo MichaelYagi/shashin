@@ -586,12 +586,13 @@ async function showMap(mapdata,keywordMap,showControls) {
         });
     });
 
-    $dynamicGallery.addEventListener('lgAfterOpen', function () {
-        // Hack to remove duplicate videos
-        // This is an issue when creating the style for a select interaction firing twice for the first time
-        $dynamicGallery.addEventListener("lgAfterAppendSlide", function(e) {
-            $("video").not(':first').remove();
-        });
+    $dynamicGallery.addEventListener("lgAfterSlide", function(e) {
+        const currSlide = $(".lg-current div.lg-video-cont");
+        const content = currSlide.children();
+
+        if (content.length > 0 && $(content[0]).prop("tagName") !== undefined && $(content[0]).prop("tagName").toLowerCase() === "video") {
+            content.not(':first').remove();
+        }
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
