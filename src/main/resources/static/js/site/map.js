@@ -4,7 +4,9 @@ async function showMap(mapdata,keywordMap,showControls) {
     // Must be format yyyy-mm-dd
     const qssd = Util.getParameterByName("sd");
     const qsed = Util.getParameterByName("ed");
+    const qsvo = Util.getParameterByName("vo");
 
+    const videoOnlyCheckbox = $("#videoOnlyInput");
     const startDateField = $("#startDateInput");
     const endDateField = $("#endDateInput");
     const dateInputs = $("#dateInputs");
@@ -44,7 +46,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         localStorage.removeItem('lng');
     }
 
-    if ((qssd !== null && qssd !== "") || (qsed !== null && qsed !== "")) {
+    if ((qssd !== null && qssd !== "") || (qsed !== null && qsed !== "") || qsvo !== null) {
         if (qssd !== "") {
             if (true === isValidQsDate(qssd)) {
                 startDateField.val(qssd);
@@ -59,13 +61,18 @@ async function showMap(mapdata,keywordMap,showControls) {
                 dateValidationMessage.text("Date format must be yyyy-mm-dd.");
             }
         }
+        if (qsvo !== null) {
+            videoOnlyCheckbox.prop("checked", qsvo);
+        }
     } else if (
       Util.localStorageAvailable() === true &&
       "sd" in localStorage &&
-      "ed" in localStorage
+      "ed" in localStorage &&
+      "vo" in localStorage
     ) {
         const sd = localStorage.getItem("sd");
         const ed = localStorage.getItem("ed");
+        const vo = localStorage.getItem("vo");
 
         if (sd !== "") {
             startDateField.val(sd);
@@ -73,9 +80,11 @@ async function showMap(mapdata,keywordMap,showControls) {
         if (ed !== "") {
             endDateField.val(ed);
         }
+        videoOnlyCheckbox.prop("checked",vo);
 
         localStorage.removeItem("sd");
         localStorage.removeItem("ed");
+        localStorage.removeItem("vo");
     }
 
     function isValidQsDate(dateString) {
@@ -177,12 +186,16 @@ async function showMap(mapdata,keywordMap,showControls) {
         return true;
     }
 
-    function setLayer(startDate, endDate) {
+    function setLayer(startDate, endDate, videoOnly) {
         map.removeLayer(vectorLayer);
         const iconFeatures = [];
 
         for (let index in mapdata) {
             const data = mapdata[index];
+
+            if (videoOnly === true && data["type"].includes("video") === false) {
+                continue;
+            }
 
             if (data["lat"] !== null && data["lng"] !== null &&
                 data["lat"] !== "" && data["lng"] !== "") {
@@ -587,16 +600,17 @@ async function showMap(mapdata,keywordMap,showControls) {
     });
 
     $dynamicGallery.addEventListener("lgAfterSlide", function(e) {
-        const currSlide = $(".lg-current div.lg-video-cont");
-        const content = currSlide.children();
-
-        if (content.length > 0 && $(content[0]).prop("tagName") !== undefined && $(content[0]).prop("tagName").toLowerCase() === "video") {
-            content.not(':first').remove();
-        }
+        const lgItems = $(".lg-item div.lg-video-cont");
+        lgItems.each(function(i, obj) {
+            const content = $(obj).children();
+            if (content.length > 0 && $(content[0]).prop("tagName") !== undefined && $(content[0]).prop("tagName").toLowerCase() === "video") {
+                content.length = 1;
+            }
+        });
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
-    setLayer(startDateField.val(),endDateField.val());
+    setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
 
     $("#dateInputButton").on("click", function(e) {
         e.preventDefault();
@@ -606,7 +620,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         // Validate fields
         if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
             // Filter results
-            setLayer(startDateField.val(),endDateField.val());
+            setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
         }
     });
 
@@ -616,7 +630,9 @@ async function showMap(mapdata,keywordMap,showControls) {
         startDateField.val("");
         endDateField.val("");
         dateValidationMessage.text("");
-        setLayer(startDateField.val(),endDateField.val());
+        videoOnlyCheckbox.prop("checked", false);
+
+        setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
     });
 
     map.on("pointermove", function (evt) {
@@ -688,6 +704,7 @@ async function showMap(mapdata,keywordMap,showControls) {
                     localStorage.setItem("lng", lng);
                     localStorage.setItem("sd", startDateField.val());
                     localStorage.setItem("ed", endDateField.val());
+                    localStorage.setItem("vo", videoOnlyCheckbox.prop("checked"));
                 }
 
                 metadataLocationModalCancel.prop('disabled', false);
