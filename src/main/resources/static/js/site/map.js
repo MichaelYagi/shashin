@@ -4,7 +4,7 @@ async function showMap(mapdata,keywordMap,showControls) {
     // Must be format yyyy-mm-dd
     const qssd = Util.getParameterByName("sd");
     const qsed = Util.getParameterByName("ed");
-    const qsvo = Util.getParameterByName("vo");
+    const qsvo = Util.getParameterByName("vo") === "true";
 
     const videoOnlyCheckbox = $("#videoOnlyInput");
     const startDateField = $("#startDateInput");
