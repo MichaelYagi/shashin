@@ -72,7 +72,7 @@ async function showMap(mapdata,keywordMap,showControls) {
     ) {
         const sd = localStorage.getItem("sd");
         const ed = localStorage.getItem("ed");
-        const vo = localStorage.getItem("vo");
+        const vo = localStorage.getItem("vo") === "true";
 
         if (sd !== "") {
             startDateField.val(sd);
