@@ -741,7 +741,11 @@
                         // Prevent auto scrolling
                         if (($("#container").position().top === $("#infinite-scroll-gallery").position().top || lastTopPosition === currentTopPosition) && counter > 1) {
                             if (Util.getOS() !== "MacOS") {
-                                scrollByN(1);
+                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
+                                    scrollByN(1);
+                                } else {
+                                    scrollByN(-1);
+                                }
                             }
                             break;
                         }
