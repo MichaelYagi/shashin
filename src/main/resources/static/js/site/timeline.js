@@ -738,7 +738,7 @@
                         }
 
                         // Prevent auto scrolling
-                        if ($("#container").position().top === $("#infinite-scroll-gallery").position().top || lastTopPosition === currentTopPosition) {
+                        if ($("#container").position().top === $("#infinite-scroll-gallery").position().top || (Util.isMobile() === false && lastTopPosition === currentTopPosition)) {
                             if (Util.getOS() !== "MacOS") {
                                 scrollByN(1);
                             }
