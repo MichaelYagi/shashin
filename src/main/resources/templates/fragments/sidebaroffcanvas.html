@@ -51,7 +51,7 @@
             </li>
             <th:block th:if="${currentUser.authority == 'ROLE_ADMIN'}">
                 <li class="nav-item">
-                    <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='settings' or activeSidebar=='scan' or activeSidebar=='users' or activeSidebar=='match' or activeSidebar=='logs' ? ' active' : ''}" href="/settings">
+                    <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='settings' or activeSidebar=='scan' or activeSidebar=='users' or activeSidebar=='match' or activeSidebar=='logs' or activeSidebar=='snapshot' ? ' active' : ''}" href="/settings">
                         <span class="bi-wrench" style="font-size: 1rem;"></span> Settings
                     </a>
                 </li>
