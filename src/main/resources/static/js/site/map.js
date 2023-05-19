@@ -46,6 +46,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         localStorage.removeItem('lng');
     }
 
+    // Query param takes precedence over localstorage
     if ((qssd !== null && qssd !== "") || (qsed !== null && qsed !== "") || qsvo !== null) {
         if (qssd !== "") {
             if (true === isValidQsDate(qssd)) {
@@ -88,6 +89,10 @@ async function showMap(mapdata,keywordMap,showControls) {
     }
 
     function isValidQsDate(dateString) {
+        if (dateString === "" || dateString === null) {
+            return true;
+        }
+
         const regEx = /^\d{4}-\d{2}-\d{2}$/;
         if (!dateString.match(regEx)) {
             return false;
