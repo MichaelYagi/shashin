@@ -25,7 +25,7 @@
     }
 
     const scrollByN = function(scrollBy) {
-        if (!scrollBy) {
+        if (scrollBy === undefined || scrollBy === null) {
             scrollBy = 1;
         }
         document.getElementById("container").scrollBy({top: scrollBy, behavior: "smooth"});
@@ -717,7 +717,6 @@
             }
 
             let timelineArr = timelineDates.reverse();
-            let counter = 0;
             let lastTopPosition = $("#infinite-scroll-gallery").position().top;
             for (let index = startingIndexTop; index < timelineArr.length; index++) {
                 const timelineDate = timelineArr[index];
@@ -739,13 +738,9 @@
                         }
 
                         // Prevent auto scrolling
-                        if (($("#container").position().top === $("#infinite-scroll-gallery").position().top || lastTopPosition === currentTopPosition) && counter > 1) {
+                        if ($("#container").position().top === $("#infinite-scroll-gallery").position().top || lastTopPosition === currentTopPosition) {
                             if (Util.getOS() !== "MacOS") {
-                                if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
-                                    scrollByN(1);
-                                } else {
-                                    scrollByN(-1);
-                                }
+                                scrollByN(1);
                             }
                             break;
                         }
@@ -766,7 +761,6 @@
                     }
                 }
                 lastTopPosition = $("#infinite-scroll-gallery").position().top;
-                counter++;
             }
 
             // Render below visibleContainers going from top down
