@@ -718,6 +718,7 @@
 
             let timelineArr = timelineDates.reverse();
             let counter = 0;
+            let lastTopPosition = $("#infinite-scroll-gallery").position().top;
             for (let index = startingIndexTop; index < timelineArr.length; index++) {
                 const timelineDate = timelineArr[index];
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
@@ -729,6 +730,8 @@
                         // Render currentDate
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
 
+                        const currentTopPosition = $("#infinite-scroll-gallery").position().top;
+
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
 
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
@@ -736,7 +739,7 @@
                         }
 
                         // Prevent auto scrolling
-                        if ($("#container").position().top === $("#infinite-scroll-gallery").position().top && counter > 1) {
+                        if (($("#container").position().top === $("#infinite-scroll-gallery").position().top || lastTopPosition === currentTopPosition) && counter > 1) {
                             if (Util.getOS() !== "MacOS") {
                                 scrollByN(1);
                             }
@@ -758,6 +761,7 @@
                         }
                     }
                 }
+                lastTopPosition = $("#infinite-scroll-gallery").position().top;
                 counter++;
             }
 
@@ -862,26 +866,26 @@
                         const prevDateObj = dateList.length > 1 ? dateList[Math.round((dateList.length - 2) - ui.value)] : currentDateObj;
 
                         if (
-                          timelineSettings.currentScrollDirection ===
-                          timelineSettings.ScrollDirection.down
+                            timelineSettings.currentScrollDirection ===
+                            timelineSettings.ScrollDirection.down
                         ) {
-                          handleTooltip.text(
-                            Util.getShortMonths(currentDateObj.month - 1) +
-                              " " +
-                              currentDateObj.day +
-                              ", " +
-                              currentDateObj.year
-                          );
-                          $(".monthYearSlider").hide();
+                            handleTooltip.text(
+                                Util.getShortMonths(currentDateObj.month - 1) +
+                                " " +
+                                currentDateObj.day +
+                                ", " +
+                                currentDateObj.year
+                            );
+                            $(".monthYearSlider").hide();
                         } else if (prevDateObj) {
-                          handleTooltip.text(
-                            Util.getShortMonths(prevDateObj.month - 1) +
-                              " " +
-                              prevDateObj.day +
-                              ", " +
-                              prevDateObj.year
-                          );
-                          $(".monthYearSlider").hide();
+                            handleTooltip.text(
+                                Util.getShortMonths(prevDateObj.month - 1) +
+                                " " +
+                                prevDateObj.day +
+                                ", " +
+                                prevDateObj.year
+                            );
+                            $(".monthYearSlider").hide();
                         }
                     }
                 },
