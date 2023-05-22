@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width">
     <meta property="og:type" content="video.movie">
     <meta property="og:image" th:content="${baseUrl + #strings.substring(metadataObj.thumbnailUrlCentered, 1, #strings.length(metadataObj.thumbnailUrlCentered))}">
+    <meta property="og:url" th:content="${baseUrl + 'api/v1/video/' + metadataObj.id + '/player'}">
     <meta property="og:title" th:content="${metadataObj.title}">
     <meta property="og:description" th:content="${metadataObj.description}">
     <meta property="og:image:width" th:content="${metadataObj.originalImageWidth}">

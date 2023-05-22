@@ -13,6 +13,7 @@
         <meta name="theme-color" content="#ffffff">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <th:block th:if="${titleDescriptorLower == 'share' or titleDescriptorLower == 'album'}">
+            <meta property="og:url" th:content="${album.shareURL}">
             <meta property="og:image" th:content="${baseUrl + #strings.substring(#uris.escapePath(album.coverUrl), 1, #strings.length(#uris.escapePath(album.coverUrl)))}">
             <meta property="og:title" th:content="${album.name}">
             <meta property="og:description" th:content="${album.name + ' album'}">
