@@ -8,7 +8,7 @@
     <meta property="og:image" th:content="${baseUrl + #strings.substring(metadataObj.thumbnailUrlCentered, 1, #strings.length(metadataObj.thumbnailUrlCentered))}">
     <meta property="og:url" th:content="${baseUrl + 'api/v1/video/' + metadataObj.id + '/player'}">
     <meta property="og:title" th:content="${metadataObj.title}">
-    <meta property="og:description" th:content="${metadataObj.description}">
+    <meta property="og:description" th:content="${metadataObj.description==''?metadataObj.title:metadataObj.description}">
     <meta property="og:image:width" th:content="${metadataObj.originalImageWidth}">
     <meta property="og:image:height" th:content="${metadataObj.originalImageHeight}">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
