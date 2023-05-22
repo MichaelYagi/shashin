@@ -8,6 +8,8 @@
     <meta property="og:image" th:content="${baseUrl + #strings.substring(metadataObj.thumbnailUrlSmall, 1, #strings.length(metadataObj.thumbnailUrlSmall))}">
     <meta property="og:title" th:content="${metadataObj.title}">
     <meta property="og:description" th:content="${metadataObj.description}">
+    <meta property="og:width" th:content="${metadataObj.originalImageWidth}">
+    <meta property="og:height" th:content="${metadataObj.originalImageHeight}">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
