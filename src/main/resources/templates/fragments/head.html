@@ -23,10 +23,10 @@
             <meta property="og:type" content="image.photo.video.movie">
             <meta property="og:image" th:content="${baseUrl + #strings.substring(#uris.escapePath(album.coverUrl), 1, #strings.length(#uris.escapePath(album.coverUrl)))}">
             <meta property="og:title" th:content="${album.name}">
-            <meta property="description" th:content="${album.name + ' album'}">
             <meta property="og:description" th:content="${album.name + ' album'}">
             <meta property="og:image:width" content="209">
             <meta property="og:image:height" content="209">
+            <meta property="description" th:content="${album.name + ' album'}">
         </th:block>
         <script src="/js/jquery-3.5.1.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/jquery-ui.min.js" th:nonce="${cspNonce}"></script>
