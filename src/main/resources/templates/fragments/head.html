@@ -12,6 +12,13 @@
         <meta name="msapplication-TileColor" content="#da532c">
         <meta name="theme-color" content="#ffffff">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <th:block th:if="${titleDescriptorLower == 'share' or titleDescriptorLower == 'album'}">
+            <meta property="og:image" th:content="${baseUrl + #strings.substring(#uris.escapePath(album.coverUrl), 1, #strings.length(#uris.escapePath(album.coverUrl)))}">
+            <meta property="og:title" th:content="${album.name}">
+            <meta property="og:description" th:content="${album.name + ' album'}">
+            <meta property="og:image:width" content="209">
+            <meta property="og:image:height" content="209">
+        </th:block>
         <script src="/js/jquery-3.5.1.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/jquery-ui.min.js" th:nonce="${cspNonce}"></script>
         <script src="/js/popper.min.js" th:nonce="${cspNonce}"></script>
