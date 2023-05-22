@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width">
-    <meta property="og:image" th:content="${baseUrl + #strings.substring(metadataObj.thumbnailUrlOriginal, 1, #strings.length(metadataObj.thumbnailUrlOriginal))}">
+    <meta property="og:image" th:content="${baseUrl + #strings.substring(metadataObj.thumbnailUrlCentered, 1, #strings.length(metadataObj.thumbnailUrlCentered))}">
     <meta property="og:title" th:content="${metadataObj.title}">
     <meta property="og:description" th:content="${metadataObj.description}">
     <meta property="og:image:width" th:content="${metadataObj.originalImageWidth}">
