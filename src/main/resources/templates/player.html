@@ -5,8 +5,8 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="viewport" content="width=device-width">
     <meta name="robots" content="noindex">
-    <meta property="og:type" content="video">
-    <meta property="og:image" th:content="${baseUrl + #strings.substring(metadataObj.thumbnailUrlCentered, 1, #strings.length(metadataObj.thumbnailUrlCentered))}">
+    <meta property="og:type" content="video.movie">
+    <meta property="og:image" th:content="${baseUrl + #strings.substring(#uris.escapePath(metadataObj.thumbnailUrlCentered), 1, #uris.escapePath(#strings.length(metadataObj.thumbnailUrlCentered)))}">
     <meta property="og:url" th:content="${baseUrl + 'api/v1/video/' + metadataObj.id + '/player'}">
     <meta property="og:video" th:content="${baseUrl + 'api/v1/video/' + metadataObj.id}">
     <meta property="og:title" th:content="${metadataObj.title}">
