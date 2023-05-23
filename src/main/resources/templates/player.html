@@ -10,8 +10,8 @@
     <meta property="og:url" th:content="${baseUrl + 'api/v1/video/' + metadataObj.id + '/player'}">
     <meta property="og:title" th:content="${metadataObj.title}">
     <meta property="og:description" th:content="${#strings.isEmpty(metadataObj.description)?metadataObj.title:metadataObj.description}">
-    <meta property="og:image:width" th:content="${metadataObj.originalImageWidth}">
-    <meta property="og:image:height" th:content="${metadataObj.originalImageHeight}">
+    <meta property="og:video:width" th:content="${metadataObj.originalImageWidth}">
+    <meta property="og:video:height" th:content="${metadataObj.originalImageHeight}">
     <meta property="description" th:content="${#strings.isEmpty(metadataObj.description)?metadataObj.title:metadataObj.description}">
     <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
