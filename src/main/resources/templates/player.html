@@ -8,7 +8,7 @@
     <meta property="og:type" content="video">
     <meta property="og:image" th:content="${baseUrl + #strings.substring(metadataObj.thumbnailUrlCentered, 1, #strings.length(metadataObj.thumbnailUrlCentered))}">
     <meta property="og:url" th:content="${baseUrl + 'api/v1/video/' + metadataObj.id + '/player'}">
-    <meta property="og:video" content="${baseUrl + 'api/v1/video/' + metadataObj.id}">
+    <meta property="og:video" th:content="${baseUrl + 'api/v1/video/' + metadataObj.id}">
     <meta property="og:title" th:content="${metadataObj.title}">
     <meta property="og:description" th:content="${#strings.isEmpty(metadataObj.description)?metadataObj.title:metadataObj.description}">
     <meta property="og:video:width" th:content="${metadataObj.originalImageWidth}">
