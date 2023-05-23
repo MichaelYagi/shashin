@@ -58,6 +58,11 @@ $("#saveBatchMetadata").on("click", async function (e) {
                 $("#camerasBatchString").val(data["cameras"]);
             }
 
+            if (data.hasOwnProperty("lenses") && data["lenses"] !== "") {
+                $("#lensesString").val(data["lenses"]);
+                $("#lensesBatchString").val(data["lenses"]);
+            }
+
             if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
                 let renderRecognitionLabels = false;
                 let batchHtml = "";

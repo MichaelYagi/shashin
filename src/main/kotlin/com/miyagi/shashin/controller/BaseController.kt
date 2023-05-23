@@ -54,11 +54,18 @@ class BaseController {
             model["cameras"] = cameraList.joinToString()
         }
 
+        model["lenses"] = ""
+        val lensList = metadataRepository?.findByLensTypeAlphabetical()
+        if (lensList != null && lensList.count() > 0) {
+            model["lenses"] = lensList.joinToString()
+        }
+
         response["recognitionLabels"] = model.getAttribute("recognitionLabels") as Any
         response["allAlbumList"] = model.getAttribute("allAlbumList") as Any
         response["timeOffsets"] = model.getAttribute("timeOffsets") as Any
         response["keywords"] = model.getAttribute("keywords") as Any
         response["cameras"] = model.getAttribute("cameras") as Any
+        response["lenses"] = model.getAttribute("lenses") as Any
 
         return response
     }

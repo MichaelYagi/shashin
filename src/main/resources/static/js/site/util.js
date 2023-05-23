@@ -524,6 +524,7 @@ class Util {
         jsonData.latlngBatchData = batchObj.hasOwnProperty("latlngBatchData") ? Util.decodeHtml(batchObj["latlngBatchData"]) : null;
         jsonData.keywordsBatchData = batchObj.hasOwnProperty("keywordsBatchData") ? Util.decodeHtml(batchObj["keywordsBatchData"]) : null;
         jsonData.cameraBatchData = batchObj.hasOwnProperty("cameraBatchData") ? Util.decodeHtml(batchObj["cameraBatchData"]) : null;
+        jsonData.lensBatchData = batchObj.hasOwnProperty("lensBatchData") ? Util.decodeHtml(batchObj["lensBatchData"]) : null;
         jsonData.offsetTakenBatchData = batchObj.hasOwnProperty("offsetTakenBatchData") ? batchObj["offsetTakenBatchData"] : null;
         jsonData.tagBatchDataInput = batchObj.hasOwnProperty("tagBatchDataInput") ? Util.decodeHtml(batchObj["tagBatchDataInput"]) : null;
         jsonData.albumNameInput = batchObj.hasOwnProperty("albumNameInput") ? Util.decodeHtml(batchObj["albumNameInput"]) : null;

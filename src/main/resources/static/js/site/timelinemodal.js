@@ -89,6 +89,7 @@ $("#saveMetadata").on("click", async function (e) {
             title: Util.decodeHtml($("#title").val().trim()),
             description: Util.decodeHtml($("#description").val().trim()),
             camera: Util.decodeHtml($("#camera").val().trim()),
+            lens: Util.decodeHtml($("#lens").val().trim()),
             year: $("#yearTaken").val(),
             month: $("#monthTaken").val(),
             day: $("#dayTaken").val(),
@@ -129,6 +130,11 @@ $("#saveMetadata").on("click", async function (e) {
                 if (data.hasOwnProperty("cameras") && data["cameras"] !== "") {
                     $("#camerasString").val(data["cameras"]);
                     $("#camerasBatchString").val(data["cameras"]);
+                }
+
+                if (data.hasOwnProperty("lenses") && data["lenses"] !== "") {
+                    $("#lensesString").val(data["lenses"]);
+                    $("#lensesBatchString").val(data["lenses"]);
                 }
 
                 shashin.processAlbumList(data);

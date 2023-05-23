@@ -157,6 +157,7 @@
 
                 const keywordsAvailable = $('#keywordsString').val();
                 const camerasList = $('#camerasString').val();
+                const lensList = $('#lensesString').val();
 
                 // Clear modal data
                 $('#propTimelineModal').find(':input').val('');
@@ -171,6 +172,7 @@
                 $("#metadataId").val(metadata.id);
                 $("#keywordsString").val(keywordsAvailable);
                 $("#camerasString").val(camerasList);
+                $("#lensesString").val(lensList);
 
                 if (metadata.thumbnailUrlCentered !== null) {
                     $("#propTimelineModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
@@ -186,6 +188,10 @@
 
                 if (metadata.camera !== null) {
                     $("#camera").val(metadata.camera);
+                }
+
+                if (metadata.lens !== null) {
+                    $("#lens").val(metadata.lens);
                 }
 
                 if (metadata.timeZone !== null) {
@@ -347,6 +353,11 @@
                     return v !== ''
                 });
                 shashin.createAutocomplete("#camera", camerasAvailableList, false);
+
+                const lensesAvailableList = $($("#lensesString").val().split(",")).not($("#lens").val().split(",")).get().filter(function (v) {
+                    return v !== ''
+                });
+                shashin.createAutocomplete("#lens", lensesAvailableList, false);
 
                 // Open modal window
                 $("#propTimelineModal").modal('show');
