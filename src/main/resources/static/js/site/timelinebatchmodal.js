@@ -115,6 +115,11 @@ $("#saveBatchMetadata").on("click", async function (e) {
                     $("#camerasBatchString").val(data["cameras"]);
                 }
 
+                if (data.hasOwnProperty("lenses") && data["lenses"] !== "") {
+                    $("#lensesString").val(data["lenses"]);
+                    $("#lensesBatchString").val(data["lenses"]);
+                }
+
                 shashin.processAlbumList(data);
 
                 shashin.processPeopleList(data);
@@ -226,6 +231,7 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#albumNameInput').val('');
     $('#keywordsBatchData').val('');
     $('#cameraBatchData').val('');
+    $('#lensBatchData').val('');
     $('#offsetTakenBatchData').val('');
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();

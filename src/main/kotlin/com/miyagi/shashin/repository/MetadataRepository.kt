@@ -43,6 +43,9 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
    @Query("SELECT camera FROM metadata WHERE camera IS NOT NULL GROUP BY camera ORDER BY camera COLLATE NOCASE ASC", nativeQuery = true)
    fun findByCameraTypeAlphabetical(): MutableIterable<String>
 
+   @Query("SELECT lens FROM metadata WHERE lens IS NOT NULL GROUP BY lens ORDER BY lens COLLATE NOCASE ASC", nativeQuery = true)
+   fun findByLensTypeAlphabetical(): MutableIterable<String>
+
    @Query("SELECT * FROM metadata WHERE hidden = true ORDER BY modified_at DESC LIMIT :offset, :limit", nativeQuery = true)
    fun findAllByHiddenAndOffsetAndLimit(@Param("offset") offset: Int, @Param("limit") limit: Int): MutableIterable<Metadata>
 

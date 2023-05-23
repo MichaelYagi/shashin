@@ -36,6 +36,8 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.logging.Level
+import java.util.logging.Logger
 import javax.transaction.Transactional
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
@@ -87,6 +89,8 @@ class TimelineController: BaseController() {
 
     @Value("\${app.sidecar.path}")
     private var relativeSidecarDir: String? = null
+
+    private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
@@ -458,6 +462,7 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("hidden") &&
             metadataMap.containsKey("isObject") &&
             metadataMap.containsKey("camera") &&
+            metadataMap.containsKey("lens") &&
             metadataMap["id"].toString() == metadataId
         ) {
             resp["msg"] = "Saved!"
@@ -580,6 +585,22 @@ class TimelineController: BaseController() {
             } else {
                 metadataObj.get().setCamera(null)
             }
+            if (metadataMap["lens"].toString().trim() != "") {
+                var lens = StringEscapeUtils.escapeHtml4(metadataMap["lens"].toString()).trim()
+                val lensTypes = metadataRepository.findByLensTypeAlphabetical()
+                for (lensType in lensTypes) {
+                    if (lens.trim().lowercase() == lensType.trim().lowercase()) {
+                        lens = lensType
+                        break
+                    }
+                }
+
+                if (metadataObj.get().getLens() != lens) {
+                    metadataObj.get().setLens(lens)
+                }
+            } else {
+                metadataObj.get().setLens(null)
+            }
             if (metadataMap["year"].toString() == "") {
                 metadataObj.get().setYear(null)
             } else if (metadataObj.get().getYear() != metadataMap["year"].toString().toInt()) {
@@ -649,6 +670,7 @@ class TimelineController: BaseController() {
 
             return mapper.writeValueAsString(resp)
         }
+        logger.log(Level.WARNING, "Updating metadata failed. Could not save.")
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
@@ -705,6 +727,7 @@ class TimelineController: BaseController() {
                 return mapper.writeValueAsString(resp)
             }
         }
+        logger.log(Level.WARNING, "Removing batch metadata failed. Could not save.")
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)
@@ -724,6 +747,7 @@ class TimelineController: BaseController() {
         val latlng: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.latlngBatchData)
         val offset: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.offsetTakenBatchData)
         var camera: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.cameraBatchData)
+        var lens: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.lensBatchData)
         var keywords: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.keywordsBatchData)
         val recognitionLabelNames: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.tagBatchDataInput)
         val albumNames: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.albumNameInput)
@@ -758,6 +782,16 @@ class TimelineController: BaseController() {
                 for (cameraType in cameraTypes) {
                     if (camera!!.trim().lowercase() == cameraType.trim().lowercase()) {
                         camera = cameraType.trim()
+                        break
+                    }
+                }
+            }
+
+            if (lens != null && lens.trim().isNotBlank()) {
+                val lensTypes = metadataRepository.findByLensTypeAlphabetical()
+                for (lensType in lensTypes) {
+                    if (lens!!.trim().lowercase() == lensType.trim().lowercase()) {
+                        lens = lensType.trim()
                         break
                     }
                 }
@@ -823,6 +857,9 @@ class TimelineController: BaseController() {
                     if (camera != null && camera.trim().isNotBlank()) {
                         metadata.setCamera(camera)
                     }
+                    if (lens != null && lens.trim().isNotBlank()) {
+                        metadata.setLens(lens)
+                    }
                     if (offset != null && offset.trim().isNotBlank()) {
                         metadata.setTimeZone(offset)
                     }
@@ -867,6 +904,7 @@ class TimelineController: BaseController() {
                 return mapper.writeValueAsString(resp)
             }
         }
+        logger.log(Level.WARNING, "Updating batch metadata failed. Could not save.")
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
         return mapper.writeValueAsString(resp)

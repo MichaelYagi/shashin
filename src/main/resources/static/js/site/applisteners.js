@@ -23,6 +23,9 @@ $("#appToolsBatchEdit").on("click", function(e) {
     const cameraList = $("#camerasBatchString").val().split(",");
     shashin.createAutocomplete("#cameraBatchData", cameraList, false);
 
+    const lensList = $("#lensesBatchString").val().split(",");
+    shashin.createAutocomplete("#lensBatchData", lensList, false);
+
     $("#propBatchMetadata").modal('show');
 });
 
