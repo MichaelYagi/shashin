@@ -565,7 +565,7 @@ class TimelineController: BaseController() {
                 metadataObj.get().setTitle(StringEscapeUtils.escapeHtml4(metadataMap["title"].toString()).trim())
             }
             if (metadataMap["description"].toString().trim() == "") {
-                metadataObj.get().setDescription(metadataObj.get().getDescription())
+                metadataObj.get().setDescription(null)
             } else if (metadataObj.get().getDescription() != metadataMap["description"].toString().trim()) {
                 metadataObj.get().setDescription(StringEscapeUtils.escapeHtml4(metadataMap["description"].toString()).trim())
             }
