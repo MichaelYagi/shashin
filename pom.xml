@@ -206,6 +206,12 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.4.0-b180830.0359</version>
         </dependency>
+        <!-- MD to html -->
+        <dependency>
+            <groupId>org.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.20.0</version>
+        </dependency>
         <!-- Facial Recog-->
         <dependency>
             <groupId>org.tensorflow</groupId>
