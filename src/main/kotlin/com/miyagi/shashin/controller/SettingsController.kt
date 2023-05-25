@@ -13,6 +13,7 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import org.commonmark.renderer.html.HtmlRenderer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
@@ -39,11 +40,9 @@ import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.io.*
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.nio.file.attribute.DosFileAttributes
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -57,7 +56,8 @@ import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
-
+import org.commonmark.node.*;
+import org.commonmark.parser.Parser;
 
 @Controller
 class SettingsController {
@@ -710,6 +710,33 @@ class SettingsController {
         }
 
         return mapper.writeValueAsString(resp)
+    }
+
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/settings/changelog")
+    fun getChangelog(model: Model): String {
+        val module = "changelog"
+        model["msg"] = ""
+        model["status"] = ApiResponse.SUCCESS.status
+        model["message"] = ""
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+
+        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+        val changeLogFile = File("$rootPath/CHANGES.md")
+        var renderedMd = ""
+        if (changeLogFile.exists()) {
+            val changeLogFileString = changeLogFile.readText(Charsets.UTF_8)
+            val parser: Parser = Parser.builder().build()
+            val document: Node = parser.parse(changeLogFileString)
+            val renderer = HtmlRenderer.builder().build()
+            renderedMd = renderer.render(document)
+        }
+
+        model["renderedMd"] = renderedMd
+
+        return module
     }
 
     @Secured("ROLE_ADMIN")
