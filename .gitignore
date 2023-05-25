@@ -23,6 +23,7 @@ node/
 *.sqlite
 *.log
 *.DS_Store
+*.bak
 
 ### NetBeans ###
 /nbproject/private/
