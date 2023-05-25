@@ -117,12 +117,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [2.2.3] - 2023-04-26
 ### Added
 
+- SQLite backup added during metadata export
+
 ### Changed
 
 - Use placeholder divs during timeline loading
 
 ### Fixed
 
-- Timeline play photo/video button misfiring
 - Bulk edit Albums and People dropdown list population
 - Work around for duplicate video html on map view

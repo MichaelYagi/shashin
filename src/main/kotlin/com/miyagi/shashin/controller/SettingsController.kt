@@ -128,6 +128,9 @@ class SettingsController {
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
+    @Value("\${spring.datasource.url}")
+    private var dataSourceUrl: String? = null
+
     private var bcrypt = BCryptPasswordEncoder()
 
     private var shouldStop = AtomicBoolean(false)
@@ -715,7 +718,7 @@ class SettingsController {
         val module = "snapshot"
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
-        model["message"] = "Export or import metadata zip file. People and keywords will not be exported."
+        model["message"] = "Export or import metadata zip file and backup database. People and keywords will not be exported."
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -826,6 +829,14 @@ class SettingsController {
                         }
                     }
                 }
+            }
+
+            // Backup the database
+            if (!DatabaseUtil.backup(dataSourceUrl)) {
+                logger.log(
+                    Level.WARNING,
+                    "Could not backup database"
+                )
             }
 
             if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
