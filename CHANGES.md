@@ -2,6 +2,108 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+
+## [2.2.3] - 2023-04-26
+### Added
+
+- Editable Lens field
+- SQLite backup added during metadata export
+- Changelog page
+
+### Changed
+
+- Use placeholder divs during timeline loading
+
+### Fixed
+
+- Bulk edit Albums and People dropdown list population
+- Work around for duplicate video html on map view
+
+## [2.2.2] - 2023-04-09
+### Added
+
+- Ability to download album photos
+
+### Changed
+
+- Paginated "Folders" and "Albums" view
+
+### Fixed
+
+## [2.2.1] - 2022-06-20
+### Added
+
+- Spinner on download icon while making AJAX call for timeline media downloads
+- UX improvements for backup exports
+- File browser for media directories
+- Date filter for map
+
+### Changed
+
+- Minor file naming change for downloaded files
+- Updated OpenLayers to 7.0.0
+
+### Fixed
+
+- Prevent multiple downloads while downloading
+- Redirect to referer after login
+
+## [2.2.0] - 2022-06-19
+### Added
+
+- Added ability to download selected files in various views
+
+### Changed
+
+### Fixed
+
+## [2.1.0] - 2022-03-18
+### Added
+
+- Added recently modified view and API
+
+### Changed
+
+### Fixed
+
+- Firefox scroll jumping
+
+## [2.0.2] - 2022-03-15
+### Added
+
+- Added nonce to inline Javascript
+
+### Changed
+
+### Fixed
+
+## [2.0.1] - 2022-02-21
+### Added
+
+- Import/Export metadata functionality
+
+### Changed
+
+### Fixed
+
+- UX fixes and improvements for mobile
+- Fixed favorite counts for media
+
+## [2.0.0] - 2022-01-29
+### Added
+
+- Input to change or add camera model
+- Added description field in metadata
+
+### Changed
+
+- Simplified timeline API and view logic
+- Optimized modals on views
+- Re-hauled date scrolling
+- Changed params for UUID generation for metadata
+
+### Fixed
+
 ## [1.0.0] - 2022-01-14
 ### Added
 
@@ -28,104 +130,3 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed API data structure of values returned
 - Prevent keyword blank string entry
 - Open only one search link when clicking on dashboard bar for camera and keywords
-
-## [2.0.0] - 2022-01-29
-### Added
-
-- Input to change or add camera model
-- Added description field in metadata
-
-### Changed
-
-- Simplified timeline API and view logic
-- Optimized modals on views
-- Re-hauled date scrolling
-- Changed params for UUID generation for metadata
-
-### Fixed
-
-## [2.0.1] - 2022-02-21
-### Added
-
-- Import/Export metadata functionality
-
-### Changed
-
-### Fixed
-
-- UX fixes and improvements for mobile
-- Fixed favorite counts for media
-
-## [2.0.2] - 2022-03-15
-### Added
-
-- Added nonce to inline Javascript
-
-### Changed
-
-### Fixed
-
-## [2.1.0] - 2022-03-18
-### Added
-
-- Added recently modified view and API
-
-### Changed
-
-### Fixed
-
-- Firefox scroll jumping
-
-## [2.2.0] - 2022-06-19
-### Added
-
-- Added ability to download selected files in various views
-
-### Changed
-
-### Fixed
-
-## [2.2.1] - 2022-06-20
-### Added
-
-- Spinner on download icon while making AJAX call for timeline media downloads
-- UX improvements for backup exports
-- File browser for media directories
-- Date filter for map
-
-### Changed
-
-- Minor file naming change for downloaded files
-- Updated OpenLayers to 7.0.0
-
-### Fixed
-
-- Prevent multiple downloads while downloading
-- Redirect to referer after login
-
-## [2.2.2] - 2023-04-09
-### Added
-
-- Ability to download album photos
-
-### Changed
-
-- Paginated "Folders" and "Albums" view
-
-### Fixed
-
-## [2.2.3] - 2023-04-26
-### Added
-
-- Editable Lens field
-- SQLite backup added during metadata export
-- Changelog page
-
-### Changed
-
-- Use placeholder divs during timeline loading
-
-### Fixed
-
-- Bulk edit Albums and People dropdown list population
-- Work around for duplicate video html on map view
