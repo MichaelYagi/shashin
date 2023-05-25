@@ -119,6 +119,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Editable Lens field
 - SQLite backup added during metadata export
+- Changelog page
 
 ### Changed
 
