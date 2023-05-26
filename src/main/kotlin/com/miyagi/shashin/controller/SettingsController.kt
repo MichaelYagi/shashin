@@ -859,7 +859,8 @@ class SettingsController {
             }
 
             // Backup the database
-            if (!DatabaseUtil.backup(dataSourceUrl)) {
+            val dbBackupName = DatabaseUtil.backup(dataSourceUrl)
+            if (dbBackupName == "") {
                 logger.log(
                     Level.WARNING,
                     "Could not backup database"
@@ -880,6 +881,7 @@ class SettingsController {
                     val headers = HttpHeaders()
                     headers.add(HttpHeaders.SET_COOKIE, "ShashinSnapshotName=" + outputZipFile.name)
                     headers.add(HttpHeaders.SET_COOKIE, "ShashinSnapshotSize=" + contentLength)
+                    headers.add(HttpHeaders.SET_COOKIE, "ShashinDbBackupName=" + dbBackupName)
                     headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + outputZipFile.name)
                     headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
                     headers.add("Pragma", "no-cache")
