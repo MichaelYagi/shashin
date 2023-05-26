@@ -713,33 +713,6 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @GetMapping("/settings/changelog")
-    fun getChangelog(model: Model): String {
-        val module = "changelog"
-        model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
-        model["message"] = ""
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-
-        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val changeLogFile = File("$rootPath/CHANGES.md")
-        var renderedMd = ""
-        if (changeLogFile.exists()) {
-            val changeLogFileString = changeLogFile.readText(Charsets.UTF_8)
-            val parser: Parser = Parser.builder().build()
-            val document: Node = parser.parse(changeLogFileString)
-            val renderer = HtmlRenderer.builder().build()
-            renderedMd = renderer.render(document)
-        }
-
-        model["renderedMd"] = renderedMd
-
-        return module
-    }
-
-    @Secured("ROLE_ADMIN")
     @GetMapping("/settings/snapshot")
     fun getSnapshot(model: Model): String {
         val module = "snapshot"
