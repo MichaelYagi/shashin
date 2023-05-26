@@ -20,7 +20,7 @@ object DatabaseUtil {
 
                 val dir = File(rootPath)
 
-                val names = dir.list { dir, name ->
+                val names = dir.list { _, name ->
                     name.endsWith(".bak")
                 }
 
