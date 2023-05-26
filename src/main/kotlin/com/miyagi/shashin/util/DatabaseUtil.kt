@@ -9,8 +9,8 @@ import java.time.format.DateTimeFormatter
 
 object DatabaseUtil {
     @Throws(IOException::class, InterruptedException::class)
-    fun backup(fullDbName: String?): Boolean {
-        var processComplete = 0
+    fun backup(fullDbName: String?): String {
+        var backupName = ""
         val fullDbNameArray = fullDbName?.split(":")
         if (!fullDbNameArray.isNullOrEmpty() && fullDbNameArray.size > 2) {
             val dbNameArray = fullDbNameArray[2].split("?")
@@ -37,11 +37,11 @@ object DatabaseUtil {
                 val dbFile = File("$rootPath/$dbName")
                 if (dbFile.exists()) {
                     dbFile.copyTo(backupDbFile)
-                    processComplete = 1
+                    backupName = dbName + "." + dtf.format(now) + ".bak"
                 }
             }
         }
 
-        return processComplete == 1
+        return backupName
     }
 }

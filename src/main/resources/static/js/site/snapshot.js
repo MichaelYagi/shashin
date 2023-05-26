@@ -3,6 +3,7 @@ class Snapshot {
     constructor() {
         this.tokenName = "ShashinSnapshotName";
         this.tokenSize = "ShashinSnapshotSize";
+        this.tokenDbBackupName = "ShashinDbBackupName";
         this.configuredAttempts = 120;
     }
 
@@ -27,6 +28,7 @@ class Snapshot {
 
         const tokenName = this.tokenName;
         const tokenSize = this.tokenSize;
+        const tokenDbBackupName = this.tokenDbBackupName;
         let downloadTimer;
 
         $("#export").on("click", function() {
@@ -37,19 +39,23 @@ class Snapshot {
 
             Util.setCookie(tokenName, "", "/settings/snapshot");
             Util.setCookie(tokenSize, "", "/settings/snapshot");
+            Util.setCookie(tokenDbBackupName, "", "/settings/snapshot");
 
             downloadTimer = window.setInterval( function() {
                 const tokenCookieValue = Util.getCookie(tokenName);
                 const tokenCookieSize = Util.getCookie(tokenSize);
+                const tokenCookieDbBackupName = Util.getCookie(tokenDbBackupName);
 
-                if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
+                if ((tokenCookieValue !== "" && tokenCookieSize !== "" && tokenCookieDbBackupName !== "") || attempts === 0) {
                     if (attempts === 0) {
                         $("#msg").html("&nbsp;");
                     } else {
-                        $("#msg").text("File name: " + tokenCookieValue + ". File size: " + Util.formatBytes(tokenCookieSize) + ".");
+                        const dbBackupStatusString = tokenCookieDbBackupName === "" ? "Error encountered":tokenCookieDbBackupName;
+                        $("#msg").text("Database backup name: " + dbBackupStatusString + ". File name: " + tokenCookieValue + ". File size: " + Util.formatBytes(tokenCookieSize) + ".");
                         $("#export").prop("disabled", false);
                         Util.deleteCookie(tokenName, "/settings/snapshot");
                         Util.deleteCookie(tokenSize, "/settings/snapshot");
+                        Util.deleteCookie(tokenDbBackupName, "/settings/snapshot");
                         window.clearInterval(downloadTimer);
                     }
                 }
