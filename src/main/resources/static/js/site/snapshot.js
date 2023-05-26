@@ -50,8 +50,8 @@ class Snapshot {
                     if (attempts === 0) {
                         $("#msg").html("&nbsp;");
                     } else {
-                        const dbBackupStatusString = tokenCookieDbBackupName === "" ? "Error encountered":tokenCookieDbBackupName;
-                        $("#msg").text("Database backup name: " + dbBackupStatusString + ". File name: " + tokenCookieValue + ". File size: " + Util.formatBytes(tokenCookieSize) + ".");
+                        const dbBackupNameString = tokenCookieDbBackupName === "" ? "Error encountered":tokenCookieDbBackupName;
+                        $("#msg").text("Database backup name: " + dbBackupNameString + ". File name: " + tokenCookieValue + ". File size: " + Util.formatBytes(tokenCookieSize) + ".");
                         $("#export").prop("disabled", false);
                         Util.deleteCookie(tokenName, "/settings/snapshot");
                         Util.deleteCookie(tokenSize, "/settings/snapshot");
