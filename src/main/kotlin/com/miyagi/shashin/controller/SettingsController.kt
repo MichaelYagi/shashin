@@ -13,7 +13,6 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import org.commonmark.renderer.html.HtmlRenderer
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
@@ -56,8 +55,6 @@ import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
-import org.commonmark.node.*;
-import org.commonmark.parser.Parser;
 
 @Controller
 class SettingsController {
