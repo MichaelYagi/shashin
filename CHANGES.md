@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 - Use placeholder divs during timeline loading
+- Rendering preview thumbnail images in viewport for better performance
 
 ### Fixed
 

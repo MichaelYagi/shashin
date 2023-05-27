@@ -15,6 +15,7 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
+    timelineSettings.elementsToRescan = [];
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -103,6 +104,15 @@
             }
 
             setTimeout(() => {
+                $.each(timelineSettings.elementsToRescan, function(index, map) {
+                    const metadata = map.metadata;
+                    const favoritesMap = map.favoritesMap;
+
+                    if ($("#image"+metadata.id).src === undefined) {
+                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                    }
+                })
+                timelineSettings.elementsToRescan = [];
                 timelineSettings.reinitLightGalleryInstance();
             }, 500);
         });
@@ -1185,6 +1195,96 @@
         }
     }
 
+    timelineSettings.renderThumbnailPreviews = function(metadata, favoritesMap) {
+        if ($("#tnbr" + metadata.id + ".thumbnail-br").length === 0) {
+            $("#tnbr" + metadata.id).addClass("thumbnail-br");
+        }
+
+        if ($("#favorite" + metadata.id).length === 0) {
+            $("#tnbr" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomRightOverlay({metadata:metadata}));
+            const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
+            const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
+            $("#bricon" + metadata.id).addClass(favoriteIcon);
+            $("#briconcount" + metadata.id).text(favoriteCount);
+        }
+
+        if ($("#image" + metadata.id).length === 1) {
+            $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall));
+            $("#image" + metadata.id).css("background-color", "lightgray");
+        }
+
+        if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {
+            $("#tnbl" + metadata.id).addClass("thumbnail-bl");
+        }
+
+        if ($("#tncentered" + metadata.id + ".thumbnail-centered").length === 0) {
+            $("#tncentered" + metadata.id).addClass("thumbnail-centered");
+        }
+
+        const mediaContent = {};
+        mediaContent.func = shashin.openInfoSidebar;
+        mediaContent.args = metadata.id;
+        mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
+
+        if (metadata.type.indexOf("video") >= 0) {
+            mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
+            mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
+        } else {
+            mediaContent.src = metadata.thumbnailUrlOriginal;
+            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal) + "/download";
+        }
+
+        if (metadata.originalImageWidth !== null) {
+            mediaContent.width = metadata.originalImageWidth;
+        }
+
+        if ($("#mediaLink" + metadata.id).length === 0) {
+            $("#tncentered" + metadata.id).append(TimelineTemplates.TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent}));
+        }
+
+        if ($("#timelineModalEdit" + metadata.id).length === 0) {
+            const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
+            $("#tnbl" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomLeftOverlay({metadata:metadata,editIcon:editIcon}));
+            $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
+            $("#timelineModalEdit" + metadata.id).on("click", function (e) {
+                e.preventDefault();
+                shashin.openEditMetadataModal(metadata.id, timelineSettings)
+            });
+        }
+
+        if ($("#select" + metadata.id).length === 0) {
+            $("#tntl" + metadata.id).append(TimelineTemplates.TimelineGalleryTopLeftOverlay({metadata:metadata})).ready(function () {
+                timelineSettings.rendered = true;
+            });
+        }
+
+        if ($("#tntl" + metadata.id + ".thumbnail-tl").length === 0) {
+            $("#tntl" + metadata.id).addClass("thumbnail-tl");
+            shashin.setPhotoOverlays(metadata, "timeline")
+            timelineSettings.activateMetadataListeners(metadata.id);
+        }
+
+        if (metadata.type.indexOf("video") >= 0) {
+            if ($("#video" + metadata.id).length === 0) {
+                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
+                    timelineSettings.rendered = true;
+                });
+            }
+            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                $("#tntr" + metadata.id).addClass("thumbnail-tr");
+            }
+        } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
+            if ($("#panorama" + metadata.id).length === 0) {
+                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
+                    timelineSettings.rendered = true;
+                });
+            }
+            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                $("#tntr" + metadata.id).addClass("thumbnail-tr");
+            }
+        }
+    }
+
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = function(date,mediaTypeFilter) {
         timelineSettings.rendered = false;
@@ -1205,95 +1305,11 @@
                                 const metadata = metadataList[index];
 
                                 setTimeout(function () {
-                                    if (Util.elementsInViewport($("#image" + metadata.id))) {
-
-                                        if ($("#tnbr" + metadata.id + ".thumbnail-br").length === 0) {
-                                            $("#tnbr" + metadata.id).addClass("thumbnail-br");
-                                        }
-
-                                        if ($("#favorite" + metadata.id).length === 0) {
-                                            $("#tnbr" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomRightOverlay({metadata:metadata}));
-                                            const favoriteIcon = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["favorite"] === true ? 'bi-suit-heart-fill' : 'bi-suit-heart';
-                                            const favoriteCount = favoritesMap.hasOwnProperty(metadata.id) && favoritesMap[metadata.id]["count"] > 0 ? favoritesMap[metadata.id]["count"] : 0;
-                                            $("#bricon" + metadata.id).addClass(favoriteIcon);
-                                            $("#briconcount" + metadata.id).text(favoriteCount);
-                                        }
-
-                                        if ($("#image" + metadata.id).length === 1) {
-                                            $("#image" + metadata.id).attr("src", encodeURI(metadata.thumbnailUrlSmall));
-                                            $("#image" + metadata.id).css("background-color", "lightgray");
-                                        }
-
-                                        if ($("#tnbl" + metadata.id + ".thumbnail-bl").length === 0) {
-                                            $("#tnbl" + metadata.id).addClass("thumbnail-bl");
-                                        }
-
-                                        if ($("#tncentered" + metadata.id + ".thumbnail-centered").length === 0) {
-                                            $("#tncentered" + metadata.id).addClass("thumbnail-centered");
-                                        }
-
-                                        const mediaContent = {};
-                                        mediaContent.func = shashin.openInfoSidebar;
-                                        mediaContent.args = metadata.id;
-                                        mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
-
-                                        if (metadata.type.indexOf("video") >= 0) {
-                                            mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
-                                            mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
-                                        } else {
-                                            mediaContent.src = metadata.thumbnailUrlOriginal;
-                                            mediaContent.downloadUrl = encodeURI(metadata.thumbnailUrlOriginal) + "/download";
-                                        }
-
-                                        if (metadata.originalImageWidth !== null) {
-                                            mediaContent.width = metadata.originalImageWidth;
-                                        }
-
-                                        if ($("#mediaLink" + metadata.id).length === 0) {
-                                            $("#tncentered" + metadata.id).append(TimelineTemplates.TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent}));
-                                        }
-
-                                        if ($("#timelineModalEdit" + metadata.id).length === 0) {
-                                            const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
-                                            $("#tnbl" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomLeftOverlay({metadata:metadata,editIcon:editIcon}));
-                                            $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
-                                            $("#timelineModalEdit" + metadata.id).on("click", function (e) {
-                                                e.preventDefault();
-                                                shashin.openEditMetadataModal(metadata.id, timelineSettings)
-                                            });
-                                        }
-
-                                        if ($("#select" + metadata.id).length === 0) {
-                                            $("#tntl" + metadata.id).append(TimelineTemplates.TimelineGalleryTopLeftOverlay({metadata:metadata})).ready(function () {
-                                                timelineSettings.rendered = true;
-                                            });
-                                        }
-
-                                        if ($("#tntl" + metadata.id + ".thumbnail-tl").length === 0) {
-                                            $("#tntl" + metadata.id).addClass("thumbnail-tl");
-                                            shashin.setPhotoOverlays(metadata, "timeline")
-                                            timelineSettings.activateMetadataListeners(metadata.id);
-                                        }
-
-                                        if (metadata.type.indexOf("video") >= 0) {
-                                            if ($("#video" + metadata.id).length === 0) {
-                                                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
-                                                    timelineSettings.rendered = true;
-                                                });
-                                            }
-                                            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                                                $("#tntr" + metadata.id).addClass("thumbnail-tr");
-                                            }
-                                        } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
-                                            if ($("#panorama" + metadata.id).length === 0) {
-                                                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
-                                                    timelineSettings.rendered = true;
-                                                });
-                                            }
-                                            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                                                $("#tntr" + metadata.id).addClass("thumbnail-tr");
-                                            }
-                                        }
+                                    if (Util.isInViewport($("#image" + metadata.id))) {
+                                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                                    } else {
+                                        // Collect elements to rescan later
+                                        timelineSettings.elementsToRescan.push({metadata:metadata,favoritesMap:favoritesMap});
                                     }
                                 }, 500);
                             }
