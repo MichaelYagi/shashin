@@ -6,6 +6,7 @@ class Util {
 
     static isInViewport(element) {
         if (element.length > 0) {
+            /*
             const header = $('header');
             const elementTop = element.offset().top;
             const elementBottom = elementTop + element.outerHeight();
@@ -13,6 +14,9 @@ class Util {
             const viewportBottom = viewportTop + ($(window).height()-header.outerHeight());
 
             return elementBottom > viewportTop && elementTop < viewportBottom;
+
+             */
+            return element.inViewport('-15') === true;
         }
 
         return false;

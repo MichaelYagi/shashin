@@ -104,15 +104,7 @@
             }
 
             setTimeout(() => {
-                $.each(timelineSettings.elementsToRescan, function(index, map) {
-                    const metadata = map.metadata;
-                    const favoritesMap = map.favoritesMap;
-
-                    if ($("#image"+metadata.id).src === undefined) {
-                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                    }
-                })
-                timelineSettings.elementsToRescan = [];
+                timelineSettings.rescanElements();
                 timelineSettings.reinitLightGalleryInstance();
             }, 500);
         });
@@ -181,6 +173,8 @@
         scrollTimer = setTimeout(function() {
             //$(".photo-thumbnail-image").mousemove();
 
+            timelineSettings.rescanElements();
+
             // Only show overlays when scrolling stopped for current hovered image
             let hovered = false;
             $(".photo-thumbnail-image").mousemove(function () {
@@ -190,6 +184,18 @@
                 }
             });
         }, 1500);
+    }
+
+    timelineSettings.rescanElements = function () {
+        $.each(timelineSettings.elementsToRescan, function(index, map) {
+            const metadata = map.metadata;
+            const favoritesMap = map.favoritesMap;
+
+            if ($("#image"+metadata.id).src === undefined) {
+                timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+            }
+        })
+        timelineSettings.elementsToRescan = [];
     }
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
