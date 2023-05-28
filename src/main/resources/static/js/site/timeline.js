@@ -102,9 +102,8 @@
                 $("#dateSlider").hide();
             }
 
-            timelineSettings.rescanElements();
-
             setTimeout(() => {
+                timelineSettings.rescanElements();
                 timelineSettings.reinitLightGalleryInstance();
             }, 500);
         });
