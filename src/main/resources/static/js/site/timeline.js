@@ -15,7 +15,6 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
-    timelineSettings.firstTimeRender = true;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -834,7 +833,7 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
 
                         // Stage 3 - network call to embed the image URL and complete the process
-                        if (timelineSettings.firstTimeRender === true && msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
                         }
@@ -860,7 +859,6 @@
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
 
-        timelineSettings.firstTimeRender = false;
         timelineSettings.enableScrollSpy = true;
 
         return timelineSettings.success;
@@ -1284,23 +1282,27 @@
         }
 
         if (metadata.type.indexOf("video") >= 0) {
-            if ($("#video" + metadata.id).length === 0) {
-                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
-                    timelineSettings.rendered = true;
-                });
-            }
-            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                $("#tntr" + metadata.id).addClass("thumbnail-tr");
-            }
+            setTimeout(function () {
+                if ($("#video" + metadata.id).length === 0) {
+                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
+                        timelineSettings.rendered = true;
+                    });
+                }
+                if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                    $("#tntr" + metadata.id).addClass("thumbnail-tr");
+                }
+            }, 0);
         } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
-            if ($("#panorama" + metadata.id).length === 0) {
-                $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
-                    timelineSettings.rendered = true;
-                });
-            }
-            if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
-                $("#tntr" + metadata.id).addClass("thumbnail-tr");
-            }
+            setTimeout(function () {
+                if ($("#panorama" + metadata.id).length === 0) {
+                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
+                        timelineSettings.rendered = true;
+                    });
+                }
+                if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                    $("#tntr" + metadata.id).addClass("thumbnail-tr");
+                }
+            }, 0);
         }
     }
 
