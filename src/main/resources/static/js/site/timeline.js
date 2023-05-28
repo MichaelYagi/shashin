@@ -488,7 +488,7 @@
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
                 $("#container_"+currentId).outerHeight(true);
                 if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    await timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
 
                 action = "below";
@@ -510,7 +510,7 @@
                 shashin.printMessageToConsole("actionBelow:"+action)
                 const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint);
                 if (msg === timelineSettings.success && $("#"+currentId).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                    await timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                 }
             }
             attachPoint = currentId;
@@ -546,7 +546,7 @@
 
                     const msg = await timelineSettings.updateTimeline(currentId, mediaTypeFilter, action, attachPoint)
                     if (msg === timelineSettings.success && $("#" + currentId).length === 1) {
-                        timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
+                        await timelineSettings.attachAssociatedMetadata(currentId, mediaTypeFilter);
                     }
 
                     action = "below";
@@ -603,7 +603,7 @@
                 shashin.printMessageToConsole("attaching mid action:" + action)
                 const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, action, attachPoint);
                 if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                    timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                    await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                 }
             }
         }
@@ -758,7 +758,7 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, "above", anchorPoint);
 
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                            await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
 
                         // Prevent auto scrolling
@@ -782,7 +782,7 @@
                     } else {
                         const msg = await timelineSettings.updateTimeline(firstDate, mediaTypeFilter, "above", currentDate);
                         if (msg === timelineSettings.success && $("#" + firstDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(firstDate, mediaTypeFilter);
+                            await timelineSettings.attachAssociatedMetadata(firstDate, mediaTypeFilter);
                         }
                     }
                 }
@@ -831,7 +831,7 @@
 
                         // Stage 3 - network call to embed the image URL and complete the process
                         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                            await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
                         }
 
@@ -846,7 +846,7 @@
                     } else {
                         const msg = await timelineSettings.updateTimeline(lastDate, mediaTypeFilter, "below", currentDate);
                         if (msg === timelineSettings.success && $("#" + lastDate).length === 1) {
-                            timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
+                            await timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
                         }
                     }
                 }
@@ -1054,7 +1054,7 @@
 
         const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
-            timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
+            await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
         }
 
         let depth = 6;
@@ -1070,7 +1070,7 @@
                             // Render currentDate
                             const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
                             if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                                await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                             }
                             currAnchor = id;
                         }
@@ -1088,7 +1088,7 @@
                             // Render currentDate
                             const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
                             if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                                await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
                             }
                             currAnchor = id;
                         }
@@ -1300,7 +1300,7 @@
     }
 
     // Hook up data to edit albums, favorites and people labels
-    timelineSettings.attachAssociatedMetadata = function(date,mediaTypeFilter) {
+    timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
         timelineSettings.rendered = false;
 
         const http = new Http("attaching associated metadata");
