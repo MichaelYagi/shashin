@@ -15,6 +15,7 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
+    timelineSettings.firstTimeRender = true;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -830,7 +831,7 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
 
                         // Stage 3 - network call to embed the image URL and complete the process
-                        if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                        if (timelineSettings.firstTimeRender === true && msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                             await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                             timelineSettings.distanceToFooter = calculateDistanceToFooter();
                         }
@@ -856,6 +857,7 @@
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
 
+        timelineSettings.firstTimeRender = false;
         timelineSettings.enableScrollSpy = true;
 
         return timelineSettings.success;
