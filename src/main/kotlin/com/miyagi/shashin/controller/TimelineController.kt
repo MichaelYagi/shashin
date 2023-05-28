@@ -1013,6 +1013,21 @@ class TimelineController: BaseController() {
             response["metadata"] = metadataRecord.get()
         }
 
+        val favoritesMap = HashMap<String, HashMap<String, Any>>()
+        val idList = mutableListOf<String>()
+        idList.add(id)
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        val favoriteCounts = favoriteRepository.countByMetadataIdIn(idList)
+        if (favoriteCounts.count() > 0) {
+            for (favoriteCount in favoriteCounts) {
+                favoritesMap[favoriteCount.getMetadataId()!!] = hashMapOf(
+                    "favorite" to (favoriteCount.getUserId() == currentUserObj?.getId()),
+                    "count" to favoriteCount.getCount() as Any
+                )
+            }
+        }
+        response["favorites"] = favoritesMap
+
         response["msg"] = ""
         response["status"] = ApiResponse.SUCCESS.status
 

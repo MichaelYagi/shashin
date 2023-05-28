@@ -15,7 +15,6 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
-    timelineSettings.elementsToRescan = [];
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -103,8 +102,9 @@
                 $("#dateSlider").hide();
             }
 
+            timelineSettings.rescanElements();
+
             setTimeout(() => {
-                timelineSettings.rescanElements();
                 timelineSettings.reinitLightGalleryInstance();
             }, 500);
         });
@@ -173,7 +173,7 @@
         scrollTimer = setTimeout(function() {
             //$(".photo-thumbnail-image").mousemove();
 
-            timelineSettings.rescanElements();
+            //timelineSettings.rescanElements();
 
             // Only show overlays when scrolling stopped for current hovered image
             let hovered = false;
@@ -188,15 +188,20 @@
 
     timelineSettings.rescanElements = function () {
         setTimeout(() => {
-            $.each(timelineSettings.elementsToRescan, function(index, map) {
-                const metadata = map.metadata;
-                const favoritesMap = map.favoritesMap;
-
-                if ($("#image"+metadata.id).src === undefined) {
-                    timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+            const elements = Util.elementsInViewport($(".photo-thumbnail-image"));
+            $.each(elements, function(index, value) {
+                const imageId = $(value).attr('id');
+                const imageMetadataId = imageId.substring(5);
+                if ($("#image" + imageMetadataId).src === undefined) {
+                    const http = new Http("attaching associated metadata in viewport");
+                    const version = Util.getMetadataLocalStorage();
+                    http.ajax("get", "/api/v1/metadata/" + imageMetadataId + (version === "" ? "" : "?v=" + version)).then(function (data) {
+                        const metadata = data["metadata"];
+                        const favoritesMap = data["favorites"];
+                        timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                    });
                 }
             })
-            timelineSettings.elementsToRescan = [];
         }, 0);
     }
 
@@ -1313,13 +1318,10 @@
                                 const metadata = metadataList[index];
 
                                 setTimeout(function () {
-                                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id))) {
+                                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id)) === true) {
                                         timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-                                    } else {
-                                        // Collect elements to rescan later
-                                        timelineSettings.elementsToRescan.push({metadata:metadata,favoritesMap:favoritesMap});
                                     }
-                                }, 500);
+                                }, 0);
                             }
                         }
                     }
