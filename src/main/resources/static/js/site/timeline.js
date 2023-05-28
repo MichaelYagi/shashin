@@ -102,8 +102,9 @@
                 $("#dateSlider").hide();
             }
 
+            timelineSettings.rescanElements();
+
             setTimeout(() => {
-                timelineSettings.rescanElements();
                 timelineSettings.reinitLightGalleryInstance();
             }, 500);
         });
@@ -191,7 +192,8 @@
             $.each(elements, function(index, value) {
                 const imageId = $(value).attr('id');
                 const imageMetadataId = imageId.substring(5);
-                if ($("#image" + imageMetadataId).src === undefined) {
+                const imageIdentifier = "#image" + imageMetadataId;
+                if ($(imageIdentifier).length > 0 && $(imageIdentifier).src === undefined) {
                     const http = new Http("attaching associated metadata in viewport");
                     const version = Util.getMetadataLocalStorage();
                     http.ajax("get", "/api/v1/metadata/" + imageMetadataId + (version === "" ? "" : "?v=" + version)).then(function (data) {
