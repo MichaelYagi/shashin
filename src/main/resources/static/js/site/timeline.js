@@ -187,15 +187,17 @@
     }
 
     timelineSettings.rescanElements = function () {
-        $.each(timelineSettings.elementsToRescan, function(index, map) {
-            const metadata = map.metadata;
-            const favoritesMap = map.favoritesMap;
+        setTimeout(() => {
+            $.each(timelineSettings.elementsToRescan, function(index, map) {
+                const metadata = map.metadata;
+                const favoritesMap = map.favoritesMap;
 
-            if ($("#image"+metadata.id).src === undefined) {
-                timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
-            }
-        })
-        timelineSettings.elementsToRescan = [];
+                if ($("#image"+metadata.id).src === undefined) {
+                    timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                }
+            })
+            timelineSettings.elementsToRescan = [];
+        }, 0);
     }
 
     timelineSettings.jumpToLightGalleryMetadata = function (metadataId) {
