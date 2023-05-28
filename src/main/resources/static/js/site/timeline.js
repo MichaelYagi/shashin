@@ -1311,7 +1311,7 @@
                                 const metadata = metadataList[index];
 
                                 setTimeout(function () {
-                                    if (Util.isInViewport($("#image" + metadata.id))) {
+                                    if (Util.isInViewport($("#photoThumbnailContainer" + metadata.id))) {
                                         timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
                                     } else {
                                         // Collect elements to rescan later
