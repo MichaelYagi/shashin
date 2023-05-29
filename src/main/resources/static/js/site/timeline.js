@@ -10,7 +10,6 @@
     timelineSettings.currentScrollTop = 0;
     timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
     timelineSettings.initialized = false;
-    timelineSettings.rendered = false;
     timelineSettings.timelineDates = [];
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
@@ -173,7 +172,7 @@
             // Only show overlays when scrolling stopped for current hovered image
             let hovered = false;
             $(".photo-thumbnail-image").mousemove(function () {
-                if (hovered === false && timelineSettings.rendered === true && timelineSettings.enableScrollSpy === true) {
+                if (hovered === false && timelineSettings.enableScrollSpy === true) {
                     scrollByN(1);
                     hovered = true;
                 }
@@ -1252,9 +1251,7 @@
         }
 
         if ($("#select" + metadata.id).length === 0) {
-            $("#tntl" + metadata.id).append(TimelineTemplates.TimelineGalleryTopLeftOverlay({metadata:metadata})).ready(function () {
-                timelineSettings.rendered = true;
-            });
+            $("#tntl" + metadata.id).append(TimelineTemplates.TimelineGalleryTopLeftOverlay({metadata:metadata}));
         }
 
         if ($("#tntl" + metadata.id + ".thumbnail-tl").length === 0) {
@@ -1266,9 +1263,7 @@
         if (metadata.type.indexOf("video") >= 0) {
             setTimeout(function () {
                 if ($("#video" + metadata.id).length === 0) {
-                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
-                        timelineSettings.rendered = true;
-                    });
+                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
                 }
                 if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
                     $("#tntr" + metadata.id).addClass("thumbnail-tr");
@@ -1277,9 +1272,7 @@
         } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) {
             setTimeout(function () {
                 if ($("#panorama" + metadata.id).length === 0) {
-                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata})).ready(function () {
-                        timelineSettings.rendered = true;
-                    });
+                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
                 }
                 if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
                     $("#tntr" + metadata.id).addClass("thumbnail-tr");
@@ -1290,8 +1283,6 @@
 
     // Hook up data to edit albums, favorites and people labels
     timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
-        timelineSettings.rendered = false;
-
         const http = new Http("attaching associated metadata");
         const version = Util.getMetadataLocalStorage();
         http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
@@ -1315,11 +1306,7 @@
                             }
                         }
                     }
-                } else {
-                    timelineSettings.rendered = true;
                 }
-            } else {
-                timelineSettings.rendered = true;
             }
         });
     }
