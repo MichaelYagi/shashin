@@ -552,17 +552,7 @@
                     attachPoint = currentId;
                     attachBelowArray.push(currentId);
 
-                    if (
-                        rendered === false &&
-                        //($("footer").withinviewport().length === 0) &&
-                        (//$("#br" + currentId).withinviewport().length === 0 ||
-                            //$("#row" + currentId).withinviewport().length === 0 ||
-                            $("#amp_" + currentId).withinviewport().length === 0 //||
-                            //$("#tail_" + currentId).withinviewport().length === 0 ||
-                            //$("#" + currentId).withinviewport().length === 0 ||
-                            //$(".photo-thumbnail-image.thumbnailTag_" + currentId).withinviewport().length === 0
-                        )
-                    ) {
+                    if (rendered === false && $("#amp_" + currentId).withinviewport().length === 0) {
                         rendered = true;
                         continue;
                     }
@@ -608,9 +598,6 @@
         }
 
         shashin.printMessageToConsole("==============================================");
-        //deferred.resolve(timelineSettings.successMidMsg);
-        //return deferred.promise();
-
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
         timelineSettings.enableScrollSpy = true;
