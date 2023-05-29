@@ -108,6 +108,8 @@
         });
 
         // Scroll event handler
+        let lastOffset = $("#container").scrollTop();
+        let lastDate = new Date().getTime();
         const scrollHandler = function (e) {
             if (scrollTimer !== null) {
                 clearTimeout(scrollTimer);
@@ -123,6 +125,16 @@
             if (st === 0) {
                 topScroll = true;
             }
+
+            let delayInMs = e.timeStamp - lastDate;
+            let offset = st - lastOffset;
+            let speedInpxPerMs = offset / delayInMs;
+            if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
+                timelineSettings.rescanElements();
+            }
+
+            lastDate = e.timeStamp;
+            lastOffset = $(e.target).scrollTop();
 
             $("#dateSlider").show();
 
