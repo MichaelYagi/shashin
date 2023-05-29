@@ -50,7 +50,6 @@
         let topScroll = true;
         let topOfPage = true;
         let scrollTimer = null;
-        // let sliderTimer = null;
 
         // Initialize
         if (Util.isMobile() === false) {
@@ -171,10 +170,6 @@
             clearTimeout(scrollTimer);
         }
         scrollTimer = setTimeout(function() {
-            //$(".photo-thumbnail-image").mousemove();
-
-            //timelineSettings.rescanElements();
-
             // Only show overlays when scrolling stopped for current hovered image
             let hovered = false;
             $(".photo-thumbnail-image").mousemove(function () {
