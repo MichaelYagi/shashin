@@ -14,6 +14,7 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
+    timelineSettings.removeElements = true;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -656,7 +657,8 @@
 
         const removedElements = [];
         section.each(function (index, element) {
-            if (Util.isInViewport($("#" + element.id)) === false &&
+            if (timelineSettings.removeElements === true &&
+                Util.isInViewport($("#" + element.id)) === false &&
                 Util.isInViewport($("#br" + element.id)) === false &&
                 Util.isInViewport($("#row" + element.id)) === false &&
                 Util.isInViewport($("#tail_" + element.id)) === false &&
@@ -685,6 +687,8 @@
                 }
             }
         });
+
+        timelineSettings.removeElements = true;
 
         if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
@@ -759,11 +763,9 @@
 
                         // Prevent auto scrolling
                         if ($("#container").position().top === $("#infinite-scroll-gallery").position().top
-                            // || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
+                            || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
                         ) {
-                            // if (Util.getOS() !== "MacOS") {
-                            //     scrollByN(1);
-                            // }
+                            timelineSettings.removeElements = false;
                             break;
                         }
 
