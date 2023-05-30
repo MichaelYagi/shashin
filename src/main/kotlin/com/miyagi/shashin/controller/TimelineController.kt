@@ -404,7 +404,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/timeline/remove/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     fun removeMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -442,7 +442,7 @@ class TimelineController: BaseController() {
 
     @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -679,7 +679,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/timeline/remove/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     fun removeBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
 //        println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -735,7 +735,7 @@ class TimelineController: BaseController() {
 
     @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
 //         println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<BatchMetadataInput>() {})
@@ -994,8 +994,9 @@ class TimelineController: BaseController() {
 
     @RequestMapping(value = ["/api/v1/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
+    @Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
     @Secured("ROLE_ADMIN","ROLE_USER")
-    fun getMetadata(model: Model, @PathVariable(required = true) id: String): String {
+    fun getMetadata(model: Model, @PathVariable(required = true) id: String): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val keywordArray = mutableListOf<String>()
         val keywords = keywordRepository.findKeywordsByMetadataId(id)
@@ -1031,7 +1032,12 @@ class TimelineController: BaseController() {
         response["msg"] = ""
         response["status"] = ApiResponse.SUCCESS.status
 
-        return mapper.writeValueAsString(response)
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+//            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
     }
 
     @RequestMapping(value = ["/api/v1/timeline/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])

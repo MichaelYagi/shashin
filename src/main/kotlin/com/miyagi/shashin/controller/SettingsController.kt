@@ -398,7 +398,7 @@ class SettingsController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings/content/delete"], method = [RequestMethod.POST], produces = ["application/json"])
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     @ResponseBody
     @Transactional
     fun deleteContent(model: Model, @RequestBody requestBody: JsonNode): String? {
@@ -673,7 +673,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
@@ -915,7 +915,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     @PostMapping("/settings/snapshot")
     @Transactional
     fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam snapshotFile: MultipartFile): String {
@@ -1170,7 +1170,7 @@ class SettingsController {
         return false
     }
 
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     fun scanMediaDirectories(reindexFiles: Boolean): String {
         scanCount = 0
         val admins = userRepository?.findAllByAuthorityEquals(adminRole!!)

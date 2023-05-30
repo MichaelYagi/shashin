@@ -108,7 +108,7 @@ class FavoritesController {
     }
 
     @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], produces = ["application/json"])
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     @ResponseBody
     fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -176,7 +176,7 @@ class FavoritesController {
     @RequestMapping(value = ["/favorite/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     fun postDeleteFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataId") && favoritesMap.containsKey("isFavorite")) {
@@ -221,7 +221,7 @@ class FavoritesController {
     @RequestMapping(value = ["/favorites/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate"], allEntries = true)
+    @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest"], allEntries = true)
     fun postDeleteFavorites(model: Model, @RequestBody requestBody: JsonNode): String {
         val favoritesMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (favoritesMap.containsKey("metadataIdList")) {
