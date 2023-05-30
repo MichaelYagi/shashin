@@ -17,6 +17,10 @@ class Http {
             ajaxParams.data = data;
         }
 
+        if (type === "get") {
+            ajaxParams.cache = true;
+        }
+
         return await $.ajax(ajaxParams).fail(function(xhr, textStatus) {
             const message = " executing " + (this.action && this.action.length > 0 ? this.action : "unknown.");
             shashin.onFail(xhr, textStatus, ajaxParams, message, failFunction);
