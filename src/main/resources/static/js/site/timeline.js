@@ -761,9 +761,9 @@
                         if ($("#container").position().top === $("#infinite-scroll-gallery").position().top
                             // || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
                         ) {
-                            if (Util.getOS() !== "MacOS") {
-                                scrollByN(1);
-                            }
+                            // if (Util.getOS() !== "MacOS") {
+                            //     scrollByN(1);
+                            // }
                             break;
                         }
 
