@@ -761,7 +761,7 @@
                             await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                         }
 
-                        // Prevent auto scrolling
+                        // Prevent auto scrolling & div flickering
                         if ($("#container").position().top === $("#infinite-scroll-gallery").position().top
                             || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
                         ) {
