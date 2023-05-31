@@ -14,7 +14,7 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
-    timelineSettings.removeElements = true;
+    timelineSettings.renderElements = false;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -657,8 +657,7 @@
 
         const removedElements = [];
         section.each(function (index, element) {
-            if (timelineSettings.removeElements === true &&
-                Util.isInViewport($("#" + element.id)) === false &&
+            if (Util.isInViewport($("#" + element.id)) === false &&
                 Util.isInViewport($("#br" + element.id)) === false &&
                 Util.isInViewport($("#row" + element.id)) === false &&
                 Util.isInViewport($("#tail_" + element.id)) === false &&
@@ -687,8 +686,6 @@
                 }
             }
         });
-
-        timelineSettings.removeElements = true;
 
         if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
             if (timelineSettings.currentScrollDirection === timelineSettings.ScrollDirection.down) {
@@ -746,7 +743,7 @@
                 const timelineDate = timelineArr[index];
                 prevDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
 
-                if (Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
+                if (timelineSettings.renderElements === true && Util.getDateObject(currentDate) < Util.getDateObject(prevDate)) {
                     if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) ||
                         ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
 
@@ -765,7 +762,7 @@
                         if ($("#container").position().top === $("#infinite-scroll-gallery").position().top
                             || (Util.isMobile() === false && lastTopPosition === currentTopPosition)
                         ) {
-                            timelineSettings.removeElements = false;
+                            timelineSettings.renderElements = true;
                             break;
                         }
 
@@ -786,6 +783,8 @@
                 }
                 lastTopPosition = $("#infinite-scroll-gallery").position().top;
             }
+
+            timelineSettings.renderElements = false;
 
             // Render below visibleContainers going from top down
             currentDate = $(lastVisibleContainer).attr("id");
