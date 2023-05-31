@@ -1,7 +1,7 @@
 (function( timelineSettings, $, undefined ) {
     timelineSettings.ScrollDirection = Object.freeze({"up":1, "down":0})
     timelineSettings.enableScrollSpy = true;
-    timelineSettings.isScrolling = false;
+    timelineSettings.isScrolling = true;
     timelineSettings.prevAnchor = "";
     timelineSettings.successBelowMsg = "success_below";
     timelineSettings.successAboveMsg = "success_above";
@@ -110,6 +110,8 @@
         // Scroll event handler
         let lastOffset = $("#container").scrollTop();
         let lastDate = new Date().getTime();
+        let heightCounter = 0;
+        let heightArray = [];
         const scrollHandler = function (e) {
             if (scrollTimer !== null) {
                 clearTimeout(scrollTimer);
@@ -131,6 +133,22 @@
             let speedInpxPerMs = offset / delayInMs;
             if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
                 timelineSettings.rescanElements();
+            }
+
+            // Prevent flickering
+            if (heightCounter < 3) {
+                heightArray.push(timelineSettings.distanceToFooter);
+                heightCounter++;
+            } else {
+                heightArray = heightArray.sort();
+                for (let i = 0; i < heightArray.length - 1; i++) {
+                    if (heightArray[i + 1] === heightArray[i]) {
+                        timelineSettings.isScrolling = false;
+                        break;
+                    }
+                }
+                heightArray = [];
+                heightCounter = 0;
             }
 
             lastDate = e.timeStamp;
@@ -324,7 +342,7 @@
                 });
 
                 // Scrolling behavior different on Chrome iOS
-                if ((Util.isSafari() === false || Util.isFirefox() === true) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                if ((Util.isSafari() === false || Util.isFirefox() === true) && !(Util.getOS() === "iOS" && Util.isChrome() === true) && timelineSettings.isScrolling === true) {
                     timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                         if (msg === timelineSettings.success) {
                             // Set TOC active element
