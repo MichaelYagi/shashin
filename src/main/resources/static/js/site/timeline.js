@@ -136,35 +136,35 @@
             }
 
             // Prevent flickering
-            if (heightCounter < 3) {
-                heightArray.push($("#container").scrollTop());
-                heightCounter++;
-            } else {
-                heightArray.shift();
-                heightArray.push($("#container").scrollTop());
-
-                let sortedHeightArray = heightArray.sort(function(a, b) {
-                    return a - b;
-                });
-
-                for (let i = 0; i < sortedHeightArray.length - 1; i++) {
-                    const elementAhead = sortedHeightArray[i + 1];
-
-                    if (elementAhead === sortedHeightArray[i] ||
-                        (elementAhead+1) === sortedHeightArray[i] ||
-                        (elementAhead+2) === sortedHeightArray[i] ||
-                        (elementAhead+3) === sortedHeightArray[i] ||
-                        (elementAhead+4) === sortedHeightArray[i] ||
-                        (elementAhead-1) === sortedHeightArray[i] ||
-                        (elementAhead-2) === sortedHeightArray[i] ||
-                        (elementAhead-3) === sortedHeightArray[i] ||
-                        (elementAhead-4) === sortedHeightArray[i]
-                    ) {
-                        timelineSettings.isScrolling = false;
-                        break;
-                    }
-                }
-            }
+            // if (heightCounter < 3) {
+            //     heightArray.push($("#container").scrollTop());
+            //     heightCounter++;
+            // } else {
+            //     heightArray.shift();
+            //     heightArray.push($("#container").scrollTop());
+            //
+            //     let sortedHeightArray = heightArray.sort(function(a, b) {
+            //         return a - b;
+            //     });
+            //
+            //     for (let i = 0; i < sortedHeightArray.length - 1; i++) {
+            //         const elementAhead = sortedHeightArray[i + 1];
+            //
+            //         if (elementAhead === sortedHeightArray[i] ||
+            //             (elementAhead+1) === sortedHeightArray[i] ||
+            //             (elementAhead+2) === sortedHeightArray[i] ||
+            //             (elementAhead+3) === sortedHeightArray[i] ||
+            //             (elementAhead+4) === sortedHeightArray[i] ||
+            //             (elementAhead-1) === sortedHeightArray[i] ||
+            //             (elementAhead-2) === sortedHeightArray[i] ||
+            //             (elementAhead-3) === sortedHeightArray[i] ||
+            //             (elementAhead-4) === sortedHeightArray[i]
+            //         ) {
+            //             timelineSettings.isScrolling = false;
+            //             break;
+            //         }
+            //     }
+            // }
 
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
@@ -357,7 +357,7 @@
                 });
 
                 // Scrolling behavior different on Chrome iOS
-                if ((Util.isSafari() === false || Util.isFirefox() === true) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                if (timelineSettings.isScrolling === true && ((Util.isSafari() === false || Util.isFirefox() === true) && !(Util.getOS() === "iOS" && Util.isChrome() === true))) {
                     timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                         if (msg === timelineSettings.success) {
                             // Set TOC active element
@@ -689,7 +689,7 @@
 
         const removedElements = [];
         section.each(function (index, element) {
-            if (timelineSettings.isScrolling === true &&
+            if (//timelineSettings.isScrolling === true &&
                 Util.isInViewport($("#" + element.id)) === false &&
                 Util.isInViewport($("#br" + element.id)) === false &&
                 Util.isInViewport($("#row" + element.id)) === false &&
@@ -733,7 +733,8 @@
         const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
         const lastVisibleContainer = $('section').length > 0 ? $('section')[$('section').length-1] : null;
 
-        if (timelineSettings.isScrolling === true && firstVisibleContainer !== null) {
+        if (//timelineSettings.isScrolling === true &&
+            firstVisibleContainer !== null) {
             // Render above visibleContainers going from bottom up
             let currentDate = $(firstVisibleContainer).attr("id");
             let prevDate = "";
