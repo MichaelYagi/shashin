@@ -136,35 +136,35 @@
             }
 
             // Prevent flickering
-            // if (heightCounter < 3) {
-            //     heightArray.push($("#container").scrollTop());
-            //     heightCounter++;
-            // } else {
-            //     heightArray.shift();
-            //     heightArray.push($("#container").scrollTop());
-            //
-            //     let sortedHeightArray = heightArray.sort(function(a, b) {
-            //         return a - b;
-            //     });
-            //
-            //     for (let i = 0; i < sortedHeightArray.length - 1; i++) {
-            //         const elementAhead = sortedHeightArray[i + 1];
-            //
-            //         if (elementAhead === sortedHeightArray[i] ||
-            //             (elementAhead+1) === sortedHeightArray[i] ||
-            //             (elementAhead+2) === sortedHeightArray[i] ||
-            //             (elementAhead+3) === sortedHeightArray[i] ||
-            //             (elementAhead+4) === sortedHeightArray[i] ||
-            //             (elementAhead-1) === sortedHeightArray[i] ||
-            //             (elementAhead-2) === sortedHeightArray[i] ||
-            //             (elementAhead-3) === sortedHeightArray[i] ||
-            //             (elementAhead-4) === sortedHeightArray[i]
-            //         ) {
-            //             timelineSettings.isScrolling = false;
-            //             break;
-            //         }
-            //     }
-            // }
+            if (heightCounter < 3) {
+                heightArray.push($("#container").scrollTop());
+                heightCounter++;
+            } else {
+                heightArray.shift();
+                heightArray.push($("#container").scrollTop());
+
+                let sortedHeightArray = heightArray.sort(function(a, b) {
+                    return a - b;
+                });
+
+                for (let i = 0; i < sortedHeightArray.length - 1; i++) {
+                    const elementAhead = sortedHeightArray[i + 1];
+
+                    if (elementAhead === sortedHeightArray[i] ||
+                        (elementAhead+1) === sortedHeightArray[i] ||
+                        (elementAhead+2) === sortedHeightArray[i] ||
+                        (elementAhead+3) === sortedHeightArray[i] ||
+                        (elementAhead+4) === sortedHeightArray[i] ||
+                        (elementAhead-1) === sortedHeightArray[i] ||
+                        (elementAhead-2) === sortedHeightArray[i] ||
+                        (elementAhead-3) === sortedHeightArray[i] ||
+                        (elementAhead-4) === sortedHeightArray[i]
+                    ) {
+                        timelineSettings.isScrolling = false;
+                        break;
+                    }
+                }
+            }
 
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
