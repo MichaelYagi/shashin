@@ -880,8 +880,6 @@
                             await timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
                         }
                     }
-                } else if (closeToFooter() === false) {
-                    break;
                 }
             }
         }
