@@ -14,6 +14,8 @@
     timelineSettings.distanceToFooter = 9999;
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
+    timelineSettings.heightArray = [];
+    timelineSettings.heightCounter = 0;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
@@ -110,8 +112,7 @@
         // Scroll event handler
         let lastOffset = $("#container").scrollTop();
         let lastDate = new Date().getTime();
-        let heightCounter = 0;
-        let heightArray = [];
+
         const scrollHandler = function (e) {
             if (scrollTimer !== null) {
                 clearTimeout(scrollTimer);
@@ -136,14 +137,14 @@
             }
 
             // Prevent flickering
-            if (heightCounter < 3) {
-                heightArray.push($("#container").scrollTop());
-                heightCounter++;
+            if (timelineSettings.heightCounter < 3) {
+                timelineSettings.heightArray.push($("#container").scrollTop());
+                timelineSettings.heightCounter++;
             } else {
-                heightArray.shift();
-                heightArray.push($("#container").scrollTop());
+                timelineSettings.heightArray.shift();
+                timelineSettings.heightArray.push($("#container").scrollTop());
 
-                let sortedHeightArray = heightArray.sort(function(a, b) {
+                let sortedHeightArray = timelineSettings.heightArray.sort(function(a, b) {
                     return a - b;
                 });
 
@@ -689,7 +690,7 @@
 
         const removedElements = [];
         section.each(function (index, element) {
-            if (//timelineSettings.isScrolling === true &&
+            if (timelineSettings.isScrolling === true &&
                 Util.isInViewport($("#" + element.id)) === false &&
                 Util.isInViewport($("#br" + element.id)) === false &&
                 Util.isInViewport($("#row" + element.id)) === false &&
@@ -733,8 +734,9 @@
         const firstVisibleContainer = $('section').length > 0 ? $('section')[0] : null;
         const lastVisibleContainer = $('section').length > 0 ? $('section')[$('section').length-1] : null;
 
-        if (//timelineSettings.isScrolling === true &&
+        if (timelineSettings.isScrolling === true &&
             firstVisibleContainer !== null) {
+
             // Render above visibleContainers going from bottom up
             let currentDate = $(firstVisibleContainer).attr("id");
             let prevDate = "";
@@ -827,7 +829,6 @@
 
                 if (Util.getDateObject(prevDate) < Util.getDateObject(currentDate) && closeToFooter() === true) {
                     if ($("#" + currentDate).length === 0 && ((Util.isSafari() === false && Util.isFirefox() === false && !(Util.getOS() === "iOS" && Util.isChrome() === true)) || ((Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) && $.inArray(currentDate, removedElements) === -1))) {
-
                         const numberOfPhotos = timelineSettings.metadataYearMonthCount[timelineDate.year + "-" + timelineDate.month];
 
                         let sectionHeight = 0;
@@ -1068,6 +1069,8 @@
             e.preventDefault();
         }
 
+        timelineSettings.heightArray = [];
+        timelineSettings.heightCounter = 0;
         timelineSettings.currentScrollDirection = timelineSettings.ScrollDirection.down;
         timelineSettings.enableScrollSpy = false;
 
@@ -1083,9 +1086,12 @@
         const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
+            const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
+            const saveState = timelineSettings.isScrolling;
+            timelineSettings.isScrolling = true;
+            await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates);
+            timelineSettings.isScrolling = saveState;
         }
-
-
 
         // let depth = 6;
         // let currAnchor = anchor;
@@ -1130,7 +1136,6 @@
         //     }
         // }
 
-        await timelineSettings.renderThumbnails(Util.elementsInViewport($(".scrollspy")), mediaTypeFilter, timelineDates);
 
         // Jump to anchor after rendering
         location.href = "#" + anchor;
