@@ -737,7 +737,8 @@
         if (timelineSettings.isScrolling === true &&
             firstVisibleContainer !== null) {
 
-            // Render above visibleContainers going from bottom up
+            // Divide dates into 2
+            // TODO: Optimize this further
             let currentDate = $(firstVisibleContainer).attr("id");
             let prevDate = "";
             const firstDate = timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day;
@@ -773,6 +774,7 @@
                 }
             }
 
+            // Render above visibleContainers going from bottom up
             let timelineArr = timelineDates.reverse();
             let lastTopPosition = $("#infinite-scroll-gallery").position().top;
             for (let index = startingIndexTop; index < timelineArr.length; index++) {
@@ -878,6 +880,8 @@
                             await timelineSettings.attachAssociatedMetadata(lastDate, mediaTypeFilter);
                         }
                     }
+                } else if (closeToFooter() === false) {
+                    break;
                 }
             }
         }
