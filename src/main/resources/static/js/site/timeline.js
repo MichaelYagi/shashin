@@ -845,11 +845,7 @@
                         // Render currentDate
                         // Stage 1 - create a placeholder dive to enable scrolling through additional content based on current date section
                         const anchorPoint = timelineDates[index - 2].year + "-" + timelineDates[index - 2].month + "-" + timelineDates[index - 2].day;
-                        if (Util.isMobile() === false && anchorPoint !== (timelineDates[0].year + "-" + timelineDates[0].month + "-" + timelineDates[0].day) &&
-                            anchorPoint !== (timelineDates[1].year + "-" + timelineDates[1].month + "-" + timelineDates[1].day) &&
-                            anchorPoint !== (timelineDates[2].year + "-" + timelineDates[2].month + "-" + timelineDates[2].day) &&
-                            anchorPoint !== (timelineDates[3].year + "-" + timelineDates[3].month + "-" + timelineDates[3].day)
-                        ) {
+                        if (Util.isMobile() === false) {
                             // Stage 1 - create an empty block
                             await timelineSettings.createEmptyContainer(currentDate, anchorPoint, sectionHeight);
                             action = "emptyContainer";
