@@ -251,6 +251,8 @@ async function showMap(mapdata,keywordMap,showControls) {
                         compressionType: data["compressionType"],
                         thumbnailUrlSmall: data["thumbnailUrlSmall"],
                         thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
+                        originalImageHeight: data["originalImageHeight"],
+                        originalImageWidth: data["originalImageWidth"],
                         mapMarkerUrl: data["mapMarkerUrl"],
                         mapMarkerIcon: mapMarkerIcon,
                         videoUrl: data["videoUrl"],
@@ -348,8 +350,10 @@ async function showMap(mapdata,keywordMap,showControls) {
             metadata.placeName = locationArgs[22];
             metadata.keywords = locationArgs[23];
             metadata.thumbnailUrlOriginal = locationArgs[24];
-            metadata.videoUrl = locationArgs[25];
-            metadata.description = locationArgs[26];
+            metadata.originalImageHeight = locationArgs[25];
+            metadata.originalImageWidth = locationArgs[26];
+            metadata.videoUrl = locationArgs[27];
+            metadata.description = locationArgs[28];
         }
         if (modalLabel && modalLabel.length > 0) {
             $("#editPhotoLocationModalLabel").text("for " + modalLabel);
@@ -486,6 +490,8 @@ async function showMap(mapdata,keywordMap,showControls) {
                         featureProperties["placeName"],
                         featureProperties["keywords"],
                         featureProperties["thumbnailUrlOriginal"],
+                        featureProperties["originalImageHeight"],
+                        featureProperties["originalImageWidth"],
                         featureProperties["videoUrl"],
                         featureProperties["description"]
                     ]
@@ -499,7 +505,10 @@ async function showMap(mapdata,keywordMap,showControls) {
                         "attributes": {
                             "preload": "auto",
                             "controls": true,
-                            "autoplay": true
+                            "autoplay": true,
+                            "height": featureProperties.originalImageHeight,
+                            "width": featureProperties.originalImageWidth,
+                            "id": featureProperties.metadataId
                         }
                     }
                     mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl) + "/download";
@@ -625,18 +634,26 @@ async function showMap(mapdata,keywordMap,showControls) {
         //     }
         // });
 
-        const videoContainer = $(".lg-video-cont");
-        if (videoContainer.length > 0) {
-            videoContainer.css({"width": window.innerWidth, "height": window.innerHeight});
-        }
+        setVideoWidth();
     });
 
     $dynamicGallery.addEventListener("lgContainerResize", function(e) {
+        setVideoWidth();
+    });
+
+    function setVideoWidth() {
         const videoContainer = $(".lg-video-cont");
         if (videoContainer.length > 0) {
-            videoContainer.css({"width": window.innerWidth, "height": window.innerHeight});
+            const videos = $("video");
+            $.each(videos, function(index, video) {
+                const videoObj = $(video);
+                const videoHeight = videoObj.attr("height");
+                const videoWidth = videoObj.attr("width");
+                const scale = window.innerHeight/videoHeight;
+                videoContainer.css({"height": "100%", "width": (videoWidth*scale)});
+            })
         }
-    });
+    }
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
