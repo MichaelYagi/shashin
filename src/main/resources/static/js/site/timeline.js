@@ -148,20 +148,18 @@
                     return a - b;
                 });
 
+                const elementAheadLimit = -4;
                 for (let i = 0; i < sortedHeightArray.length - 1; i++) {
                     const elementAhead = sortedHeightArray[i + 1];
 
-                    if (elementAhead === sortedHeightArray[i] ||
-                        (elementAhead+1) === sortedHeightArray[i] ||
-                        (elementAhead+2) === sortedHeightArray[i] ||
-                        (elementAhead+3) === sortedHeightArray[i] ||
-                        (elementAhead+4) === sortedHeightArray[i] ||
-                        (elementAhead-1) === sortedHeightArray[i] ||
-                        (elementAhead-2) === sortedHeightArray[i] ||
-                        (elementAhead-3) === sortedHeightArray[i] ||
-                        (elementAhead-4) === sortedHeightArray[i]
-                    ) {
-                        timelineSettings.isScrolling = false;
+                    for (let j = elementAheadLimit; j <= Math.abs(elementAheadLimit); j++) {
+                        if ((elementAhead+j) === sortedHeightArray[i]) {
+                            timelineSettings.isScrolling = false;
+                            break;
+                        }
+                    }
+
+                    if (timelineSettings.isScrolling === false) {
                         break;
                     }
                 }
