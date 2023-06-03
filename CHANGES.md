@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Bulk edit Albums and People dropdown list population
 - Work around for duplicate video html on map view
+- Map fullscreen button bug
 
 ## [2.2.2] - 2023-04-09
 ### Added

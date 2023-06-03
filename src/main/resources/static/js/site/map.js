@@ -437,6 +437,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         }
     }
 
+    let clicked = false;
     function selectStyleFunction(feature) {
         // Return first map marker
         const styles = [
@@ -451,76 +452,85 @@ async function showMap(mapdata,keywordMap,showControls) {
         let originalFeature = originalFeatures[originalFeatures.length - 1];
         styles.push(originalFeature.getProperties()["mapMarkerIcon"]);
 
-        // Show gallery for each cluster
-        const mediaContentList = [];
-        for (let i = originalFeatures.length - 1; i >= 0; --i) {
-            const featureProperties = originalFeatures[i].getProperties();
+        if (clicked === true) {
+            // Show gallery for each cluster
+            const mediaContentList = [];
+            for (let i = originalFeatures.length - 1; i >= 0; --i) {
+                const featureProperties = originalFeatures[i].getProperties();
 
-            const mediaContent = {
-                func: editLocation,
-                args: [
-                    featureProperties["metadataId"],
-                    featureProperties["lat"],
-                    featureProperties["lng"],
-                    featureProperties["title"],
-                    featureProperties["path"],
-                    featureProperties["compressionType"],
-                    featureProperties["type"],
-                    featureProperties["iso"],
-                    featureProperties["exposure"],
-                    featureProperties["fstopNumber"],
-                    featureProperties["focalLength"],
-                    featureProperties["camera"],
-                    featureProperties["lens"],
-                    featureProperties["quality"],
-                    featureProperties["createdAt"],
-                    featureProperties["modifiedAt"],
-                    featureProperties["takenAt"],
-                    featureProperties["year"],
-                    featureProperties["month"],
-                    featureProperties["day"],
-                    featureProperties["time"],
-                    featureProperties["timeZone"],
-                    featureProperties["placeName"],
-                    featureProperties["keywords"],
-                    featureProperties["thumbnailUrlOriginal"],
-                    featureProperties["videoUrl"],
-                    featureProperties["description"]
-                ]
-            };
-            if (featureProperties.type.includes("image")) {
-                mediaContent.src = featureProperties.thumbnailUrlOriginal;
-                mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal)+"/download";
-            } else if ($("#"+featureProperties.metadataId).length === 0 && featureProperties.type.includes("video")) {
-                mediaContent.video = {
-                    "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
-                    "attributes": {"preload": "auto", "controls": true, "autoplay": true, "id": featureProperties.metadataId}
+                const mediaContent = {
+                    func: editLocation,
+                    args: [
+                        featureProperties["metadataId"],
+                        featureProperties["lat"],
+                        featureProperties["lng"],
+                        featureProperties["title"],
+                        featureProperties["path"],
+                        featureProperties["compressionType"],
+                        featureProperties["type"],
+                        featureProperties["iso"],
+                        featureProperties["exposure"],
+                        featureProperties["fstopNumber"],
+                        featureProperties["focalLength"],
+                        featureProperties["camera"],
+                        featureProperties["lens"],
+                        featureProperties["quality"],
+                        featureProperties["createdAt"],
+                        featureProperties["modifiedAt"],
+                        featureProperties["takenAt"],
+                        featureProperties["year"],
+                        featureProperties["month"],
+                        featureProperties["day"],
+                        featureProperties["time"],
+                        featureProperties["timeZone"],
+                        featureProperties["placeName"],
+                        featureProperties["keywords"],
+                        featureProperties["thumbnailUrlOriginal"],
+                        featureProperties["videoUrl"],
+                        featureProperties["description"]
+                    ]
+                };
+                if (featureProperties.type.includes("image")) {
+                    mediaContent.src = featureProperties.thumbnailUrlOriginal;
+                    mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal) + "/download";
+                } else if ($("#" + featureProperties.metadataId).length === 0 && featureProperties.type.includes("video")) {
+                    mediaContent.video = {
+                        "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
+                        "attributes": {
+                            "preload": "auto",
+                            "controls": true,
+                            "autoplay": true,
+                            "id": featureProperties.metadataId
+                        }
+                    }
+                    mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl) + "/download";
                 }
-                mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl)+"/download";
+                mediaContent.subHtml = featureProperties.description;
+                mediaContentList.push(mediaContent);
             }
-            mediaContent.subHtml = featureProperties.description;
-            mediaContentList.push(mediaContent);
+
+            // Destroy gallery instance hack
+            dynamicGallery.closeGallery(true);
+            dynamicGallery.destroyModules(true);
+            dynamicGallery.invalidateItems();
+            $(window).off(`.lg.global${dynamicGallery.lgId}`);
+            dynamicGallery.LGel.off('.lg');
+            setTimeout(() => {
+                // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
+                // Hack because lg.destroy() errors out
+                // when photos appear slower than destroy called, then there's an error
+                try {
+                    dynamicGallery.$container.remove();
+                } catch (e) {
+                    shashin.printMessageToConsole(e);
+                }
+                lightGalleryConfigs["dynamicEl"] = mediaContentList;
+                dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
+                dynamicGallery.openGallery(0);
+            }, 500);
         }
 
-        // Destroy gallery instance hack
-        dynamicGallery.closeGallery(true);
-        dynamicGallery.destroyModules(true);
-        dynamicGallery.invalidateItems();
-        $(window).off(`.lg.global${dynamicGallery.lgId}`);
-        dynamicGallery.LGel.off('.lg');
-        setTimeout(() => {
-            // https://github.com/sachinchoolur/lightGallery/blob/383d51852657ab44bb8697748c570cf110723f97/src/lightgallery.ts#L2396
-            // Hack because lg.destroy() errors out
-            // when photos appear slower than destroy called, then there's an error
-            try {
-                dynamicGallery.$container.remove();
-            } catch (e) {
-                shashin.printMessageToConsole(e);
-            }
-            lightGalleryConfigs["dynamicEl"] = mediaContentList;
-            dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
-            dynamicGallery.openGallery(0);
-        }, 500);
+        clicked = false;
 
         return styles;
     }
@@ -543,7 +553,8 @@ async function showMap(mapdata,keywordMap,showControls) {
     const interactions = [
         new ol.interaction.Select({
             condition: function (evt) {
-                return evt.type === 'singleclick';
+                clicked = evt.type === 'singleclick';
+                return clicked;
             },
             style: selectStyleFunction,
         }),
