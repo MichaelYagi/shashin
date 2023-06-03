@@ -493,14 +493,13 @@ async function showMap(mapdata,keywordMap,showControls) {
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = featureProperties.thumbnailUrlOriginal;
                     mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal) + "/download";
-                } else if ($("#" + featureProperties.metadataId).length === 0 && featureProperties.type.includes("video")) {
+                } else if (featureProperties.type.includes("video")) {
                     mediaContent.video = {
                         "source": [{"src": featureProperties.videoUrl, "type": "video/mp4"}],
                         "attributes": {
                             "preload": "auto",
                             "controls": true,
-                            "autoplay": true,
-                            "id": featureProperties.metadataId
+                            "autoplay": true
                         }
                     }
                     mediaContent.downloadUrl = encodeURI(featureProperties.videoUrl) + "/download";
@@ -618,13 +617,25 @@ async function showMap(mapdata,keywordMap,showControls) {
     // Temporary measure to not have multiple videos stacked up for a slide
     // TODO: Look into why selectStyleFunction gets fired off multiple times for a cluster of photos the first time it gets called
     $dynamicGallery.addEventListener("lgAfterSlide", function(e) {
-        const lgItems = $(".lg-item div.lg-video-cont");
-        lgItems.each(function(i, obj) {
-            const content = $(obj).children();
-            if (content.length > 0 && $(content[0]).prop("tagName") !== undefined && $(content[0]).prop("tagName").toLowerCase() === "video") {
-                $(content).not(':first').remove();
-            }
-        });
+        // const lgItems = $(".lg-item div.lg-video-cont");
+        // lgItems.each(function(i, obj) {
+        //     const content = $(obj).children();
+        //     if (content.length > 0 && $(content[0]).prop("tagName") !== undefined && $(content[0]).prop("tagName").toLowerCase() === "video") {
+        //         $(content).not(':first').remove();
+        //     }
+        // });
+
+        const videoContainer = $(".lg-video-cont");
+        if (videoContainer.length > 0) {
+            videoContainer.css({"width": window.innerWidth, "height": window.innerHeight});
+        }
+    });
+
+    $dynamicGallery.addEventListener("lgContainerResize", function(e) {
+        const videoContainer = $(".lg-video-cont");
+        if (videoContainer.length > 0) {
+            videoContainer.css({"width": window.innerWidth, "height": window.innerHeight});
+        }
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
