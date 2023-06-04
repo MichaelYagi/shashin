@@ -7,4 +7,4 @@ Worker.prototype.postMessage = function(msg) {
     this.onmessage(msg);
 }
 
-module.exports = Worker
+if(typeof module!=='undefined'){module.exports=Worker;}
