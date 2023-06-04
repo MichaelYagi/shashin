@@ -139,15 +139,17 @@
             // Prevent flickering
             const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
 
-            if (Util.isInViewport($("footer")) === false &&
-                timelineSettings.elementTracking.length > 0 &&
-                elementsInViewPort.length === timelineSettings.elementTracking.length &&
-                ((Util.isFirefox() === true && timelineSettings.elementTracking[0] === elementsInViewPort[0]) || timelineSettings.elementTracking[0].isSameNode(elementsInViewPort[0])) &&
-                timelineSettings.elementTracking[timelineSettings.elementTracking.length-1].isSameNode(elementsInViewPort[elementsInViewPort.length-1])
-            ) {
-                timelineSettings.isScrolling = false;
+            if (Util.isMobile() === false) {
+                if (Util.isInViewport($("footer")) === false &&
+                    timelineSettings.elementTracking.length > 0 &&
+                    elementsInViewPort.length === timelineSettings.elementTracking.length &&
+                    ((Util.isFirefox() === true && timelineSettings.elementTracking[0] === elementsInViewPort[0]) || timelineSettings.elementTracking[0].isSameNode(elementsInViewPort[0])) &&
+                    timelineSettings.elementTracking[timelineSettings.elementTracking.length - 1].isSameNode(elementsInViewPort[elementsInViewPort.length - 1])
+                ) {
+                    timelineSettings.isScrolling = false;
+                }
+                timelineSettings.elementTracking = elementsInViewPort;
             }
-            timelineSettings.elementTracking = elementsInViewPort;
 
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
