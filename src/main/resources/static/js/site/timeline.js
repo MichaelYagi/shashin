@@ -148,12 +148,12 @@
                     return a - b;
                 });
 
-                const elementAheadLimit = -4;
+                const elementDepthLimit = -5;
                 for (let i = 0; i < sortedHeightArray.length - 1; i++) {
-                    const elementAhead = sortedHeightArray[i + 1];
+                    const nextElement = sortedHeightArray[i + 1];
 
-                    for (let j = elementAheadLimit; j <= Math.abs(elementAheadLimit); j++) {
-                        if ((elementAhead+j) === sortedHeightArray[i]) {
+                    for (let j = elementDepthLimit; j <= Math.abs(elementDepthLimit); j++) {
+                        if ((nextElement+j) === sortedHeightArray[i]) {
                             timelineSettings.isScrolling = false;
                             break;
                         }
