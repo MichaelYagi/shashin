@@ -84,8 +84,8 @@
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
                 const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
-                timelineSettings.isScrolling = false;
                 timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+                timelineSettings.isScrolling = false;
 
                 // Only show overlays when scrolling stopped for current hovered image
                 let hovered = false;
