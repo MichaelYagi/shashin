@@ -113,7 +113,7 @@
         // Scroll event handler
         let lastOffset = $("#container").scrollTop();
         let lastDate = new Date().getTime();
-
+        let counter = 0;
         const scrollHandler = function (e) {
             if (scrollTimer !== null) {
                 clearTimeout(scrollTimer);
@@ -138,15 +138,18 @@
             }
 
             // Prevent flickering
-            const elementsInView = Util.elementsInViewport($(".scrollspy"));
+            const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
 
-            if (timelineSettings.elementTracking.length > 0 && elementsInView.length === timelineSettings.elementTracking.length &&
-                timelineSettings.elementTracking[0].isSameNode(elementsInView[0]) &&
-                timelineSettings.elementTracking[timelineSettings.elementTracking.length-1].isSameNode(elementsInView[elementsInView.length-1])) {
+            if (counter > 2 &&
+                timelineSettings.elementTracking.length > 0 &&
+                elementsInViewPort.length === timelineSettings.elementTracking.length &&
+                timelineSettings.elementTracking[0].isSameNode(elementsInViewPort[0]) &&
+                timelineSettings.elementTracking[timelineSettings.elementTracking.length-1].isSameNode(elementsInViewPort[elementsInViewPort.length-1])) {
                 timelineSettings.isScrolling = false;
+                counter = 0;
             }
-            timelineSettings.elementTracking = Util.elementsInViewport($(".scrollspy"));
-
+            timelineSettings.elementTracking = elementsInViewPort;
+            counter++;
 
             if (timelineSettings.heightCounter < 3) {
                 timelineSettings.heightArray.push($("#container").scrollTop());
@@ -187,16 +190,16 @@
             }
 
             const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
-            topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
+            topOfPage = $(elementsInViewPort[0]).attr("id") === firstDate;
 
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
-                timelineSettings.scrollToTimelineToc(timelineSettings.elementTracking);
+                timelineSettings.scrollToTimelineToc(elementsInViewPort);
             }
 
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
-                timelineSettings.renderThumbnailsInViewport(timelineSettings.elementTracking, mediaTypeFilter);
+                timelineSettings.renderThumbnailsInViewport(elementsInViewPort, mediaTypeFilter);
             }
         };
         $("#container").on('scroll', scrollHandler);
