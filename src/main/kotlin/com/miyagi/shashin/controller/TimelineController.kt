@@ -189,7 +189,7 @@ class TimelineController: BaseController() {
         if (mediaTypeFilter == "video") {
             mediaType = mediaTypeFilter
         }
-        response["message"] = "There are no "+mediaType+"s. Please setup directories in Settings and scan."
+        response["message"] = "There are no "+mediaType+"s. Please setup directories to scan in Settings and index media in Media Indexing."
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
@@ -322,7 +322,7 @@ class TimelineController: BaseController() {
         if (mediaTypeFilter == "video") {
             mediaType = mediaTypeFilter
         }
-        response["message"] = "There are no "+mediaType+"s. Please setup directories in Settings and scan."
+        response["message"] = "There are no "+mediaType+"s. Please setup directories to scan in Settings and index media in Media Indexing."
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter

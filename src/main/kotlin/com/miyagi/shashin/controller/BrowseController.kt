@@ -81,7 +81,7 @@ class BrowseController: BaseController() {
 
     private fun buildBrowseRecord(module: String, model: Model, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = "There are no photos. Please setup directories in Settings and scan ."
+        response["message"] = "There are no photos. Please setup directories to scan in Settings and index media in Media Indexing."
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()
@@ -337,7 +337,7 @@ class BrowseController: BaseController() {
 
     private fun buildFolder(model: Model, folder: String, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["message"] = "There are no photos.."
+        response["message"] = "There are no photos. Please setup directories to scan in Settings and index media in Media Indexing."
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["albumList"] = mutableListOf<Album>()
