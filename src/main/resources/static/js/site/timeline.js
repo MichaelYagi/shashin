@@ -187,17 +187,16 @@
             }
 
             const firstDate = $("#offcanvasTocBody div a").first().attr("id").split("offcanvas_")[1];
-            const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
             topOfPage = $(elementsInViewport[0]).attr("id") === firstDate;
 
             // Scroll to the timeline TOC
             if (typeof $("#offcanvasToc").css('visibility') !== 'undefined' && $("#offcanvasToc").css('visibility') === "visible" && timelineSettings.enableScrollSpy === true) {
-                timelineSettings.scrollToTimelineToc(elementsInViewport);
+                timelineSettings.scrollToTimelineToc(timelineSettings.elementTracking);
             }
 
             if (timelineSettings.enableScrollSpy === true) {
                 topScroll = false;
-                timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
+                timelineSettings.renderThumbnailsInViewport(timelineSettings.elementTracking, mediaTypeFilter);
             }
         };
         $("#container").on('scroll', scrollHandler);
