@@ -839,7 +839,7 @@ class SettingsController {
 
             if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
                 val tempDir = tempExportBaseDir.toFile()
-                val outputZipFile = FileUtils.zipFolder(tempDir,appName?.lowercase()+"_backup")
+                val outputZipFile = FileUtils.zipFolder(tempDir,appName?.lowercase()+"_metadata_export")
                 FileUtils.deleteDirectory(tempDir)
 
                 if (outputZipFile != null) {
