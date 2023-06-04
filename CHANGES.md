@@ -8,11 +8,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 - Editable Lens field
 - SQLite backup added during metadata export
+- Double click, Drag and Zoom added to maps
 
 ### Changed
 
 - Use placeholder divs during timeline loading
 - Rendering preview thumbnail images in viewport for better performance
+- Updated to OpenLayers 7.4.0
 
 ### Fixed
 

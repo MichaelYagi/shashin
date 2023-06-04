@@ -585,6 +585,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         new ol.interaction.DragPan({
             kinetic: new ol.Kinetic(-0.005, 0.05, 100)
         }),
+        new ol.interaction.DblClickDragZoom(),
         new ol.interaction.DragZoom(),
         new ol.interaction.DragRotate()
     ];
