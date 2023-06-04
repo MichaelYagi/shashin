@@ -15,6 +15,7 @@
     timelineSettings.metadataYearMonthCount = [];
     timelineSettings.thumbnailsPerRow = 4;
     timelineSettings.heightArray = [];
+    timelineSettings.elementTracking = [];
     timelineSettings.heightCounter = 0;
 
     const calculateDistanceToFooter = function() {
@@ -137,10 +138,20 @@
             }
 
             // Prevent flickering
+            const elementsInView = Util.elementsInViewport($(".scrollspy"));
+
+            if (timelineSettings.elementTracking.length > 0 && elementsInView.length === timelineSettings.elementTracking.length &&
+                timelineSettings.elementTracking[0].isSameNode(elementsInView[0]) &&
+                timelineSettings.elementTracking[timelineSettings.elementTracking.length-1].isSameNode(elementsInView[elementsInView.length-1])) {
+                timelineSettings.isScrolling = false;
+            }
+            timelineSettings.elementTracking = Util.elementsInViewport($(".scrollspy"));
+
+
             if (timelineSettings.heightCounter < 3) {
                 timelineSettings.heightArray.push($("#container").scrollTop());
                 timelineSettings.heightCounter++;
-            } else {
+            } else if (timelineSettings.isScrolling === true) {
                 timelineSettings.heightArray.shift();
                 timelineSettings.heightArray.push($("#container").scrollTop());
 
