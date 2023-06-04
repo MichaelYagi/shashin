@@ -561,6 +561,8 @@ async function showMap(mapdata,keywordMap,showControls) {
     const interactions = [
         new ol.interaction.Select({
             condition: function (evt) {
+                // TODO: Fix selectStyleFunction, it should run only once per click
+                //  It runs twice because a style is set for the radius
                 clicked = evt.type === 'singleclick';
                 return clicked;
             },
@@ -603,12 +605,8 @@ async function showMap(mapdata,keywordMap,showControls) {
         controls: []
     });
 
-    // const zoom = new ol.control.Zoom();
-    // const zoomSlider = new ol.control.ZoomSlider();
     const attributions = new ol.control.Attribution({collapsible: true});
 
-    // map.addControl(zoom);
-    // map.addControl(zoomSlider);
     map.addControl(attributions);
 
     map.once("postrender", function() {
@@ -624,17 +622,7 @@ async function showMap(mapdata,keywordMap,showControls) {
         });
     });
 
-    // Temporary measure to not have multiple videos stacked up for a slide
-    // TODO: Look into why selectStyleFunction gets fired off multiple times for a cluster of photos the first time it gets called
     $dynamicGallery.addEventListener("lgAfterSlide", function(e) {
-        // const lgItems = $(".lg-item div.lg-video-cont");
-        // lgItems.each(function(i, obj) {
-        //     const content = $(obj).children();
-        //     if (content.length > 0 && $(content[0]).prop("tagName") !== undefined && $(content[0]).prop("tagName").toLowerCase() === "video") {
-        //         $(content).not(':first').remove();
-        //     }
-        // });
-
         setVideoWidth();
     });
 
