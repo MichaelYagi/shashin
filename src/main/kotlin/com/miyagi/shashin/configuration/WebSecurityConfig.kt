@@ -118,7 +118,7 @@ class WebSecurityConfig: WebSecurityConfigurerAdapter() {
             .headers()
                 .xssProtection()
                 .and()
-                .contentSecurityPolicy("script-src 'self' 'nonce-{nonce}'")
+                .contentSecurityPolicy("worker-src 'self' 'nonce-{nonce}' blob:")
                 .and()
                 .frameOptions()
                 .sameOrigin()
