@@ -113,7 +113,6 @@
         // Scroll event handler
         let lastOffset = $("#container").scrollTop();
         let lastDate = new Date().getTime();
-        let counter = 0;
         const scrollHandler = function (e) {
             if (scrollTimer !== null) {
                 clearTimeout(scrollTimer);
@@ -140,44 +139,14 @@
             // Prevent flickering
             const elementsInViewPort = Util.elementsInViewport($(".scrollspy"));
 
-            if (counter > 2 &&
-                timelineSettings.elementTracking.length > 0 &&
+            if (timelineSettings.elementTracking.length > 0 &&
                 elementsInViewPort.length === timelineSettings.elementTracking.length &&
                 timelineSettings.elementTracking[0].isSameNode(elementsInViewPort[0]) &&
-                timelineSettings.elementTracking[timelineSettings.elementTracking.length-1].isSameNode(elementsInViewPort[elementsInViewPort.length-1])) {
+                timelineSettings.elementTracking[timelineSettings.elementTracking.length-1].isSameNode(elementsInViewPort[elementsInViewPort.length-1])
+            ) {
                 timelineSettings.isScrolling = false;
-                counter = 0;
             }
             timelineSettings.elementTracking = elementsInViewPort;
-            counter++;
-
-            if (timelineSettings.heightCounter < 3) {
-                timelineSettings.heightArray.push($("#container").scrollTop());
-                timelineSettings.heightCounter++;
-            } else if (timelineSettings.isScrolling === true) {
-                timelineSettings.heightArray.shift();
-                timelineSettings.heightArray.push($("#container").scrollTop());
-
-                let sortedHeightArray = timelineSettings.heightArray.sort(function(a, b) {
-                    return a - b;
-                });
-
-                const elementDepthLimit = -5;
-                for (let i = 0; i < sortedHeightArray.length - 1; i++) {
-                    const nextElement = sortedHeightArray[i + 1];
-
-                    for (let j = elementDepthLimit; j <= Math.abs(elementDepthLimit); j++) {
-                        if ((nextElement+j) === sortedHeightArray[i]) {
-                            timelineSettings.isScrolling = false;
-                            break;
-                        }
-                    }
-
-                    if (timelineSettings.isScrolling === false) {
-                        break;
-                    }
-                }
-            }
 
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
