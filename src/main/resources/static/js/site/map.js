@@ -623,26 +623,12 @@ async function showMap(mapdata,keywordMap,showControls) {
     });
 
     $dynamicGallery.addEventListener("lgAfterSlide", function(e) {
-        setVideoWidth();
+        Util.setVideoWidth();
     });
 
     $dynamicGallery.addEventListener("lgContainerResize", function(e) {
-        setVideoWidth();
+        Util.setVideoWidth();
     });
-
-    function setVideoWidth() {
-        const videoContainer = $(".lg-video-cont");
-        if (videoContainer.length > 0) {
-            const videos = $("video");
-            $.each(videos, function(index, video) {
-                const videoObj = $(video);
-                const videoHeight = videoObj.attr("height");
-                const videoWidth = videoObj.attr("width");
-                const scale = window.innerHeight/videoHeight;
-                videoContainer.css({"height": "100%", "width": (videoWidth*scale)});
-            })
-        }
-    }
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));

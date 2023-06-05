@@ -14,6 +14,7 @@ class ShareAlbum {
 
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendAlbumPhotos", this.albumMetadataList);
+        shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
         shashin.mouseMoveListener();
     }
 
@@ -24,6 +25,7 @@ class ShareAlbum {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+                shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
             }.bind(this));
         }
 
