@@ -132,7 +132,7 @@
             let delayInMs = e.timeStamp - lastDate;
             let offset = st - lastOffset;
             let speedInpxPerMs = offset / delayInMs;
-            if (speedInpxPerMs < 0.20) {
+            if (speedInpxPerMs < 0.20 && speedInpxPerMs > 0.15) {
                 timelineSettings.rescanElements();
             }
 
