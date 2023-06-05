@@ -1,0 +1,37 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:include="layouts/articles :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+    <div class="d-none d-xl-block col-xl-2 float-end">
+        <ul class="section-nav">
+            <li class="toc-entry toc-h2"><a href="#quickstart">Quick Start</a></li>
+            <li class="toc-entry toc-h2"><a href="#get-involved">Get Involved</a></li>
+        </ul>
+    </div>
+
+    <div class="col-11 col-md-10 col-xl-9">
+        <h2 id="quickstart">
+            <div>Quick Start<a class="anchorjs-link " href="#quickstart" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <ol>
+            <li>Login as an administrator and go to the <a href="/settings">settings</a> page from the sidebar.</li>
+            <li>In the <a href="/settings">"General"</a> tab in the "Media directories" text area, point to where your photos or videos are stored, separating multiple directories with a comma.
+                <ol type="I"><li>Eg. <code>/Volumes/Pictures, /Volumes/Home Movies</code></li></ol>
+            </li>
+            <li>Click "Save" near the bottom of the page.</li>
+            <li>In the <a href="/settings/scan">"Media Indexing"</a> tab, click the "Scan" button.</li>
+            <li>After you see the message "Scan Complete", view your media on the <a href="/timeline">timeline</a> page.</li>
+        </ol>
+
+        <h2 id="get-involved">
+            <div>Get Involved<a class="anchorjs-link " href="#get-involved" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+        </h2>
+
+        <p>Report issues <a href="https://github.com/MichaelYagi/shashin/issues">here</a>!</p>
+    </div>
+</section>
+</body>
+</html>

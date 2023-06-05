@@ -1,6 +1,5 @@
 package com.miyagi.shashin.controller
 
-import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
