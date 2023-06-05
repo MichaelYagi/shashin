@@ -1257,7 +1257,7 @@
         mediaContent.thumb = encodeURI(metadata.thumbnailUrlSmall);
 
         if (metadata.type.indexOf("video") >= 0) {
-            mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true}}';
+            mediaContent.video = '{"source": [{"src":"' + encodeURI(metadata.videoUrl) + '", "type":"video/mp4"}], "attributes": {"preload": "auto", "controls": true, "autoplay": true, "height": '+metadata.originalImageHeight+', "width": '+metadata.originalImageWidth+'}}';
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
         } else {
             mediaContent.src = metadata.thumbnailUrlOriginal;

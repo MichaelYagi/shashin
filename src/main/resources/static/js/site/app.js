@@ -28,7 +28,13 @@
         if (metadata.type.includes("video")) {
             mediaContent.video = {
                 "source": [{"src": metadata.videoUrl, "type": "video/mp4"}],
-                "attributes": {"preload": "auto", "controls": true, "autoplay": true}
+                "attributes": {
+                    "preload": "auto",
+                    "controls": true,
+                    "autoplay": true,
+                    "height": metadata.originalImageHeight,
+                    "width": metadata.originalImageWidth
+                }
             };
             mediaContent.downloadUrl = encodeURI(metadata.videoUrl) + "/download";
         } else {
@@ -860,6 +866,20 @@
     shashin.setLightGallery = function (additionalConfigs) {
         let configs = shashin.getLightGalleryConfigs(additionalConfigs);
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
+    }
+
+    shashin.setVideoWidth = function (element) {
+        element.addEventListener("lgAfterSlide", function (e) {
+            Util.setVideoWidth();
+        });
+
+        element.addEventListener("lgAfterOpen", function (e) {
+            Util.setVideoWidth();
+        });
+
+        element.addEventListener("lgContainerResize", function (e) {
+            Util.setVideoWidth();
+        });
     }
 
     shashin.mouseMoveListener = function () {
