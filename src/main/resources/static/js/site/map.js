@@ -648,16 +648,25 @@ async function showMap(mapdata,keywordMap,showControls) {
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
 
     $("#dateInputButton").on("click", function(e) {
+        setLayerInputs(e);
+    });
+
+    $("#videoOnlyInput").on("change", function(e) {
+        setLayerInputs(e);
+    });
+
+    function setLayerInputs(e) {
         e.preventDefault();
 
         dateValidationMessage.text("");
 
         // Validate fields
         if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
+            initialZoom = map.getView().getZoom();
             // Filter results
             setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
         }
-    });
+    }
 
     $("#clearDateInputsButton").on("click", function(e) {
         e.preventDefault();
