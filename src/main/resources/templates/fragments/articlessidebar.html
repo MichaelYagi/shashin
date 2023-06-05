@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="articlessidebar(${activePage})">
+
+<ul class="list-unstyled ps-0">
+    <li class="mb-1">
+        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+            <li><a href="/articles/quickstart" th:attr="class='link-dark rounded' + ${activePage=='articles' or activePage=='articles/quickstart' ? ' active' : ''}">Quick Start</a></li>
+        </ul>
+    </li>
+
+    <li class="mb-1">
+        <button th:attr="class='btn btn-toggle align-items-center rounded' + ${activePage=='articles/timeline' or activePage=='articles/timeline/editing' ? ' active' : ' collapsed'}" data-bs-toggle="collapse" data-bs-target="#timeline-collapse" th:aria-expanded="${activePage=='articles/timeline' or activePage=='articles/timeline/editing' ? 'true' : 'false'}">
+            Timeline
+        </button>
+<!--        <div th:attr="class='collapse' + ${activePage=='articles/timeline' or activePage=='articles/timeline/editing' ? ' show' : ''}" id="timeline-collapse">-->
+<!--            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">-->
+<!--                <li><a href="/articles/timeline/editing" th:attr="class='link-dark rounded' + ${activePage=='articles/timeline/editing' ? ' active' : ''}">Editing</a></li>-->
+<!--            </ul>-->
+<!--        </div>-->
+    </li>
+
+    <li class="mb-1">
+        <button th:attr="class='btn btn-toggle align-items-center rounded' + ${activePage=='articles/albums' or activePage=='articles/albums/editing' ? ' active' : ' collapsed'}" data-bs-toggle="collapse" data-bs-target="#albums-collapse" th:aria-expanded="${activePage=='articles/albums' or activePage=='articles/albums/editing' ? 'true' : 'false'}">
+            Albums
+        </button>
+        <!--        <div th:attr="class='collapse' + ${activePage=='articles/albums' or activePage=='articles/albums/editing' ? ' show' : ''}" id="albums-collapse">-->
+        <!--            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">-->
+        <!--                <li><a href="/articles/albums/editing" th:attr="class='link-dark rounded' + ${activePage=='articles/albums/editing' ? ' active' : ''}">Editing</a></li>-->
+        <!--            </ul>-->
+        <!--        </div>-->
+    </li>
+</ul>
+
+</body>
+</html>
