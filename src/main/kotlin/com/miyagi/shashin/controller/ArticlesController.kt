@@ -14,9 +14,10 @@ class ArticlesController {
     fun getAbout(model: Model, request: HttpServletRequest): String {
         val module = "articles/quickstart"
 
+        val moduleArray = module.split("/")
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["titleDescriptor"] = TextUtils.capitalized(moduleArray[moduleArray.size-1])
 
         return module
     }
