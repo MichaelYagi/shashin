@@ -183,7 +183,7 @@ class GalleryTemplates {
             `
             <a class="mediaLink" id="mediaLink${id}" data-download-url="${encodeURI(data.metadata.videoUrl)}/download" 
                 ${(data.metadata.description !== null ? ` data-sub-html="${data.metadata.description}" ` : '')}
-                data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true, "height": ${data.metadata.originalImageHeight-42}, "width": ${data.metadata.originalImageWidth-42}}}\'>
+                data-video=\'{"source": [{"src":"${data.metadata.videoUrl}", "type":"video/mp4"}], "attributes": {"preload": false, "controls": true, "autoplay": true, "height": ${data.metadata.originalImageHeight}, "width": ${data.metadata.originalImageWidth}}}\'>
                 <span class="bi-play-btn" style="font-size: 4rem;color: lightgray;"></span>
             </a>
             `
