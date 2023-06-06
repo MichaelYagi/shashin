@@ -4,6 +4,7 @@ import com.miyagi.shashin.repository.UserRepository
 import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.info.BuildProperties
 import org.springframework.core.io.FileSystemResource
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -26,6 +27,9 @@ class TestController {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
+    @Autowired
+    private var buildProperties: BuildProperties? = null
 
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
@@ -108,6 +112,8 @@ class TestController {
             model["geocoderServicesAvailable"] = "FAIL"
             status = "FAIL"
         }
+
+        model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else ""
 
         model["status"] = status
 
