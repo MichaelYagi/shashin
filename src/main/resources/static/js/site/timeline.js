@@ -61,7 +61,15 @@
             $("#dateSliderContainer").hide();
         }
 
-        if ($('.scrollspy').length > 0) {
+        // Jump to date
+        if (window.location.hash) {
+            //Puts hash in variable, and removes the # character
+            const hash = window.location.hash.substring(1);
+
+            if ($("#offcanvas_"+hash).length > 0) {
+                timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
+            }
+        } else if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
             const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
 
@@ -183,16 +191,6 @@
         });
 
         shashin.mouseMoveListener();
-
-        // Jump to date
-        if (window.location.hash) {
-            //Puts hash in variable, and removes the # character
-            const hash = window.location.hash.substring(1);
-
-            if ($("#offcanvas_"+hash).length > 0) {
-                timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter, false);
-            }
-        }
 
         if (scrollTimer !== null) {
             clearTimeout(scrollTimer);
@@ -927,7 +925,7 @@
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
 
                     if (currentDateObj && timelineSettings.enableScrollSpy === true) {
-                        timelineSettings.jumpFromTimelineToc(null, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter, true);
+                        timelineSettings.jumpFromTimelineToc(null, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
                         timelineSettings.enableScrollSpy = true;
                     }
                     $(".monthYearSlider").show();
@@ -1045,7 +1043,7 @@
         }
     }
 
-    timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter, useRenderFunction) {
+    timelineSettings.jumpFromTimelineToc = async function (e, anchor, mediaTypeFilter) {
         if (e) {
             e.preventDefault();
         }
@@ -1067,60 +1065,55 @@
         const msg = await timelineSettings.updateTimeline(anchor, mediaTypeFilter, "new", null);
         if (msg === timelineSettings.success && $("#" + anchor).length === 1) {
             await timelineSettings.attachAssociatedMetadata(anchor, mediaTypeFilter);
-        }
-
-        const saveState = timelineSettings.isScrolling;
-        timelineSettings.isScrolling = true;
-
-        if (useRenderFunction === true) {
+            const saveState = timelineSettings.isScrolling;
+            timelineSettings.isScrolling = true;
             const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
             await timelineSettings.renderThumbnails(elementsInViewport, mediaTypeFilter, timelineDates);
-        } else {
-            let depth = 6;
-            let currAnchor = anchor;
-            for (const [index, timelineDate] of timelineDates.entries()) {
-                let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
-                if (anchor === currTimelineDate) {
-                    let limit = index - 1;
-                    for (let i = index - 1; i > limit; i--) {
-                        if (timelineDates[i] !== undefined) {
-                            let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
-                            if ($("#" + id).length === 0) {
-                                // Render currentDate
-                                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
-                                if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                    await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                                }
-                                currAnchor = id;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-
-                    currAnchor = anchor;
-                    limit = index + depth;
-                    for (let i = index + 1; i < limit; i++) {
-                        if (timelineDates[i] !== undefined) {
-                            let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
-                            if ($("#" + id).length === 0) {
-                                // Render currentDate
-                                const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
-                                if (msg === timelineSettings.success && $("#" + id).length === 1) {
-                                    await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
-                                }
-                                currAnchor = id;
-                            }
-                        } else {
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
+            timelineSettings.isScrolling = saveState;
         }
 
-        timelineSettings.isScrolling = saveState;
+        /*let depth = 6;
+        let currAnchor = anchor;
+        for (const [index, timelineDate] of timelineDates.entries()) {
+            let currTimelineDate = timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day;
+            if (anchor === currTimelineDate) {
+                let limit = index - 1;
+                for (let i = index - 1; i > limit; i--) {
+                    if (timelineDates[i] !== undefined) {
+                        let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
+                        if ($("#" + id).length === 0) {
+                            // Render currentDate
+                            const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "above", currAnchor);
+                            if (msg === timelineSettings.success && $("#" + id).length === 1) {
+                                await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                            }
+                            currAnchor = id;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+
+                currAnchor = anchor;
+                limit = index + depth;
+                for (let i = index + 1; i < limit; i++) {
+                    if (timelineDates[i] !== undefined) {
+                        let id = timelineDates[i].year + "-" + timelineDates[i].month + "-" + timelineDates[i].day;
+                        if ($("#" + id).length === 0) {
+                            // Render currentDate
+                            const msg = await timelineSettings.updateTimeline(id, mediaTypeFilter, "below", currAnchor);
+                            if (msg === timelineSettings.success && $("#" + id).length === 1) {
+                                await timelineSettings.attachAssociatedMetadata(id, mediaTypeFilter);
+                            }
+                            currAnchor = id;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+                break;
+            }
+        }*/
 
         // Jump to anchor after rendering
         location.href = "#" + anchor;
