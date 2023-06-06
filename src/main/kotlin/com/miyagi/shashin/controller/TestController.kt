@@ -113,7 +113,7 @@ class TestController {
             status = "FAIL"
         }
 
-        model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else ""
+        model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
 
         model["status"] = status
 
