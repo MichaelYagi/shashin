@@ -13,7 +13,7 @@
         <main role="main" class="col">
 
             <a data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasExample" aria-controls="offcanvasExample">
-                Link with href
+                Link to open sidebar
             </a>
 
             <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
@@ -38,7 +38,7 @@
                 </div>
             </div>
 
-            <br><th:block th:text="${@environment.getProperty('app.js.useMinified')}"></th:block>
+            <br><th:block th:text="${'Using minified JS: '+@environment.getProperty('app.js.useMinified')}"></th:block>
 
             <div id="rnRoot"></div>
 
