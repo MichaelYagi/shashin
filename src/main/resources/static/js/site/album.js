@@ -13,8 +13,6 @@
             metadataDetail: true
         }, '.mediaLink');
 
-        shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
-
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
                 // console.log(albumSettings.page)
@@ -23,8 +21,6 @@
                     albumSettings.page++;
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
                 });
-
-                shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
             }
         }
 

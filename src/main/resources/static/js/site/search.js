@@ -13,7 +13,6 @@ class Search {
 
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendSearchPhotos", this.metadataSearchList);
-        shashin.setVideoWidth($("#scroll-gallery")[0]);
         shashin.mouseMoveListener();
     }
 
@@ -24,7 +23,6 @@ class Search {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-                shashin.setVideoWidth($("#scroll-gallery")[0]);
             }.bind(this));
         }
     }

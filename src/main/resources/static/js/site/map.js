@@ -506,8 +506,6 @@ async function showMap(mapdata,keywordMap,showControls) {
                             "preload": "auto",
                             "controls": true,
                             "autoplay": true,
-                            "height": featureProperties.originalImageHeight,
-                            "width": featureProperties.originalImageWidth,
                             "id": featureProperties.metadataId
                         }
                     }
@@ -620,14 +618,6 @@ async function showMap(mapdata,keywordMap,showControls) {
                 interaction.getFeatures().clear();
             }
         });
-    });
-
-    $dynamicGallery.addEventListener("lgAfterSlide", function(e) {
-        Util.setVideoWidth();
-    });
-
-    $dynamicGallery.addEventListener("lgContainerResize", function(e) {
-        Util.setVideoWidth();
     });
 
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
