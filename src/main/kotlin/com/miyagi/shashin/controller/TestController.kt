@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse
 
 
 @Controller
-@Secured("ROLE_ADMIN")
 class TestController {
 
     @Autowired
@@ -31,12 +30,14 @@ class TestController {
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
 
+    @Secured("ROLE_ADMIN")
     @GetMapping("/test")
     fun test(model: Model): String {
         model["somevalue"] = "This is a test"
         return "test"
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/testvideo"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     fun getTestVideo(response: HttpServletResponse?): FileSystemResource? {
@@ -44,6 +45,7 @@ class TestController {
         return FileSystemResource(path)
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/testimage"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     fun getTestImage(response: HttpServletResponse?): FileSystemResource? {
@@ -51,6 +53,7 @@ class TestController {
         return FileSystemResource(path)
     }
 
+    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/testaudio"], method = [RequestMethod.GET], produces = ["audio/3gpp","audio/aac","audio/flac","audio/mpeg","audio/mp3","audio/mp4","audio/ogg","audio/wav","audio/webm"])
     @ResponseBody
     fun getTestAudio(response: HttpServletResponse?): FileSystemResource? {
