@@ -620,6 +620,14 @@ async function showMap(mapdata,keywordMap,showControls) {
         });
     });
 
+    $dynamicGallery.addEventListener("lgAfterSlide", function(e) {
+        Util.setVideoWidth();
+    });
+
+    $dynamicGallery.addEventListener("lgContainerResize", function(e) {
+        Util.setVideoWidth();
+    });
+
     checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))
     setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
 

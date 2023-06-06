@@ -866,6 +866,20 @@
         shashin.lg = lightGallery(shashin.getLightGalleryElement(), configs);
     }
 
+    shashin.setVideoWidth = function (element) {
+        element.addEventListener("lgAfterSlide", function (e) {
+            Util.setVideoWidth();
+        });
+
+        element.addEventListener("lgAfterOpen", function (e) {
+            Util.setVideoWidth();
+        });
+
+        element.addEventListener("lgContainerResize", function (e) {
+            Util.setVideoWidth();
+        });
+    }
+
     shashin.mouseMoveListener = function () {
         // Hide caption when showing lg gallery
         shashin.lgSubHtmlTimeout = null;
@@ -908,6 +922,7 @@
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,
+            videoMaxSize: "7680-4320",
             speed: 0,
             autoplayFirstVideo: false,
             gotoNextSlideOnVideoEnd: false,
@@ -916,7 +931,6 @@
             rotateRight: true,
             flipHorizontal: false,
             flipVertical: false,
-            videoMaxSize: "7680-4320",
             licenseKey: Util.lgApiKey()
         }
 

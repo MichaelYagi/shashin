@@ -861,6 +861,7 @@
             }
         }
 
+        shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
         $("#spinner_top").css("display", "none");
         $("#spinner_bottom").css("display", "none");
 
