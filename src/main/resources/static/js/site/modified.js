@@ -12,7 +12,6 @@ class Modified {
 
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendModifiedPhotos", this.metadataList);
-        shashin.setVideoWidth($("#scroll-gallery")[0]);
         shashin.mouseMoveListener();
     }
 
@@ -23,7 +22,6 @@ class Modified {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-                shashin.setVideoWidth($("#scroll-gallery")[0]);
             }.bind(this));
         }
     }

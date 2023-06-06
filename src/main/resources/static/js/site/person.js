@@ -14,7 +14,6 @@ class Person {
 
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendPersonPhotos", this.metadataList);
-        shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
         shashin.matchingListeners();
         shashin.mouseMoveListener();
     }
@@ -26,7 +25,6 @@ class Person {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
-                shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
             }.bind(this));
         }
     }
