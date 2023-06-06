@@ -346,7 +346,8 @@ class Util {
                 const videoHeight = videoObj.attr("height");
                 const videoWidth = videoObj.attr("width");
                 const scale = window.innerHeight/videoHeight;
-                videoContainer.css({"height": "100%", "width": (videoWidth*scale)});
+                videoObj.css("margin-top", "-5px")
+                videoContainer.css({"height": "99%", "width": (videoWidth*scale)});
             })
         }
     }
