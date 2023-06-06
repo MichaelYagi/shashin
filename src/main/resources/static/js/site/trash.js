@@ -11,6 +11,7 @@ class Trash {
 
     async init() {
         shashin.pageLoader(await this.loadNextPage.bind(this), ".appendMetadataPhotos", this.metadataList);
+        shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
         shashin.mouseMoveListener();
     }
 
@@ -21,6 +22,7 @@ class Trash {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
+                shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
             }.bind(this));
         }
     }
