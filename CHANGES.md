@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Editable Lens field
 - SQLite backup added during metadata export
 - Double click, Drag and Zoom added to maps
+- Health endpoint
 
 ### Changed
 
