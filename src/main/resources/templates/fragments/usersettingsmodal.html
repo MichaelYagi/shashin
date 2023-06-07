@@ -126,7 +126,7 @@
                     e.preventDefault();
 
                     let userId = "[[${user.id}]]";
-                    let currentRole = "[[${user.authority}]]";
+                    let currentRole = /*[[${user.authority}]]*/ '';
                     let changeTo = currentRole === "ROLE_USER" ? "ROLE_ADMIN" : "ROLE_USER";
 
                     const http = new Http("setting user");
