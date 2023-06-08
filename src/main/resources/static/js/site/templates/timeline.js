@@ -127,16 +127,25 @@ class TimelineTemplates {
     static TimelineGalleryTopRightOverlay({metadata}) { return `
         ${metadata.type.indexOf("video") >= 0 ?
             `
-        <span class="overlayIconBackground">${(metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00"}&nbsp;<span id="video${metadata.id}" class="bi-camera-video overlayIcon"></span></span>
-        `
+            <span class="overlayIconBackground">${(metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00"}&nbsp;<span id="video${metadata.id}" class="bi-camera-video overlayIcon"></span></span>
+            `
             :
-            `
-            ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) ?
+            ` 
+                ${(metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth > metadata.originalImageHeight * 2) ?
+                    `
+                        <span id="panorama${metadata.id}" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
+                    `
+                :
                 `
-            <span id="panorama${metadata.id}" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
+                    ${metadata.expectedExtension === "gif" ?
+                    `
+                    <span id="gif${metadata.id}" class="bi-layers overlayIcon overlayIconBackground"></span>
+                    `
+                    : ''
+                }
+                `
+            }
             `
-                : ''}
-        `
         }
     `};
 

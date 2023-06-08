@@ -1345,6 +1345,8 @@
             data["duration"] = duration;
         } else if (metadata.width !== null && metadata.height !== null && metadata.width > metadata.height*2) {
             overlays.push("isPan");
+        } else if (metadata.width !== null && metadata.height !== null && metadata.width <= metadata.height*2 && metadata.expectedExtension === "gif") {
+            overlays.push("isGif");
         }
 
         if (typeof args !== "undefined") {

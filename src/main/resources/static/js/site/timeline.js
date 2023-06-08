@@ -1310,6 +1310,15 @@
                     $("#tntr" + metadata.id).addClass("thumbnail-tr");
                 }
             }, 0);
+        } else if (metadata.originalImageWidth !== null && metadata.originalImageHeight !== null && metadata.originalImageWidth <= metadata.originalImageHeight * 2 && metadata.expectedExtension === "gif") {
+            setTimeout(function () {
+                if ($("#gif" + metadata.id).length === 0) {
+                    $("#tntr" + metadata.id).append(TimelineTemplates.TimelineGalleryTopRightOverlay({metadata:metadata}));
+                }
+                if ($("#tntr" + metadata.id + ".thumbnail-tr").length === 0) {
+                    $("#tntr" + metadata.id).addClass("thumbnail-tr");
+                }
+            }, 0);
         }
     }
 

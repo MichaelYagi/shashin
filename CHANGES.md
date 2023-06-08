@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - SQLite backup added during metadata export
 - Double click, Drag and Zoom added to maps
 - Health endpoint
+- Icon indicator for gifs
 
 ### Changed
 
