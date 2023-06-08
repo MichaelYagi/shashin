@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="toprightoverlay(type, id, content, width, height, isTagged)">
+<body th:fragment="toprightoverlay(type, id, content, width, height, expectedExtension, isTagged)">
 <div class="thumbnail-tr" th:id="${'tntr'+id}">
 
 <th:block th:if="${type.contains('video')}">
@@ -10,6 +10,11 @@
 
 <th:block th:if="${!type.contains('video') and width != null and height != null and width > height*2}">
     <span th:id="${'panorama'+id}" class="bi-aspect-ratio overlayIcon overlayIconBackground"></span>
+    <br>
+</th:block>
+
+<th:block th:if="${!type.contains('video') and width != null and height != null and width <= height*2 and expectedExtension == 'gif'}">
+    <span th:id="${'gif'+id}" class="bi-layers overlayIcon overlayIconBackground"></span>
     <br>
 </th:block>
 

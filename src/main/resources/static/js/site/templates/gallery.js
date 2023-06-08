@@ -90,6 +90,13 @@ class GalleryTemplates {
             ` : ''
         }
         
+        ${($.inArray("isPan", overlays) !== -1) ?
+        `
+            <span id="gif${id}" class="bi-layers overlayIcon overlayIconBackground"></span>
+            <br>
+            ` : ''
+    }
+        
         ${($.inArray("isTagged", overlays) !== -1) ?
             `
             <span class="bi-bookmark-fill overlayIconBackground" style="font-size: 1rem;color: lightsalmon;"></span>
