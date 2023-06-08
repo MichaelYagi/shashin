@@ -90,7 +90,7 @@ class GalleryTemplates {
             ` : ''
         }
         
-        ${($.inArray("isPan", overlays) !== -1) ?
+        ${($.inArray("isGif", overlays) !== -1) ?
         `
             <span id="gif${id}" class="bi-layers overlayIcon overlayIconBackground"></span>
             <br>
