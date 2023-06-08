@@ -13,7 +13,7 @@
     <br>
 </th:block>
 
-<th:block th:if="${!type.contains('video') and width != null and height != null and width <= height*2 and expectedExtension == 'gif'}">
+<th:block th:if="${expectedExtension == 'gif'}">
     <span th:id="${'gif'+id}" class="bi-layers overlayIcon overlayIconBackground"></span>
     <br>
 </th:block>

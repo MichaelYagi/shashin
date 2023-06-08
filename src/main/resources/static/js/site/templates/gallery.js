@@ -73,7 +73,7 @@ class GalleryTemplates {
 
     static getTopRightOverlay({id, overlays, data}) { return `
         <div class="thumbnail-tr" id="tntr${id}">
-    
+
         ${($.inArray("isVideo", overlays) !== -1) ?
             `
             <span class="overlayIconBackground">${data.duration}&nbsp;
@@ -91,11 +91,11 @@ class GalleryTemplates {
         }
         
         ${($.inArray("isGif", overlays) !== -1) ?
-        `
+            `
             <span id="gif${id}" class="bi-layers overlayIcon overlayIconBackground"></span>
             <br>
             ` : ''
-    }
+        }
         
         ${($.inArray("isTagged", overlays) !== -1) ?
             `
