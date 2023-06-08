@@ -319,7 +319,7 @@
 
                     if (id.indexOf("tail_") === -1 && index < 2 && timelineSettings.prevAnchor !== id) {
                         // Scrolling behavior different on Chrome iOS
-                        if (Util.isSafari() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
+                        if (Util.isSafari() === true || Util.isFirefox() === true || (Util.getOS() === "iOS" && Util.isChrome() === true)) {
                             timelineSettings.renderThumbnailsAlt(id, mediaTypeFilter).then(function (msg) {
                                 if (msg === timelineSettings.successBelowMsg || msg === timelineSettings.successAboveMsg || msg === timelineSettings.successMidMsg) {
                                     timelineSettings.setScrollSpyActive(id);
@@ -341,7 +341,7 @@
                 });
 
                 // Scrolling behavior different on Chrome iOS
-                if (timelineSettings.isScrolling === true && ((Util.isSafari() === false || Util.isFirefox() === true) && !(Util.getOS() === "iOS" && Util.isChrome() === true))) {
+                if (timelineSettings.isScrolling === true && (Util.isSafari() === false || Util.isFirefox() === false) && !(Util.getOS() === "iOS" && Util.isChrome() === true)) {
                     timelineSettings.renderThumbnails(elements, mediaTypeFilter, timelineDates).then(function (msg) {
                         if (msg === timelineSettings.success) {
                             // Set TOC active element
