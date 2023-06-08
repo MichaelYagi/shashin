@@ -1339,13 +1339,12 @@
 
         data["metadata"] = metadata;
 
-        const duration = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
         if (metadata.type.includes("video")) {
             overlays.push("isVideo");
-            data["duration"] = duration;
+            data["duration"] = (metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00";
         } else if (metadata.width !== null && metadata.height !== null && metadata.width > metadata.height*2) {
             overlays.push("isPan");
-        } else if (metadata.width !== null && metadata.height !== null && metadata.width <= metadata.height*2 && metadata.expectedExtension === "gif") {
+        } else if (metadata.expectedExtension === "gif") {
             overlays.push("isGif");
         }
 
