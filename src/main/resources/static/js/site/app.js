@@ -913,12 +913,13 @@
 
     shashin.getLightGalleryConfigs = function(additionalConfigs) {
         const configs = {
-            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate],
+            plugins: [lgZoom, lgVideo, lgRelativeCaption, lgFullscreen, lgRotate, lgCastMedia],
             videojs: false,
             hideBarsDelay: 5000,
             allowMediaOverlap: true,
             counter: false,
             preload: "auto",
+            castMedia: true,
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,

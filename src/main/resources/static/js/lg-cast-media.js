@@ -4,7 +4,7 @@
     "use strict";
 
     // Create new Castjs instance
-    const cjs = new Castjs();
+    let cjs = new Castjs();
 
     var e = function() {
             return (e = Object.assign || function(e) {
@@ -27,43 +27,73 @@
         return n.prototype.init = function() {
             var e = "";
             if (this.settings.castMedia) {
-                e = '<button type="button" aria-label="Cast Media" id="cast" class="bi-cast lg-icon" style="font-size: 1rem;visibility: hidden"></button>',
+                e = '<button type="button" aria-label="Cast Media" id="chromecasting" class="bi-cast lg-icon" style="font-size: 1rem;display: none;"></button>',
                     this.core.$toolbar.append(e),
                     this.castMedia()
-            }
 
-            cjs.on('available',function () {
-                $("#cast").css("visibility","visible");
-            });
+                if (cjs.available) {
+                    $("#chromecasting").css({"display": "block", "font-size": "1rem"});
+                }
+
+                cjs.on('available', () => {
+                    $("#chromecasting").css({"display": "block", "font-size": "1rem"});
+                });
+            }
 
             this.core.outer
                 .find('.bi-cast')
                 .first()
                 .on('click.lg', () => {
                     if (cjs.available) {
-                        const getUrl = window.location;
-                        const baseUrl = getUrl.protocol + "//" + getUrl.host;
-                        let metadata = null;
+                        let metadataId = null;
                         let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
+
                         if (currentDynamicEl.hasOwnProperty("func")) {
-                            $("#metadataId").val(currentDynamicEl.args.id);
-                            metadata = currentDynamicEl.args;
-                        } else if ($($(".thumbnail-bl")[this.core.index].firstChild).attr("tag")) {
-                            //console.log($($(".thumbnail-bl")[this.core.index].firstChild).attr("tag"))
-                            const fn = this.settings.metadataDetailFunc;
-                            let toArgObj = {};
+                            $("#metadataId").val(currentDynamicEl.args);
+                            metadataId = currentDynamicEl.args;
+                        } else if ($($(".thumbnail-bl")[this.core.index])) {
+                            //console.log($($(".thumbnail-bl")[this.core.index]))
+                            let toArgObj = "";
                             try {
-                                toArgObj = JSON.parse($($(".thumbnail-bl")[this.core.index].firstChild).attr("tag"));
+                                toArgObj = $($(".thumbnail-bl")[this.core.index]).attr("id").substring(4);
                             } catch (e) {
                             }
-                            metadata = toArgObj;
+                            metadataId = toArgObj;
                         }
 
+                        if (metadataId !== null && $.isArray(metadataId) === true && metadataId.length > 0) {
+                            metadataId = metadataId[0];
+                        }
+
+                        if (shashin &&
+                            /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)) {
+                            shashin.getMetadata(metadataId).then(function (metadata) {
+                                castMetadataMedia(metadata, cjs);
+                            });
+                        }
+                    }
+
+                    function castMetadataMedia(metadata, cjs) {
                         if (metadata !== null && metadata.hasOwnProperty("id")) {
+                            const getUrl = window.location;
+                            const baseUrl = getUrl.protocol + "//" + getUrl.host;
+
                             if (metadata.videoUrl !== null) {
-                                cjs.cast(baseUrl + metadata.videoUrl);
+                                try {
+                                    cjs.cast(baseUrl + metadata.videoUrl);
+                                } catch(e) {
+                                    // Error
+                                    // console.log(e)
+                                    $("#chromecasting").css({"display": "none", "font-size": "1rem"});
+                                }
                             } else if (metadata.thumbnailUrlOriginal !== null) {
-                                cjs.cast(baseUrl + metadata.thumbnailUrlOriginal);
+                                try {
+                                    cjs.cast(baseUrl + metadata.thumbnailUrlOriginal);
+                                } catch(e) {
+                                    // Error
+                                    // console.log(e)
+                                    $("#chromecasting").css({"display": "none", "font-size": "1rem"});
+                                }
                             }
                         }
                     }
