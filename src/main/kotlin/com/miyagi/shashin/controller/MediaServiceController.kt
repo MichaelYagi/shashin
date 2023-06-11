@@ -68,12 +68,12 @@ class MediaServiceController {
                 (metadata.getType()!!.lowercase().contains("mp4") || metadata.getType()!!.lowercase().contains("quicktime")) &&
                 (
                         ((metadata.getCompressionType() == null || metadata.getCompressionType()!!.lowercase() == "unknown") &&
-                            metadata.getExpectedExtension() != null &&
-                            metadata.getExpectedExtension()!!.lowercase() == "mov" &&
-                            File(metadata.getPath()!!).extension.lowercase() == "mov") ||
-                        (metadata.getCompressionType() != null && metadata.getCompressionType()!!.lowercase() != "h.264") &&
-                        (mp4MajorBrand.lowercase().contains("mpeg"))
-                )
+                                metadata.getExpectedExtension() != null &&
+                                metadata.getExpectedExtension()!!.lowercase() == "mov" &&
+                                File(metadata.getPath()!!).extension.lowercase() == "mov") ||
+                                (metadata.getCompressionType() != null && metadata.getCompressionType()!!.lowercase() != "h.264") &&
+                                (mp4MajorBrand.lowercase().contains("mpeg"))
+                        )
             ) {
                 logger.log(Level.INFO, "Converting video " + metadata.getPath() + " to h.264.")
                 /* Step 1. Declaring source file and Target file */
@@ -193,7 +193,7 @@ class MediaServiceController {
         return module
     }
 
-    @RequestMapping(value = ["/api/v1/image/{metadataId}"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
+    @RequestMapping(value = ["/api/v1/image/{metadataId}","/api/v1/image/{metadataId}.jpg"], method = [RequestMethod.GET], produces = ["image/apng","image/avif","image/gif","image/jpeg","image/png","image/svg+xml","image/svg+xml","image/webp"])
     @ResponseBody
     @Throws(java.io.IOException::class)
     fun getImage(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {

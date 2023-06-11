@@ -88,7 +88,7 @@
                                 }
                             } else if (metadata.thumbnailUrlOriginal !== null) {
                                 try {
-                                    cjs.cast(baseUrl + metadata.thumbnailUrlOriginal + "?." + metadata.expectedExtension);
+                                    cjs.cast(baseUrl + metadata.thumbnailUrlOriginal + ".jpg");
                                 } catch(e) {
                                     // Error
                                     // console.log(e)
