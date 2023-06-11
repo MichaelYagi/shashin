@@ -6,6 +6,14 @@
     // Create new Castjs instance
     let cjs = new Castjs();
 
+    cjs.on('available', () => {
+        $("#chromecasting").css({"display": "block", "font-size": "1rem"});
+    });
+
+    cjs.on('error', (e) => {
+        //console.log(e)
+    });
+
     var e = function() {
             return (e = Object.assign || function(e) {
                 for (var l, n = 1, t = arguments.length; n < t; n++)
@@ -34,10 +42,6 @@
                 if (cjs.available) {
                     $("#chromecasting").css({"display": "block", "font-size": "1rem"});
                 }
-
-                cjs.on('available', () => {
-                    $("#chromecasting").css({"display": "block", "font-size": "1rem"});
-                });
             }
 
             this.core.outer
