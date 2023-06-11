@@ -137,7 +137,7 @@ class MediaServiceController {
             if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
                 val typeList = metadataObj.get().getType()!!.split("/")
                 if (typeList.count() == 2) {
-                    headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
+                    headers.contentType = MediaType(typeList[0],typeList[1])
                 }
             }
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
@@ -161,7 +161,7 @@ class MediaServiceController {
             if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
                 val typeList = metadataObj.get().getType()!!.split("/")
                 if (typeList.count() == 2) {
-                    headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
+                    headers.contentType = MediaType(typeList[0],typeList[1])
                 }
             }
             response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename);
@@ -207,7 +207,7 @@ class MediaServiceController {
             if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
                 val typeList = metadataObj.get().getType()!!.split("/")
                 if (typeList.count() == 2) {
-                    headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
+                    headers.contentType = MediaType(typeList[0],typeList[1])
                 }
             }
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
@@ -231,7 +231,7 @@ class MediaServiceController {
             if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
                 val typeList = metadataObj.get().getType()!!.split("/")
                 if (typeList.count() == 2) {
-                    headers.contentType = MediaType(typeList[0],typeList[1],StandardCharsets.UTF_8)
+                    headers.contentType = MediaType(typeList[0],typeList[1])
                 }
             }
             response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename);
