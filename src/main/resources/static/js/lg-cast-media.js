@@ -10,8 +10,18 @@
         $("#chromecasting").css({"display": "block", "font-size": "1rem"});
     });
 
+    cjs.on('event', (e) => {
+        // console.log(e)
+        if (e === 'disconnect') {
+            $("#chromecasting").css({"display": "block", "font-size": "1rem"});
+        } else {
+            $("#chromecasting").css({"display": "none", "font-size": "1rem"});
+        }
+    });
+
     cjs.on('error', (e) => {
         //console.log(e)
+        $("#chromecasting").css({"display": "none", "font-size": "1rem"});
     });
 
     var e = function() {
