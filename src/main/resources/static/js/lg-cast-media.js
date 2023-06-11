@@ -60,33 +60,34 @@
                         if ($("#chromecasting").hasClass("bi-stop")) {
                             $("#chromecasting").addClass('bi-cast').removeClass('bi-stop');
                             cjs.disconnect();
-                        }
+                        } else {
 
-                        let metadataId = null;
-                        let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
+                            let metadataId = null;
+                            let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
-                        if (currentDynamicEl.hasOwnProperty("func")) {
-                            $("#metadataId").val(currentDynamicEl.args);
-                            metadataId = currentDynamicEl.args;
-                        } else if ($($(".thumbnail-bl")[this.core.index])) {
-                            //console.log($($(".thumbnail-bl")[this.core.index]))
-                            let toArgObj = "";
-                            try {
-                                toArgObj = $($(".thumbnail-bl")[this.core.index]).attr("id").substring(4);
-                            } catch (e) {
+                            if (currentDynamicEl.hasOwnProperty("func")) {
+                                $("#metadataId").val(currentDynamicEl.args);
+                                metadataId = currentDynamicEl.args;
+                            } else if ($($(".thumbnail-bl")[this.core.index])) {
+                                //console.log($($(".thumbnail-bl")[this.core.index]))
+                                let toArgObj = "";
+                                try {
+                                    toArgObj = $($(".thumbnail-bl")[this.core.index]).attr("id").substring(4);
+                                } catch (e) {
+                                }
+                                metadataId = toArgObj;
                             }
-                            metadataId = toArgObj;
-                        }
 
-                        if (metadataId !== null && $.isArray(metadataId) === true && metadataId.length > 0) {
-                            metadataId = metadataId[0];
-                        }
+                            if (metadataId !== null && $.isArray(metadataId) === true && metadataId.length > 0) {
+                                metadataId = metadataId[0];
+                            }
 
-                        if (shashin &&
-                            /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)) {
-                            shashin.getMetadata(metadataId).then(function (metadata) {
-                                castMetadataMedia(metadata, cjs);
-                            });
+                            if (shashin &&
+                                /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(metadataId)) {
+                                shashin.getMetadata(metadataId).then(function (metadata) {
+                                    castMetadataMedia(metadata, cjs);
+                                });
+                            }
                         }
                     }
 
