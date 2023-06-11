@@ -12,10 +12,8 @@
 
     cjs.on('event', (e) => {
         // console.log(e)
-        if (e === 'disconnect') {
-            $("#chromecasting").css({"display": "block", "font-size": "1rem"});
-        } else {
-            $("#chromecasting").css({"display": "none", "font-size": "1rem"});
+        if (e === "connect" && $("#chromecasting").hasClass("bi-cast")) {
+            $("#chromecasting").addClass('bi-stop').removeClass('bi-cast');
         }
     });
 
@@ -55,10 +53,15 @@
             }
 
             this.core.outer
-                .find('.bi-cast')
+                .find('.bi-cast, .bi-stop')
                 .first()
                 .on('click.lg', () => {
                     if (cjs.available) {
+                        if ($("#chromecasting").hasClass("bi-stop")) {
+                            $("#chromecasting").addClass('bi-cast').removeClass('bi-stop');
+                            cjs.disconnect();
+                        }
+
                         let metadataId = null;
                         let currentDynamicEl = this.settings.dynamicEl[this.core.index] && this.settings.dynamicEl[this.core.index].hasOwnProperty("func") ? this.settings.dynamicEl[this.core.index] : this.core.galleryItems[this.core.index];
 
