@@ -11,6 +11,9 @@
     $("#progressBar").css("width","100%");
 </script>
 
+<input type="hidden" id="mapdata" name="mapdata" th:value="${mapdata}">
+<input type="hidden" id="keywordMap" name="keywordMap" th:value="${keywordMap}">
+
 <div class="invalid-feedback d-block ms-3" id="dateValidationMessage"></div>
 <div class="row m-1" id="dateInputs" style="visibility: hidden">
     <div class="d-inline-flex align-items-center col-sm-1">
@@ -116,12 +119,12 @@
     $(document).ready(function () {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
-        const mapdata = /*[[${mapdata}]]*/ [];
-        const keywordMap = /*[[${keywordMap}]]*/ {};
         const showControls = /*[[${showControls}]]*/ false;
         /*]]>*/
 
-        showMap(mapdata,keywordMap,showControls);
+        const mapdata = $("#mapdata").val();
+
+        showMap(mapdata,showControls);
     });
 </script>
 </body>

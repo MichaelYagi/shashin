@@ -1,4 +1,5 @@
-async function showMap(mapdata,keywordMap,showControls) {
+async function showMap(mapdataString,showControls) {
+    const mapdata = JSON.parse(mapdataString);
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
     // Must be format yyyy-mm-dd
@@ -231,9 +232,6 @@ async function showMap(mapdata,keywordMap,showControls) {
                 }
 
                 if (true === checkDates(dateTakenObj,startDateObj,endDateObj)) {
-
-                    const keywords = keywordMap.hasOwnProperty(data["id"]) ? keywordMap[data["id"]] : "";
-
                     const mapMarkerIcon = new ol.style.Style({
                         //geometry: feature.getGeometry(),
                         image: new ol.style.Icon(({
@@ -277,7 +275,6 @@ async function showMap(mapdata,keywordMap,showControls) {
                         takenAt: data["takenAt"],
                         time: data["time"],
                         timeZone: data["timeZone"],
-                        keywords: keywords,
                         description: data["description"]
                     });
 
@@ -348,12 +345,11 @@ async function showMap(mapdata,keywordMap,showControls) {
             metadata.time = locationArgs[20];
             metadata.timeZone = locationArgs[21];
             metadata.placeName = locationArgs[22];
-            metadata.keywords = locationArgs[23];
-            metadata.thumbnailUrlOriginal = locationArgs[24];
-            metadata.originalImageHeight = locationArgs[25];
-            metadata.originalImageWidth = locationArgs[26];
-            metadata.videoUrl = locationArgs[27];
-            metadata.description = locationArgs[28];
+            metadata.thumbnailUrlOriginal = locationArgs[23];
+            metadata.originalImageHeight = locationArgs[24];
+            metadata.originalImageWidth = locationArgs[25];
+            metadata.videoUrl = locationArgs[26];
+            metadata.description = locationArgs[27];
         }
         if (modalLabel && modalLabel.length > 0) {
             $("#editPhotoLocationModalLabel").text("for " + modalLabel);
@@ -488,7 +484,6 @@ async function showMap(mapdata,keywordMap,showControls) {
                         featureProperties["time"],
                         featureProperties["timeZone"],
                         featureProperties["placeName"],
-                        featureProperties["keywords"],
                         featureProperties["thumbnailUrlOriginal"],
                         featureProperties["originalImageHeight"],
                         featureProperties["originalImageWidth"],
@@ -548,10 +543,12 @@ async function showMap(mapdata,keywordMap,showControls) {
 
     const lightGalleryConfigs = shashin.getLightGalleryConfigs();
     lightGalleryConfigs["plugins"].push(lgEditLocation);
+    lightGalleryConfigs["plugins"].push(lgCastMedia);
     lightGalleryConfigs["controls"] = true;
     lightGalleryConfigs["dynamic"] = true;
     lightGalleryConfigs["counter"] = true;
     lightGalleryConfigs["editLocation"] = true;
+    lightGalleryConfigs["castMedia"] = true;
     const $dynamicGallery = document.getElementById('light-gallery-photo');
     let dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
 
