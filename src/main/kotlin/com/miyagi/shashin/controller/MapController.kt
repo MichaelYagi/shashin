@@ -8,6 +8,8 @@ import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.CacheControl
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
+import java.util.concurrent.TimeUnit
 
 @Controller
 class MapController {
@@ -51,7 +54,7 @@ class MapController {
     @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["api/v1/mapdata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
-    fun getMapDataAdmin(model: Model): String {
+    fun getMapDataAdmin(model: Model): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         response["mapdata"] = mutableListOf<Metadata>()
@@ -70,6 +73,11 @@ class MapController {
             response["status"] = ApiResponse.SUCCESS.status
         }
 
-        return mapper.writeValueAsString(response)
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+//            .eTag(UUID.nameUUIDFromBytes(json.toByteArray()).toString())
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
     }
 }
