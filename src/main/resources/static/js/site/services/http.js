@@ -27,6 +27,8 @@ class Http {
         }).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 return data;
+            } else {
+                return {"message": "Error: No status or msg keys."}
             }
 
             return null;

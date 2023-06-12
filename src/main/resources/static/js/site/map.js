@@ -1,5 +1,4 @@
-async function showMap(mapdataString,showControls) {
-    const mapdata = JSON.parse(mapdataString);
+async function showMap(mapdata,showControls) {
     const qslat = Util.getParameterByName("lat");
     const qslng = Util.getParameterByName("lng");
     // Must be format yyyy-mm-dd
