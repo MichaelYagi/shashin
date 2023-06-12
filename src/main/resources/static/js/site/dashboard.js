@@ -357,6 +357,7 @@ class Dashboard {
             setTimeout(scanRefresh, refreshRateMS);
         }
 
+        let counter = 0;
         function connect() {
             const socket = new SockJS('/websocket-endpoint');
             stompClient = Stomp.over(socket);
@@ -400,7 +401,12 @@ class Dashboard {
                     shashin.printMessageToConsole("Message:"+respMessageJsonString);
                 });
             }, function(e) {
-                shashin.printMessageToConsole("Socket connection error: " + e.toString())
+                if (counter > 0) {
+                    shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
+                } else {
+                    shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
+                }
+                counter++;
             });
         }
 
