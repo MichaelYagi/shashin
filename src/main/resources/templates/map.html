@@ -11,8 +11,6 @@
     $("#progressBar").css("width","100%");
 </script>
 
-<input type="hidden" id="mapdata" name="mapdata" th:value="${mapdata}">
-
 <div class="invalid-feedback d-block ms-3" id="dateValidationMessage"></div>
 <div class="row m-1" id="dateInputs" style="visibility: hidden">
     <div class="d-inline-flex align-items-center col-sm-1">
@@ -121,9 +119,19 @@
         const showControls = /*[[${showControls}]]*/ false;
         /*]]>*/
 
-        const mapdata = $("#mapdata").val();
+        const http = new Http("Getting map data");
+        http.ajax("get", "api/v1/mapdata").then(function (mapdataObj) {
+            let mapdata = [];
 
-        showMap(mapdata,showControls);
+            if (mapdataObj !== null && mapdataObj.hasOwnProperty("mapdata")) {
+                mapdata = mapdataObj["mapdata"];
+                if (mapdata === null || mapdata === "") {
+                    mapdata = [];
+                }
+            }
+
+            showMap(mapdata, showControls);
+        });
     });
 </script>
 </body>
