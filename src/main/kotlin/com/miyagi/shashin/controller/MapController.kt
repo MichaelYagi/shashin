@@ -38,12 +38,6 @@ class MapController {
             } else {
                 model["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserId(currentUserObj.getId())
             }
-            val keywordList = keywordRepository!!.findAllKeywordsGroupedByMetadataId()
-            val keywordMap = mutableMapOf<String, String>()
-            for (keywordGroup in keywordList) {
-                keywordMap[keywordGroup.getMetadataId()!!] = keywordGroup.getKeywords()!!
-            }
-            model["keywordMap"] = keywordMap
         }
 
         model["msg"] = ""
