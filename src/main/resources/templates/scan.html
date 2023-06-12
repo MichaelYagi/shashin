@@ -99,6 +99,7 @@
             }
         }
 
+        let counter = 0;
         function connect() {
             const socket = new SockJS('/websocket-endpoint');
             stompClient = Stomp.over(socket);
@@ -122,8 +123,13 @@
                 shashin.printMessageToConsole( "connect() error" );
                 shashin.printMessageToConsole( e.toString() );
                 //showMessage("Socket connection error: " + e.toString())
-                showMessage("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
+                if (counter > 0) {
+                    showMessage("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
+                } else {
+                    showMessage("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
+                }
                 scanInProgress = false;
+                counter++;
             });
         }
 
