@@ -120,9 +120,9 @@
                 });
             }, function(e) {
                 shashin.printMessageToConsole( "connect() error" );
-                shashin.printMessageToConsole( error );
+                shashin.printMessageToConsole( e.toString() );
                 //showMessage("Socket connection error: " + e.toString())
-                showMessage("Oops, something went wrong!")
+                showMessage("Oops, something went wrong!" + e.toString());
                 scanInProgress = false;
             });
         }
