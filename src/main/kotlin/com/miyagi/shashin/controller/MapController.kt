@@ -33,10 +33,10 @@ class MapController {
         // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
             if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
-                model["mapdata"] = metadataRepository!!.findTimelineAll()
+                model["mapdata"] = metadataRepository!!.findTimelineAllWithCoordinates()
                 model["showControls"] = true
             } else {
-                model["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserId(currentUserObj.getId())
+                model["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserIdWithCoordinates(currentUserObj.getId())
             }
         }
 
