@@ -19,7 +19,9 @@
 
     cjs.on('error', (e) => {
         //console.log(e)
-        $("#chromecasting").css({"display": "none", "font-size": "1rem"});
+        if (e !== "invalid_parameter") {
+            $("#chromecasting").css({"display": "none", "font-size": "1rem"});
+        }
     });
 
     var e = function() {
