@@ -30,8 +30,6 @@ class Http {
             } else {
                 return {"message": "Error: No status or msg keys."}
             }
-
-            return null;
         }.bind(this));
     }
 }
