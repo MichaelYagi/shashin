@@ -78,14 +78,6 @@
             timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
             timelineSettings.reinitLightGalleryInstance();
-
-            $(".photo-thumbnail-image").mousemove(function () {
-                if (firsthovered === false) {
-                    const attrId = $(this).attr("id");
-                    const metadataId = attrId.substring(5, attrId.length);
-                    shashin.imageHover(this, metadataId);
-                }
-            });
         } else {
             timelineSettings.enableScrollSpy = false;
         }
@@ -220,6 +212,18 @@
                 }
             });
         }, 1500);
+
+        // If there not many photos or no scrolling, activate hover icons
+        setTimeout(function() {
+            $(".photo-thumbnail-image").mousemove(function () {
+                if (firsthovered === false) {
+                    const attrId = $(this).attr("id");
+                    const metadataId = attrId.substring(5, attrId.length);
+                    shashin.imageHover(this, metadataId);
+                }
+
+            });
+        }, 3000);
     }
 
     timelineSettings.rescanElements = function () {
