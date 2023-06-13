@@ -52,6 +52,7 @@
         let topScroll = true;
         let topOfPage = true;
         let scrollTimer = null;
+        let firsthovered = false;
 
         // Initialize
         if (Util.isMobile() === false) {
@@ -77,11 +78,21 @@
             timelineSettings.renderThumbnailsInViewport(elementsInViewport, mediaTypeFilter);
             timelineSettings.setScrollSpyActive($(firstElem));
             timelineSettings.reinitLightGalleryInstance();
+
+            $(".photo-thumbnail-image").mousemove(function () {
+                if (firsthovered === false) {
+                    const attrId = $(this).attr("id");
+                    const metadataId = attrId.substring(5, attrId.length);
+                    shashin.imageHover(this, metadataId);
+                }
+            });
         } else {
             timelineSettings.enableScrollSpy = false;
         }
 
         $(window).bind("scrollStop", function() {
+            firsthovered = true;
+
             // Prevent getting stuck scrolling up
             if ($("#container").position().top === $("#infinite-scroll-gallery").position().top) {
                 setTimeout(() => {
@@ -122,6 +133,8 @@
         let lastOffset = $("#container").scrollTop();
         let lastDate = new Date().getTime();
         const scrollHandler = function (e) {
+            firsthovered = true;
+
             if (scrollTimer !== null) {
                 clearTimeout(scrollTimer);
             }

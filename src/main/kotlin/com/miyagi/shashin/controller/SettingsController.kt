@@ -1219,6 +1219,7 @@ class SettingsController {
                             val metadataList = metadataRepository?.findAll()
 
                             if (metadataList != null) {
+                                var deleteCount = 0
                                 for (metadata in metadataList) {
                                     if (shouldStop.get()) {
                                         writeToThreadFile("Scan Cancelled", threadFile)
@@ -1241,6 +1242,8 @@ class SettingsController {
                                             }
                                             val checkFile = File(metadata.getPath()!!)
                                             if (!checkFile.exists() || !basePathExists) {
+                                                deleteCount++
+
                                                 // Delete side car and metadata files
                                                 if (!metadata.getThumbnailPathCentered().isNullOrBlank()) {
                                                     val fileObj = File(metadata.getThumbnailPathCentered()!!)
@@ -1385,6 +1388,28 @@ class SettingsController {
                                             } else if (!reindexFiles) {
                                                 alreadyScannedFilepaths.add(checkFile.path)
                                             }
+                                        }
+                                    }
+                                }
+
+                                if (deleteCount > 0) {
+                                    // Set notification for scanCount and date and link to /recent
+                                    val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
+                                    val msg =
+                                        "Deleted $deleteCount images/videos at " + sdtf.format(Date()) + "."
+                                    if (admins != null) {
+                                        val notificationObjList = mutableListOf<Notification>()
+                                        for (admin in admins) {
+                                            val notificationObj = Notification()
+                                            notificationObj.setUserId(admin.getId())
+                                            notificationObj.setCreatedAt(getCurrentTimestamp())
+                                            notificationObj.setModifiedAt(getCurrentTimestamp())
+                                            notificationObj.setRead(false)
+                                            notificationObj.setMessage(msg)
+                                            notificationObjList.add(notificationObj)
+                                        }
+                                        if (notificationObjList.isNotEmpty()) {
+                                            notificationRepository?.saveAll(notificationObjList)
                                         }
                                     }
                                 }
