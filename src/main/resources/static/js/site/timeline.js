@@ -170,7 +170,9 @@
             lastDate = e.timeStamp;
             lastOffset = $(e.target).scrollTop();
 
-            $("#dateSlider").show(timelineSettings.fadeTime);
+            if (timelineSettings.isScrolling === true) {
+                $("#dateSlider").show(timelineSettings.fadeTime);
+            }
 
             // Hack to prevent infinite scroll upwards and throttle scrolling
             if (topScroll === true && topOfPage === false && Util.isMobile() === false) {
@@ -949,7 +951,7 @@
                         timelineSettings.jumpFromTimelineToc(null, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
                         timelineSettings.enableScrollSpy = true;
                     }
-                    $(".monthYearSlider").show();
+                    //$(".monthYearSlider").show();
                 },
                 change: function (event, ui) {
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
