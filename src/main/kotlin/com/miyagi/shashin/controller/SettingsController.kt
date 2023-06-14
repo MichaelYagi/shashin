@@ -299,7 +299,9 @@ class SettingsController {
 
             val allMediaDirs = mediaDirRepository?.findByExclude(false)
             val allMediaDirList: List<String>? = allMediaDirs?.map { it?.getDirectory()!! }
-            if (scanAutomatically == "on" && (!mediaDirs.containsAll(allMediaDirList!!) || !allMediaDirList.containsAll(mediaDirs))) {
+            if (scanAutomatically == "on" &&
+                (mediaDirs.isNotEmpty() && (!mediaDirs.containsAll(allMediaDirList!!) || !allMediaDirList.containsAll(mediaDirs)))
+            ) {
                 resetServer = true
             }
 
@@ -328,10 +330,11 @@ class SettingsController {
         }
 
         if (!mediaExcludeDirs.isNullOrEmpty()) {
-
             val allMediaExcludeDirs = mediaDirRepository?.findByExclude(true)
             val allMediaExcludeDirList: List<String>? = allMediaExcludeDirs?.map { it?.getDirectory()!! }
-            if (scanAutomatically == "on" && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(mediaExcludeDirs))) {
+            if (scanAutomatically == "on" &&
+                (mediaExcludeDirs.isNotEmpty() && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(mediaExcludeDirs)))
+            ) {
                 resetServer = true
             }
 
