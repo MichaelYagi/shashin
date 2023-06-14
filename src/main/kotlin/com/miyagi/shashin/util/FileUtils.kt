@@ -225,6 +225,17 @@ class FileUtils {
             }
         }
 
+        fun deleteEmptyDirectoriesOfFolder(folder: File) {
+            for (fileEntry in folder.listFiles()) {
+                if (fileEntry.isDirectory) {
+                    deleteEmptyDirectoriesOfFolder(fileEntry)
+                    if (fileEntry.listFiles() != null && fileEntry.listFiles().isEmpty()) {
+                        fileEntry.delete()
+                    }
+                }
+            }
+        }
+
         /**
          * Main zip Function
          * @param out Target ZipStream
