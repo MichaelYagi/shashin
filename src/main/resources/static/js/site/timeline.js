@@ -17,7 +17,7 @@
     timelineSettings.heightArray = [];
     timelineSettings.elementTracking = [];
     timelineSettings.heightCounter = 0;
-    timelineSettings.fadeTime = 500;
+    timelineSettings.fadeTime = 0;
 
     const calculateDistanceToFooter = function() {
         return $(window).height() - $('#subfooter').offset().top;
