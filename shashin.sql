@@ -130,6 +130,7 @@ DROP TABLE IF EXISTS `mediadir`;
 CREATE TABLE `mediadir` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `directory` VARCHAR(150) NOT NULL,
+    `exclude` BOOLEAN DEFAULT FALSE,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL,
     CHECK(`directory` <> '')

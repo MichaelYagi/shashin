@@ -148,7 +148,7 @@ class SettingsController {
         //println("message:${message.getMessage()}")
         var msg = "Start Scan"
 
-        val mediaDirs = mediaDirRepository?.findAll()
+        val mediaDirs = mediaDirRepository?.findByExclude(false)
         if (mediaDirs != null && mediaDirs.count() > 0) {
             if (!FileUtils.checkThreadFileAlive("shashinscan")) {
                 msg = "Scan Complete"
@@ -210,17 +210,20 @@ class SettingsController {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/settings"], method = [RequestMethod.GET])
     fun getSettings(model: Model, @ModelAttribute("settings") settings: Settings): String {
-        val mediaDirectories = mediaDirRepository?.findAll()
+        val mediaDirectories = mediaDirRepository?.findByExclude(false)
+        val mediaExcludeDirectories = mediaDirRepository?.findByExclude(true)
 
         val module = "settings"
         model["message"] = ""
         model["mediaDirList"] = ""
+        model["mediaExcludeDirList"] = ""
         model["settings"] = ""
         model["alertClass"] = ""
 
         var dirDneString = ""
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirectories != null) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && mediaDirectories != null && mediaExcludeDirectories != null) {
             model["mediaDirList"] = mediaDirectories.joinToString { "${it?.getDirectory()}" }
+            model["mediaExcludeDirList"] = mediaExcludeDirectories.joinToString { "${it?.getDirectory()}" }
 
             for (mediaDir in mediaDirectories) {
                 if (mediaDir != null) {
@@ -230,10 +233,21 @@ class SettingsController {
                     }
                 }
             }
+
+            for (mediaDir in mediaExcludeDirectories) {
+                if (mediaDir != null) {
+                    val path: Path = Paths.get(mediaDir.getDirectory()!!)
+                    if (!Files.exists(path)) {
+                        dirDneString += "${mediaDir.getDirectory()},"
+                    }
+                }
+            }
+
             if (dirDneString.isNotBlank()) {
                 dirDneString = "Cannot find "+dirDneString.dropLast(1)
                 model["alertClass"] = "alert-warning"
             }
+
             model.addAttribute("settings", settings)
         }
 
@@ -255,6 +269,7 @@ class SettingsController {
         request: HttpServletRequest,
         @RequestHeader headers: HttpHeaders,
         @RequestParam("mediaDirList") mediaDirList: String,
+        @RequestParam("mediaExcludeDirList") mediaExcludeDirList: String,
         @RequestParam("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,
         @RequestParam("queryLimit") queryLimit: Int,
         @RequestParam("matchScanLimit") matchScanLimit: Int,
@@ -270,27 +285,33 @@ class SettingsController {
         if (mediaDirList.isNotBlank()) {
             mediaDirs = mediaDirList.trim().split(",").map { it.trim() }
         }
+        var mediaExcludeDirs: List<String>? = null
+        val mediaExcludeDirArrayList: ArrayList<MediaDirectory> = ArrayList()
+        if (mediaExcludeDirList.isNotBlank()) {
+            mediaExcludeDirs = mediaExcludeDirList.trim().split(",").map { it.trim() }
+        }
 
         model["alertClass"] = "alert-success"
         var statusMessage = ""
 
         var dirDneString = ""
-        if (mediaDirs != null && mediaDirs.isNotEmpty()) {
+        if (!mediaDirs.isNullOrEmpty()) {
 
-            val allMediaDirs = mediaDirRepository?.findAll()
+            val allMediaDirs = mediaDirRepository?.findByExclude(false)
             val allMediaDirList: List<String>? = allMediaDirs?.map { it?.getDirectory()!! }
             if (scanAutomatically == "on" && (!mediaDirs.containsAll(allMediaDirList!!) || !allMediaDirList.containsAll(mediaDirs))) {
                 resetServer = true
             }
 
-            mediaDirRepository?.deleteAll()
+            mediaDirRepository?.deleteByExclude(false)
             for (mediaDir in mediaDirs) {
                 if (mediaDir.trim().isNotBlank()) {
-                    var mediaDirObj = mediaDirRepository?.findByDirectory(mediaDir)
+                    var mediaDirObj = mediaDirRepository?.findByExcludeIsAndDirectory(false, mediaDir)
                     if (mediaDirObj == null) {
                         mediaDirObj = MediaDirectory()
                         mediaDirObj.setDirectory(mediaDir)
                     }
+                    mediaDirObj.setExclude(false)
                     mediaDirObj.setCreatedAt(getCurrentTimestamp())
                     mediaDirObj.setModifiedAt(getCurrentTimestamp())
                     mediaDirArrayList.add(mediaDirObj)
@@ -301,13 +322,46 @@ class SettingsController {
                     }
                 }
             }
-            if (dirDneString.isNotBlank()) {
-                statusMessage = "Cannot find "+dirDneString.dropLast(1)
-                model["alertClass"] = "alert-warning"
-            }
             mediaDirRepository?.saveAll(mediaDirArrayList)
         } else {
-            mediaDirRepository?.deleteAll()
+            mediaDirRepository?.deleteByExclude(false)
+        }
+
+        if (!mediaExcludeDirs.isNullOrEmpty()) {
+
+            val allMediaExcludeDirs = mediaDirRepository?.findByExclude(true)
+            val allMediaExcludeDirList: List<String>? = allMediaExcludeDirs?.map { it?.getDirectory()!! }
+            if (scanAutomatically == "on" && (!mediaExcludeDirs.containsAll(allMediaExcludeDirList!!) || !allMediaExcludeDirList.containsAll(mediaExcludeDirs))) {
+                resetServer = true
+            }
+
+            mediaDirRepository?.deleteByExclude(true)
+            for (mediaDir in mediaExcludeDirs) {
+                if (mediaDir.trim().isNotBlank()) {
+                    var mediaDirObj = mediaDirRepository?.findByExcludeIsAndDirectory(true, mediaDir)
+                    if (mediaDirObj == null) {
+                        mediaDirObj = MediaDirectory()
+                        mediaDirObj.setDirectory(mediaDir)
+                    }
+                    mediaDirObj.setExclude(true)
+                    mediaDirObj.setCreatedAt(getCurrentTimestamp())
+                    mediaDirObj.setModifiedAt(getCurrentTimestamp())
+                    mediaExcludeDirArrayList.add(mediaDirObj)
+
+                    val path: Path = Paths.get(mediaDir)
+                    if (!Files.exists(path)) {
+                        dirDneString += "$mediaDir,"
+                    }
+                }
+            }
+            mediaDirRepository?.saveAll(mediaExcludeDirArrayList)
+        } else {
+            mediaDirRepository?.deleteByExclude(true)
+        }
+
+        if (dirDneString.isNotBlank()) {
+            statusMessage = "Cannot find "+dirDneString.dropLast(1)
+            model["alertClass"] = "alert-warning"
         }
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
@@ -365,6 +419,7 @@ class SettingsController {
         model["status"] = ApiResponse.SUCCESS.status
         model["message"] = ""
         model["mediaDirList"] = mediaDirList.trim()
+        model["mediaExcludeDirList"] = mediaExcludeDirList.trim()
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
@@ -1188,7 +1243,7 @@ class SettingsController {
             return "Scan cancellation in progress, please wait"
         }
 
-        val mediaDirs = mediaDirRepository?.findAll()
+        val mediaDirs = mediaDirRepository?.findByExclude(false)
         if (mediaDirs != null && mediaDirs.count() > 0) {
             var mediaDirNotFound = false
             for (mediaDir in mediaDirs) {

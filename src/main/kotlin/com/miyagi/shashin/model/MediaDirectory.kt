@@ -11,6 +11,8 @@ class MediaDirectory {
     private var id: Int = 0
     @NotBlank
     private var directory: String? = null
+    @NotBlank
+    private var exclude: Boolean? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -42,5 +44,13 @@ class MediaDirectory {
 
     fun setModifiedAt(modifiedAt: String?) {
         this.modifiedAt = modifiedAt
+    }
+
+    fun getExclude(): Boolean? {
+        return this.exclude
+    }
+
+    fun setExclude(exclude: Boolean?) {
+        this.exclude = exclude
     }
 }
