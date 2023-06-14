@@ -1297,19 +1297,19 @@ class SettingsController {
                                                 basePathExists = metadata.getPath()!!
                                                     .startsWith(mediaDir!!.getDirectory().toString())
 
-                                                if (mediaExcludeDirs != null) {
-                                                    for (mediaExcludeDir in mediaExcludeDirs) {
-                                                        excludeBasePathExists = metadata.getPath()!!
-                                                            .startsWith(mediaExcludeDir!!.getDirectory().toString())
-
-                                                        if (excludeBasePathExists) {
-                                                            break
-                                                        }
-                                                    }
-                                                }
-
-                                                if (basePathExists && excludeBasePathExists) {
+                                                if (basePathExists) {
                                                     break
+                                                }
+                                            }
+
+                                            if (mediaExcludeDirs != null) {
+                                                for (mediaExcludeDir in mediaExcludeDirs) {
+                                                    excludeBasePathExists = metadata.getPath()!!
+                                                        .startsWith(mediaExcludeDir?.getDirectory().toString())
+
+                                                    if (excludeBasePathExists) {
+                                                        break
+                                                    }
                                                 }
                                             }
 
@@ -1491,7 +1491,6 @@ class SettingsController {
                             // Scan for new files
                             if (!shouldStop.get()) {
                                 for (mediaDir in mediaDirs) {
-
                                     if (mediaDir != null) {
                                         getFile(
                                             mediaDir.getDirectory().toString(),
@@ -1503,7 +1502,6 @@ class SettingsController {
                                     }
                                 }
 
-                                // Empty directory cleanup
                                 FileUtils.deleteEmptyDirectoriesOfFolder(File(sidecarDir))
                             }
 
