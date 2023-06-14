@@ -23,12 +23,12 @@
                     </th:block>
                     <div class="row">
                         <div class="col-12">
-                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></strong></label>
+                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></label>
                             <div>
                                 <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
                             </div>
 
-                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Exclude directories and files</strong></label>
+                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (comma separated)</label>
                             <div>
                                 <textarea class="form-control" id="mediaExcludeDirTextArea" name="mediaExcludeDirList" rows="3"><th:block th:text="${mediaExcludeDirList}"></th:block></textarea>
                             </div>
@@ -51,29 +51,29 @@
                     <th:block th:if="${settings != null}">
                         <div class="row">
                             <div class="col-4">
-                                <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold (Default 0.6)</strong></label>
+                                <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold</strong> (Default 0.6)</label>
                                 <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
                             </div>
                             <div class="col-4">
-                                <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit (Default 20)</strong></label>
+                                <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit</strong> (Default 20)</label>
                                 <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
                             </div>
                             <div class="col-4">
-                                <label for="notificationLimit" class="form-label"><strong>Notification Limit (Default 20)</strong></label>
+                                <label for="notificationLimit" class="form-label"><strong>Notification Limit</strong> (Default 20)</label>
                                 <input class="form-control" id="notificationLimit" name="notificationLimit" th:value="${settings.notificationLimit}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-3">
-                                <label for="searchHistoryLimit" class="form-label"><strong>Search History Limit (Default 15)</strong></label>
+                                <label for="searchHistoryLimit" class="form-label"><strong>Search History Limit</strong> (Default 15)</label>
                                 <input class="form-control" id="searchHistoryLimit" name="searchHistoryLimit" th:value="${settings.searchHistoryLimit}">
                             </div>
                             <div class="col-3">
-                                <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit (Default 50)</strong></label>
+                                <label for="matchScanLimit" class="form-label"><strong>Match Scan Limit</strong> (Default 50)</label>
                                 <input class="form-control" id="matchScanLimit" name="matchScanLimit" th:value="${settings.matchScanLimit}">
                             </div>
                             <div class="col-3">
-                                <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit (Default 100)</strong></label>
+                                <label for="trainingDataLimit" class="form-label"><strong>Training Data Limit</strong> (Default 100)</label>
                                 <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
                             </div>
                             <div class="col-3">
