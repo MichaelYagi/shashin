@@ -23,12 +23,12 @@
                     </th:block>
                     <div class="row">
                         <div class="col-12">
-                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></label>
+                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (comma separated) <span style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected and Automatic Media Indexing enabled"></span></label>
                             <div>
                                 <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
                             </div>
 
-                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (comma separated) <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="List specific files or subdirectories from the Media directories listed above"></span></label>
+                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (comma separated) <span style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="List specific files or subdirectories from the Media directories listed above"></span></label>
                             <div>
                                 <textarea class="form-control" id="mediaExcludeDirTextArea" name="mediaExcludeDirList" rows="3"><th:block th:text="${mediaExcludeDirList}"></th:block></textarea>
                             </div>
@@ -77,7 +77,7 @@
                                 <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
                             </div>
                             <div class="col-3">
-                                <label for="changePort" class="form-label"><strong>Change Port <span style="color: red;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected"></span></strong></label>
+                                <label for="changePort" class="form-label"><strong>Change Port <span style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected"></span></strong></label>
                                 <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
                             </div>
                         </div>
