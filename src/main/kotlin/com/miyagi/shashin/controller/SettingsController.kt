@@ -1244,6 +1244,8 @@ class SettingsController {
         }
 
         val mediaDirs = mediaDirRepository?.findByExclude(false)
+        val mediaExcludeDirs = mediaDirRepository?.findByExclude(true)
+
         if (mediaDirs != null && mediaDirs.count() > 0) {
             var mediaDirNotFound = false
             for (mediaDir in mediaDirs) {
@@ -1289,14 +1291,30 @@ class SettingsController {
 
                                             // Check if metadata path still exists, if not, delete media
                                             var basePathExists = false
+                                            var excludeBasePathExists = false
+
                                             for (mediaDir in mediaDirs) {
-                                                basePathExists = metadata.getPath()!!.startsWith(mediaDir!!.getDirectory().toString())
-                                                if (basePathExists) {
+                                                basePathExists = metadata.getPath()!!
+                                                    .startsWith(mediaDir!!.getDirectory().toString())
+
+                                                if (mediaExcludeDirs != null) {
+                                                    for (mediaExcludeDir in mediaExcludeDirs) {
+                                                        excludeBasePathExists = metadata.getPath()!!
+                                                            .startsWith(mediaExcludeDir!!.getDirectory().toString())
+
+                                                        if (excludeBasePathExists) {
+                                                            break
+                                                        }
+                                                    }
+                                                }
+
+                                                if (basePathExists && excludeBasePathExists) {
                                                     break
                                                 }
                                             }
+
                                             val checkFile = File(metadata.getPath()!!)
-                                            if (!checkFile.exists() || !basePathExists) {
+                                            if (!checkFile.exists() || !basePathExists || excludeBasePathExists) {
                                                 deleteCount++
 
                                                 // Delete side car and metadata files
@@ -1473,15 +1491,20 @@ class SettingsController {
                             // Scan for new files
                             if (!shouldStop.get()) {
                                 for (mediaDir in mediaDirs) {
+
                                     if (mediaDir != null) {
                                         getFile(
                                             mediaDir.getDirectory().toString(),
                                             threadFile,
                                             sidecarDir,
-                                            mediaDir.getDirectory().toString()
+                                            mediaDir.getDirectory().toString(),
+                                            mediaExcludeDirs
                                         )
                                     }
                                 }
+
+                                // Empty directory cleanup
+                                FileUtils.deleteEmptyDirectoriesOfFolder(File(sidecarDir))
                             }
 
                             if (shouldStop.get()) {
@@ -1569,8 +1592,7 @@ class SettingsController {
         }
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String) {
-
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?) {
         val f = File(dirPath)
         val files = f.listFiles()
         if (files != null) {
@@ -1585,8 +1607,19 @@ class SettingsController {
                     break
                 }
 
+                var exclude = false
+                if (mediaExcludeDirs != null) {
+                    for (mediaExcludeDir in mediaExcludeDirs) {
+                        // Don't scan if path starts with exclude path
+                        if (file.path.startsWith(mediaExcludeDir?.getDirectory().toString())) {
+                            exclude = true
+                            break
+                        }
+                    }
+                }
+
                 if (file.isFile && !alreadyScannedFilepaths.contains(file.path)) {
-                    if (FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
+                    if (!exclude && FileUtils.allowableMediaFiles().contains(file.extension.lowercase())) {
 
                         //val mediaProcessingUtils = MediaProcessing(apiVersion,geocodeUrl)
                         var metadataObj: Metadata? = Metadata()
@@ -1640,7 +1673,7 @@ class SettingsController {
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs)
                 }
             }
         }
