@@ -1,5 +1,6 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpServletResponse
 class TestController {
 
     @Autowired
-    private lateinit var userRepository: UserRepository
+    private lateinit var metaRepository: MetadataRepository
 
     @Autowired
     private var buildProperties: BuildProperties? = null
@@ -71,9 +72,9 @@ class TestController {
         var status = "OK"
 
         val timingOne = Date()
-        val count = userRepository.countAllByLoggedInIsTrue()
+        val allMetadata = metaRepository.findAll()
         val timingTwo = Date()
-        if (count >= 0) {
+        if (allMetadata.count() >= 0) {
             model["dbConnect"] = "OK"
         } else {
             model["dbConnect"] = "FAIL"
