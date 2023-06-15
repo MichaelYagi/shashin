@@ -293,11 +293,13 @@ class PeopleController {
             model[k] = v!!
         }
 
+        val person = mapper.convertValue(response["personInfo"], object : TypeReference<Map<String, Any>>() {})
+
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["titleDescriptor"] = person["name"]!!
         return module
     }
 
