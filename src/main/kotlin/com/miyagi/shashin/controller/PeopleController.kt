@@ -309,8 +309,51 @@ class PeopleController {
         model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = person["name"]!!
+        model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @RequestMapping(value = ["/person/metadata/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedPersonMetadataList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
+        val response = mutableMapOf<String, Any?>()
+        response["message"] = ""
+        response["metadataList"] = mutableListOf<Metadata>()
+        response["msg"] = "Could not get results"
+        response["status"] = ApiResponse.FAIL.status
+
+        if (model.getAttribute("currentUser") != "") {
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            val settings = model.getAttribute("settings") as Settings
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page*queryLimit
+
+            var metadataList: MutableIterable<Metadata>? = mutableListOf(Metadata())
+            if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
+                metadataList = metadataRepository?.findAlbumPhotoByPerson(
+                    settings.getRecognitionConfidenceThreshold()!!,
+                    personId,
+                    currentUserObj.getId(),
+                    pageValue,
+                    queryLimit
+                )
+                response["msg"] = ""
+                response["status"] = ApiResponse.SUCCESS.status
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+                metadataList = metadataRepository?.findMetadataByPerson(
+                    settings.getRecognitionConfidenceThreshold()!!,
+                    personId,
+                    pageValue,
+                    queryLimit
+                )
+                response["msg"] = ""
+                response["status"] = ApiResponse.SUCCESS.status
+            }
+
+            response["metadataList"] = metadataList
+        }
+
+        return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/person/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -550,7 +593,8 @@ class PeopleController {
         resp["msg"] = ""
         resp["status"] = ApiResponse.FAIL.status
 
-        if (settings.getCompreFaceKey() != null && settings.getCompreFaceServer() != null) {
+        if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
+            settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
             var body: MultiValueMap<String, Any>?
             var metadata: Optional<Metadata?>?
             var thumbFile: FileSystemResource?
@@ -648,7 +692,8 @@ class PeopleController {
         resp["msg"] = ""
         resp["status"] = ApiResponse.FAIL.status
 
-        if (settings.getCompreFaceKey() != null && settings.getCompreFaceServer() != null) {
+        if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
+            settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
             var body: MultiValueMap<String, Any>?
             var metadata: Optional<Metadata?>?
             var thumbFile: FileSystemResource?
