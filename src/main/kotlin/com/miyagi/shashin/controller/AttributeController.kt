@@ -57,6 +57,9 @@ class AttributeController {
     @Value("\${app.role.user}")
     private lateinit var userRole: String
 
+    @Value("\${app.endpoint.url.compreface}")
+    private lateinit var comprefaceServer: String
+
     @Value("\${app.endpoint.url.geocode}")
     private lateinit var geocodeUrl: String
 
@@ -110,6 +113,7 @@ class AttributeController {
             settingsObj.setTrainingDataLimit(trainingDataLimitProperty)
             settingsObj.setNotificationLimit(notificationLimitProperty)
             settingsObj.setSearchHistoryLimit(searchHistoryLimitProperty)
+            settingsObj.setCompreFaceServer(comprefaceServer)
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)

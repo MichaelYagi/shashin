@@ -50,6 +50,16 @@
                     </div>
                     <th:block th:if="${settings != null}">
                         <div class="row">
+                            <div class="col-6">
+                                <label for="compreFaceServer" class="form-label"><strong>CompreFace Endpoint</strong> (Default http://127.0.0.1:8000/)</label>
+                                <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
+                            </div>
+                            <div class="col-6">
+                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong></label>
+                                <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-4">
                                 <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold</strong> (Default 0.6)</label>
                                 <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">

@@ -16,6 +16,10 @@ import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
+import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -23,17 +27,23 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.RestTemplate
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.util.HashMap
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
 @Controller
 class PeopleController {
+
+    @Autowired
+    private lateinit var metaRepository: MetadataRepository
 
     @Autowired
     private var metadataRepository: MetadataRepository? = null
@@ -513,4 +523,204 @@ class PeopleController {
         return mapper.writeValueAsString(resp)
     }
 
+    @RequestMapping(value = ["/person/recognition/faces"], method = [RequestMethod.POST], produces = ["application/json"])
+    @Secured("ROLE_ADMIN")
+    @ResponseBody
+    fun postPersonUpload(model: Model, @RequestBody requestBody: JsonNode): String {
+        val personMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        resp["responseData"] = mutableMapOf<String, Any?>()
+        resp["msg"] = ""
+        resp["status"] = ApiResponse.FAIL.status
+
+        if (personMap.containsKey("personName") &&
+            personMap.containsKey("metadataId")
+        ) {
+            val personName = personMap["personName"].toString()
+            val metadataId = personMap["metadataId"].toString()
+
+            return mapper.writeValueAsString(buildPersonUpload(model.getAttribute("settings") as Settings, personName, metadataId))
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    fun buildPersonUpload(settings: Settings, personName: String?, metadataId: String?): MutableMap<String, Any?> {
+        resp["responseData"] = mutableMapOf<String, Any?>()
+        resp["msg"] = ""
+        resp["status"] = ApiResponse.FAIL.status
+
+        if (settings.getCompreFaceKey() != null && settings.getCompreFaceServer() != null) {
+            var body: MultiValueMap<String, Any>?
+            var metadata: Optional<Metadata?>?
+            var thumbFile: FileSystemResource?
+            var serverUrl: String
+            var requestEntity: HttpEntity<MultiValueMap<String, Any>>
+            var restTemplate: RestTemplate
+            var response: String?
+
+            if (!personName.isNullOrBlank() && !metadataId.isNullOrBlank()) {
+                val recognitionLabelQuery = recognitionLabelRepository?.findByNameIgnoreCase(personName)
+                val recognitionLabelId = if (recognitionLabelQuery == null) 0 else recognitionLabelQuery.getId()
+                val photoInRecog = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(recognitionLabelId, metadataId)
+
+                if (photoInRecog == null) {
+                    // Uploaded faces
+                    val headers = HttpHeaders()
+                    headers.contentType = MediaType.MULTIPART_FORM_DATA
+                    headers.add("x-api-key", settings.getCompreFaceKey())
+
+                    serverUrl = "${settings.getCompreFaceServer()}api/v1/recognition/faces?subject=${personName}"
+
+                    try {
+                        body = LinkedMultiValueMap()
+                        metadata = metaRepository.findById(metadataId)
+                        if (metadata != null) {
+                            thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
+                            body.add("file", thumbFile)
+
+                            requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+                            restTemplate = RestTemplate()
+                            response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+                            val jsonObj = mapper.readTree(response)
+                            resp["responseData"] = jsonObj
+
+                            val recognitionLabelId = if (recognitionLabelQuery?.getName() == null) {
+                                val recognitionLabelObj = RecognitionLabel()
+                                recognitionLabelObj.setName(personName.trim())
+                                recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                                recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                                val retRecognitionLabelObj = recognitionLabelRepository?.save(recognitionLabelObj)
+                                retRecognitionLabelObj!!.getId()
+                            } else {
+                                recognitionLabelQuery.getId()
+                            }
+
+                            if (recognitionLabelId > 0) {
+                                val recognitionLabelPhoto = RecognitionLabelPhoto()
+                                recognitionLabelPhoto.setRecognitionLabelId(recognitionLabelId)
+                                recognitionLabelPhoto.setMetadataId(metadataId)
+                                recognitionLabelPhoto.setAutoTagged(false)
+                                recognitionLabelPhoto.setConfidence("0.0")
+                                recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                            }
+
+                            resp["msg"] = ""
+                            resp["status"] = ApiResponse.SUCCESS.status
+                        } else {
+                            response = "Metadata not found."
+                            resp["responseData"] = response
+                        }
+                    } catch (e: Exception) {
+                        val errorResponse =
+                            e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                        resp["responseData"] = errorResponse
+                    }
+                } else {
+                    resp["msg"] = "Person already processed"
+                    resp["status"] = ApiResponse.FAIL.status
+                }
+            } else {
+                resp["msg"] = "Person name or metadata ID blank"
+                resp["status"] = ApiResponse.FAIL.status
+            }
+        }
+
+        return resp
+    }
+
+    @RequestMapping(value = ["/person/recognition/recognize/{metadataId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @Secured("ROLE_ADMIN")
+    @ResponseBody
+    fun postPersonRecognize(model: Model, @PathVariable metadataId: String): String {
+        resp["responseData"] = mutableMapOf<String, Any?>()
+        resp["msg"] = ""
+        resp["status"] = ApiResponse.FAIL.status
+
+        return mapper.writeValueAsString(buildPersonRecognition(model.getAttribute("settings") as Settings, metadataId))
+    }
+
+    fun buildPersonRecognition(settings: Settings, metadataId: String?): MutableMap<String, Any?> {
+        resp["responseData"] = mutableMapOf<String, Any?>()
+        resp["msg"] = ""
+        resp["status"] = ApiResponse.FAIL.status
+
+        if (settings.getCompreFaceKey() != null && settings.getCompreFaceServer() != null) {
+            var body: MultiValueMap<String, Any>?
+            var metadata: Optional<Metadata?>?
+            var thumbFile: FileSystemResource?
+            var serverUrl: String
+            var requestEntity: HttpEntity<MultiValueMap<String, Any>>
+            var restTemplate: RestTemplate
+            var response: String?
+
+            if (!metadataId.isNullOrBlank()) {
+                // Uploaded faces
+                val headers = HttpHeaders()
+                headers.contentType = MediaType.MULTIPART_FORM_DATA
+                headers.add("x-api-key", settings.getCompreFaceKey())
+
+                serverUrl = "${settings.getCompreFaceServer()}api/v1/recognition/recognize"
+
+                try {
+                    body = LinkedMultiValueMap()
+                    metadata = metaRepository.findById(metadataId)
+                    if (metadata != null) {
+                        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
+                        body.add("file", thumbFile)
+
+                        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+                        restTemplate = RestTemplate()
+                        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+                        val jsonObj = mapper.readTree(response)
+                        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                        val resultList = resultMap["result"] as ArrayList<Map<String, Any>>
+                        val subjects = resultList[0]["subjects"] as ArrayList<Map<String, Any>>
+
+                        for (subject in subjects) {
+                            val name = subject["subject"].toString()
+                            val confidence = subject["similarity"].toString()
+
+                            val recognitionLabelQuery = recognitionLabelRepository?.findByNameIgnoreCase(name)
+                            val recognitionLabelId = recognitionLabelQuery?.getId()
+
+                            if (recognitionLabelId != null && recognitionLabelId > 0) {
+                                val recognitionLabelPhoto = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(recognitionLabelId, metadataId)
+                                if (recognitionLabelPhoto != null && recognitionLabelPhoto.getConfidence() != "0.0" && recognitionLabelPhoto.getId() > 0) {
+                                    recognitionLabelPhoto.setAutoTagged(true)
+                                    recognitionLabelPhoto.setConfidence(confidence)
+                                    recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                                } else {
+                                    val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                                    recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelId)
+                                    recognitionLabelPhotoObj.setMetadataId(metadataId)
+                                    recognitionLabelPhotoObj.setAutoTagged(true)
+                                    recognitionLabelPhotoObj.setConfidence(confidence)
+                                    recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                                }
+                            }
+                        }
+
+                        resp["responseData"] = subjects
+
+
+                        resp["msg"] = ""
+                        resp["status"] = ApiResponse.SUCCESS.status
+                    } else {
+                        response = "Metadata not found."
+                        resp["responseData"] = response
+                    }
+                } catch (e: Exception) {
+                    val errorResponse =
+                        e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                    resp["responseData"] = errorResponse
+                }
+            } else {
+                resp["msg"] = "Metadata ID blank"
+                resp["status"] = ApiResponse.FAIL.status
+            }
+        }
+
+        return resp
+    }
 }
