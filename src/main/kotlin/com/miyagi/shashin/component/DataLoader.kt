@@ -28,6 +28,9 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
     @Value("\${app.config.default.searchhistorylimit}")
     private var searchHistoryLimitProperty: Int = 15
 
+    @Value("\${app.endpoint.url.compreface}")
+    private lateinit var comprefaceServer: String
+
     @Value("\${app.config.default.recognitionConfidenceThreshold}")
     private lateinit var recognitionConfidenceThresholdProperty: String
 
@@ -44,6 +47,7 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
             settingsObj.setTrainingDataLimit(trainingDataLimitProperty)
             settingsObj.setNotificationLimit(notificationLimitProperty)
             settingsObj.setSearchHistoryLimit(searchHistoryLimitProperty)
+            settingsObj.setCompreFaceServer(comprefaceServer)
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)

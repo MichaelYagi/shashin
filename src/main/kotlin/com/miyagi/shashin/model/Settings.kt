@@ -14,6 +14,10 @@ class Settings {
     @NotBlank
     private var recognitionConfidenceThreshold: String? = null
     @NotBlank
+    private var compreFaceServer: String? = null
+    @NotBlank
+    private var compreFaceKey: String? = null
+    @NotBlank
     private var queryLimit: Int? = null
     @NotBlank
     private var matchScanLimit: Int? = null
@@ -42,6 +46,22 @@ class Settings {
 
     fun setRecognitionConfidenceThreshold(recognitionConfidenceThreshold: String?) {
         this.recognitionConfidenceThreshold = recognitionConfidenceThreshold
+    }
+
+    fun getCompreFaceKey(): String? {
+        return this.compreFaceKey
+    }
+
+    fun setCompreFaceKey(compreFaceKey: String?) {
+        this.compreFaceKey = compreFaceKey
+    }
+
+    fun getCompreFaceServer(): String? {
+        return this.compreFaceServer
+    }
+
+    fun setCompreFaceServer(compreFaceServer: String?) {
+        this.compreFaceServer = compreFaceServer
     }
 
     fun getMatchScanLimit(): Int? {

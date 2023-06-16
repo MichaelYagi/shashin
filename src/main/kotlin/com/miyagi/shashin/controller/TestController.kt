@@ -1,17 +1,26 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.repository.UserRepository
 import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
+import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.util.LinkedMultiValueMap
+import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.RestTemplate
+import java.io.File
 import java.io.IOException
 import java.lang.management.ManagementFactory
 import java.math.RoundingMode
@@ -39,6 +48,106 @@ class TestController {
     @GetMapping("/test")
     fun test(model: Model): String {
         model["somevalue"] = "This is a test"
+
+
+
+        // Add API key to header
+        var settings = model.getAttribute("settings") as Settings
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.MULTIPART_FORM_DATA
+        headers.add("x-api-key", settings.getCompreFaceKey())
+        var body: MultiValueMap<String, Any>? = null
+        var metadata: Optional<com.miyagi.shashin.model.Metadata?>? = null
+        var thumbFile: FileSystemResource? = null
+        var serverUrl = ""
+        var requestEntity: HttpEntity<MultiValueMap<String, Any>>
+        var restTemplate: RestTemplate
+        var response: String?
+
+
+        // Uploaded faces
+//        serverUrl = "${faceRecogUrl}api/v1/recognition/faces?subject=noah&det_prob_threshold=0.45"
+//
+//        body = LinkedMultiValueMap()
+//        metadata = metaRepository.findById("7944b8f0-2dd2-3226-8c67-9d7350735617")
+//        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
+//        body.add("file", thumbFile)
+//
+//        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+//        restTemplate = RestTemplate()
+//        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+//        println(response)
+
+
+
+        // Recognize face
+        serverUrl = "${settings.getCompreFaceServer()}api/v1/recognition/recognize"
+
+try {
+    // Noah
+    body = LinkedMultiValueMap()
+    metadata = metaRepository.findById("1aec30fc-871e-3e5c-956b-1442b50c6849")
+    thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
+    body.add("file", thumbFile)
+
+    requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+    restTemplate = RestTemplate()
+    response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+    println(response)
+
+    /*
+        // Ryuko
+        body = LinkedMultiValueMap()
+        metadata = metaRepository.findById("77823c1f-9d8a-332a-94cc-a04a052f8971")
+        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
+        body.add("file", thumbFile)
+
+        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+        restTemplate = RestTemplate()
+        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+        println(response)
+
+        // Mike
+        body = LinkedMultiValueMap()
+        metadata = metaRepository.findById("752e9360-617c-3643-baff-5b6964f7f284")
+        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
+        body.add("file", thumbFile)
+
+        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+        restTemplate = RestTemplate()
+        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+        println(response)*/
+
+        // Nobody
+        body = LinkedMultiValueMap()
+        metadata = metaRepository.findById("4ba78ee5-e3f9-36f4-89e9-e3a93fef6c3e")
+        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
+        body.add("file", thumbFile)
+
+        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+        restTemplate = RestTemplate()
+        try {
+            response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+            println(response)
+        } catch (e: Exception) {
+            println("error:" + e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), ""))
+        }
+    } catch (e: Exception) {
+        println("error:" + e.localizedMessage)
+    }
+
+/*        // Mike
+        body = LinkedMultiValueMap()
+        metadata = metaRepository.findById("c691b1f5-591e-395e-88f8-955093f5bbaa")
+        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
+        body.add("file", thumbFile)
+
+        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
+        restTemplate = RestTemplate()
+        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+        println(response)*/
+
+
         return "test"
     }
 
@@ -112,6 +221,14 @@ class TestController {
         } else {
             model["geocoderServicesAvailable"] = "FAIL"
             status = "FAIL"
+        }
+
+        val settings = model.getAttribute("settings") as Settings
+        val faceRecogReachable: Boolean = pingURL(settings.getCompreFaceServer()!!, 200)
+        if (faceRecogReachable) {
+            model["faceRecogServicesAvailable"] = "OK"
+        } else {
+            model["faceRecogServicesAvailable"] = "FAIL"
         }
 
         model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"

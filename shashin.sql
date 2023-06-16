@@ -65,6 +65,8 @@ CREATE TABLE `settings` (
     `searchHistoryLimit` INTEGER NOT NULL DEFAULT 15,
     `port` VARCHAR(10) NOT NULL DEFAULT '6624',
     `scanAutomatically` BOOLEAN DEFAULT FALSE,
+    `compreFaceKey` VARCHAR(36) DEFAULT 'http://127.0.0.1:8000/',
+    `compreFaceServer` VARCHAR(150),
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL
 );

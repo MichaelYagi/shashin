@@ -270,6 +270,8 @@ class SettingsController {
         @RequestHeader headers: HttpHeaders,
         @RequestParam("mediaDirList") mediaDirList: String,
         @RequestParam("mediaExcludeDirList") mediaExcludeDirList: String,
+        @RequestParam("compreFaceServer") compreFaceServer: String,
+        @RequestParam("compreFaceKey") compreFaceKey: String,
         @RequestParam("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String,
         @RequestParam("queryLimit") queryLimit: Int,
         @RequestParam("matchScanLimit") matchScanLimit: Int,
@@ -369,6 +371,12 @@ class SettingsController {
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
+        if (compreFaceServer.isNotEmpty()) {
+            settings?.setCompreFaceServer(compreFaceServer)
+        }
+        if (compreFaceKey.isNotEmpty()) {
+            settings?.setCompreFaceKey(compreFaceKey)
+        }
         if (recognitionConfidenceThreshold.isNotEmpty()) {
             settings?.setRecognitionConfidenceThreshold(recognitionConfidenceThreshold)
         }
