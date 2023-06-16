@@ -562,7 +562,13 @@ class PeopleController {
             if (!personName.isNullOrBlank() && !metadataId.isNullOrBlank()) {
                 val recognitionLabelQuery = recognitionLabelRepository?.findByNameIgnoreCase(personName)
                 val recognitionLabelId = if (recognitionLabelQuery == null) 0 else recognitionLabelQuery.getId()
-                val photoInRecog = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(recognitionLabelId, metadataId)
+                var photoInRecog: RecognitionLabelPhoto? = null
+                if (recognitionLabelId > 0) {
+                    photoInRecog = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
+                        recognitionLabelId,
+                        metadataId
+                    )
+                }
 
                 if (photoInRecog == null) {
                     // Uploaded faces
@@ -585,25 +591,22 @@ class PeopleController {
                             val jsonObj = mapper.readTree(response)
                             resp["responseData"] = jsonObj
 
-                            val recognitionLabelId = if (recognitionLabelQuery?.getName() == null) {
+                            if (recognitionLabelQuery?.getId() == 0) {
                                 val recognitionLabelObj = RecognitionLabel()
                                 recognitionLabelObj.setName(personName.trim())
                                 recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                                 recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                                 val retRecognitionLabelObj = recognitionLabelRepository?.save(recognitionLabelObj)
                                 retRecognitionLabelObj!!.getId()
-                            } else {
-                                recognitionLabelQuery.getId()
-                            }
-
-                            if (recognitionLabelId > 0) {
+                            } else if (recognitionLabelQuery != null && recognitionLabelQuery.getId() > 0) {
                                 val recognitionLabelPhoto = RecognitionLabelPhoto()
-                                recognitionLabelPhoto.setRecognitionLabelId(recognitionLabelId)
+                                recognitionLabelPhoto.setRecognitionLabelId(recognitionLabelQuery.getId())
                                 recognitionLabelPhoto.setMetadataId(metadataId)
                                 recognitionLabelPhoto.setAutoTagged(false)
                                 recognitionLabelPhoto.setConfidence("0.0")
                                 recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
                             }
+
 
                             resp["msg"] = ""
                             resp["status"] = ApiResponse.SUCCESS.status
@@ -672,6 +675,7 @@ class PeopleController {
                         requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
                         restTemplate = RestTemplate()
                         response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+
                         val jsonObj = mapper.readTree(response)
                         val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
                         val resultList = resultMap["result"] as ArrayList<Map<String, Any>>
@@ -684,19 +688,23 @@ class PeopleController {
                             val recognitionLabelQuery = recognitionLabelRepository?.findByNameIgnoreCase(name)
                             val recognitionLabelId = recognitionLabelQuery?.getId()
 
-                            if (recognitionLabelId != null && recognitionLabelId > 0) {
-                                val recognitionLabelPhoto = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(recognitionLabelId, metadataId)
-                                if (recognitionLabelPhoto != null && recognitionLabelPhoto.getConfidence() != "0.0" && recognitionLabelPhoto.getId() > 0) {
-                                    recognitionLabelPhoto.setAutoTagged(true)
-                                    recognitionLabelPhoto.setConfidence(confidence)
-                                    recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
-                                } else {
+                            if (recognitionLabelId != null && recognitionLabelId > 0 && confidence.toDouble() > settings.getRecognitionConfidenceThreshold().toString().toDouble()) {
+                                val countDistinctLabelIdAndMetadataId = recognitionLabelPhotoRepository?.countDistinctLabelIdAndMetadataId(recognitionLabelId, metadataId)
+
+                                if (countDistinctLabelIdAndMetadataId == 0) {
                                     val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                                     recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelId)
                                     recognitionLabelPhotoObj.setMetadataId(metadataId)
                                     recognitionLabelPhotoObj.setAutoTagged(true)
                                     recognitionLabelPhotoObj.setConfidence(confidence)
                                     recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                                } else {
+                                    val recognitionLabelPhoto = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(recognitionLabelId, metadataId)
+                                    if (recognitionLabelPhoto != null && recognitionLabelPhoto.getConfidence() != "0.0" && recognitionLabelPhoto.getId() > 0) {
+                                        recognitionLabelPhoto.setAutoTagged(true)
+                                        recognitionLabelPhoto.setConfidence(confidence)
+                                        recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                                    }
                                 }
                             }
                         }

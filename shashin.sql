@@ -57,7 +57,7 @@ CREATE INDEX `idx_metadata_date` ON metadata (`year`, `month`, `day`, `time`);
 DROP TABLE IF EXISTS `settings`;
 CREATE TABLE `settings` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
-    `recognitionConfidenceThreshold` VARCHAR(36) NOT NULL DEFAULT '0.6',
+    `recognitionConfidenceThreshold` VARCHAR(36) NOT NULL DEFAULT '0.9',
     `traininDataLimit` INTEGER NOT NULL DEFAULT 100,
     `matchScanLimit` INTEGER NOT NULL DEFAULT 50,
     `queryLimit` INTEGER NOT NULL DEFAULT 20,

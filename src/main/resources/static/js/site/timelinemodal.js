@@ -84,6 +84,8 @@ $("#saveMetadata").on("click", async function (e) {
         $("#latlng").val(),
         "timelineModalMsg"
     ) === true) {
+        const people = $("#tagpeople").val();
+
         const json = {
             id: metadataId,
             title: Util.decodeHtml($("#title").val().trim()),
@@ -97,11 +99,28 @@ $("#saveMetadata").on("click", async function (e) {
             offset: $("#offsetTaken").val() === null ? "" : $("#offsetTaken").val(),
             latlng: Util.decodeHtml($("#latlng").val()),
             keywords: Util.decodeHtml($("#keywords").val()),
-            tagpeople: Util.decodeHtml($("#tagpeople").val()),
+            tagpeople: Util.decodeHtml(people),
             albumnames: Util.decodeHtml($("#albumnames").val()),
             hidden: $("#hidden").prop("checked"),
             isObject: $("#isobject").prop("checked")
         }
+
+        const peopleArray = people.split(",").map(function(item) {
+            return item.trim();
+        });
+
+        $.each(peopleArray, async function (index, person) {
+            person = person.trim();
+
+            if (person !== '') {
+                const personJson = {
+                    personName: person,
+                    metadataId: metadataId
+                }
+                const http = new Http("upload faces");
+                let persondata = await http.ajax("post", "/person/recognition/faces", JSON.stringify(personJson));
+            }
+        });
 
         const http = new Http("save timeline");
         let data;
