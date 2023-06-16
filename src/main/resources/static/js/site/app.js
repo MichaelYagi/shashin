@@ -143,14 +143,16 @@
     }
 
     shashin.openEditMetadataModal = function (metadataId) {
-        shashin.getTimelineMetadata(metadataId).then(function (data) {
+        shashin.getTimelineMetadata(metadataId).then(async function (data) {
+            const http = new Http("recognize faces");
+            let persondata = await http.ajax("get", "/person/recognition/recognize/" + metadataId)
+
             if (data.hasOwnProperty("metadata") &&
                 data.hasOwnProperty("taggedPeopleList") &&
                 data.hasOwnProperty("albumList") &&
                 data.hasOwnProperty("keywordList") &&
                 data.hasOwnProperty("allRecognitionLabels") &&
-                data.hasOwnProperty("allAlbumList"))
-            {
+                data.hasOwnProperty("allAlbumList")) {
                 const metadata = data["metadata"];
                 const taggedPeopleArray = data["taggedPeopleList"];
                 const albumListArray = data["albumList"];
@@ -179,7 +181,7 @@
                 $("#lensesString").val(lensList);
 
                 if (metadata.thumbnailUrlCentered !== null) {
-                    $("#propTimelineModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
+                    $("#propTimelineModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata}));
                 }
 
                 if (metadata.title !== null) {
@@ -251,10 +253,10 @@
                     $("#recognitionLabelInput").remove();
                 }
                 if (recognitionLabels !== null && recognitionLabels.length > 0) {
-                    let html = ModalTemplates.PersonModalDropdownHead({metadata:metadata});
-                        // '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
-                        // '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
-                        // '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
+                    let html = ModalTemplates.PersonModalDropdownHead({metadata: metadata});
+                    // '<div class="input-group-append dropdown" id="recognitionLabelInput">\n' +
+                    // '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                    // '           <div class="dropdown-menu" id="recognitionLabelsList">\n';
 
                     for (index in recognitionLabels) {
                         const recognitionLabel = recognitionLabels[index];
@@ -264,20 +266,24 @@
                             checkedString = " checked";
                         }
 
-                        html += ModalTemplates.PersonModalDropDown({metadata:metadata,recognitionLabel:recognitionLabel,checkedString:checkedString});
-                            // '           <button class="dropdown-item" type="button">\n' +
-                            // '               <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
-                            // '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
-                            // '           </button>\n';
+                        html += ModalTemplates.PersonModalDropDown({
+                            metadata: metadata,
+                            recognitionLabel: recognitionLabel,
+                            checkedString: checkedString
+                        });
+                        // '           <button class="dropdown-item" type="button">\n' +
+                        // '               <input type="checkbox" class="recognitionLabel" value="' + recognitionLabel.name + '" name="recognitionLabel' + metadata.id + '[]" id="' + metadata.id + '-' + recognitionLabel.id + '"' + checkedString + '>\n' +
+                        // '               <label for="' + metadata.id + '-' + recognitionLabel.id + '" id="label-' + metadata.id + '-' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
+                        // '           </button>\n';
                     }
                     html += ModalTemplates.PersonModalDropdownFooter();
-                        // '   </div>\n' +
-                        // '</div>\n';
+                    // '   </div>\n' +
+                    // '</div>\n';
 
                     $(html).insertAfter($("#labelIdData"));
                     $("#tagpeopledropdown" + metadata.id).on("click", function (e) {
-                       e.preventDefault();
-                       timelineModal.toggleTagPeopleDropdown(metadata.id);
+                        e.preventDefault();
+                        timelineModal.toggleTagPeopleDropdown(metadata.id);
                     });
                     $(".recognitionLabel").on("click", function (e) {
                         timelineModal.populateLabel(metadata.id);
@@ -304,10 +310,10 @@
                 }
 
                 if (allAlbumList !== null && allAlbumList.length > 0) {
-                    let html = ModalTemplates.AlbumModalDropdownHeader({metadata:metadata});
-                        // '<div class="input-group-append dropdown" id="albumListInput">\n' +
-                        // '   <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                        // '   <div class="dropdown-menu" id="albumsList">\n';
+                    let html = ModalTemplates.AlbumModalDropdownHeader({metadata: metadata});
+                    // '<div class="input-group-append dropdown" id="albumListInput">\n' +
+                    // '   <button class="btn btn-outline-secondary dropdown-toggle" id="albumdropdown' + metadata.id + '" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                    // '   <div class="dropdown-menu" id="albumsList">\n';
 
                     for (index in allAlbumList) {
                         const eachAlbum = allAlbumList[index];
@@ -317,15 +323,19 @@
                             checkedString = " checked";
                         }
 
-                        html += ModalTemplates.AlbumModalDropDown({metadata:metadata,album:eachAlbum,checkedString:checkedString});
-                            // '   <button class="dropdown-item" type="button">\n' +
-                            // '       <input type="checkbox" class="album" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
-                            // '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + Util.escapeHtml(eachAlbum.name) + '</label>\n' +
-                            // '   </button>\n';
+                        html += ModalTemplates.AlbumModalDropDown({
+                            metadata: metadata,
+                            album: eachAlbum,
+                            checkedString: checkedString
+                        });
+                        // '   <button class="dropdown-item" type="button">\n' +
+                        // '       <input type="checkbox" class="album" value="' + eachAlbum.name + '" name="album' + metadata.id + '[]" id="' + metadata.id + '-' + eachAlbum.id + '"' + checkedString + '>\n' +
+                        // '       <label for="' + metadata.id + '-' + eachAlbum.id + '" id="album-' + metadata.id + '-' + eachAlbum.id + '">' + Util.escapeHtml(eachAlbum.name) + '</label>\n' +
+                        // '   </button>\n';
                     }
                     html += ModalTemplates.AlbumModalDropdownFooter();
-                        // '</div>\n' +
-                        // '</div>\n';
+                    // '</div>\n' +
+                    // '</div>\n';
 
                     $(html).insertAfter($("#albumNameData"))
                     $("#albumdropdown" + metadata.id).on("click", function (e) {
