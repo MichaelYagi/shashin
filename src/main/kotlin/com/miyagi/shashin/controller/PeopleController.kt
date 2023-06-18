@@ -20,6 +20,7 @@ import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -31,19 +32,24 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
+import java.io.BufferedWriter
+import java.io.File
+import java.io.FileWriter
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.logging.Level
+import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
+import javax.transaction.Transactional
 
 @Controller
 class PeopleController {
-
-    @Autowired
-    private lateinit var metaRepository: MetadataRepository
 
     @Autowired
     private var metadataRepository: MetadataRepository? = null
@@ -69,6 +75,8 @@ class PeopleController {
     private var shouldStop = AtomicBoolean(false)
 
     private val threadExtensionName: String = "facescan_shashinscan"
+
+    private var logger: Logger = Logger.getLogger(SettingsController::class.simpleName)
 
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
@@ -140,22 +148,139 @@ class PeopleController {
 
         // Scan records of photos that haven't been scanned in a separate thread
         val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
-        val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
+//        val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
         val distinctLabelRecords = this.recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
         // Start matching in a separate thread
-        if (testImages != null && trainingData != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
-            val faceRecognizer = FaceRecognizer(
-                testImages,
-                trainingData,
-                recognitionLabelPhotoRepository,
-                recognitionLabelRepository,
-                notificationRepository,
-                userRepository,
-                adminRole,
-                settings.getRecognitionConfidenceThreshold()!!.toDouble()
-            )
-            faceRecognizer.runRecognizer(shouldStop.get())
+        if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
+//            val faceRecognizer = FaceRecognizer(
+//                testImages,
+//                trainingData,
+//                recognitionLabelPhotoRepository,
+//                recognitionLabelRepository,
+//                notificationRepository,
+//                userRepository,
+//                adminRole,
+//                settings.getRecognitionConfidenceThreshold()!!.toDouble()
+//            )
+//            faceRecognizer.runRecognizer(shouldStop.get())
+
+
+            val tempDir = System.getProperty("java.io.tmpdir")
+
+            if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                // Clean up any existing thread files
+                FileUtils.deleteThreadFiles(threadExtensionName)
+
+                Thread {
+                    val threadFile = FileUtils.createFile(
+                        tempDir,
+                        tempDir + "/" + Thread.currentThread().name + "." + threadExtensionName,
+                        "Thread"
+                    )
+
+                    if (threadFile != null) {
+                        for (distinctLabelRecord in distinctLabelRecords) {
+                            if (FileUtils.readThreadFile(threadExtensionName) == null || !FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                                break
+                            }
+
+                            val name =
+                                recognitionLabelRepository?.findById(distinctLabelRecord.getRecognitionLabelId()!!)
+
+                            val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+
+                            if (name != null && name.get().getName() != "null") {
+                                for (testImage in testImages) {
+                                    if (FileUtils.readThreadFile(threadExtensionName) == null || !FileUtils.checkThreadFileAlive(threadExtensionName)) {
+                                        break
+                                    }
+
+                                    val metadata = metadataRepository?.findById(testImage.getId())
+
+                                    writeToThreadFileAndLogMessage("Matching " + metadata?.get()?.getPath(),threadFile)
+
+                                    val personUploaded = mapper.writeValueAsString(
+                                        buildPersonUpload(
+                                            settings,
+                                            name.get().getName(),
+                                            metadata?.get(),
+                                            compreFaceImageIdMap
+                                        )
+                                    )
+                                    val jsonRespObj = mapper.readTree(personUploaded)
+
+                                    if (jsonRespObj.has("similarity") && jsonRespObj.has("responseData") && jsonRespObj["responseData"].has(
+                                            "subject"
+                                        )
+                                    ) {
+                                        val subject = jsonRespObj["responseData"].get("subject").textValue()
+                                        val similarity = jsonRespObj["similarity"].asDouble()
+
+                                        logger.log(
+                                            Level.INFO,
+                                            "Results for $subject: $similarity"
+                                        )
+
+                                        var compreFaceImageId: String? = null
+                                        if (jsonRespObj.has("responseDataUpload") && jsonRespObj["responseDataUpload"].has(
+                                                "image_id"
+                                            )
+                                        ) {
+                                            compreFaceImageId = jsonRespObj["responseDataUpload"]["image_id"].toString()
+                                            compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                                        } else if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("image_id")) {
+                                            compreFaceImageId = jsonRespObj["responseData"]["image_id"].toString()
+                                            compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                                        }
+
+                                        if (similarity >= settings.getRecognitionConfidenceThreshold()!!.toDouble()) {
+                                            val countDistinctLabelIdAndMetadataId =
+                                                recognitionLabelPhotoRepository?.countDistinctLabelIdAndMetadataId(
+                                                    distinctLabelRecord.getRecognitionLabelId()!!,
+                                                    testImage.getId()
+                                                )
+                                            if (countDistinctLabelIdAndMetadataId == 0) {
+                                                // Create new record
+                                                val recognitionLabelPhoto = RecognitionLabelPhoto()
+                                                recognitionLabelPhoto.setRecognitionLabelId(distinctLabelRecord.getRecognitionLabelId()!!)
+                                                recognitionLabelPhoto.setMetadataId(testImage.getId())
+                                                recognitionLabelPhoto.setAutoTagged(true)
+                                                recognitionLabelPhoto.setConfidence(similarity.toString())
+                                                recognitionLabelPhoto.setCompreFaceImageId(compreFaceImageId)
+                                                recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
+                                            } else {
+                                                // Update
+                                                val recognitionLabelPhoto =
+                                                    recognitionLabelPhotoRepository?.findById(distinctLabelRecord.getRecognitionLabelId()!!)
+                                                if (recognitionLabelPhoto != null) {
+                                                    recognitionLabelPhoto.get().setAutoTagged(true)
+                                                    recognitionLabelPhoto.get().setConfidence(similarity.toString())
+                                                    recognitionLabelPhoto.get().setCompreFaceImageId(compreFaceImageId)
+                                                    recognitionLabelPhotoRepository?.save(recognitionLabelPhoto.get())
+                                                }
+                                            }
+                                        }
+                                    } else {
+                                        logger.log(
+                                            Level.WARNING,
+                                            "Could not get results from recognizer for " + name.get().getName()
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    FileUtils.deleteThreadFiles(threadExtensionName)
+                    writeToThreadFileAndLogMessage("Matching Complete",threadFile!!)
+                }.start()
+            }
+
+            if (shouldStop.get()) {
+                FileUtils.deleteThreadFiles(threadExtensionName)
+            }
+
             shouldStop.set(false)
         } else {
             resp["msg"] = "Training data not detected."
@@ -166,6 +291,14 @@ class PeopleController {
         resp["msg"] = "Start Matching"
         resp["status"] = ApiResponse.SUCCESS.status
         return mapper.writeValueAsString(resp)
+    }
+
+    private fun writeToThreadFileAndLogMessage(message: String, threadFile: File) {
+        try {
+            val writer = BufferedWriter(FileWriter(threadFile))
+            writer.write(message)
+            writer.close()
+        } catch(e: Exception) { }
     }
 
     @GetMapping("/person/matches/{personId}")
@@ -207,6 +340,7 @@ class PeopleController {
                 counts["person"] = metadataList.count()
             }
         }
+
         // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
         val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
         if (lowMatchResults != null && lowMatchResults.count() > 0) {
@@ -303,7 +437,7 @@ class PeopleController {
             model[k] = v!!
         }
 
-        val person = mapper.convertValue(response["personInfo"], object : TypeReference<Map<String, Any>>() {})
+        // val person = mapper.convertValue(response["personInfo"], object : TypeReference<Map<String, Any>>() {})
 
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -475,19 +609,34 @@ class PeopleController {
         ) {
             val metadataId = StringEscapeUtils.escapeHtml4(personMap["metadataId"].toString())
             val isObject = personMap["isObject"].toString().toBoolean()
+            val recognitionLabelArray = personMap["tagpeople"].toString().split(",")
 
-            if (personMap["tagpeople"].toString() != "") {
-                val recognitionLabelArray = personMap["tagpeople"].toString().split(",")
+            if (personMap.containsKey("currentPerson") && personMap["currentPerson"].toString() != "") {
+                val recognitionLabel = personMap["currentPerson"].toString()
+                val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+
+                if (recognitionLabel.trim().isNotBlank()) {
+                    val recognitionLabelRecord =
+                        recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
+                    if (recognitionLabelRecord != null) {
+                        val recognitionLabelPhoto = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(recognitionLabelRecord.getId(), metadataId)
+                        if (recognitionLabelPhoto != null && recognitionLabelPhoto.getCompreFaceImageId()!!.isNotEmpty()) {
+                            compreFaceImageIdMap["${recognitionLabel.replace("\\s".toRegex(), "")}-$metadataId"] = recognitionLabelPhoto.getCompreFaceImageId()!!
+                        }
+                    }
+                }
+
                 if (recognitionLabelArray.count() > 0) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
-                for (recognitionLabel in recognitionLabelArray) {
-                    if (recognitionLabel.trim().isNotBlank()) {
+
+                for (recognitionLabelString in recognitionLabelArray) {
+                    if (recognitionLabelString.trim().isNotBlank()) {
                         val recognitionLabelRecord =
-                            recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
+                            recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabelString.trim())
                         var recognitionLabelObj = RecognitionLabel()
                         if (recognitionLabelRecord == null) {
-                            recognitionLabelObj.setName(recognitionLabel.trim())
+                            recognitionLabelObj.setName(recognitionLabelString.trim())
                             recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                             recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
                             recognitionLabelRepository?.save(recognitionLabelObj)
@@ -500,10 +649,24 @@ class PeopleController {
                                 metadataId
                             )
                         if (recognitionLabelPhotoCount == 0) {
+                            val metadata = metadataRepository?.findById(metadataId)
+                            val uploadResp = mapper.writeValueAsString(buildPersonUpload(model.getAttribute("settings") as Settings, recognitionLabelString.trim(), metadata?.get(), compreFaceImageIdMap))
+                            val jsonRespObj = mapper.readTree(uploadResp)
+
+                            var compreFaceImageId: String? = null
+                            if (jsonRespObj.has("responseDataUpload") && jsonRespObj["responseDataUpload"].has("image_id")) {
+                                compreFaceImageId = jsonRespObj["responseDataUpload"]["image_id"].toString()
+                                compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                            } else if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("image_id")) {
+                                compreFaceImageId = jsonRespObj["responseData"]["image_id"].toString()
+                                compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                            }
+
                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                             recognitionLabelPhotoObj.setMetadataId(metadataId)
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             recognitionLabelPhotoObj.setConfidence("0.0")
+                            recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
                             recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                         }
                     }
@@ -581,99 +744,234 @@ class PeopleController {
         ) {
             val personName = personMap["personName"].toString()
             val metadataId = personMap["metadataId"].toString()
-
-            return mapper.writeValueAsString(buildPersonUpload(model.getAttribute("settings") as Settings, personName, metadataId))
+            val metadata = metadataRepository?.findById(metadataId)
+            val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+            return mapper.writeValueAsString(buildPersonUpload(model.getAttribute("settings") as Settings, personName, metadata?.get(), compreFaceImageIdMap))
         }
 
         return mapper.writeValueAsString(resp)
     }
 
-    fun buildPersonUpload(settings: Settings, personName: String?, metadataId: String?): MutableMap<String, Any?> {
-        resp["responseData"] = mutableMapOf<String, Any?>()
-        resp["msg"] = ""
-        resp["status"] = ApiResponse.FAIL.status
+    private fun processPeople(settings: Settings, metadataObj: Metadata?, taggedPeople: String?, isObject: Boolean) {
+        if (metadataObj != null) {
+            val metadataId = metadataObj.getId()
+
+            val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
+            if (recognitionLabelPhotos != null) {
+                for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                    recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
+                }
+            }
+
+            if (taggedPeople != null && taggedPeople.trim() != "") {
+                val recognitionLabelArray = StringEscapeUtils.escapeHtml4(taggedPeople).split(",")
+                if (recognitionLabelArray.count() > 0) {
+                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                }
+
+                val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+
+                for (recognitionLabel in recognitionLabelArray) {
+                    if (recognitionLabel.trim().isNotBlank()) {
+                        val uploadResp = mapper.writeValueAsString(buildPersonUpload(settings, recognitionLabel, metadataObj, compreFaceImageIdMap))
+                        val jsonRespObj = mapper.readTree(uploadResp)
+
+                        var compreFaceImageId: String? = null
+                        if (jsonRespObj.has("responseDataUpload") && jsonRespObj["responseDataUpload"].has("image_id")) {
+                            compreFaceImageId = jsonRespObj["responseDataUpload"]["image_id"].toString()
+                            compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                        } else if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("image_id")) {
+                            compreFaceImageId = jsonRespObj["responseData"]["image_id"].toString()
+                            compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                        }
+
+                        val recognitionLabelRecord =
+                            recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
+                        var recognitionLabelObj = RecognitionLabel()
+                        if (recognitionLabelRecord == null) {
+                            recognitionLabelObj.setName(recognitionLabel.trim())
+                            recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                            recognitionLabelRepository?.save(recognitionLabelObj)
+                        } else {
+                            recognitionLabelObj = recognitionLabelRecord
+                        }
+                        val recognitionLabelPhotoCount =
+                            recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                recognitionLabelObj.getId(),
+                                metadataId
+                            )
+                        if (recognitionLabelPhotoCount == 0) {
+                            val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                            recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
+                            recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                            recognitionLabelPhotoObj.setConfidence("0.0")
+                            recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
+                            recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                        }
+                    }
+                }
+            } else if (isObject) {
+                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                var recognitionLabelObj = RecognitionLabel()
+                if (recognitionLabelRecord == null) {
+                    recognitionLabelObj.setName("object")
+                    recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
+                    recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                    recognitionLabelRepository?.save(recognitionLabelObj)
+                } else {
+                    recognitionLabelObj = recognitionLabelRecord
+                }
+
+                val recognitionLabelPhotoObj = RecognitionLabelPhoto()
+                recognitionLabelPhotoObj.setMetadataId(metadataId)
+                recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                recognitionLabelPhotoObj.setConfidence("-0.1")
+                recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+            }
+        }
+    }
+
+    private fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>): MutableMap<String, Any?> {
+        val uploadresponse = mutableMapOf<String, Any?>()
+        uploadresponse["responseData"] = mutableMapOf<String, Any?>()
+        uploadresponse["similarity"] = 0.0
+
+        uploadresponse["msg"] = ""
+        uploadresponse["status"] = ApiResponse.FAIL.status
 
         if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
             settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
-            var body: MultiValueMap<String, Any>?
-            var metadata: Optional<Metadata?>?
-            var thumbFile: FileSystemResource?
-            var serverUrl: String
-            var requestEntity: HttpEntity<MultiValueMap<String, Any>>
-            var restTemplate: RestTemplate
             var response: String?
 
-            if (!personName.isNullOrBlank() && !metadataId.isNullOrBlank()) {
-                val recognitionLabelQuery = recognitionLabelRepository?.findByNameIgnoreCase(personName)
-                val recognitionLabelId = if (recognitionLabelQuery == null) 0 else recognitionLabelQuery.getId()
-                var photoInRecog: RecognitionLabelPhoto? = null
-                if (recognitionLabelId > 0) {
-                    photoInRecog = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(
-                        recognitionLabelId,
-                        metadataId
-                    )
+            if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
+
+                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                val recognizedObj = mapper.writeValueAsString(buildPersonRecognition(settings, metadata))
+
+                val jsonRespObj = mapper.readTree(recognizedObj)
+                var subjectObj: JsonNode
+                var subject = ""
+                var similarity = 0.0
+                if (jsonRespObj.has("recognizeData") && jsonRespObj["recognizeData"].has(0)) {
+                    subjectObj = jsonRespObj["recognizeData"].get(0)
+                    if (subjectObj.has("subject")) {
+                        subject = subjectObj["subject"].textValue();
+                        similarity = subjectObj["similarity"].asDouble()
+                    }
+                }
+                uploadresponse["similarity"] = similarity
+
+                // This means the person has been relabeled
+                if (subject != "" && personName != subject) {
+                    similarity = 0.0
+
+                    val compreFaceImageId = compreFaceImageIdMap[subject.filterNot {it.isWhitespace()} + "-" + metadata?.getId()]
+                    if (compreFaceImageId != null && compreFaceImageId.toString().isNotEmpty()) {
+                        webClient.delete()
+                            .uri("api/v1/recognition/faces/$compreFaceImageId")
+                            .header("x-api-key", settings.getCompreFaceKey())
+                            .retrieve()
+                            .bodyToMono(String::class.java)
+                            .block()
+                    }
                 }
 
-                if (photoInRecog == null) {
-                    // Uploaded faces
-                    val headers = HttpHeaders()
-                    headers.contentType = MediaType.MULTIPART_FORM_DATA
-                    headers.add("x-api-key", settings.getCompreFaceKey())
-
-                    serverUrl = "${settings.getCompreFaceServer()}api/v1/recognition/faces?subject=${personName}"
-
+                // Uploaded faces
+                if (similarity != 1.0 && (similarity == 0.0 || similarity >= settings.getRecognitionConfidenceThreshold().toString().toDouble())) {
                     try {
-                        body = LinkedMultiValueMap()
-                        metadata = metaRepository.findById(metadataId)
                         if (metadata != null) {
-                            thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
-                            body.add("file", thumbFile)
+                            val builder = MultipartBodyBuilder()
+                            builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
 
-                            requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-                            restTemplate = RestTemplate()
-                            response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
+                            response = webClient.post()
+                                .uri("api/v1/recognition/faces?subject=${personName}")
+                                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                                .header("x-api-key", settings.getCompreFaceKey())
+                                .body(BodyInserters.fromMultipartData(builder.build()))
+                                .retrieve()
+                                .bodyToMono(String::class.java)
+                                .block()
+
                             val jsonObj = mapper.readTree(response)
-                            resp["responseData"] = jsonObj
+                            uploadresponse["responseData"] = jsonObj
 
-                            if (recognitionLabelQuery?.getId() == 0) {
-                                val recognitionLabelObj = RecognitionLabel()
-                                recognitionLabelObj.setName(personName.trim())
-                                recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
-                                recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
-                                val retRecognitionLabelObj = recognitionLabelRepository?.save(recognitionLabelObj)
-                                retRecognitionLabelObj!!.getId()
-                            } else if (recognitionLabelQuery != null && recognitionLabelQuery.getId() > 0) {
-                                val recognitionLabelPhoto = RecognitionLabelPhoto()
-                                recognitionLabelPhoto.setRecognitionLabelId(recognitionLabelQuery.getId())
-                                recognitionLabelPhoto.setMetadataId(metadataId)
-                                recognitionLabelPhoto.setAutoTagged(false)
-                                recognitionLabelPhoto.setConfidence("0.0")
-                                recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
-                            }
-
-
-                            resp["msg"] = ""
-                            resp["status"] = ApiResponse.SUCCESS.status
+                            uploadresponse["msg"] = ""
+                            uploadresponse["status"] = ApiResponse.SUCCESS.status
                         } else {
                             response = "Metadata not found."
-                            resp["responseData"] = response
+                            uploadresponse["responseData"] = response
                         }
                     } catch (e: Exception) {
                         val errorResponse =
                             e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
-                        resp["responseData"] = errorResponse
+                        uploadresponse["responseData"] = errorResponse
                     }
                 } else {
-                    resp["msg"] = "Person already processed"
-                    resp["status"] = ApiResponse.FAIL.status
+                    uploadresponse["msg"] = "Duplicate image"
+                    uploadresponse["status"] = ApiResponse.FAIL.status
                 }
             } else {
-                resp["msg"] = "Person name or metadata ID blank"
-                resp["status"] = ApiResponse.FAIL.status
+                uploadresponse["msg"] = "Person name or metadata ID blank"
+                uploadresponse["status"] = ApiResponse.FAIL.status
             }
         }
 
-        return resp
+        return uploadresponse
+    }
+
+    private fun buildPersonRecognition(settings: Settings, metadata: Metadata?): MutableMap<String, Any?> {
+        val recogresponse = mutableMapOf<String, Any?>()
+
+        recogresponse["recognizeData"] = mutableMapOf<String, Any?>()
+        recogresponse["msg"] = ""
+        recogresponse["status"] = ApiResponse.FAIL.status
+
+        if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
+            settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
+            var response: String?
+
+            if (metadata !== null) {
+                // Recognizing faces
+
+                try {
+                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                    val builder = MultipartBodyBuilder()
+                    builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+
+                    response = webClient.post()
+                        .uri("api/v1/recognition/recognize")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                        .header("x-api-key", settings.getCompreFaceKey())
+                        .body(BodyInserters.fromMultipartData(builder.build()))
+                        .retrieve()
+                        .bodyToMono(String::class.java)
+                        .block()
+
+                    val jsonObj = mapper.readTree(response)
+                    val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                    val resultList = resultMap["result"] as ArrayList<Map<String, Any>>
+                    val subjects = resultList[0]["subjects"] as ArrayList<Map<String, Any>>
+
+                    recogresponse["recognizeData"] = subjects
+                    recogresponse["msg"] = ""
+                    recogresponse["status"] = ApiResponse.SUCCESS.status
+
+                } catch (e: Exception) {
+                    val errorResponse =
+                        e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                    recogresponse["recognizeData"] = errorResponse
+                }
+            } else {
+                recogresponse["msg"] = "Metadata ID blank"
+                recogresponse["status"] = ApiResponse.FAIL.status
+            }
+        }
+
+        return recogresponse
     }
 
     @RequestMapping(value = ["/person/recognition/recognize/{metadataId}"], method = [RequestMethod.GET], produces = ["application/json"])
@@ -684,96 +982,7 @@ class PeopleController {
         resp["msg"] = ""
         resp["status"] = ApiResponse.FAIL.status
 
-        return mapper.writeValueAsString(buildPersonRecognition(model.getAttribute("settings") as Settings, metadataId))
-    }
-
-    fun buildPersonRecognition(settings: Settings, metadataId: String?): MutableMap<String, Any?> {
-        resp["responseData"] = mutableMapOf<String, Any?>()
-        resp["msg"] = ""
-        resp["status"] = ApiResponse.FAIL.status
-
-        if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
-            settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
-            var body: MultiValueMap<String, Any>?
-            var metadata: Optional<Metadata?>?
-            var thumbFile: FileSystemResource?
-            var serverUrl: String
-            var requestEntity: HttpEntity<MultiValueMap<String, Any>>
-            var restTemplate: RestTemplate
-            var response: String?
-
-            if (!metadataId.isNullOrBlank()) {
-                // Uploaded faces
-                val headers = HttpHeaders()
-                headers.contentType = MediaType.MULTIPART_FORM_DATA
-                headers.add("x-api-key", settings.getCompreFaceKey())
-
-                serverUrl = "${settings.getCompreFaceServer()}api/v1/recognition/recognize"
-
-                try {
-                    body = LinkedMultiValueMap()
-                    metadata = metaRepository.findById(metadataId)
-                    if (metadata != null) {
-                        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
-                        body.add("file", thumbFile)
-
-                        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-                        restTemplate = RestTemplate()
-                        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
-
-                        val jsonObj = mapper.readTree(response)
-                        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
-                        val resultList = resultMap["result"] as ArrayList<Map<String, Any>>
-                        val subjects = resultList[0]["subjects"] as ArrayList<Map<String, Any>>
-
-                        for (subject in subjects) {
-                            val name = subject["subject"].toString()
-                            val confidence = subject["similarity"].toString()
-
-                            val recognitionLabelQuery = recognitionLabelRepository?.findByNameIgnoreCase(name)
-                            val recognitionLabelId = recognitionLabelQuery?.getId()
-
-                            if (recognitionLabelId != null && recognitionLabelId > 0 && confidence.toDouble() > settings.getRecognitionConfidenceThreshold().toString().toDouble()) {
-                                val countDistinctLabelIdAndMetadataId = recognitionLabelPhotoRepository?.countDistinctLabelIdAndMetadataId(recognitionLabelId, metadataId)
-
-                                if (countDistinctLabelIdAndMetadataId == 0) {
-                                    val recognitionLabelPhotoObj = RecognitionLabelPhoto()
-                                    recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelId)
-                                    recognitionLabelPhotoObj.setMetadataId(metadataId)
-                                    recognitionLabelPhotoObj.setAutoTagged(true)
-                                    recognitionLabelPhotoObj.setConfidence(confidence)
-                                    recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
-                                } else {
-                                    val recognitionLabelPhoto = recognitionLabelPhotoRepository?.findByRecognitionLabelIdAndMetadataId(recognitionLabelId, metadataId)
-                                    if (recognitionLabelPhoto != null && recognitionLabelPhoto.getConfidence() != "0.0" && recognitionLabelPhoto.getId() > 0) {
-                                        recognitionLabelPhoto.setAutoTagged(true)
-                                        recognitionLabelPhoto.setConfidence(confidence)
-                                        recognitionLabelPhotoRepository?.save(recognitionLabelPhoto)
-                                    }
-                                }
-                            }
-                        }
-
-                        resp["responseData"] = subjects
-
-
-                        resp["msg"] = ""
-                        resp["status"] = ApiResponse.SUCCESS.status
-                    } else {
-                        response = "Metadata not found."
-                        resp["responseData"] = response
-                    }
-                } catch (e: Exception) {
-                    val errorResponse =
-                        e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
-                    resp["responseData"] = errorResponse
-                }
-            } else {
-                resp["msg"] = "Metadata ID blank"
-                resp["status"] = ApiResponse.FAIL.status
-            }
-        }
-
-        return resp
+        val metadata = metadataRepository?.findByMetadataId(metadataId)
+        return mapper.writeValueAsString(buildPersonRecognition(model.getAttribute("settings") as Settings, metadata))
     }
 }

@@ -105,6 +105,7 @@ $("#saveMetadata").on("click", async function (e) {
             isObject: $("#isobject").prop("checked")
         }
 
+        // let compreFaceImageId = "";
         const peopleArray = people.split(",").map(function(item) {
             return item.trim();
         });
@@ -117,8 +118,12 @@ $("#saveMetadata").on("click", async function (e) {
                     personName: person,
                     metadataId: metadataId
                 }
-                const http = new Http("upload faces");
-                let persondata = await http.ajax("post", "/person/recognition/faces", JSON.stringify(personJson));
+//                 const http = new Http("upload faces");
+//                 let persondata = await http.ajax("post", "/person/recognition/faces", JSON.stringify(personJson));
+// console.log(persondata)
+//                 if (persondata.hasOwnProperty("responseDataUpload") && persondata["responseDataUpload"].hasOwnProperty("image_id")) {
+//                     compreFaceImageId = persondata["responseDataUpload"]["image_id"];
+//                 }
             }
         });
 

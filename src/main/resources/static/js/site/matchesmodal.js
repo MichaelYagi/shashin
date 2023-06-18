@@ -198,9 +198,15 @@ $('#propBatchMetadata').bind('keypress', function () {
             $("#matchesModalStatus" + metadata.id).attr("title", "");
             $("#matchesModalCancel" + metadata.id).prop('disabled', true);
 
+            $("#personModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+            $("#personModalStatus" + metadata.id).css("visibility", "visible");
+            $("#personModalStatus" + metadata.id).attr("title", "");
+            $("#personModalStatus" + metadata.id).prop('disabled', true);
+
             const http = new Http("saving person matches");
             const json = {
                 metadataId: metadata.id,
+                currentPerson: $("#currentPerson").val(),
                 tagpeople: $("#tagpeople" + metadata.id).val(),
                 isObject: $("#isobject" + metadata.id).prop("checked")
             };
@@ -208,6 +214,10 @@ $('#propBatchMetadata').bind('keypress', function () {
                 $("#matchesModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                 $("#matchesModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                 $("#matchesModalCancel" + metadata.id).prop('disabled', false);
+
+                $("#personModalStatus" + metadata.id).removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
+                $("#personModalStatus" + metadata.id).prop('disabled', false);
             });
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
@@ -247,15 +257,26 @@ $('#propBatchMetadata').bind('keypress', function () {
 
                     $("#matchesModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#matchesModalCancel" + metadata.id).prop('disabled', false);
+
+                    $("#personModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
+                    $("#personModalStatus" + metadata.id).prop('disabled', false);
                 } else {
                     $("#matchesModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                     $("#matchesModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                     $("#matchesModalCancel" + metadata.id).prop('disabled', false);
+
+                    $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                    $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
+                    $("#personModalStatus" + metadata.id).prop('disabled', false);
                 }
             } else {
                 $("#matchesModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#matchesModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                 $("#matchesModalCancel" + metadata.id).prop('disabled', false);
+
+                $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
+                $("#personModalStatus" + metadata.id).prop('disabled', false);
             }
 
             return false;
@@ -265,6 +286,10 @@ $('#propBatchMetadata').bind('keypress', function () {
         $('#propmatches' + metadata.id).on('hide.bs.modal', function () {
             $("#matchesModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
             $("#matchesModalStatus" + metadata.id).css("visibility","hidden");
+
+            $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
+            $("#personModalStatus" + metadata.id).css("visibility","hidden");
+
             $("#msg" + metadata.id).html("");
             $("#isobject" + metadata.id)[0].checked = false;
         });
@@ -273,6 +298,10 @@ $('#propBatchMetadata').bind('keypress', function () {
         $('#propmatches' + metadata.id + ' input').bind('keypress', function () {
             $("#matchesModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
             $("#matchesModalStatus" + metadata.id).css("visibility","hidden");
+
+            $("#personModalStatus" + metadata.id).attr("class","spinner-grow me-auto");
+            $("#personModalStatus" + metadata.id).css("visibility","hidden");
+
             $("#msg" + metadata.id).html("");
         });
     }

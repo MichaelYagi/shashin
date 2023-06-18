@@ -2,16 +2,14 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.util.FileUtils
 import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -20,6 +18,10 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.ClientResponse
+import org.springframework.web.reactive.function.client.WebClient
+import reactor.core.publisher.Mono
 import java.io.File
 import java.io.IOException
 import java.lang.management.ManagementFactory
@@ -53,100 +55,17 @@ class TestController {
 
         // Add API key to header
         var settings = model.getAttribute("settings") as Settings
-        val headers = HttpHeaders()
-        headers.contentType = MediaType.MULTIPART_FORM_DATA
-        headers.add("x-api-key", settings.getCompreFaceKey())
-        var body: MultiValueMap<String, Any>? = null
-        var metadata: Optional<com.miyagi.shashin.model.Metadata?>? = null
-        var thumbFile: FileSystemResource? = null
-        var serverUrl = ""
-        var requestEntity: HttpEntity<MultiValueMap<String, Any>>
-        var restTemplate: RestTemplate
-        var response: String?
 
-
-        // Uploaded faces
-//        serverUrl = "${faceRecogUrl}api/v1/recognition/faces?subject=noah&det_prob_threshold=0.45"
-//
-//        body = LinkedMultiValueMap()
-//        metadata = metaRepository.findById("7944b8f0-2dd2-3226-8c67-9d7350735617")
-//        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
-//        body.add("file", thumbFile)
-//
-//        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-//        restTemplate = RestTemplate()
-//        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
-//        println(response)
-
-
-
-        // Recognize face
-        serverUrl = "${settings.getCompreFaceServer()}api/v1/recognition/recognize"
-
-try {
-    // Noah
-    body = LinkedMultiValueMap()
-    metadata = metaRepository.findById("1aec30fc-871e-3e5c-956b-1442b50c6849")
-    thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
-    body.add("file", thumbFile)
-
-    requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-    restTemplate = RestTemplate()
-    response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
-    println(response)
-
-    /*
-        // Ryuko
-        body = LinkedMultiValueMap()
-        metadata = metaRepository.findById("77823c1f-9d8a-332a-94cc-a04a052f8971")
-        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
-        body.add("file", thumbFile)
-
-        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-        restTemplate = RestTemplate()
-        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
-        println(response)
-
-        // Mike
-        body = LinkedMultiValueMap()
-        metadata = metaRepository.findById("752e9360-617c-3643-baff-5b6964f7f284")
-        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
-        body.add("file", thumbFile)
-
-        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-        restTemplate = RestTemplate()
-        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
-        println(response)*/
-
-        // Nobody
-        body = LinkedMultiValueMap()
-        metadata = metaRepository.findById("4ba78ee5-e3f9-36f4-89e9-e3a93fef6c3e")
-        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
-        body.add("file", thumbFile)
-
-        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-        restTemplate = RestTemplate()
-        try {
-            response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
-            println(response)
-        } catch (e: Exception) {
-            println("error:" + e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), ""))
+        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+        val response = webClient.get()
+            .uri("api/v1/recognition/subjects/")
+            .header("x-api-key", settings.getCompreFaceKey())
+            .retrieve()
+            .toEntity(String::class.java)
+            .block()
+        if (response != null) {
+            println(response.statusCode)
         }
-    } catch (e: Exception) {
-        println("error:" + e.localizedMessage)
-    }
-
-/*        // Mike
-        body = LinkedMultiValueMap()
-        metadata = metaRepository.findById("c691b1f5-591e-395e-88f8-955093f5bbaa")
-        thumbFile = FileSystemResource(metadata.get().getThumbnailPathSmall()!!)
-        body.add("file", thumbFile)
-
-        requestEntity = HttpEntity<MultiValueMap<String, Any>>(body, headers)
-        restTemplate = RestTemplate()
-        response = restTemplate.postForObject(serverUrl, requestEntity, String::class.java)
-        println(response)*/
-
 
         return "test"
     }
@@ -215,7 +134,7 @@ try {
         @Suppress("DEPRECATION")
         model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
         model["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
-        val reachable: Boolean = pingURL(geocodeUrl, 200)
+        val reachable: Boolean = FileUtils.pingURL(geocodeUrl, 200)
         if (reachable) {
             model["geocoderServicesAvailable"] = "OK"
         } else {
@@ -223,12 +142,11 @@ try {
             status = "FAIL"
         }
 
-        val settings = model.getAttribute("settings") as Settings
-        val faceRecogReachable: Boolean = pingURL(settings.getCompreFaceServer()!!, 200)
-        if (faceRecogReachable) {
-            model["faceRecogServicesAvailable"] = "OK"
+        val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
+        if (faceRecogServicesAvailable) {
+            model["faceRecogAvailable"] = "OK"
         } else {
-            model["faceRecogServicesAvailable"] = "FAIL"
+            model["faceRecogAvailable"] = "FAIL"
         }
 
         model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
@@ -242,32 +160,5 @@ try {
         val df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.CEILING
         return df.format(number).toDouble()
-    }
-
-    /**
-     * Pings a HTTP URL. This effectively sends a HEAD request and returns `true` if the response code is in
-     * the 200-399 range.
-     * @param url The HTTP URL to be pinged.
-     * @param timeout The timeout in millis for both the connection timeout and the response read timeout. Note that
-     * the total timeout is effectively two times the given timeout.
-     * @return `true` if the given HTTP URL has returned response code 200-399 on a HEAD request within the
-     * given timeout, otherwise `false`.
-     */
-    private fun pingURL(url: String, timeout: Int): Boolean {
-        var url = url
-        url = url.replaceFirst(
-            "^https".toRegex(),
-            "http"
-        ) // Otherwise an exception may be thrown on invalid SSL certificates.
-        return try {
-            val connection: HttpURLConnection = URL(url).openConnection() as HttpURLConnection
-            connection.connectTimeout = timeout
-            connection.readTimeout = timeout
-            connection.requestMethod = "HEAD"
-            val responseCode: Int = connection.responseCode
-            responseCode in 200..399
-        } catch (exception: IOException) {
-            false
-        }
     }
 }

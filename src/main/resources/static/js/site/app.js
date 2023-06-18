@@ -144,9 +144,6 @@
 
     shashin.openEditMetadataModal = function (metadataId) {
         shashin.getTimelineMetadata(metadataId).then(async function (data) {
-            const http = new Http("recognize faces");
-            let persondata = await http.ajax("get", "/person/recognition/recognize/" + metadataId)
-
             if (data.hasOwnProperty("metadata") &&
                 data.hasOwnProperty("taggedPeopleList") &&
                 data.hasOwnProperty("albumList") &&

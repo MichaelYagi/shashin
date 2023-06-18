@@ -6,6 +6,8 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
+import com.google.javascript.jscomp.jarjar.com.google.common.reflect.TypeToken
+import com.google.javascript.jscomp.jarjar.com.google.gson.GsonBuilder
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
@@ -23,6 +25,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -33,6 +36,8 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.socket.messaging.SessionConnectEvent
@@ -249,6 +254,15 @@ class SettingsController {
             }
 
             model.addAttribute("settings", settings)
+        }
+
+        val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
+        if (faceRecogServicesAvailable) {
+            model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
+            model["faceRecogAvailableStatusColor"] = "green"
+        } else {
+            model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
+            model["faceRecogAvailableStatusColor"] = "red"
         }
 
         model["msg"] = ""
@@ -486,6 +500,21 @@ class SettingsController {
                 userAlbumRepository?.deleteAll()
                 keywordRepository?.deleteAll()
                 keywordPhotoRepository?.deleteAll()
+
+                // Cleanup CompreFace subjects
+                val settings = model.getAttribute("settings") as Settings
+                if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
+                    settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank())
+                {
+                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                    webClient.delete()
+                        .uri("api/v1/recognition/subjects")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                        .header("x-api-key", settings.getCompreFaceKey())
+                        .retrieve()
+                        .bodyToMono(String::class.java)
+                        .block()
+                }
 
                 // Clean up thread files
                 FileUtils.deleteThreadFiles("shashinscan")
@@ -1288,6 +1317,8 @@ class SettingsController {
 
                             if (metadataList != null) {
                                 var deleteCount = 0
+                                val settings = settingsRepository?.findFirstByOrderByIdAsc()
+
                                 for (metadata in metadataList) {
                                     if (shouldStop.get()) {
                                         writeToThreadFile("Scan Cancelled", threadFile)
@@ -1461,6 +1492,32 @@ class SettingsController {
                                                 logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
 
                                                 // Delete tagged people
+                                                val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                                                if (settings != null) {
+                                                    if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
+                                                        settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
+                                                        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                                                        if (recognitionLabelPhotos != null) {
+                                                            for (recognitionLabelPhoto in recognitionLabelPhotos) {
+                                                                if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
+                                                                        .isNotBlank()
+                                                                ) {
+                                                                    try {
+                                                                        webClient.delete()
+                                                                            .uri("api/v1/recognition/faces/${recognitionLabelPhoto.getCompreFaceImageId()}")
+                                                                            .header(
+                                                                                "x-api-key",
+                                                                                settings.getCompreFaceKey()
+                                                                            )
+                                                                            .retrieve()
+                                                                            .bodyToMono(String::class.java)
+                                                                            .block()
+                                                                    }catch (e: Exception) {}
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
 
                                                 // Delete metadata
@@ -1501,6 +1558,7 @@ class SettingsController {
 
                             // Scan for new files
                             if (!shouldStop.get()) {
+                                val settings = settingsRepository?.findFirstByOrderByIdAsc()
                                 for (mediaDir in mediaDirs) {
                                     if (mediaDir != null) {
                                         getFile(
@@ -1508,7 +1566,8 @@ class SettingsController {
                                             threadFile,
                                             sidecarDir,
                                             mediaDir.getDirectory().toString(),
-                                            mediaExcludeDirs
+                                            mediaExcludeDirs,
+                                            settings
                                         )
                                     }
                                 }
@@ -1601,9 +1660,11 @@ class SettingsController {
         }
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?) {
         val f = File(dirPath)
         val files = f.listFiles()
+        val webClient = WebClient.create(settings?.getCompreFaceServer()!!)
+
         if (files != null) {
             for (i in files.indices) {
 
@@ -1648,14 +1709,143 @@ class SettingsController {
 
                                         try {
                                             metadataRepository?.save(metadataObj)
+
+                                            try {
+                                                if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
+                                                    settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
+
+                                                    // Have at least 3 people tagged
+                                                    val compreFaceTagAllow = 3
+                                                    val recognitionLabelPhotoLabels = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+                                                    if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
+                                                        var builder = MultipartBodyBuilder()
+                                                        builder.part(
+                                                            "file",
+                                                            FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
+                                                        )
+
+                                                        var response = webClient.post()
+                                                            .uri("api/v1/recognition/recognize")
+                                                            .header(
+                                                                HttpHeaders.CONTENT_TYPE,
+                                                                MediaType.MULTIPART_FORM_DATA.toString()
+                                                            )
+                                                            .header("x-api-key", settings.getCompreFaceKey())
+                                                            .body(BodyInserters.fromMultipartData(builder.build()))
+                                                            .retrieve()
+                                                            .bodyToMono(String::class.java)
+                                                            .block()
+
+                                                        logger.log(
+                                                            Level.INFO,
+                                                            "Recognizing face for " + metadataObj.getPath() + ": " + response
+                                                        )
+
+                                                        var jsonObj = mapper.readTree(response)
+                                                        val resultMap = mapper.convertValue(
+                                                            jsonObj,
+                                                            object :
+                                                                TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                                                        val resultList =
+                                                            resultMap["result"] as ArrayList<Map<String, Any>>
+                                                        if (resultList.isNotEmpty() && resultList[0].containsKey("subjects")) {
+                                                            val subjects =
+                                                                resultList[0]["subjects"] as ArrayList<Map<String, Any>>
+                                                            val subjectObj = subjects[0]
+
+                                                            var subject = ""
+                                                            var similarity = 0.0
+
+                                                            if (subjectObj.isNotEmpty()) {
+                                                                subject = subjectObj["subject"].toString()
+                                                                similarity =
+                                                                    subjectObj["similarity"].toString().toDouble()
+                                                            }
+
+                                                            if (similarity >= settings.getRecognitionConfidenceThreshold()
+                                                                    .toString().toDouble()
+                                                            ) {
+                                                                builder = MultipartBodyBuilder()
+                                                                builder.part(
+                                                                    "file",
+                                                                    FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
+                                                                )
+
+                                                                response = webClient.post()
+                                                                    .uri("api/v1/recognition/faces?subject=${subject}")
+                                                                    .header(
+                                                                        HttpHeaders.CONTENT_TYPE,
+                                                                        MediaType.MULTIPART_FORM_DATA.toString()
+                                                                    )
+                                                                    .header(
+                                                                        "x-api-key",
+                                                                        settings.getCompreFaceKey()
+                                                                    )
+                                                                    .body(BodyInserters.fromMultipartData(builder.build()))
+                                                                    .retrieve()
+                                                                    .bodyToMono(String::class.java)
+                                                                    .block()
+
+                                                                jsonObj = mapper.readTree(response)
+                                                                var compreFaceImageId: String?
+                                                                if (jsonObj.has("image_id")) {
+                                                                    compreFaceImageId =
+                                                                        jsonObj["image_id"].toString()
+
+                                                                    logger.log(
+                                                                        Level.INFO,
+                                                                        "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
+                                                                    )
+
+                                                                    val recognitionLabelObj =
+                                                                        recognitionLabelRepository?.findByNameIgnoreCase(
+                                                                            subject
+                                                                        )
+                                                                    if (recognitionLabelObj != null) {
+                                                                        val recognitionLabelPhotoObj =
+                                                                            RecognitionLabelPhoto()
+                                                                        recognitionLabelPhotoObj.setMetadataId(
+                                                                            metadataObj.getId()
+                                                                        )
+                                                                        recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                                            recognitionLabelObj.getId()
+                                                                        )
+                                                                        recognitionLabelPhotoObj.setConfidence(
+                                                                            similarity.toString()
+                                                                        )
+                                                                        recognitionLabelPhotoObj.setCompreFaceImageId(
+                                                                            compreFaceImageId
+                                                                        )
+                                                                        recognitionLabelPhotoRepository?.save(
+                                                                            recognitionLabelPhotoObj
+                                                                        )
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    } else {
+
+                                                        logger.log(
+                                                            Level.INFO,
+                                                            "You need to manually tag at least $compreFaceTagAllow different people to use face recognition service"
+                                                        )
+                                                    }
+                                                }
+                                            } catch (e: Exception) {
+                                                logger.log(
+                                                    Level.INFO,
+                                                    "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
+                                                )
+                                            }
+
                                             threadText = file.path + " indexed"
                                             scanCount++
                                         } catch (e: Exception) {
                                             logger.log(
                                                 Level.SEVERE,
-                                                "Could not save file " + metadataObj.getPath() + ": " + e.localizedMessage
+                                                "Error saving metadata: " + metadataObj.getPath() + ": " + e.localizedMessage
                                             )
-                                            threadText = "Could not save file " + metadataObj.getPath() + "."
+                                            threadText = "Error saving metadata: " + metadataObj.getPath() + "."
                                         }
                                     } else {
                                         logger.log(
@@ -1682,7 +1872,7 @@ class SettingsController {
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings)
                 }
             }
         }
