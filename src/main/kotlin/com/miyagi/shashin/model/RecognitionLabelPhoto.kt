@@ -16,6 +16,8 @@ class RecognitionLabelPhoto {
     @NotBlank
     private var metadataId: String? = null
     @NotBlank
+    private var compreFaceImageId: String? = null
+    @NotBlank
     private var confidence: String? = null
     @NotBlank
     private var autoTagged: Boolean? = false
@@ -40,6 +42,14 @@ class RecognitionLabelPhoto {
 
     fun getMetadataId(): String? {
         return this.metadataId
+    }
+
+    fun setCompreFaceImageId(compreFaceImageId: String?) {
+        this.compreFaceImageId = compreFaceImageId
+    }
+
+    fun getCompreFaceImageId(): String? {
+        return this.compreFaceImageId
     }
 
     fun setMetadataId(metadataId: String?) {

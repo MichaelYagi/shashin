@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.stereotype.Component
 import java.io.*
+import java.net.HttpURLConnection
+import java.net.URL
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -233,6 +235,33 @@ class FileUtils {
                         fileEntry.delete()
                     }
                 }
+            }
+        }
+
+        /**
+         * Pings a HTTP URL. This effectively sends a HEAD request and returns `true` if the response code is in
+         * the 200-399 range.
+         * @param url The HTTP URL to be pinged.
+         * @param timeout The timeout in millis for both the connection timeout and the response read timeout. Note that
+         * the total timeout is effectively two times the given timeout.
+         * @return `true` if the given HTTP URL has returned response code 200-399 on a HEAD request within the
+         * given timeout, otherwise `false`.
+         */
+        fun pingURL(url: String, timeout: Int): Boolean {
+            var urlcopy = url
+            urlcopy = urlcopy.replaceFirst(
+                "^https".toRegex(),
+                "http"
+            ) // Otherwise an exception may be thrown on invalid SSL certificates.
+            return try {
+                val connection: HttpURLConnection = URL(urlcopy).openConnection() as HttpURLConnection
+                connection.connectTimeout = timeout
+                connection.readTimeout = timeout
+                connection.requestMethod = "HEAD"
+                val responseCode: Int = connection.responseCode
+                responseCode in 200..399
+            } catch (exception: IOException) {
+                false
             }
         }
 

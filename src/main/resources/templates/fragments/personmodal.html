@@ -234,6 +234,7 @@
                 const http = new Http("saving person");
                 const json = {
                     metadataId: metadata.id,
+                    currentPerson: $("#currentPerson").val(),
                     tagpeople: $("#tagpeople" + metadata.id).val(),
                     isObject: $("#isobject" + metadata.id).prop("checked")
                 };

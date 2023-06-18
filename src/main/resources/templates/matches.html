@@ -12,9 +12,10 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
 
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/matchesmodal :: matchesmodal(${recognitionLabels})"></div>
             <input type="hidden" id="activePage" th:value="${activePage}">
+            <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
             <div id="infinite-scroll-gallery">
             <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">

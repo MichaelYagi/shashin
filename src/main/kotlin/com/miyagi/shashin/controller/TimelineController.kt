@@ -3,7 +3,6 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
@@ -18,15 +17,15 @@ import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.InputStreamResource
-import org.springframework.http.CacheControl
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
+import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
@@ -414,12 +413,6 @@ class TimelineController: BaseController() {
             metadataMap["id"].toString() == metadataId
         ) {
             val metadataObj = metadataRepository.findById(metadataId)
-            val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataObj.get().getId())
-            if (recognitionLabelPhotos != null) {
-                for (recognitionLabelPhoto in recognitionLabelPhotos) {
-                    recognitionLabelPhotoRepository?.delete(recognitionLabelPhoto)
-                }
-            }
             val isHidden = metadataMap["hidden"].toString().toBoolean()
 
             if (isHidden) {
@@ -556,7 +549,7 @@ class TimelineController: BaseController() {
             if (metadataMap["tagpeople"].toString().isBlank()) {
                 recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
             } else {
-                processPeople(metadataObj.get(), metadataMap["tagpeople"].toString(), metadataMap["isObject"].toString().toBoolean())
+                processPeople(model.getAttribute("settings") as Settings, metadataObj.get(), metadataMap["tagpeople"].toString(), metadataMap["isObject"].toString().toBoolean())
             }
 
             if (metadataMap["title"].toString().trim() == "") {
@@ -684,6 +677,12 @@ class TimelineController: BaseController() {
 //        println(requestBody)
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
+        val settings = model.getAttribute("settings") as Settings
+
+        val headers = HttpHeaders()
+        headers.contentType = MediaType.MULTIPART_FORM_DATA
+        headers.add("x-api-key", settings.getCompreFaceKey())
+
         var idArray: Array<String>? = null
         var isHidden = false
 
@@ -758,6 +757,11 @@ class TimelineController: BaseController() {
         if (!idArray.isNullOrEmpty()) {
             resp["msg"] = "Saved!"
             resp["status"] = ApiResponse.SUCCESS.status
+
+            val settings = model.getAttribute("settings") as Settings
+
+            val headers = HttpHeaders()
+            headers.add("x-api-key", settings.getCompreFaceKey())
 
             val firstAvailableMetadataId = StringEscapeUtils.escapeHtml4(idArray[0])
             val metadataCoverAlbumObj = metadataRepository.findById(firstAvailableMetadataId)
@@ -843,7 +847,7 @@ class TimelineController: BaseController() {
                         }
                     }
 
-                    processPeople(metadata, recognitionLabelNames.toString(), isObject)
+                    processPeople(model.getAttribute("settings") as Settings, metadata, recognitionLabelNames.toString(), isObject)
 
                     if (dayTaken != null) {
                         metadata.setDay(dayTaken)
@@ -1270,9 +1274,36 @@ class TimelineController: BaseController() {
         return coordinateMap
     }
 
-    private fun processPeople(metadataObj: Metadata?, taggedPeople: String?, isObject: Boolean) {
+    private fun processKeywords(keywordList: List<String>, metadataId: String) {
+        for (keywordTerm in keywordList) {
+            val keyword = keywordTerm.trim().lowercase()
+
+            if (keyword.isNotEmpty()) {
+                val keywordCount = keywordRepository.countByKeywordIgnoreCase(keyword)
+                var keywordObj = Keyword()
+                if (keywordCount == 0) {
+                    keywordObj.setKeyword(keywordTerm)
+                    keywordObj.setCreatedAt(getCurrentTimestamp())
+                    keywordObj.setModifiedAt(getCurrentTimestamp())
+                    keywordRepository.save(keywordObj)
+                } else {
+                    keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
+                }
+
+                val keywordPhotoObj = KeywordPhoto()
+                keywordPhotoObj.setKeywordId(keywordObj.getId())
+                keywordPhotoObj.setMetadataId(metadataId)
+                keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
+                keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
+                keywordPhotoRepository.save(keywordPhotoObj)
+            }
+        }
+    }
+
+    private fun processPeople(settings: Settings, metadataObj: Metadata?, taggedPeople: String?, isObject: Boolean) {
         if (metadataObj != null) {
             val metadataId = metadataObj.getId()
+
             val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadataId)
             if (recognitionLabelPhotos != null) {
                 for (recognitionLabelPhoto in recognitionLabelPhotos) {
@@ -1285,8 +1316,23 @@ class TimelineController: BaseController() {
                 if (recognitionLabelArray.count() > 0) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
+
+                val compreFaceImageIdMap = mutableMapOf<String, Any?>()
+
                 for (recognitionLabel in recognitionLabelArray) {
                     if (recognitionLabel.trim().isNotBlank()) {
+                        val uploadResp = mapper.writeValueAsString(buildPersonUpload(settings, recognitionLabel, metadataObj, compreFaceImageIdMap))
+                        val jsonRespObj = mapper.readTree(uploadResp)
+
+                        var compreFaceImageId: String? = null
+                        if (jsonRespObj.has("responseDataUpload") && jsonRespObj["responseDataUpload"].has("image_id")) {
+                            compreFaceImageId = jsonRespObj["responseDataUpload"]["image_id"].toString()
+                            compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                        } else if (jsonRespObj.has("responseData") && jsonRespObj["responseData"].has("image_id")) {
+                            compreFaceImageId = jsonRespObj["responseData"]["image_id"].toString()
+                            compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
+                        }
+
                         val recognitionLabelRecord =
                             recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabel.trim())
                         var recognitionLabelObj = RecognitionLabel()
@@ -1308,6 +1354,7 @@ class TimelineController: BaseController() {
                             recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
                             recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
                             recognitionLabelPhotoObj.setConfidence("0.0")
+                            recognitionLabelPhotoObj.setCompreFaceImageId(compreFaceImageId)
                             recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
                         }
                     }
@@ -1334,29 +1381,146 @@ class TimelineController: BaseController() {
         }
     }
 
-    private fun processKeywords(keywordList: List<String>, metadataId: String) {
-        for (keywordTerm in keywordList) {
-            val keyword = keywordTerm.trim().lowercase()
+    private fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>): MutableMap<String, Any?> {
+        val uploadresponse = mutableMapOf<String, Any?>()
+        uploadresponse["responseData"] = mutableMapOf<String, Any?>()
+        uploadresponse["similarity"] = 0.0
 
-            if (keyword.isNotEmpty()) {
-                val keywordCount = keywordRepository.countByKeywordIgnoreCase(keyword)
-                var keywordObj = Keyword()
-                if (keywordCount == 0) {
-                    keywordObj.setKeyword(keywordTerm)
-                    keywordObj.setCreatedAt(getCurrentTimestamp())
-                    keywordObj.setModifiedAt(getCurrentTimestamp())
-                    keywordRepository.save(keywordObj)
-                } else {
-                    keywordObj = keywordRepository.findByKeywordIgnoreCase(keywordTerm)!!
+        uploadresponse["msg"] = ""
+        uploadresponse["status"] = ApiResponse.FAIL.status
+
+        if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
+            settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
+            var response: String?
+
+            if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
+
+                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                val recognizedObj = mapper.writeValueAsString(buildPersonRecognition(settings, metadata))
+
+                val jsonRespObj = mapper.readTree(recognizedObj)
+                var subjectObj: JsonNode
+                var subject = ""
+                var similarity = 0.0
+                if (jsonRespObj.has("recognizeData") && jsonRespObj["recognizeData"].has(0)) {
+                    subjectObj = jsonRespObj["recognizeData"].get(0)
+                    if (subjectObj.has("subject")) {
+                        subject = subjectObj["subject"].textValue();
+                        similarity = subjectObj["similarity"].asDouble()
+                    }
+                }
+                uploadresponse["similarity"] = similarity
+
+                // This means the person has been relabeled
+                if (subject != "" && personName != subject) {
+                    similarity = 0.0
+
+                    val compreFaceImageId = compreFaceImageIdMap[subject.filterNot {it.isWhitespace()} + "-" + metadata?.getId()]
+                    if (compreFaceImageId != null && compreFaceImageId.toString().isNotEmpty()) {
+                        webClient.delete()
+                            .uri("api/v1/recognition/faces/$compreFaceImageId")
+                            .header("x-api-key", settings.getCompreFaceKey())
+                            .retrieve()
+                            .bodyToMono(String::class.java)
+                            .block()
+                    }
                 }
 
-                val keywordPhotoObj = KeywordPhoto()
-                keywordPhotoObj.setKeywordId(keywordObj.getId())
-                keywordPhotoObj.setMetadataId(metadataId)
-                keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
-                keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
-                keywordPhotoRepository.save(keywordPhotoObj)
+                // Uploaded faces
+                if (similarity != 1.0 && (similarity == 0.0 || similarity >= settings.getRecognitionConfidenceThreshold().toString().toDouble())) {
+                    try {
+                        if (metadata != null) {
+                            val builder = MultipartBodyBuilder()
+                            builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+
+                            response = webClient.post()
+                                .uri("api/v1/recognition/faces?subject=${personName}")
+                                .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                                .header("x-api-key", settings.getCompreFaceKey())
+                                .body(BodyInserters.fromMultipartData(builder.build()))
+                                .retrieve()
+                                .bodyToMono(String::class.java)
+                                .block()
+
+                            val jsonObj = mapper.readTree(response)
+                            uploadresponse["responseData"] = jsonObj
+
+                            uploadresponse["msg"] = ""
+                            uploadresponse["status"] = ApiResponse.SUCCESS.status
+                        } else {
+                            response = "Metadata not found."
+                            uploadresponse["responseData"] = response
+                        }
+                    } catch (e: Exception) {
+                        val errorResponse =
+                            e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                        uploadresponse["responseData"] = errorResponse
+                    }
+                } else {
+                    uploadresponse["msg"] = "Duplicate image"
+                    uploadresponse["status"] = ApiResponse.FAIL.status
+                }
+            } else {
+                uploadresponse["msg"] = "Person name or metadata ID blank"
+                uploadresponse["status"] = ApiResponse.FAIL.status
             }
         }
+
+        return uploadresponse
+    }
+
+    private fun buildPersonRecognition(settings: Settings, metadata: Metadata?): MutableMap<String, Any?> {
+        val recogresponse = mutableMapOf<String, Any?>()
+
+        recogresponse["recognizeData"] = mutableMapOf<String, Any?>()
+        recogresponse["msg"] = ""
+        recogresponse["status"] = ApiResponse.FAIL.status
+
+        if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
+            settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
+            var response: String?
+
+            if (metadata !== null) {
+                // Recognizing faces
+
+                try {
+                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                    val builder = MultipartBodyBuilder()
+                    builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+
+                    response = webClient.post()
+                        .uri("api/v1/recognition/recognize")
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                        .header("x-api-key", settings.getCompreFaceKey())
+                        .body(BodyInserters.fromMultipartData(builder.build()))
+                        .retrieve()
+                        .bodyToMono(String::class.java)
+                        .block()
+
+                    val jsonObj = mapper.readTree(response)
+                    val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                    val resultList = resultMap["result"] as ArrayList<Map<String, Any>>
+                    var subjects: ArrayList<Map<String, Any>>? = null
+                    if (resultList.isNotEmpty() && resultList[0].containsKey("subjects")) {
+                        subjects = resultList[0]["subjects"] as ArrayList<Map<String, Any>>
+                    }
+                    recogresponse["recognizeData"] = subjects
+                    recogresponse["msg"] = ""
+                    recogresponse["status"] = ApiResponse.SUCCESS.status
+
+                } catch (e: Exception) {
+                    val errorResponse =
+                        e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                    recogresponse["recognizeData"] = errorResponse
+                }
+            } else {
+                recogresponse["msg"] = "Metadata ID blank"
+                recogresponse["status"] = ApiResponse.FAIL.status
+            }
+        }
+
+        return recogresponse
     }
 }

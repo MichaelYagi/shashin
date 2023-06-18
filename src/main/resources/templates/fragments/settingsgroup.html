@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<ul class="nav nav-tabs" th:fragment="settings(activePage)">
+<ul class="nav nav-tabs" th:fragment="settings(activePage,faceRecogServicesAvailable)">
   <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='settings' ? ' active' : ''}" href="/settings">General</a>
   </li>
   <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='scan' ? ' active' : ''}" href="/settings/scan">Media Indexing</a>
   </li>
-<!--  <li class="nav-item">-->
-<!--    <a th:attr="class='nav-link' + ${activePage=='match' ? ' active' : ''}" href="/settings/match">Face Match Indexing</a>-->
-<!--  </li>-->
+  <th:block th:if="${faceRecogServicesAvailable==true}">
+    <li class="nav-item">
+      <a th:attr="class='nav-link' + ${activePage=='match' ? ' active' : ''}" href="/settings/match">Face Match Indexing</a>
+    </li>
+  </th:block>
   <li class="nav-item">
     <a th:attr="class='nav-link' + ${activePage=='users' ? ' active' : ''}" href="/settings/users">User Management</a>
   </li>

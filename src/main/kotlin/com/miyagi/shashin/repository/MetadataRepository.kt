@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
+   @Query("SELECT * FROM metadata WHERE id = :metadataId", nativeQuery = true)
+   fun findByMetadataId(@Param("metadataId") metadataId: String): Metadata?
+
    @Cacheable(value = ["allAlbumMetadataWithCoordinates"], key = "{#userId}")
    @Query("SELECT DISTINCT * FROM metadata m LEFT JOIN albumphoto ap ON m.id = ap.metadata_id LEFT JOIN useralbum ua ON ap.album_id = ua.album_id LEFT JOIN album a ON a.id = ua.album_id WHERE m.hidden = false AND ua.user_id = :userId AND m.lat IS NOT NULL AND m.lat != \"\" AND m.lng IS NOT NULL AND m.lng != \"\"", nativeQuery = true)
    fun findByAlbumMetadataByUserIdWithCoordinates(@Param("userId") userId: Int): MutableIterable<Metadata>

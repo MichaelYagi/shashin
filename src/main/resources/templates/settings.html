@@ -10,7 +10,7 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
             <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'')" class="col-sm p-3 min-vh-100"></div>
+                <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
 
                 <br>
                 <form id="saveSettingsForm" method="post" action="/settings">
@@ -55,7 +55,7 @@
                                 <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
                             </div>
                             <div class="col-6">
-                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong></label>
+                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong> <span th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-toggle="tooltip" title="CompreFace server connection status"></span></label>
                                 <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
                             </div>
                         </div>
@@ -107,7 +107,7 @@
                     <hr>
                     <div class="alert alert-danger" role="alert">
                         <h4 class="alert-heading">Delete Content</h4>
-                        <p><span class="exclamation-triangle-fill"></span>Warning! This will wipe all media content! (Media directories will be not be reset)</p>
+                        <p><span class="exclamation-triangle-fill"></span>Warning! This will wipe all media content! (Media directories will be not be reset and settings)</p>
                         <a href="#" class="btn btn-danger" id="deleteContent">Delete</a>
                     </div>
                 </form>

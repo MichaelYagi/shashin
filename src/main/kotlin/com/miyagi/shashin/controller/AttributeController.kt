@@ -5,11 +5,13 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
 import org.springframework.core.env.Environment
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import org.springframework.web.reactive.function.client.WebClient
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -172,9 +175,24 @@ class AttributeController {
             cookie.isHttpOnly = true
             cookie.maxAge = 0
             response.addCookie(cookie)
-            logger.log(Level.INFO, "Not logged in. " + e.message)
+            logger.log(Level.INFO, "Not logged in. " + e.localizedMessage)
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
+
+        var compreFaceResponse: ResponseEntity<String>?
+        try {
+            val webClient = WebClient.create(settings?.getCompreFaceServer()!!)
+            compreFaceResponse = webClient.get()
+                .uri("api/v1/recognition/subjects/")
+                .header("x-api-key", settings.getCompreFaceKey())
+                .retrieve()
+                .toEntity(String::class.java)
+                .block()
+            model["faceRecogServicesAvailable"] = compreFaceResponse != null && compreFaceResponse.statusCode.toString().lowercase() == "200 ok"
+        } catch (e: Exception) {
+            model["faceRecogServicesAvailable"] = false
+            logger.log(Level.INFO, "Error CompreFace connection: " + e.localizedMessage)
+        }
 
         model["operatingSystemInfo"] = ""
         if (model.getAttribute("authority") ==  adminRole) {
