@@ -17,12 +17,10 @@
             <input type="hidden" id="activePage" th:value="${activePage}">
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
-            <div class="row">
-                <h1 th:inline="text">
-                    [[${personInfo.name]]
-                    <a href="/people"><span class="bi-arrow-return-left" style="font-size: 1rem;color: blue;" title="Go back"></span></a>
-                </h1>
-            </div>
+            <h1 th:inline="text">
+                [[${personInfo.name]]
+                <a href="/people"><span class="bi-arrow-return-left" style="font-size: 1rem;color: blue;" title="Go back"></span></a>
+            </h1>
 
             <div id="infinite-scroll-gallery">
             <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">
