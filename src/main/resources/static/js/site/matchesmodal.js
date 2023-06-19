@@ -105,6 +105,8 @@ $("#saveBatchMetadata").on("click", async function (e) {
         $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
         $("#matchesBatchModalCancel").prop('disabled', false);
     }
+
+    location.reload();
 });
 
 // Clear message on modal close
@@ -279,7 +281,7 @@ $('#propBatchMetadata').bind('keypress', function () {
                 $("#personModalStatus" + metadata.id).prop('disabled', false);
             }
 
-            return false;
+            location.reload();
         });
 
         // Clear message on modal close
