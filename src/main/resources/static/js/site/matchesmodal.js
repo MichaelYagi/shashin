@@ -95,6 +95,8 @@ $("#saveBatchMetadata").on("click", async function (e) {
 
             $("#matchesBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
             $("#matchesBatchModalCancel").prop('disabled', false);
+
+            location.reload();
         } else {
             $("#matchesBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
             $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
@@ -105,8 +107,6 @@ $("#saveBatchMetadata").on("click", async function (e) {
         $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
         $("#matchesBatchModalCancel").prop('disabled', false);
     }
-
-    location.reload();
 });
 
 // Clear message on modal close
@@ -262,6 +262,8 @@ $('#propBatchMetadata').bind('keypress', function () {
 
                     $("#personModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
                     $("#personModalStatus" + metadata.id).prop('disabled', false);
+
+                    location.reload();
                 } else {
                     $("#matchesModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                     $("#matchesModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
@@ -280,8 +282,6 @@ $('#propBatchMetadata').bind('keypress', function () {
                 $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
                 $("#personModalStatus" + metadata.id).prop('disabled', false);
             }
-
-            location.reload();
         });
 
         // Clear message on modal close
