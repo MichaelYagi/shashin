@@ -1835,6 +1835,7 @@ class SettingsController {
                                                                         if (jsonObj.has("image_id")) {
                                                                             compreFaceImageId =
                                                                                 jsonObj["image_id"].toString()
+                                                                            compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
 
                                                                             logger.log(
                                                                                 Level.INFO,
