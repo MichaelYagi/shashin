@@ -25,9 +25,10 @@
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <div th:replace="fragments/personmodal :: personmodal()"></div>
 
-                    <h1 th:text="${personInfo.name}"></h1>
-
-                    <a href="/people"><span class="bi-arrow-return-left" style="font-size: 2rem;color: blue;" title="Go back"></span></a>
+                    <h1 th:inline="text">
+                        [[${personInfo.name}]]
+                        <small><a href="/people"><span class="bi-arrow-return-left" style="font-size: 1rem;color: blue;" title="Go back"></span></a></small>
+                    </h1>
 
                     <div id="personMessage"></div>
 
