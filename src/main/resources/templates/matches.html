@@ -17,11 +17,11 @@
             <input type="hidden" id="activePage" th:value="${activePage}">
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
+            <h1 th:text="${personInfo.name}"></h1>
             <a href="/people"><span class="bi-arrow-return-left" style="font-size: 2rem;color: blue;" title="Go back"></span></a>
 
             <div id="infinite-scroll-gallery">
             <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">
-                <h1 th:text="${personInfo.name}"></h1>
                 <div class="row image-group-padding">
                     <th:block th:each="metadata, iterStat: ${lowMatchResults}">
                         <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">
