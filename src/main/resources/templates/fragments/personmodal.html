@@ -281,6 +281,8 @@
 
                         $("#personModalStatus" + metadata.id).addClass('bi-check-circle').removeClass('spinner-grow');
                         $("#personModalCancel" + metadata.id).prop('disabled', false);
+
+                        location.reload();
                     } else {
                         $("#personModalStatus" + metadata.id).addClass('bi-x-circle').removeClass('spinner-grow');
                         $("#personModalStatus" + metadata.id).attr("title", shashin.modalStatusFailMessage());
