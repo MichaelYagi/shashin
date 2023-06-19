@@ -6,7 +6,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.model.Folder
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
+import org.springframework.ui.set
+import org.springframework.web.reactive.function.client.WebClient
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -263,6 +266,28 @@ class FileUtils {
             } catch (exception: IOException) {
                 false
             }
+        }
+
+        fun checkCompreFaceConnection(compreFaceServer: String?, compreFaceKey: String?): Boolean {
+            var available = false
+            if (!compreFaceKey.isNullOrBlank() && !compreFaceServer.isNullOrBlank()) {
+                var compreFaceResponse: ResponseEntity<String>?
+                try {
+                    val webClient = WebClient.create(compreFaceServer)
+                    compreFaceResponse = webClient.get()
+                        .uri("api/v1/recognition/subjects/")
+                        .header("x-api-key", compreFaceKey)
+                        .retrieve()
+                        .toEntity(String::class.java)
+                        .block()
+                    available =
+                        compreFaceResponse != null && compreFaceResponse.statusCode.toString().lowercase() == "200 ok"
+                } catch (e: Exception) {
+                    available = false
+                }
+            }
+
+            return available
         }
 
         /**

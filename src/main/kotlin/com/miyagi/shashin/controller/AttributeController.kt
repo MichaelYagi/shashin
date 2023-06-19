@@ -179,20 +179,7 @@ class AttributeController {
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
 
-        var compreFaceResponse: ResponseEntity<String>?
-        try {
-            val webClient = WebClient.create(settings?.getCompreFaceServer()!!)
-            compreFaceResponse = webClient.get()
-                .uri("api/v1/recognition/subjects/")
-                .header("x-api-key", settings.getCompreFaceKey())
-                .retrieve()
-                .toEntity(String::class.java)
-                .block()
-            model["faceRecogServicesAvailable"] = compreFaceResponse != null && compreFaceResponse.statusCode.toString().lowercase() == "200 ok"
-        } catch (e: Exception) {
-            model["faceRecogServicesAvailable"] = false
-            logger.log(Level.INFO, "Error CompreFace connection: " + e.localizedMessage)
-        }
+        model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settings?.getCompreFaceServer(), settings?.getCompreFaceKey())
 
         model["operatingSystemInfo"] = ""
         if (model.getAttribute("authority") ==  adminRole) {
