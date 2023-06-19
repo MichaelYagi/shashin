@@ -17,6 +17,8 @@
             <input type="hidden" id="activePage" th:value="${activePage}">
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
+            <a href="/people"><span class="bi-arrow-return-left" style="font-size: 2rem;color: blue;" title="Go back"></span></a>
+
             <div id="infinite-scroll-gallery">
             <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">
                 <h1 th:text="${personInfo.name}"></h1>
