@@ -190,6 +190,8 @@ class PeopleController {
                                 FileSystemResource(metadataObj?.getThumbnailPathSmall()!!)
                             )
 
+                            writeToThreadFileAndLogMessage("Matching " + metadataObj.getPath(),threadFile)
+
                             var response: String? = null
 
                             try {
@@ -286,6 +288,7 @@ class PeopleController {
                                                 if (jsonObj.has("image_id")) {
                                                     compreFaceImageId =
                                                         jsonObj["image_id"].toString()
+                                                    compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
 
                                                     logger.log(
                                                         Level.INFO,
