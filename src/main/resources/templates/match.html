@@ -10,7 +10,7 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
-            <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> This is experimental! There should be at least 3 different people already tagged. There should be a single subject in each of the photos.<br>
+            <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> This is experimental! There should be at least 3 distinct people already tagged before scanning, and should be a single subject in each of the photos.<br>
             <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
             <button class="btn btn-danger" id="cancelThread">Cancel</button>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
