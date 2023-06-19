@@ -42,6 +42,6 @@ Tech Stack
 * [JQuery](https://jquery.com/) - JavaScript library
 * [OpenLayers](https://openlayers.org/) with [OpenStreetMap](https://www.openstreetmap.org/) - Display map tiles, vector data and markers loaded from any source, like Open Street Maps
 * [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
-* [CompreFace](https://github.com/exadel-inc/CompreFace) - Self hosted face recognition API service
+* [CompreFace](https://github.com/exadel-inc/CompreFace) - Self hosted REST API for face recognition
 
 See [folders.js](https://github.com/MichaelYagi/shashin/blob/main/src/main/resources/static/js/site/folders.js) for an example of JS templating and pagination.
