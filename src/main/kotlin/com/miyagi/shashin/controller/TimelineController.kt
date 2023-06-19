@@ -1389,8 +1389,8 @@ class TimelineController: BaseController() {
         uploadresponse["msg"] = ""
         uploadresponse["status"] = ApiResponse.FAIL.status
 
-        if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
-            settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
+        if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+
             var response: String?
 
             if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
@@ -1428,7 +1428,7 @@ class TimelineController: BaseController() {
                 }
 
                 // Uploaded faces
-                if (similarity != 1.0 && (similarity == 0.0 || similarity >= settings.getRecognitionConfidenceThreshold().toString().toDouble())) {
+                if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold().toString().toDouble())) {
                     try {
                         if (metadata != null) {
                             val builder = MultipartBodyBuilder()
@@ -1477,8 +1477,8 @@ class TimelineController: BaseController() {
         recogresponse["msg"] = ""
         recogresponse["status"] = ApiResponse.FAIL.status
 
-        if (settings.getCompreFaceKey() != null && settings.getCompreFaceKey()!!.isNotBlank() &&
-            settings.getCompreFaceServer() != null && settings.getCompreFaceServer()!!.isNotBlank()) {
+        if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+
             var response: String?
 
             if (metadata !== null) {
