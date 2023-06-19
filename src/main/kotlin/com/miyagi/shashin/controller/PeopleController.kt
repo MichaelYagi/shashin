@@ -923,14 +923,25 @@ class PeopleController {
                 if (subject != "" && personName != subject) {
                     similarity = 0.0
 
-                    val compreFaceImageId = compreFaceImageIdMap[subject.filterNot {it.isWhitespace()} + "-" + metadata?.getId()]
-                    if (compreFaceImageId != null && compreFaceImageId.toString().isNotEmpty()) {
-                        webClient.delete()
-                            .uri("api/v1/recognition/faces/$compreFaceImageId")
-                            .header("x-api-key", settings.getCompreFaceKey())
-                            .retrieve()
-                            .bodyToMono(String::class.java)
-                            .block()
+                    val compreFaceImageId =
+                        compreFaceImageIdMap[subject.filterNot { it.isWhitespace() } + "-" + metadata?.getId()]
+
+                    try {
+                        if (compreFaceImageId != null && compreFaceImageId.toString().isNotEmpty()) {
+                            webClient.delete()
+                                .uri("api/v1/recognition/faces/$compreFaceImageId")
+                                .header("x-api-key", settings.getCompreFaceKey())
+                                .retrieve()
+                                .bodyToMono(String::class.java)
+                                .block()
+                        }
+                    } catch (e: Exception) {
+                        logger.log(
+                            Level.WARNING,
+                            "Error deleting CompreFace ID ${compreFaceImageId} for ${metadata?.getId()}: " + e.localizedMessage
+                        )
+                        val errorResponse =
+                            e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
                     }
                 }
 
