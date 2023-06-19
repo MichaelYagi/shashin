@@ -300,43 +300,50 @@ class PeopleController {
                                                         )
                                                     }
 
+                                                    var compreFaceImageId: String? = null
+
                                                     if (response != null) {
                                                         jsonObj = mapper.readTree(response)
-                                                        var compreFaceImageId: String?
+
                                                         if (jsonObj.has("image_id")) {
                                                             compreFaceImageId =
                                                                 jsonObj["image_id"].toString()
                                                             compreFaceImageId = compreFaceImageId.drop(1).dropLast(1)
-
-                                                            logger.log(
-                                                                Level.INFO,
-                                                                "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
-                                                            )
-
-                                                            val recognitionLabelObj =
-                                                                recognitionLabelRepository?.findByNameIgnoreCase(
-                                                                    subject
-                                                                )
-                                                            if (recognitionLabelObj != null) {
-                                                                val recognitionLabelPhotoObj =
-                                                                    RecognitionLabelPhoto()
-                                                                recognitionLabelPhotoObj.setMetadataId(
-                                                                    metadataObj.getId()
-                                                                )
-                                                                recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                                    recognitionLabelObj.getId()
-                                                                )
-                                                                recognitionLabelPhotoObj.setConfidence(
-                                                                    similarity.toString()
-                                                                )
-                                                                recognitionLabelPhotoObj.setCompreFaceImageId(
-                                                                    compreFaceImageId
-                                                                )
-                                                                recognitionLabelPhotoRepository?.save(
-                                                                    recognitionLabelPhotoObj
-                                                                )
-                                                            }
                                                         }
+                                                    }
+
+                                                    logger.log(
+                                                        Level.INFO,
+                                                        "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
+                                                    )
+
+                                                    val recognitionLabelObj =
+                                                        recognitionLabelRepository?.findByNameIgnoreCase(
+                                                            subject
+                                                        )
+
+                                                    val recognitionLabelPhoto = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj!!.getId(), metadataObj.getId())
+
+                                                    if (recognitionLabelObj != null && recognitionLabelPhoto == 0) {
+                                                        val recognitionLabelPhotoObj =
+                                                            RecognitionLabelPhoto()
+                                                        recognitionLabelPhotoObj.setMetadataId(
+                                                            metadataObj.getId()
+                                                        )
+                                                        recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                            recognitionLabelObj.getId()
+                                                        )
+                                                        recognitionLabelPhotoObj.setConfidence(
+                                                            similarity.toString()
+                                                        )
+                                                        if (compreFaceImageId != null) {
+                                                            recognitionLabelPhotoObj.setCompreFaceImageId(
+                                                                compreFaceImageId
+                                                            )
+                                                        }
+                                                        recognitionLabelPhotoRepository?.save(
+                                                            recognitionLabelPhotoObj
+                                                        )
                                                     }
                                                 }
                                             }
