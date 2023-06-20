@@ -9,7 +9,7 @@
         <a th:attr="class='nav-link' + ${activePage=='matches' ? ' active' : ''}" th:href="${'/person/matches/'+parameter}">Matches <span class="badge bg-secondary" th:text="${counts.get('matches')}"></span></a>
     </li>
     <li class="nav-item">
-        <a th:attr="class='nav-link' + ${activePage=='compreface' ? ' active' : ''}" th:href="${'/person/compreface/'+parameter}">CompreFace Collection</a>
+        <a th:attr="class='nav-link' + ${activePage=='compreface' ? ' active' : ''}" th:href="${'/person/compreface/'+parameter}">Training Images</a>
     </li>
 </ul>
 </body>
