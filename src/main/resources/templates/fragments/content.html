@@ -8,7 +8,7 @@
     <div th:replace="fragments/browsegroup :: browse(${activePage})"></div>
 </th:block>
 <th:block th:if="${authority == 'ROLE_ADMIN' && (activePage == 'person' or activePage == 'matches' or (faceRecogServicesAvailable and activePage == 'compreface'))}">
-    <div th:replace="fragments/persongroup :: person(${activePage},${parameter},${counts})"></div>
+    <div th:replace="fragments/persongroup :: person(${activePage},${parameter},${counts},${faceRecogServicesAvailable})"></div>
 </th:block>
 <th:block th:if="${message != ''}">
     <br><p id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></p>
