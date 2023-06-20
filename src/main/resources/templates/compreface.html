@@ -155,6 +155,10 @@
             </div>
 
             <div class="col-12">
+                <!-- Back to top button -->
+                <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+                    <i class="bi-arrow-up-circle"></i>
+                </button>
                 <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
             </div>
         </main>
@@ -218,6 +222,7 @@
             $("#multiSelectMetadataIds").val("[]");
         });
 
+        shashin.activateScrollToTop();
         shashin.mouseMoveListener();
     });
 </script>
