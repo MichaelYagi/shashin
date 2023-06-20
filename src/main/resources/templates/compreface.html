@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
+
+<div th:replace="fragments/infomodal :: infomodal(${currentUser})"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+        <main role="main" class="col overflow-auto h-100">
+
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
+            <input type="hidden" id="activePage" th:value="${activePage}">
+            <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
+            <input type="hidden" id="multiSelectMetadataIds" name="multiSelectMetadataIds" value="[]">
+
+            <h1 th:inline="text">
+                [[${personInfo.name}]]
+                <a href="/people"><span class="bi-arrow-return-left" style="font-size: 1rem;color: blue;" title="Go back"></span></a>
+            </h1>
+
+            <div id="infinite-scroll-gallery" class="row">
+                <th:block th:if="${not #lists.isEmpty(resultList)}">
+                    <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+                        function setPhotoOverlays(compreFaceImageId) {
+                            if (compreFaceImageId !== "") {
+                                const opaque = 0.3
+                                const transparent = 1.0
+
+                                $("#select" + compreFaceImageId).on("click", function (e) {
+                                    e.preventDefault();
+
+                                    if ($("#tlicon" + compreFaceImageId).attr("class") === "bi-circle") {
+                                        $("#tntl" + compreFaceImageId).show();
+                                        $("#tlicon" + compreFaceImageId).addClass('bi-circle-fill').removeClass('bi-circle');
+                                        $("#image" + compreFaceImageId).css("opacity", opaque);
+                                        shashin.addToMetadataIdList(compreFaceImageId);
+                                    } else {
+                                        $("#tntl" + compreFaceImageId).show();
+                                        $("#tlicon" + compreFaceImageId).addClass('bi-circle').removeClass('bi-circle-fill');
+                                        $("#image" + compreFaceImageId).css("opacity", opaque);
+                                        shashin.removeFromMetadataIdList(compreFaceImageId);
+                                    }
+
+                                    if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                                        $("#appSearch").hide();
+                                        $("#comprefaceAppTools").show();
+                                    } else {
+                                        $("#appSearch").show();
+                                        $("#timelineAppTools").hide();
+                                        $("#albumAppTools").hide();
+                                        $("#matchesAppTools").hide();
+                                        $("#comprefaceAppTools").hide();
+                                    }
+
+                                    let timelineSelectCount = $('.bi-circle-fill').length;
+
+                                    $("#timelineNumberSelected").text(timelineSelectCount + " Selected");
+                                    $("#matchesNumberSelected").text($('.bi-circle-fill').length + " Selected");
+                                    $("#favoritesNumberSelected").text($('.bi-circle-fill').length + " Selected");
+                                    $("#trashNumberSelected").text($('.bi-circle-fill').length + " Selected");
+                                    $("#albumNumberSelected").text($('.bi-circle-fill').length + " Selected");
+                                });
+
+                                $("#image" + compreFaceImageId).on("click", function (e) {
+                                    e.preventDefault();
+
+                                    // Fill top left icon when clicking anywhere on thumbnail
+                                    if ($('.bi-circle-fill')[0]) {
+                                        if ($("#tlicon" + compreFaceImageId).attr("class") === "bi-circle") {
+                                            $("#tntl" + compreFaceImageId).show();
+                                            $("#tlicon" + compreFaceImageId).addClass('bi-circle-fill').removeClass('bi-circle');
+                                            $("#image" + compreFaceImageId).css("opacity", opaque);
+                                            shashin.addToMetadataIdList(compreFaceImageId);
+                                        } else {
+                                            $("#tntl" + compreFaceImageId).show();
+                                            $("#tlicon" + compreFaceImageId).addClass('bi-circle').removeClass('bi-circle-fill');
+                                            $("#image" + compreFaceImageId).css("opacity", opaque);
+                                            shashin.removeFromMetadataIdList(compreFaceImageId);
+                                        }
+                                    }
+
+                                    if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                                        $("#appSearch").hide();
+                                        $("#comprefaceAppTools").show();
+                                    } else {
+                                        $("#appSearch").show();
+                                        $("#timelineAppTools").hide();
+                                        $("#albumAppTools").hide();
+                                        $("#matchesAppTools").hide();
+                                        $("#comprefaceAppTools").hide();
+                                    }
+
+                                    let timelineSelectCount = $('.bi-circle-fill').length;
+
+                                    $("#timelineNumberSelected").text(timelineSelectCount + " Selected");
+                                    $("#matchesNumberSelected").text($('.bi-circle-fill').length + " Selected");
+                                    $("#favoritesNumberSelected").text($('.bi-circle-fill').length + " Selected");
+                                    $("#trashNumberSelected").text($('.bi-circle-fill').length + " Selected");
+                                    $("#albumNumberSelected").text($('.bi-circle-fill').length + " Selected");
+                                });
+
+                                $("#image" + compreFaceImageId).hover(function () {
+                                    $(this).css("opacity", 0.3);
+                                    $(this).siblings(".thumbnail-tl").show();
+                                }, function () {
+                                    if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
+                                        $(this).css("opacity", 1.0);
+                                        $(this).siblings(".thumbnail-tl").hide();
+                                    }
+                                });
+
+                                $("#tntl" + compreFaceImageId).hover(function () {
+                                    if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
+                                        $(this).show();
+                                        $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
+                                    }
+                                }, function () {
+                                    if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
+                                        $(this).hide();
+                                        $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
+                                    } else {
+                                        $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
+                                    }
+                                });
+                            }
+                        }
+                    </script>
+                    <div class="col-12">
+                        <th:block th:each="faceObj, iterStat: ${resultList}">
+                            <div th:id="${'photoThumbnailContainer'+faceObj.image_id}" class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
+                                <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
+
+                                <img loading="lazy" th:src="${compreFaceServer}+'api/v1/static/'+${compreFaceApiKey}+'/images/'+${faceObj.image_id}" class="photo-thumbnail-image" th:id="'image'+${faceObj.image_id}">
+
+                                <th:block th:if="${authority == 'ROLE_ADMIN'}">
+                                    <div th:replace="fragments/topleftoverlay :: topleftoverlay(${faceObj.image_id})"></div>
+                                </th:block>
+
+                                <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+                                    /*<![CDATA[*/
+                                    setPhotoOverlays(/*[[${faceObj.image_id}]]*/ "")
+                                    /*]]>*/
+                                </script>
+                            </div>
+
+                            <span class="appendCompreFacePhotos" style="width:0;height:0;padding:0"></span>
+                        </th:block>
+                    </div>
+
+                </th:block>
+            </div>
+
+            <div class="col-12">
+                <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+            </div>
+        </main>
+
+    </div>
+</div>
+
+<div class="modal fade" id="comprefaceModal" tabindex="-1" role="dialog" aria-labelledby="labeltrash" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trashModalLabel">Delete images for subject <th:block th:text="${personInfo.name}"></th:block></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to delete this user?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="deleteUser">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+            <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+                $("#deleteUser").on("click", async function (e) {
+                    e.preventDefault();
+
+                    let compreFaceImageIds = $("#multiSelectMetadataIds").val();
+
+                    const http = new Http("marking notification saving album");
+                    let json = {imageIds: compreFaceImageIds}
+                    const data = await http.ajax("post", "/person/compreface/delete", JSON.stringify(json));
+
+                    if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                        //console.log(data)
+                        location.reload();
+                    }
+
+                    $("#multiSelectMetadataIds").val("[]");
+                });
+            </script>
+        </div>
+    </div>
+</div>
+
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+    <script src="/js/site/applisteners.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+</th:block>
+<th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+    <script src="/js/site/min/applisteners.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+</th:block>
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+    $(document).ready(function () {
+        /*<![CDATA[*/
+        shashin.nonce = /*[[${cspNonce}]]*/ '';
+        /*]]>*/
+
+        $("#comprefaceBatchDelete").on("click", function(e) {
+            e.preventDefault();
+
+            $("#comprefaceModal").modal('show');
+        });
+
+        $('#comprefaceModal').on('hide.bs.modal', function () {
+            $("#multiSelectMetadataIds").val("[]");
+        });
+
+        shashin.mouseMoveListener();
+    });
+</script>
+</body>
+</html>

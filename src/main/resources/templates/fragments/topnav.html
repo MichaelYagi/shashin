@@ -118,6 +118,13 @@
                     &nbsp;&nbsp;<span id="albumNumberSelected"></span>
                 </div>
             </th:block>
+            <th:block th:if="${activePage == 'compreface'}">
+                <div id="comprefaceAppTools">
+                    <a href="#" id="comprefaceBatchDelete" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span th:class="'bi-trash placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    <a href="#" id="comprefaceDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
+                    &nbsp;&nbsp;<span id="comprefaceNumberSelected"></span>
+                </div>
+            </th:block>
         </div>
         <div class="flex-shrink-0 dropdown" style="margin-left: 10px;">
             <a id="dLabel" th:class="'d-block link-dark text-decoration-none dropdown-toggle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" role="button" data-bs-toggle="dropdown" data-bs-auto-close="true" aria-expanded="false">

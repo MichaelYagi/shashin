@@ -1432,6 +1432,7 @@
         $("#timelineTools").show();
         $("#albumAppTools").hide();
         $("#matchesAppTools").hide();
+        $("#comprefaceAppTools").hide();
     }
 
     shashin.matchingListeners = function () {

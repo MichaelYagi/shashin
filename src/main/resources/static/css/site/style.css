@@ -224,6 +224,10 @@ footer {
   display: none;
 }
 
+#comprefaceAppTools {
+  display: none;
+}
+
 .form-signin {
   max-width: 330px;
   padding: 15px;
