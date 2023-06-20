@@ -62,6 +62,12 @@ $("#albumAppToolsDeselectAll").on("click", function(e) {
     shashin.clearTimelineSelection();
 });
 
+$("#comprefaceDeselectAll").on("click", function(e) {
+    e.preventDefault();
+
+    shashin.clearTimelineSelection();
+});
+
 $("#appToolsAddAlbum").on("click", function(e) {
     e.preventDefault();
 

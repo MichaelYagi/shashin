@@ -467,6 +467,145 @@ class PeopleController {
         return module
     }
 
+    @RequestMapping(value = ["/person/compreface/delete"], method = [RequestMethod.POST], produces = ["application/json"])
+    @Secured("ROLE_ADMIN")
+    @ResponseBody
+    fun deleteCompreFaceGetImages(model: Model, @RequestBody requestBody: JsonNode): String {
+        val imageMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
+        resp["responseData"] = mutableMapOf<String, Any?>()
+        resp["msg"] = ""
+        resp["status"] = ApiResponse.FAIL.status
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null && imageMap.containsKey("imageIds")) {
+            val imageIdsString = imageMap["imageIds"].toString()
+
+            val settings = model.getAttribute("settings") as Settings
+            if (imageIdsString.isNotBlank() && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                try {
+                    val response = webClient.post()
+                        .uri("api/v1/recognition/faces/delete")
+                        .header("x-api-key", settings.getCompreFaceKey())
+                        .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                        .body(BodyInserters.fromValue(imageIdsString))
+                        .retrieve()
+                        .bodyToMono(String::class.java)
+                        .block()
+
+                    resp["msg"] = response
+                    resp["status"] = ApiResponse.SUCCESS.status
+                } catch (e: Exception) {
+                    resp["msg"] = "Error could not delete faces from CompreFace"
+
+                    logger.log(
+                        Level.WARNING,
+                        "Error could not delete faces from CompreFace: ${e.localizedMessage}"
+                    )
+
+                    return mapper.writeValueAsString(resp)
+                }
+
+                resp["responseData"]
+            }
+        }
+
+        return mapper.writeValueAsString(resp)
+    }
+
+    @GetMapping("/person/compreface/{personId}")
+    @Secured("ROLE_ADMIN")
+    fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int): String {
+        val module = "compreface"
+        model["message"] = "There are no photos."
+        val counts = HashMap<String,Int>()
+        counts["compreface"] = 0
+        counts["person"] = 0
+        counts["matches"] = 0
+        model["counts"] = counts
+        model["parameter"] = personId
+        model["resultList"] = mutableListOf<MutableMap<String, String>>()
+
+        val settings = model.getAttribute("settings") as Settings
+        model["compreFaceServer"] = settings.getCompreFaceServer()!!
+        model["compreFaceApiKey"] = settings.getCompreFaceKey()!!
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            var metadataList: MutableIterable<Metadata>? = null
+            if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
+                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),0,2000)
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,0,2000)
+            }
+            if (metadataList != null && metadataList.count() > 0) {
+                counts["person"] = metadataList.count()
+            }
+        }
+
+        // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
+        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
+        if (lowMatchResults != null && lowMatchResults.count() > 0) {
+            counts["matches"] = lowMatchResults.count()
+        }
+
+        // Get the recognition label
+        val recognitionLabel = recognitionLabelRepository?.findById(personId)
+
+        if (recognitionLabel != null) {
+            model["personInfo"] = recognitionLabel.get()
+            val subject = recognitionLabel.get().getName()
+            var subjectCompreFaceJsonStr: String? = null
+
+            if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                try {
+                    subjectCompreFaceJsonStr = webClient.get()
+                        .uri("api/v1/recognition/faces?subject=${subject}&size=1000")
+                        .header(
+                            "x-api-key",
+                            settings.getCompreFaceKey()
+                        )
+                        .retrieve()
+                        .bodyToMono(String::class.java)
+                        .block()
+                } catch (e: Exception) {
+                    model["message"] = "Error getting CompreFace results for $subject"
+
+                    logger.log(
+                        Level.WARNING,
+                        "Error getting CompreFace results for ${subject}: ${e.localizedMessage}"
+                    )
+                }
+            }
+
+            if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
+                var jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
+                val resultMap = mapper.convertValue(
+                    jsonObj,
+                    object :
+                        TypeReference<Map<String, Any>>() {})
+                var resultList: ArrayList<Map<String, String>>? = null
+
+                if (resultMap.containsKey("faces")) {
+                    resultList = resultMap["faces"] as ArrayList<Map<String, String>>
+                    model["resultList"] = resultList
+                    model["message"] = ""
+                }
+            }
+        }
+
+        model["msg"] = ""
+        model["status"] = ApiResponse.SUCCESS.status
+        model["counts"] = counts
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
     @GetMapping("/people")
     @Secured("ROLE_ADMIN", "ROLE_USER")
     fun getPeople(model: Model): String {
