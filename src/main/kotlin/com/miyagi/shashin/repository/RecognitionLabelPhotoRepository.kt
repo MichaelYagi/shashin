@@ -1,5 +1,6 @@
 package com.miyagi.shashin.repository
 
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.model.RecognitionLabelId
 import com.miyagi.shashin.model.RecognitionLabelPhoto
 import org.springframework.data.jpa.repository.Query
@@ -23,6 +24,10 @@ interface RecognitionLabelPhotoRepository : CrudRepository<RecognitionLabelPhoto
     fun deleteByMetadataId(metadataId: String): Int
 
     fun findByMetadataId(metadataId: String): MutableIterable<RecognitionLabelPhoto>
+
+    fun deleteByCompreFaceImageId(compreFaceImageId: String): Int
+
+    fun findByCompreFaceImageId(compreFaceImageId: String): RecognitionLabelPhoto?
 
     fun findByRecognitionLabelIdAndMetadataId(recognitionLabelId: Int,metadataId: String): RecognitionLabelPhoto?
 

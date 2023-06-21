@@ -497,6 +497,16 @@ class PeopleController {
 
                     resp["msg"] = response
                     resp["status"] = ApiResponse.SUCCESS.status
+
+                    val idArray: Array<String>? = mapper.readValue(imageIdsString, object : TypeReference<Array<String>>() {})
+
+                    if (!idArray.isNullOrEmpty()) {
+                        println(Arrays.deepToString(idArray))
+                        for (imageId in idArray) {
+                            recognitionLabelPhotoRepository?.deleteByCompreFaceImageId(imageId)
+                        }
+
+                    }
                 } catch (e: Exception) {
                     resp["msg"] = "Error could not delete faces from CompreFace"
 
@@ -587,10 +597,23 @@ class PeopleController {
                     jsonObj,
                     object :
                         TypeReference<Map<String, Any>>() {})
-                var resultList: ArrayList<Map<String, String>>? = null
+                var resultList: ArrayList<MutableMap<String, String>>?
 
                 if (resultMap.containsKey("faces")) {
-                    resultList = resultMap["faces"] as ArrayList<Map<String, String>>
+                    resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
+                    for (facesResult in resultList) {
+                        val compreFaceImageId = facesResult["image_id"]
+                        val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(compreFaceImageId!!)
+                        facesResult["metadata_date"] = ""
+                        if (recognitionLabelPhotoObj != null) {
+                            val metadataObj = metadataRepository?.findByMetadataId(recognitionLabelPhotoObj.getMetadataId().toString())
+                            if (metadataObj != null) {
+                                val metadataDate = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
+                                facesResult["metadata_date"] = metadataDate
+                            }
+                        }
+                    }
+                    println(resultList)
                     model["resultList"] = resultList
                     model["message"] = ""
                 }
