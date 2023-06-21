@@ -186,6 +186,9 @@
                     </div>
 
                 </th:block>
+                <th:block th:unless="${not #lists.isEmpty(resultList)}">
+                    <span>There are no Training Images.</span><br><br>
+                </th:block>
             </div>
 
             <div class="col-12">
