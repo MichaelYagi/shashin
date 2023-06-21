@@ -175,7 +175,7 @@
                             <div th:id="${'photoThumbnailContainer'+faceObj.image_id}" class="photo-thumbnail-container photo-thumbnail" style="float: left; padding-left:0;padding-right:0;">
                                 <a class="lightGalleryIndexAnchor" th:name="${'lightGalleryIndex'+iterStat.index}"></a>
 
-                                <img loading="lazy" th:src="${compreFaceServer}+'api/v1/static/'+${compreFaceApiKey}+'/images/'+${faceObj.image_id}" class="photo-thumbnail-image" th:id="'image'+${faceObj.image_id}">
+                                <img loading="lazy" th:src="'data:image/png;base64,'+${faceObj.image_base64}" class="photo-thumbnail-image" th:id="'image'+${faceObj.image_id}">
 
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
                                     <div th:replace="fragments/topleftoverlay :: topleftoverlay(${faceObj.image_id})"></div>
