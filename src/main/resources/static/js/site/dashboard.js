@@ -406,6 +406,10 @@ class Dashboard {
                 } else {
                     shashin.printMessageToConsole("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
                 }
+                if (counter < 10) {
+                    counter = 0;
+                    scanRefresh();
+                }
                 counter++;
             });
         }

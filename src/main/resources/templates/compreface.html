@@ -113,11 +113,23 @@
                                     $(this).css("opacity", 0.3);
                                     $(this).siblings(".thumbnail-tl").show();
                                     $(this).siblings(".thumbnail-centered").show();
+
+                                    if ($("#tlicon" + compreFaceImageId).attr("class") === "bi-circle-fill") {
+                                        $("#tncentered" + compreFaceImageId).hide();
+                                    }
+                                    if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                                        $('.thumbnail-centered').hide();
+                                    }
                                 }, function () {
                                     if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
                                         $(this).css("opacity", 1.0);
                                         $(this).siblings(".thumbnail-tl").hide();
                                         $(this).siblings(".thumbnail-centered").hide();
+                                    } else {
+                                        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                                            $('.thumbnail-centered').hide();
+                                        }
+                                        $("#tncentered" + compreFaceImageId).hide();
                                     }
                                 });
 
