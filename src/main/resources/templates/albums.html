@@ -10,11 +10,13 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
-            <div id="albumsMessage">&nbsp;</div><br>
+
             <input type="hidden" id="albumsId" name="albumsId">
             <input type="hidden" id="currentUser" th:value="${currentUser.username}">
             <input type="hidden" id="currentUserId" th:value="${currentUser.id}">
 
+            <div id="albumsMessage"></div>
+            
             <th:block th:if="${not #lists.isEmpty(albumsList)}">
                 <div class="row image-group-padding">
                     <th:block th:each="album, iterStat: ${albumsList}">
