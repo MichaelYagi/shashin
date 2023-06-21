@@ -600,15 +600,16 @@ class PeopleController {
                         val compreFaceImageId: String? = facesResult["image_id"]
                         val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(compreFaceImageId!!)
                         facesResult["metadata_date"] = ""
+                        facesResult["image_base64"] = ""
                         if (recognitionLabelPhotoObj != null) {
                             val metadataObj = metadataRepository?.findByMetadataId(recognitionLabelPhotoObj.getMetadataId().toString())
                             if (metadataObj != null) {
                                 val metadataDate = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
                                 facesResult["metadata_date"] = metadataDate
+
                                 val compreFaceImageUrl = "${settings.getCompreFaceServer()}api/v1/static/${settings.getCompreFaceKey()!!}/images/${compreFaceImageId}"
                                 val base64String = getByteArrayFromImageURL(compreFaceImageUrl)
-                                facesResult["image_base64"] = ""
-                                    if (!base64String.isNullOrBlank()) {
+                                if (!base64String.isNullOrBlank()) {
                                     facesResult["image_base64"] = base64String
                                 }
                             }
