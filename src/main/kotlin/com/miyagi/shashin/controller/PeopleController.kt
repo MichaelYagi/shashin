@@ -3,7 +3,6 @@ package com.miyagi.shashin.controller
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.component.FaceRecognizer
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
@@ -17,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.client.MultipartBodyBuilder
@@ -28,25 +26,22 @@ import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.RestTemplate
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.io.BufferedWriter
-import java.io.File
-import java.io.FileWriter
+import java.io.*
+import java.net.URL
+import java.net.URLConnection
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
-import javax.transaction.Transactional
+
 
 @Controller
 class PeopleController {
@@ -602,7 +597,7 @@ class PeopleController {
                 if (resultMap.containsKey("faces")) {
                     resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
                     for (facesResult in resultList) {
-                        val compreFaceImageId = facesResult["image_id"]
+                        val compreFaceImageId: String? = facesResult["image_id"]
                         val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(compreFaceImageId!!)
                         facesResult["metadata_date"] = ""
                         if (recognitionLabelPhotoObj != null) {
@@ -610,10 +605,16 @@ class PeopleController {
                             if (metadataObj != null) {
                                 val metadataDate = "${metadataObj.getYear()}-${metadataObj.getMonth()}-${metadataObj.getDay()}"
                                 facesResult["metadata_date"] = metadataDate
+                                val compreFaceImageUrl = "${settings.getCompreFaceServer()}api/v1/static/${settings.getCompreFaceKey()!!}/images/${compreFaceImageId}"
+                                val base64String = getByteArrayFromImageURL(compreFaceImageUrl)
+                                facesResult["image_base64"] = ""
+                                    if (!base64String.isNullOrBlank()) {
+                                    facesResult["image_base64"] = base64String
+                                }
                             }
                         }
                     }
-                    println(resultList)
+
                     model["resultList"] = resultList
                     model["message"] = ""
                 }
@@ -627,6 +628,28 @@ class PeopleController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    private fun getByteArrayFromImageURL(url: String): String? {
+        try {
+            val imageUrl = URL(url)
+            val ucon: URLConnection = imageUrl.openConnection()
+            val `is`: InputStream = ucon.getInputStream()
+            val baos = ByteArrayOutputStream()
+            val buffer = ByteArray(1024)
+            var read = 0
+            while (`is`.read(buffer, 0, buffer.size).also { read = it } != -1) {
+                baos.write(buffer, 0, read)
+            }
+            baos.flush()
+            return Base64.getEncoder().encodeToString(baos.toByteArray())
+        } catch (e: java.lang.Exception) {
+            logger.log(
+                Level.WARNING,
+                "Could not get byte array from image URL ${url}: ${e.localizedMessage}"
+            )
+        }
+        return null
     }
 
     @GetMapping("/people")
