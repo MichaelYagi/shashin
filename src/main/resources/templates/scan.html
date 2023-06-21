@@ -125,11 +125,12 @@
                 //showMessage("Socket connection error: " + e.toString())
                 if (counter > 0) {
                     showMessage("Oops, something went wrong! " + e.toString() + ". Probably already scanning.");
-                    if (counter < 10) {
-                        scanRefresh();
-                    }
                 } else {
                     showMessage("Oops, something went wrong! " + e.toString() + ". Click the Scan button once, to proceed with indexing.");
+                }
+                if (counter < 10) {
+                    counter = 0;
+                    scanRefresh();
                 }
                 scanInProgress = false;
                 counter++;
