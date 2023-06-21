@@ -22,10 +22,10 @@
                 <a href="/people"><span class="bi-arrow-return-left" style="font-size: 1rem;color: blue;" title="Go back"></span></a>
             </h1>
 
-            Click image to view on timeline. Deleting Training images only deletes images from the CompreFace server. It does not delete Shashin images.
-
             <div id="infinite-scroll-gallery" class="row">
                 <th:block th:if="${not #lists.isEmpty(resultList)}">
+                    <span>Click image to view on timeline. Deleting Training images only deletes images from the CompreFace server. It does not delete Shashin images.</span><br><br>
+
                     <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
                         function setPhotoOverlays(compreFaceImageId) {
                             if (compreFaceImageId !== "") {
