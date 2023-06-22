@@ -45,6 +45,7 @@
                                         $("#tntl" + compreFaceImageId).show();
                                         $("#tlicon" + compreFaceImageId).addClass('bi-circle').removeClass('bi-circle-fill');
                                         $("#tncentered" + compreFaceImageId).show();
+                                        $("#tntr" + compreFaceImageId).show();
                                         $("#image" + compreFaceImageId).css("opacity", opaque);
                                         shashin.removeFromMetadataIdList(compreFaceImageId);
                                     }
@@ -167,6 +168,22 @@
                                         $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
                                     }
                                 });
+
+                                $("#tntr" + compreFaceImageId).hover(function () {
+                                    $(this).show();
+                                    $(this).siblings(".thumbnail-tl").show();
+                                    $(this).siblings(".thumbnail-centered").show();
+                                    $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
+                                    if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                                        $('.thumbnail-centered').hide();
+                                    }
+                                }, function () {
+                                    if ($(this).siblings(".thumbnail-tl").find('.bi-circle-fill').length === 0) {
+                                        $(this).siblings(".thumbnail-tl").hide();
+                                        $(this).siblings(".thumbnail-centered").hide();
+                                        $(this).siblings(".photo-thumbnail-image").css("opacity", transparent);
+                                    }
+                                });
                             }
                         }
                     </script>
@@ -182,6 +199,10 @@
                                     <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
                                         <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.image_id}">
                                             <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span></a>
+                                        </div>
+                                        <div class="thumbnail-tr" th:id="${'tntr'+faceObj.image_id}">
+                                            <span th:id="${'timelineviewable'+faceObj.image_id}" class="bi-calendar overlayIcon overlayIconBackground"></span>
+                                            <br>
                                         </div>
                                     </th:block>
                                 </th:block>
