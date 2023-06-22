@@ -612,7 +612,6 @@ class PeopleController {
     fun getPagedComprefaceList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
         var response = mutableMapOf<String, Any?>()
 
-
         if (model.getAttribute("currentUser") != "") {
             response = buildCompreFace(model,personId,page)
             response["msg"] = ""
