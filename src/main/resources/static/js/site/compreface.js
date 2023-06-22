@@ -66,10 +66,14 @@ class Compreface {
 
                     setPhotoOverlays(resultObj["image_id"]);
                 }
-            }
 
-            this.rendering = false;
-            $("#spinner").css("display", "none");
+                this.rendering = false;
+                $("#spinner").css("display", "none");
+            } else {
+                $(".appendCompreFacePhotos").last().text("EOL").css("display","none");
+                this.rendering = false;
+                this.eol = true;
+            }
         } else {
             this.rendering = false;
             this.eol = true;
