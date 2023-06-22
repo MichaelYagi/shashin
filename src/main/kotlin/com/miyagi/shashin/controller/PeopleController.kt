@@ -496,11 +496,13 @@ class PeopleController {
                     val idArray: Array<String>? = mapper.readValue(imageIdsString, object : TypeReference<Array<String>>() {})
 
                     if (!idArray.isNullOrEmpty()) {
-                        println(Arrays.deepToString(idArray))
                         for (imageId in idArray) {
-                            recognitionLabelPhotoRepository?.deleteByCompreFaceImageId(imageId)
+                            val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(imageId)
+                            if (recognitionLabelPhotoObj != null) {
+                                recognitionLabelPhotoObj.setCompreFaceImageId("")
+                                recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                            }
                         }
-
                     }
                 } catch (e: Exception) {
                     resp["msg"] = "Error could not delete faces from CompreFace"
