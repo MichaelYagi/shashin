@@ -391,6 +391,7 @@ class PeopleController {
         val counts = HashMap<String,Int>()
         counts["person"] = 0
         counts["matches"] = 0
+        counts["compreface"] = 0
         model["counts"] = counts
         model["parameter"] = personId
 
@@ -408,14 +409,29 @@ class PeopleController {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            var metadataList: MutableIterable<Metadata>? = null
+            var personCount = 0
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),0,2000)
+                personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
-                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,0,2000)
+                personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
             }
-            if (metadataList != null && metadataList.count() > 0) {
-                counts["person"] = metadataList.count()
+            if (personCount > 0) {
+                counts["person"] = personCount
+            } else {
+                counts["person"] = 0
+            }
+        }
+
+        val subject = recognitionLabel?.get()?.getName()
+        val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+        if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
+            val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
+            val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+            val resultList: ArrayList<MutableMap<String, String>>?
+
+            if (resultMap.containsKey("faces")) {
+                resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
+                counts["compreface"] = resultList.size
             }
         }
 
@@ -582,21 +598,25 @@ class PeopleController {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            var metadataList: MutableIterable<Metadata>? = null
+            var personCount = 0
             if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),0,2000)
+                personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
-                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,0,2000)
+                personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
             }
-            if (metadataList != null && metadataList.count() > 0) {
-                counts["person"] = metadataList.count()
+            if (personCount > 0) {
+                counts["person"] = personCount
+            } else {
+                counts["person"] = 0
             }
         }
 
         // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
-        val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
-        if (lowMatchResults != null && lowMatchResults.count() > 0) {
-            counts["matches"] = lowMatchResults.count()
+        val lowMatchCount = metadataRepository?.countLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
+        if (lowMatchCount != null && lowMatchCount > 0) {
+            counts["matches"] = lowMatchCount
+        } else {
+            counts["matches"] = 0
         }
 
         // Get the recognition label
@@ -605,40 +625,29 @@ class PeopleController {
         if (recognitionLabel != null) {
             response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
-            var subjectCompreFaceJsonStr: String? = null
 
-            if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
-                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
-                try {
-                    subjectCompreFaceJsonStr = webClient.get()
-                        .uri("api/v1/recognition/faces?subject=${subject}&page=${page}&size=${queryLimit}")
-                        .header(
-                            "x-api-key",
-                            settings.getCompreFaceKey()
-                        )
-                        .retrieve()
-                        .bodyToMono(String::class.java)
-                        .block()
-                } catch (e: Exception) {
-                    response["message"] = "Error getting CompreFace results for $subject"
-
-                    logger.log(
-                        Level.WARNING,
-                        "Error getting CompreFace results for ${subject}: ${e.localizedMessage}"
-                    )
-                }
-            }
-
-            if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
-                var jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
-                val resultMap = mapper.convertValue(
-                    jsonObj,
-                    object :
-                        TypeReference<Map<String, Any>>() {})
-                var resultList: ArrayList<MutableMap<String, String>>?
+            val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+            if (!allSubjectCompreFaceJsonStr.isNullOrBlank()) {
+                val jsonObj = mapper.readTree(allSubjectCompreFaceJsonStr)
+                val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+                val resultList: ArrayList<MutableMap<String, String>>?
 
                 if (resultMap.containsKey("faces")) {
                     resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
+                    counts["compreface"] = resultList.size
+                }
+            }
+
+
+            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, page, queryLimit)
+            if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
+                val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
+                val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+                val resultList: ArrayList<MutableMap<String, String>>?
+
+                if (resultMap.containsKey("faces")) {
+                    resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
+
                     for (facesResult in resultList) {
                         val compreFaceImageId: String? = facesResult["image_id"]
                         val recognitionLabelPhotoObj = recognitionLabelPhotoRepository?.findByCompreFaceImageId(compreFaceImageId!!)
@@ -668,6 +677,35 @@ class PeopleController {
         response["status"] = ApiResponse.SUCCESS.status
 
         return response
+    }
+
+    private fun getCompreFaceJsonForSubject(model: Model, subject: String?, page: Int, queryLimit: Int): String? {
+        var subjectCompreFaceJsonStr: String? = null
+        val settings = model.getAttribute("settings") as Settings
+
+        if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+            val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+            try {
+                subjectCompreFaceJsonStr = webClient.get()
+                    .uri("api/v1/recognition/faces?subject=${subject}&page=${page}&size=${queryLimit}")
+                    .header(
+                        "x-api-key",
+                        settings.getCompreFaceKey()
+                    )
+                    .retrieve()
+                    .bodyToMono(String::class.java)
+                    .block()
+            } catch (e: Exception) {
+                subjectCompreFaceJsonStr = "{\"error\" : \"Error getting CompreFace results for $subject\"}"
+
+                logger.log(
+                    Level.WARNING,
+                    "Error getting CompreFace results for ${subject}: ${e.localizedMessage}"
+                )
+            }
+        }
+
+        return subjectCompreFaceJsonStr
     }
 
     private fun getByteArrayFromImageURL(url: String): String? {
@@ -817,6 +855,7 @@ class PeopleController {
         val counts = HashMap<String,Int>()
         counts["person"] = 0
         counts["matches"] = 0
+        counts["compreface"] = 0
         response["counts"] = counts
         response["canEdit"] = model.getAttribute("authority") == adminRole
 
@@ -837,30 +876,50 @@ class PeopleController {
             }
 
             // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
-            val lowMatchResults = metadataRepository?.findLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
-            if (lowMatchResults != null && lowMatchResults.count() > 0) {
-                counts["matches"] = lowMatchResults.count()
+            val lowMatchCount = metadataRepository?.countLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
+            if (lowMatchCount != null && lowMatchCount > 0) {
+                counts["matches"] = lowMatchCount
+            } else {
+                counts["matches"] = 0
             }
 
             var metadataList: MutableIterable<Metadata>? = null
-            var completeMetadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
                 metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),pageValue,queryLimit)
-                completeMetadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),0,9999)
-
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
                 metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,pageValue,queryLimit)
-                completeMetadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,0,9999)
             }
 
             if (metadataList != null && metadataList.count() > 0) {
-                if (completeMetadataList != null) {
-                    counts["person"] = completeMetadataList.count()
+                var personCount = 0
+                if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
+                    personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
+                } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+                    personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
                 }
+                if (personCount > 0) {
+                    counts["person"] = personCount
+                } else {
+                    counts["person"] = 0
+                }
+
+                val subject = recognitionLabel?.get()?.getName()
+                val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+                if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
+                    val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
+                    val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+                    val resultList: ArrayList<MutableMap<String, String>>?
+
+                    if (resultMap.containsKey("faces")) {
+                        resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
+                        counts["compreface"] = resultList.size
+                    }
+                }
+
                 response["message"] = ""
 
                 val labelPhotoMap = mutableMapOf<String, MutableMap<String,Any>>()
