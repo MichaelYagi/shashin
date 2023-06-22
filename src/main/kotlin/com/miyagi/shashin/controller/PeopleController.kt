@@ -638,7 +638,6 @@ class PeopleController {
                 }
             }
 
-
             val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, page, queryLimit)
             if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
                 val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
