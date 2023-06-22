@@ -712,6 +712,7 @@ class AlbumsController {
                     }
                     if (albumMetadataList.count() > 0) {
                         val album = albumRepository.findById(albumId)
+                        response["titleDescriptor"] = TextUtils.capitalized(module) + " - " + album.get().getName()
                         response["favorites"] = favoritesMap
                         response["notificationMap"] = notificationMap
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
-<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100">
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
@@ -25,7 +25,11 @@
 
             <div id="scroll-gallery">
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
-                    <h1 th:text="${folder}"></h1>
+                    <h1 th:inline="text">
+                        [[${folder}]]
+                        <a href="/folders"><span class="bi-arrow-return-left" style="font-size: 1rem;color: blue;" title="Go back"></span></a>
+                    </h1>
+
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataList}">
                             <div th:id="${'photoThumbnailContainer'+metadata.id}" class="photo-thumbnail-container photo-thumbnail" th:style="${'width:'+metadata.thumbnailSmallWidth+'px;height:'+metadata.thumbnailSmallHeight+'px;padding-left:0;padding-right:0;'}">

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
-<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100">
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
@@ -28,7 +28,12 @@
             <div id="albumMessage"></div>
 
             <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
-                <span id="albumNameHeader"><h1 id="albumNameHeading" th:text="${album.name}"></h1></span>
+                <span id="albumNameHeader">
+                    <h1 id="albumNameHeading" th:inline="text">
+                        [[${album.name}]]
+                        <a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;color: blue;" title="Go back"></span></a>
+                    </h1>
+                </span>
 
                 <div id="infinite-scroll-gallery">
                     <div class="row image-group-padding">

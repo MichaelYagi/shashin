@@ -474,7 +474,11 @@ class PeopleController {
         model["counts"] = counts
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        var title = TextUtils.capitalized(module)
+        if (recognitionLabel != null && recognitionLabel.get().getName() != "") {
+            title = TextUtils.capitalized(module) + " - " + recognitionLabel.get().getName()
+        }
+        model["titleDescriptor"] = title
         return module
     }
 
@@ -603,7 +607,11 @@ class PeopleController {
         model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        var title = TextUtils.capitalized(module)
+        if (recognitionLabel != null && recognitionLabel.get().getName() != "") {
+            title = TextUtils.capitalized(module) + " - " + recognitionLabel.get().getName()
+        }
+        model["titleDescriptor"] = title
         return module
     }
 
@@ -797,7 +805,12 @@ class PeopleController {
         model["status"] = ApiResponse.SUCCESS.status
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        var title = TextUtils.capitalized(module)
+        var personInfo = response["personInfo"] as RecognitionLabel
+        if (!personInfo.getName().isNullOrBlank()) {
+            title = TextUtils.capitalized(module) + " - " + personInfo.getName()
+        }
+        model["titleDescriptor"] = title
         return module
     }
 

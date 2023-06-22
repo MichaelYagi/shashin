@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
-<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
 <body>
 <div th:replace="fragments/loginregcontent :: loginregcontent(${activePage},${message})" class="col-sm p-3 min-vh-100"></div>
 <span style="text-align: center;" th:insert="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></span>

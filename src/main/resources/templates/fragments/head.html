@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html  xmlns:th="http://www.thymeleaf.org">
-<head th:fragment="head(titleDescriptor)">
-    <th:block th:with="titleDescriptorLower = ${#strings.toLowerCase(titleDescriptor)}">
+<head th:fragment="head(activePage,titleDescriptor)">
+    <th:block th:with="activePageLower = ${#strings.toLowerCase(activePage)}">
         <meta charset="UTF-8">
-        <title th:text="${@environment.getProperty('app.build.properties.name')} + (${#strings.isEmpty(titleDescriptor)} ? ': Home' : ': ' + ${titleDescriptor})"></title>
+        <title th:text="${@environment.getProperty('app.build.properties.name')} + (${#strings.isEmpty(titleDescriptor)} ? '' : ': ' + ${titleDescriptor})"></title>
         <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
@@ -13,11 +13,11 @@
         <meta name="theme-color" content="#ffffff">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="robots" content="noindex">
-        <th:block th:if="${titleDescriptorLower == 'share' or titleDescriptorLower == 'album'}">
-            <th:block th:if="${titleDescriptorLower == 'share'}">
+        <th:block th:if="${activePageLower == 'share' or activePageLower == 'album'}">
+            <th:block th:if="${activePageLower == 'share'}">
                 <meta property="og:url" th:content="${album.shareUrl}">
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'album'}">
+            <th:block th:if="${activePageLower == 'album'}">
                 <meta property="og:url" th:content="${baseUrl + 'album/' + album.id}">
             </th:block>
             <meta property="og:type" content="image.photo.video.movie">
@@ -45,7 +45,7 @@
             <link rel="stylesheet" href="/css/bootstrap.min.css">
         </th:block>
         <link rel="stylesheet" href="/css/bootstrap-icons.css">
-        <th:block th:if="${titleDescriptorLower == 'timeline'}">
+        <th:block th:if="${activePageLower == 'timeline'}">
             <link rel="stylesheet" href="/css/jquery-ui.css">
         </th:block>
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
@@ -54,18 +54,18 @@
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
             <link rel="stylesheet" href="/css/site/style.css">
         </th:block>
-        <th:block th:if="${titleDescriptorLower == 'person' or
-        titleDescriptorLower == 'matches' or
-        titleDescriptorLower == 'timeline' or
-        titleDescriptorLower == 'album' or
-        titleDescriptorLower == 'favorites' or
-        titleDescriptorLower == 'map' or
-        titleDescriptorLower == 'search' or
-        titleDescriptorLower == 'share' or
-        titleDescriptorLower == 'trash' or
-        titleDescriptorLower == 'recent' or
-        titleDescriptorLower == 'modified' or
-        titleDescriptorLower == 'folder'}">
+        <th:block th:if="${activePageLower == 'person' or
+        activePageLower == 'matches' or
+        activePageLower == 'timeline' or
+        activePageLower == 'album' or
+        activePageLower == 'favorites' or
+        activePageLower == 'map' or
+        activePageLower == 'search' or
+        activePageLower == 'share' or
+        activePageLower == 'trash' or
+        activePageLower == 'recent' or
+        activePageLower == 'modified' or
+        activePageLower == 'folder'}">
             <script src="/js/lightgallery.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-video.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/lg-zoom.min.js" th:nonce="${cspNonce}"></script>
@@ -88,7 +88,7 @@
             <link rel="stylesheet" href="/css/lg-metadata-detail.css">
             <link rel="stylesheet" href="/css/lg-cast-media.css">
         </th:block>
-        <th:block th:if="${titleDescriptorLower == 'timeline'}">
+        <th:block th:if="${activePageLower == 'timeline'}">
             <style>
                 #container {
                     -ms-overflow-style: none;  /* Internet Explorer 10+ */
@@ -99,11 +99,11 @@
                 }
             </style>
         </th:block>
-        <th:block th:if="${titleDescriptorLower == 'scan' or titleDescriptorLower == 'match' or titleDescriptorLower == 'dashboard'}">
+        <th:block th:if="${activePageLower == 'scan' or activePageLower == 'match' or activePageLower == 'dashboard'}">
             <script src="/js/stomp.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/sockjs.min.js" th:nonce="${cspNonce}"></script>
         </th:block>
-        <th:block th:if="${titleDescriptorLower == 'dashboard'}">
+        <th:block th:if="${activePageLower == 'dashboard'}">
             <script src="/js/chart.min.js" th:nonce="${cspNonce}"></script>
         </th:block>
 
@@ -114,52 +114,52 @@
             <script src="/js/site/templates/gallery.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/templates/modal.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/templates/timeline.js" th:nonce="${cspNonce}"></script>
-            <th:block th:if="${titleDescriptorLower == 'album'}">
+            <th:block th:if="${activePageLower == 'album'}">
                 <script src="/js/site/album.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'timeline'}">
+            <th:block th:if="${activePageLower == 'timeline'}">
                 <script src="/js/site/timeline.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'recent'}">
+            <th:block th:if="${activePageLower == 'recent'}">
                 <script src="/js/site/recent.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'folders'}">
+            <th:block th:if="${activePageLower == 'folders'}">
                 <script src="/js/site/folders.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'compreface'}">
+            <th:block th:if="${activePageLower == 'compreface'}">
                 <script src="/js/site/compreface.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'modified'}">
+            <th:block th:if="${activePageLower == 'modified'}">
                 <script src="/js/site/modified.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'folder'}">
+            <th:block th:if="${activePageLower == 'folder'}">
                 <script src="/js/site/folder.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'favorites'}">
+            <th:block th:if="${activePageLower == 'favorites'}">
                 <script src="/js/site/favorites.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'search'}">
+            <th:block th:if="${activePageLower == 'search'}">
                 <script src="/js/site/search.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'trash'}">
+            <th:block th:if="${activePageLower == 'trash'}">
                 <script src="/js/site/trash.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'share'}">
+            <th:block th:if="${activePageLower == 'share'}">
                 <script src="/js/site/share.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'person'}">
+            <th:block th:if="${activePageLower == 'person'}">
                 <script src="/js/site/person.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'albums'}">
+            <th:block th:if="${activePageLower == 'albums'}">
                 <script src="/js/site/albumsmodallisteners.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'snapshot'}">
+            <th:block th:if="${activePageLower == 'snapshot'}">
                 <script src="/js/site/snapshot.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'settings'}">
+            <th:block th:if="${activePageLower == 'settings'}">
                 <script src="/js/site/settings.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'albums'}">
+            <th:block th:if="${activePageLower == 'albums'}">
                 <script src="/js/site/albums.js" th:nonce="${cspNonce}"></script>
             </th:block>
         </th:block>
@@ -171,52 +171,52 @@
             <script src="/js/site/min/templates/gallery.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/min/templates/modal.min.js" th:nonce="${cspNonce}"></script>
             <script src="/js/site/min/templates/timeline.min.js" th:nonce="${cspNonce}"></script>
-            <th:block th:if="${titleDescriptorLower == 'album'}">
+            <th:block th:if="${activePageLower == 'album'}">
                 <script src="/js/site/min/album.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'timeline'}">
+            <th:block th:if="${activePageLower == 'timeline'}">
                 <script src="/js/site/min/timeline.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'recent'}">
+            <th:block th:if="${activePageLower == 'recent'}">
                 <script src="/js/site/min/recent.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'folders'}">
+            <th:block th:if="${activePageLower == 'folders'}">
                 <script src="/js/site/min/folders.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'modified'}">
+            <th:block th:if="${activePageLower == 'modified'}">
                 <script src="/js/site/min/modified.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'folder'}">
+            <th:block th:if="${activePageLower == 'folder'}">
                 <script src="/js/site/min/folder.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'compreface'}">
+            <th:block th:if="${activePageLower == 'compreface'}">
                 <script src="/js/site/min/compreface.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'favorites'}">
+            <th:block th:if="${activePageLower == 'favorites'}">
                 <script src="/js/site/min/favorites.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'search'}">
+            <th:block th:if="${activePageLower == 'search'}">
                 <script src="/js/site/min/search.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'trash'}">
+            <th:block th:if="${activePageLower == 'trash'}">
                 <script src="/js/site/min/trash.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'share'}">
+            <th:block th:if="${activePageLower == 'share'}">
                 <script src="/js/site/min/share.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'person'}">
+            <th:block th:if="${activePageLower == 'person'}">
                 <script src="/js/site/min/person.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'albums'}">
+            <th:block th:if="${activePageLower == 'albums'}">
                 <script src="/js/site/min/albumsmodallisteners.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'snapshot'}">
+            <th:block th:if="${activePageLower == 'snapshot'}">
                 <script src="/js/site/min/snapshot.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'settings'}">
+            <th:block th:if="${activePageLower == 'settings'}">
                 <script src="/js/site/min/settings.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
-            <th:block th:if="${titleDescriptorLower == 'albums'}">
+            <th:block th:if="${activePageLower == 'albums'}">
                 <script src="/js/site/min/albums.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
         </th:block>

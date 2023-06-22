@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
-<head th:insert="fragments/head :: head(${titleDescriptor})"></head>
+<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100">
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},${searchTerm})"></div>
