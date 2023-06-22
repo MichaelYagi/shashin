@@ -12,6 +12,7 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
 import java.net.URLDecoder
+import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import javax.servlet.http.HttpServletRequest
 
@@ -315,7 +316,8 @@ class BrowseController: BaseController() {
     fun getRecentlyAdded(model: Model, @PathVariable folder: String): String {
         val module = "folder"
         val page = 0
-        val response = buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page)
+        val decodedValue = URLDecoder.decode(folder, StandardCharsets.UTF_8.toString())
+        val response = buildFolder(model,decodedValue,page)
 
         for ((k, v) in response) {
             model[k] = v!!
@@ -325,7 +327,8 @@ class BrowseController: BaseController() {
 
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["titleDescriptor"] = TextUtils.capitalized(module) + " - " +  decodedValue
+
         return module
     }
 
