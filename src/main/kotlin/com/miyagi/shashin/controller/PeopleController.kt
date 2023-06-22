@@ -526,18 +526,59 @@ class PeopleController {
     @Secured("ROLE_ADMIN")
     fun getCompreFaceGetImages(model: Model, @PathVariable personId: Int): String {
         val module = "compreface"
-        model["message"] = "There are no photos."
+        val page = 0
+        val response = buildCompreFace(model,personId,page)
+        for ((k, v) in response) {
+            model[k] = v!!
+        }
+
+        model["msg"] = ""
+        model["status"] = ApiResponse.SUCCESS.status
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/person/compreface/{personId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedComprefaceList(model: Model, request: HttpServletRequest, @PathVariable personId: Int, @PathVariable page: Int): String {
+        var response = mutableMapOf<String, Any?>()
+
+
+        if (model.getAttribute("currentUser") != "") {
+            response = buildCompreFace(model,personId,page)
+
+            response["msg"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+
+            return mapper.writeValueAsString(response)
+        }
+
+        response["message"] = ""
+        response["resultList"] = mutableListOf<MutableMap<String, String>>()
+        response["msg"] = "Could not get results"
+        response["status"] = ApiResponse.FAIL.status
+
+        return mapper.writeValueAsString(response)
+    }
+
+    private fun buildCompreFace(model: Model,personId: Int,page: Int): MutableMap<String, Any?> {
+        val response = mutableMapOf<String, Any?>()
+
+        response["message"] = "There are no photos."
         val counts = HashMap<String,Int>()
         counts["compreface"] = 0
         counts["person"] = 0
         counts["matches"] = 0
-        model["counts"] = counts
-        model["parameter"] = personId
-        model["resultList"] = mutableListOf<MutableMap<String, String>>()
+        response["counts"] = counts
+        response["parameter"] = personId
+        response["resultList"] = mutableListOf<MutableMap<String, String>>()
+        val queryLimit = model.getAttribute("queryLimit").toString().toInt()
 
         val settings = model.getAttribute("settings") as Settings
-        model["compreFaceServer"] = settings.getCompreFaceServer()!!
-        model["compreFaceApiKey"] = settings.getCompreFaceKey()!!
+        response["compreFaceServer"] = settings.getCompreFaceServer()!!
+        response["compreFaceApiKey"] = settings.getCompreFaceKey()!!
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -562,7 +603,7 @@ class PeopleController {
         val recognitionLabel = recognitionLabelRepository?.findById(personId)
 
         if (recognitionLabel != null) {
-            model["personInfo"] = recognitionLabel.get()
+            response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
             var subjectCompreFaceJsonStr: String? = null
 
@@ -570,7 +611,7 @@ class PeopleController {
                 val webClient = WebClient.create(settings.getCompreFaceServer()!!)
                 try {
                     subjectCompreFaceJsonStr = webClient.get()
-                        .uri("api/v1/recognition/faces?subject=${subject}&size=1000")
+                        .uri("api/v1/recognition/faces?subject=${subject}&page=${page}&size=${queryLimit}")
                         .header(
                             "x-api-key",
                             settings.getCompreFaceKey()
@@ -579,7 +620,7 @@ class PeopleController {
                         .bodyToMono(String::class.java)
                         .block()
                 } catch (e: Exception) {
-                    model["message"] = "Error getting CompreFace results for $subject"
+                    response["message"] = "Error getting CompreFace results for $subject"
 
                     logger.log(
                         Level.WARNING,
@@ -617,19 +658,16 @@ class PeopleController {
                         }
                     }
 
-                    model["resultList"] = resultList
-                    model["message"] = ""
+                    response["resultList"] = resultList
+                    response["message"] = ""
                 }
             }
         }
 
-        model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
-        model["counts"] = counts
-        model["activePage"] = module
-        model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
-        return module
+        response["msg"] = "Results"
+        response["status"] = ApiResponse.SUCCESS.status
+
+        return response
     }
 
     private fun getByteArrayFromImageURL(url: String): String? {
