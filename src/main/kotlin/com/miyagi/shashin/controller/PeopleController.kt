@@ -546,12 +546,15 @@ class PeopleController {
         val response = buildCompreFace(model,personId,page)
         val counts = HashMap<String,Int>()
         counts["compreface"] = 0
+        counts["person"] = 0
+        counts["matches"] = 0
         response["counts"] = counts
 
         for ((k, v) in response) {
             model[k] = v!!
         }
 
+        val settings = model.getAttribute("settings") as Settings
         val recognitionLabel = recognitionLabelRepository?.findById(personId)
 
         var subject: String? = null
@@ -569,6 +572,29 @@ class PeopleController {
                 resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
                 counts["compreface"] = resultList.size
             }
+        }
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            var personCount = 0
+            if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
+                personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
+            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
+                personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
+            }
+            if (personCount > 0) {
+                counts["person"] = personCount
+            } else {
+                counts["person"] = 0
+            }
+        }
+
+        // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
+        val lowMatchCount = metadataRepository?.countLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
+        if (lowMatchCount != null && lowMatchCount > 0) {
+            counts["matches"] = lowMatchCount
+        } else {
+            counts["matches"] = 0
         }
 
         response["counts"] = counts
@@ -607,11 +633,6 @@ class PeopleController {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos."
-        val counts = HashMap<String,Int>()
-        counts["compreface"] = 0
-        counts["person"] = 0
-        counts["matches"] = 0
-        response["counts"] = counts
         response["parameter"] = personId
         response["resultList"] = mutableListOf<MutableMap<String, String>>()
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
@@ -619,29 +640,6 @@ class PeopleController {
         val settings = model.getAttribute("settings") as Settings
         response["compreFaceServer"] = settings.getCompreFaceServer()!!
         response["compreFaceApiKey"] = settings.getCompreFaceKey()!!
-
-        val currentUserObj = model.getAttribute("currentUser") as User?
-        if (currentUserObj != null) {
-            var personCount = 0
-            if (currentUserObj.getAuthority() == model.getAttribute("userRole")) {
-                personCount = metadataRepository?.countByPhotoAlbumByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId())!!
-            } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
-                personCount = metadataRepository?.countByMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId)!!
-            }
-            if (personCount > 0) {
-                counts["person"] = personCount
-            } else {
-                counts["person"] = 0
-            }
-        }
-
-        // Get records of photos that haven't been confirmed - Threshold not 9.0 and greater than threshold configured
-        val lowMatchCount = metadataRepository?.countLowMatchesByPerson(personId,settings.getRecognitionConfidenceThreshold()!!)
-        if (lowMatchCount != null && lowMatchCount > 0) {
-            counts["matches"] = lowMatchCount
-        } else {
-            counts["matches"] = 0
-        }
 
         // Get the recognition label
         val recognitionLabel = recognitionLabelRepository?.findById(personId)
