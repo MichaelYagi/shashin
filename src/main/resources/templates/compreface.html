@@ -200,17 +200,15 @@
 
                                 <img loading="lazy" th:src="'data:image/png;base64,'+${faceObj.image_base64}" class="photo-thumbnail-image" th:id="'image'+${faceObj.image_id}">
 
-                                <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                    <div th:replace="fragments/topleftoverlay :: topleftoverlay(${faceObj.image_id})"></div>
-                                    <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
-                                        <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.image_id}">
-                                            <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span></a>
-                                        </div>
-                                        <div class="thumbnail-tr" th:id="${'tntr'+faceObj.image_id}">
-                                            <span th:id="${'timelineviewable'+faceObj.image_id}" class="bi-calendar overlayIcon overlayIconBackground"></span>
-                                            <br>
-                                        </div>
-                                    </th:block>
+                                <div th:replace="fragments/topleftoverlay :: topleftoverlay(${faceObj.image_id})"></div>
+                                <th:block th:if="${faceObj.metadata_date != null and faceObj.metadata_date != ''}">
+                                    <div class="thumbnail-centered" th:id="${'tncentered'+faceObj.image_id}">
+                                        <a th:href="${'/timeline#'+faceObj.metadata_date}" target="_blank"><span class="bi-play-circle" style="font-size: 4rem;color: lightgray;"></span></a>
+                                    </div>
+                                    <div class="thumbnail-tr" th:id="${'tntr'+faceObj.image_id}">
+                                        <span th:id="${'timelineviewable'+faceObj.image_id}" class="bi-calendar overlayIcon overlayIconBackground"></span>
+                                        <br>
+                                    </div>
                                 </th:block>
 
                                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
