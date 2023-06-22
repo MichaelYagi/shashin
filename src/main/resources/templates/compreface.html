@@ -284,6 +284,9 @@
     $(document).ready(function () {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
+        const activePage = /*[[${activePage}]]*/ 'folder';
+        const personId = /*[[${parameter}]]*/ '';
+        const resultList = '[1]';
         /*]]>*/
 
         $("#comprefaceBatchDelete").on("click", function(e) {
@@ -296,8 +299,9 @@
             $("#multiSelectMetadataIds").val("[]");
         });
 
-        shashin.activateScrollToTop();
-        shashin.mouseMoveListener();
+        const comprefaceInstance = new Compreface(resultList, personId, activePage);
+        comprefaceInstance.init();
+        Util.checkErrorImage();
     });
 </script>
 </body>

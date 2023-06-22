@@ -126,6 +126,9 @@
             <th:block th:if="${titleDescriptorLower == 'folders'}">
                 <script src="/js/site/folders.js" th:nonce="${cspNonce}"></script>
             </th:block>
+            <th:block th:if="${titleDescriptorLower == 'compreface'}">
+                <script src="/js/site/compreface.js" th:nonce="${cspNonce}"></script>
+            </th:block>
             <th:block th:if="${titleDescriptorLower == 'modified'}">
                 <script src="/js/site/modified.js" th:nonce="${cspNonce}"></script>
             </th:block>
@@ -185,6 +188,9 @@
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'folder'}">
                 <script src="/js/site/min/folder.min.js" th:nonce="${cspNonce}"></script>
+            </th:block>
+            <th:block th:if="${titleDescriptorLower == 'compreface'}">
+                <script src="/js/site/min/compreface.min.js" th:nonce="${cspNonce}"></script>
             </th:block>
             <th:block th:if="${titleDescriptorLower == 'favorites'}">
                 <script src="/js/site/min/favorites.min.js" th:nonce="${cspNonce}"></script>
