@@ -544,9 +544,34 @@ class PeopleController {
         val module = "compreface"
         val page = 0
         val response = buildCompreFace(model,personId,page)
+        val counts = HashMap<String,Int>()
+        counts["compreface"] = 0
+        response["counts"] = counts
+
         for ((k, v) in response) {
             model[k] = v!!
         }
+
+        val recognitionLabel = recognitionLabelRepository?.findById(personId)
+
+        var subject: String? = null
+        if (recognitionLabel != null) {
+            response["personInfo"] = recognitionLabel.get()
+            subject = recognitionLabel.get().getName()
+        }
+        val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
+        if (!allSubjectCompreFaceJsonStr.isNullOrBlank()) {
+            val jsonObj = mapper.readTree(allSubjectCompreFaceJsonStr)
+            val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+            val resultList: ArrayList<MutableMap<String, String>>?
+
+            if (resultMap.containsKey("faces")) {
+                resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
+                counts["compreface"] = resultList.size
+            }
+        }
+
+        response["counts"] = counts
 
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -564,7 +589,6 @@ class PeopleController {
 
         if (model.getAttribute("currentUser") != "") {
             response = buildCompreFace(model,personId,page)
-
             response["msg"] = ""
             response["status"] = ApiResponse.SUCCESS.status
 
@@ -625,18 +649,6 @@ class PeopleController {
         if (recognitionLabel != null) {
             response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
-
-            val allSubjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, 0, 9999)
-            if (!allSubjectCompreFaceJsonStr.isNullOrBlank()) {
-                val jsonObj = mapper.readTree(allSubjectCompreFaceJsonStr)
-                val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
-                val resultList: ArrayList<MutableMap<String, String>>?
-
-                if (resultMap.containsKey("faces")) {
-                    resultList = resultMap["faces"] as ArrayList<MutableMap<String, String>>
-                    counts["compreface"] = resultList.size
-                }
-            }
 
             val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, page, queryLimit)
             if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
