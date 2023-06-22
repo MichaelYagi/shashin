@@ -158,7 +158,12 @@
                                 $("#tntl" + compreFaceImageId).hover(function () {
                                     if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
                                         $(this).show();
+                                        $(this).siblings(".thumbnail-centered").show();
+                                        $(this).siblings(".thumbnail-tr").show();
                                         $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
+                                        if ($('.bi-circle-fill')[0] || $(this).attr("class") === "bi-circle-fill") {
+                                            $('.thumbnail-centered').hide();
+                                        }
                                     }
                                 }, function () {
                                     if ($("#tlicon" + compreFaceImageId).attr("class") !== "bi-circle-fill") {
@@ -167,6 +172,7 @@
                                     } else {
                                         $(this).siblings(".photo-thumbnail-image").css("opacity", opaque);
                                     }
+                                    $(this).siblings(".thumbnail-centered").hide();
                                 });
 
                                 $("#tntr" + compreFaceImageId).hover(function () {
