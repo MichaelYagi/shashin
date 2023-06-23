@@ -55,7 +55,7 @@ class SearchController {
         model["msg"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["titleDescriptor"] = TextUtils.capitalized(module) + " - " + searchTerm
 
         return module
     }
