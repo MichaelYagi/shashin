@@ -1,14 +1,21 @@
 package com.miyagi.shashin.util
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.model.Folder
+import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.Settings
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.ui.set
+import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.*
 import java.net.HttpURLConnection
@@ -16,6 +23,7 @@ import java.net.URL
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.ArrayList
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.zip.ZipEntry
@@ -288,6 +296,179 @@ class FileUtils {
             }
 
             return available
+        }
+
+        fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>): MutableMap<String, Any?> {
+            val mapper = ObjectMapper()
+            val uploadresponse = mutableMapOf<String, Any?>()
+            uploadresponse["responseData"] = mutableMapOf<String, Any?>()
+            uploadresponse["similarity"] = 0.0
+
+            uploadresponse["msg"] = ""
+            uploadresponse["status"] = ApiResponse.FAIL.status
+
+            if (checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                var response: String?
+
+                if (!personName.isNullOrBlank() && !metadata?.getId().isNullOrBlank()) {
+
+                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                    val recognizedObj = mapper.writeValueAsString(buildPersonRecognition(settings, metadata))
+
+                    val jsonRespObj = mapper.readTree(recognizedObj)
+                    var subjectObj: JsonNode
+                    var subject = ""
+                    var similarity = 0.0
+                    if (jsonRespObj.has("recognizeData") && jsonRespObj["recognizeData"].has(0)) {
+                        subjectObj = jsonRespObj["recognizeData"].get(0)
+                        if (subjectObj.has("subject")) {
+                            subject = subjectObj["subject"].textValue();
+                            similarity = subjectObj["similarity"].asDouble()
+                        }
+                    }
+                    uploadresponse["similarity"] = similarity
+
+                    // This means the person has been relabeled
+                    if (subject != "" && personName != subject) {
+                        similarity = 0.0
+
+                        val compreFaceImageId =
+                            compreFaceImageIdMap[subject.filterNot { it.isWhitespace() } + "-" + metadata?.getId()]
+
+                        try {
+                            if (compreFaceImageId != null && compreFaceImageId.toString().isNotEmpty()) {
+                                webClient.delete()
+                                    .uri("api/v1/recognition/faces/$compreFaceImageId")
+                                    .header("x-api-key", settings.getCompreFaceKey())
+                                    .retrieve()
+                                    .bodyToMono(String::class.java)
+                                    .block()
+                            }
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.WARNING,
+                                "Error deleting CompreFace ID ${compreFaceImageId} for ${metadata?.getId()}: " + e.localizedMessage
+                            )
+                            val errorResponse =
+                                e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                        }
+                    }
+
+                    // Uploaded faces
+                    if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold().toString().toDouble())) {
+                        try {
+                            if (metadata != null) {
+                                val builder = MultipartBodyBuilder()
+                                builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+
+                                response = webClient.post()
+                                    .uri("api/v1/recognition/faces?subject=${personName}")
+                                    .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                                    .header("x-api-key", settings.getCompreFaceKey())
+                                    .body(BodyInserters.fromMultipartData(builder.build()))
+                                    .retrieve()
+                                    .bodyToMono(String::class.java)
+                                    .block()
+
+                                val jsonObj = mapper.readTree(response)
+
+                                logger.log(
+                                    Level.INFO,
+                                    "Face $personName for ${metadata.getId()} uploaded: " + response
+                                )
+
+                                uploadresponse["responseData"] = jsonObj
+
+                                uploadresponse["msg"] = ""
+                                uploadresponse["status"] = ApiResponse.SUCCESS.status
+                            } else {
+                                response = "Metadata not found."
+                                uploadresponse["responseData"] = response
+                            }
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.WARNING,
+                                "Error uploading face $personName for ${metadata?.getId()}: " + e.localizedMessage
+                            )
+                            val errorResponse =
+                                e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                            uploadresponse["responseData"] = errorResponse
+                        }
+                    } else {
+                        logger.log(
+                            Level.WARNING,
+                            "Error - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
+                        )
+                        uploadresponse["msg"] = "Error - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
+                        uploadresponse["status"] = ApiResponse.FAIL.status
+                    }
+                } else {
+                    logger.log(
+                        Level.WARNING,
+                        "Person name or metadata ID blank"
+                    )
+                    uploadresponse["msg"] = "Person name or metadata ID blank"
+                    uploadresponse["status"] = ApiResponse.FAIL.status
+                }
+            }
+
+            return uploadresponse
+        }
+
+        fun buildPersonRecognition(settings: Settings, metadata: Metadata?): MutableMap<String, Any?> {
+            val mapper = ObjectMapper()
+            val recogresponse = mutableMapOf<String, Any?>()
+
+            recogresponse["recognizeData"] = mutableMapOf<String, Any?>()
+            recogresponse["msg"] = ""
+            recogresponse["status"] = ApiResponse.FAIL.status
+
+            if (checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+
+                var response: String?
+
+                if (metadata !== null) {
+                    // Recognizing faces
+
+                    try {
+                        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+
+                        val builder = MultipartBodyBuilder()
+                        builder.part("file", FileSystemResource(metadata.getThumbnailPathSmall()!!))
+
+                        response = webClient.post()
+                            .uri("api/v1/recognition/recognize")
+                            .header(HttpHeaders.CONTENT_TYPE, MediaType.MULTIPART_FORM_DATA.toString())
+                            .header("x-api-key", settings.getCompreFaceKey())
+                            .body(BodyInserters.fromMultipartData(builder.build()))
+                            .retrieve()
+                            .bodyToMono(String::class.java)
+                            .block()
+
+                        val jsonObj = mapper.readTree(response)
+                        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                        val resultList = resultMap["result"] as ArrayList<Map<String, Any>>
+                        var subjects: ArrayList<Map<String, Any>>? = null
+                        if (resultList.isNotEmpty() && resultList[0].containsKey("subjects")) {
+                            subjects = resultList[0]["subjects"] as ArrayList<Map<String, Any>>
+                        }
+                        recogresponse["recognizeData"] = subjects
+                        recogresponse["msg"] = ""
+                        recogresponse["status"] = ApiResponse.SUCCESS.status
+
+                    } catch (e: Exception) {
+                        val errorResponse =
+                            e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+                        recogresponse["recognizeData"] = errorResponse
+                    }
+                } else {
+                    recogresponse["msg"] = "Metadata ID blank"
+                    recogresponse["status"] = ApiResponse.FAIL.status
+                }
+            }
+
+            return recogresponse
         }
 
         /**
