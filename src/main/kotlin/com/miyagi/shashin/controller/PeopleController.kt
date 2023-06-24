@@ -42,7 +42,7 @@ import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
-
+@Suppress("UNCHECKED_CAST")
 @Controller
 class PeopleController {
 
@@ -731,7 +731,7 @@ class PeopleController {
             val `is`: InputStream = ucon.getInputStream()
             val baos = ByteArrayOutputStream()
             val buffer = ByteArray(1024)
-            var read = 0
+            var read: Int
             while (`is`.read(buffer, 0, buffer.size).also { read = it } != -1) {
                 baos.write(buffer, 0, read)
             }

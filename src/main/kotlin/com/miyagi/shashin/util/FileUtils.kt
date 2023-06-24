@@ -29,6 +29,7 @@ import java.util.logging.Logger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
+@Suppress("UNCHECKED_CAST")
 @Component
 class FileUtils {
     companion object {
@@ -350,8 +351,8 @@ class FileUtils {
                                 Level.WARNING,
                                 "Error deleting CompreFace ID ${compreFaceImageId} for ${metadata?.getId()}: " + e.localizedMessage
                             )
-                            val errorResponse =
-                                e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
+//                            val errorResponse =
+//                                e.localizedMessage.replace("<EOL>", "").replace("400 : ", "").replace("\\s".toRegex(), "")
                         }
                     }
 
