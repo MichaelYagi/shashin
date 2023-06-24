@@ -9,6 +9,7 @@
     shashin.darkMode = true;
     shashin.lgSubHtmlTimeout = null;
     shashin.nonce = "";
+    shashin.apikey = "";
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
