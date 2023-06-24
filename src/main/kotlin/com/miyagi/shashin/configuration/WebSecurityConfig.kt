@@ -54,31 +54,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
     class ApiSecurityConfig : WebSecurityConfigurerAdapter() {
 
         @Autowired
-        private val dataSource: DataSource? = null
-
-        @Autowired
         private val userRepository: UserRepository? = null
-
-        @Autowired
-        private val authFailureHandler: AuthFailureHandler? = null
-
-        @Autowired
-        private val authSuccessHandler: AuthSuccessHandler? = null
-
-        @Value("\${app.api.version}")
-        private val apiVersion: String? = null
-
-        @Value("\${app.role.admin}")
-        private var adminRole: String? = null
-
-        @Value("\${app.role.user}")
-        private var userRole: String? = null
-
-        @Value("\${app.rememberme.key}")
-        private var rememberMeKey: String? = null
-
-        @Value("\${app.rememberme.expiration.seconds}")
-        private var expirationSeconds: Int? = null
 
         @Bean
         fun passwordApiEncoder(): PasswordEncoder? {
@@ -128,9 +104,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Autowired
         private val authSuccessHandler: AuthSuccessHandler? = null
 
-        @Value("\${app.api.version}")
-        private val apiVersion: String? = null
-
         @Value("\${app.role.admin}")
         private var adminRole: String? = null
 
@@ -175,7 +148,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 )
                 .authoritiesByUsernameQuery(
                     "SELECT username, authority from user where username = ?"
-                );
+                )
         }
 
         @Throws(Exception::class)
@@ -242,6 +215,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .csrf().disable()
                 .httpBasic()
 
+            // Using stateless API requests
 //            http.exceptionHandling()
 //                .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login", apiVersion))
 
