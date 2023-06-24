@@ -61,6 +61,7 @@ import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 
+@Suppress("UNCHECKED_CAST")
 @Controller
 class SettingsController {
 
@@ -425,7 +426,7 @@ class SettingsController {
             var faceRecogServicesAvailable = false
             var compreFaceResponse: ResponseEntity<String>?
             try {
-                val webClient = WebClient.create(settings?.getCompreFaceServer()!!)
+                val webClient = WebClient.create(settings.getCompreFaceServer()!!)
                 compreFaceResponse = webClient.get()
                     .uri("api/v1/recognition/subjects/")
                     .header("x-api-key", settings.getCompreFaceKey())
