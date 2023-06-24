@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+  <div class="row flex-grow-sm-1 flex-grow-0">
+    <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+    <main role="main" class="col overflow-auto h-100">
+      <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
+      <div class="row image-group-padding">
+        <h2 class="form-signin-heading">Manage API key</h2>
+
+        <br><br><br>
+        <div class="col-4">
+          <div class="input-group mb-3">
+            <span data-clipboard-target="#apikey" class="input-group-prepend"><button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-outline-secondary" type="button"><span id="apikeycopyicon" class="bi-clipboard" style="font-size: 1rem;"></span></button></span>
+            <input id="apikey" type="text" class="form-control" aria-label="API key" th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
+            <span class="input-group-append"><button id="updateapikey" class="btn btn-outline-secondary" type="button"><span class="bi-arrow-clockwise" style="font-size: 1rem;"></span></button></span>
+            <div id="msg"></div>
+          </div>
+        </div>
+      </div>
+
+      <th:block th:if="${message != '' and alertClass != ''}">
+        <div class="col-12">
+          <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+        </div>
+      </th:block>
+
+      <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+    </main>
+  </div>
+</div>
+
+<div class="modal fade" id="apikeyUpdateConfirmation" tabindex="-1" role="dialog" aria-labelledby="apikey" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="trashModalLabel">Update API key</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">Are you sure you want to update your API key?</div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmUpdateApiKey">Confirm</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+  /*<![CDATA[*/
+  shashin.nonce = /*[[${cspNonce}]]*/ '';
+  shashin.apikey = /*[[${apikey}]]*/ '';
+  /*]]>*/
+
+  $("#copyapikey").on("click", function (e) {
+    e.preventDefault();
+
+    const apikey = $("#apikey").val();
+    $("#msg").html("");
+
+    if (apikey !== null && apikey !== "") {
+      const clipboard = new ClipboardJS("#copyapikey");
+
+      clipboard.on('success', function (e) {
+        $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+      });
+
+      clipboard.on('error', function (e) {
+        // console.log("fail:" + e.message)
+        $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+      });
+    } else {
+      $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+      $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+    }
+  });
+
+  $("#updateapikey").on("click", async function (e) {
+    $("#apikeyUpdateConfirmation").modal('show');
+  });
+
+  $("#confirmUpdateApiKey").on("click", async function (e) {
+    e.preventDefault();
+
+    $("#msg").html("");
+
+    const currentApikey = $("#apikey").val();
+
+    const http = new Http("apikey update");
+    const json = {currentApikey: currentApikey};
+
+    let data = await http.ajax("post", "/users/apikey/update", JSON.stringify(json));
+    if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "") {
+      $("#apikey").val(data["updatedApikey"]);
+    } else {
+      $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not regenerate API key</div>");
+    }
+
+  });
+</script>
+
+</body>
+</html>
