@@ -125,6 +125,7 @@ CREATE TABLE `user` (
     `darkMode` BOOLEAN NOT NULL DEFAULT FALSE,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL,
+    `apikey` VARCHAR(36) NOT NULL DEFAULT '00000000-00000000-00000000-00000000',
     CHECK(`username` <> ''),
     CHECK(`password` <> '')
 );

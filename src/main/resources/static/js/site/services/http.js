@@ -13,6 +13,10 @@ class Http {
             retries: shashin.ajaxRetries
         }
 
+        if (shashin.apikey !== "") {
+            ajaxParams.headers = {"X-API-KEY": shashin.apikey};
+        }
+
         if (type === "post" && typeof data !== "undefined") {
             ajaxParams.data = data;
         }

@@ -151,7 +151,7 @@ class TimelineController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}", "/api/v1/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
     fun getTimelineMediaType(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
         val response = buildTimelineData(model,mediaType,0)

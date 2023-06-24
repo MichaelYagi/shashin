@@ -136,46 +136,72 @@ class AttributeController {
         }
         model["parameter"] = ""
         model["currentUser"] = User()
-
         model["authority"] = ""
         model["username"] = ""
+        model["apikey"] = ""
         val requestAttributes = RequestContextHolder.currentRequestAttributes()
         val attributes = requestAttributes as ServletRequestAttributes
         val request = attributes.request
-        val session = request.getSession(true)
-        try {
-            val securityContext: SecurityContext = session.getAttribute("SPRING_SECURITY_CONTEXT") as SecurityContext
-            val authorities = securityContext.authentication.authorities as Collection<GrantedAuthority>
-            model["username"] = securityContext.authentication.name
-            for (authority in authorities) {
-                model["authority"] = authority.authority
+        var currentUser: User?
+
+        //println("X-API-KEY: "+request.getHeader("X-API-KEY"))
+
+        if (!request.getHeader("X-API-KEY").isNullOrBlank()) {
+            currentUser = userRepository.findByApikey(request.getHeader("X-API-KEY"))
+            if (currentUser != null) {
+                model["currentUser"] = currentUser
+                model["authority"] = currentUser.getAuthority()!!
+                model["username"] = currentUser.getUsername()!!
+                model["apikey"] = currentUser.getApikey()!!
+            } else {
+                logger.log(Level.INFO, "{\"message\":\"Invalid API Key\"}")
             }
-            val currentUser = userRepository.findByUsername(securityContext.authentication.name)
-            if (currentUser != null && currentUser.getAuthority() == adminRole && (currentUser.getIsAllowed() == false || currentUser.getIsAllowed() == null)) {
-                currentUser.setIsAllowed(true)
-            }
-            if (currentUser != null && currentUser.getDarkMode() == null) {
-                currentUser.setDarkMode(false)
-            }
-            if (currentUser == null || currentUser.getIsAllowed() == false) {
-                SecurityContextHolder.clearContext()
-                session?.invalidate()
+        } else {
+            val session = request.getSession(true)
+            try {
+                val securityContext: SecurityContext =
+                    session.getAttribute("SPRING_SECURITY_CONTEXT") as SecurityContext
+                val authorities = securityContext.authentication.authorities as Collection<GrantedAuthority>
+                model["username"] = securityContext.authentication.name
+
+                //println("Session: "+securityContext.authentication.name)
+
+                for (authority in authorities) {
+                    model["authority"] = authority.authority
+                }
+                currentUser = userRepository.findByUsername(securityContext.authentication.name)
+                if (currentUser != null) {
+                    if (currentUser.getAuthority() == adminRole && (currentUser.getIsAllowed() == false || currentUser.getIsAllowed() == null)) {
+                        currentUser.setIsAllowed(true)
+                    }
+                    if (currentUser.getDarkMode() == null) {
+                        currentUser.setDarkMode(false)
+                    }
+                    if (!currentUser.getApikey().isNullOrBlank()) {
+                        model["apikey"] = currentUser.getApikey()!!
+                    }
+                }
+
+                if (currentUser == null || currentUser.getIsAllowed() == false) {
+                    SecurityContextHolder.clearContext()
+                    session?.invalidate()
+                    val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
+                    cookie.path = "/"
+                    cookie.isHttpOnly = true
+                    cookie.maxAge = 0
+                    response.addCookie(cookie)
+                } else {
+                    model["currentUser"] = currentUser
+                }
+            } catch (e: Exception) {
+                model["currentUser"] = User()
                 val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
                 cookie.path = "/"
                 cookie.isHttpOnly = true
                 cookie.maxAge = 0
                 response.addCookie(cookie)
-            } else {
-                model["currentUser"] = currentUser
+                logger.log(Level.INFO, "Not logged in. " + e.localizedMessage)
             }
-        } catch(e: Exception) {
-            model["currentUser"] = User()
-            val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
-            cookie.path = "/"
-            cookie.isHttpOnly = true
-            cookie.maxAge = 0
-            response.addCookie(cookie)
-            logger.log(Level.INFO, "Not logged in. " + e.localizedMessage)
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
 

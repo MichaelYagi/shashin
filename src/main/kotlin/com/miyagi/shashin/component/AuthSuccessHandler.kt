@@ -2,7 +2,7 @@ package com.miyagi.shashin.component
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.configuration.WebSecurityConfig
+import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
@@ -116,7 +116,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     }
 
     private fun validSubPaths(pathToCompare: String): Boolean {
-        val validWebSubPaths = WebSecurityConfig.validWebSubPaths
+        val validWebSubPaths = MultiSecurityConfig.validWebSubPaths
         for (path in validWebSubPaths) {
             if (pathToCompare.lowercase().contains(path)) {
                 return true

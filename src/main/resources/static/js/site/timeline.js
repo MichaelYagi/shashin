@@ -1342,7 +1342,7 @@
     timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
         const http = new Http("attaching associated metadata");
         const version = Util.getMetadataLocalStorage();
-        http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
+        http.ajax("get", "/api/v1/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === timelineSettings.success) {
                     if (data.hasOwnProperty("metadataList") &&
@@ -1392,10 +1392,14 @@
 
         const ajaxParams = {
             type: 'get',
-            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
+            url: "/api/v1/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries
+        }
+
+        if (shashin.apikey !== "") {
+            ajaxParams.headers = {"X-API-KEY": shashin.apikey};
         }
 
         return await $.ajax(ajaxParams)

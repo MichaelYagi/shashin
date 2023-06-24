@@ -21,6 +21,8 @@ class User {
     @NotBlank
     private var isAllowed: Boolean? = false
     @NotBlank
+    private var apikey: String? = null
+    @NotBlank
     private var darkMode: Boolean? = false
     private var authority: String? = null
     private var createdAt: String? = null
@@ -59,6 +61,14 @@ class User {
 
     fun setPassword(password: String?) {
         this.password = password
+    }
+
+    fun getApikey(): String? {
+        return this.apikey
+    }
+
+    fun setApikey(apikey: String?) {
+        this.apikey = apikey
     }
 
     fun getCreatedAt(): String? {

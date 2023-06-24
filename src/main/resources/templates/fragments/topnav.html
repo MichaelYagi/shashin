@@ -10,6 +10,7 @@
     $(document).ready(async function () {
         /*<![CDATA[*/
         shashin.darkMode = /*[[${currentUser.darkMode}]]*/ true;
+        shashin.apikey = /*[[${apikey}]]*/ '';
         const userId = /*[[${currentUser.id}]]*/ 0;
         /*]]>*/
 
@@ -56,6 +57,10 @@
                 <input type="submit" style="position: absolute; left: -9999px"/>
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                     $(document).ready(async function () {
+                        /*<![CDATA[*/
+                        shashin.apikey = /*[[${apikey}]]*/ '';
+                        /*]]>*/
+
                         const http = new Http("search history");
                         const data = await http.ajax("get", "/api/v1/search/history");
 
