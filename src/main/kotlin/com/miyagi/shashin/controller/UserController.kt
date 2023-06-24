@@ -123,6 +123,64 @@ class UserController {
         return module
     }
 
+    @GetMapping("/users/apikey")
+    fun getApiKey(model: Model): String {
+        model["message"] = ""
+        model["user"] = User()
+        model["alertClass"] = ""
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            model["user"] = currentUserObj
+        }
+
+        val module = "apikey"
+        model["msg"] = ""
+        model["status"] = ApiResponse.SUCCESS.status
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/users/apikey/update", "/api/v1/users/apikey/update"], method = [RequestMethod.POST], produces = ["application/json"])
+    @ResponseBody
+    fun postUpdateApikey(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+        val apikeyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "Could not save apikey"
+        response["message"] = "Could not save apikey"
+        response["status"] = ApiResponse.FAIL.status
+        response["updatedApikey"] = ""
+
+        if (apikeyMap.containsKey("currentApikey")) {
+            val currentApikey = apikeyMap["currentApikey"]
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            if (currentUserObj != null && currentUserObj.getApikey() == currentApikey) {
+                // Generate a new key
+                val updatedUserObj = userRepository?.findById(currentUserObj.getId())
+                if (updatedUserObj != null) {
+                    val updatedApikey = TextUtils.generateUUID(currentUserObj.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"").toString()
+                    updatedUserObj.get().setApikey(updatedApikey)
+                    userRepository?.save(updatedUserObj.get())
+
+                    response["updatedApikey"] = updatedApikey
+                    response["msg"] = ""
+                    response["status"] = ApiResponse.SUCCESS.status
+                    response["message"] = ""
+                }
+            }
+        }
+
+        val module = "apikey"
+        response["activePage"] = module
+        response["activeSidebar"] = module
+        response["titleDescriptor"] = TextUtils.capitalized(module)
+
+        return mapper.writeValueAsString(response)
+    }
+
     @GetMapping("/users/register")
     fun getRegisterUser(model: Model): String {
         val userCount = userRepository?.count()
@@ -173,6 +231,7 @@ class UserController {
             newUser.setPassword(encodedPassword)
             newUser.setCreatedAt(getCurrentTimestamp())
             newUser.setModifiedAt(getCurrentTimestamp())
+            newUser.setApikey(TextUtils.generateUUID(newUser.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"").toString())
             newUser.setLoggedIn(false)
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
