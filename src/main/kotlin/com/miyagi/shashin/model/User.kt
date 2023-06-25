@@ -19,7 +19,7 @@ class User {
     @NotBlank
     private var loggedIn: Boolean? = false
     @NotBlank
-    private var isAllowed: Boolean? = false
+    private var isAuthorized: Boolean? = false
     @NotBlank
     private var apikey: String? = null
     @NotBlank
@@ -103,12 +103,12 @@ class User {
         this.loggedIn = loggedIn
     }
 
-    fun getIsAllowed(): Boolean? {
-        return this.isAllowed
+    fun getIsAuthorized(): Boolean? {
+        return this.isAuthorized
     }
 
-    fun setIsAllowed(isAllowed: Boolean?) {
-        this.isAllowed = isAllowed
+    fun setIsAuthorized(isAuthorized: Boolean?) {
+        this.isAuthorized = isAuthorized
     }
 
     fun getDarkMode(): Boolean? {
@@ -139,7 +139,7 @@ class User {
         map["authority"] = this.authority
         map["apikey"] = this.apikey
         map["loggedIn"] = this.loggedIn
-        map["isAllowed"] = this.isAllowed
+        map["isAuthorized"] = this.isAuthorized
         map["darkMode"] = this.darkMode
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"

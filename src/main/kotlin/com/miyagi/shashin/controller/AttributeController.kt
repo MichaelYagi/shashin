@@ -171,8 +171,8 @@ class AttributeController {
                 }
                 currentUser = userRepository.findByUsername(securityContext.authentication.name)
                 if (currentUser != null) {
-                    if (currentUser.getAuthority() == adminRole && (currentUser.getIsAllowed() == false || currentUser.getIsAllowed() == null)) {
-                        currentUser.setIsAllowed(true)
+                    if (currentUser.getAuthority() == adminRole && (currentUser.getIsAuthorized() == false || currentUser.getIsAuthorized() == null)) {
+                        currentUser.setIsAuthorized(true)
                     }
                     if (currentUser.getDarkMode() == null) {
                         currentUser.setDarkMode(false)
@@ -182,7 +182,7 @@ class AttributeController {
                     }
                 }
 
-                if (currentUser == null || currentUser.getIsAllowed() == false) {
+                if (currentUser == null || currentUser.getIsAuthorized() == false) {
                     SecurityContextHolder.clearContext()
                     session?.invalidate()
                     val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.

@@ -162,10 +162,10 @@ class DashboardController {
         response["sidecarSizeMB"] = sidecarSize/(1024 * 1024)
 
         // User stats
-        val allowedUserCount = userRepository.countAllByIsAllowedIsTrueAndAuthorityEquals(userRole!!)
-        val notAllowedUserCount = userRepository.countAllByIsAllowedIsFalseAndAuthorityEquals(userRole!!)
-        val allowedAdminCount = userRepository.countAllByIsAllowedIsTrueAndAuthorityEquals(adminRole!!)
-        val notAllowedAdminCount = userRepository.countAllByIsAllowedIsFalseAndAuthorityEquals(adminRole!!)
+        val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
+        val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
+        val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
+        val notAllowedAdminCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(adminRole!!)
         val loggedInCount = userRepository.countAllByLoggedInIsTrue()
         response["allowedUserCount"] = allowedUserCount
         response["notAllowedUserCount"] = notAllowedUserCount

@@ -40,11 +40,11 @@
                                     </a>
                                 </td>
                                 <td>
-                                    <a href="#" th:id="${'isallowed' + user.id}">
-                                        <th:block th:if="${user.isAllowed}">
+                                    <a href="#" th:id="${'isauthorized' + user.id}">
+                                        <th:block th:if="${user.isAuthorized}">
                                             <span class="bi-check" style="font-size: 1rem;color: lightgreen;"></span>
                                         </th:block>
-                                        <th:block th:unless="${user.isAllowed}">
+                                        <th:block th:unless="${user.isAuthorized}">
                                             <span class="bi-x" style="font-size: 1rem;color: lightsalmon;"></span>
                                         </th:block>
                                     </a>
@@ -88,10 +88,10 @@
 
                                     $("#proproleuser[[${user.id}]]").modal('show');
                                 });
-                                $("#isallowed[[${user.id}]]").on("click", function(e) {
+                                $("#isauthorized[[${user.id}]]").on("click", function(e) {
                                     e.preventDefault();
 
-                                    $("#propisalloweduser[[${user.id}]]").modal('show');
+                                    $("#propisauthorizeduser[[${user.id}]]").modal('show');
                                 });
                                 /*]]>*/
                             </script>
