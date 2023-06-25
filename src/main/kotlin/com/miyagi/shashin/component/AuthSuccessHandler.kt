@@ -75,17 +75,17 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             }
 
             if (currentAuthority != "") {
-                var isAllowed = true
+                var isAuthorized = true
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null && user.getId() > 0) {
-                    if (currentAuthority == userRole && user.getIsAllowed() == false) {
+                    if (currentAuthority == userRole && user.getIsAuthorized() == false) {
                         user.setLoggedIn(false)
                         user.setModifiedAt(getCurrentTimestamp())
                         userRepository?.save(user)
                         SecurityContextLogoutHandler().logout(request, response, authentication)
                         SecurityContextHolder.getContext().authentication = null
                         redirectStrategy.sendRedirect(request, response, "/users/login?msg=loginfail")
-                        isAllowed = false
+                        isAuthorized = false
                     } else {
                         user.setLoggedIn(true)
                         user.setModifiedAt(getCurrentTimestamp())
@@ -97,7 +97,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                     }
                 }
 
-                if (isAllowed) {
+                if (isAuthorized) {
                     if (user != null && user.getId() > 0) {
                         notifyLogin(user)
                         checkLatestAppVersion(user)

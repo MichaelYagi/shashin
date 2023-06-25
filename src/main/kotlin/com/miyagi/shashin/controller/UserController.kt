@@ -236,7 +236,7 @@ class UserController {
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
                 newUser.setAuthority("ROLE_ADMIN")
-                newUser.setIsAllowed(true)
+                newUser.setIsAuthorized(true)
                 userRepository?.save(newUser)
                 return "redirect:/users/login?msg=regsuccess"
             } else {
@@ -322,7 +322,7 @@ class UserController {
                 val users: List<User?> = userRepository?.findAll() as List<User?>
                 for (other in users) {
                     if (other != null) {
-                        if (other.equals(userObj) && bcrypt.matches(password, other.getPassword()) && userObj.getIsAllowed() == true) {
+                        if (other.equals(userObj) && bcrypt.matches(password, other.getPassword()) && userObj.getIsAuthorized() == true) {
                             userObj.setLoggedIn(true)
                             userObj.setModifiedAt(getCurrentTimestamp())
                             userRepository?.save(userObj)

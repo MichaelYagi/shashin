@@ -676,7 +676,7 @@ class SettingsController {
                 val userObj = userRepository?.findById(userId)?.get()
                 if (userObj != null) {
                     userObj.setModifiedAt(getCurrentTimestamp())
-                    userObj.setIsAllowed(changePermissionTo)
+                    userObj.setIsAuthorized(changePermissionTo)
                     userRepository?.save(userObj)
                 }
             }

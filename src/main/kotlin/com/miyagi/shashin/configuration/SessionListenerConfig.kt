@@ -48,7 +48,7 @@ internal class SessionListenerConfig : HttpSessionListener {
                 loggedInUsernameList.add(username)
             }
         }
-        val users = userRepository?.findAllByIsAllowedTrue()
+        val users = userRepository?.findAllByIsAuthorizedTrue()
         if (users != null) {
             val userList = mutableListOf<User>()
             for (user in users) {

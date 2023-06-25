@@ -43,7 +43,7 @@ class TimelineControllerApiTest {
         var encodedPassword: String = bcrypt.encode("testadmin")
         adminObj.setPassword(encodedPassword)
         adminObj.setAuthority("ROLE_ADMIN")
-        adminObj.setIsAllowed(true)
+        adminObj.setIsAuthorized(true)
         userRepository?.save(adminObj)
         adminId = adminObj.getId()
 
@@ -52,7 +52,7 @@ class TimelineControllerApiTest {
         encodedPassword = bcrypt.encode("testuser")
         userObj.setPassword(encodedPassword)
         userObj.setAuthority("ROLE_USER")
-        userObj.setIsAllowed(true)
+        userObj.setIsAuthorized(true)
         userRepository?.save(userObj)
         userId = userObj.getId()
 

@@ -24,9 +24,9 @@ object AuthenticationService {
             userObj = userRepository?.findByApikey(apiKey.trim())
         }
 
-        println(apiKey)
+//        println(apiKey)
 
-        if (apiKey == null || userObj == null || (userObj.getApikey() != null && apiKey != userObj.getApikey()) || (userObj.getApikey() != null && !userObj.getIsAllowed()!!)) {
+        if (apiKey == null || userObj == null || (userObj.getApikey() != null && apiKey != userObj.getApikey()) || (userObj.getApikey() != null && !userObj.getIsAuthorized()!!)) {
             throw BadCredentialsException("{\"message\":\"Invalid API Key\"}")
         }
 
