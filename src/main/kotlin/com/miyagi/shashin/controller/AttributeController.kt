@@ -170,17 +170,6 @@ class AttributeController {
                     model["authority"] = authority.authority
                 }
                 currentUser = userRepository.findByUsername(securityContext.authentication.name)
-                if (currentUser != null) {
-                    if (currentUser.getAuthority() == adminRole && (currentUser.getIsAuthorized() == false || currentUser.getIsAuthorized() == null)) {
-                        currentUser.setIsAuthorized(true)
-                    }
-                    if (currentUser.getDarkMode() == null) {
-                        currentUser.setDarkMode(false)
-                    }
-                    if (!currentUser.getApikey().isNullOrBlank()) {
-                        model["apikey"] = currentUser.getApikey()!!
-                    }
-                }
 
                 if (currentUser == null || currentUser.getIsAuthorized() == false) {
                     SecurityContextHolder.clearContext()
@@ -191,6 +180,13 @@ class AttributeController {
                     cookie.maxAge = 0
                     response.addCookie(cookie)
                 } else {
+                    if (currentUser.getDarkMode() == null) {
+                        currentUser.setDarkMode(false)
+                    }
+                    if (!currentUser.getApikey().isNullOrBlank()) {
+                        model["apikey"] = currentUser.getApikey()!!
+                    }
+                    currentUser.setLoggedIn(true)
                     model["currentUser"] = currentUser
                 }
             } catch (e: Exception) {
