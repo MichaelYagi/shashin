@@ -78,7 +78,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 var isAuthorized = true
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null && user.getId() > 0) {
-                    if (currentAuthority == userRole && user.getIsAuthorized() == false) {
+                    if (user.getIsAuthorized() == false) {
                         user.setLoggedIn(false)
                         user.setModifiedAt(getCurrentTimestamp())
                         userRepository?.save(user)
