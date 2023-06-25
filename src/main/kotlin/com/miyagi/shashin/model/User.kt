@@ -137,6 +137,7 @@ class User {
         map["id"] = this.id
         map["username"] = this.username
         map["authority"] = this.authority
+        map["apikey"] = this.apikey
         map["loggedIn"] = this.loggedIn
         map["isAllowed"] = this.isAllowed
         map["darkMode"] = this.darkMode

@@ -68,11 +68,16 @@
 
       clipboard.on('success', function (e) {
         $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+        $('#apikeycopyicon').fadeOut(5000, function () {
+          $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard");
+        }).fadeIn(400)
+
       });
 
       clipboard.on('error', function (e) {
         // console.log("fail:" + e.message)
         $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+        $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Operation failed: "+e.message+"</div>");
       });
     } else {
       $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
