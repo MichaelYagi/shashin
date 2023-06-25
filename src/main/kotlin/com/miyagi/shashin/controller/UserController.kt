@@ -272,6 +272,8 @@ class UserController {
         return module
     }
 
+
+
     @GetMapping("/users/login")
     fun getLoginUser(model: Model, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
         val module = "login"
@@ -478,5 +480,26 @@ class UserController {
     private fun md5(input:String): String {
         val md = MessageDigest.getInstance("MD5")
         return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
+    }
+
+    @RequestMapping(value = ["/api/v1/users/self"], method = [RequestMethod.GET], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_ADMIN","ROLE_USER")
+    fun getMyUserInfo(model: Model): String {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "Could not get user info"
+        response["message"] = "Could not get user info"
+        response["status"] = ApiResponse.FAIL.status
+        response["user"] = User()
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            response["user"] = mapper.readTree(currentUserObj.toString())
+            response["msg"] = ""
+            response["message"] = ""
+            response["status"] = ApiResponse.SUCCESS.status
+        }
+
+        return mapper.writeValueAsString(response)
     }
 }
