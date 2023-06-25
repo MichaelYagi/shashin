@@ -154,7 +154,7 @@
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="alloweduserModalLabel">Change <th:block th:text="${user.username}"></th:block> permission to <th:block th:text="${user.isAuthorized == true ? 'not login?' : 'login?'}"></th:block></h5>
+                <h5 class="modal-title" id="alloweduserModalLabel"><th:block th:text="${user.isAuthorized == true ? 'Deauthorizing' : 'Authorizing'}"></th:block> <strong><th:block th:text="${user.username}"></th:block></strong></h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">Are you sure you want to change this users permissions?</div>
