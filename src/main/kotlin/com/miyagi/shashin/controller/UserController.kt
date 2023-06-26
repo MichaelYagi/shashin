@@ -402,7 +402,7 @@ class UserController {
             operationId = "getMyUserInfo",
             description = "See your user information including your user ID.<br>" +
                     "<pre><code>" +
-                    "curl -X GET \"<base_url>/api/v1/users/self\" \\\n" +
+                    "curl -X GET \"&lt;base_url&gt;/api/v1/users/self\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
