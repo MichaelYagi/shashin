@@ -145,14 +145,14 @@ class UserController {
         return module
     }
 
-    @RequestMapping(value = ["/users/apikey/update", "/api/v1/users/apikey/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/users/apikey/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN","ROLE_USER")
-    fun postUpdateApikey(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+    fun postWebUpdateApikey(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
         val apikeyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
-        response["msg"] = "Could not save apikey"
-        response["message"] = "Could not save apikey"
+        response["msg"] = "Could not update API key"
+        response["message"] = "Could not update API key"
         response["status"] = ApiResponse.FAIL.status
         response["updatedApikey"] = ""
 

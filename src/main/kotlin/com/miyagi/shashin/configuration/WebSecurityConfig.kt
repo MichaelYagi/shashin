@@ -171,8 +171,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/users/apikey/update",
             "api/v1/mapdata",
             "api/v1/metadata/**",
-            "api/v1/users/self",
-            "/api/v1/users/apikey/update"
+            "api/v1/users/self"
         )
 
         @Bean
