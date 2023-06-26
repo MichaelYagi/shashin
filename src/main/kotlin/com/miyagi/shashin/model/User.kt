@@ -138,7 +138,6 @@ class User {
         map["username"] = this.username
         map["authority"] = this.authority
         map["apikey"] = this.apikey
-        map["loggedIn"] = this.loggedIn
         map["isAuthorized"] = this.isAuthorized
         map["darkMode"] = this.darkMode
         val mapper = ObjectMapper()

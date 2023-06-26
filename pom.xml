@@ -171,6 +171,12 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>2.13.4</version>
         </dependency>
+        <!-- Javadoc -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-javadoc</artifactId>
+            <version>1.7.0</version>
+        </dependency>
         <!-- DB -->
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -268,6 +274,20 @@
         <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
         <testSourceDirectory>${project.basedir}/src/test</testSourceDirectory>
         <plugins>
+            <!-- javadoc support for springdoc-openapi -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>com.github.therapi</groupId>
+                            <artifactId>therapi-runtime-javadoc-scribe</artifactId>
+                            <version>0.15.0</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
             <!-- Code coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
