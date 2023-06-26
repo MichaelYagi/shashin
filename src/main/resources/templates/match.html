@@ -34,10 +34,11 @@
         $("#matchAction").on("click", function(e) {
             e.preventDefault();
 
-            let posting = $.post(
-                "/person/matches/start",
-                {"cancelScan": false}
-            );
+            let posting = $.post({
+                url: "/person/matches/start",
+                headers: {'content-type': 'application/json'},
+                data: {"cancelScan": false}
+            });
 
             posting.done(function(data) {
                 if (data["status"] === "success") {
@@ -51,10 +52,11 @@
         $("#cancelThread").on("click", function(e) {
             e.preventDefault();
 
-            let posting = $.post(
-                "/person/matches/start",
-                {"cancelScan": true}
-            );
+            let posting = $.post({
+                url: "/person/matches/start",
+                headers: {'content-type': 'application/json'},
+                data: {"cancelScan": true}
+            });
 
             posting.done(function(data) {
                 if (data["msg"]) {
