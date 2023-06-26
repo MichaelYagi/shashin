@@ -90,7 +90,7 @@ class ArticlesController {
                     }
                 }
 
-                roleController["rolePath"] = TextUtils.generateUUID(key.toString(),System.currentTimeMillis().toString(),"",0.0,0,"").toString()
+                roleController["rolePath"] = TextUtils.generateUUID(key.toString(),"","",0.0,0,"").toString()
                 roleController["controller"] = value.toString()
                 apiMap[key.toString()] = roleController
 
