@@ -410,7 +410,7 @@ class UserController {
                     "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
                     "</thead><tbody>" +
                     "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
-                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>api key of the Shashin service, created by the user</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
                     "<code><pre>{\n" +
