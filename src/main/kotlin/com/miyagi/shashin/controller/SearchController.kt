@@ -60,7 +60,7 @@ class SearchController {
         return module
     }
 
-    @RequestMapping(value = ["/search/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/search/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedSearch(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         val hasSearchTerm = request.parameterMap.containsKey("searchTerm")
@@ -148,7 +148,7 @@ class SearchController {
         return "redirect:/"+module
     }
 
-    @RequestMapping(value = ["/api/v1/search/history"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/search/history"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getSearchHistory(model: Model, request: HttpServletRequest): String {
         val response = mutableMapOf<String, Any?>()

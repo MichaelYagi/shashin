@@ -499,7 +499,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/content/delete"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/settings/content/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
     @Transactional
@@ -575,7 +575,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/user/delete/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/settings/user/delete/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun deleteUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
@@ -602,7 +602,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/user/changepassword/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/settings/user/changepassword/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun resetPasswordUser(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
@@ -631,7 +631,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/user/role/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/settings/user/role/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun changeUserRole(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
@@ -663,7 +663,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/user/permission/{userId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/settings/user/permission/{userId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun changeUserLoginPermission(model: Model, @RequestBody requestBody: JsonNode, @PathVariable userId: Int): String? {
@@ -791,7 +791,7 @@ class SettingsController {
 
     @Secured("ROLE_ADMIN")
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/settings/scan"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postScan(
@@ -987,7 +987,7 @@ class SettingsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/settings/directorytree"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/settings/directorytree"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getDirectoryTree(model: Model, @RequestBody requestBody: JsonNode): String? {
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})

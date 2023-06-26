@@ -56,7 +56,7 @@ class BrowseController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/recent/{page}","/api/v1/recent/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/recent/{page}","/api/v1/recent/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedRecent(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildBrowseRecord("recent",model,page))
@@ -74,7 +74,7 @@ class BrowseController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/modified/{page}","/api/v1/modified/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/modified/{page}","/api/v1/modified/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedModified(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildBrowseRecord("modified",model,page))
@@ -245,7 +245,7 @@ class BrowseController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["api/v1/folders"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["api/v1/folders"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getFoldersApi(model: Model): String {
         return mapper.writeValueAsString(buildAllFolders(model))
@@ -306,7 +306,7 @@ class BrowseController: BaseController() {
         return response
     }
 
-    @RequestMapping(value = ["/folders/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/folders/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolders(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildPagedFolders(model,page))
@@ -332,7 +332,7 @@ class BrowseController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/folder/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/folder/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String): String {
         return mapper.writeValueAsString(buildFolder(model,URLDecoder.decode(folder, StandardCharsets.UTF_8.toString()),page))

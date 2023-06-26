@@ -93,7 +93,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/albums/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/albums/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumsApi(model: Model, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildAlbums(model, page))
@@ -208,7 +208,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/sharedalbums"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/sharedalbums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getSharedAlbumsApi(model: Model): String {
         return mapper.writeValueAsString(buildSharedAlbumsList(model))
@@ -247,7 +247,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/albumcomments/{albumId}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/albumcomments/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumCommentsApi(@PathVariable albumId: Int): String {
         return mapper.writeValueAsString(buildAlbumComments(albumId))
@@ -279,7 +279,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
@@ -321,7 +321,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/delete/batch"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/album/delete/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode): String? {
@@ -386,7 +386,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/update"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/album/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun updateAlbum(@RequestBody requestBody: JsonNode): String? {
@@ -466,7 +466,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/{albumId}/save/sharelink","/api/v1/album/{albumId}/save/sharelink"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/album/{albumId}/save/sharelink","/api/v1/album/{albumId}/save/sharelink"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
@@ -519,7 +519,7 @@ class AlbumsController {
         return module
     }
 
-    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}","/api/v1/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}","/api/v1/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
         val queryLimit = model.getAttribute("queryLimit").toString().toInt()
@@ -567,7 +567,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
@@ -627,7 +627,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildAlbum(model,albumId,page))
@@ -825,7 +825,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun updateAlbumName(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
