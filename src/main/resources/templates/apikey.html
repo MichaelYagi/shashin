@@ -14,7 +14,7 @@
         <h2 class="form-signin-heading">Manage API key</h2>
 
         <br><br><br>
-        <div class="col-4">
+        <div class="col-12">
           <div class="input-group mb-3">
             <span data-clipboard-target="#apikey" class="input-group-prepend"><button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-outline-secondary" type="button"><span id="apikeycopyicon" class="bi-clipboard" style="font-size: 1rem;"></span></button></span>
             <input id="apikey" type="text" class="form-control" aria-label="API key" th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
