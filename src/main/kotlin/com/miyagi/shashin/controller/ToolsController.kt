@@ -21,7 +21,7 @@ class ToolsController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @RequestMapping(value = ["tools/minifyassets"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["tools/minifyassets"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getMinifyAssets(model: Model): String {
         val response = mutableMapOf<String, Any?>()

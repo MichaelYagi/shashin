@@ -239,7 +239,7 @@ class TimelineController: BaseController() {
         return response
     }
 
-    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
     fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
@@ -258,7 +258,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
     }
 
-    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
     fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
@@ -400,7 +400,7 @@ class TimelineController: BaseController() {
         return response
     }
 
-    @RequestMapping(value = ["/timeline/remove/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/remove/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -669,7 +669,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/timeline/remove/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/remove/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -951,7 +951,7 @@ class TimelineController: BaseController() {
 
     }
 
-    @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun postSyncData(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})

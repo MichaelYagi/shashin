@@ -107,7 +107,7 @@ class FavoritesController {
         return response
     }
 
-    @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], produces = ["application/json"])
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody
     fun postSaveFavorite(model: Model, @RequestBody requestBody: JsonNode): String {
@@ -173,7 +173,7 @@ class FavoritesController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/favorite/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/favorite/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -218,7 +218,7 @@ class FavoritesController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/favorites/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/favorites/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)

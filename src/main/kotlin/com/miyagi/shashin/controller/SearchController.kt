@@ -60,7 +60,7 @@ class SearchController {
         return module
     }
 
-    @RequestMapping(value = ["/search/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/search/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedSearch(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
         val hasSearchTerm = request.parameterMap.containsKey("searchTerm")

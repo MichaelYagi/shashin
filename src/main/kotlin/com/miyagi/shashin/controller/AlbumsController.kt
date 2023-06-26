@@ -279,7 +279,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
@@ -321,7 +321,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/delete/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/delete/batch"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode): String? {
@@ -386,7 +386,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/update"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun updateAlbum(@RequestBody requestBody: JsonNode): String? {
@@ -567,7 +567,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun shareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
@@ -825,7 +825,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/updatename/{albumId}"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun updateAlbumName(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
