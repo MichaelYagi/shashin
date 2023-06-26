@@ -94,6 +94,93 @@ class AlbumsController {
         return model.getAttribute("activePage").toString()
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getAlbumsApi",
+            description = "Get paged list for all albums." +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/albums/{page}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"baseUrl\": \"&lt;base_url&gt;\",\n" +
+                    "    \"showControls\": &lt;show_controls&gt;,\n" +
+                    "    \"userCount\": &lt;user_count&gt;,\n" +
+                    "    \"albumsList\": [\n" +
+                    "        {\n" +
+                    "            \"coverUrl\": \"&lt;relative_cover_url&gt;\",\n" +
+                    "            \"albumVideoCount\": &lt;album_video_count&gt;,\n" +
+                    "            \"albumPhotoCount\": &lt;album_photo_count&gt;,\n" +
+                    "            \"id\": &lt;album_id&gt;,\n" +
+                    "            \"shareUrl\": \"&lt;relative_share_url&gt;\",\n" +
+                    "            \"name\": \"&lt;album_name&gt;\"\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"userAlbums\": [\n" +
+                    "        {\n" +
+                    "            \"id\": \"&lt;user_albums_id&gt;,\"\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"albumId\": &lt;album_id&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"albumsCommentsMap\": \"&lt;albumId&gt;\": [\n" +
+                    "        {\n" +
+                    "            \"albumId\": \"&lt;album_id&gt;\",\n" +
+                    "            \"commentId\": \"&lt;comment_id&gt;\",\n" +
+                    "            \"comment\": &lt;comment&gt;,\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"username\": &lt;username&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"sharedAlbums\": [\n" +
+                    "        {\n" +
+                    "            \"albumId\": &lt;album_id&gt;,\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"username\": &lt;username&gt;,\n" +
+                    "            \"isShared\": \"&lt;is_shared&gt;\"\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>baseUrl</td><td>string</td><td>Current base URL</td></tr>" +
+                    "<tr><td>showControls</td><td>boolean</td><td>Set to true if an ADMIN role, and have icons shown to edit the album.</td></tr>" +
+                    "<tr><td>userCount</td><td>int</td><td>Number of users</td></tr>" +
+                    "<tr><td>albumList.coverUrl</td><td>String</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>albumList.albumVideoCount</td><td>string</td><td>The number of videos in this album</td></tr>" +
+                    "<tr><td>albumList.albumPhotoCount</td><td>string</td><td>The number of photos in this album</td></tr>" +
+                    "<tr><td>albumList.id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>albumList.shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>albumList.name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>userAlbums.id</td><td>int</td><td>The user albums ID</td></tr>" +
+                    "<tr><td>userAlbums.userId</td><td>int</td><td>The user ID to share the album</td></tr>" +
+                    "<tr><td>userAlbums.albumId</td><td>int</td><td>The album ID to share the album</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.albumId</td><td>int</td><td>The album ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.commentId</td><td>int</td><td>The comment ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.comment</td><td>string</td><td>The comment for this album</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.userId</td><td>int</td><td>The user ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.username</td><td>string</td><td>The username for the comment</td></tr>" +
+                    "<tr><td>sharedAlbums.albumId</td><td>int</td><td>The album ID used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums.userId</td><td>int</td><td>The user ID used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums.username</td><td>string</td><td>The username used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums.isShared</td><td>boolean</td><td>Flag of whether this album is shared with this user or not</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albums/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
@@ -110,7 +197,6 @@ class AlbumsController {
         response["userAlbums"] = mutableListOf<UserAlbum>()
         response["userCount"] = 0
         response["albumsCommentsMap"] = mutableMapOf<Int, ArrayList<HashMap<String, Any>>>()
-        response["notificationMap"] = mutableMapOf<Int, Boolean>()
         var showControls = false
 
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -124,7 +210,6 @@ class AlbumsController {
             if (userAlbums != null && userAlbums.count() > 0) {
                 val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
 
-                val notificationMap = HashMap<Int, Boolean>()
                 val albums = ArrayList<HashMap<String, Any>>()
                 var albumVideoCount: Int?
                 var albumPhotoCount: Int?
@@ -151,9 +236,6 @@ class AlbumsController {
                         albumMap["albumVideoCount"] = albumVideoCount
                         albums.add(albumMap)
 
-                        val notificationCount = notificationRepository.countAllByAlbumIdAndUserIdAndMetadataIdIsNullAndReadIsFalse(userAlbum.getAlbumId()!!,currentUserObj.getId())
-                        notificationMap[userAlbum.getAlbumId()!!] = notificationCount > 0
-
                         // Get comments for this album
                         val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
                         for (albumComment in albumComments) {
@@ -175,7 +257,6 @@ class AlbumsController {
                 if (albums.isNotEmpty()) {
                     response["albumsList"] = albums
                     response["albumsCommentsMap"] = albumsCommentsMap
-                    response["notificationMap"] = notificationMap
 
                     val userCount = userRepository.count()
                     if (userCount > 1) {
@@ -248,6 +329,50 @@ class AlbumsController {
         return response
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getAlbumCommentsApi",
+            description = "Get comments for an album." +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/albumcomments/{albumId}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>Comments associated with this album Id</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"albumCommentsList\": [" +
+                    "        {\n" +
+                    "            \"comment\": \"&lt;comment&gt;\",\n" +
+                    "            \"commentId\": &lt;comment_id&gt;,\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"albumId\": &lt;album_id&gt;,\n" +
+                    "            \"username\": \"&lt;username&gt;\",\n" +
+                    "            \"createdAt\": \"&lt;created_at&gt;\",\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"status\": \"success\"\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>albumCommentsList.comment</td><td>string</td><td>The comment</td></tr>" +
+                    "<tr><td>albumCommentsList.commentId</td><td>int</td><td>The comment ID</td></tr>" +
+                    "<tr><td>albumCommentsList.albumId</td><td>int</td><td>The album ID for the album the user commented on</td></tr>" +
+                    "<tr><td>albumCommentsList.userId</td><td>int</td><td>The user ID of the person who commented</td></tr>" +
+                    "<tr><td>albumCommentsList.username</td><td>string</td><td>The username of the person who commented</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/albumcomments/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
@@ -256,7 +381,7 @@ class AlbumsController {
     }
     private fun buildAlbumComments(albumId: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["status"] = ""
+        response["status"] = ApiResponse.FAIL.status
         response["msg"] = "No results"
         val albumCommentsList = ArrayList<HashMap<String, Any>>()
 
@@ -270,10 +395,11 @@ class AlbumsController {
             albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
             albumCommentMap["username"] = albumComment.getUsername().toString()
             albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
-            response["status"] = ""
-            response["msg"] = "No results"
             albumCommentsList.add(albumCommentMap)
         }
+
+        response["status"] = ApiResponse.SUCCESS.status
+        response["msg"] = ""
 
         response["albumCommentsList"] = albumComments
 
@@ -467,6 +593,40 @@ class AlbumsController {
         return mapper.writeValueAsString(resp)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postAnonymousShareAlbum",
+            description = "Save and generate a sharable public URL. This can be a user generated share link eg. http://127.0.0.1:6624/share/abcd/album/1" +
+                    "<pre><code>" +
+                    "curl -X POST \"http://127.0.0.1:6624/api/v1/album/{albumId}/save/sharelink\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-d '{\"albumId\": &lt;album_id&gt;, \"relativeShareUrl\": \"&lt;relative_share_url&gt;\"}'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>Album Id for the album to share</td></tr>" +
+                    "<tr><td>albumId</td><td>body param</td><td>int</td><td>required</td><td>Album Id for the album to share</td></tr>" +
+                    "<tr><td>relativeShareUrl</td><td>body param</td><td>string</td><td>required</td><td>The relative share URL you'd like to save</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"relativeShareUrl\": \"&lt;relative_share_url&gt;\",\n" +
+                    "    \"status\": \"success\"\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>relativeShareUrl</td><td>string</td><td>The saved relative URL that can be used to share the album</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/{albumId}/save/sharelink","/api/v1/album/{albumId}/save/sharelink"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
@@ -643,8 +803,8 @@ class AlbumsController {
                     "</thead><tbody>" +
                     "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
-                    "<tr><td>albumId</td><td>param</td><td>string</td><td>required</td><td>The album ID</td></tr>" +
-                    "<tr><td>page</td><td>param</td><td>string</td><td>required</td><td>page number of examples to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>The album ID</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
                     "<code><pre>{\n" +
@@ -703,7 +863,6 @@ class AlbumsController {
         response["albumMetadataList"] = mutableListOf<Metadata>()
         response["albumPhotoCommentsMap"] = mutableMapOf<String, ArrayList<HashMap<String, Any>>>()
         response["userMap"] = mutableMapOf<String, Any>()
-        response["notificationMap"] = mutableMapOf<String, Boolean>()
         response["favorites"] = mutableMapOf<String, String>()
         response["msg"] = "No results"
         response["status"] = "noop"
@@ -721,16 +880,12 @@ class AlbumsController {
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
-                    val notificationMap = HashMap<String, Boolean>()
 
                     for (albumPhoto in albumPhotos) {
                         val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                             albumMetadataList.add(metadata.get())
-
-                            val notificationCount = notificationRepository.countAllByMetadataIdAndUserIdAndReadIsFalse(albumPhoto.getMetadataId()!!,currentUserObj.getId())
-                            notificationMap[albumPhoto.getMetadataId()!!] = notificationCount > 0
 
                             val favorites = favoriteRepository.findAllByMetadataId(albumPhoto.getMetadataId())
                             if (favorites != null) {
@@ -770,7 +925,6 @@ class AlbumsController {
                         val album = albumRepository.findById(albumId)
                         response["titleDescriptor"] = TextUtils.capitalized(module) + " - " + album.get().getName()
                         response["favorites"] = favoritesMap
-                        response["notificationMap"] = notificationMap
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         response["album"] = album.get()
                         response["albumId"] = album.get().getId()
