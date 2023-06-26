@@ -58,7 +58,7 @@ class TrashController {
         return module
     }
 
-    @RequestMapping(value = ["/trash/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/trash/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
         val response = mutableMapOf<String, Any?>()
@@ -86,7 +86,7 @@ class TrashController {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/trash/unhide"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/trash/unhide"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)

@@ -57,7 +57,7 @@ class CommentsController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @RequestMapping(value = ["/comment/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/comment/album/save"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postSaveComment(model: Model, @RequestBody requestBody: JsonNode): String {
@@ -134,7 +134,7 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/albumphoto/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/comment/albumphoto/save"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun postSaveAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -210,7 +210,7 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/comment/update"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     fun postUpdateComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -242,7 +242,7 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/albumphoto/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/comment/albumphoto/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postDeleteAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
@@ -272,7 +272,7 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/album/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/comment/album/delete"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postDeleteComment(model: Model, @RequestBody requestBody: JsonNode): String {
