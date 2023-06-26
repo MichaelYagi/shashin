@@ -40,6 +40,7 @@ class ArticlesController {
         val requestMappingHandlerMapping = applicationContext
             .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping::class.java)
         val map = requestMappingHandlerMapping.handlerMethods
+
         model["apiEndpointsMap"] = mutableMapOf<String, String>()
         val apiMap = mutableMapOf<String, MutableMap<String, String>>()
 
@@ -121,7 +122,9 @@ class ArticlesController {
             }
         }
 
-        model["apiEndpointsMap"] = apiMap
+        val sortedMap = apiMap.toSortedMap(compareBy  { it })
+
+        model["apiEndpointsMap"] = sortedMap
 
         val moduleArray = module.split("/")
         model["activePage"] = module
