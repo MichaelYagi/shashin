@@ -644,7 +644,7 @@ class AlbumsController {
                     "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>albumId</td><td>param</td><td>string</td><td>required</td><td>The album ID</td></tr>" +
-                    "<tr><td>page</td><td>param</td><td>string</td><td>required</td><td>page number of examples to return used for pagination. Page index starts from 0. Admins can set the query/page size can set in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>string</td><td>required</td><td>page number of examples to return used for pagination. Page index starts from 0. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
                     "<code><pre>{\n" +
