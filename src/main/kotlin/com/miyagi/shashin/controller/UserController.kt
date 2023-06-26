@@ -399,6 +399,7 @@ class UserController {
     @RouterOperation(
         operation =
         Operation(
+            operationId = "getMyUserInfo",
             description = "See your user information including your user ID.<br>" +
                     "<pre><code>" +
                     "curl -X GET \"<base_url>/api/v1/users/self\" \\\n" +
@@ -435,8 +436,7 @@ class UserController {
                     "<tr><td>user.apikey</td><td>string</td><td>Your service API key</td></tr>" +
                     "<tr><td>user.isAuthorized</td><td>boolean</td><td>Authorized to access Shashin flag</td></tr>" +
                     "<tr><td>user.darkMode</td><td>boolean</td><td>Flag of whether you have dark enabled or not</td></tr>" +
-                    "</tbody></table>",
-            operationId = "getMyUserInfo",
+                    "</tbody></table>"
         )
     )
     @RequestMapping(value = ["/api/v1/users/self"], method = [RequestMethod.GET], produces = ["application/json"])
