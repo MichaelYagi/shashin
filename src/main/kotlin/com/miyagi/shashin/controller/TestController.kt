@@ -1,36 +1,31 @@
 package com.miyagi.shashin.controller
 
-import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.FileUtils
 import com.sun.management.OperatingSystemMXBean
+import jdk.jfr.Description
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.info.BuildProperties
-import org.springframework.core.io.ByteArrayResource
+import org.springframework.context.ApplicationContext
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.*
+import org.springframework.messaging.handler.HandlerMethod
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.reactive.function.BodyInserters
-import org.springframework.web.reactive.function.client.ClientResponse
-import org.springframework.web.reactive.function.client.WebClient
-import reactor.core.publisher.Mono
-import java.io.File
-import java.io.IOException
+import org.springframework.web.context.support.WebApplicationContextUtils
+import org.springframework.web.reactive.result.method.RequestMappingInfo
+import org.springframework.web.server.adapter.WebHttpHandlerBuilder.applicationContext
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
 import java.lang.management.ManagementFactory
 import java.math.RoundingMode
-import java.net.HttpURLConnection
-import java.net.URL
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 
@@ -48,24 +43,35 @@ class TestController {
 
     @Secured("ROLE_ADMIN")
     @GetMapping("/test")
-    fun test(model: Model): String {
+    fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
 
 
-        // Add API key to header
-        var settings = model.getAttribute("settings") as Settings
 
-        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
-        val response = webClient.get()
-            .uri("api/v1/recognition/subjects/")
-            .header("x-api-key", settings.getCompreFaceKey())
-            .retrieve()
-            .toEntity(String::class.java)
-            .block()
-        if (response != null) {
-            println(response.statusCode)
+        val applicationContext =
+            WebApplicationContextUtils.getRequiredWebApplicationContext(request.session.servletContext)
+        val requestMappingHandlerMapping = applicationContext
+            .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping::class.java)
+        val map = requestMappingHandlerMapping.handlerMethods
+        model["apiEndpointsMap"] = mutableMapOf<String, String>()
+        model["nonApiEndpointsMap"] = mutableMapOf<String, String>()
+        val apiMap = mutableMapOf<String, String>()
+        val nonApiMap = mutableMapOf<String, String>()
+
+        map.forEach { (key, value) ->
+            if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString().contains("/docs/", ignoreCase = true)) {
+                apiMap[key.toString()] = key.toString()
+            } else {
+                nonApiMap[key.toString()] = value.toString()
+            }
         }
+
+        model["apiEndpointsMap"] = apiMap
+        model["nonApiEndpointsMap"] = nonApiMap
+
+
+
 
         return "test"
     }

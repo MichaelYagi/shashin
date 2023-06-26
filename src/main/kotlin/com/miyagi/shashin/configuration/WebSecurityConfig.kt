@@ -116,6 +116,65 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Value("\${app.rememberme.expiration.seconds}")
         private var expirationSeconds: Int? = null
 
+        var publicList = arrayOf(
+            "/",
+            "/docs/**",
+            "/articles/**",
+            "/health",
+            "/features",
+            "/share/**",
+            "/css/**",
+            "/js/**",
+            "/fonts/**",
+            "/images/**",
+            "/users/register",
+            "/users/login",
+            "/users/logout",
+            "/websocket-endpoint",
+            "/topic/messages",
+            "/topic/matchmessages",
+            "/settings/matchmessage",
+            "/settings/scanmessage",
+            "/dashboard/statmessages",
+            "/dashboard/statmessage",
+            "/api/v1/thumbnails/**",
+            "/api/v1/image/**",
+            "/api/v1/video/**"
+        )
+
+        var adminList = arrayOf(
+            "settings/**",
+            "settings",
+            "settings/users",
+            "settings/scan",
+            "favorites",
+            "timeline",
+            "timeline/**",
+            "users/delete",
+            "albums/add",
+            "api/v1/folders/**",
+            "api/v1/folder/**",
+            "api/v1/recent/**",
+            "api/v1/modified/**",
+            "api/v1/album/**/save/sharelink",
+            "api/v1/exif/metadata/**",
+            "api/v1/folders",
+            "api/v1/keywords"
+        )
+
+        val allRoleList = arrayOf(
+            "comments/**",
+            "albums",
+            "map/**",
+            "search/**",
+            "api/v1/album/**/page/**",
+            "api/v1/users/apikey/update",
+            "api/v1/mapdata",
+            "api/v1/metadata/**",
+            "api/v1/users/self",
+            "/api/v1/users/apikey/update"
+        )
+
         @Bean
         fun passwordEncoder(): PasswordEncoder? {
             return BCryptPasswordEncoder()
@@ -166,41 +225,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .sameOrigin()
                 .and()
                 .authorizeRequests()
-                .antMatchers(
-                    "/",
-                    "/docs/**",
-                    "/articles/**",
-                    "/health",
-                    "/features",
-                    "/share/**",
-                    "/css/**",
-                    "/js/**",
-                    "/fonts/**",
-                    "/images/**",
-                    "/users/register",
-                    "/users/login",
-                    "/users/logout",
-                    "/websocket-endpoint",
-                    "/topic/messages",
-                    "/topic/matchmessages",
-                    "/settings/matchmessage",
-                    "/settings/scanmessage",
-                    "/dashboard/statmessages",
-                    "/dashboard/statmessage",
-                    "/api/v1/thumbnails/**", "/api/v1/image/**", "/api/v1/video/**"
-                ).permitAll()
-                .antMatchers(
-                    "settings/**",
-                    "settings",
-                    "settings/users",
-                    "settings/scan",
-                    "favorites",
-                    "timeline",
-                    "timeline/**",
-                    "users/delete",
-                    "albums/add"
-                ).hasRole(adminRole.toString().replace("ROLE_", ""))
-                .antMatchers("comments/**", "albums", "map/**", "search/**")
+                .antMatchers(*publicList).permitAll()
+                .antMatchers(*adminList).hasRole(adminRole.toString().replace("ROLE_", ""))
+                .antMatchers(*allRoleList)
                 .hasAnyRole(userRole.toString().replace("ROLE_", ""), adminRole.toString().replace("ROLE_", ""))
                 .anyRequest().authenticated()
                 .and()

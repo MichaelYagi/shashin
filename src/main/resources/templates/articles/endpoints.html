@@ -1,0 +1,48 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      th:include="layouts/articles :: page(title=${titleDescriptor},activePage=${activePage})">
+<head></head>
+<body>
+
+<section th:fragment="content">
+  <nav class="d-none d-xl-block col-xl-4 float-end">
+    <ul class="section-nav">
+      <li class="toc-entry toc-h2"><a href="#apiendpoints">API Endpoints</a>
+        <ul>
+          <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
+            <li class="toc-entry toc-h2"><a th:href="${'#'+endpoint.value.rolePath}"><th:block th:text="${endpoint.value.apiCall}"></th:block></a></li>
+          </th:block>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <div class="col-11 col-md-10 col-xl-9">
+    <h2 id="apiendpoints">
+      <div>API Endpoints<a class="anchorjs-link" href="#apiendpoints" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
+    </h2>
+
+    <p>Find and manage your service API key at <a href="/users/apikey" target="_blank"><th:block th:text="${baseUrl}"></th:block>users/apikey</a></p>
+
+    <div class="card">
+      <div class="card-body">
+        <pre><code>curl -X GET "<th:block th:text="${baseUrl}"></th:block>api/v1/users/self" \
+-H "Content-Type: application/json" \
+-H "x-api-key: &lt;service_api_key&gt;"</code></pre>
+      </div>
+    </div>
+    <br><br>
+
+    <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
+      <p>
+        <span th:class="${endpoint.value.requestType == 'GET' ? 'badge bg-primary' : 'badge bg-success'}"><a th:id="${endpoint.value.rolePath}"></a><th:block th:text="${endpoint.value.requestType}"></th:block></span>&nbsp;<th:block th:text="${endpoint.value.apiCall}"></th:block><br>
+        <th:block th:text="'Access: '+${endpoint.value.role}"></th:block><br>
+        <th:block th:if="${endpoint.value.produces != ''}">
+          <th:block th:text="'Produces: '+${endpoint.value.produces}"></th:block>
+        </th:block>
+      </p>
+    </th:block>
+
+  </div>
+</section>
+</body>
+</html>

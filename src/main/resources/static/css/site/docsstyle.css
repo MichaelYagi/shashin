@@ -7,6 +7,12 @@ html {
     height: -webkit-fill-available;
 }
 
+section > nav {
+    position: sticky;
+    top: 2rem;
+    align-self: start;
+}
+
 .b-example-divider {
     flex-shrink: 0;
     width: 1.5rem;
