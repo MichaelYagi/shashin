@@ -145,7 +145,7 @@ class UserController {
         return module
     }
 
-    @RequestMapping(value = ["/users/apikey/update", "/api/v1/users/apikey/update"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/users/apikey/update", "/api/v1/users/apikey/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN","ROLE_USER")
     fun postUpdateApikey(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
@@ -336,7 +336,7 @@ class UserController {
         response.addCookie(cookie)
     }
 
-    @RequestMapping(value = ["/users/darkmode"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/users/darkmode"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN","ROLE_USER")
     fun toggleDarkmode(model: Model, @RequestBody requestBody: JsonNode): String? {
@@ -360,7 +360,7 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/users/delete"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/users/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN")
     fun deleteUser(model: Model, @ModelAttribute user: @Valid User?): String? {
@@ -439,7 +439,7 @@ class UserController {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/users/self"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/users/self"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN","ROLE_USER")
     fun getMyUserInfo(model: Model): String {

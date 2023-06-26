@@ -52,7 +52,7 @@ class MapController {
     }
 
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["api/v1/mapdata"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["api/v1/mapdata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getMapDataAdmin(model: Model): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()

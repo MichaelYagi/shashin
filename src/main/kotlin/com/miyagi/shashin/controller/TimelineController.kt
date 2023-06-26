@@ -165,13 +165,13 @@ class TimelineController: BaseController() {
         return module
     }
 
-    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}","/api/v1/timeline/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/{page}","/api/v1/timeline/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedTimeline(model: Model, @PathVariable page: Int,@PathVariable mediaType: String): String {
         return mapper.writeValueAsString(buildTimelineData(model,mediaType,page))
     }
 
-    @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTimelineJson(model: Model, @PathVariable(required = false) page: Int?): String {
         var pageValue = 0
@@ -239,7 +239,7 @@ class TimelineController: BaseController() {
         return response
     }
 
-    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
     fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
@@ -251,14 +251,14 @@ class TimelineController: BaseController() {
             .body(json)
     }
 
-    @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
     fun getTimelineByDateApi(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
         return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
     }
 
-    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
     fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
@@ -271,7 +271,7 @@ class TimelineController: BaseController() {
             .body(json)
     }
 
-    @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
     fun getTimelineMetadataByDateApi(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
@@ -279,7 +279,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(jsonMap)
     }
 
-    @RequestMapping(value = ["/api/v1/keywords"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/keywords"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAllKeywords(model: Model): String {
         val response = mutableMapOf<String, Any?>()
@@ -287,7 +287,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/timeline/dates/{mediaType}","/api/v1/timeline/dates/{mediaType}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/dates/{mediaType}","/api/v1/timeline/dates/{mediaType}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTimelineDates(model: Model, @PathVariable mediaType: String): String {
         return mapper.writeValueAsString(getMetadataDates(mediaType))
@@ -400,7 +400,7 @@ class TimelineController: BaseController() {
         return response
     }
 
-    @RequestMapping(value = ["/timeline/remove/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/remove/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -433,7 +433,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
@@ -669,7 +669,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/timeline/remove/batch"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/remove/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -732,7 +732,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
@@ -951,7 +951,7 @@ class TimelineController: BaseController() {
 
     }
 
-    @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun postSyncData(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
         val batchMetadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -996,7 +996,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/api/v1/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
     @Secured("ROLE_ADMIN","ROLE_USER")
@@ -1044,7 +1044,7 @@ class TimelineController: BaseController() {
             .body(json)
     }
 
-    @RequestMapping(value = ["/api/v1/timeline/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/timeline/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
         val response = mutableMapOf<String, Any?>()
@@ -1108,7 +1108,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
-    @RequestMapping(value = ["/api/v1/exif/metadata/{id}"], method = [RequestMethod.GET], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/exif/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getExifData(model: Model, @PathVariable(required = true) id: String): String {
         val response = mutableMapOf<String, Any?>()
