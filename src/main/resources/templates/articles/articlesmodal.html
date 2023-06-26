@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body th:fragment="articlesmodal()">
+
+<!-- Metadata info modal -->
+<div class="modal fade" id="propMetadataDocs" tabindex="-1" role="dialog" aria-labelledby="labelMetadataDocs" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="labelMetadataDocs">Metadata</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Metadata for image or video.</p>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>var</th>
+                        <th>type</th>
+                        <th>values</th>
+                        <th>description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>id</td>
+                        <td>string</td>
+                        <td>UUID</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>path</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Path to original file.</td>
+                    </tr>
+                    <tr>
+                        <td>title</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Title of image or video.</td>
+                    </tr>
+                    <tr>
+                        <td>thumbnailPathSmall</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Path to sidebar thumbnail.</td>
+                    </tr>
+                    <tr>
+                        <td>thumbnailUrlSmall</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>URL to sidebar thumbnail.</td>
+                    </tr>
+                    <tr>
+                        <td>thumbnailPathCentered</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Path to sidebar centered & cropped thumbnail.</td>
+                    </tr>
+                    <tr>
+                        <td>thumbnailUrlCentered</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>URL to sidebar centered & cropped thumbnail.</td>
+                    </tr>
+                    <tr>
+                        <td>mapMarkerPath</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Path to sidebar map marker thumbnail.</td>
+                    </tr>
+                    <tr>
+                        <td>mapMarkerUrl</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>URL to sidebar map marker thumbnail.</td>
+                    </tr>
+                    <tr>
+                        <td>thumbnailSmallWidth</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Width of thumbnail.</td>
+                    </tr>
+                    <tr>
+                        <td>thumbnailSmallHeight</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Height of thumbnail.</td>
+                    </tr>
+                    <tr>
+                        <td>originalImageWidth</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Width of original image.</td>
+                    </tr>
+                    <tr>
+                        <td>originalImageHeight</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Height of original image.</td>
+                    </tr>
+                    <tr>
+                        <td>folder</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Path to folder of image or video.</td>
+                    </tr>
+                    <tr>
+                        <td>thumbnailUrlOriginal</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>URL to original image if image.</td>
+                    </tr>
+                    <tr>
+                        <td>videoUrl</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>URL to video if video.</td>
+                    </tr>
+                    <tr>
+                        <td>duration</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Duration of video if video.</td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Type of media.</td>
+                    </tr>
+                    <tr>
+                        <td>expectedExtension</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Expected extension of media.</td>
+                    </tr>
+                    <tr>
+                        <td>fileName</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Filename of media.</td>
+                    </tr>
+                    <tr>
+                        <td>timeZone</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Timezone of media.</td>
+                    </tr>
+                    <tr>
+                        <td>lat</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Latitude of media.</td>
+                    </tr>
+                    <tr>
+                        <td>lng</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Longitude of media.</td>
+                    </tr>
+                    <tr>
+                        <td>placeName</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Name of place of media.</td>
+                    </tr>
+                    <tr>
+                        <td>year</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Year taken of media.</td>
+                    </tr>
+                    <tr>
+                        <td>month</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Month taken of media.</td>
+                    </tr>
+                    <tr>
+                        <td>day</td>
+                        <td>int</td>
+                        <td></td>
+                        <td>Day taken of media.</td>
+                    </tr>
+                    <tr>
+                        <td>time</td>
+                        <td>string</td>
+                        <td>hh:mm:ss</td>
+                        <td>Time taken of media.</td>
+                    </tr>
+                    <tr>
+                        <td>iso</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>ISO of photo.</td>
+                    </tr>
+                    <tr>
+                        <td>exposure</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Exposure of photo.</td>
+                    </tr>
+                    <tr>
+                        <td>fstopNumber</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>F-stop of photo.</td>
+                    </tr>
+                    <tr>
+                        <td>focalLength</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Focal length of photo.</td>
+                    </tr>
+                    <tr>
+                        <td>camera</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Camera make and model.</td>
+                    </tr>
+                    <tr>
+                        <td>lens</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Lens make and model.</td>
+                    </tr>
+                    <tr>
+                        <td>quality</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Quality of media.</td>
+                    </tr>
+                    <tr>
+                        <td>compressionType</td>
+                        <td>string</td>
+                        <td></td>
+                        <td>Compression type of media.</td>
+                    </tr>
+                    <tr>
+                        <td>hidden</td>
+                        <td>boolean</td>
+                        <td>true/false</td>
+                        <td>Flag to mark media hidden or not.</td>
+                    </tr>
+                    <tr>
+                        <td>addedAt</td>
+                        <td>string</td>
+                        <td>yyyy-mm-dd hh:mm:ss</td>
+                        <td>Date added.</td>
+                    </tr>
+                    <tr>
+                        <td>takenAt</td>
+                        <td>string</td>
+                        <td>yyyy-mm-dd hh:mm:ss</td>
+                        <td>Date taken.</td>
+                    </tr>
+                    <tr>
+                        <td>createdAt</td>
+                        <td>string</td>
+                        <td>yyyy-mm-dd hh:mm:ss</td>
+                        <td>Date created.</td>
+                    </tr>
+                    <tr>
+                        <td>modifiedAt</td>
+                        <td>string</td>
+                        <td>yyyy-mm-dd hh:mm:ss</td>
+                        <td>Date modified.</td>
+                    </tr>
+                    <tr>
+                        <td>lastAccessedAt</td>
+                        <td>string</td>
+                        <td>yyyy-mm-dd hh:mm:ss</td>
+                        <td>Date last accessed.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

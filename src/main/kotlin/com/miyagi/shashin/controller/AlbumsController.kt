@@ -11,7 +11,9 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.InputStreamResource
@@ -626,6 +628,60 @@ class AlbumsController {
         return model.getAttribute("activePage").toString()
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getPagedAlbum",
+            description = "Get paged results for album content. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/album/{albumId}/page/{page}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>albumId</td><td>param</td><td>string</td><td>required</td><td>The album ID</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>string</td><td>required</td><td>page number of examples to return used for pagination. Page index starts from 0. Admins can set the query/page size can set in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"canEdit\": &lt;can_edit&gt;,\n" +
+                    "    \"albumId\": \"&lt;album_id&gt;\",\n" +
+                    "    \"album\": {\n" +
+                    "        \"id\": &lt;album_id&gt;,\n" +
+                    "        \"name\": \"&lt;name_of_album&gt;\",\n" +
+                    "        \"coverUrl\": \"&lt;relative_url&gt;\",\n" +
+                    "        \"shareUrl\": \"&lt;public_url_key&gt;\",\n" +
+                    "        \"createdAt\": \"&lt;created_at_datetime&gt;\",\n" +
+                    "        \"modifiedAt\": \"&lt;modified_at_datetime&gt;\"\n" +
+                    "    },\n" +
+                    "    \"albumMetadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>canEdit</td><td>boolean</td><td>Authorized to edit the album or not</td></tr>" +
+                    "<tr><td>albumId</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>album.id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>album.name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>album.coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>album.shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>albumMetadataList</td><td>array</td><td>List of Metadata objects</td></tr>" +
+                    "<tr><td>metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
