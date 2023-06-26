@@ -2,6 +2,7 @@ package com.miyagi.shashin.controller
 
 import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.util.TextUtils
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -35,6 +36,7 @@ class ArticlesController {
 
         val applicationContext =
             WebApplicationContextUtils.getRequiredWebApplicationContext(request.session.servletContext)
+
         val requestMappingHandlerMapping = applicationContext
             .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping::class.java)
         val map = requestMappingHandlerMapping.handlerMethods
@@ -60,11 +62,14 @@ class ArticlesController {
         var roleController = mutableMapOf<String, String>()
 
         map.forEach { (key, value) ->
+//            println(key.toString())
+//            println(value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description)
             if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString().contains("/docs/", ignoreCase = true)) {
                 roleController["requestType"] = ""
                 roleController["apiCall"] = ""
                 roleController["rolePath"] = ""
                 roleController["produces"] = ""
+                roleController["description"] = ""
                 roleController["role"] = "Public"
 
                 for (adminEndpoint in adminEndpoints) {
@@ -106,6 +111,10 @@ class ArticlesController {
                     val apiCall = matchResult?.value?.dropLast(1)
                     roleController["requestType"] = requestType
                     roleController["apiCall"] = apiCall.toString().replace(" || ",", ")
+                    if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description != null) {
+                        roleController["description"] =
+                            value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.toString()
+                    }
                 }
 
                 roleController = mutableMapOf()

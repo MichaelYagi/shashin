@@ -16,7 +16,7 @@
     </ul>
   </nav>
 
-  <div class="col-11 col-md-10 col-xl-9">
+  <div class="col-9 col-md-8 col-xl-7">
     <h2 id="apiendpoints">
       <div>API Endpoints<a class="anchorjs-link" href="#apiendpoints" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
     </h2>
@@ -25,6 +25,7 @@
 
     <div class="card">
       <div class="card-body">
+        General example
         <pre><code>curl -X GET "<th:block th:text="${baseUrl}"></th:block>api/v1/users/self" \
 -H "Content-Type: application/json" \
 -H "x-api-key: &lt;service_api_key&gt;"</code></pre>
@@ -35,9 +36,12 @@
     <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
       <p>
         <span th:class="${endpoint.value.requestType == 'GET' ? 'badge bg-primary' : 'badge bg-success'}"><a th:id="${endpoint.value.rolePath}"></a><th:block th:text="${endpoint.value.requestType}"></th:block></span>&nbsp;<th:block th:text="${endpoint.value.apiCall}"></th:block><br>
-        <th:block th:text="'Access: '+${endpoint.value.role}"></th:block><br>
+        <th:block th:text="'Access: '+${endpoint.value.role}"></th:block>
         <th:block th:if="${endpoint.value.produces != ''}">
-          <th:block th:text="'Produces: '+${endpoint.value.produces}"></th:block>
+          <br><th:block th:text="'Produces: '+${endpoint.value.produces}"></th:block>
+        </th:block>
+        <th:block th:if="${endpoint.value.description != ''}">
+          <br><th:block th:utext="'Description: '+${endpoint.value.description}"></th:block>
         </th:block>
       </p>
     </th:block>

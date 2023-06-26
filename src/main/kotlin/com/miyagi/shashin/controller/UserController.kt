@@ -10,7 +10,9 @@ import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
@@ -394,6 +396,49 @@ class UserController {
         return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            description = "See your user information including your user ID.<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"<base_url>/api/v1/users/self\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>api key of the Shashin service, created by the user</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"user\": {\n" +
+                    "        \"id\": &lt;user_id&gt;,\n" +
+                    "        \"username\": \"&lt;username&gt;\",\n" +
+                    "        \"authority\": \"&lt;role&gt;\",\n" +
+                    "        \"apikey\": \"&lt;api_key&gt;\",\n" +
+                    "        \"isAuthorized\": &lt;is_authorized&gt;,\n" +
+                    "        \"darkMode\": &lt;dark_mode&gt;\n" +
+                    "    }\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>user.id</td><td>int</td><td>Your user ID</td></tr>" +
+                    "<tr><td>user.username</td><td>string</td><td>Your username</td></tr>" +
+                    "<tr><td>user.authority</td><td>string</td><td>One of \"ROLE_ADMIN\" or \"ROLE_USER\"</td></tr>" +
+                    "<tr><td>user.apikey</td><td>string</td><td>Your service API key</td></tr>" +
+                    "<tr><td>user.isAuthorized</td><td>boolean</td><td>Authorized to access Shashin flag</td></tr>" +
+                    "<tr><td>user.darkMode</td><td>boolean</td><td>Flag of whether you have dark enabled or not</td></tr>" +
+                    "</tbody></table>",
+            operationId = "getMyUserInfo",
+        )
+    )
     @RequestMapping(value = ["/api/v1/users/self"], method = [RequestMethod.GET], produces = ["application/json"])
     @ResponseBody
     @Secured("ROLE_ADMIN","ROLE_USER")
