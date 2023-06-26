@@ -40,10 +40,11 @@
 
         $("#deleteThread").on("click", function (e) {
             e.preventDefault();
-            let posting = $.post(
-                "/settings/scan",
-                {"submit": "", "deleteThread": true, "cancelScan": false, "reindexFiles": false}
-            );
+            let posting = $.post({
+                url: "/settings/scan",
+                headers: {'content-type': 'application/json'},
+                data: {"submit": "", "deleteThread": true, "cancelScan": false, "reindexFiles": false}
+            });
 
             posting.done(function (data) {
                 if (data.hasOwnProperty("msg")) {
@@ -54,10 +55,11 @@
 
         $("#cancelScan").on("click", function (e) {
             e.preventDefault();
-            let posting = $.post(
-                "/settings/scan",
-                {"submit": "", "deleteThread": false, "cancelScan": true, "reindexFiles": false}
-            );
+            let posting = $.post({
+                url: "/settings/scan",
+                headers: {'content-type': 'application/json'},
+                data: {"submit": "", "deleteThread": false, "cancelScan": true, "reindexFiles": false}
+            });
 
             posting.done(function (data) {
                 if (data.hasOwnProperty("msg")) {
@@ -68,10 +70,16 @@
         });
 
         function postToScan(deleteThread) {
-            let posting = $.post(
-                "/settings/scan",
-                {"submit": "Scan", "deleteThread": deleteThread, "cancelScan": false, "reindexFiles": $('#reindexFiles').prop("checked")}
-            );
+            let posting = $.post({
+                url: "/settings/scan",
+                headers: {'content-type': 'application/json'},
+                data: {
+                    "submit": "Scan",
+                    "deleteThread": deleteThread,
+                    "cancelScan": false,
+                    "reindexFiles": $('#reindexFiles').prop("checked")
+                }
+            });
 
             posting.done(function (data) {
 
