@@ -12,9 +12,9 @@
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col">
 
-            <a data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasExample" aria-controls="offcanvasExample">
-                Link to open sidebar
-            </a>
+<!--            <a data-bs-toggle="offcanvas" data-bs-placement="bottom" href="#offcanvasExample" aria-controls="offcanvasExample">-->
+<!--                Link to open sidebar-->
+<!--            </a>-->
 
             <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
                 <div class="offcanvas-header">
@@ -38,9 +38,24 @@
                 </div>
             </div>
 
-            <br><th:block th:text="${'Using minified JS: '+@environment.getProperty('app.js.useMinified')}"></th:block>
+            <br><th:block th:text="${'Using minified JS: '+@environment.getProperty('app.js.useMinified')}"></th:block><br><br>
 
-            <div id="rnRoot"></div>
+            <h2>API Endpoints</h2>
+
+            <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
+                <br><th:block th:utext="${'<strong>Path</strong>: '+endpoint.key}"></th:block>
+                <br><th:block th:utext="${'<strong>Method</strong>: '+endpoint.value}"></th:block>
+                <br>
+            </th:block>
+
+            <br><br>
+            <h2>Non API Endpoints</h2>
+
+            <th:block th:each="endpoint, iterStat: ${nonApiEndpointsMap}">
+                <br><th:block th:utext="${'<strong>Path</strong>: '+endpoint.key}"></th:block>
+                <br><th:block th:utext="${'<strong>Method</strong>: '+endpoint.value}"></th:block>
+                <br>
+            </th:block>
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>

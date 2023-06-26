@@ -145,6 +145,7 @@ class UserController {
 
     @RequestMapping(value = ["/users/apikey/update", "/api/v1/users/apikey/update"], method = [RequestMethod.POST], produces = ["application/json"])
     @ResponseBody
+    @Secured("ROLE_ADMIN","ROLE_USER")
     fun postUpdateApikey(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
         val apikeyMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
