@@ -116,6 +116,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Value("\${app.rememberme.expiration.seconds}")
         private var expirationSeconds: Int? = null
 
+        @Value("\${app.api.version}")
+        private lateinit var apiVersion: String
+
         var publicList = arrayOf(
             "/",
             "/docs/**",
@@ -241,9 +244,8 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .csrf().disable()
                 .httpBasic()
 
-            // Using stateless API requests
-//            http.exceptionHandling()
-//                .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login", apiVersion))
+            http.exceptionHandling()
+                .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login", apiVersion))
 
             http.sessionManagement()
                 .maximumSessions(100)
