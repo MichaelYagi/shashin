@@ -93,7 +93,9 @@ class ArticlesController {
 
                 roleController["rolePath"] = TextUtils.generateUUID(key.toString(),"","",0.0,0,"").toString()
                 roleController["controller"] = value.toString()
-                apiMap[key.toString()] = roleController
+                val regex = "\\/api\\/v1\\/.*\\]".toRegex()
+                var matchResult = regex.find(key.toString())
+                apiMap[matchResult!!.value] = roleController
 
                 val endpointArray = key.toString().split(",")
                 if (endpointArray.size > 0) {
@@ -103,9 +105,8 @@ class ArticlesController {
                     }
 //                println(endpointArray[0])
 //                println("request type: "+endpointArray[0].substring(1,5).trim())
-                    val regex = "\\/api\\/v1\\/.*\\]".toRegex()
 //                println(regex)
-                    val matchResult = regex.find(endpointArray[0])
+                    matchResult = regex.find(endpointArray[0])
 //                println("matchResult: ${matchResult?.value?.dropLast(1)}")
 
                     val requestType = endpointArray[0].substring(1, 5).trim()
@@ -122,7 +123,7 @@ class ArticlesController {
             }
         }
 
-        val sortedMap = apiMap.toSortedMap(compareBy  { it })
+        val sortedMap = apiMap.toSortedMap(compareBy { it })
 
         model["apiEndpointsMap"] = sortedMap
 

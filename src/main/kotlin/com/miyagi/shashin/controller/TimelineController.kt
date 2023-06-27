@@ -9,8 +9,10 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import io.swagger.v3.oas.annotations.Operation
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.apache.commons.text.StringEscapeUtils
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
@@ -1108,6 +1110,27 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getExifData",
+            description = "Get EXIF data extracted using <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a>.<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/exif/metadata/{id}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>id</td><td>param</td><td>string</td><td>required</td><td>The metadata ID</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "Different outputs depending on media. See <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a> for more details."
+        )
+    )
     @RequestMapping(value = ["/api/v1/exif/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getExifData(model: Model, @PathVariable(required = true) id: String): String {
