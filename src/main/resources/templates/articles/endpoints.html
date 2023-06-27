@@ -25,15 +25,9 @@
 
     <p>Find and manage your service API key at <a href="/users/apikey" target="_blank"><th:block th:text="${baseUrl}"></th:block>users/apikey</a></p>
 
-    <div class="card">
-      <div class="card-body">
-        General example
-        <pre><code>curl -X GET "<th:block th:text="${baseUrl}"></th:block>api/v1/users/self" \
--H "Content-Type: application/json" \
--H "x-api-key: &lt;service_api_key&gt;"</code></pre>
-      </div>
-    </div>
-    <br><br>
+    <hr>
+
+    <br>
 
     <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
       <p>
