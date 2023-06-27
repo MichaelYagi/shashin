@@ -5,6 +5,8 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
+import io.swagger.v3.oas.annotations.Operation
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
@@ -245,6 +247,13 @@ class BrowseController: BaseController() {
         return module
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getPagedFolders",
+            description = "Get a list of all folders. See <strong>api/v1/folders/{page}</strong> for the expected response."
+        )
+    )
     @RequestMapping(value = ["api/v1/folders"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getFoldersApi(model: Model): String {
@@ -306,6 +315,45 @@ class BrowseController: BaseController() {
         return response
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getPagedFolders",
+            description = "Get paged list of all folders." +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/folders/{page}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"foldersList\": [\n" +
+                    "        {\n" +
+                    "            \"folder\": \"&lt;folder_name&gt;\",\n" +
+                    "            \"thumbnailUrlCentered\": &lt;cover_relative_url&gt;,\n" +
+                    "            \"count\": &lt;media_count&gt;\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>foldersList.folder</td><td>string</td><td>The folder name</td></tr>" +
+                    "<tr><td>foldersList.thumbnailUrlCentered</td><td>string</td><td>The relative cover image URL of the folder</td></tr>" +
+                    "<tr><td>foldersList.count</td><td>int</td><td>The number of media in the folder</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/folders/{page}","/api/v1/folders/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolders(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
@@ -332,6 +380,91 @@ class BrowseController: BaseController() {
         return module
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getPagedFolder",
+            description = "Get paged results for folder content. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/folder/{page}/{folder}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>folder</td><td>param</td><td>string</td><td>required</td><td>URL encoded name of the folder path</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"mediaTypeFilter\": \"&lt;media_type&gt;\",\n" +
+                    "    \"folder\": \"&lt;folder_name&gt;\",\n" +
+                    "    \"metadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"favorites\": {\n" +
+                    "        \"&lt;metadata_id&gt;\": {\n" +
+                    "            \"count\": &lt;count&gt;,\n" +
+                    "            \"favorite\": &lt;is_favorite&gt;\n" +
+                    "        }\n" +
+                    "    },\n" +
+                    "    \"albumsList\": [\n" +
+                    "        {\n" +
+                    "            \"coverUrl\": \"&lt;relative_cover_url&gt;\",\n" +
+                    "            \"albumVideoCount\": &lt;album_video_count&gt;,\n" +
+                    "            \"albumPhotoCount\": &lt;album_photo_count&gt;,\n" +
+                    "            \"id\": &lt;album_id&gt;,\n" +
+                    "            \"shareUrl\": \"&lt;relative_share_url&gt;\",\n" +
+                    "            \"name\": \"&lt;album_name&gt;\"\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"recognitionLabels\": [\n" +
+                    "        {\n" +
+                    "            \"id\": &lt;album_id&gt;,\n" +
+                    "            \"name\": \"&lt;subject_name&gt;\"\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"labelPhotoMap\": {\n" +
+                    "        \"&lt;metadata_id&gt;\": \"&lt;subject_name&gt;\"\n" +
+                    "    },\n" +
+                    "    \"albumMap\": {\n" +
+                    "        \"&lt;metadata_id&gt;\": \"&lt;album_name&gt;\"\n" +
+                    "    },\n" +
+                    "    \"keywordMap\": {\n" +
+                    "        \"&lt;metadata_id&gt;\": \"&lt;keywords&gt;\"\n" +
+                    "    }\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>mediaTypeFilter</td><td>string</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "<tr><td>folder</td><td>string</td><td>full path and name of the folder</td></tr>" +
+                    "<tr><td>metadataList.metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "<tr><td>favourites.&lt;metadata_id&gt;.count</td><td>int</td><td>The number of people who saved this media as a favorite</td></tr>" +
+                    "<tr><td>favourites.&lt;metadata_id&gt;.favorite</td><td>boolean</td><td>True if saved as a favorite</td></tr>" +
+                    "<tr><td>albumList.coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>albumList.albumVideoCount</td><td>string</td><td>The number of videos in this album</td></tr>" +
+                    "<tr><td>albumList.albumPhotoCount</td><td>string</td><td>The number of photos in this album</td></tr>" +
+                    "<tr><td>albumList.id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>albumList.shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>albumList.name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>recognitionLabels.id</td><td>int</td><td>Album ID the subject is associated with</td></tr>" +
+                    "<tr><td>recognitionLabels.name</td><td>string</td><td>Subject name</td></tr>" +
+                    "<tr><td>labelPhotoMap.&lt;metadata_id&gt;.&lt;subject_name&gt;</td><td>string</td><td>names associated with media</td></tr>" +
+                    "<tr><td>albumMap.&lt;metadata_id&gt;.&lt;album_name&gt;</td><td>string</td><td>album name associated with media</td></tr>" +
+                    "<tr><td>keywordMap.&lt;metadata_id&gt;.&lt;keywords&gt;</td><td>string</td><td>keywords associated with media</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/folder/{page}/{folder}","/api/v1/folder/{page}/{folder}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedFolder(model: Model, request: HttpServletRequest, @PathVariable page: Int, @PathVariable folder: String): String {
