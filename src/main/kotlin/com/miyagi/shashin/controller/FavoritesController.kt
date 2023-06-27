@@ -11,7 +11,9 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
@@ -59,6 +61,48 @@ class FavoritesController {
         return model.getAttribute("activePage").toString()
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getPagedFavorites",
+            description = "Get paged results used for your favorites." +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/favorites/{page}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"metadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"keywordMap\": {\n" +
+                    "        {\n" +
+                    "           \"&lt;metadata_id&gt;\": \"&lt;keyword_1,keyword_2,keyword_n&gt;\"\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>metadataList</td><td>array</td><td>List of Metadata objects</td></tr>" +
+                    "<tr><td>metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "<tr><td>keywordMap.&lt;metadata_id&gt;</td><td>string</td><td>A comma seperated list of keywords for the associated metadata ID</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/favorites/{page}","api/v1/favorites/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedFavorites(model: Model, @PathVariable page: Int): String {
