@@ -197,6 +197,7 @@ class AlbumsController {
         response["userAlbums"] = mutableListOf<UserAlbum>()
         response["userCount"] = 0
         response["albumsCommentsMap"] = mutableMapOf<Int, ArrayList<HashMap<String, Any>>>()
+        response["notificationMap"] = mutableMapOf<Int, Boolean>()
         var showControls = false
 
         val currentUserObj = model.getAttribute("currentUser") as User?
@@ -210,6 +211,7 @@ class AlbumsController {
             if (userAlbums != null && userAlbums.count() > 0) {
                 val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
 
+                val notificationMap = HashMap<Int, Boolean>()
                 val albums = ArrayList<HashMap<String, Any>>()
                 var albumVideoCount: Int?
                 var albumPhotoCount: Int?
@@ -236,6 +238,9 @@ class AlbumsController {
                         albumMap["albumVideoCount"] = albumVideoCount
                         albums.add(albumMap)
 
+                        val notificationCount = notificationRepository.countAllByAlbumIdAndUserIdAndMetadataIdIsNullAndReadIsFalse(userAlbum.getAlbumId()!!,currentUserObj.getId())
+                        notificationMap[userAlbum.getAlbumId()!!] = notificationCount > 0
+
                         // Get comments for this album
                         val albumComments = commentRepository.findCommentsByAlbumId(albumObj.get().getId())
                         for (albumComment in albumComments) {
@@ -257,6 +262,7 @@ class AlbumsController {
                 if (albums.isNotEmpty()) {
                     response["albumsList"] = albums
                     response["albumsCommentsMap"] = albumsCommentsMap
+                    response["notificationMap"] = notificationMap
 
                     val userCount = userRepository.count()
                     if (userCount > 1) {
@@ -863,6 +869,7 @@ class AlbumsController {
         response["albumMetadataList"] = mutableListOf<Metadata>()
         response["albumPhotoCommentsMap"] = mutableMapOf<String, ArrayList<HashMap<String, Any>>>()
         response["userMap"] = mutableMapOf<String, Any>()
+        response["notificationMap"] = mutableMapOf<String, Boolean>()
         response["favorites"] = mutableMapOf<String, String>()
         response["msg"] = "No results"
         response["status"] = "noop"
@@ -880,12 +887,16 @@ class AlbumsController {
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
+                    val notificationMap = HashMap<String, Boolean>()
 
                     for (albumPhoto in albumPhotos) {
                         val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
                         if (albumPhoto != null) {
                             val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
                             albumMetadataList.add(metadata.get())
+
+                            val notificationCount = notificationRepository.countAllByMetadataIdAndUserIdAndReadIsFalse(albumPhoto.getMetadataId()!!,currentUserObj.getId())
+                            notificationMap[albumPhoto.getMetadataId()!!] = notificationCount > 0
 
                             val favorites = favoriteRepository.findAllByMetadataId(albumPhoto.getMetadataId())
                             if (favorites != null) {
@@ -925,6 +936,7 @@ class AlbumsController {
                         val album = albumRepository.findById(albumId)
                         response["titleDescriptor"] = TextUtils.capitalized(module) + " - " + album.get().getName()
                         response["favorites"] = favoritesMap
+                        response["notificationMap"] = notificationMap
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         response["album"] = album.get()
                         response["albumId"] = album.get().getId()
