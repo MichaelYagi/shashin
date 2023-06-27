@@ -160,7 +160,7 @@ class AlbumsController {
                     "<tr><td>baseUrl</td><td>string</td><td>Current base URL</td></tr>" +
                     "<tr><td>showControls</td><td>boolean</td><td>Set to true if an ADMIN role, and have icons shown to edit the album.</td></tr>" +
                     "<tr><td>userCount</td><td>int</td><td>Number of users</td></tr>" +
-                    "<tr><td>albumList.coverUrl</td><td>String</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>albumList.coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
                     "<tr><td>albumList.albumVideoCount</td><td>string</td><td>The number of videos in this album</td></tr>" +
                     "<tr><td>albumList.albumPhotoCount</td><td>string</td><td>The number of photos in this album</td></tr>" +
                     "<tr><td>albumList.id</td><td>int</td><td>The album ID</td></tr>" +
