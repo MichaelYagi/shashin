@@ -74,14 +74,12 @@
                 if (data.hasOwnProperty("album") &&
                     data.hasOwnProperty("albumMetadataList") &&
                     data.hasOwnProperty("albumPhotoCommentsMap") &&
-                    data.hasOwnProperty("userMap") &&
-                    data.hasOwnProperty("notificationMap")
+                    data.hasOwnProperty("userMap")
                 ) {
                     const albumData = data["album"];
                     const albumMetadataList = data["albumMetadataList"];
                     const albumPhotoCommentsMap = data["albumPhotoCommentsMap"];
                     const userMap = data["userMap"];
-                    const notificationMap = data["notificationMap"];
                     const favoritesMap = data["favorites"];
 
                     shashin.printMessageToConsole(albumData);
@@ -120,9 +118,9 @@
                             let overlayData;
 
                             if (userMap.showControls === true) {
-                                overlayData = shashin.getOverlayData(metadata, {blOnClickFunction:"albumSettings.openAlbumModal",cOnClickFunction:"shashin.openGallery",onClickIdPrefix:"albumModalEdit",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,notificationMap:notificationMap,overlayFlags});
+                                overlayData = shashin.getOverlayData(metadata, {blOnClickFunction:"albumSettings.openAlbumModal",cOnClickFunction:"shashin.openGallery",onClickIdPrefix:"albumModalEdit",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,overlayFlags});
                             } else {
-                                overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,notificationMap:notificationMap,overlayFlags});
+                                overlayData = shashin.getOverlayData(metadata, {cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,favoriteCount:favoriteCount,favoriteIcon:favoriteIcon,albumPhotoCommentsMap:albumPhotoCommentsMap,overlayFlags});
                             }
 
                             mediaContentList.push(shashin.getMediaContent(metadata));

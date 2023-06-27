@@ -131,11 +131,6 @@ class GalleryTemplates {
             <a href="#" data-bs-toggle="modal" data-bs-target="#propalbumphotocomment${id}" class="overlayCommentIconBackground overlayCommentText">
                 <span id="brcommentcount${id}">${data.albumPhotoCommentsMap.hasOwnProperty(id) ? data.albumPhotoCommentsMap[id].length : `0`}</span> 
                 <span id="bricon${id}" class="bi-chat-square position-relative overlayCommentIcon">
-                    ${(data.notificationMap !== null && data.notificationMap[id] === true) ? `
-                    <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">
-                        <span class="visually-hidden">New alerts</span>
-                    </span>
-                    ` : ''}
                 </span>
             </a>
             ` : ''}
