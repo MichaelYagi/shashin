@@ -1407,7 +1407,6 @@
             if (args.hasOwnProperty("albumPhotoCommentsMap")) {
                 overlays.push("isComments");
                 data["albumPhotoCommentsMap"] = args["albumPhotoCommentsMap"];
-                data["notificationMap"] = args["notificationMap"];
             }
         } else {
             overlays.push("isInfo");

@@ -30,11 +30,6 @@
                                 <a href="#" th:id="'comment'+${album.id}" style="text-decoration: none;" title="Comments">
                                     <span th:id="'commentcount'+${album.id}"><th:block th:text="${albumsCommentsMap.containsKey(album.id) ? #lists.size(albumsCommentsMap.get(album.id)) : '0'}"></th:block></span>
                                     <span class="bi-chat-square position-relative">
-<!--                                        <th:block th:if="${notificationMap.get(album.id)}">-->
-<!--                                            <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">-->
-<!--                                                <span class="visually-hidden">New alerts</span>-->
-<!--                                            </span>-->
-<!--                                        </th:block>-->
                                     </span>
                                 </a>
                                 <th:block th:if="${album.albumPhotoCount > 0}">

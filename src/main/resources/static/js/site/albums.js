@@ -56,11 +56,6 @@ class Albums {
                     html += '<a href="#" id="comment'+album.id+'" style="text-decoration: none;" title="Comments">';
                     html += '<span id="commentcount'+album.id+'">'+(album.id in data["albumsCommentsMap"] ? data["albumsCommentsMap"][album.id].length : "0")+'</span>&nbsp;';
                     html += '<span class="bi-chat-square position-relative">';
-                    // if (album.id in data["notificationMap"]) {
-                    //     html += '<span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle">';
-                    //     html += '<span class="visually-hidden">New alerts</span>';
-                    //     html += '</span>';
-                    // }
                     html += '</span></a>';
 
                     if (album.albumPhotoCount > 0) {
