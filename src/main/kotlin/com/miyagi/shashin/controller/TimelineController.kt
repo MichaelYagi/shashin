@@ -860,206 +860,222 @@ class TimelineController: BaseController() {
             resp["status"] = ApiResponse.SUCCESS.status
 
             val metadataObj = metadataRepository.findById(metadataId)
-            val currentUserObj = model.getAttribute("currentUser") as User?
 
-            // Process albums
-            val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadataId)
-            val currentAlbumIdList = mutableListOf<Int>()
-            if (albumPhotos != null) {
-                for (albumPhoto in albumPhotos) {
-                    if (!currentAlbumIdList.contains(albumPhoto!!.getAlbumId()!!)) {
-                        currentAlbumIdList.add(albumPhoto.getAlbumId()!!)
-                    }
-                }
-            }
+            if (metadataObj.isPresent) {
+                val currentUserObj = model.getAttribute("currentUser") as User?
 
-            if (metadataMap["albumnames"].toString().trim() != "") {
-                val albumsArray = metadataMap["albumnames"].toString().split(",")
-
-                for (albumNameRaw in albumsArray) {
-
-                    val albumId = processAlbum(albumNameRaw, currentUserObj, metadataObj.get())
-
-                    if (albumId > 0) {
-                        val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
-                        if (albumPhotoCount == 0) {
-                            val albumPhotoObj = AlbumPhoto()
-                            albumPhotoObj.setMetadataId(metadataId)
-                            albumPhotoObj.setAlbumId(albumId)
-                            albumPhotoObj.setCreatedAt(getCurrentTimestamp())
-                            albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-                            albumPhotoRepository.save(albumPhotoObj)
-                        }
-
-                        if (currentAlbumIdList.contains(albumId)) {
-                            // Collect to delete
-                            val indexToRemove = currentAlbumIdList.indexOf(albumId)
-                            currentAlbumIdList.removeAt(indexToRemove)
+                // Process albums
+                val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(metadataId)
+                val currentAlbumIdList = mutableListOf<Int>()
+                if (albumPhotos != null) {
+                    for (albumPhoto in albumPhotos) {
+                        if (!currentAlbumIdList.contains(albumPhoto!!.getAlbumId()!!)) {
+                            currentAlbumIdList.add(albumPhoto.getAlbumId()!!)
                         }
                     }
                 }
-            }
 
-            if (currentAlbumIdList.isNotEmpty()) {
-                for (albumId in currentAlbumIdList) {
-                    albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
-                    val count = albumPhotoRepository.countByAlbumId(albumId)
+                if (metadataMap["albumnames"].toString().trim() != "") {
+                    val albumsArray = metadataMap["albumnames"].toString().split(",")
 
-                    if (count != null) {
-                        if (count.toInt() > 0) {
-                            val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
-                            val album = albumRepository.findById(albumId)
-                            if (album.get().getCoverUrl() == coverAlbumUrl) {
-                                // Use the first photo in album
-                                val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
-                                if (albumPhoto != null) {
-                                    val albumMetadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
-                                    album.get().setCoverUrl(albumMetadataObj.get().getThumbnailUrlCentered())
-                                    albumRepository.save(album.get())
-                                }
+                    for (albumNameRaw in albumsArray) {
+
+                        val albumId = processAlbum(albumNameRaw, currentUserObj, metadataObj.get())
+
+                        if (albumId > 0) {
+                            val albumPhotoCount =
+                                albumPhotoRepository.countByMetadataIdAndAlbumId(metadataId, albumId)!!
+                            if (albumPhotoCount == 0) {
+                                val albumPhotoObj = AlbumPhoto()
+                                albumPhotoObj.setMetadataId(metadataId)
+                                albumPhotoObj.setAlbumId(albumId)
+                                albumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                albumPhotoObj.setModifiedAt(getCurrentTimestamp())
+                                albumPhotoRepository.save(albumPhotoObj)
                             }
 
-                        } else {
-                            userAlbumRepository.deleteByAlbumId(albumId)
-                            albumRepository.deleteById(albumId)
-                            // Delete comments
-                            val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
-                            if (albumComments != null) {
-                                val commentIdList = ArrayList<Int>()
-                                for (albumComment in albumComments) {
-                                    if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
-                                        commentIdList.add(albumComment.getCommentId()!!)
+                            if (currentAlbumIdList.contains(albumId)) {
+                                // Collect to delete
+                                val indexToRemove = currentAlbumIdList.indexOf(albumId)
+                                currentAlbumIdList.removeAt(indexToRemove)
+                            }
+                        }
+                    }
+                }
+
+                if (currentAlbumIdList.isNotEmpty()) {
+                    for (albumId in currentAlbumIdList) {
+                        albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
+                        val count = albumPhotoRepository.countByAlbumId(albumId)
+
+                        if (count != null) {
+                            if (count.toInt() > 0) {
+                                val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
+                                val album = albumRepository.findById(albumId)
+                                if (album.get().getCoverUrl() == coverAlbumUrl) {
+                                    // Use the first photo in album
+                                    val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
+                                    if (albumPhoto != null) {
+                                        val albumMetadataObj =
+                                            metadataRepository.findById(albumPhoto.getMetadataId().toString())
+                                        album.get().setCoverUrl(albumMetadataObj.get().getThumbnailUrlCentered())
+                                        albumRepository.save(album.get())
                                     }
                                 }
 
-                                if (commentIdList.isNotEmpty()) {
-                                    commentRepository.deleteAllById(commentIdList)
-                                    albumCommentRepository.deleteByAlbumId(albumId)
-                                    albumPhotoCommentRepository.deleteByAlbumId(albumId)
+                            } else {
+                                userAlbumRepository.deleteByAlbumId(albumId)
+                                albumRepository.deleteById(albumId)
+                                // Delete comments
+                                val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                                if (albumComments != null) {
+                                    val commentIdList = ArrayList<Int>()
+                                    for (albumComment in albumComments) {
+                                        if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
+                                            commentIdList.add(albumComment.getCommentId()!!)
+                                        }
+                                    }
+
+                                    if (commentIdList.isNotEmpty()) {
+                                        commentRepository.deleteAllById(commentIdList)
+                                        albumCommentRepository.deleteByAlbumId(albumId)
+                                        albumPhotoCommentRepository.deleteByAlbumId(albumId)
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            // Process tagged people
-            if (metadataMap["tagpeople"].toString().isBlank()) {
-                recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-            } else {
-                processPeople(model.getAttribute("settings") as Settings, metadataObj.get(), metadataMap["tagpeople"].toString(), metadataMap["isObject"].toString().toBoolean())
-            }
+                // Process tagged people
+                if (metadataMap["tagpeople"].toString().isBlank()) {
+                    recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
+                } else {
+                    processPeople(
+                        model.getAttribute("settings") as Settings,
+                        metadataObj.get(),
+                        metadataMap["tagpeople"].toString(),
+                        metadataMap["isObject"].toString().toBoolean()
+                    )
+                }
 
-            if (metadataMap["title"].toString().trim() == "") {
-                metadataObj.get().setTitle(metadataObj.get().getFileName())
-            } else if (metadataObj.get().getTitle() != metadataMap["title"].toString().trim()) {
-                metadataObj.get().setTitle(StringEscapeUtils.escapeHtml4(metadataMap["title"].toString()).trim())
-            }
-            if (metadataMap["description"].toString().trim() == "") {
-                metadataObj.get().setDescription(null)
-            } else if (metadataObj.get().getDescription() != metadataMap["description"].toString().trim()) {
-                metadataObj.get().setDescription(StringEscapeUtils.escapeHtml4(metadataMap["description"].toString()).trim())
-            }
-            if (metadataMap["camera"].toString().trim() != "") {
-                var camera = StringEscapeUtils.escapeHtml4(metadataMap["camera"].toString()).trim()
-                val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
-                for (cameraType in cameraTypes) {
-                    if (camera.trim().lowercase() == cameraType.trim().lowercase()) {
-                        camera = cameraType
-                        break
+                if (metadataMap["title"].toString().trim() == "") {
+                    metadataObj.get().setTitle(metadataObj.get().getFileName())
+                } else if (metadataObj.get().getTitle() != metadataMap["title"].toString().trim()) {
+                    metadataObj.get().setTitle(StringEscapeUtils.escapeHtml4(metadataMap["title"].toString()).trim())
+                }
+                if (metadataMap["description"].toString().trim() == "") {
+                    metadataObj.get().setDescription(null)
+                } else if (metadataObj.get().getDescription() != metadataMap["description"].toString().trim()) {
+                    metadataObj.get()
+                        .setDescription(StringEscapeUtils.escapeHtml4(metadataMap["description"].toString()).trim())
+                }
+                if (metadataMap["camera"].toString().trim() != "") {
+                    var camera = StringEscapeUtils.escapeHtml4(metadataMap["camera"].toString()).trim()
+                    val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
+                    for (cameraType in cameraTypes) {
+                        if (camera.trim().lowercase() == cameraType.trim().lowercase()) {
+                            camera = cameraType
+                            break
+                        }
+                    }
+
+                    if (metadataObj.get().getCamera() != camera) {
+                        metadataObj.get().setCamera(camera)
+                    }
+                } else {
+                    metadataObj.get().setCamera(null)
+                }
+                if (metadataMap["lens"].toString().trim() != "") {
+                    var lens = StringEscapeUtils.escapeHtml4(metadataMap["lens"].toString()).trim()
+                    val lensTypes = metadataRepository.findByLensTypeAlphabetical()
+                    for (lensType in lensTypes) {
+                        if (lens.trim().lowercase() == lensType.trim().lowercase()) {
+                            lens = lensType
+                            break
+                        }
+                    }
+
+                    if (metadataObj.get().getLens() != lens) {
+                        metadataObj.get().setLens(lens)
+                    }
+                } else {
+                    metadataObj.get().setLens(null)
+                }
+                if (metadataMap["year"].toString() == "") {
+                    metadataObj.get().setYear(null)
+                } else if (metadataObj.get().getYear() != metadataMap["year"].toString().toInt()) {
+                    metadataObj.get().setYear(StringEscapeUtils.escapeHtml4(metadataMap["year"].toString()).toInt())
+                }
+                if (metadataMap["month"].toString() == "") {
+                    metadataObj.get().setMonth(null)
+                } else if (metadataObj.get().getMonth() != metadataMap["month"].toString().toInt()) {
+                    metadataObj.get().setMonth(StringEscapeUtils.escapeHtml4(metadataMap["month"].toString()).toInt())
+                }
+                if (metadataMap["day"].toString() == "") {
+                    metadataObj.get().setDay(null)
+                } else if (metadataObj.get().getDay() != metadataMap["day"].toString().toInt()) {
+                    metadataObj.get().setDay(StringEscapeUtils.escapeHtml4(metadataMap["day"].toString()).toInt())
+                }
+                if (metadataMap["time"].toString() == "") {
+                    metadataObj.get().setTime(null)
+                } else if (metadataObj.get().getTime() != metadataMap["time"].toString()) {
+                    metadataObj.get().setTime(StringEscapeUtils.escapeHtml4(metadataMap["time"].toString()))
+                }
+                if (metadataMap["offset"].toString() == "") {
+                    metadataObj.get().setTimeZone(null)
+                } else if (metadataObj.get().getTimeZone() != metadataMap["offset"].toString()) {
+                    metadataObj.get().setTimeZone(StringEscapeUtils.escapeHtml4(metadataMap["offset"].toString()))
+                }
+
+                keywordPhotoRepository.deleteAllByMetadataId(metadataId)
+                if (metadataMap["keywords"].toString().isNotBlank()) {
+                    var keywords = StringEscapeUtils.escapeHtml4(metadataMap["keywords"].toString()).trim()
+                    if (keywords.last() == ',') {
+                        keywords = keywords.dropLast(1)
+                    }
+                    val keywordList = keywords.split(",").map { it.trim() }
+                    processKeywords(keywordList, metadataId)
+                }
+
+                val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
+                if (keywordIdsToDelete.count() > 0) {
+                    keywordRepository.deleteAllById(keywordIdsToDelete)
+                }
+
+                if (metadataMap["latlng"].toString() == "") {
+                    metadataObj.get().setLat(null)
+                    metadataObj.get().setLng(null)
+                } else {
+                    val coordinateMap = processCoordinates(metadataMap["latlng"].toString())
+                    if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
+                        metadataObj.get().setLat(coordinateMap["lat"])
+                        metadataObj.get().setLng(coordinateMap["lng"])
+                    }
+                    if (coordinateMap["place"] != null) {
+                        metadataObj.get().setPlaceName(coordinateMap["place"])
+                    }
+                    if (coordinateMap["timezone"] != null) {
+                        metadataObj.get().setTimeZone(coordinateMap["timezone"])
                     }
                 }
 
-                if (metadataObj.get().getCamera() != camera) {
-                    metadataObj.get().setCamera(camera)
+                // Update record
+                metadataObj.get().setModifiedAt(getCurrentTimestamp())
+                metadataRepository.save(metadataObj.get())
+
+                val attrResponse = getAllAttribueData(model)
+                for ((k, v) in attrResponse) {
+                    resp[k] = v
                 }
+
+                return mapper.writeValueAsString(resp)
             } else {
-                metadataObj.get().setCamera(null)
+                logger.log(Level.WARNING, "Updating metadata $metadataId failed. Verify that $metadataId is valid. Could not save.")
+                resp["msg"] = "Could not save"
+                resp["status"] = ApiResponse.FAIL.status
+                return mapper.writeValueAsString(resp)
             }
-            if (metadataMap["lens"].toString().trim() != "") {
-                var lens = StringEscapeUtils.escapeHtml4(metadataMap["lens"].toString()).trim()
-                val lensTypes = metadataRepository.findByLensTypeAlphabetical()
-                for (lensType in lensTypes) {
-                    if (lens.trim().lowercase() == lensType.trim().lowercase()) {
-                        lens = lensType
-                        break
-                    }
-                }
-
-                if (metadataObj.get().getLens() != lens) {
-                    metadataObj.get().setLens(lens)
-                }
-            } else {
-                metadataObj.get().setLens(null)
-            }
-            if (metadataMap["year"].toString() == "") {
-                metadataObj.get().setYear(null)
-            } else if (metadataObj.get().getYear() != metadataMap["year"].toString().toInt()) {
-                metadataObj.get().setYear(StringEscapeUtils.escapeHtml4(metadataMap["year"].toString()).toInt())
-            }
-            if (metadataMap["month"].toString() == "") {
-                metadataObj.get().setMonth(null)
-            } else if (metadataObj.get().getMonth() != metadataMap["month"].toString().toInt()) {
-                metadataObj.get().setMonth(StringEscapeUtils.escapeHtml4(metadataMap["month"].toString()).toInt())
-            }
-            if (metadataMap["day"].toString() == "") {
-                metadataObj.get().setDay(null)
-            } else if (metadataObj.get().getDay() != metadataMap["day"].toString().toInt()) {
-                metadataObj.get().setDay(StringEscapeUtils.escapeHtml4(metadataMap["day"].toString()).toInt())
-            }
-            if (metadataMap["time"].toString() == "") {
-                metadataObj.get().setTime(null)
-            } else if (metadataObj.get().getTime() != metadataMap["time"].toString()) {
-                metadataObj.get().setTime(StringEscapeUtils.escapeHtml4(metadataMap["time"].toString()))
-            }
-            if (metadataMap["offset"].toString() == "") {
-                metadataObj.get().setTimeZone(null)
-            } else if (metadataObj.get().getTimeZone() != metadataMap["offset"].toString()) {
-                metadataObj.get().setTimeZone(StringEscapeUtils.escapeHtml4(metadataMap["offset"].toString()))
-            }
-
-            keywordPhotoRepository.deleteAllByMetadataId(metadataId)
-            if (metadataMap["keywords"].toString().isNotBlank()) {
-                var keywords = StringEscapeUtils.escapeHtml4(metadataMap["keywords"].toString()).trim()
-                if (keywords.last() == ',') {
-                    keywords = keywords.dropLast(1)
-                }
-                val keywordList = keywords.split(",").map { it.trim() }
-                processKeywords(keywordList, metadataId)
-            }
-
-            val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
-            if (keywordIdsToDelete.count() > 0) {
-                keywordRepository.deleteAllById(keywordIdsToDelete)
-            }
-
-            if (metadataMap["latlng"].toString() == "") {
-                metadataObj.get().setLat(null)
-                metadataObj.get().setLng(null)
-            } else {
-                val coordinateMap = processCoordinates(metadataMap["latlng"].toString())
-                if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
-                    metadataObj.get().setLat(coordinateMap["lat"])
-                    metadataObj.get().setLng(coordinateMap["lng"])
-                }
-                if (coordinateMap["place"] != null) {
-                    metadataObj.get().setPlaceName(coordinateMap["place"])
-                }
-                if (coordinateMap["timezone"] != null) {
-                    metadataObj.get().setTimeZone(coordinateMap["timezone"])
-                }
-            }
-
-            // Update record
-            metadataObj.get().setModifiedAt(getCurrentTimestamp())
-            metadataRepository.save(metadataObj.get())
-
-            val attrResponse = getAllAttribueData(model)
-            for ((k, v) in attrResponse) {
-                resp[k] = v
-            }
-
-            return mapper.writeValueAsString(resp)
         }
         logger.log(Level.WARNING, "Updating metadata failed. Could not save.")
         resp["msg"] = "Could not save"
@@ -1161,18 +1177,18 @@ class TimelineController: BaseController() {
                     "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
                     "<tr><td>batchMetadataIds</td><td>body param</td><td>array</td><td>required</td><td>A list of media to batch edit</td></tr>" +
-                    "<tr><td>batchhidden</td><td>body param</td><td>boolean</td><td>required</td><td>Flag to batch hide/unhide media</td></tr>" +
-                    "<tr><td>batchisobject</td><td>body param</td><td>boolean</td><td>required</td><td>Flag to batch tag media as an object</td></tr>" +
-                    "<tr><td>cameraBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the name of the camera used</td></tr>" +
-                    "<tr><td>lensBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the name of the lens used</td></tr>" +
-                    "<tr><td>yearTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the year media was taken</td></tr>" +
-                    "<tr><td>monthTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the month media was taken</td></tr>" +
-                    "<tr><td>dayTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the day media was taken</td></tr>" +
-                    "<tr><td>offsetTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the offset time media was taken</td></tr>" +
-                    "<tr><td>albumNameInput</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of album names</td></tr>" +
-                    "<tr><td>tagBatchDataInput</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of subjects</td></tr>" +
-                    "<tr><td>keywordsBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of keywords</td></tr>" +
-                    "<tr><td>latlngBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a latitude and longitude set separated by a comma</td></tr>" +
+                    "<tr><td>batchhidden</td><td>body param</td><td>boolean</td><td>required</td><td>Flag to batch hide/unhide media. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>batchisobject</td><td>body param</td><td>boolean</td><td>required</td><td>Flag to batch tag media as an object. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>cameraBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the name of the camera used. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>lensBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the name of the lens used. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>yearTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the year media was taken. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>monthTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the month media was taken. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>dayTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the day media was taken. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>offsetTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the offset time media was taken. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>albumNameInput</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of album names. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>tagBatchDataInput</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of subjects. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>keywordsBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of keywords. If left blank or null, this value will not be updated.</td></tr>" +
+                    "<tr><td>latlngBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a latitude and longitude set separated by a comma. If left blank or null, this value will not be updated.</td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
                     "<code><pre>{\n" +
@@ -1343,73 +1359,83 @@ class TimelineController: BaseController() {
             for (idVal in idArray) {
                 val id = StringEscapeUtils.escapeHtml4(idVal)
                 val metadataObj: Optional<Metadata?> = metadataRepository.findById(id)
-                val metadata = metadataObj.get()
-                metadata.setModifiedAt(getCurrentTimestamp())
+                if (metadataObj.isPresent) {
+                    val metadata = metadataObj.get()
+                    metadata.setModifiedAt(getCurrentTimestamp())
 
-                if (isHidden) {
-                    metadata.setHidden(true)
-                    removeMetadata(id)
-                } else {
-                    // Add album photo
-                    if (albumIdList.isNotEmpty()) {
-                        albumPhotoRepository.deleteByMetadataId(metadata.getId())
+                    if (isHidden) {
+                        metadata.setHidden(true)
+                        removeMetadata(id)
+                    } else {
+                        // Add album photo
+                        if (albumIdList.isNotEmpty()) {
+                            albumPhotoRepository.deleteByMetadataId(metadata.getId())
 
-                        for (albumId in albumIdList) {
-                            val albumPhotoCount = albumPhotoRepository.countByMetadataIdAndAlbumId(metadata.getId(), albumId)!!
-                            if (albumPhotoCount == 0) {
-                                var albumPhotoObj: AlbumPhoto
-                                albumPhotoObj = AlbumPhoto()
-                                albumPhotoObj.setMetadataId(metadata.getId())
-                                albumPhotoObj.setAlbumId(albumId)
-                                albumPhotoObj.setCreatedAt(getCurrentTimestamp())
-                                albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-                                albumPhotoRepository.save(albumPhotoObj)
+                            for (albumId in albumIdList) {
+                                val albumPhotoCount =
+                                    albumPhotoRepository.countByMetadataIdAndAlbumId(metadata.getId(), albumId)!!
+                                if (albumPhotoCount == 0) {
+                                    var albumPhotoObj: AlbumPhoto
+                                    albumPhotoObj = AlbumPhoto()
+                                    albumPhotoObj.setMetadataId(metadata.getId())
+                                    albumPhotoObj.setAlbumId(albumId)
+                                    albumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                    albumPhotoObj.setModifiedAt(getCurrentTimestamp())
+                                    albumPhotoRepository.save(albumPhotoObj)
+                                }
                             }
                         }
-                    }
 
-                    processPeople(model.getAttribute("settings") as Settings, metadata, recognitionLabelNames.toString(), isObject)
+                        processPeople(
+                            model.getAttribute("settings") as Settings,
+                            metadata,
+                            recognitionLabelNames.toString(),
+                            isObject
+                        )
 
-                    if (dayTaken != null) {
-                        metadata.setDay(dayTaken)
-                    }
-                    if (monthTaken != null) {
-                        metadata.setMonth(monthTaken)
-                    }
-                    if (yearTaken != null) {
-                        metadata.setYear(yearTaken)
-                    }
-                    if (camera != null && camera.trim().isNotBlank()) {
-                        metadata.setCamera(camera)
-                    }
-                    if (lens != null && lens.trim().isNotBlank()) {
-                        metadata.setLens(lens)
-                    }
-                    if (offset != null && offset.trim().isNotBlank()) {
-                        metadata.setTimeZone(offset)
-                    }
-
-                    if (lat != null && lng != null) {
-                        metadata.setLat(lat)
-                        metadata.setLng(lng)
-
-                        if (place != null) {
-                            metadata.setPlaceName(place)
+                        if (dayTaken != null) {
+                            metadata.setDay(dayTaken)
+                        }
+                        if (monthTaken != null) {
+                            metadata.setMonth(monthTaken)
+                        }
+                        if (yearTaken != null) {
+                            metadata.setYear(yearTaken)
+                        }
+                        if (camera != null && camera.trim().isNotBlank()) {
+                            metadata.setCamera(camera)
+                        }
+                        if (lens != null && lens.trim().isNotBlank()) {
+                            metadata.setLens(lens)
+                        }
+                        if (offset != null && offset.trim().isNotBlank()) {
+                            metadata.setTimeZone(offset)
                         }
 
-                        if (timezone != null) {
-                            metadata.setTimeZone(timezone)
+                        if (lat != null && lng != null) {
+                            metadata.setLat(lat)
+                            metadata.setLng(lng)
+
+                            if (place != null) {
+                                metadata.setPlaceName(place)
+                            }
+
+                            if (timezone != null) {
+                                metadata.setTimeZone(timezone)
+                            }
+                        }
+
+                        if (keywordList.isNotEmpty()) {
+                            keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
+                            processKeywords(keywordList, metadata.getId())
                         }
                     }
 
-                    if (keywordList.isNotEmpty()) {
-                        keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
-                        processKeywords(keywordList, metadata.getId())
-                    }
+                    metadata.setModifiedAt(getCurrentTimestamp())
+                    metadataList.add(metadata)
+                } else {
+                    logger.log(Level.WARNING, "Updating metadata $id failed for batch operation. Verify that $id is valid.")
                 }
-
-                metadata.setModifiedAt(getCurrentTimestamp())
-                metadataList.add(metadata)
             }
 
             val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
