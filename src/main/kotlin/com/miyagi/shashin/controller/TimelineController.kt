@@ -157,7 +157,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineMediaType",
-            description = "Get results for timeline content with associated favorites mapping. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+            description = "<strong>Get results for timeline content with associated favorites mapping.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -223,7 +223,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineJson",
-            description = "Get paged or all results for timeline content with associated favorites mapping. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+            description = "<strong>Get paged or all results for timeline content with associated favorites mapping.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/{page}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -349,7 +349,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineByDateApi",
-            description = "Get paged or all results for timeline content with associated favorites mapping. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+            description = "<strong>Get paged or all results for timeline content with associated favorites mapping.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}/date/{date}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -416,7 +416,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineMetadataByDateApi",
-            description = "Get minimal metadata information by date.<br>" +
+            description = "<strong>Get minimal metadata information by date.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -481,7 +481,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getAllKeywords",
-            description = "Get a list of all keywords." +
+            description = "<strong>Get a list of all keywords.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/keywords\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -523,7 +523,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineDates",
-            description = "Get a list of all timeline dates by media type." +
+            description = "<strong>Get a list of all timeline dates by media type.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/dates/{mediaType}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -706,7 +706,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "updateMetadata",
-            description = "Update metadata.<br>" +
+            description = "<strong>Update metadata.</strong><br>" +
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/update/metadata/{metadataId}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -1134,7 +1134,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "updateBatchMetadata",
-            description = "Update a batch of metadata.<br>" +
+            description = "<strong>Update a batch of metadata.</strong><br>" +
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/update/metadata/batch\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -1521,7 +1521,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getMetadata",
-            description = "Get metadata information and associated keyword and favorites data." +
+            description = "<strong>Get metadata information and associated keyword and favorites data.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/metadata/{id}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -1611,7 +1611,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getTimelineMetadata",
-            description = "Get media info for a timeline view." +
+            description = "<strong>Get media info for a timeline view.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/metadata/{id}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -1734,7 +1734,7 @@ class TimelineController: BaseController() {
         operation =
         Operation(
             operationId = "getExifData",
-            description = "Get EXIF data extracted using <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a>.<br>" +
+            description = "<strong>Get EXIF data extracted using <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a>.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/exif/metadata/{id}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +

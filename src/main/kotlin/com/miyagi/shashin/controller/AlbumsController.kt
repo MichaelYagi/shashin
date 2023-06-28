@@ -98,7 +98,7 @@ class AlbumsController {
         operation =
         Operation(
             operationId = "getAlbumsApi",
-            description = "Get paged list for all albums." +
+            description = "<strong>Get paged list for all albums.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/albums/{page}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -294,7 +294,7 @@ class AlbumsController {
         operation =
         Operation(
             operationId = "getSharedAlbumsApi",
-            description = "Get list of shared albums." +
+            description = "<strong>Get list of shared albums.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/sharedalbums\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -385,7 +385,7 @@ class AlbumsController {
         operation =
         Operation(
             operationId = "getAlbumCommentsApi",
-            description = "Get comments for an album." +
+            description = "<strong>Get comments for an album.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/albumcomments/{albumId}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -648,7 +648,7 @@ class AlbumsController {
         operation =
         Operation(
             operationId = "postAnonymousShareAlbum",
-            description = "Save and generate a sharable public URL. This can be a user generated share link eg. http://127.0.0.1:6624/share/abcd/album/1" +
+            description = "<strong>Save and generate a sharable public URL.</strong> This can be a user generated share link eg. http://127.0.0.1:6624/share/abcd/album/1" +
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/album/{albumId}/save/sharelink\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -736,7 +736,7 @@ class AlbumsController {
         operation =
         Operation(
             operationId = "getPagedAnonymousShareAlbum",
-            description = "Get paged results for shared album content. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+            description = "<strong>Get paged results for shared album content.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}/{page}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
@@ -892,7 +892,7 @@ class AlbumsController {
         operation =
         Operation(
             operationId = "getPagedAlbum",
-            description = "Get paged results for album content. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+            description = "<strong>Get paged results for album content.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/album/{albumId}/page/{page}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
