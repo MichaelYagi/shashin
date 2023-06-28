@@ -57,7 +57,7 @@ class MapController {
         operation =
         Operation(
             operationId = "getMapData",
-            description = "Get results used for map data." +
+            description = "<strong>Get results used for map data.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/mapdata\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +

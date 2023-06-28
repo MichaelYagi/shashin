@@ -154,7 +154,7 @@ class SearchController {
         operation =
         Operation(
             operationId = "getSearchHistory",
-            description = "Get your search history results.<br>" +
+            description = "<strong>Get your search history results.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/search/history\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +

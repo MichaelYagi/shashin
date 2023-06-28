@@ -65,7 +65,7 @@ class FavoritesController {
         operation =
         Operation(
             operationId = "getPagedFavorites",
-            description = "Get paged results used for your favorites." +
+            description = "<strong>Get paged results used for your favorites.</strong>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/favorites/{page}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
