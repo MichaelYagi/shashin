@@ -165,7 +165,7 @@ class BrowseController: BaseController() {
         operation =
         Operation(
             operationId = "getPagedModified",
-            description = "<strong>Get paged results for recently modified content.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+            description = "<strong>Get paged results for recently modified content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/modified/{page}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +

@@ -736,7 +736,7 @@ class AlbumsController {
         operation =
         Operation(
             operationId = "getPagedAnonymousShareAlbum",
-            description = "<strong>Get paged results for shared album content.</strong> Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+            description = "<strong>Get paged results for shared album content.</strong><br>" +
                     "<pre><code>" +
                     "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}/{page}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
