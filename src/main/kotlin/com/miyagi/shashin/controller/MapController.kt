@@ -83,8 +83,7 @@ class MapController {
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>mapdata</td><td>array</td><td>List of Metadata objects</td></tr>" +
-                    "<tr><td>metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "<tr><td>mapdata[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
                     "</tbody></table>"
         )
     )

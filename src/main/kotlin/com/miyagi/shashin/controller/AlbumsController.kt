@@ -160,24 +160,24 @@ class AlbumsController {
                     "<tr><td>baseUrl</td><td>string</td><td>Current base URL</td></tr>" +
                     "<tr><td>showControls</td><td>boolean</td><td>Set to true if an ADMIN role, and have icons shown to edit the album.</td></tr>" +
                     "<tr><td>userCount</td><td>int</td><td>Number of users</td></tr>" +
-                    "<tr><td>albumList.coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
-                    "<tr><td>albumList.albumVideoCount</td><td>string</td><td>The number of videos in this album</td></tr>" +
-                    "<tr><td>albumList.albumPhotoCount</td><td>string</td><td>The number of photos in this album</td></tr>" +
-                    "<tr><td>albumList.id</td><td>int</td><td>The album ID</td></tr>" +
-                    "<tr><td>albumList.shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
-                    "<tr><td>albumList.name</td><td>string</td><td>The album name</td></tr>" +
-                    "<tr><td>userAlbums.id</td><td>int</td><td>The user albums ID</td></tr>" +
-                    "<tr><td>userAlbums.userId</td><td>int</td><td>The user ID to share the album</td></tr>" +
-                    "<tr><td>userAlbums.albumId</td><td>int</td><td>The album ID to share the album</td></tr>" +
-                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.albumId</td><td>int</td><td>The album ID for the comment</td></tr>" +
-                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.commentId</td><td>int</td><td>The comment ID for the comment</td></tr>" +
-                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.comment</td><td>string</td><td>The comment for this album</td></tr>" +
-                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.userId</td><td>int</td><td>The user ID for the comment</td></tr>" +
-                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;.username</td><td>string</td><td>The username for the comment</td></tr>" +
-                    "<tr><td>sharedAlbums.albumId</td><td>int</td><td>The album ID used for who to allow sharing with</td></tr>" +
-                    "<tr><td>sharedAlbums.userId</td><td>int</td><td>The user ID used for who to allow sharing with</td></tr>" +
-                    "<tr><td>sharedAlbums.username</td><td>string</td><td>The username used for who to allow sharing with</td></tr>" +
-                    "<tr><td>sharedAlbums.isShared</td><td>boolean</td><td>Flag of whether this album is shared with this user or not</td></tr>" +
+                    "<tr><td>albumList[].coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>albumList[].albumVideoCount</td><td>string</td><td>The number of videos in this album</td></tr>" +
+                    "<tr><td>albumList[].albumPhotoCount</td><td>string</td><td>The number of photos in this album</td></tr>" +
+                    "<tr><td>albumList[].id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>albumList[].shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>albumList[].name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>userAlbums[].id</td><td>int</td><td>The user albums ID</td></tr>" +
+                    "<tr><td>userAlbums[].userId</td><td>int</td><td>The user ID to share the album</td></tr>" +
+                    "<tr><td>userAlbums[].albumId</td><td>int</td><td>The album ID to share the album</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].albumId</td><td>int</td><td>The album ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].commentId</td><td>int</td><td>The comment ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].comment</td><td>string</td><td>The comment for this album</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].userId</td><td>int</td><td>The user ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].username</td><td>string</td><td>The username for the comment</td></tr>" +
+                    "<tr><td>sharedAlbums[].albumId</td><td>int</td><td>The album ID used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].userId</td><td>int</td><td>The user ID used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].username</td><td>string</td><td>The username used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].isShared</td><td>boolean</td><td>Flag of whether this album is shared with this user or not</td></tr>" +
                     "</tbody></table>"
         )
     )
@@ -290,6 +290,58 @@ class AlbumsController {
         return response
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getSharedAlbumsApi",
+            description = "Get list of shared albums." +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/sharedalbums\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"userCount\": &lt;user_count&gt;,\n" +
+                    "    \"userAlbums\": [\n" +
+                    "        {\n" +
+                    "            \"id\": \"&lt;user_albums_id&gt;,\"\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"albumId\": &lt;album_id&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"sharedAlbums\": [\n" +
+                    "        {\n" +
+                    "            \"albumId\": &lt;album_id&gt;,\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"username\": &lt;username&gt;,\n" +
+                    "            \"isShared\": \"&lt;is_shared&gt;\"\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>userCount</td><td>int</td><td>Number of users</td></tr>" +
+                    "<tr><td>userAlbums[].id</td><td>int</td><td>The user albums ID</td></tr>" +
+                    "<tr><td>userAlbums[].userId</td><td>int</td><td>The user ID to share the album</td></tr>" +
+                    "<tr><td>userAlbums[].albumId</td><td>int</td><td>The album ID to share the album</td></tr>" +
+                    "<tr><td>sharedAlbums[].albumId</td><td>int</td><td>The album ID used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].userId</td><td>int</td><td>The user ID used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].username</td><td>string</td><td>The username used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].isShared</td><td>boolean</td><td>Flag of whether this album is shared with this user or not</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/sharedalbums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
@@ -355,8 +407,7 @@ class AlbumsController {
                     "            \"commentId\": &lt;comment_id&gt;,\n" +
                     "            \"userId\": &lt;user_id&gt;,\n" +
                     "            \"albumId\": &lt;album_id&gt;,\n" +
-                    "            \"username\": \"&lt;username&gt;\",\n" +
-                    "            \"createdAt\": \"&lt;created_at&gt;\",\n" +
+                    "            \"username\": \"&lt;username&gt;\"\n" +
                     "        }\n" +
                     "    ],\n" +
                     "    \"status\": \"success\"\n" +
@@ -365,11 +416,11 @@ class AlbumsController {
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>albumCommentsList.comment</td><td>string</td><td>The comment</td></tr>" +
-                    "<tr><td>albumCommentsList.commentId</td><td>int</td><td>The comment ID</td></tr>" +
-                    "<tr><td>albumCommentsList.albumId</td><td>int</td><td>The album ID for the album the user commented on</td></tr>" +
-                    "<tr><td>albumCommentsList.userId</td><td>int</td><td>The user ID of the person who commented</td></tr>" +
-                    "<tr><td>albumCommentsList.username</td><td>string</td><td>The username of the person who commented</td></tr>" +
+                    "<tr><td>albumCommentsList[].comment</td><td>string</td><td>The comment</td></tr>" +
+                    "<tr><td>albumCommentsList[].commentId</td><td>int</td><td>The comment ID</td></tr>" +
+                    "<tr><td>albumCommentsList[].albumId</td><td>int</td><td>The album ID for the album the user commented on</td></tr>" +
+                    "<tr><td>albumCommentsList[].userId</td><td>int</td><td>The user ID of the person who commented</td></tr>" +
+                    "<tr><td>albumCommentsList[].username</td><td>string</td><td>The username of the person who commented</td></tr>" +
                     "</tbody></table>"
         )
     )
@@ -681,6 +732,55 @@ class AlbumsController {
         return module
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getPagedAnonymousShareAlbum",
+            description = "Get paged results for shared album content. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}/{page}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>shareLink</td><td>param</td><td>string</td><td>required</td><td>The relative share URL you'd like to save</td></tr>" +
+                    "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>The album ID</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"shareLink\": \"&lt;relative_share_url&gt;\",\n" +
+                    "    \"album\": {\n" +
+                    "        \"id\": &lt;album_id&gt;,\n" +
+                    "        \"name\": \"&lt;name_of_album&gt;\",\n" +
+                    "        \"coverUrl\": \"&lt;relative_url&gt;\",\n" +
+                    "        \"shareUrl\": \"&lt;public_url_key&gt;\"\n" +
+                    "    },\n" +
+                    "    \"albumMetadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>shareLink</td><td>string</td><td>The saved relative URL that can be used to share the album</td></tr>" +
+                    "<tr><td>album.id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>album.name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>album.coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>album.shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>albumMetadataList[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/share/{shareLink}/album/{albumId}/{page}","/api/v1/share/{shareLink}/album/{albumId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @PathVariable page: Int): String? {
@@ -817,9 +917,7 @@ class AlbumsController {
                     "        \"id\": &lt;album_id&gt;,\n" +
                     "        \"name\": \"&lt;name_of_album&gt;\",\n" +
                     "        \"coverUrl\": \"&lt;relative_url&gt;\",\n" +
-                    "        \"shareUrl\": \"&lt;public_url_key&gt;\",\n" +
-                    "        \"createdAt\": \"&lt;created_at_datetime&gt;\",\n" +
-                    "        \"modifiedAt\": \"&lt;modified_at_datetime&gt;\"\n" +
+                    "        \"shareUrl\": \"&lt;public_url_key&gt;\"\n" +
                     "    },\n" +
                     "    \"albumMetadataList\": [\n" +
                     "        {\n" +
@@ -837,8 +935,7 @@ class AlbumsController {
                     "<tr><td>album.name</td><td>string</td><td>The album name</td></tr>" +
                     "<tr><td>album.coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
                     "<tr><td>album.shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
-                    "<tr><td>albumMetadataList</td><td>array</td><td>List of Metadata objects</td></tr>" +
-                    "<tr><td>metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "<tr><td>albumMetadataList[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
                     "</tbody></table>"
         )
     )

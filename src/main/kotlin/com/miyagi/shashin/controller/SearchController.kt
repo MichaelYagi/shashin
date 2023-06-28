@@ -9,7 +9,9 @@ import com.miyagi.shashin.repository.SearchHistoryRepository
 import com.miyagi.shashin.repository.SearchRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
+import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
@@ -148,6 +150,45 @@ class SearchController {
         return "redirect:/"+module
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getSearchHistory",
+            description = "Get your search history results.<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/search/history\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"searchHistoryList\": [\n" +
+                    "        {\n" +
+                    "            \"id\": &lt;search_history_id&gt;,\n" +
+                    "            \"term\": \"&lt;search_term&gt;\",\n" +
+                    "            \"userId\": &lt;user_id&gt;\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>searchHistoryList[].id</td><td>int</td><td>The search history term ID</td></tr>" +
+                    "<tr><td>searchHistoryList[].term</td><td>string</td><td>The search history term</td></tr>" +
+                    "<tr><td>searchHistoryList[].userId</td><td>int</td><td>The user that searched this search history term</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/api/v1/search/history"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getSearchHistory(model: Model, request: HttpServletRequest): String {

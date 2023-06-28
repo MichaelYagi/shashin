@@ -153,6 +153,52 @@ class TimelineController: BaseController() {
         return module
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getTimelineMediaType",
+            description = "Get results for timeline content with associated favorites mapping. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>mediaType</td><td>param</td><td>string</td><td>required</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"mediaTypeFilter\": \"&lt;media_type&gt;\",\n" +
+                    "    \"metadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"favorites\": {\n" +
+                    "        \"&lt;metadata_id&gt;\": {\n" +
+                    "            \"count\": &lt;count&gt;,\n" +
+                    "            \"favorite\": &lt;is_favorite&gt;\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>mediaTypeFilter</td><td>string</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "<tr><td>metadataList[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "<tr><td>favourites.&lt;metadata_id&gt;.count</td><td>int</td><td>The number of people who saved this media as a favorite</td></tr>" +
+                    "<tr><td>favourites.&lt;metadata_id&gt;.favorite</td><td>boolean</td><td>True if saved as a favorite</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}", "/api/v1/timeline/mediatype/{mediaType}"], method = [RequestMethod.GET])
     fun getTimelineMediaType(model: Model,@PathVariable mediaType: String): String {
         val module = "timeline"
@@ -173,6 +219,52 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(buildTimelineData(model,mediaType,page))
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getTimelineJson",
+            description = "Get paged or all results for timeline content with associated favorites mapping. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/{page}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>required</td><td>page number of results to return used for pagination. Page index starts from 0. The default query/page size is 20. Admins can set the query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"mediaTypeFilter\": \"&lt;media_type&gt;\",\n" +
+                    "    \"metadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"favorites\": {\n" +
+                    "        \"&lt;metadata_id&gt;\": {\n" +
+                    "            \"count\": &lt;count&gt;,\n" +
+                    "            \"favorite\": &lt;is_favorite&gt;\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>mediaTypeFilter</td><td>string</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "<tr><td>metadataList[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "<tr><td>favourites.&lt;metadata_id&gt;.count</td><td>int</td><td>The number of people who saved this media as a favorite</td></tr>" +
+                    "<tr><td>favourites.&lt;metadata_id&gt;.favorite</td><td>boolean</td><td>True if saved as a favorite</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/api/v1/timeline","/api/v1/timeline/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTimelineJson(model: Model, @PathVariable(required = false) page: Int?): String {
@@ -253,6 +345,53 @@ class TimelineController: BaseController() {
             .body(json)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getTimelineByDateApi",
+            description = "Get paged or all results for timeline content with associated favorites mapping. Pages start from 0. The page size can be configured through the web interface (default 20).<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}/date/{date}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>mediaType</td><td>param</td><td>string</td><td>required</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "<tr><td>date</td><td>param</td><td>string</td><td>required</td><td>A valid timeline date in the format <yyyy-mm-dd> eg. 2023-6-27</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"mediaTypeFilter\": \"&lt;media_type&gt;\",\n" +
+                    "    \"metadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"favorites\": {\n" +
+                    "        \"&lt;metadata_id&gt;\": {\n" +
+                    "            \"count\": &lt;count&gt;,\n" +
+                    "            \"favorite\": &lt;is_favorite&gt;\n" +
+                    "        }\n" +
+                    "    }\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>mediaTypeFilter</td><td>string</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "<tr><td>metadataList[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "<tr><td>favourites.&lt;metadata_id&gt;.count</td><td>int</td><td>The number of people who saved this media as a favorite</td></tr>" +
+                    "<tr><td>favourites.&lt;metadata_id&gt;.favorite</td><td>boolean</td><td>True if saved as a favorite</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
@@ -273,6 +412,63 @@ class TimelineController: BaseController() {
             .body(json)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getTimelineMetadataByDateApi",
+            description = "Get minimal metadata information by date.<br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>mediaType</td><td>param</td><td>string</td><td>required</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "<tr><td>date</td><td>param</td><td>string</td><td>required</td><td>A valid timeline date in the format &lt;yyyy-mm-dd&gt; eg. 2023-6-27</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"mediaTypeFilter\": \"&lt;media_type&gt;\",\n" +
+                    "    \"metadataList\": [\n" +
+                    "        {\n" +
+                    "           \"id\": \"&lt;metadata_id&gt;\",\n" +
+                    "           \"thumbnailUrlCentered\": \"&lt;centered_thumbnail_url&gt;\",\n" +
+                    "           \"thumbnailSmallHeight\": &lt;thumbnail_height&gt;,\n" +
+                    "           \"thumbnailUrlSmall\": \"&lt;thumbnail_url&gt;\",\n" +
+                    "           \"thumbnailSmallWidth\": &lt;thumbnail_width&gt;,\n" +
+                    "           \"type\": \"&lt;data_type&gt;\",\n" +
+                    "           \"fileName\": \"&lt;name_of_file&gt;\",\n" +
+                    "           \"year\": &lt;year&gt;,\n" +
+                    "           \"month\": &lt;month&gt;,\n" +
+                    "           \"day\": &lt;day&gt;\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>mediaTypeFilter</td><td>string</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "<tr><td>metadataList[].id</td><td>string</td><td>The metadata ID</td></tr>" +
+                    "<tr><td>metadataList[].thumbnailUrlCentered</td><td>string</td><td>The centered thumbnail image URL</td></tr>" +
+                    "<tr><td>metadataList[].thumbnailSmallHeight</td><td>int</td><td>The thumbnail height</td></tr>" +
+                    "<tr><td>metadataList[].thumbnailUrlSmall</td><td>string</td><td>The thumbnail image URL</td></tr>" +
+                    "<tr><td>metadataList[].thumbnailSmallWidth</td><td>int</td><td>The thumbnail width</td></tr>" +
+                    "<tr><td>metadataList[].type</td><td>string</td><td>The file type</td></tr>" +
+                    "<tr><td>metadataList[].fileName</td><td>string</td><td>The file name</td></tr>" +
+                    "<tr><td>metadataList[].year</td><td>int</td><td>The year the media was captured</td></tr>" +
+                    "<tr><td>metadataList[].month</td><td>int</td><td>The month the media was captured</td></tr>" +
+                    "<tr><td>metadataList[].day</td><td>int</td><td>The day the media was captured</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/api/v1/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
@@ -310,8 +506,8 @@ class TimelineController: BaseController() {
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>keywords.id</td><td>int</td><td>The keyword ID</td></tr>" +
-                    "<tr><td>keywords.keyword</td><td>string</td><td>The keyword</td></tr>" +
+                    "<tr><td>keywords[].id</td><td>int</td><td>The keyword ID</td></tr>" +
+                    "<tr><td>keywords[].keyword</td><td>string</td><td>The keyword</td></tr>" +
                     "</tbody></table>"
         )
     )
@@ -323,6 +519,43 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getTimelineDates",
+            description = "Get a list of all timeline dates by media type." +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/dates/{mediaType}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>mediaType</td><td>param</td><td>string</td><td>required</td><td>One of \"all\", \"video\" or \"image\"</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"metadataDates\": [\n" +
+                    "        {\n" +
+                    "            \"year\": &lt;year&gt;,\n" +
+                    "            \"month\": \"&lt;month&gt;\",\n" +
+                    "            \"day\": \"&lt;dat&gt;\"\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>metadataDates[].year</td><td>int</td><td>The 4 digit year</td></tr>" +
+                    "<tr><td>metadataDates[].month</td><td>int</td><td>The month (1-12)</td></tr>" +
+                    "<tr><td>metadataDates[].day</td><td>int</td><td>The day (1-31)</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/timeline/dates/{mediaType}","/api/v1/timeline/dates/{mediaType}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTimelineDates(model: Model, @PathVariable mediaType: String): String {
@@ -469,6 +702,135 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "updateMetadata",
+            description = "Update metadata.<br>" +
+                    "<pre><code>" +
+                    "curl -X POST \"http://127.0.0.1:6624/api/v1/update/metadata/{metadataId}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
+                    "-d '{\n" +
+                    "     \"id\": \"&lt;metadata_id&gt;\",\n" +
+                    "     \"title\": \"&lt;title&gt;\",\n" +
+                    "     \"description\": \"&lt;description&gt;\",\n" +
+                    "     \"latlng\": \"&lt;lat&gt;,&lt;lng&gt;\",\n" +
+                    "     \"offset\": \"&lt;taken_offset&gt;\",\n" +
+                    "     \"albumnames\": \"&lt;album_name_1,album_name_n&gt;\",\n" +
+                    "     \"keywords\": \"&lt;keyword_1&gt;,&lt;keyword_n&gt;\",\n" +
+                    "     \"tagpeople\": \"&lt;subject_name_1&gt;,&lt;subject_name_n&gt;\",\n" +
+                    "     \"camera\": \"&lt;camera_name&gt;\",\n" +
+                    "     \"lens\": \"&lt;lens_name&gt;\",\n" +
+                    "     \"time\": \"&lt;time_taken&gt;\",\n" +
+                    "     \"year\": \"&lt;year_taken&gt;\",\n" +
+                    "     \"month\": \"&lt;month_taken&gt;\",\n" +
+                    "     \"day\": \"&lt;day_taken&gt;\",\n" +
+                    "     \"hidden\": &lt;hidden_flag&gt;,\n" +
+                    "     \"isObject\": &lt;is_object_flag&gt;\n" +
+                    "    }'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>id</td><td>body param</td><td>string</td><td>required</td><td>Metadata id associated with media to edit</td></tr>" +
+                    "<tr><td>title</td><td>body param</td><td>string</td><td>required</td><td>The title of media</td></tr>" +
+                    "<tr><td>description</td><td>body param</td><td>string</td><td>required</td><td>The description of media</td></tr>" +
+                    "<tr><td>latlng</td><td>body param</td><td>string</td><td>required</td><td>Tag media with a latitude and longitude set separated by a comma</td></tr>" +
+                    "<tr><td>offset</td><td>body param</td><td>string</td><td>required</td><td>Tag media with the offset time media was taken</td></tr>" +
+                    "<tr><td>albumnames</td><td>body param</td><td>string</td><td>required</td><td>Tag media with a comma separated list of album names</td></tr>" +
+                    "<tr><td>keywords</td><td>body param</td><td>string</td><td>required</td><td>Tag media with a comma separated list of keywords</td></tr>" +
+                    "<tr><td>tagpeople</td><td>body param</td><td>string</td><td>required</td><td>Tag media with a comma separated list of subjects</td></tr>" +
+                    "<tr><td>camera</td><td>body param</td><td>string</td><td>required</td><td>Tag media with the name of the camera used</td></tr>" +
+                    "<tr><td>lens</td><td>body param</td><td>string</td><td>required</td><td>Tag media with the name of the lens used</td></tr>" +
+                    "<tr><td>time</td><td>body param</td><td>string</td><td>required</td><td>Tag media with the time media was taken in format HH:MM:SS</td></tr>" +
+                    "<tr><td>year</td><td>body param</td><td>string</td><td>required</td><td>Tag media with the year media was taken</td></tr>" +
+                    "<tr><td>month</td><td>body param</td><td>string</td><td>required</td><td>Tag media with the month media was taken</td></tr>" +
+                    "<tr><td>day</td><td>body param</td><td>string</td><td>required</td><td>Tag media with the day media was taken</td></tr>" +
+                    "<tr><td>hidden</td><td>body param</td><td>boolean</td><td>required</td><td>Flag to hide/unhide media</td></tr>" +
+                    "<tr><td>isObject</td><td>body param</td><td>boolean</td><td>required</td><td>Flag to tag media as an object</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"recognitionLabels\": [\n" +
+                    "        {\n" +
+                    "            \"id\": &ltsubject_id&gt;,\n" +
+                    "            \"name\": \"&ltsubject_name&gt;\"\n" +
+                    "        },\n" +
+                    "    ],\n" +
+                    "    \"allAlbumList\": [\n" +
+                    "        {\n" +
+                    "            \"id\": &lt;album_id&gt;,\n" +
+                    "            \"name\": \"&lt;name_of_album&gt;\",\n" +
+                    "            \"coverUrl\": \"&lt;relative_url&gt;\",\n" +
+                    "            \"shareUrl\": \"&lt;public_url_key&gt;\"\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"timeOffsets\": [\n" +
+                    "        \"-12:00\",\n" +
+                    "        \"-11:00\",\n" +
+                    "        \"-10:00\",\n" +
+                    "        \"-09:30\",\n" +
+                    "        \"-09:00\",\n" +
+                    "        \"-08:00\",\n" +
+                    "        \"-07:00\",\n" +
+                    "        \"-06:00\",\n" +
+                    "        \"-05:00\",\n" +
+                    "        \"-04:30\",\n" +
+                    "        \"-04:00\",\n" +
+                    "        \"-03:30\",\n" +
+                    "        \"-03:00\",\n" +
+                    "        \"-02:00\",\n" +
+                    "        \"-01:00\",\n" +
+                    "        \"±00:00\",\n" +
+                    "        \"+01:00\",\n" +
+                    "        \"+02:00\",\n" +
+                    "        \"+03:00\",\n" +
+                    "        \"+03:30\",\n" +
+                    "        \"+04:00\",\n" +
+                    "        \"+04:30\",\n" +
+                    "        \"+05:00\",\n" +
+                    "        \"+05:30\",\n" +
+                    "        \"+05:45\",\n" +
+                    "        \"+06:00\",\n" +
+                    "        \"+06:30\",\n" +
+                    "        \"+07:00\",\n" +
+                    "        \"+08:00\",\n" +
+                    "        \"+08:45\",\n" +
+                    "        \"+09:00\",\n" +
+                    "        \"+09:30\",\n" +
+                    "        \"+10:00\",\n" +
+                    "        \"+11:00\",\n" +
+                    "        \"+11:30\",\n" +
+                    "        \"+12:00\",\n" +
+                    "        \"+13:00\",\n" +
+                    "        \"+14:00\"\n" +
+                    "    ],\n" +
+                    "    \"keywords\": \"&lt;keyword_1,keyword_n&gt;\",\n" +
+                    "    \"cameras\": \"&lt;camera_1,camera_n&gt;\",\n" +
+                    "    \"lenses\": \"&lt;lens_1,lens_n&gt;\"" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>recognitionLabels[].id</td><td>int</td><td>Album ID the subject is associated with</td></tr>" +
+                    "<tr><td>recognitionLabels[].name</td><td>string</td><td>Subject name</td></tr>" +
+                    "<tr><td>allAlbumList[].id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>allAlbumList[].name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>allAlbumList[].coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>allAlbumList[].shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>timeOffsets</td><td>array</td><td>An array of valid time offsets</td></tr>" +
+                    "<tr><td>keywords</td><td>string</td><td>A comma separated string of all keywords</td></tr>" +
+                    "<tr><td>cameras</td><td>string</td><td>A comma separated string of all cameras</td></tr>" +
+                    "<tr><td>lenses</td><td>string</td><td>A comma separated string of all lenses</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -768,6 +1130,129 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "updateBatchMetadata",
+            description = "Update a batch of metadata.<br>" +
+                    "<pre><code>" +
+                    "curl -X POST \"http://127.0.0.1:6624/api/v1/update/metadata/batch\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
+                    "-d '{\n" +
+                    "     \"batchMetadataIds\": [\"&lt;metadata_id_1&gt;\",\"&lt;metadata_id_n&gt;\"],\n" +
+                    "     \"batchhidden\": &lt;batch_hidden_flag&gt;,\n" +
+                    "     \"batchisobject\": &lt;batch_is_object_flag&gt;,\n" +
+                    "     \"cameraBatchData\": \"&lt;batch_camera_name&gt;\",\n" +
+                    "     \"lensBatchData\": \"&lt;batch_lens_name&gt;\",\n" +
+                    "     \"yearTakenBatchData\": \"&lt;batch_year_taken&gt;\",\n" +
+                    "     \"monthTakenBatchData\": \"&lt;batch_month_taken&gt;\",\n" +
+                    "     \"dayTakenBatchData\": \"&lt;batch_day_taken&gt;\",\n" +
+                    "     \"offsetTakenBatchData\": \"&lt;batch_taken_offset&gt;\",\n" +
+                    "     \"albumNameInput\": \"&lt;album_name_1&gt;,&lt;album_name_n&gt;\",\n" +
+                    "     \"tagBatchDataInput\": \"&lt;subject_name_1&gt;,&lt;subject_name_n&gt;\",\n" +
+                    "     \"keywordsBatchData\": \"&lt;keyword_1&gt;,&lt;keyword_n&gt;\",\n" +
+                    "     \"latlngBatchData\": \"&lt;lat&gt;,&lt;lng&gt;\"\n" +
+                    "    }'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>batchMetadataIds</td><td>body param</td><td>array</td><td>required</td><td>A list of media to batch edit</td></tr>" +
+                    "<tr><td>batchhidden</td><td>body param</td><td>boolean</td><td>required</td><td>Flag to batch hide/unhide media</td></tr>" +
+                    "<tr><td>batchisobject</td><td>body param</td><td>boolean</td><td>required</td><td>Flag to batch tag media as an object</td></tr>" +
+                    "<tr><td>cameraBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the name of the camera used</td></tr>" +
+                    "<tr><td>lensBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the name of the lens used</td></tr>" +
+                    "<tr><td>yearTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the year media was taken</td></tr>" +
+                    "<tr><td>monthTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the month media was taken</td></tr>" +
+                    "<tr><td>dayTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the day media was taken</td></tr>" +
+                    "<tr><td>offsetTakenBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with the offset time media was taken</td></tr>" +
+                    "<tr><td>albumNameInput</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of album names</td></tr>" +
+                    "<tr><td>tagBatchDataInput</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of subjects</td></tr>" +
+                    "<tr><td>keywordsBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a comma separated list of keywords</td></tr>" +
+                    "<tr><td>latlngBatchData</td><td>body param</td><td>string</td><td>required</td><td>Batch tag media with a latitude and longitude set separated by a comma</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"recognitionLabels\": [\n" +
+                    "        {\n" +
+                    "            \"id\": &ltsubject_id&gt;,\n" +
+                    "            \"name\": \"&ltsubject_name&gt;\"\n" +
+                    "        },\n" +
+                    "    ],\n" +
+                    "    \"allAlbumList\": [\n" +
+                    "        {\n" +
+                    "            \"id\": &lt;album_id&gt;,\n" +
+                    "            \"name\": \"&lt;name_of_album&gt;\",\n" +
+                    "            \"coverUrl\": \"&lt;relative_url&gt;\",\n" +
+                    "            \"shareUrl\": \"&lt;public_url_key&gt;\"\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"timeOffsets\": [\n" +
+                    "        \"-12:00\",\n" +
+                    "        \"-11:00\",\n" +
+                    "        \"-10:00\",\n" +
+                    "        \"-09:30\",\n" +
+                    "        \"-09:00\",\n" +
+                    "        \"-08:00\",\n" +
+                    "        \"-07:00\",\n" +
+                    "        \"-06:00\",\n" +
+                    "        \"-05:00\",\n" +
+                    "        \"-04:30\",\n" +
+                    "        \"-04:00\",\n" +
+                    "        \"-03:30\",\n" +
+                    "        \"-03:00\",\n" +
+                    "        \"-02:00\",\n" +
+                    "        \"-01:00\",\n" +
+                    "        \"±00:00\",\n" +
+                    "        \"+01:00\",\n" +
+                    "        \"+02:00\",\n" +
+                    "        \"+03:00\",\n" +
+                    "        \"+03:30\",\n" +
+                    "        \"+04:00\",\n" +
+                    "        \"+04:30\",\n" +
+                    "        \"+05:00\",\n" +
+                    "        \"+05:30\",\n" +
+                    "        \"+05:45\",\n" +
+                    "        \"+06:00\",\n" +
+                    "        \"+06:30\",\n" +
+                    "        \"+07:00\",\n" +
+                    "        \"+08:00\",\n" +
+                    "        \"+08:45\",\n" +
+                    "        \"+09:00\",\n" +
+                    "        \"+09:30\",\n" +
+                    "        \"+10:00\",\n" +
+                    "        \"+11:00\",\n" +
+                    "        \"+11:30\",\n" +
+                    "        \"+12:00\",\n" +
+                    "        \"+13:00\",\n" +
+                    "        \"+14:00\"\n" +
+                    "    ],\n" +
+                    "    \"keywords\": \"&lt;keyword_1,keyword_n&gt;\",\n" +
+                    "    \"cameras\": \"&lt;camera_1,camera_n&gt;\",\n" +
+                    "    \"lenses\": \"&lt;lens_1,lens_n&gt;\"" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>recognitionLabels[].id</td><td>int</td><td>Album ID the subject is associated with</td></tr>" +
+                    "<tr><td>recognitionLabels[].name</td><td>string</td><td>Subject name</td></tr>" +
+                    "<tr><td>allAlbumList[].id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>allAlbumList[].name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>allAlbumList[].coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>allAlbumList[].shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>timeOffsets</td><td>array</td><td>An array of valid time offsets</td></tr>" +
+                    "<tr><td>keywords</td><td>string</td><td>A comma separated string of all keywords</td></tr>" +
+                    "<tr><td>cameras</td><td>string</td><td>A comma separated string of all cameras</td></tr>" +
+                    "<tr><td>lenses</td><td>string</td><td>A comma separated string of all lenses</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -1058,9 +1543,7 @@ class TimelineController: BaseController() {
                     "            \"count\": &lt;favorites_count&gt;\n" +
                     "        }\n" +
                     "    },\n" +
-                    "    \"keywordList\": [\n" +
-                    "        \"keyword_1\", \"keyword_2\", \"keyword_n\"\n" +
-                    "    ],\n" +
+                    "    \"keywordList\": [\"&lt;keyword_1&gt;\", \"&lt;keyword_n&gt;\"]\n" +
                     "    \"metadata\": {\n" +
                     "        &lt;metadata&gt;\n" +
                     "    }\n" +
@@ -1124,6 +1607,65 @@ class TimelineController: BaseController() {
             .body(json)
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getTimelineMetadata",
+            description = "Get media info for a timeline view." +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/timeline/metadata/{id}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>id</td><td>param</td><td>string</td><td>required</td><td>A valid metadata ID</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"allRecognitionLabels\": [\n" +
+                    "        {\n" +
+                    "            \"id\": &lt;subject_id&gt;,\n" +
+                    "            \"name\": &lt;subject_name&gt;,\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"albumList\": [\"&lt;album_name_1&gt;\",\"&lt;album_name_n&gt;\"]\n" +
+                    "    \"taggedPeopleList\": [\"&lt;subject_1&gt;\",\"&lt;subject_n&gt;\"]\n" +
+                    "    \"keywordList\": [\"&lt;keyword_1&gt;\",\"&lt;keyword_n&gt;\"]\n" +
+                    "    \"allAlbumList\": [\n" +
+                    "        {\n" +
+                    "            \"id\": &lt;album_id&gt;,\n" +
+                    "            \"name\": \"&lt;name_of_album&gt;\",\n" +
+                    "            \"coverUrl\": \"&lt;relative_url&gt;\",\n" +
+                    "            \"shareUrl\": \"&lt;public_url_key&gt;\"\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"metadata\": {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "    },\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>allRecognitionLabels[].id</td><td>int</td><td>The subject ID</td></tr>" +
+                    "<tr><td>allRecognitionLabels[].name</td><td>int</td><td>The subject name</td></tr>" +
+                    "<tr><td>albumList</td><td>array</td><td>A list of album names associated with this media</td></tr>" +
+                    "<tr><td>taggedPeopleList</td><td>array</td><td>A list of subject names associated with this media</td></tr>" +
+                    "<tr><td>keywordList</td><td>array</td><td>A list of keywords associated with this media</td></tr>" +
+                    "<tr><td>allAlbumList[].id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>allAlbumList[].name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>allAlbumList[].coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>allAlbumList[].shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
     @RequestMapping(value = ["/api/v1/timeline/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
