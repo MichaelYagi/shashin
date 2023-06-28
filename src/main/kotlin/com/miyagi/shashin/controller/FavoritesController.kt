@@ -89,7 +89,7 @@ class FavoritesController {
                     "    ],\n" +
                     "    \"keywordMap\": {\n" +
                     "        {\n" +
-                    "           \"&lt;metadata_id&gt;\": \"&lt;keyword_1,keyword_2,keyword_n&gt;\"\n" +
+                    "           \"&lt;metadata_id&gt;\": \"&lt;keyword_1,keyword_n&gt;\"\n" +
                     "        }\n" +
                     "    }\n" +
                     "}" +
@@ -97,8 +97,7 @@ class FavoritesController {
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
                     "</thead><tbody>" +
-                    "<tr><td>metadataList</td><td>array</td><td>List of Metadata objects</td></tr>" +
-                    "<tr><td>metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "<tr><td>metadataList[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
                     "<tr><td>keywordMap.&lt;metadata_id&gt;</td><td>string</td><td>A comma seperated list of keywords for the associated metadata ID</td></tr>" +
                     "</tbody></table>"
         )
