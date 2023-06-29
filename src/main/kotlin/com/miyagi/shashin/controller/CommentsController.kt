@@ -7,7 +7,9 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
+import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Controller
@@ -57,7 +59,40 @@ class CommentsController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @RequestMapping(value = ["/comment/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postSaveComment",
+            description = "<strong>Save a comment for an album.</strong>" +
+                    "<pre><code>" +
+                    "curl -X POST \"http://127.0.0.1:6624/api/v1/comment/album/save\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-d '{\"albumId\": &lt;album_id&gt;, \"comment\": \"&lt;comment&gt;\"}'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>albumId</td><td>body param</td><td>int</td><td>required</td><td>Save a comment for this album ID</td></tr>" +
+                    "<tr><td>comment</td><td>body param</td><td>string</td><td>required</td><td>The comment</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"commentCount\": &lt;comment_count&gt;,\n" +
+                    "    \"commentId\": &lt;comment_id&gt;\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>commentCount</td><td>int</td><td>The number of comments for this album</td></tr>" +
+                    "<tr><td>commentId</td><td>int</td><td>The comment ID</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
+    @RequestMapping(value = ["/comment/album/save","/api/v1/comment/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postSaveComment(model: Model, @RequestBody requestBody: JsonNode): String {
@@ -134,7 +169,39 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/albumphoto/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postSaveAlbumPhotoComment",
+            description = "<strong>Save a comment for an album photo or video.</strong>" +
+                    "<pre><code>" +
+                    "curl -X POST \"http://127.0.0.1:6624/api/v1/comment/albumphoto/save\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-d '{\"albumId\": &lt;album_id&gt;, \"comment\": \"&lt;comment&gt;\", \"metadataId\": \"&lt;metadata_id&gt;\"}'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>albumId</td><td>body param</td><td>int</td><td>required</td><td>Save a comment for this album ID and media</td></tr>" +
+                    "<tr><td>comment</td><td>body param</td><td>string</td><td>required</td><td>The comment</td></tr>" +
+                    "<tr><td>metadataId</td><td>body param</td><td>string</td><td>required</td><td>The metadata ID for media</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"commentId\": &lt;comment_id&gt;\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>commentId</td><td>int</td><td>The comment ID</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
+    @RequestMapping(value = ["/comment/albumphoto/save","/api/v1/comment/albumphoto/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun postSaveAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -210,7 +277,38 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postUpdateComment",
+            description = "<strong>Update a comment for an album, album photo or video.</strong>" +
+                    "<pre><code>" +
+                    "curl -X POST \"http://127.0.0.1:6624/api/v1/comment/update\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-d '{\"commentId\": &lt;comment_id&gt;, \"comment\": \"&lt;updated_comment&gt;\"}'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>commentId</td><td>body param</td><td>int</td><td>required</td><td>The comment ID for the comment to update.</td></tr>" +
+                    "<tr><td>comment</td><td>body param</td><td>string</td><td>required</td><td>The updated comment</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"commentId\": &lt;comment_id&gt;\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>commentId</td><td>int</td><td>The comment ID that was updated</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
+    @RequestMapping(value = ["/comment/update","/api/v1/comment/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun postUpdateComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
@@ -242,12 +340,44 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/albumphoto/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postDeleteAlbumPhotoComment",
+            description = "<strong>Delete a comment for an album, album photo or video.</strong>" +
+                    "<pre><code>" +
+                    "curl -X DELETE \"http://127.0.0.1:6624/api/v1/comment/albumphoto/delete\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-d '{\"commentId\": &lt;comment_id&gt;}'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>commentId</td><td>body param</td><td>int</td><td>required</td><td>The comment ID to delete.</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"commentId\": &lt;comment_id&gt;\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>commentId</td><td>int</td><td>The comment ID that was deleted</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
+    @RequestMapping(value = ["/comment/albumphoto/delete","/api/v1/comment/albumphoto/delete"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postDeleteAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        if (commentMap.containsKey("commentId") && commentMap.containsKey("metadataId")) {
+        println(commentMap)
+        if (commentMap.containsKey("commentId")) {
             val commentId = commentMap["commentId"].toString().toInt()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
@@ -272,7 +402,40 @@ class CommentsController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/comment/album/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "postDeleteComment",
+            description = "<strong>Delete a comment for an album.</strong>" +
+                    "<pre><code>" +
+                    "curl -X DELETE \"http://127.0.0.1:6624/api/v1/comment/album/delete\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-d '{\"commentId\": &lt;comment_id&gt;, \"albumId\": &lt;album_id&gt;}'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>commentId</td><td>body param</td><td>int</td><td>required</td><td>The comment ID to delete.</td></tr>" +
+                    "<tr><td>albumId</td><td>body param</td><td>int</td><td>required</td><td>The album ID associated with the comment.</td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"commentId\": &lt;comment_id&gt;,\n" +
+                    "    \"commentCount\": &lt;comment_count&gt;\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>commentId</td><td>int</td><td>The comment ID that was deleted</td></tr>" +
+                    "<tr><td>commentCount</td><td>int</td><td>The comment count after deletion</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
+    @RequestMapping(value = ["/comment/album/delete", "/api/v1/comment/album/delete"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun postDeleteComment(model: Model, @RequestBody requestBody: JsonNode): String {

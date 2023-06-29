@@ -708,7 +708,7 @@ async function showMap(mapdata,showControls) {
             "batchMetadataIds": metadataIdList,
             "latlngBatchData": locationDataInput.val()
         };
-        const data = await http.ajax("post", "/timeline/update/batch", JSON.stringify(json), function () {
+        const data = await http.ajax("put", "/timeline/update/batch", JSON.stringify(json), function () {
             metadataLocationModalStatus.removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
             metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
             metadataLocationModalCancel.prop('disabled', false);

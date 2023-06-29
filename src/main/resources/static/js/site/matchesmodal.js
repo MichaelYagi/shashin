@@ -40,7 +40,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
 
     const http = new Http("saving persons matches");
     const batchObj = Util.serializeObject($('#saveBatchData'));
-    const data = await http.ajax("post", "/timeline/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
+    const data = await http.ajax("put", "/timeline/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
         $("#matchesBatchModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
         $("#matchesBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
         $("#matchesBatchModalCancel").prop('disabled', false);

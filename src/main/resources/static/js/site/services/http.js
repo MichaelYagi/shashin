@@ -17,7 +17,11 @@ class Http {
             ajaxParams.headers = {"X-API-KEY": shashin.apikey};
         }
 
-        if (type === "post" && typeof data !== "undefined") {
+        if (data === "undefined" || data === null) {
+            data = "";
+        }
+
+        if (type === "post" || type === "put" || type === "delete") {
             ajaxParams.data = data;
         }
 

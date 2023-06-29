@@ -96,7 +96,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                 $("#timelineBatchModalCancel").prop("disabled", false);
             });
         } else {
-            data = await http.ajax("post", "/timeline/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
+            data = await http.ajax("put", "/timeline/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
                 $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#timelineBatchModalCancel").prop("disabled", false);

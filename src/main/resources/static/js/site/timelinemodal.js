@@ -137,7 +137,7 @@ $("#saveMetadata").on("click", async function (e) {
                 $("#timelineModalCancel").prop('disabled', false);
             });
         } else {
-            data = await http.ajax("post", "/timeline/update/" + metadataId, JSON.stringify(json), function () {
+            data = await http.ajax("put", "/timeline/update/" + metadataId, JSON.stringify(json), function () {
                 $("#timelineModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
                 $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
                 $("#timelineModalCancel").prop('disabled', false);
