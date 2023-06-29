@@ -99,7 +99,7 @@ $("#albumAppToolsRemoveAlbum").on("click", async function (e) {
     if (metadataIdList.length > 0 && albumId.length > 0) {
         const http = new Http("album batch delete");
         let json = {metadataIdList: metadataIdList, albumId: parseInt(albumId)}
-        const data = await http.ajax("post", "/album/delete/batch", JSON.stringify(json));
+        const data = await http.ajax("delete", "/album/media/delete/batch", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
             if (data["status"] === "redirect") {
