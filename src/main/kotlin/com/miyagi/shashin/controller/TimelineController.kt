@@ -708,7 +708,7 @@ class TimelineController: BaseController() {
             operationId = "updateMetadata",
             description = "<strong>Update metadata.</strong><br>" +
                     "<pre><code>" +
-                    "curl -X POST \"http://127.0.0.1:6624/api/v1/update/metadata/{metadataId}\" \\\n" +
+                    "curl -X PUT \"http://127.0.0.1:6624/api/v1/update/metadata/{metadataId}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
                     "-d '{\n" +
@@ -831,7 +831,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
@@ -1152,7 +1152,7 @@ class TimelineController: BaseController() {
             operationId = "updateBatchMetadata",
             description = "<strong>Update a batch of metadata.</strong><br>" +
                     "<pre><code>" +
-                    "curl -X POST \"http://127.0.0.1:6624/api/v1/update/metadata/batch\" \\\n" +
+                    "curl -X PUT \"http://127.0.0.1:6624/api/v1/update/metadata/batch\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
                     "-d '{\n" +
@@ -1269,7 +1269,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {

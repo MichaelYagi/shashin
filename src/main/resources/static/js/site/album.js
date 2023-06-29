@@ -193,35 +193,35 @@
         });
     }
 
-    albumSettings.deleteComment = async function (commentId, metadata) {
+    albumSettings.deleteComment = async function (commentId, metadataId) {
         const http = new Http("delete comment");
-        const json = {commentId: commentId, metadataId: metadata.id};
-        const data = await http.ajax("post", "/comment/albumphoto/delete/", JSON.stringify(json));
+        const json = {commentId: commentId};
+        const data = await http.ajax("delete", "/comment/albumphoto/delete/", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
             let commentId = data["commentId"];
             if (data["status"] === "success") {
                 // Delete comment
                 $("#comment" + commentId).remove();
-                let currentCount = parseInt($("#brcommentcount" + metadata.id).text());
+                let currentCount = parseInt($("#brcommentcount" + metadataId).text());
                 if (currentCount > 0) {
                     currentCount--;
                 }
-                $("#brcommentcount" + metadata.id).text(currentCount);
+                $("#brcommentcount" + metadataId).text(currentCount);
             }
         }
 
-        $("#currentCommentId" + metadata.id).val("");
+        $("#currentCommentId" + metadataId).val("");
     }
 
-    albumSettings.editComment = function(commentId, metadata) {
-        if ($("#currentCommentId" + metadata.id).val() === "") {
-            $("#currentCommentId" + metadata.id).val(commentId);
+    albumSettings.editComment = function(commentId, metadataId) {
+        if ($("#currentCommentId" + metadataId).val() === "") {
+            $("#currentCommentId" + metadataId).val(commentId);
 
-            $("#saveCommentMetadata" + metadata.id).hide();
-            $("#dismissModalCommentMetadata" + metadata.id).hide();
-            $("#updateCommentMetadata" + metadata.id).show();
-            $("#cancelEditCommentMetadata" + metadata.id).show();
+            $("#saveCommentMetadata" + metadataId).hide();
+            $("#dismissModalCommentMetadata" + metadataId).hide();
+            $("#updateCommentMetadata" + metadataId).show();
+            $("#cancelEditCommentMetadata" + metadataId).show();
 
             $("#commentcontainer" + commentId).hide();
             $("#textareacontainer" + commentId).show();
@@ -230,15 +230,15 @@
         }
     }
 
-    albumSettings.albumCommentsDeleteEditModalListener = function(commentId, metadata) {
+    albumSettings.albumCommentsDeleteEditModalListener = function(commentId, metadataId) {
         $("#deletecomment" + commentId).on("click", function (e) {
             e.preventDefault();
-            albumSettings.deleteComment(commentId, metadata);
+            albumSettings.deleteComment(commentId, metadataId);
         });
 
         $("#editcomment" + commentId).on("click", function (e) {
             e.preventDefault();
-            albumSettings.editComment(commentId, metadata);
+            albumSettings.editComment(commentId, metadataId);
         });
     }
 
@@ -334,12 +334,12 @@
 
                     $("#deletecomment" + commentId).on("click", function (e) {
                         e.preventDefault();
-                        albumSettings.deleteComment(commentId, metadata);
+                        albumSettings.deleteComment(commentId, metadata.id);
                     });
 
                     $("#editcomment" + commentId).on("click", function (e) {
                         e.preventDefault();
-                        albumSettings.editComment(commentId, metadata);
+                        albumSettings.editComment(commentId, metadata.id);
                     });
 
                     let currentCount = parseInt($("#brcommentcount" + metadata.id).text());
@@ -368,7 +368,7 @@
         $("#albummodal"+metadata.id).after(html);
         for (index in commentIdArray) {
             const commentId = commentIdArray[index];
-            albumSettings.albumCommentsDeleteEditModalListener(commentId, metadata);
+            albumSettings.albumCommentsDeleteEditModalListener(commentId,metadata.id);
         }
 
         albumSettings.albumCommentsUpdateSaveModalListener(metadata, albumData, userMap);

@@ -2,7 +2,7 @@
     albumsCommentsSettings.deleteComment = async function (commentId, albumId) {
         const http = new Http("delete comment");
         let json = {commentId: commentId, albumId: albumId}
-        const data = await http.ajax("post", "/comment/album/delete", JSON.stringify(json));
+        const data = await http.ajax("delete", "/comment/album/delete", JSON.stringify(json));
 
         if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
             let commentId = data["commentId"];

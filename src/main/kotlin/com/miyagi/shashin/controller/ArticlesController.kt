@@ -93,9 +93,9 @@ class ArticlesController {
 
                 roleController["rolePath"] = TextUtils.generateUUID(key.toString(),"","",0.0,0,"").toString()
                 roleController["controller"] = value.toString()
-                val regex = "\\/api\\/v1\\/.*\\]".toRegex()
-                var matchResult = regex.find(key.toString())
-                apiMap[matchResult!!.value] = roleController
+                val apiRegex = "\\/api\\/v1\\/.*\\]".toRegex()
+                var apiMatchResult = apiRegex.find(key.toString())
+                apiMap[apiMatchResult!!.value] = roleController
 
                 val endpointArray = key.toString().split(",")
                 if (endpointArray.size > 0) {
@@ -106,16 +106,34 @@ class ArticlesController {
 //                println(endpointArray[0])
 //                println("request type: "+endpointArray[0].substring(1,5).trim())
 //                println(regex)
-                    matchResult = regex.find(endpointArray[0])
-//                println("matchResult: ${matchResult?.value?.dropLast(1)}")
-
-                    val requestType = endpointArray[0].substring(1, 5).trim()
-                    val apiCall = matchResult?.value?.dropLast(1)
-                    roleController["requestType"] = requestType
-                    roleController["apiCall"] = apiCall.toString().replace(" || ",", ")
+                    apiMatchResult = apiRegex.find(endpointArray[0])
+                    val apiCall = apiMatchResult?.value?.dropLast(1)
+                    roleController["apiCall"] = apiCall.toString().replace(" || ", ", ")
                     if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description != null) {
                         roleController["description"] =
                             value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.toString()
+                    }
+
+//                println("matchResult: ${matchResult?.value?.dropLast(1)}")
+
+                    // type === "post" || type === "patch" || type === "put" || type === "delete"
+                    val apiCallArray = endpointArray[0].split(" ")
+                    if (apiCallArray.size > 0) {
+                        val requestType = apiCallArray[0].drop(1).trim()
+                        roleController["requestType"] = requestType
+
+                        var badgeStyle = "badge bg-success"
+                        if (requestType.lowercase() == "get") {
+                            badgeStyle = "badge bg-primary"
+                        } else if(requestType.lowercase() == "post") {
+                            badgeStyle = "badge bg-success"
+                        } else if(requestType.lowercase() == "put") {
+                            badgeStyle = "badge bg-warning"
+                        } else if(requestType.lowercase() == "delete") {
+                            badgeStyle = "badge bg-danger"
+                        }
+
+                        roleController["badgeStyle"] = badgeStyle
                     }
                 }
 
