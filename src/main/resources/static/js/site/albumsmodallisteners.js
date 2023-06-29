@@ -51,7 +51,7 @@
         async function deleteAlbum() {
             const http = new Http("delete album");
             let json = {albumId: albumId, delete: true}
-            const data = await http.ajax("post", "/album/delete/" + albumId, JSON.stringify(json));
+            const data = await http.ajax("delete", "/album/delete/" + albumId, JSON.stringify(json));
 
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 let message = "Error";

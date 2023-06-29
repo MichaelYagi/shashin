@@ -458,7 +458,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
@@ -500,7 +500,7 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/delete/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/media/delete/batch"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode): String? {
