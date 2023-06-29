@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - API management endpoint and interface
 
 ### Changed
+- Updated API calls to reflect appropriate request types
 
 ### Fixed
 
