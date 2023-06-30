@@ -4,21 +4,9 @@
 <body>
 
 <section th:fragment="content">
-  <nav class="d-none d-xl-block col-xl-4 float-end">
-    <ul class="section-nav">
-      <li class="toc-entry toc-h2"><a href="#apiendpoints">API Endpoints</a>
-        <ul>
-          <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
-            <li class="toc-entry toc-h2"><a th:href="${'#'+endpoint.value.rolePath}"><th:block th:text="${endpoint.value.apiCall}"></th:block></a></li>
-          </th:block>
-        </ul>
-      </li>
-    </ul>
-  </nav>
-
   <div th:replace="/articles/articlesmodal :: articlesmodal()"></div>
 
-  <div class="col-9 col-md-8 col-xl-7">
+  <div id="subcontainer" class="col-12 col-md-12 col-xl-12">
     <h2 id="apiendpoints">
       <div>API Endpoints<a class="anchorjs-link" href="#apiendpoints" aria-label="Anchor" data-anchorjs-icon="#" style="padding-left: 0.375em;"></a></div>
     </h2>
@@ -42,7 +30,6 @@
       </p>
       <br>
     </th:block>
-
   </div>
 </section>
 </body>
