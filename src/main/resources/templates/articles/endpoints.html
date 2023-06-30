@@ -18,8 +18,9 @@
     <br>
 
     <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
+      <a th:id="${endpoint.value.rolePath}"></a>
       <p>
-        <span th:class="${endpoint.value.badgeStyle}"><a th:id="${endpoint.value.rolePath}"></a><th:block th:text="${endpoint.value.requestType}"></th:block></span>&nbsp;<th:block th:text="${endpoint.value.apiCall}"></th:block><br>
+        <span th:class="${endpoint.value.badgeStyle}"><th:block th:text="${endpoint.value.requestType}"></th:block></span>&nbsp;<th:block th:text="${endpoint.value.apiCall}"></th:block><br>
         <th:block th:text="'Access: '+${endpoint.value.role}"></th:block>
         <th:block th:if="${endpoint.value.produces != ''}">
           <br><th:block th:text="'Produces: '+${endpoint.value.produces}"></th:block>
