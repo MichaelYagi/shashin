@@ -218,10 +218,14 @@
         if ($("#currentCommentId" + metadataId).val() === "") {
             $("#currentCommentId" + metadataId).val(commentId);
 
+
             $("#saveCommentMetadata" + metadataId).hide();
             $("#dismissModalCommentMetadata" + metadataId).hide();
             $("#updateCommentMetadata" + metadataId).show();
             $("#cancelEditCommentMetadata" + metadataId).show();
+
+            // Hide other trash and pencil actions
+            $("#comment" + commentId).siblings().find('a').hide();
 
             $("#commentcontainer" + commentId).hide();
             $("#textareacontainer" + commentId).show();
@@ -257,6 +261,8 @@
                 $("#updateCommentMetadata"+metadata.id).hide();
                 $("#cancelEditCommentMetadata"+metadata.id).hide();
 
+                $("#comment" + currentCommentId).siblings().find('a').show();
+
                 $("#commentcontainer" + currentCommentId).show();
                 $("#textareacontainer" + currentCommentId).html('');
                 $("#textareacontainer" + currentCommentId).hide();
@@ -289,6 +295,8 @@
                         $("#updateCommentMetadata" + metadata.id).hide();
                         $("#cancelEditCommentMetadata" + metadata.id).hide();
 
+                        $("#comment" + commentId).siblings().find('a').show();
+
                         $("#commentcontainer" + commentId).show();
                         $("#textareacontainer" + commentId).html('');
                         $("#textareacontainer" + commentId).hide();
@@ -300,6 +308,8 @@
                 $("#dismissModalCommentMetadata" + metadata.id).show();
                 $("#updateCommentMetadata" + metadata.id).hide();
                 $("#cancelEditCommentMetadata" + metadata.id).hide();
+
+                $("#comment" + currentCommentId).siblings().find('a').show();
 
                 $("#commentcontainer" + currentCommentId).show();
                 $("#textareacontainer" + currentCommentId).html('');
