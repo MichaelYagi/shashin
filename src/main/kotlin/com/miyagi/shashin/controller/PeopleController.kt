@@ -636,13 +636,12 @@ class PeopleController {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildCompreFace(model: Model,personId: Int,page: Int): MutableMap<String, Any?> {
+    private fun buildCompreFace(model: Model, personId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos."
         response["parameter"] = personId
         response["resultList"] = mutableListOf<MutableMap<String, String>>()
-        val queryLimit = model.getAttribute("queryLimit").toString().toInt()
 
         val settings = model.getAttribute("settings") as Settings
         response["compreFaceServer"] = settings.getCompreFaceServer()!!
@@ -655,7 +654,7 @@ class PeopleController {
             response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
 
-            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, page, queryLimit)
+            val subjectCompreFaceJsonStr = getCompreFaceJsonForSubject(model, subject, page, size)
             if (!subjectCompreFaceJsonStr.isNullOrBlank()) {
                 val jsonObj = mapper.readTree(subjectCompreFaceJsonStr)
                 val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
@@ -863,7 +862,7 @@ class PeopleController {
         return mapper.writeValueAsString(buildPersonAlbum(model,personId,page))
     }
 
-    private fun buildPersonAlbum(model: Model,personId: Int,page: Int): MutableMap<String, Any?> {
+    private fun buildPersonAlbum(model: Model,personId: Int,page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         response["message"] = "There are no photos."
@@ -886,8 +885,7 @@ class PeopleController {
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
             val settings = model.getAttribute("settings") as Settings
-            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-            val pageValue = page*queryLimit
+            val pageValue = page*size
 
             response["currentUser"] = currentUserObj
 
@@ -906,13 +904,13 @@ class PeopleController {
 
             var metadataList: MutableIterable<Metadata>? = null
             if (currentUserObj!!.getAuthority() == model.getAttribute("userRole")) {
-                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),pageValue,queryLimit)
+                metadataList = metadataRepository?.findAlbumPhotoByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,currentUserObj.getId(),pageValue,size)
             } else if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
                 val recognitionLabels = recognitionLabelRepository?.findAllByNameNotContaining("object")
                 if (recognitionLabels != null && recognitionLabels.count() > 0) {
                     response["recognitionLabels"] = recognitionLabels
                 }
-                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,pageValue,queryLimit)
+                metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,pageValue,size)
             }
 
             if (metadataList != null && metadataList.count() > 0) {

@@ -108,7 +108,7 @@ class FavoritesController {
         return mapper.writeValueAsString(buildFavorites(model,page))
     }
 
-    private fun buildFavorites(model: Model, page: Int): MutableMap<String, Any?> {
+    private fun buildFavorites(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "favorites"
@@ -121,7 +121,7 @@ class FavoritesController {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*model.getAttribute("queryLimit").toString().toInt()), model.getAttribute("queryLimit").toString().toInt())
+            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*size), size)
             if (favoriteList != null && favoriteList.count() > 0) {
                 val metadataList = ArrayList<Metadata>()
                 model["message"] = ""

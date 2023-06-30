@@ -275,7 +275,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(buildTimelineData(model,"all",pageValue))
     }
 
-    private fun buildTimelineData(model: Model,mediaTypeFilter: String,page: Int): MutableMap<String, Any?> {
+    private fun buildTimelineData(model: Model, mediaTypeFilter: String, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         var mediaType = "photo"
@@ -293,19 +293,18 @@ class TimelineController: BaseController() {
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         if (model.getAttribute("currentUser") != "") {
             val currentUserObj = model.getAttribute("currentUser") as User?
-            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-            val pageValue = page*queryLimit
+            val pageValue = page*size
 
             val metadataList: MutableList<Metadata> = if (mediaTypeFilter == "all") {
                 metadataRepository.findAllByOffsetAndLimit(
                     pageValue,
-                    model.getAttribute("queryLimit").toString().toInt()
+                    size
                 ).toMutableList()
             } else {
                 metadataRepository.findAllByTypeOffsetAndLimit(
                     mediaTypeFilter,
                     pageValue,
-                    model.getAttribute("queryLimit").toString().toInt()
+                    size
                 ).toMutableList()
             }
 
