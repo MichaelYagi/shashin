@@ -21,6 +21,7 @@ import org.springframework.ui.set
 import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 
 
@@ -156,7 +157,7 @@ class SearchController {
             operationId = "getSearchHistory",
             description = "<strong>Get your search history results.</strong><br>" +
                     "<pre><code>" +
-                    "curl -X GET \"http://127.0.0.1:6624/api/v1/search/history\" \\\n" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/search/history?size={size}\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "</code></pre>" +
@@ -165,6 +166,7 @@ class SearchController {
                     "</thead><tbody>" +
                     "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>size</td><td>param</td><td>int</td><td>optional</td><td>The default query/page size is 20. Admins can set the default query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
                     "<code><pre>{\n" +
@@ -191,7 +193,8 @@ class SearchController {
     )
     @RequestMapping(value = ["/api/v1/search/history"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getSearchHistory(model: Model, request: HttpServletRequest): String {
+    fun getSearchHistory(model: Model, request: HttpServletRequest, @RequestParam size: Optional<Int>): String {
+        val searchHistoryLimit = size.orElse(model.getAttribute("searchHistoryLimit").toString().toInt())
         val response = mutableMapOf<String, Any?>()
         response["searchHistoryList"] = mutableListOf<SearchHistory>()
         response["msg"] = "Not authorized"
@@ -202,7 +205,6 @@ class SearchController {
             response["msg"] = "Success!"
             response["status"] = ApiResponse.SUCCESS.status
 
-            val searchHistoryLimit = model.getAttribute("searchHistoryLimit").toString().toInt()
             val searchHistoryList =
                 searchHistoryRepository?.findTopNByUserIdOrderByCreatedAtDesc(currentUserObj.getId(), searchHistoryLimit)
             if (searchHistoryList != null) {
