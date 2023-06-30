@@ -17,8 +17,6 @@ class User {
     @NotBlank
     private var password: String? = null
     @NotBlank
-    private var loggedIn: Boolean? = false
-    @NotBlank
     private var isAuthorized: Boolean? = false
     @NotBlank
     private var apikey: String? = null
@@ -36,7 +34,6 @@ class User {
     ) {
         this.username = username
         this.password = password
-        this.loggedIn = false
     }
 
     fun setId(id: Int) {
@@ -95,14 +92,6 @@ class User {
         this.authority = authority
     }
 
-    fun getLoggedIn(): Boolean? {
-        return this.loggedIn
-    }
-
-    fun setLoggedIn(loggedIn: Boolean?) {
-        this.loggedIn = loggedIn
-    }
-
     fun getIsAuthorized(): Boolean? {
         return this.isAuthorized
     }
@@ -128,7 +117,7 @@ class User {
 
     override fun hashCode(): Int {
         return Objects.hash(
-            id, username, password, authority, loggedIn
+            id, username
         )
     }
 

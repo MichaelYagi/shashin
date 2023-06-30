@@ -21,5 +21,4 @@ interface UserRepository : CrudRepository<User?, Int?> {
     fun findAllByAuthorityEquals(authority: String): MutableIterable<User>
     fun countAllByIsAuthorizedIsFalseAndAuthorityEquals(authority: String): Int
     fun countAllByIsAuthorizedIsTrueAndAuthorityEquals(authority: String): Int
-    fun countAllByLoggedInIsTrue(): Int
 }

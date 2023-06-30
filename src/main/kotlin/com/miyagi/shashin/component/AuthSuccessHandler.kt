@@ -79,7 +79,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null && user.getId() > 0) {
                     if (user.getIsAuthorized() == false) {
-                        user.setLoggedIn(false)
                         user.setModifiedAt(getCurrentTimestamp())
                         userRepository?.save(user)
                         SecurityContextLogoutHandler().logout(request, response, authentication)
@@ -87,7 +86,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         redirectStrategy.sendRedirect(request, response, "/users/login?msg=loginfail")
                         isAuthorized = false
                     } else {
-                        user.setLoggedIn(true)
                         user.setModifiedAt(getCurrentTimestamp())
                         try {
                             userRepository?.save(user)

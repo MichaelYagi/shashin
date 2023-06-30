@@ -235,7 +235,6 @@ class UserController {
             newUser.setCreatedAt(getCurrentTimestamp())
             newUser.setModifiedAt(getCurrentTimestamp())
             newUser.setApikey(TextUtils.generateUUID(newUser.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"").toString())
-            newUser.setLoggedIn(false)
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
                 newUser.setAuthority("ROLE_ADMIN")
@@ -319,7 +318,6 @@ class UserController {
             val user = userRepository?.findByUsername(authentication.name)
 
             if (user != null) {
-                user.setLoggedIn(false)
                 user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
             }
@@ -372,7 +370,6 @@ class UserController {
             for (other in users) {
                 if (other != null && user != null) {
                     if (other.equals(user)) {
-                        user.setLoggedIn(false)
                         userRepository?.delete(user)
 
                         resp["msg"] = "Deleted user " + user.getUsername()
