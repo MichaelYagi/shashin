@@ -166,12 +166,10 @@ class DashboardController {
         val notAllowedUserCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(userRole!!)
         val allowedAdminCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(adminRole!!)
         val notAllowedAdminCount = userRepository.countAllByIsAuthorizedIsFalseAndAuthorityEquals(adminRole!!)
-        val loggedInCount = userRepository.countAllByLoggedInIsTrue()
         response["allowedUserCount"] = allowedUserCount
         response["notAllowedUserCount"] = notAllowedUserCount
         response["allowedAdminCount"] = allowedAdminCount
         response["notAllowedAdminCount"] = notAllowedAdminCount
-        response["loggedInCount"] = loggedInCount
 
         // Media stats
         val photoCount = metadataRepository.countAllByTypeContains("image")

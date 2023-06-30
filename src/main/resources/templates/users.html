@@ -19,7 +19,6 @@
                             <th scope="col">Authorized</th>
                             <th scope="col">Created</th>
                             <th scope="col">Modified</th>
-                            <th scope="col">Logged In</th>
                             <th scope="col">Reset Password</th>
                             <th scope="col">Delete User</th>
                         </tr>
@@ -51,14 +50,6 @@
                                 </td>
                                 <td><span th:text="${user.createdAt}"></span></td>
                                 <td><span th:text="${user.modifiedAt}"></span></td>
-                                <td>
-                                    <th:block th:if="${user.loggedIn}">
-                                        <span class="bi-circle-fill" style="font-size: 1rem;color: lightgreen;"></span>
-                                    </th:block>
-                                    <th:block th:unless="${user.loggedIn}">
-                                        <span class="bi-circle" style="font-size: 1rem;color: lightsalmon;"></span>
-                                    </th:block>
-                                </td>
                                 <td>
                                     <a href="#" th:id="${'resetPassword' + user.id}">
                                         <span class="bi-arrow-clockwise overlayIconBackground overlayIcon"></span>

@@ -243,7 +243,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
                     if (!currentUser.getApikey().isNullOrBlank()) {
                         model["apikey"] = currentUser.getApikey()!!
                     }
-                    currentUser.setLoggedIn(true)
                     model["currentUser"] = currentUser
                 }
             } catch (e: Exception) {

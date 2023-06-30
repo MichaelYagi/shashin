@@ -44,9 +44,9 @@ class Dashboard {
         return new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Registered Users', 'Registered Admins', 'Pending Users', 'Pending Admins', 'Logged In'],
+                labels: ['Registered Users', 'Registered Admins', 'Pending Users', 'Pending Admins'],
                 datasets: [{
-                    data: [data.activeUserCount, data.activeAdminCount, data.pendingUserCount, data.pendingAdminCount, data.loggedInCount],
+                    data: [data.activeUserCount, data.activeAdminCount, data.pendingUserCount, data.pendingAdminCount],
                     backgroundColor: [
                         'rgba(54, 162, 235, 0.2)',
                         'rgba(255, 206, 86, 0.2)',
