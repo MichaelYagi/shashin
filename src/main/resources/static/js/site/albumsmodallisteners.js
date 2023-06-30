@@ -26,6 +26,8 @@
             $("#updateCommentAlbum").show();
             $("#cancelEditCommentAlbum").show();
 
+            $("#comment" + commentId).siblings().find('a').hide();
+
             $("#commentcontainer"+commentId).hide();
             $("#textareacontainer"+commentId).show();
             const commentText = $("#commentcontent" + commentId).text();
@@ -222,6 +224,8 @@
                 $("#updateCommentAlbum").hide();
                 $("#cancelEditCommentAlbum").hide();
 
+                $("#comment" + currentCommentId).siblings().find('a').show();
+
                 $("#commentcontainer" + currentCommentId).show();
                 $("#textareacontainer" + currentCommentId).html('');
                 $("#textareacontainer" + currentCommentId).hide();
@@ -254,6 +258,8 @@
                         $("#updateCommentAlbum").hide();
                         $("#cancelEditCommentAlbum").hide();
 
+                        $("#comment" + commentId).siblings().find('a').show();
+
                         $("#commentcontainer" + commentId).show();
                         $("#textareacontainer" + commentId).html('');
                         $("#textareacontainer" + commentId).hide();
@@ -265,6 +271,8 @@
                 $("#dismissModalCommentAlbum").show();
                 $("#updateCommentAlbum").hide();
                 $("#cancelEditCommentAlbum").hide();
+
+                $("#comment" + currentCommentId).siblings().find('a').show();
 
                 $("#commentcontainer" + currentCommentId).show();
                 $("#textareacontainer" + currentCommentId).html('');
