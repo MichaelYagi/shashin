@@ -188,7 +188,102 @@ class AlbumsController {
         return mapper.writeValueAsString(buildAlbums(model, page))
     }
 
-    private fun buildAlbums(model: Model, page: Int): MutableMap<String, Any?> {
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getAlbumsApi",
+            description = "<strong>Get paged list for all albums.</strong><br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/albums?page={page}&size={size}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>optional</td><td>page number of results to return used for pagination. Default is 0.</td></tr>" +
+                    "<tr><td>size</td><td>param</td><td>int</td><td>optional</td><td>The default query/page size is 20. Admins can set the default query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"baseUrl\": \"&lt;base_url&gt;\",\n" +
+                    "    \"showControls\": &lt;show_controls&gt;,\n" +
+                    "    \"userCount\": &lt;user_count&gt;,\n" +
+                    "    \"albumsList\": [\n" +
+                    "        {\n" +
+                    "            \"coverUrl\": \"&lt;relative_cover_url&gt;\",\n" +
+                    "            \"albumVideoCount\": &lt;album_video_count&gt;,\n" +
+                    "            \"albumPhotoCount\": &lt;album_photo_count&gt;,\n" +
+                    "            \"id\": &lt;album_id&gt;,\n" +
+                    "            \"shareUrl\": \"&lt;relative_share_url&gt;\",\n" +
+                    "            \"name\": \"&lt;album_name&gt;\"\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"userAlbums\": [\n" +
+                    "        {\n" +
+                    "            \"id\": \"&lt;user_albums_id&gt;,\"\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"albumId\": &lt;album_id&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"albumsCommentsMap\": \"&lt;albumId&gt;\": [\n" +
+                    "        {\n" +
+                    "            \"albumId\": \"&lt;album_id&gt;\",\n" +
+                    "            \"commentId\": \"&lt;comment_id&gt;\",\n" +
+                    "            \"comment\": &lt;comment&gt;,\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"username\": &lt;username&gt;\n" +
+                    "        }\n" +
+                    "    ],\n" +
+                    "    \"sharedAlbums\": [\n" +
+                    "        {\n" +
+                    "            \"albumId\": &lt;album_id&gt;,\n" +
+                    "            \"userId\": &lt;user_id&gt;,\n" +
+                    "            \"username\": &lt;username&gt;,\n" +
+                    "            \"isShared\": \"&lt;is_shared&gt;\"\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>baseUrl</td><td>string</td><td>Current base URL</td></tr>" +
+                    "<tr><td>showControls</td><td>boolean</td><td>Set to true if an ADMIN role, and have icons shown to edit the album.</td></tr>" +
+                    "<tr><td>userCount</td><td>int</td><td>Number of users</td></tr>" +
+                    "<tr><td>albumList[].coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>albumList[].albumVideoCount</td><td>string</td><td>The number of videos in this album</td></tr>" +
+                    "<tr><td>albumList[].albumPhotoCount</td><td>string</td><td>The number of photos in this album</td></tr>" +
+                    "<tr><td>albumList[].id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>albumList[].shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>albumList[].name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>userAlbums[].id</td><td>int</td><td>The user albums ID</td></tr>" +
+                    "<tr><td>userAlbums[].userId</td><td>int</td><td>The user ID to share the album</td></tr>" +
+                    "<tr><td>userAlbums[].albumId</td><td>int</td><td>The album ID to share the album</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].albumId</td><td>int</td><td>The album ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].commentId</td><td>int</td><td>The comment ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].comment</td><td>string</td><td>The comment for this album</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].userId</td><td>int</td><td>The user ID for the comment</td></tr>" +
+                    "<tr><td>albumsCommentsMap.&lt;albumId&gt;[].username</td><td>string</td><td>The username for the comment</td></tr>" +
+                    "<tr><td>sharedAlbums[].albumId</td><td>int</td><td>The album ID used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].userId</td><td>int</td><td>The user ID used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].username</td><td>string</td><td>The username used for who to allow sharing with</td></tr>" +
+                    "<tr><td>sharedAlbums[].isShared</td><td>boolean</td><td>Flag of whether this album is shared with this user or not</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/albums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getAlbumsApi(model: Model, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
+        return mapper.writeValueAsString(buildAlbums(model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
+    }
+
+    private fun buildAlbums(model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "albums"
@@ -204,8 +299,7 @@ class AlbumsController {
             if (currentUserObj.getAuthority() != null && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
                 showControls = true
             }
-            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
-            val userAlbums = userAlbumRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page*queryLimit), queryLimit)
+            val userAlbums = userAlbumRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page*size), size)
 
             if (userAlbums != null && userAlbums.count() > 0) {
                 val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
@@ -789,7 +883,63 @@ class AlbumsController {
         return mapper.writeValueAsString(response)
     }
 
-    private fun buildShareData(albumId: Int,shareLink: String, queryLimit: Int, page: Int): MutableMap<String, Any?> {
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getPagedSizeAnonymousShareAlbum",
+            description = "<strong>Get results for shared album content.</strong><br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/share/{shareLink}/album/{albumId}?page={page}&size={size}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>shareLink</td><td>param</td><td>string</td><td>required</td><td>The relative share URL you'd like to save</td></tr>" +
+                    "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>The album ID</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>optional</td><td>page number of results to return used for pagination. Default is 0.</td></tr>" +
+                    "<tr><td>size</td><td>param</td><td>int</td><td>optional</td><td>The default query/page size is 20. Admins can set the default query/page size in the <a href=\"/settings\">settings</a></td></tr>" +                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"shareLink\": \"&lt;relative_share_url&gt;\",\n" +
+                    "    \"album\": {\n" +
+                    "        \"id\": &lt;album_id&gt;,\n" +
+                    "        \"name\": \"&lt;name_of_album&gt;\",\n" +
+                    "        \"coverUrl\": \"&lt;relative_url&gt;\",\n" +
+                    "        \"shareUrl\": \"&lt;public_url_key&gt;\"\n" +
+                    "    },\n" +
+                    "    \"albumMetadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>shareLink</td><td>string</td><td>The saved relative URL that can be used to share the album</td></tr>" +
+                    "<tr><td>album.id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>album.name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>album.coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>album.shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>albumMetadataList[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
+    @RequestMapping(value = ["/api/v1/share/{shareLink}/album/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedSizeAnonymousShareAlbum(model: Model, @PathVariable shareLink: String, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String? {
+        val response = buildShareData(albumId,StringEscapeUtils.escapeHtml4(shareLink), size.orElse(model.getAttribute("queryLimit").toString().toInt()), page.orElse(0))
+        return mapper.writeValueAsString(response)
+    }
+
+    private fun buildShareData(albumId: Int,shareLink: String, size: Int, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["message"] = "Nothing to see here."
         val tempAlbum = Album()
@@ -802,8 +952,8 @@ class AlbumsController {
 
         val photoObj = albumRepository.findById(albumId)
         if (photoObj.isPresent && photoObj.get().getShareUrl() == shareLink) {
-            val resultPage = page*queryLimit
-            val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,resultPage,queryLimit)
+            val resultPage = page*size
+            val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,resultPage,size)
             val albumMetadataList = ArrayList<Metadata>()
             if (albumPhotos != null) {
                 for (albumPhoto in albumPhotos) {
@@ -946,7 +1096,66 @@ class AlbumsController {
         return mapper.writeValueAsString(buildAlbum(model,albumId,page))
     }
 
-    private fun buildAlbum(model: Model, albumId: Int, page: Int): MutableMap<String, Any?> {
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "getPagedSizeAlbum",
+            description = "<strong>Get paged results for album content by specifying the page and size.</strong><br>" +
+                    "<pre><code>" +
+                    "curl -X GET \"http://127.0.0.1:6624/api/v1/album/{albumId}?page={page}&size={size}\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>The album ID</td></tr>" +
+                    "<tr><td>page</td><td>param</td><td>int</td><td>optional</td><td>page number of results to return used for pagination. Default is 0.</td></tr>" +
+                    "<tr><td>size</td><td>param</td><td>int</td><td>optional</td><td>The default query/page size is 20. Admins can set the default query/page size in the <a href=\"/settings\">settings</a></td></tr>" +
+                    "</tbody></table><br>" +
+                    "Response body on success:<br>" +
+                    "<code><pre>{\n" +
+                    "    \"msg\": \"\",\n" +
+                    "    \"message\": \"\",\n" +
+                    "    \"status\": \"success\",\n" +
+                    "    \"canEdit\": &lt;can_edit&gt;,\n" +
+                    "    \"albumId\": \"&lt;album_id&gt;\",\n" +
+                    "    \"album\": {\n" +
+                    "        \"id\": &lt;album_id&gt;,\n" +
+                    "        \"name\": \"&lt;name_of_album&gt;\",\n" +
+                    "        \"coverUrl\": \"&lt;relative_url&gt;\",\n" +
+                    "        \"shareUrl\": \"&lt;public_url_key&gt;\"\n" +
+                    "    },\n" +
+                    "    \"albumMetadataList\": [\n" +
+                    "        {\n" +
+                    "           &lt;metadata&gt;\n" +
+                    "        }\n" +
+                    "    ]\n" +
+                    "}" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>canEdit</td><td>boolean</td><td>Authorized to edit the album or not</td></tr>" +
+                    "<tr><td>albumId</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>album.id</td><td>int</td><td>The album ID</td></tr>" +
+                    "<tr><td>album.name</td><td>string</td><td>The album name</td></tr>" +
+                    "<tr><td>album.coverUrl</td><td>string</td><td>Relative URL for the album cover image</td></tr>" +
+                    "<tr><td>album.shareUrl</td><td>string</td><td>Part of the share URL endpoint for public sharing</td></tr>" +
+                    "<tr><td>albumMetadataList[].metadata</td><td>object</td><td>A <a href=\"#\" data-bs-toggle=\"modal\" data-bs-target=\"#propMetadataDocs\">Metadata</a> object</td></tr>" +
+                    "</tbody></table>"
+        )
+    )
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/api/v1/album/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedSizeAlbum(model: Model, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
+        return mapper.writeValueAsString(buildAlbum(model, albumId, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
+    }
+
+    private fun buildAlbum(model: Model, albumId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "album"
@@ -973,7 +1182,7 @@ class AlbumsController {
             val userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
             if (userAlbums != null) {
                 // Get album photos
-                val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,page*model.getAttribute("queryLimit").toString().toInt(),model.getAttribute("queryLimit").toString().toInt())
+                val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,page*size, size)
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
