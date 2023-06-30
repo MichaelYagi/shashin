@@ -109,6 +109,13 @@ section > nav {
     border-bottom-color: #000;
 }
 
+#btn-back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 40px;
+    display: none;
+}
+
 @media (min-width: 768px) {
     .bd-sidebar {
         border-right:1px solid rgba(0,0,0,.1)

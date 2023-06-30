@@ -4,16 +4,35 @@
 
 <body>
 
-<div class="container-fluid flex-xl-nowrap">
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
 
     <div class="row px-4 py-3 ml-3 mr-3" th:insert="fragments/docstopnav :: docstopnav()"></div>
 
     <div class="row">
         <div class="col-12 col-md-2 col-xl-1 bd-sidebar" th:insert="fragments/articlessidebar :: articlessidebar(${activePage})"></div>
 
-        <main class="col-12 col-md-10 col-xl-11 py-md-3 pl-md-5 bd-content" role="main">
+        <main class="col overflow-auto h-100" role="main">
             <div th:replace="this :: content"></div>
+
+            <button type="button" class="btn btn-primary btn-floating btn-lg" id="btn-back-to-top">
+                <i class="bi-arrow-up-circle"></i>
+            </button>
         </main>
+
+        <th:block th:if="${activePage == 'articles/endpoints'}">
+            <nav class="d-none d-xl-block col-xl-4 float-end">
+                <ul class="section-nav">
+                    <li class="toc-entry toc-h2"><a href="#apiendpoints">API Endpoints</a>
+                        <ul>
+                            <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
+                                <li class="toc-entry toc-h2"><a th:href="${'#'+endpoint.value.rolePath}"><th:block th:text="${endpoint.value.requestType}"></th:block>&nbsp;<th:block th:text="${endpoint.value.apiCall}"></th:block></a></li>
+                            </th:block>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+        </th:block>
+
     </div>
 
     <div class="row">
@@ -22,6 +41,32 @@
         </footer>
     </div>
 
+    <script type="application/javascript">
+        $(document).ready(function() {
+            const scrollToTopButton = $("#btn-back-to-top");
+            const showScrollToTop = function (scrollEl) {
+                if (scrollToTopButton.length > 0) {
+                    if (scrollEl.scrollTop() > 0) {
+                        scrollToTopButton.css("display", "block");
+                    } else {
+                        scrollToTopButton.css("display", "none");
+                    }
+                }
+            }
+
+            const elToScroll = window;
+
+            $(elToScroll).on('scroll', function () {
+                showScrollToTop($(elToScroll));
+            });
+
+            if (scrollToTopButton.length > 0) {
+                scrollToTopButton.on("click", function () {
+                    $(elToScroll)[0].scrollTo({top: 0, behavior: 'smooth'});
+                });
+            }
+        });
+    </script>
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">

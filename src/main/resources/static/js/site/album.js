@@ -276,7 +276,7 @@
                 if (updatedComment.length > 0) {
                     const http = new Http("updating album photo comment");
                     const json = {commentId: currentCommentId, comment: updatedComment}
-                    const data = await http.ajax("post", "/comment/update", JSON.stringify(json));
+                    const data = await http.ajax("put", "/comment/update", JSON.stringify(json));
 
                     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                         let commentId = data["commentId"];

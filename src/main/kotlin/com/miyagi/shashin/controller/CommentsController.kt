@@ -283,7 +283,7 @@ class CommentsController {
             operationId = "postUpdateComment",
             description = "<strong>Update a comment for an album, album photo or video.</strong>" +
                     "<pre><code>" +
-                    "curl -X POST \"http://127.0.0.1:6624/api/v1/comment/update\" \\\n" +
+                    "curl -X PUT \"http://127.0.0.1:6624/api/v1/comment/update\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "-d '{\"commentId\": &lt;comment_id&gt;, \"comment\": \"&lt;updated_comment&gt;\"}'" +
@@ -308,7 +308,7 @@ class CommentsController {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/comment/update","/api/v1/comment/update"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/comment/update","/api/v1/comment/update"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun postUpdateComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
