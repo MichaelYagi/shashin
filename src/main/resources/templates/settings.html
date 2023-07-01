@@ -55,7 +55,7 @@
                                 <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
                             </div>
                             <div class="col-6">
-                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong> <span th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-toggle="tooltip" title="CompreFace server connection status"></span></label>
+                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong> <span th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span></label>
                                 <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
                             </div>
                         </div>
