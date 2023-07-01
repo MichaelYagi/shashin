@@ -442,9 +442,11 @@ class SettingsController {
 
             model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
             model["faceRecogAvailableStatusColor"] = "red"
+            model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
             if (faceRecogServicesAvailable) {
                 model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
                 model["faceRecogAvailableStatusColor"] = "green"
+                model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
             }
         }
 
