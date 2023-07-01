@@ -13,7 +13,7 @@
     cjs.on('event', (e) => {
         // console.log(e)
         if (e === "connect" && $("#chromecasting").hasClass("bi-cast")) {
-            $("#chromecasting").addClass('bi-stop').removeClass('bi-cast');
+            $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
         }
     });
 
@@ -55,12 +55,12 @@
             }
 
             this.core.outer
-                .find('.bi-cast, .bi-stop')
+                .find('.bi-cast, .bi-stop-circle')
                 .first()
                 .on('click.lg', () => {
                     if (cjs.available) {
-                        if ($("#chromecasting").hasClass("bi-stop")) {
-                            $("#chromecasting").addClass('bi-cast').removeClass('bi-stop');
+                        if ($("#chromecasting").hasClass("bi-stop-circle")) {
+                            $("#chromecasting").addClass('bi-cast').removeClass('bi-stop-circle');
                             cjs.disconnect();
                         } else {
 
