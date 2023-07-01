@@ -98,7 +98,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 if (isAuthorized) {
                     if (user != null && user.getId() > 0) {
                         notifyLogin(user)
-                        checkLatestAppVersion(user)
+//                        checkLatestAppVersion(user)
                     }
 
                     if (uriPath.isNotEmpty()) {
