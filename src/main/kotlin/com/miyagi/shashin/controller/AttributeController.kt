@@ -15,7 +15,6 @@ import org.springframework.core.Ordered
 import org.springframework.core.annotation.Order
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -28,12 +27,12 @@ import org.springframework.util.StringUtils.capitalize
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.client.HttpClientErrorException.Unauthorized
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import java.util.*
-import java.util.function.Consumer
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.persistence.EntityNotFoundException
@@ -99,6 +98,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
     @ExceptionHandler(Exception::class)
     fun globeExceptionHandler(ex: java.lang.Exception, request: WebRequest): ResponseEntity<*>? {
+        if (ex.localizedMessage.lowercase() == "access is denied") {
+            return buildResponseEntity(ApiError(HttpStatus.FORBIDDEN, ex.localizedMessage, ex))
+        }
         return buildResponseEntity(ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.localizedMessage, ex))
     }
 
