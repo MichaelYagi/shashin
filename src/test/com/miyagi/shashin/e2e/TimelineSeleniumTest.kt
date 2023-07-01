@@ -61,7 +61,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         encodedPassword = bcrypt.encode("testuser")
         userObj.setPassword(encodedPassword)
         userObj.setAuthority("ROLE_USER")
-        userObj.setIsAuthorized()true)
+        userObj.setIsAuthorized(true)
         userRepository?.save(userObj)
         userId = userObj.getId()
 
