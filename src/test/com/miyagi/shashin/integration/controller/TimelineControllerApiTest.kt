@@ -44,6 +44,7 @@ class TimelineControllerApiTest {
         adminObj.setPassword(encodedPassword)
         adminObj.setAuthority("ROLE_ADMIN")
         adminObj.setIsAuthorized(true)
+        adminObj.setApikey("00000000-00000000-00000000-00000000")
         userRepository?.save(adminObj)
         adminId = adminObj.getId()
 
@@ -53,6 +54,7 @@ class TimelineControllerApiTest {
         userObj.setPassword(encodedPassword)
         userObj.setAuthority("ROLE_USER")
         userObj.setIsAuthorized(true)
+        userObj.setApikey("00000000-00000000-00000000-00000001")
         userRepository?.save(userObj)
         userId = userObj.getId()
 
@@ -72,7 +74,10 @@ class TimelineControllerApiTest {
     @WithMockUser(username = "invaliduser", roles = ["ADMIN"])
     @Throws(Exception::class)
     fun shouldReturn401WhenSendingRequestToTimelineApiWithRoleUser() {
-        mockMvc!!.perform(get("/api/v1/timeline/0"))
+        mockMvc!!.perform(
+            get("/api/v1/timeline/0")
+                .header("X-Api-Key", "00000000-00000000-00000000-00000000")
+        )
             .andExpect(status().is4xxClientError)
     }
 
@@ -80,7 +85,11 @@ class TimelineControllerApiTest {
     @WithMockUser(username = "testuser", roles = ["USER"])
     @Throws(Exception::class)
     fun shouldReturn403WhenSendingRequestToTimelineApiWithRoleUser() {
-        mockMvc!!.perform(get("/api/v1/timeline/0"))
+        mockMvc!!.perform(
+            get("/api/v1/timeline/0")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", "00000000-00000000-00000000-00000003")
+        )
             .andExpect(status().is4xxClientError)
     }
 
@@ -88,7 +97,11 @@ class TimelineControllerApiTest {
     @WithMockUser(username = "testadmin", roles = ["ADMIN"])
     @Throws(Exception::class)
     fun shouldReturnSuccessWhenSendingRequestToTimelineApiWithRoleAdmin() {
-        val response = mockMvc!!.perform(get("/api/v1/timeline/0"))
+        val response = mockMvc!!.perform(
+            get("/api/v1/timeline/0")
+                .header("Content-Type", "application/json")
+                .header("X-Api-Key", "00000000-00000000-00000000-00000000")
+        )
         //println(response.andReturn().response.contentAsString)
         response
             .andExpect(status().isOk)
