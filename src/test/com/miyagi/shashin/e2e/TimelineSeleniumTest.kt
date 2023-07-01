@@ -53,6 +53,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         adminObj.setPassword(encodedPassword)
         adminObj.setAuthority("ROLE_ADMIN")
         adminObj.setIsAuthorized(true)
+        adminObj.setApikey("00000000-00000000-00000000-00000000")
         userRepository?.save(adminObj)
         adminId = adminObj.getId()
 
@@ -62,6 +63,7 @@ class TimelineSeleniumTest: BaseSeleniumTests() {
         userObj.setPassword(encodedPassword)
         userObj.setAuthority("ROLE_USER")
         userObj.setIsAuthorized(true)
+        userObj.setApikey("00000000-00000000-00000000-00000001")
         userRepository?.save(userObj)
         userId = userObj.getId()
 
