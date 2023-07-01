@@ -23,12 +23,12 @@
                     </th:block>
                     <div class="row">
                         <div class="col-12">
-                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (comma separated) <span style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="When Automatic Media Indexing is enabled, changing this value will restart the app"></span></label>
+                            <label for="mediaDirTextArea" class="form-label"><strong>Media directories and files</strong> (comma separated)</label>&nbsp;<span id="inclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="When Automatic Media Indexing is enabled, changing this value will restart the app"></span>
                             <div>
                                 <textarea class="form-control" id="mediaDirTextArea" name="mediaDirList" rows="5"><th:block th:text="${mediaDirList}"></th:block></textarea>
                             </div>
 
-                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (comma separated) <span style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Exclusion list takes precedence over inclusion list"></span></label>
+                            <label for="mediaExcludeDirTextArea" class="form-label"><strong>Excluded media directories and files</strong> (comma separated)</label>&nbsp;<span id="exclusionListInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Exclusion list takes precedence over inclusion list"></span>
                             <div>
                                 <textarea class="form-control" id="mediaExcludeDirTextArea" name="mediaExcludeDirList" rows="3"><th:block th:text="${mediaExcludeDirList}"></th:block></textarea>
                             </div>
@@ -55,7 +55,7 @@
                                 <input class="form-control" id="compreFaceServer" name="compreFaceServer" th:value="${settings.compreFaceServer}">
                             </div>
                             <div class="col-6">
-                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong> <span th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span></label>
+                                <label for="compreFaceKey" class="form-label"><strong>CompreFace API key</strong></label>&nbsp;<span id="faceRecogAvailableStatusInfo" th:style="${'color: '+faceRecogAvailableStatusColor+';font-size: 1rem;'}" th:class="${faceRecogAvailableStatusIcon}" data-toggle="tooltip" th:title="${faceRecogAvailableStatusText}"></span>
                                 <input class="form-control" id="compreFaceKey" name="compreFaceKey" th:value="${settings.compreFaceKey}">
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                                 <input class="form-control" id="trainingDataLimit" name="trainingDataLimit" th:value="${settings.trainingDataLimit}">
                             </div>
                             <div class="col-3">
-                                <label for="changePort" class="form-label"><strong>Change Port <span style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app when change detected"></span></strong></label>
+                                <label for="changePort" class="form-label"><strong>Change Port</strong></label>&nbsp;<span id="changePortInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app after updated and saved"></span>
                                 <input class="form-control" id="changePort" name="changePort" th:value="${settings.port}">
                             </div>
                         </div>
@@ -146,7 +146,20 @@
         /*]]>*/
 
         const settingsInstance = new Settings();
-        settingsInstance.init();
+        await settingsInstance.init();
+
+        $("#faceRecogAvailableStatusInfo").tooltip({
+            placement: "right"
+        });
+        $("#inclusionListInfo").tooltip({
+            placement: "right"
+        });
+        $("#exclusionListInfo").tooltip({
+            placement: "right"
+        });
+        $("#changePortInfo").tooltip({
+            placement: "right"
+        });
     });
 </script>
 
