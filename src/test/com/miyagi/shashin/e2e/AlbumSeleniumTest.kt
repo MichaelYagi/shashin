@@ -76,7 +76,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         //println(this.driver?.pageSource)
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
+        val rememberMe = this.driver!!.findElement(By.id("remember-me"))
         val login = this.driver!!.findElement(By.tagName("button"))
+        rememberMe.click()
         username.sendKeys("testadmin")
         password.sendKeys("testadmin")
         login.click()
@@ -132,6 +134,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         val action = Actions(this.driver)
         //Performing the mouse hover action on the target element.
         action.moveToElement(imageEl).perform()
+//        println(this.driver?.pageSource)
         val timelineModalEdit = this.driver!!.findElement(By.id("timelineModalEdit$metadataId"))
         timelineModalEdit.click()
 
@@ -267,7 +270,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         this.driver?.get("http://localhost:$port/users/login")
         val username = this.driver!!.findElement(By.id("username"))
         val password = this.driver!!.findElement(By.id("password"))
+        val rememberMe = this.driver!!.findElement(By.id("remember-me"))
         val login = this.driver!!.findElement(By.tagName("button"))
+        rememberMe.click()
         username.sendKeys("testuser")
         password.sendKeys("testuser")
         login.click()
