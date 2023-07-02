@@ -132,30 +132,26 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
 
+        // TODO: don't like sleep
+        this.logger.log(Level.INFO, "3 sec sleep.")
+//        doesn't work
+//        this.driver!!.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS);
+        Thread.sleep(3000);
+
+        val timelineBottomLeft = "tnbl$metadataId"
+        val timelineBottomLeftEl = this.driver!!.findElement(By.id(timelineBottomLeft))
+        val timelineModalEdit = this.driver!!.findElement(By.id("timelineModalEdit$metadataId"))
+
         //Creating object of an Actions class
         val action = Actions(this.driver)
 
-//        this.driver!!.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-
         //Performing the mouse hover action on the target element.
         action.moveToElement(imageEl).perform()
+        action.moveToElement(timelineBottomLeftEl).perform()
+        action.moveToElement(timelineModalEdit).perform()
 //        println(this.driver?.pageSource)
-        val executor = driver as JavascriptExecutor
-        val timelineBottomLeft = "tnbl$metadataId"
-        // Hack to unhide the link
-        // TODO: Fix test hack
-        val script = "document.getElementById('$timelineBottomLeft').style.display = 'block';"
-        executor.executeScript(script, this.driver!!.findElement(By.id(timelineBottomLeft)))
-//        println(this.driver?.pageSource)
-        this.driver!!.findElement(By.id("timelineModalEdit$metadataId")).click()
-
-//        val tracker = driver!!.findElement(By.id("timelineModalEdit$metadataId"))
-//        Actions(driver)
-//            .moveToElement(tracker, 0, 0)
-//            .perform()
-////        println(this.driver?.pageSource)
-//        val timelineModalEdit = this.driver!!.findElement(By.id("timelineModalEdit$metadataId"))
-//        timelineModalEdit.click()
+        timelineModalEdit.click()
+        this.logger.log(Level.INFO, "Timeline edit button clicked.")
 
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("timelineModalTitle")))
 
