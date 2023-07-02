@@ -48,7 +48,7 @@ class MetadataProcessing() {
             BasicFileAttributes::class.java
         )
 
-        val datePattern = "yyyy-MM-dd HH:mm:ss"
+        val datePattern = TextUtils.getCommonDateFormat()
         val sourceFormatMS = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
         val sourceFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
         val destFormat = SimpleDateFormat(datePattern, Locale.ENGLISH)

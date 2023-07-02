@@ -1511,7 +1511,7 @@ class TimelineController: BaseController() {
             val metadataObj = metadataOptional.get()
 
             if (metadataObj.getTakenAt() != null) {
-                val datePattern = "yyyy-MM-dd HH:mm:ss"
+                val datePattern = TextUtils.getCommonDateFormat()
                 val dateArray = metadataObj.getTakenAt()!!.format(datePattern).toString().split(" ")
                 val takenDateArray = dateArray[0].split("-")
                 val year = takenDateArray[0].toInt()
