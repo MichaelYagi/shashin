@@ -1584,6 +1584,13 @@ class SettingsController {
                             // Scan for new files
                             if (!shouldStop.get()) {
                                 val settings = settingsRepository?.findFirstByOrderByIdAsc()
+                                var webClient: WebClient? = null
+                                if (settings != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                                    webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                                }
+
+                                val recognitionLabelPhotoLabels = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+
                                 for (mediaDir in mediaDirs) {
                                     if (mediaDir != null) {
                                         getFile(
@@ -1592,7 +1599,9 @@ class SettingsController {
                                             sidecarDir,
                                             mediaDir.getDirectory().toString(),
                                             mediaExcludeDirs,
-                                            settings
+                                            settings,
+                                            webClient,
+                                            recognitionLabelPhotoLabels
                                         )
                                     }
                                 }
@@ -1685,7 +1694,7 @@ class SettingsController {
         }
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, webClient: WebClient?, recognitionLabelPhotoLabels:  MutableIterable<RecognitionLabelId>?) {
         val f = File(dirPath)
         val files = f.listFiles()
 
@@ -1735,12 +1744,9 @@ class SettingsController {
                                             metadataRepository?.save(metadataObj)
 
                                             try {
-                                                if (settings != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
-                                                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
-
+                                                if (settings != null && webClient != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
                                                     // Have at least 3 people tagged
                                                     val compreFaceTagAllow = 3
-                                                    val recognitionLabelPhotoLabels = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
                                                     if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
                                                         var builder = MultipartBodyBuilder()
                                                         builder.part(
@@ -1951,7 +1957,7 @@ class SettingsController {
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, webClient, recognitionLabelPhotoLabels)
                 }
             }
         }
