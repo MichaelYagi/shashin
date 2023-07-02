@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
+import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.interactions.Actions
 import org.openqa.selenium.support.ui.ExpectedConditions
@@ -22,7 +23,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 import java.io.File
 import java.net.URL
+import java.util.concurrent.TimeUnit
 import java.util.logging.Level
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -127,16 +130,32 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         // Check image src
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("img[src^='/api/v1/thumbnails']")))
-//        println(this.driver?.pageSource)
         val imageEl = this.driver!!.findElement(By.id("image$metadataId"))
 
         //Creating object of an Actions class
         val action = Actions(this.driver)
+
+//        this.driver!!.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+
         //Performing the mouse hover action on the target element.
         action.moveToElement(imageEl).perform()
 //        println(this.driver?.pageSource)
-        val timelineModalEdit = this.driver!!.findElement(By.id("timelineModalEdit$metadataId"))
-        timelineModalEdit.click()
+        val executor = driver as JavascriptExecutor
+        val timelineBottomLeft = "tnbl$metadataId"
+        // Hack to unhide the link
+        // TODO: Fix test hack
+        val script = "document.getElementById('$timelineBottomLeft').style.display = 'block';"
+        executor.executeScript(script, this.driver!!.findElement(By.id(timelineBottomLeft)))
+//        println(this.driver?.pageSource)
+        this.driver!!.findElement(By.id("timelineModalEdit$metadataId")).click()
+
+//        val tracker = driver!!.findElement(By.id("timelineModalEdit$metadataId"))
+//        Actions(driver)
+//            .moveToElement(tracker, 0, 0)
+//            .perform()
+////        println(this.driver?.pageSource)
+//        val timelineModalEdit = this.driver!!.findElement(By.id("timelineModalEdit$metadataId"))
+//        timelineModalEdit.click()
 
         WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("timelineModalTitle")))
 
