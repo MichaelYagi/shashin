@@ -1688,7 +1688,6 @@ class SettingsController {
     private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?) {
         val f = File(dirPath)
         val files = f.listFiles()
-        val webClient = WebClient.create(settings?.getCompreFaceServer()!!)
 
         if (files != null) {
             for (i in files.indices) {
@@ -1736,7 +1735,8 @@ class SettingsController {
                                             metadataRepository?.save(metadataObj)
 
                                             try {
-                                                if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                                                if (settings != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                                                    val webClient = WebClient.create(settings.getCompreFaceServer()!!)
 
                                                     // Have at least 3 people tagged
                                                     val compreFaceTagAllow = 3
