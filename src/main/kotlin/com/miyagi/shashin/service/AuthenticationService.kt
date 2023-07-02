@@ -1,14 +1,18 @@
 package com.miyagi.shashin.service
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.UserRepository
-import org.springframework.aop.framework.AopProxyUtils
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory
+import com.miyagi.shashin.util.TextUtils
+import org.springframework.http.HttpStatus
 import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.stereotype.Service
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 import javax.servlet.http.HttpServletRequest
 
 
@@ -27,7 +31,16 @@ object AuthenticationService {
 //        println(apiKey)
 
         if (apiKey == null || userObj == null || (userObj.getApikey() != null && apiKey != userObj.getApikey()) || (userObj.getApikey() != null && !userObj.getIsAuthorized()!!)) {
-            throw BadCredentialsException("{\"message\":\"Invalid API Key\"}")
+
+            val jsonResponseMap = mutableMapOf<String, Any>()
+            jsonResponseMap["msg"] = "Invalid API Key"
+            val now = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern(TextUtils.getCommonDateFormat())
+            jsonResponseMap["timestamp"] = now.format(formatter);
+            jsonResponseMap["status"] = HttpStatus.UNAUTHORIZED
+            val mapper = ObjectMapper()
+            val jsonResponse = mapper.writeValueAsString(jsonResponseMap)
+            throw BadCredentialsException(jsonResponse)
         }
 
         // See how UserController.loginUser handles login

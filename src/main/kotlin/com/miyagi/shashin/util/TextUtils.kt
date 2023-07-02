@@ -19,6 +19,10 @@ class TextUtils {
 
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
 
+        fun getCommonDateFormat(): String {
+            return "yyyy-MM-dd HH:mm:ss"
+        }
+
         fun isNumber(input: String): Boolean {
             val integerChars = '0'..'9'
             var dotOccurred = 0
@@ -31,14 +35,14 @@ class TextUtils {
         }
 
         fun formatToLongDate(oldDate: String): String {
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val sdf = SimpleDateFormat(getCommonDateFormat())
             val newSdf = SimpleDateFormat("EEE, MMM d, yyyy")
             val temp = sdf.parse(oldDate)
             return newSdf.format(temp)
         }
 
         fun formatToLongDateWithTime(oldDate: String): String {
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val sdf = SimpleDateFormat(getCommonDateFormat())
             val newSdf = SimpleDateFormat("EEE, MMM d, yyyy  'at' h:mm aa")
             val temp = sdf.parse(oldDate)
             return newSdf.format(temp)
@@ -76,7 +80,7 @@ class TextUtils {
         }
 
         fun getCurrentTimestamp(): String {
-            val dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+            val dtf = DateTimeFormatter.ofPattern(getCommonDateFormat())
             val now = LocalDateTime.now()
             return dtf.format(now)
         }
