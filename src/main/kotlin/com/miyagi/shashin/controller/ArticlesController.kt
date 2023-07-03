@@ -46,14 +46,13 @@ class ArticlesController {
         //mutableListOf<MutableMap<String, String>>()
 
         // Based on WebSecurityConfig
-        val webSecurityConfig = MultiSecurityConfig.WebSecurityConfig()
-        val adminEndpoints = webSecurityConfig.adminList
+        val adminEndpoints = MultiSecurityConfig.adminList
         adminEndpoints.forEachIndexed { i, _ ->
             if(adminEndpoints[i].contains("**")) {
                 adminEndpoints[i] = adminEndpoints[i].replace("**", "(.*)")
             }
         }
-        val allRoleEndpoints = webSecurityConfig.allRoleList
+        val allRoleEndpoints = MultiSecurityConfig.allRoleList
         allRoleEndpoints.forEachIndexed { i, _ ->
             if(allRoleEndpoints[i].contains("**")) {
                 allRoleEndpoints[i] = allRoleEndpoints[i].replace("**", "(.*)")
