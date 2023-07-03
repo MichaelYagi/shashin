@@ -51,6 +51,70 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "dashboard",
             "search"
         )
+
+        var publicList = arrayOf(
+            "/",
+            "/docs/**",
+            "/articles/**",
+            "/health",
+            "/features",
+            "/share/**",
+            "/css/**",
+            "/js/**",
+            "/fonts/**",
+            "/images/**",
+            "/users/register",
+            "/users/login",
+            "/users/logout",
+            "/websocket-endpoint",
+            "/topic/messages",
+            "/topic/matchmessages",
+            "/settings/matchmessage",
+            "/settings/scanmessage",
+            "/dashboard/statmessages",
+            "/dashboard/statmessage",
+            "/api/v1/thumbnails/**",
+            "/api/v1/image/**",
+            "/api/v1/video/**"
+        )
+
+        var adminList = arrayOf(
+            "settings/**",
+            "settings",
+            "settings/users",
+            "settings/scan",
+            "timeline",
+            "timeline/**",
+            "users/delete",
+            "albums/add",
+            "api/v1/folders",
+            "api/v1/folders/**",
+            "api/v1/folder",
+            "api/v1/folder/**",
+            "api/v1/recent",
+            "api/v1/recent/**",
+            "api/v1/modified",
+            "api/v1/modified/**",
+            "api/v1/share/album/save",
+            "api/v1/exif/metadata/**",
+            "api/v1/folders"
+        )
+
+        val allRoleList = arrayOf(
+            "comments/**",
+            "albums",
+            "favorites",
+            "map/**",
+            "search/**",
+            "api/v1/album/**",
+            "api/v1/users/apikey/update",
+            "api/v1/mapdata",
+            "api/v1/metadata/**",
+            "api/v1/users/self",
+            "api/v1/comment/**",
+            "api/v1/favorites/**",
+            "api/v1/keywords"
+        )
     }
 
     @Configuration
@@ -122,70 +186,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
 
         @Value("\${app.api.version}")
         private lateinit var apiVersion: String
-
-        var publicList = arrayOf(
-            "/",
-            "/docs/**",
-            "/articles/**",
-            "/health",
-            "/features",
-            "/share/**",
-            "/css/**",
-            "/js/**",
-            "/fonts/**",
-            "/images/**",
-            "/users/register",
-            "/users/login",
-            "/users/logout",
-            "/websocket-endpoint",
-            "/topic/messages",
-            "/topic/matchmessages",
-            "/settings/matchmessage",
-            "/settings/scanmessage",
-            "/dashboard/statmessages",
-            "/dashboard/statmessage",
-            "/api/v1/thumbnails/**",
-            "/api/v1/image/**",
-            "/api/v1/video/**"
-        )
-
-        var adminList = arrayOf(
-            "settings/**",
-            "settings",
-            "settings/users",
-            "settings/scan",
-            "timeline",
-            "timeline/**",
-            "users/delete",
-            "albums/add",
-            "api/v1/folders",
-            "api/v1/folders/**",
-            "api/v1/folder",
-            "api/v1/folder/**",
-            "api/v1/recent",
-            "api/v1/recent/**",
-            "api/v1/modified",
-            "api/v1/modified/**",
-            "api/v1/share/album/save",
-            "api/v1/exif/metadata/**",
-            "api/v1/folders"
-        )
-
-        val allRoleList = arrayOf(
-            "comments/**",
-            "albums",
-            "favorites",
-            "map/**",
-            "search/**",
-            "api/v1/album/**",
-            "api/v1/users/apikey/update",
-            "api/v1/mapdata",
-            "api/v1/metadata/**",
-            "api/v1/users/self",
-            "api/v1/comment/**",
-            "api/v1/favorites/**",
-            "api/v1/keywords"
-        )
 
         @Bean
         fun passwordEncoder(): PasswordEncoder? {
