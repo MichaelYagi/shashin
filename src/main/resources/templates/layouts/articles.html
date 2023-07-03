@@ -24,8 +24,18 @@
                 <ul class="section-nav">
                     <li class="toc-entry toc-h2"><a href="#apiendpoints">API Endpoints</a>
                         <ul>
-                            <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
-                                <li class="toc-entry toc-h2"><a th:href="${'#'+endpoint.value.rolePath}"><th:block th:text="${endpoint.value.requestType}"></th:block>&nbsp;<th:block th:text="${endpoint.value.apiCall}"></th:block></a></li>
+                            <th:block th:each="endpoint, iterStat: ${apiEndpointsMapList}">
+                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (apiEndpointsMapList[iterStat.index-1].role)==(endpoint.role)}">
+                                    <li class="toc-entry toc-h3"><a th:href="${'#role'+endpoint.roleAnchor}" th:text="${endpoint.role+' APIs'}"></a>
+                                        <th:block th:remove="tag" th:utext="'&lt;ul&gt;'"></th:block>
+                                </th:block>
+
+                                <li class="toc-entry toc-h2"><a th:href="${'#'+endpoint.rolePath}"><th:block th:text="${endpoint.requestType}"></th:block>&nbsp;<th:block th:text="${endpoint.apiCall}"></th:block></a></li>
+
+                                <th:block th:if="${iterStat.count > 0 and !iterStat.first and !iterStat.last and (apiEndpointsMapList[iterStat.index+1].role)!=(endpoint.role)}">
+                                    <th:block th:remove="tag" th:utext="'&lt;/ul&gt;&lt;/li&gt;'"></th:block>
+                                </th:block>
+
                             </th:block>
                         </ul>
                     </li>
