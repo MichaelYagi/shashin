@@ -778,7 +778,6 @@ class AlbumsController {
     fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode): String? {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
-            println(albumShareInfo["albumId"])
             val albumIdRequest = albumShareInfo["albumId"].toString().toInt()
             var relativeShareUrl: String? = StringEscapeUtils.escapeHtml4(albumShareInfo["relativeShareUrl"].toString().trim())
 
