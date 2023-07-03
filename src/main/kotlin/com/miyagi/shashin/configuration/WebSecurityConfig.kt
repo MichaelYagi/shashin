@@ -162,7 +162,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/recent/**",
             "api/v1/modified",
             "api/v1/modified/**",
-            "api/v1/album/**/save/sharelink",
+            "api/v1/share/album/save",
             "api/v1/exif/metadata/**",
             "api/v1/folders"
         )
@@ -173,17 +173,12 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "favorites",
             "map/**",
             "search/**",
-            "api/v1/album/**/page/**",
             "api/v1/album/**",
             "api/v1/users/apikey/update",
             "api/v1/mapdata",
             "api/v1/metadata/**",
             "api/v1/users/self",
-            "api/v1/comment/album/delete",
-            "api/v1/comment/album/save",
-            "api/v1/comment/albumphoto/delete",
-            "api/v1/comment/albumphoto/save",
-            "api/v1/comment/update",
+            "api/v1/comment/**",
             "api/v1/favorites/**",
             "api/v1/keywords"
         )

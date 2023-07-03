@@ -23,7 +23,7 @@
 
         const http = new Http("save sharelink");
         let json = {albumId: albumId, relativeShareUrl: relativeShareLink}
-        const data = await http.ajax("post", "/album/"+albumId+"/save/sharelink", JSON.stringify(json), function () {
+        const data = await http.ajax("post", "/share/album/save", JSON.stringify(json), function () {
             $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
             $("#albumsModalStatus").attr("title", shashin.modalStatusFailMessage());
             $("#cancelUserShare").prop('disabled', false);
