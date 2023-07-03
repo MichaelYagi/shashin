@@ -42,7 +42,8 @@ class ArticlesController {
         val map = requestMappingHandlerMapping.handlerMethods
 
         model["apiEndpointsMap"] = mutableMapOf<String, String>()
-        val apiMap = mutableMapOf<String, MutableMap<String, String>>()
+        val apiMapList = mutableListOf<MutableMap<String, String>>()
+        //mutableListOf<MutableMap<String, String>>()
 
         // Based on WebSecurityConfig
         val webSecurityConfig = MultiSecurityConfig.WebSecurityConfig()
@@ -91,11 +92,13 @@ class ArticlesController {
                     }
                 }
 
+                roleController["roleAnchor"] = roleController["role"].toString().lowercase().replace("\\s".toRegex(), "")
+
                 roleController["rolePath"] = TextUtils.generateUUID(key.toString(),"","",0.0,0,"").toString()
                 roleController["controller"] = value.toString()
                 val apiRegex = "\\/api\\/v1\\/.*\\]".toRegex()
                 var apiMatchResult = apiRegex.find(key.toString())
-                apiMap[apiMatchResult!!.value] = roleController
+                roleController["order"] = roleController["role"]+apiMatchResult!!.value
 
                 val endpointArray = key.toString().split(",")
                 if (endpointArray.size > 0) {
@@ -137,13 +140,13 @@ class ArticlesController {
                     }
                 }
 
+                apiMapList.add(roleController)
+
                 roleController = mutableMapOf()
             }
         }
 
-        val sortedMap = apiMap.toSortedMap(compareBy { it })
-
-        model["apiEndpointsMap"] = sortedMap
+        model["apiEndpointsMapList"] = apiMapList.sortedBy { it["order"] }
 
         val moduleArray = module.split("/")
         model["activePage"] = module

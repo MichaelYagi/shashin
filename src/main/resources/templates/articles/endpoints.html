@@ -17,16 +17,23 @@
 
     <br>
 
-    <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
-      <a th:id="${endpoint.value.rolePath}"></a>
+    <th:block th:each="endpoint, iterStat: ${apiEndpointsMapList}">
+      <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and (apiEndpointsMapList[iterStat.index-1].role)==(endpoint.role)}">
+        <a class="anchorjs-link" aria-label="Anchor" data-anchorjs-icon="#" th:href="${'#role'+endpoint.roleAnchor}"></a>
+        <h3 th:id="${'role'+endpoint.roleAnchor}">
+          <div th:text="${endpoint.role+' APIs'}"></div>
+        </h3>
+      </th:block>
+
+      <a th:id="${endpoint.rolePath}"></a>
       <p>
-        <span th:class="${endpoint.value.badgeStyle}"><th:block th:text="${endpoint.value.requestType}"></th:block></span>&nbsp;<th:block th:text="${endpoint.value.apiCall}"></th:block><br>
-        <th:block th:text="'Access: '+${endpoint.value.role}"></th:block>
-        <th:block th:if="${endpoint.value.produces != ''}">
-          <br><th:block th:text="'Produces: '+${endpoint.value.produces}"></th:block>
+        <span th:class="${endpoint.badgeStyle}"><th:block th:text="${endpoint.requestType}"></th:block></span>&nbsp;<th:block th:text="${endpoint.apiCall}"></th:block><br>
+        <th:block th:text="'Access: '+${endpoint.role}"></th:block>
+        <th:block th:if="${endpoint.produces != ''}">
+          <br><th:block th:text="'Produces: '+${endpoint.produces}"></th:block>
         </th:block>
-        <th:block th:if="${endpoint.value.description != ''}">
-          <br><th:block th:utext="'Description: '+${endpoint.value.description}"></th:block>
+        <th:block th:if="${endpoint.description != ''}">
+          <br><th:block th:utext="'Description: '+${endpoint.description}"></th:block>
         </th:block>
       </p>
       <br>
