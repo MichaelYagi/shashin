@@ -162,7 +162,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/recent/**",
             "api/v1/modified",
             "api/v1/modified/**",
-            "api/v1/share/album/save",
+            "api/v1/share/public/album/save",
             "api/v1/exif/metadata/**",
             "api/v1/folders"
         )
