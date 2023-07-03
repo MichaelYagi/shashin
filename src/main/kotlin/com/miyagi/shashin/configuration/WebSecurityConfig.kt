@@ -150,31 +150,41 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "settings",
             "settings/users",
             "settings/scan",
-            "favorites",
             "timeline",
             "timeline/**",
             "users/delete",
             "albums/add",
+            "api/v1/folders",
             "api/v1/folders/**",
+            "api/v1/folder",
             "api/v1/folder/**",
+            "api/v1/recent",
             "api/v1/recent/**",
+            "api/v1/modified",
             "api/v1/modified/**",
             "api/v1/album/**/save/sharelink",
             "api/v1/exif/metadata/**",
-            "api/v1/folders",
-            "api/v1/keywords"
+            "api/v1/folders"
         )
 
         val allRoleList = arrayOf(
             "comments/**",
             "albums",
+            "favorites",
             "map/**",
             "search/**",
             "api/v1/album/**/page/**",
             "api/v1/users/apikey/update",
             "api/v1/mapdata",
             "api/v1/metadata/**",
-            "api/v1/users/self"
+            "api/v1/users/self",
+            "api/v1/comment/album/delete",
+            "api/v1/comment/album/save",
+            "api/v1/comment/albumphoto/delete",
+            "api/v1/comment/albumphoto/save",
+            "api/v1/comment/update",
+            "api/v1/favorites/**",
+            "api/v1/keywords"
         )
 
         @Bean
