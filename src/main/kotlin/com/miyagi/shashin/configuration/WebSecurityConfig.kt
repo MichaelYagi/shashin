@@ -174,6 +174,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "map/**",
             "search/**",
             "api/v1/album/**/page/**",
+            "api/v1/album/**",
             "api/v1/users/apikey/update",
             "api/v1/mapdata",
             "api/v1/metadata/**",
