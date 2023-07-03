@@ -28,6 +28,7 @@ import javax.sql.DataSource
 
 @EnableGlobalMethodSecurity(securedEnabled = true)
 class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
+    // Used to validate URL paths for login redirect
     companion object {
         val validWebSubPaths = arrayOf(
             "timeline",
