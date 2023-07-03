@@ -744,7 +744,7 @@ class AlbumsController {
             operationId = "postAnonymousShareAlbum",
             description = "<strong>Save and generate a sharable public URL.</strong> This can be a user generated share link eg. http://127.0.0.1:6624/share/abcd/album/1" +
                     "<pre><code>" +
-                    "curl -X POST \"http://127.0.0.1:6624/api/v1/album/{albumId}/save/sharelink\" \\\n" +
+                    "curl -X POST \"http://127.0.0.1:6624/api/v1/sharelink/album/save\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
                     "-H \"x-api-key: &lt;service_api_key&gt;\"" +
                     "-d '{\"albumId\": &lt;album_id&gt;, \"relativeShareUrl\": \"&lt;relative_share_url&gt;\"}'" +
@@ -754,7 +754,6 @@ class AlbumsController {
                     "</thead><tbody>" +
                     "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
                     "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
-                    "<tr><td>albumId</td><td>param</td><td>int</td><td>required</td><td>Album Id for the album to share</td></tr>" +
                     "<tr><td>albumId</td><td>body param</td><td>int</td><td>required</td><td>Album Id for the album to share</td></tr>" +
                     "<tr><td>relativeShareUrl</td><td>body param</td><td>string</td><td>required</td><td>The relative share URL you'd like to save</td></tr>" +
                     "</tbody></table><br>" +
@@ -773,17 +772,17 @@ class AlbumsController {
         )
     )
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/{albumId}/save/sharelink","/api/v1/album/{albumId}/save/sharelink"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/share/album/save","/api/v1/share/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
+    fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode): String? {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
             val albumIdRequest = albumShareInfo["albumId"].toString().toInt()
             var relativeShareUrl: String? = StringEscapeUtils.escapeHtml4(albumShareInfo["relativeShareUrl"].toString().trim())
 
-            if (albumId == albumIdRequest && albumId > 0) {
-                val albumObj = albumRepository.findById(albumId)
+            if (albumIdRequest > 0) {
+                val albumObj = albumRepository.findById(albumIdRequest)
                 if (albumObj.get().getId() == albumIdRequest) {
                     resp["msg"] = "Share link generated"
                     if (relativeShareUrl != null && relativeShareUrl.isEmpty()) {
