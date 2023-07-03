@@ -45,7 +45,10 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "notifications",
             "settings",
             "dashboard",
-            "trash"
+            "trash",
+            "users",
+            "dashboard",
+            "search"
         )
     }
 
