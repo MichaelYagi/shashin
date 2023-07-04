@@ -837,7 +837,7 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
-    fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String): String? {
+    fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse): String? {
 //        println(requestBody)
         val metadataMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
 
@@ -1074,10 +1074,7 @@ class TimelineController: BaseController() {
 
                 return mapper.writeValueAsString(resp)
             } else {
-                logger.log(Level.WARNING, "Updating metadata $metadataId failed. Verify that $metadataId is valid. Could not save.")
-                resp["msg"] = "Could not save"
-                resp["status"] = ApiResponse.FAIL.status
-                return mapper.writeValueAsString(resp)
+                return TextUtils.returnForbiddenError(response)
             }
         }
         logger.log(Level.WARNING, "Updating metadata failed. Could not save.")
@@ -1305,7 +1302,7 @@ class TimelineController: BaseController() {
 
             val firstAvailableMetadataId = StringEscapeUtils.escapeHtml4(idArray[0])
             val metadataCoverAlbumObj = metadataRepository.findById(firstAvailableMetadataId)
-            var albumIdList: ArrayList<Int> = ArrayList()
+            val albumIdList: ArrayList<Int> = ArrayList()
 
             // Process albums
             if (!isHidden && albumNames != null && albumNames.toString().trim() != "") {

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
 import io.swagger.v3.oas.annotations.Operation
@@ -380,7 +381,6 @@ class CommentsController {
     @Transactional
     fun postDeleteAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
-        println(commentMap)
         if (commentMap.containsKey("commentId")) {
             val commentId = commentMap["commentId"].toString().toInt()
 
@@ -442,7 +442,7 @@ class CommentsController {
     @RequestMapping(value = ["/comment/album/delete", "/api/v1/comment/album/delete"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postDeleteComment(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postDeleteComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("commentId") && commentMap.containsKey("albumId")) {
             val commentId = commentMap["commentId"].toString().toInt()
@@ -462,6 +462,8 @@ class CommentsController {
                     resp["status"] = ApiResponse.SUCCESS.status
                     resp["commentId"] = commentId.toString()
                     return mapper.writeValueAsString(resp)
+                } else {
+                    return returnForbiddenError(response)
                 }
             }
         }
