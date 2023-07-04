@@ -2,9 +2,6 @@ package com.miyagi.shashin.component
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.util.ApiResponse
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.actuate.endpoint.ApiVersion
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
 import java.io.IOException

@@ -1,11 +1,9 @@
 package com.miyagi.shashin.component
 
-import com.fasterxml.jackson.annotation.JsonFormat
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-
 
 internal class ApiError private constructor() {
     private var status: HttpStatus? = null
