@@ -1,6 +1,7 @@
 package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.io.BufferedReader
 import java.io.InputStreamReader
@@ -11,6 +12,7 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.HttpServletResponse
 
 
 @Component
@@ -190,6 +192,20 @@ class TextUtils {
             escaped = escaped.replace("\t", "\\t")
             // TODO: escape other non-printing characters using uXXXX notation
             return escaped
+        }
+
+        fun returnForbiddenError(response: HttpServletResponse): String {
+            val jsonResponseMap = mutableMapOf<String, Any>()
+            jsonResponseMap["msg"] = "Access is denied"
+            val now = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern(TextUtils.getCommonDateFormat())
+            jsonResponseMap["timestamp"] = now.format(formatter);
+            jsonResponseMap["status"] = HttpStatus.FORBIDDEN
+            val mapper = ObjectMapper()
+
+            response.contentType = "application/json"
+            response.status = HttpStatus.FORBIDDEN.value()
+            return mapper.writeValueAsString(jsonResponseMap)
         }
 
         private fun readUrl(urlString: String): String? {

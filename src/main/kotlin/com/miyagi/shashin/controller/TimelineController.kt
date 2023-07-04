@@ -39,6 +39,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
@@ -1781,8 +1782,8 @@ class TimelineController: BaseController() {
     )
     @RequestMapping(value = ["/api/v1/exif/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getExifData(model: Model, @PathVariable(required = true) id: String): String {
-        val response = mutableMapOf<String, Any?>()
+    fun getExifData(model: Model, @PathVariable(required = true) id: String, response: HttpServletResponse): String {
+        val responseMap = mutableMapOf<String, Any?>()
 
         val metadataRecord = metadataRepository.findById(id)
         if (metadataRecord.isPresent) {
@@ -1790,20 +1791,19 @@ class TimelineController: BaseController() {
 
             val jsonNode = FileUtils.convertExifToJsonNode(metadata.getFolder()!!, metadata.getFileName()!!, relativeSidecarDir!!)
 
-            response["msg"] = "Could not get EXIF file"
-            response["status"] = ApiResponse.FAIL.status
+            responseMap["msg"] = "Could not get EXIF file"
+            responseMap["status"] = ApiResponse.FAIL.status
 
             if (jsonNode != null) {
-                response["exif"] = jsonNode
-                response["msg"] = ""
-                response["status"] = ApiResponse.SUCCESS.status
+                responseMap["exif"] = jsonNode
+                responseMap["msg"] = ""
+                responseMap["status"] = ApiResponse.SUCCESS.status
             }
         } else {
-            response["msg"] = "Could not get record"
-            response["status"] = ApiResponse.FAIL.status
+            return TextUtils.returnForbiddenError(response)
         }
 
-        return mapper.writeValueAsString(response)
+        return mapper.writeValueAsString(responseMap)
     }
 
     @RequestMapping(value = ["/timeline/download/batch"],

@@ -7,6 +7,7 @@ import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
+import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 
 @Controller
@@ -310,7 +312,7 @@ class CommentsController {
     )
     @RequestMapping(value = ["/comment/update","/api/v1/comment/update"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun postUpdateComment(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postUpdateComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("commentId") && commentMap.containsKey("comment")) {
             val commentId = commentMap["commentId"].toString().toInt()
@@ -330,6 +332,8 @@ class CommentsController {
                     resp["status"] = ApiResponse.SUCCESS.status
                     resp["commentId"] = commentObj.get().getId().toString()
                     return mapper.writeValueAsString(resp)
+                } else {
+                    return returnForbiddenError(response)
                 }
             }
         }
