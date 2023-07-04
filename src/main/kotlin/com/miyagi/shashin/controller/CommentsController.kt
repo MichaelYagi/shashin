@@ -98,7 +98,7 @@ class CommentsController {
     @RequestMapping(value = ["/comment/album/save","/api/v1/comment/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postSaveComment(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postSaveComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment")) {
             val albumId = commentMap["albumId"].toString().toInt()
@@ -106,7 +106,13 @@ class CommentsController {
 
             val currentUserObj = model.getAttribute("currentUser") as User?
 
-            if (currentUserObj != null) {
+            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumId)
+            val albumObj = albumRepository.findById(albumId)
+
+            if (currentUserObj != null && userAlbumCount != null &&
+                userAlbumCount > 0 && currentUserObj.getId() > 0 &&
+                albumObj.isPresent
+            ) {
                 // Insert into comments
                 val comment = Comment()
                 comment.setUserId(currentUserObj.getId())
@@ -124,7 +130,6 @@ class CommentsController {
                 albumCommentRepository.save(albumComment)
 
                 // Notify if admin or other users in album
-                val albumObj = albumRepository.findById(albumId)
                 val users = userRepository.findAll()
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -162,6 +167,8 @@ class CommentsController {
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
                 return mapper.writeValueAsString(resp)
+            } else {
+                return returnForbiddenError(response)
             }
         }
 
@@ -206,7 +213,7 @@ class CommentsController {
     )
     @RequestMapping(value = ["/comment/albumphoto/save","/api/v1/comment/albumphoto/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun postSaveAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postSaveAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment") && commentMap.containsKey("metadataId")) {
             val albumId = commentMap["albumId"].toString().toInt()
@@ -214,7 +221,15 @@ class CommentsController {
             val commentText = StringEscapeUtils.escapeHtml4(commentMap["comment"].toString())
 
             val currentUserObj = model.getAttribute("currentUser") as User?
-            if (currentUserObj != null) {
+
+            val metadataObj = metadataRepository.findById(metadataId)
+            val albumObj = albumRepository.findById(albumId)
+            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumId)
+
+            if (currentUserObj != null && userAlbumCount != null &&
+                userAlbumCount > 0 && currentUserObj.getId() > 0 &&
+                metadataObj.isPresent && albumObj.isPresent
+            ) {
                 // Insert into comments
                 val comment = Comment()
                 comment.setUserId(currentUserObj.getId())
@@ -233,8 +248,6 @@ class CommentsController {
                 albumPhotoCommentRepository.save(albumPhotoComment)
 
                 // Notify if admin or other users in album
-                val metadataObj = metadataRepository.findById(metadataId)
-                val albumObj = albumRepository.findById(albumId)
                 val users = userRepository.findAll()
                 val notificationObjList = mutableListOf<Notification>()
                 val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
@@ -271,6 +284,8 @@ class CommentsController {
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
                 return mapper.writeValueAsString(resp)
+            } else {
+                return returnForbiddenError(response)
             }
         }
 
@@ -379,7 +394,7 @@ class CommentsController {
     @RequestMapping(value = ["/comment/albumphoto/delete","/api/v1/comment/albumphoto/delete"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postDeleteAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode): String {
+    fun postDeleteAlbumPhotoComment(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("commentId")) {
             val commentId = commentMap["commentId"].toString().toInt()
@@ -396,6 +411,8 @@ class CommentsController {
                     resp["status"] = ApiResponse.SUCCESS.status
                     resp["commentId"] = commentId.toString()
                     return mapper.writeValueAsString(resp)
+                } else {
+                    return returnForbiddenError(response)
                 }
             }
         }
