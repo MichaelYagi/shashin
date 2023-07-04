@@ -124,6 +124,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Autowired
         private val userRepository: UserRepository? = null
 
+        @Autowired
+        private val apiAccessDeniedHandler: ApiAccessDeniedHandler? = null
+
         @Bean
         fun passwordApiEncoder(): PasswordEncoder? {
             return BCryptPasswordEncoder()
@@ -152,6 +155,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
+                .and()
+                .exceptionHandling()
+                .accessDeniedHandler(apiAccessDeniedHandler)
         }
 
         override fun configure(web: WebSecurity) {

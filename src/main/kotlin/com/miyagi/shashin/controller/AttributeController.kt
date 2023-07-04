@@ -96,13 +96,10 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @Value("\${server.port}")
     private lateinit var portProperty: String
 
-    @ExceptionHandler(Exception::class)
-    fun globeExceptionHandler(ex: java.lang.Exception, request: WebRequest): ResponseEntity<*>? {
-        if (ex.localizedMessage.lowercase() == "access is denied") {
-            return buildResponseEntity(ApiError(HttpStatus.FORBIDDEN, ex.localizedMessage, ex))
-        }
-        return buildResponseEntity(ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.localizedMessage, ex))
-    }
+//    @ExceptionHandler(Exception::class)
+//    fun globeExceptionHandler(ex: java.lang.Exception, request: WebRequest): ResponseEntity<*>? {
+//        return buildResponseEntity(ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.localizedMessage, ex))
+//    }
 
     override fun handleHttpMessageNotReadable(
         ex: HttpMessageNotReadableException,
