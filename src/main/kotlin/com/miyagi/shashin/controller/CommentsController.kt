@@ -321,7 +321,7 @@ class CommentsController {
 
                 // Update comment
                 val commentObj = commentRepository.findById(commentId)
-                if (currentUserObj.getId() == commentObj.get().getUserId()) {
+                if (commentObj.isPresent && currentUserObj.getId() == commentObj.get().getUserId()) {
                     commentObj.get().setComment(commentText)
                     commentObj.get().setModifiedAt(getCurrentTimestamp())
                     commentRepository.save(commentObj.get())

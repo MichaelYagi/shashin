@@ -98,9 +98,11 @@ class TrashController {
             if (metadataIdList.count() > 0) {
                 for (metadataId in metadataIdList) {
                     val metadataObj = metadataRepository.findById(StringEscapeUtils.escapeHtml4(metadataId as String))
-                    metadataObj.get().setHidden(false)
-                    metadataObj.get().setModifiedAt(TextUtils.getCurrentTimestamp())
-                    metadataRepository.save(metadataObj.get())
+                    if (metadataObj.isPresent) {
+                        metadataObj.get().setHidden(false)
+                        metadataObj.get().setModifiedAt(TextUtils.getCurrentTimestamp())
+                        metadataRepository.save(metadataObj.get())
+                    }
                 }
 
                 resp["msg"] = "Restored photos"

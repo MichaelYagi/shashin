@@ -681,20 +681,23 @@ class TimelineController: BaseController() {
             metadataMap["id"].toString() == metadataId
         ) {
             val metadataObj = metadataRepository.findById(metadataId)
-            val isHidden = metadataMap["hidden"].toString().toBoolean()
 
-            if (isHidden) {
-                metadataObj.get().setHidden(true)
-                metadataObj.get().setModifiedAt(getCurrentTimestamp())
-                removeMetadata(metadataId)
+            if (metadataObj.isPresent) {
+                val isHidden = metadataMap["hidden"].toString().toBoolean()
+
+                if (isHidden) {
+                    metadataObj.get().setHidden(true)
+                    metadataObj.get().setModifiedAt(getCurrentTimestamp())
+                    removeMetadata(metadataId)
+                }
+
+                // Update record
+                metadataRepository.save(metadataObj.get())
+
+                resp["msg"] = "Saved!"
+                resp["status"] = ApiResponse.SUCCESS.status
+                return mapper.writeValueAsString(resp)
             }
-
-            // Update record
-            metadataRepository.save(metadataObj.get())
-
-            resp["msg"] = "Saved!"
-            resp["status"] = ApiResponse.SUCCESS.status
-            return mapper.writeValueAsString(resp)
         }
         resp["msg"] = "Could not save"
         resp["status"] = ApiResponse.FAIL.status
@@ -911,7 +914,7 @@ class TimelineController: BaseController() {
                             if (count.toInt() > 0) {
                                 val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
                                 val album = albumRepository.findById(albumId)
-                                if (album.get().getCoverUrl() == coverAlbumUrl) {
+                                if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
                                     // Use the first photo in album
                                     val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
                                     if (albumPhoto != null) {
