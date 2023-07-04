@@ -11,26 +11,28 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.InputStreamResource
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseCookie
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.security.access.annotation.Secured
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.server.ResponseStatusException
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -692,7 +694,6 @@ class AlbumsController {
                                 albumRepository.save(album.get())
                             }
                         }
-
                     } else {
                         userAlbumRepository.deleteByAlbumId(albumId)
                         albumRepository.deleteById(albumId)
@@ -775,7 +776,7 @@ class AlbumsController {
     @RequestMapping(value = ["/share/album/save","/api/v1/share/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode): String? {
+    fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, response: HttpServletResponse): String? {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
             val albumIdRequest = albumShareInfo["albumId"].toString().toInt()
@@ -795,6 +796,8 @@ class AlbumsController {
                     resp["relativeShareUrl"] = relativeShareUrl
                     resp["status"] = ApiResponse.SUCCESS.status
                     return mapper.writeValueAsString(resp)
+                } else {
+                    return returnForbiddenError(response)
                 }
             }
         }
