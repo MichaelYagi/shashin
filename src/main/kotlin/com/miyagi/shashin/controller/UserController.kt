@@ -163,7 +163,7 @@ class UserController {
             if (currentUserObj != null && currentUserObj.getApikey() == currentApikey) {
                 // Generate a new key
                 val updatedUserObj = userRepository?.findById(currentUserObj.getId())
-                if (updatedUserObj != null) {
+                if (updatedUserObj != null && updatedUserObj.isPresent) {
                     val updatedApikey = TextUtils.generateUUID(currentUserObj.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"").toString()
                     updatedUserObj.get().setApikey(updatedApikey)
                     userRepository?.save(updatedUserObj.get())

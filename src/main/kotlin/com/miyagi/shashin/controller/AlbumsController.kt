@@ -610,7 +610,7 @@ class AlbumsController {
                     var metadataObj = metadataRepository.findById(metadataId)
                     val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
                     val album = albumRepository.findById(albumId)
-                    if (album.get().getCoverUrl() == coverAlbumUrl) {
+                    if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
                         // Use the first photo in album
                         val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
                         if (albumPhoto != null) {
@@ -683,7 +683,7 @@ class AlbumsController {
                         var metadataObj = metadataRepository.findById(metadataId)
                         val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
                         val album = albumRepository.findById(albumId)
-                        if (album.get().getCoverUrl() == coverAlbumUrl) {
+                        if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
                             // Use the first photo in album
                             val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
                             if (albumPhoto != null) {
@@ -783,7 +783,7 @@ class AlbumsController {
 
             if (albumIdRequest > 0) {
                 val albumObj = albumRepository.findById(albumIdRequest)
-                if (albumObj.get().getId() == albumIdRequest) {
+                if (albumObj.isPresent && albumObj.get().getId() == albumIdRequest) {
                     resp["msg"] = "Share link generated"
                     if (relativeShareUrl != null && relativeShareUrl.isEmpty()) {
                         relativeShareUrl = null

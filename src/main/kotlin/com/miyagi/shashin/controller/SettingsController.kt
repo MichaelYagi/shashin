@@ -1079,7 +1079,7 @@ class SettingsController {
                     if (importedMetadata != null) {
                         val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId())
 
-                        if (foundMetadataRecord != null && !foundMetadataRecord.isEmpty) {
+                        if (foundMetadataRecord != null && foundMetadataRecord.isPresent && !foundMetadataRecord.isEmpty) {
                             val foundMetadata = foundMetadataRecord.get()
                             var message = "not imported"
                             val saved = saveImportedMetadata(importedMetadata, foundMetadata)

@@ -475,7 +475,7 @@ class PeopleController {
         model["activePage"] = module
         model["activeSidebar"] = module
         var title = TextUtils.capitalized(module)
-        if (recognitionLabel != null && recognitionLabel.get().getName() != "") {
+        if (recognitionLabel != null && recognitionLabel.isPresent && recognitionLabel.get().getName() != "") {
             title = TextUtils.capitalized(module) + " - " + recognitionLabel.get().getName()
         }
         model["titleDescriptor"] = title
@@ -562,7 +562,7 @@ class PeopleController {
         val recognitionLabel = recognitionLabelRepository?.findById(personId)
 
         var subject: String? = null
-        if (recognitionLabel != null) {
+        if (recognitionLabel != null && recognitionLabel.isPresent) {
             response["personInfo"] = recognitionLabel.get()
             subject = recognitionLabel.get().getName()
         }
@@ -608,7 +608,7 @@ class PeopleController {
         model["activePage"] = module
         model["activeSidebar"] = module
         var title = TextUtils.capitalized(module)
-        if (recognitionLabel != null && recognitionLabel.get().getName() != "") {
+        if (recognitionLabel != null && recognitionLabel.isPresent && recognitionLabel.get().getName() != "") {
             title = TextUtils.capitalized(module) + " - " + recognitionLabel.get().getName()
         }
         model["titleDescriptor"] = title
@@ -650,7 +650,7 @@ class PeopleController {
         // Get the recognition label
         val recognitionLabel = recognitionLabelRepository?.findById(personId)
 
-        if (recognitionLabel != null) {
+        if (recognitionLabel != null && recognitionLabel.isPresent) {
             response["personInfo"] = recognitionLabel.get()
             val subject = recognitionLabel.get().getName()
 
