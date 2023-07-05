@@ -49,8 +49,8 @@ class ModalTemplates {
 
     static AlbumModalDropDown({metadata, album, checkedString}) { return `
                 <button class="dropdown-item" type="button">
-                    <input type="checkbox" class="album" value="${album.name}" name="album${metadata.id}[]" id="${metadata.id}-${album.id}"${checkedString}>
-                    <label for="${metadata.id}-${album.id}" id="album-${metadata.id}-${album.id}">${Util.escapeHtml(album.name)}</label>
+                    <input type="checkbox" class="album" value="${album.name}" name="album${metadata.id}[]" id="album-${metadata.id}-${album.id}"${checkedString}>
+                    <label for="album-${metadata.id}-${album.id}">${Util.escapeHtml(album.name)}</label>
                 </button>
     `};
 
@@ -95,8 +95,8 @@ class ModalTemplates {
     static PersonModalDropDown({metadata, recognitionLabel, checkedString}) { return `
                                                 ${(recognitionLabel.name === null || recognitionLabel.name === "null") ? ``: `
                                                 <button class="dropdown-item" type="button">
-                                                    <input type="checkbox" class="recognitionLabel" value="${recognitionLabel.name}" name="recognitionLabel${metadata.id}[]" id="${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}"${(checkedString.length > 0) ? `${checkedString}` : ''}>
-                                                    <label for="${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}" id="label${metadata.id.length > 0 ? `-${metadata.id}-` : ''}${recognitionLabel.id}">${recognitionLabel.name}</label>
+                                                    <input type="checkbox" class="recognitionLabel" value="${recognitionLabel.name}" name="recognitionLabel${metadata.id}[]" id="label-${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}"${(checkedString.length > 0) ? `${checkedString}` : ''}>
+                                                    <label for="label-${metadata.id.length > 0 ? `${metadata.id}-` : ''}${recognitionLabel.id}">${recognitionLabel.name}</label>
                                                 </button>`}
     `};
 
