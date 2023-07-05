@@ -74,8 +74,8 @@
                                             <div class="dropdown-menu" id="albumNameList">
                                                 <th:block th:each="album, iterStat: ${allAlbumList}">
                                                     <button class="dropdown-item" type="button">
-                                                        <input type="checkbox" class="album" th:id="${album.id}" th:value="${album.name}" name="albums[]">
-                                                        <label th:for="${album.id}" th:text="${album.name}"></label>
+                                                        <input type="checkbox" class="album" th:id="${'album'+album.id}" th:value="${album.name}" name="albums[]">
+                                                        <label th:for="${'album'+album.id}" th:text="${album.name}"></label>
                                                     </button>
                                                 </th:block>
                                             </div>
@@ -111,8 +111,8 @@
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <th:block th:if="${recognitionLabel.name != null and recognitionLabel.name != 'null'}">
                                                     <button class="dropdown-item" type="button">
-                                                        <input type="checkbox" class="recognitionLabel" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
-                                                        <label th:for="${recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
+                                                        <input type="checkbox" class="recognitionLabel" th:id="${'recognitionLabel'+recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
+                                                        <label th:for="${'recognitionLabel'+recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
                                                     </button>
                                                 </th:block>
                                             </th:block>

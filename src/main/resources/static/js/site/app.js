@@ -931,7 +931,7 @@
             fullScreen: true,
             download: true,
             zoomFromOrigin: true,
-            videoMaxSize: "7680-4320",
+            // videoMaxSize: "7680-4320",
             speed: 0,
             autoplayFirstVideo: false,
             gotoNextSlideOnVideoEnd: false,
@@ -1545,7 +1545,7 @@
 
                 batchHtml +=
                     '<button class="dropdown-item" type="button">\n' +
-                    '    <input type="checkbox" class="album" id="'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                    '    <input type="checkbox" class="album" id="album'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
                     '    <label for="'+album.id+'">'+album.name+'</label>\n' +
                     '</button>\n';
             }
@@ -1589,8 +1589,8 @@
                 if (recognitionLabel.name !== null && recognitionLabel.name !== "null") {
                     batchHtml +=
                         '           <button class="dropdown-item" type="button">\n' +
-                        '               <input type="checkbox" class="recognitionLabel" id="' + recognitionLabel.id + '" value="' + recognitionLabel.name + '" name="recognitionLabel[]">\n' +
-                        '               <label for="' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
+                        '               <input type="checkbox" class="recognitionLabel" id="recognitionLabel' + recognitionLabel.id + '" value="' + recognitionLabel.name + '" name="recognitionLabel[]">\n' +
+                        '               <label for="recognitionLabel' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
                         '           </button>'
                 }
             }
