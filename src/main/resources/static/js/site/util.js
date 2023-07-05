@@ -469,6 +469,18 @@ class Util {
         $("#container_"+id).remove();
     }
 
+    static darkModeToggle(darkmodeEnabled) {
+        if (darkmodeEnabled === true) {
+            $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
+            $(".lightmodeIcons").addClass("darkmodeIcons").removeClass("lightmodeIcons");
+            $(".link-button-lightmode").addClass("link-button-darkmode").removeClass("link-button-lightmode");
+        } else {
+            $("LINK[href='/css/bootstrap-night.min.css']").attr("href", "/css/bootstrap.min.css");
+            $(".darkmodeIcons").addClass("lightmodeIcons").removeClass("darkmodeIcons");
+            $(".link-button-darkmode").addClass("link-button-lightmode").removeClass("link-button-darkmode");
+        }
+    }
+
     static getCookie(name) {
         const parts = document.cookie.split(name + "=");
 
@@ -479,9 +491,13 @@ class Util {
         return "";
     }
 
-    static setCookie(name, value, path, domain) {
+    static setCookie(name, value, path, domain, days) {
         const d = new Date();
-        d.setTime(d.getTime() + (3600*1000));
+        let time = 3600*1000;
+        if (days) {
+            time = days*24*60*60*1000;
+        }
+        d.setTime(d.getTime() + (time));
         document.cookie = name + "=" +
             ((value !== "") ? value : "") +
             ((path) ? ";path=" + path : "") +

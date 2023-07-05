@@ -20,18 +20,6 @@
         }
     }
 
-    shashin.darkModeToggle = function(darkmodeEnabled) {
-        if (darkmodeEnabled === true) {
-            $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
-            $(".lightmodeIcons").addClass("darkmodeIcons").removeClass("lightmodeIcons");
-            $(".link-button-lightmode").addClass("link-button-darkmode").removeClass("link-button-lightmode");
-        } else {
-            $("LINK[href='/css/bootstrap-night.min.css']").attr("href", "/css/bootstrap.min.css");
-            $(".darkmodeIcons").addClass("lightmodeIcons").removeClass("darkmodeIcons");
-            $(".link-button-darkmode").addClass("link-button-lightmode").removeClass("link-button-darkmode");
-        }
-    }
-
     shashin.getMediaContent = function(metadata) {
         const mediaContent = {};
 

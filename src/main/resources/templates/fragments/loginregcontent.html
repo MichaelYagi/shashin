@@ -3,6 +3,19 @@
 <head></head>
 <body th:fragment="loginregcontent(activePage, message)">
 <div class="container">
+    <header class="mb-2">
+        <div>
+            <h3 class="text-center float-md-start mb-0">Shashin</h3>
+            <nav class="nav nav-masthead justify-content-center float-md-end">
+                <a class="nav-link" aria-current="page" href="/">Home</a>
+                <a class="nav-link" aria-current="page" href="/features">Features</a>
+                <a class="nav-link" aria-current="page" href="/articles">Quick Start</a>
+            </nav>
+        </div>
+    </header>
+
+    <br><br><br>
+
     <form class="form-signin" method="post" th:object="${user}" th:action="'/users/'+${activePage}">
         <th:block th:if="${message != ''}">
             <div class="alert alert-info" role="alert">
@@ -46,9 +59,9 @@
 
     <script type="text/javascript" th:nonce="${cspNonce}">
         const dmCookieName = "shashinlogindmcookie";
-        const darkModeCookie = getCookie(dmCookieName);
+        const darkModeCookie = Util.getCookie(dmCookieName);
 
-        shashin.darkModeToggle(darkModeCookie !== null && darkModeCookie === "on");
+        Util.darkModeToggle(darkModeCookie !== null && darkModeCookie === "on");
 
         const mode = Util.getParameterByName("m");
 
@@ -60,37 +73,13 @@
             let html = $("html");
             html.hide();
 
-            eraseCookie(dmCookieName);
+            Util.deleteCookie(dmCookieName);
             if ($("#darkmodeSwitch").is(':checked')) {
-                setCookie(dmCookieName, "on", 365);
+                Util.setCookie(dmCookieName, "", "/", 365);
             }
-            shashin.darkModeToggle($("#darkmodeSwitch").is(':checked'));
+            Util.darkModeToggle($("#darkmodeSwitch").is(':checked'));
             html.show();
         });
-
-        function setCookie(name,value,days) {
-            let expires = "";
-            if (days) {
-                const date = new Date();
-                date.setTime(date.getTime() + (days*24*60*60*1000));
-                expires = "; expires=" + date.toUTCString();
-            }
-            document.cookie = name + "=" + (value || "")  + expires + "; path=/";
-        }
-        function getCookie(name) {
-            const nameEQ = name + "=";
-            const ca = document.cookie.split(';');
-            for(let i=0; i < ca.length; i++) {
-                let c = ca[i];
-                while (c.charAt(0)===' ') c = c.substring(1,c.length);
-                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
-            }
-            return null;
-        }
-
-        function eraseCookie(name) {
-            document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        }
     </script>
 </div>
 
