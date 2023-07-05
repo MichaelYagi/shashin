@@ -49,9 +49,9 @@ class MediaServiceController {
     @ResponseBody
     @Throws(java.io.IOException::class)
     fun getVideo(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        val metadataCount = metadataRepository.countMetadataById(metadataId)
-        if (metadataCount > 0) {
-            val metadataObj = metadataRepository.findById(metadataId)
+        val metadataObj = metadataRepository.findById(metadataId)
+
+        if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
             var path = metadataObj.get().getPath()!!
             val metadata = metadataObj.get()
 
@@ -143,7 +143,7 @@ class MediaServiceController {
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            throw IOException("File Not Found")
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.FORBIDDEN)
         }
     }
 
@@ -151,9 +151,9 @@ class MediaServiceController {
     @ResponseBody
     @Throws(java.io.IOException::class)
     fun getVideoDownload(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource>? {
-        val metadataCount = metadataRepository.countMetadataById(metadataId)
-        if (metadataCount > 0) {
-            val metadataObj = metadataRepository.findById(metadataId)
+        val metadataObj = metadataRepository.findById(metadataId)
+
+        if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
             val path = metadataObj.get().getPath()!!
             val resource = FileSystemResource(path)
             val headers = HttpHeaders()
@@ -168,7 +168,7 @@ class MediaServiceController {
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            throw IOException("File Not Found");
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.FORBIDDEN)
         }
     }
 
@@ -197,9 +197,9 @@ class MediaServiceController {
     @ResponseBody
     @Throws(java.io.IOException::class)
     fun getImage(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        val metadataCount = metadataRepository.countMetadataById(metadataId)
-        return if (metadataCount > 0) {
-            val metadataObj = metadataRepository.findById(metadataId)
+        val metadataObj = metadataRepository.findById(metadataId)
+
+        return if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
             val path = metadataObj.get().getPath()!!
             val resource = FileSystemResource(path)
             val headers = HttpHeaders()
@@ -213,7 +213,7 @@ class MediaServiceController {
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            throw IOException("File Not Found")
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.FORBIDDEN)
         }
     }
 
@@ -221,9 +221,9 @@ class MediaServiceController {
     @ResponseBody
     @Throws(java.io.IOException::class)
     fun getImageDownload(response: HttpServletResponse?, @PathVariable metadataId: String): ResponseEntity<FileSystemResource> {
-        val metadataCount = metadataRepository.countMetadataById(metadataId)
-        return if (metadataCount > 0) {
-            val metadataObj = metadataRepository.findById(metadataId)
+        val metadataObj = metadataRepository.findById(metadataId)
+
+        return if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
             val path = metadataObj.get().getPath()!!
             val resource = FileSystemResource(path)
             val headers = HttpHeaders()
@@ -238,7 +238,7 @@ class MediaServiceController {
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            throw IOException("File Not Found")
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.FORBIDDEN)
         }
     }
 }
