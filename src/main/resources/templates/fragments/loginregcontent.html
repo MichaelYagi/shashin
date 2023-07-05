@@ -52,11 +52,18 @@
         }
 
         $('#darkmodeSwitch').on("click", function() {
+            let html = $("html");
+            html.hide();
             if($("#darkmodeSwitch").is(':checked')) {
-                window.location.href = window.location.pathname+"?"+$.param({'m':'dark'})
+                $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
+                $(".lightmodeIcons").addClass("darkmodeIcons").removeClass("lightmodeIcons");
+                $(".link-button-lightmode").addClass("link-button-darkmode").removeClass("link-button-lightmode");
             } else {
-                window.location = window.location.href.split("?")[0];
+                $("LINK[href='/css/bootstrap-night.min.css']").attr("href", "/css/bootstrap.min.css");
+                $(".darkmodeIcons").addClass("lightmodeIcons").removeClass("darkmodeIcons");
+                $(".link-button-darkmode").addClass("link-button-lightmode").removeClass("link-button-darkmode");
             }
+            html.show();
         });
     </script>
 </div>
