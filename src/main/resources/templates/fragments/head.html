@@ -54,6 +54,9 @@
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
             <link rel="stylesheet" href="/css/site/style.css">
         </th:block>
+        <th:block th:if="${activePageLower == 'login' or activePageLower == 'register'}">
+            <link href="/css/cover.css" rel="stylesheet" type="text/css">
+        </th:block>
         <th:block th:if="${activePageLower == 'person' or
         activePageLower == 'matches' or
         activePageLower == 'timeline' or

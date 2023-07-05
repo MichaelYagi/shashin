@@ -17,6 +17,12 @@
         <link href="/css/bootstrap-icons.css" rel="stylesheet">
         <link href="/css/site/docsstyle.css" rel="stylesheet">
         <meta name="theme-color" content="#7952b3">
+        <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+            <script src="/js/site/util.js"></script>
+        </th:block>
+        <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+            <script src="/js/site/min/util.min.js"></script>
+        </th:block>
     </th:block>
 </head>
 <body></body>

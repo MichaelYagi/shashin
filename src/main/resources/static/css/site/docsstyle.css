@@ -116,6 +116,42 @@ section > nav {
     display: none;
 }
 
+.darkmodeIcons {
+    color: white;
+}
+
+.lightmodeIcons {
+    color: black;
+}
+
+.darkmodeIcons:hover, .lightmodeIcons:hover {
+    color: slategray;
+}
+
+.link-button-lightmode {
+    background: none;
+    border: none;
+    color: #0d6efd;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link-button-lightmode:hover {
+    color: #0A58CA;
+}
+
+.link-button-darkmode {
+    background: none;
+    border: none;
+    color: #5F7B99;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.link-button-darkmode:hover {
+    color: #4B6B8C;
+}
+
 @media (min-width: 768px) {
     .bd-sidebar {
         border-right:1px solid rgba(0,0,0,.1)
