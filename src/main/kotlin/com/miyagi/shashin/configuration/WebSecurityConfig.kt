@@ -96,7 +96,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/share/album/save",
             "api/v1/exif/metadata/**",
             "api/v1/folders",
-            "api/v1/album/delete"
+            "api/v1/all/album/delete"
         )
 
         val allRoleList = arrayOf(
@@ -106,7 +106,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "map/**",
             "search/**",
             "api/v1/album/**/page/**",
-            "api/v1/album/(?!delete)**",
+            "api/v1/album/**",
             "api/v1/users/apikey/update",
             "api/v1/mapdata",
             "api/v1/metadata/**",
