@@ -2,6 +2,7 @@ package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
@@ -54,7 +55,6 @@ class MediaServiceController {
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
             var path = metadataObj.get().getPath()!!
             val metadata = metadataObj.get()
-
             var mp4MajorBrand = ""
 
             // metadata/<folder>/<fileName>.exif.yaml
@@ -123,25 +123,10 @@ class MediaServiceController {
                         Level.SEVERE,
                         "Could not convert video " + metadata.getPath() + " to h.264: " + e.message
                     )
-
-                }
-
-//                if (target.exists()) {
-//                    target.delete()
-//                }
-            }
-
-            val resource = FileSystemResource(path)
-            val headers = HttpHeaders()
-            headers.contentLength = resource.contentLength()
-            if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
-                val typeList = metadataObj.get().getType()!!.split("/")
-                if (typeList.count() == 2) {
-                    headers.contentType = MediaType(typeList[0],typeList[1])
                 }
             }
-            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+
+            return getVideoFactory(response, metadata, path)
         } else {
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
@@ -154,22 +139,27 @@ class MediaServiceController {
         val metadataObj = metadataRepository.findById(metadataId)
 
         if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("video")!!) {
-            val path = metadataObj.get().getPath()!!
-            val resource = FileSystemResource(path)
-            val headers = HttpHeaders()
-            headers.contentLength = resource.contentLength()
-            if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
-                val typeList = metadataObj.get().getType()!!.split("/")
-                if (typeList.count() == 2) {
-                    headers.contentType = MediaType(typeList[0],typeList[1])
-                }
-            }
-            response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename);
-            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+            return getVideoFactory(response, metadataObj.get(), metadataObj.get().getPath()!!, true)
         } else {
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
+    }
+
+    private fun getVideoFactory(response: HttpServletResponse?, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
+        val resource = FileSystemResource(path)
+        val headers = HttpHeaders()
+        headers.contentLength = resource.contentLength()
+        if (metadataObj.getType() != null && "/" in metadataObj.getType()!!) {
+            val typeList = metadataObj.getType()!!.split("/")
+            if (typeList.count() == 2) {
+                headers.contentType = MediaType(typeList[0],typeList[1])
+            }
+        }
+        if (attachFile) {
+            response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+        }
+        headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+        return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
     }
 
     @RequestMapping(value = ["/video/{metadataId}/player"], method = [RequestMethod.GET])
