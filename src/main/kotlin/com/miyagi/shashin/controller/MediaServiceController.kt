@@ -172,12 +172,12 @@ class MediaServiceController {
         }
     }
 
-    @RequestMapping(value = ["/api/v1/video/{metadataId}/player"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/video/{metadataId}/player"], method = [RequestMethod.GET])
     fun getVideoPlayer(model: Model, @PathVariable metadataId: String): String {
         return setModel(metadataId,model,"player")
     }
 
-    @RequestMapping(value = ["/api/v1/image/{metadataId}/viewer"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/image/{metadataId}/viewer"], method = [RequestMethod.GET])
     fun getImageViewer(model: Model, @PathVariable metadataId: String): String {
         return setModel(metadataId,model,"viewer")
     }
