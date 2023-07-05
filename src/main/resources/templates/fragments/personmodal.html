@@ -33,8 +33,8 @@
                                         <div class="dropdown-menu batchPersonDropdown" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
-                                                    <input type="checkbox" class="batchRecognitionLabel" th:id="${recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
-                                                    <label th:for="${recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
+                                                    <input type="checkbox" class="batchRecognitionLabel" th:id="${'recognitionLabel'+recognitionLabel.id}" th:value="${recognitionLabel.name}" name="recognitionLabel[]">
+                                                    <label th:for="${'recognitionLabel'+recognitionLabel.id}" th:text="${recognitionLabel.name}"></label>
                                                 </button>
                                             </th:block>
                                         </div>

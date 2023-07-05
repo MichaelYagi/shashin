@@ -40,11 +40,11 @@
                                                 <th:block th:if="${recognitionLabel.name != null and recognitionLabel.name != 'null'}">
                                                     <button class="dropdown-item" type="button">
                                                         <input type="checkbox"
-                                                               th:id="${recognitionLabel.id}"
+                                                               th:id="${'recognitionLabel'+recognitionLabel.id}"
                                                                class="recognitionLabel"
                                                                th:value="${recognitionLabel.name}"
                                                                name="recognitionLabel[]">
-                                                        <label th:for="${recognitionLabel.id}"
+                                                        <label th:for="${'recognitionLabel'+recognitionLabel.id}"
                                                                th:text="${recognitionLabel.name}"></label>
                                                     </button>
                                                 </th:block>
