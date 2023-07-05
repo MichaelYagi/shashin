@@ -143,7 +143,7 @@ class MediaServiceController {
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.FORBIDDEN)
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
     }
 
@@ -168,7 +168,7 @@ class MediaServiceController {
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.FORBIDDEN)
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
     }
 
@@ -213,7 +213,7 @@ class MediaServiceController {
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.FORBIDDEN)
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
     }
 
@@ -238,7 +238,7 @@ class MediaServiceController {
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
-            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.FORBIDDEN)
+            return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
     }
 }
