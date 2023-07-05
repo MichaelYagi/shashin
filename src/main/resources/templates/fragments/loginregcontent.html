@@ -48,15 +48,7 @@
         const dmCookieName = "shashinlogindmcookie";
         const darkModeCookie = getCookie(dmCookieName);
 
-        if (darkModeCookie !== null && darkModeCookie === "on") {
-            $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
-            $(".lightmodeIcons").addClass("darkmodeIcons").removeClass("lightmodeIcons");
-            $(".link-button-lightmode").addClass("link-button-darkmode").removeClass("link-button-lightmode");
-        } else {
-            $("LINK[href='/css/bootstrap-night.min.css']").attr("href", "/css/bootstrap.min.css");
-            $(".darkmodeIcons").addClass("lightmodeIcons").removeClass("darkmodeIcons");
-            $(".link-button-darkmode").addClass("link-button-lightmode").removeClass("link-button-darkmode");
-        }
+        shashin.darkModeToggle(darkModeCookie !== null && darkModeCookie === "on");
 
         const mode = Util.getParameterByName("m");
 
@@ -66,18 +58,9 @@
 
         $('#darkmodeSwitch').on("click", function() {
             let html = $("html");
+
             html.hide();
-            if($("#darkmodeSwitch").is(':checked')) {
-                setCookie(dmCookieName, "on", 365);
-                $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
-                $(".lightmodeIcons").addClass("darkmodeIcons").removeClass("lightmodeIcons");
-                $(".link-button-lightmode").addClass("link-button-darkmode").removeClass("link-button-lightmode");
-            } else {
-                eraseCookie(dmCookieName);
-                $("LINK[href='/css/bootstrap-night.min.css']").attr("href", "/css/bootstrap.min.css");
-                $(".darkmodeIcons").addClass("lightmodeIcons").removeClass("darkmodeIcons");
-                $(".link-button-darkmode").addClass("link-button-lightmode").removeClass("link-button-darkmode");
-            }
+            shashin.darkModeToggle($("#darkmodeSwitch").is(':checked'));
             html.show();
         });
 
