@@ -723,7 +723,8 @@ class Util {
             if (metadata.videoUrl != null) {
                 page = "/player"
             }
-            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download'></a>&nbsp;<a href='" + relativeShareLink + page + "' target='_blank'>Share Link</a>&nbsp;<span class='copyLink bi-clipboard-plus' data-clipboard-text='" + shareUrl + page + "'></span>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
+
+            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download'></a>&nbsp;<a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>Share Link</a>&nbsp;<span class='copyLink bi-clipboard-plus' data-clipboard-text='" + shareUrl + page + "'></span>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
 
             const clipboard = new ClipboardJS(".copyLink.bi-clipboard-plus",{container: document.getElementById(containerModalId)});
             clipboard.on('success', function (e) {
