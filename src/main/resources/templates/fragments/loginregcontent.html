@@ -58,8 +58,12 @@
 
         $('#darkmodeSwitch').on("click", function() {
             let html = $("html");
-
             html.hide();
+
+            eraseCookie(dmCookieName);
+            if ($("#darkmodeSwitch").is(':checked')) {
+                setCookie(dmCookieName, "on", 365);
+            }
             shashin.darkModeToggle($("#darkmodeSwitch").is(':checked'));
             html.show();
         });
