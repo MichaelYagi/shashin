@@ -73,9 +73,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "/settings/scanmessage",
             "/dashboard/statmessages",
             "/dashboard/statmessage",
-            "/api/v1/thumbnails/**",
-            "/api/v1/image/**",
-            "/api/v1/video/**"
+            "/api/v1/thumbnails/**"
         )
 
         var adminList = arrayOf(
@@ -97,7 +95,8 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/modified/**",
             "api/v1/share/album/save",
             "api/v1/exif/metadata/**",
-            "api/v1/folders"
+            "api/v1/folders",
+            "api/v1/album/delete"
         )
 
         val allRoleList = arrayOf(
@@ -106,7 +105,8 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "favorites",
             "map/**",
             "search/**",
-            "api/v1/album/**",
+            "api/v1/album/**/page/**",
+            "api/v1/album/(?!delete)**",
             "api/v1/users/apikey/update",
             "api/v1/mapdata",
             "api/v1/metadata/**",

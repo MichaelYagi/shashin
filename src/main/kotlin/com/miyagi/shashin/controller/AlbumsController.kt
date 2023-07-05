@@ -553,22 +553,48 @@ class AlbumsController {
         return response
     }
 
+    @RouterOperation(
+        operation =
+        Operation(
+            operationId = "deleteAlbumPhotos",
+            description = "<strong>Delete album.</strong>" +
+                    "<pre><code>" +
+                    "curl -X DELETE \"http://127.0.0.1:6624/api/v1/album/delete\" \\\n" +
+                    "-H \"Content-Type: application/json\" \\\n" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
+                    "-d '{\"albumId\": &lt;album_id&gt;, \"delete\": &lt;delete_flag&gt;}'" +
+                    "</code></pre>" +
+                    "<table class=\"table table-bordered\"><thead>" +
+                    "<tr><th>Element</th><th>Description</th><th>Type</th><th>Required</th><th>Notes</th></tr>" +
+                    "</thead><tbody>" +
+                    "<tr><td>Content-Type</td><td>header</td><td>string</td><td>required</td><td>application/json</td></tr>" +
+                    "<tr><td>x-api-key</td><td>header</td><td>string</td><td>required</td><td>API key of the Shashin service</td></tr>" +
+                    "<tr><td>albumId</td><td>body param</td><td>int</td><td>required</td><td>Save a comment for this album ID and media</td></tr>" +
+                    "<tr><td>delete</td><td>body param</td><td>boolean</td><td>required</td><td>Flag confirming deletion</td></tr>" +
+                    "</tbody></table><br>"
+        )
+    )
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/album/delete/{albumId}"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/album/delete", "/api/v1/album/delete"], method = [RequestMethod.DELETE], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
-    fun deleteAlbumPhotos(@RequestBody requestBody: JsonNode, @PathVariable albumId: Int): String? {
+    fun deleteAlbumPhotos(model: Model, @RequestBody requestBody: JsonNode, response: HttpServletResponse): String? {
         val albumDeleteMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
         if (albumDeleteMap.containsKey("albumId") && albumDeleteMap.containsKey("delete")) {
             val albumIdRequest = albumDeleteMap["albumId"].toString().toInt()
             val deleteFlag = albumDeleteMap["delete"].toString().toBoolean()
 
-            if (deleteFlag && albumId == albumIdRequest) {
-                userAlbumRepository.deleteByAlbumId(albumId)
-                albumPhotoRepository.deleteByAlbumId(albumId)
-                albumRepository.deleteById(albumId)
+            val currentUserObj = model.getAttribute("currentUser") as User?
+
+            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumIdRequest)
+
+            if (userAlbumCount != null && deleteFlag && userAlbumCount > 0) {
+                userAlbumRepository.deleteByAlbumId(albumIdRequest)
+                albumPhotoRepository.deleteByAlbumId(albumIdRequest)
+                albumRepository.deleteById(albumIdRequest)
                 // Delete comments
-                val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                val albumComments = albumCommentRepository.findAllByAlbumId(albumIdRequest)
                 if (albumComments != null) {
                     val commentIdList = ArrayList<Int>()
                     for (albumComment in albumComments) {
@@ -579,15 +605,17 @@ class AlbumsController {
 
                     if (commentIdList.count() > 0) {
                         commentRepository.deleteAllById(commentIdList)
-                        albumCommentRepository.deleteByAlbumId(albumId)
-                        albumPhotoCommentRepository.deleteByAlbumId(albumId)
+                        albumCommentRepository.deleteByAlbumId(albumIdRequest)
+                        albumPhotoCommentRepository.deleteByAlbumId(albumIdRequest)
                     }
                 }
-            }
 
-            resp["msg"] = "Success!"
-            resp["status"] = ApiResponse.SUCCESS.status
-            return mapper.writeValueAsString(resp)
+                resp["msg"] = "Success!"
+                resp["status"] = ApiResponse.SUCCESS.status
+                return mapper.writeValueAsString(resp)
+            } else {
+                return returnForbiddenError(response)
+            }
         }
 
         resp["msg"] = "Could not save"
@@ -747,7 +775,7 @@ class AlbumsController {
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/share/album/save\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
-                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
                     "-d '{\"albumId\": &lt;album_id&gt;, \"relativeShareUrl\": \"&lt;relative_share_url&gt;\"}'" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +

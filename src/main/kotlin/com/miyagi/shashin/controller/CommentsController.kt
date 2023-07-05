@@ -70,7 +70,7 @@ class CommentsController {
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/comment/album/save\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
-                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
                     "-d '{\"albumId\": &lt;album_id&gt;, \"comment\": \"&lt;comment&gt;\"}'" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
@@ -187,7 +187,7 @@ class CommentsController {
                     "<pre><code>" +
                     "curl -X POST \"http://127.0.0.1:6624/api/v1/comment/albumphoto/save\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
-                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
                     "-d '{\"albumId\": &lt;album_id&gt;, \"comment\": \"&lt;comment&gt;\", \"metadataId\": \"&lt;metadata_id&gt;\"}'" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
@@ -303,7 +303,7 @@ class CommentsController {
                     "<pre><code>" +
                     "curl -X PUT \"http://127.0.0.1:6624/api/v1/comment/update\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
-                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
                     "-d '{\"commentId\": &lt;comment_id&gt;, \"comment\": \"&lt;updated_comment&gt;\"}'" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
@@ -369,7 +369,7 @@ class CommentsController {
                     "<pre><code>" +
                     "curl -X DELETE \"http://127.0.0.1:6624/api/v1/comment/albumphoto/delete\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
-                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
                     "-d '{\"commentId\": &lt;comment_id&gt;}'" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
@@ -431,7 +431,7 @@ class CommentsController {
                     "<pre><code>" +
                     "curl -X DELETE \"http://127.0.0.1:6624/api/v1/comment/album/delete\" \\\n" +
                     "-H \"Content-Type: application/json\" \\\n" +
-                    "-H \"x-api-key: &lt;service_api_key&gt;\"" +
+                    "-H \"x-api-key: &lt;service_api_key&gt;\" \\\n" +
                     "-d '{\"commentId\": &lt;comment_id&gt;, \"albumId\": &lt;album_id&gt;}'" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
