@@ -38,7 +38,6 @@ Tech Stack
 3rd Party Libraries used:
 * [lightGallery](https://www.lightgalleryjs.com/) and [plugins](https://cdnjs.com/libraries/lightgallery) - Image and video lightbox
 * [Metadata Extractor](https://github.com/drewnoakes/metadata-extractor) - Extracts Exif, IPTC, XMP, ICC and other metadata from image, video and audio files
-* [TensorFlow](https://www.tensorflow.org/) - Build machine learning applications
 * [JQuery](https://jquery.com/) - JavaScript library
 * [OpenLayers](https://openlayers.org/) with [OpenStreetMap](https://www.openstreetmap.org/) - Display map tiles, vector data and markers loaded from any source, like Open Street Maps
 * [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
