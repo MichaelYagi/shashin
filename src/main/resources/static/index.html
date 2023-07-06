@@ -10,33 +10,18 @@
         <link href="/css/bootstrap.min.css" rel="stylesheet">
         <link href="/css/bootstrap-icons.css" rel="stylesheet">
         <link href="/css/cover.css" rel="stylesheet" type="text/css">
-        <style>
-            .bd-placeholder-img {
-                font-size: 1.125rem;
-                text-anchor: middle;
-                -webkit-user-select: none;
-                -moz-user-select: none;
-                user-select: none;
-            }
-
-            @media (min-width: 768px) {
-                .bd-placeholder-img-lg {
-                    font-size: 3.5rem;
-                }
-            }
-        </style>
+        <script src="/js/site/min/util.min.js" th:nonce="0"></script>
     </head>
 
-    <body class="d-flex h-100 text-center text-black bg-light">
+    <body class="d-flex h-100 text-center">
 
         <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
             <header class="mb-auto">
                 <div>
                     <h3 class="float-md-start mb-0">Shashin</h3>
-                    <nav class="nav nav-masthead justify-content-center float-md-end">
+                    <nav class="nav justify-content-center float-md-end">
                         <a class="nav-link" aria-current="page" href="/features">Features</a>
                         <a class="nav-link" aria-current="page" href="/articles">Quick Start</a>
-                        <!--                        <a class="nav-link" aria-current="page" href="/docs">Docs</a>-->
                         <a class="nav-link" href="/users/login">Login</a>
                     </nav>
                 </div>
@@ -50,13 +35,18 @@
                 </p>
             </main>
 
-            <footer class="mt-auto text-black-50">
-                <p>&copy; <span id="copyrightYear"></span> Shashin</p>
+            <footer class="mt-auto">
+                <div class="form-switch">
+                    <input class="form-check-input" type="checkbox" id="darkmodeSwitch">&nbsp;
+                    <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
+                </div>
+                &copy; <span id="copyrightYear"></span> Shashin
             </footer>
         </div>
 
         <script type="text/javascript" nonce="0">
             $("#copyrightYear").text("2021-"+new Date().getFullYear());
+            Util.activateDarkModeListener();
         </script>
 
     </body>

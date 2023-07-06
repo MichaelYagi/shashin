@@ -77,28 +77,7 @@
             }
 
             // Dark mode operations
-            const dmCookieName = "shashinlogindmcookie";
-            const darkModeCookie = Util.getCookie(dmCookieName);
-
-            Util.darkModeToggle(darkModeCookie !== null && darkModeCookie === "on");
-
-            const mode = Util.getParameterByName("m");
-
-            if (mode === "dark" || (darkModeCookie !== null && darkModeCookie === "on")) {
-                $("#darkmodeSwitch").prop('checked', true);
-            }
-
-            $('#darkmodeSwitch').on("click", function() {
-                let html = $("html");
-                html.hide();
-
-                Util.deleteCookie(dmCookieName);
-                if ($("#darkmodeSwitch").is(':checked')) {
-                    Util.setCookie(dmCookieName, "", "/", 365);
-                }
-                Util.darkModeToggle($("#darkmodeSwitch").is(':checked'));
-                html.show();
-            });
+            Util.activateDarkModeListener();
         });
     </script>
 </div>

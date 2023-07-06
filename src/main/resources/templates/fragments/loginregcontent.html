@@ -6,7 +6,7 @@
     <header class="mb-2">
         <div>
             <h3 class="text-center float-md-start mb-0">Shashin</h3>
-            <nav class="nav nav-masthead justify-content-center float-md-end">
+            <nav class="nav justify-content-center float-md-end">
                 <a class="nav-link" aria-current="page" href="/">Home</a>
                 <a class="nav-link" aria-current="page" href="/features">Features</a>
                 <a class="nav-link" aria-current="page" href="/articles">Quick Start</a>
@@ -58,28 +58,7 @@
     </form>
 
     <script type="text/javascript" th:nonce="${cspNonce}">
-        const dmCookieName = "shashinlogindmcookie";
-        const darkModeCookie = Util.getCookie(dmCookieName);
-
-        Util.darkModeToggle(darkModeCookie !== null && darkModeCookie === "on");
-
-        const mode = Util.getParameterByName("m");
-
-        if (mode === "dark" || (darkModeCookie !== null && darkModeCookie === "on")) {
-            $("#darkmodeSwitch").prop('checked', true);
-        }
-
-        $('#darkmodeSwitch').on("click", function() {
-            let html = $("html");
-            html.hide();
-
-            Util.deleteCookie(dmCookieName);
-            if ($("#darkmodeSwitch").is(':checked')) {
-                Util.setCookie(dmCookieName, "", "/", 365);
-            }
-            Util.darkModeToggle($("#darkmodeSwitch").is(':checked'));
-            html.show();
-        });
+        Util.activateDarkModeListener();
     </script>
 </div>
 
