@@ -469,6 +469,32 @@ class Util {
         $("#container_"+id).remove();
     }
 
+    static activateDarkModeListener() {
+        const dmCookieName = "shashindmcookie";
+        const darkModeCookie = Util.getCookie(dmCookieName);
+
+        Util.darkModeToggle(darkModeCookie !== null && darkModeCookie === "on");
+
+        const mode = Util.getParameterByName("m");
+
+        if (mode === "dark" || (darkModeCookie !== "" && darkModeCookie === "on")) {
+            $("#darkmodeSwitch").prop('checked', true);
+        }
+
+        $('#darkmodeSwitch').on("click", function() {
+            let html = $("html");
+            html.hide();
+
+            Util.deleteCookie(dmCookieName, "/");
+            if ($("#darkmodeSwitch").is(':checked')) {
+                // (name, value, path, domain, days)
+                Util.setCookie(dmCookieName, "on", "/", null, 365);
+            }
+            Util.darkModeToggle($("#darkmodeSwitch").is(':checked'));
+            html.show();
+        });
+    }
+
     static darkModeToggle(darkmodeEnabled) {
         if (darkmodeEnabled === true) {
             $("LINK[href='/css/bootstrap.min.css']").attr("href", "/css/bootstrap-night.min.css");
