@@ -2,15 +2,11 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="articlessidebar(${activePage})">
 
-<div class="form-check form-switch float-end">
-    <input class="form-check-input" type="checkbox" id="darkmodeSwitch">
-    <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
-</div>
 <ul class="list-unstyled ps-0">
     <li class="mb-1">
         <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="/articles/quickstart" th:attr="class=${activePage=='articles' or activePage=='articles/quickstart' ? 'link-dark rounded active' : ''}">Quick Start</a></li>
-            <li><a href="/articles/endpoints" th:attr="class=${activePage=='articles/endpoints' ? 'link-dark rounded active' : ''}">API Endpoints</a></li>
+            <li><a href="/articles/quickstart" th:attr="class='rounded' + ${activePage=='articles' or activePage=='articles/quickstart' ? 'link-dark rounded active' : ''}">Quick Start</a></li>
+            <li><a href="/articles/endpoints" th:attr="class='rounded' + ${activePage=='articles/endpoints' ? 'link-dark rounded active' : ''}">API Endpoints</a></li>
         </ul>
     </li>
 
