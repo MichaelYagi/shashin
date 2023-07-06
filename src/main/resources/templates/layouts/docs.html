@@ -27,7 +27,7 @@
 </div>
 
 <script type="text/javascript" th:nonce="${cspNonce}">
-    $("#copyrightYear").text("2021-" + new Date().getFullYear());
+    $("#copyrightYear").text(Util.getYearCreated() + "-" + new Date().getFullYear());
 </script>
 
 </body>

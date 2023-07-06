@@ -1,5 +1,9 @@
 class Util {
 
+    static getYearCreated() {
+        return 2021
+    }
+
     static lgApiKey() {
         return "A8E2CC75-7F9D45CA-9CE65C4E-FFF50CE3";
     }
