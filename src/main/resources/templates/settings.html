@@ -148,19 +148,7 @@
         const settingsInstance = new Settings();
         await settingsInstance.init();
 
-        $("#faceRecogAvailableStatusInfo").tooltip({
-            placement: "right"
-        });
-        $("#inclusionListInfo").tooltip({
-            placement: "right"
-        });
-        $("#exclusionListInfo").tooltip({
-            placement: "right"
-        });
-        $("#changePortInfo").tooltip({
-            placement: "right"
-        });
-        $("#compreFaceInfo").tooltip({
+        $('[data-toggle="tooltip"]').tooltip({
             placement: "right"
         });
     });
