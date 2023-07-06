@@ -78,13 +78,13 @@
         </div>
 
         <small class="text-muted">* Supported image types: <span th:text="${supportedImageTypes}"></span>. Supported video types: <span th:text="${supportedVideoTypes}"></span>. Limited supported raw types: <span th:text="${supportedRawTypes}"></span>.</small>
-        <div class="form-check form-switch float-end">
-            <input class="form-check-input" type="checkbox" id="darkmodeSwitch">
-            <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
-        </div>
 
         <footer class="pt-3 mt-4 text-muted border-top">
-            <p>&copy; <span id="copyrightYear"></span> Shashin</p>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="darkmodeSwitch">
+                <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
+            </div>
+            &copy; <span id="copyrightYear"></span> Shashin
         </footer>
     </div>
 
