@@ -861,15 +861,21 @@
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
 
 
-                        // 1 sec delay for smoother scrolling
-                        setTimeout(async () => {
-                            // Stage 3 - network call to embed the image URL and complete the process
+                        if (timelineSettings.initialized === false) {
                             if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
                                 await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                                 timelineSettings.distanceToFooter = calculateDistanceToFooter();
                             }
-                        }, 1000);
-
+                        } else {
+                            // 1 sec delay for smoother scrolling
+                            setTimeout(async () => {
+                                // Stage 3 - network call to embed the image URL and complete the process
+                                if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                                    await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                                    timelineSettings.distanceToFooter = calculateDistanceToFooter();
+                                }
+                            }, 1000);
+                        }
 
                         // Break if footer not in viewport
                         if (closeToFooter() === false) {
@@ -895,6 +901,10 @@
         $("#spinner_bottom").css("display", "none");
 
         timelineSettings.enableScrollSpy = true;
+
+        if (timelineSettings.initialized === false) {
+            timelineSettings.initialized = true;
+        }
 
         return timelineSettings.success;
     }
