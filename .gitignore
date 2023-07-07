@@ -24,6 +24,7 @@ node/
 *.log
 *.DS_Store
 *.bak
+.DS_Store
 
 ### NetBeans ###
 /nbproject/private/
