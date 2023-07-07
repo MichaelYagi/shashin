@@ -423,3 +423,8 @@ footer {
 .lg-components {
   background-image:linear-gradient(0deg,rgba(0,0,0,.4),rgba(0,0,0,0))
 }
+
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+  color: inherit;
+  text-decoration: inherit;
+}
