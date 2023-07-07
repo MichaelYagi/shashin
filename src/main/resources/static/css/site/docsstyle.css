@@ -152,6 +152,11 @@ section > nav {
     color: #4B6B8C;
 }
 
+.link-unstyled, .link-unstyled:link, .link-unstyled:hover {
+    color: inherit;
+    text-decoration: inherit;
+}
+
 @media (min-width: 768px) {
     .bd-sidebar {
         border-right:1px solid rgba(0,0,0,.1)
