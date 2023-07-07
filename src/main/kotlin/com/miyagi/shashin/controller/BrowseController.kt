@@ -430,7 +430,7 @@ class BrowseController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/modified","/api/v1/modified"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/modified"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeModified(model: Model, request: HttpServletRequest, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
         return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
