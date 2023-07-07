@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator
-import com.google.javascript.jscomp.jarjar.com.google.common.reflect.TypeToken
-import com.google.javascript.jscomp.jarjar.com.google.gson.GsonBuilder
 import com.miyagi.shashin.component.Message
 import com.miyagi.shashin.component.ScanMessage
 import com.miyagi.shashin.model.*
@@ -60,6 +58,7 @@ import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
+import kotlinx.coroutines.*
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -1329,7 +1328,8 @@ class SettingsController {
                     deleteThreadScan()
 
                     // Iterate through directory in another thread
-                    Thread {
+                    runBlocking {
+                        launch {
                         //Create file with thread name and write file name iterated
                         val tempDir = System.getProperty("java.io.tmpdir")
                         val threadFile = FileUtils.createFile(
@@ -1457,7 +1457,8 @@ class SettingsController {
                                                 if (albumPhotoCommentList != null) {
                                                     for (albumPhotoComment in albumPhotoCommentList) {
                                                         if (albumPhotoComment != null) {
-                                                            val commentCount = commentRepository?.countById(albumPhotoComment.getId())
+                                                            val commentCount =
+                                                                commentRepository?.countById(albumPhotoComment.getId())
                                                             if (commentCount != null && commentCount > 0) {
                                                                 commentRepository?.deleteById(albumPhotoComment.getId())
                                                             }
@@ -1482,7 +1483,8 @@ class SettingsController {
                                                 val keywords = keywordRepository?.findAll()
                                                 if (keywords != null) {
                                                     for (keywordObj in keywords) {
-                                                        val keywordCount = keywordPhotoRepository?.countByKeywordId(keywordObj!!.getId())
+                                                        val keywordCount =
+                                                            keywordPhotoRepository?.countByKeywordId(keywordObj!!.getId())
                                                         if (keywordCount != null && keywordCount == 0) {
                                                             keywordRepository?.deleteById(keywordObj!!.getId())
                                                         }
@@ -1504,11 +1506,18 @@ class SettingsController {
                                                                 albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
                                                                 userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
                                                             } else {
-                                                                val firstAlbumPhoto = albumPhotoRepository?.findFirstByAlbumId(albumPhotoCount.getAlbumId()!!)
-                                                                val metadataObj = metadataRepository?.findById(firstAlbumPhoto?.getMetadataId()!!)
-                                                                val albumObj = albumRepository?.findById(albumPhotoCount.getAlbumId()!!)
+                                                                val firstAlbumPhoto =
+                                                                    albumPhotoRepository?.findFirstByAlbumId(
+                                                                        albumPhotoCount.getAlbumId()!!
+                                                                    )
+                                                                val metadataObj =
+                                                                    metadataRepository?.findById(firstAlbumPhoto?.getMetadataId()!!)
+                                                                val albumObj =
+                                                                    albumRepository?.findById(albumPhotoCount.getAlbumId()!!)
                                                                 if (metadataObj != null && metadataObj.isPresent && albumObj != null && albumObj.isPresent) {
-                                                                    albumObj.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                                                                    albumObj.get().setCoverUrl(
+                                                                        metadataObj.get().getThumbnailUrlCentered()
+                                                                    )
                                                                     albumRepository?.save(albumObj.get())
                                                                 }
                                                             }
@@ -1518,10 +1527,16 @@ class SettingsController {
                                                 logger.log(Level.INFO, "Removed album records for: " + metadata.getId())
 
                                                 // Delete tagged people
-                                                val recognitionLabelPhotos = recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
+                                                val recognitionLabelPhotos =
+                                                    recognitionLabelPhotoRepository?.findByMetadataId(metadata.getId())
                                                 if (settings != null) {
-                                                    if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
-                                                        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                                                    if (FileUtils.checkCompreFaceConnection(
+                                                            settings.getCompreFaceServer(),
+                                                            settings.getCompreFaceKey()
+                                                        )
+                                                    ) {
+                                                        val webClient =
+                                                            WebClient.create(settings.getCompreFaceServer()!!)
                                                         if (recognitionLabelPhotos != null) {
                                                             for (recognitionLabelPhoto in recognitionLabelPhotos) {
                                                                 if (recognitionLabelPhoto.getCompreFaceImageId() != null && recognitionLabelPhoto.getCompreFaceImageId()!!
@@ -1537,7 +1552,8 @@ class SettingsController {
                                                                             .retrieve()
                                                                             .bodyToMono(String::class.java)
                                                                             .block()
-                                                                    }catch (e: Exception) {}
+                                                                    } catch (e: Exception) {
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -1585,11 +1601,16 @@ class SettingsController {
                             if (!shouldStop.get()) {
                                 val settings = settingsRepository?.findFirstByOrderByIdAsc()
                                 var webClient: WebClient? = null
-                                if (settings != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                                if (settings != null && FileUtils.checkCompreFaceConnection(
+                                        settings.getCompreFaceServer(),
+                                        settings.getCompreFaceKey()
+                                    )
+                                ) {
                                     webClient = WebClient.create(settings.getCompreFaceServer()!!)
                                 }
 
-                                val recognitionLabelPhotoLabels = recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+                                val recognitionLabelPhotoLabels =
+                                    recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
                                 for (mediaDir in mediaDirs) {
                                     if (mediaDir != null) {
@@ -1621,7 +1642,9 @@ class SettingsController {
                                     // Set notification for scanCount and date and link to /recent
                                     val sdtf = SimpleDateFormat("yyyy/MM/dd h:mm:ss aa z")
                                     val msg =
-                                        "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a> at " + sdtf.format(Date()) + "."
+                                        "Scan complete for <a href='/recent' target='_blank'>$scanCount images/videos</a> at " + sdtf.format(
+                                            Date()
+                                        ) + "."
                                     if (admins != null) {
                                         val notificationObjList = mutableListOf<Notification>()
                                         for (admin in admins) {
@@ -1644,7 +1667,9 @@ class SettingsController {
                                 logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
                             }
                         }
-                    }.start()
+                    }
+                }
+                    //}.start()
 
                     return "Start Scan"
                 }
