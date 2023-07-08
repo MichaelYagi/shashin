@@ -117,6 +117,7 @@ CREATE TABLE `recognitionlabelphoto` (
 DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `profile` VARCHAR(255) DEFAULT NULL,
     `username` VARCHAR(50) NOT NULL,
     `password` VARCHAR(50) NOT NULL,
     `authority` VARCHAR(50) NOT NULL,

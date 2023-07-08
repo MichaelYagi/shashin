@@ -57,6 +57,9 @@
         <th:block th:if="${activePageLower == 'login' or activePageLower == 'register'}">
             <link href="/css/cover.css" rel="stylesheet" type="text/css">
         </th:block>
+        <th:block th:if="${activePageLower == 'profile'}">
+            <link rel="stylesheet" href="/css/croppie.css">
+        </th:block>
         <th:block th:if="${activePageLower == 'person' or
         activePageLower == 'matches' or
         activePageLower == 'timeline' or
@@ -108,6 +111,9 @@
         </th:block>
         <th:block th:if="${activePageLower == 'dashboard'}">
             <script src="/js/chart.min.js" th:nonce="${cspNonce}"></script>
+        </th:block>
+        <th:block th:if="${activePageLower == 'profile'}">
+            <script src="/js/croppie.js" th:nonce="${cspNonce}"></script>
         </th:block>
 
         <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
