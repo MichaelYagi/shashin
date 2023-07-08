@@ -4,7 +4,7 @@
 
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" tabindex="-1" id="offcanvasMenu" aria-labelledby="offcanvasMenuLabel">
     <div class="offcanvas-header">
-        <a class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none" th:href="${currentUser.authority == 'ROLE_ADMIN' ? '/timeline' : '/albums'}">
+        <a class="d-flex align-items-center col-lg-4 mb-2 mb-lg-0 link-dark text-decoration-none" href="/">
             <span class="lead" style="font-size: medium;color:slategray" th:text="${@environment.getProperty('app.build.properties.name')}"></span>
         </a>
         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
