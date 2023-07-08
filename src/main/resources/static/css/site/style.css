@@ -428,3 +428,7 @@ footer {
   color: inherit;
   text-decoration: inherit;
 }
+
+.croppieContainer {
+  float: left;
+}

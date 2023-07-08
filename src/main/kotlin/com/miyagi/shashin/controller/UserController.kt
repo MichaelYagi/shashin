@@ -8,21 +8,21 @@ import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
+import net.coobird.thumbnailator.Thumbnails
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.FileSystemResource
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.authentication.AuthenticationManager
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -30,6 +30,8 @@ import org.springframework.util.MultiValueMap
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.io.ByteArrayInputStream
+import java.io.File
 import java.math.BigInteger
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
@@ -38,8 +40,8 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.annotation.Resource
+import javax.imageio.ImageIO
 import javax.servlet.http.Cookie
-import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.validation.Valid
@@ -54,11 +56,11 @@ class UserController {
     val resp = mutableMapOf<String, Any?>()
     var bcrypt = BCryptPasswordEncoder()
 
-    @Value("\${app.rememberme.key}")
-    private var rememberMeKey: String? = null
+    @Value("\${app.sidecar.path}")
+    private var relativeSidecarDir: String? = null
 
-    @Value("\${app.rememberme.expiration.seconds}")
-    private var expirationSeconds: Int? = null
+    @Value("\${app.api.version}")
+    private var apiVersion: String? = null
 
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
@@ -123,6 +125,83 @@ class UserController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @GetMapping("/users/profile")
+    fun getProfile(model: Model): String {
+        model["message"] = ""
+        model["user"] = User()
+        model["alertClass"] = ""
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            model["user"] = currentUserObj
+        }
+
+        val module = "profile"
+        model["msg"] = ""
+        model["status"] = ApiResponse.SUCCESS.status
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/users/profile"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    @Secured("ROLE_ADMIN","ROLE_USER")
+    fun postUpdateProfile(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
+        val base64Map = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
+        val response = mutableMapOf<String, Any?>()
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+
+            if (base64Map.containsKey("base64")) {
+                val base64Image = base64Map["base64"].toString()
+
+                val imageBytes = FileUtils.parseBase64(base64Image)
+                if (imageBytes != null) {
+                    // save file
+                    val img = ImageIO.read(ByteArrayInputStream(imageBytes))
+                    val extension = "png"
+
+                    val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                    val sidecarDir = rootPath + relativeSidecarDir
+
+                    val profileDirectory = sidecarDir.dropLast(1) + "/profile"
+                    val profileFileStr = "$profileDirectory/profile.$extension"
+                    if (File(profileFileStr).exists()) {
+                        File(profileFileStr).delete()
+                    }
+                    val profileFile = FileUtils.createFile(profileDirectory, profileFileStr, "Profile")
+                    if (profileFile != null) {
+                        val tempFile = File(System.getProperty("java.io.tmpdir") + ".$extension")
+                        ImageIO.write(img, extension, profileFile)
+                        tempFile.delete()
+                    }
+
+                    // save as url
+                    val profileUrl = "/api/$apiVersion/profile/profile.$extension"
+                    currentUserObj.setProfile(profileUrl)
+                    userRepository?.save(currentUserObj)
+
+                    response["msg"] = "Updated profile picture"
+                    response["message"] = "Updated profile picture"
+                    response["status"] = ApiResponse.SUCCESS.status
+                    response["imageUrl"] = profileUrl
+
+                    return mapper.writeValueAsString(response)
+                }
+            }
+        }
+
+        response["msg"] = "Could not update profile picture"
+        response["message"] = "Could not update profile picture"
+        response["status"] = ApiResponse.FAIL.status
+        response["imageUrl"] = ""
+
+        return mapper.writeValueAsString(response)
     }
 
     @GetMapping("/users/apikey")

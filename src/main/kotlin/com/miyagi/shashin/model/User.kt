@@ -22,6 +22,7 @@ class User {
     private var apikey: String? = null
     @NotBlank
     private var darkMode: Boolean? = false
+    private var profile: String? = null
     private var authority: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
@@ -98,6 +99,14 @@ class User {
 
     fun setIsAuthorized(isAuthorized: Boolean?) {
         this.isAuthorized = isAuthorized
+    }
+
+    fun getProfile(): String? {
+        return this.profile
+    }
+
+    fun setProfile(profile: String?) {
+        this.profile = profile
     }
 
     fun getDarkMode(): Boolean? {

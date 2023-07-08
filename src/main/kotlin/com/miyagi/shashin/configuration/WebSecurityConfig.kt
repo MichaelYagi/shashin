@@ -109,6 +109,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "api/v1/album/**",
             "api/v1/users/apikey/update",
             "api/v1/mapdata",
+            "api/v1/profile/**",
             "api/v1/metadata/**",
             "api/v1/users/self",
             "api/v1/comment/**",
@@ -161,7 +162,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         }
 
         override fun configure(web: WebSecurity) {
-            web.ignoring().antMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**")
+            web.ignoring().antMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**", "/api/v1/profile/**")
         }
     }
 

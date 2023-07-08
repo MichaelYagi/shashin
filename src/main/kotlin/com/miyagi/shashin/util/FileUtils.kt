@@ -14,20 +14,22 @@ import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
-import org.springframework.ui.set
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
+import java.net.URLConnection
 import java.nio.file.Files
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.ArrayList
+import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import javax.xml.bind.DatatypeConverter
+import javax.xml.bind.DatatypeConverter.parseBase64Binary
 
 @Suppress("UNCHECKED_CAST")
 @Component
@@ -470,6 +472,15 @@ class FileUtils {
             }
 
             return recogresponse
+        }
+
+        fun parseBase64(url: String): ByteArray? {
+            val base64Image = url.split(",")[1]
+            if (!base64Image.isNullOrBlank()) {
+                return parseBase64Binary(base64Image)
+            }
+
+            return null
         }
 
         /**

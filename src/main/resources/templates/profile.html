@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+<body class="thumb d-flex flex-column vh-100">
+
+<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
+
+<div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
+
+            <h2>Change profile picture</h2>
+
+            <div class="row mt-4">
+                <div class="col-lg-4">
+                    <div class="input-group mb-2">
+                        <input type="file" accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" class="form-control" id="profilePhoto" name="profilePhoto" aria-describedby="profilePhoto" aria-label="Upload">
+                        <button type="button" class="btn btn-primary" id="saveProfile" style="display: none;">Save</button>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a id="cancelProfile" href="#" class="mt-2" style="display: none;float:right;">Cancel</a>
+                    </div>
+
+                    <img id="profilePictureEdit" src="#" style="float: left; max-height: 200px; visibility: hidden;" />
+                </div>
+            </div>
+
+<!--            <div class="row">-->
+<!--                <div class="col-lg-4">-->
+<!--                    <button type="button" class="btn btn-primary" id="saveProfile" style="visibility: hidden;">Save</button>-->
+<!--                </div>-->
+<!--            </div>-->
+
+            <th:block th:if="${message != '' and alertClass != ''}">
+                <div class="col-12">
+                    <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+                </div>
+            </th:block>
+
+            <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+        </main>
+    </div>
+</div>
+
+<div class="modal fade" id="apikeyUpdateConfirmation" tabindex="-1" role="dialog" aria-labelledby="apikey" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trashModalLabel">Update API key</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to update your API key?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmUpdateApiKey">Confirm</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
+    /*<![CDATA[*/
+    shashin.nonce = /*[[${cspNonce}]]*/ '';
+    /*]]>*/
+
+    $("#profilePhoto").on("change", function(){
+        readURL(this);
+    });
+
+    function readURL(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                $("#profilePictureEdit").attr('src', e.target.result);
+                $("#profilePictureEdit").css("visibility", "visible");
+                $("#saveProfile").css("display", "block");
+                $("#cancelProfile").css("display", "block");
+
+                const croppieObject = $("#profilePictureEdit").croppie({
+                    customClass: "croppieContainer",
+                    enableExif: true,
+                    viewport: {
+                        width: 200,
+                        height: 200,
+                        type: 'circle'
+                    },
+                    boundary: {
+                        width: 300,
+                        height: 300
+                    }
+                });
+
+                $("#cancelProfile").on("click", async function (e) {
+                    e.preventDefault();
+
+                    $("#profilePictureEdit").attr("src", "#");
+                    $("#profilePictureEdit").css("visibility", "hidden");
+                    $("#profilePictureEdit").croppie('destroy');
+                    $("#saveProfile").css("display", "none");
+                    $("#cancelProfile").css("display", "none");
+                    $("#profilePhoto").val("");
+                });
+
+                $("#saveProfile").on("click", async function (e) {
+                    e.preventDefault();
+                    croppieObject.croppie('result', 'base64').then(function (base64Result) {
+                        // send to server
+                        const http = new Http("upload profile picture");
+                        let json = {base64: base64Result}
+                        http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
+                            if (data.hasOwnProperty("imageUrl") && data["imageUrl"] !== "") {
+                                $("#profileImage").attr("src", data["imageUrl"]);
+                                $("#profileImage").css("display", "inline-block");
+                                $("#profileImagePlaceholder").css("display", "none");
+
+                                $("#profilePictureEdit").css("visibility", "hidden");
+                                $("#saveProfile").css("display", "none");
+                                $("#cancelProfile").css("display", "none");
+                                $("#profilePhoto").val("");
+                            }
+                        });
+                    });
+                });
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+
+</body>
+</html>
