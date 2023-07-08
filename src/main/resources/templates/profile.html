@@ -115,7 +115,9 @@
                                 $("#profileImage").css("display", "inline-block");
                                 $("#profileImagePlaceholder").css("display", "none");
 
+                                $("#profilePictureEdit").attr("src", "#");
                                 $("#profilePictureEdit").css("visibility", "hidden");
+                                $("#profilePictureEdit").croppie('destroy');
                                 $("#saveProfile").css("display", "none");
                                 $("#cancelProfile").css("display", "none");
                                 $("#profilePhoto").val("");
