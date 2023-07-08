@@ -144,17 +144,6 @@ class PeopleController {
 
         // Start matching in a separate thread
         if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
-//            val faceRecognizer = FaceRecognizer(
-//                testImages,
-//                trainingData,
-//                recognitionLabelPhotoRepository,
-//                recognitionLabelRepository,
-//                notificationRepository,
-//                userRepository,
-//                adminRole,
-//                settings.getRecognitionConfidenceThreshold()!!.toDouble()
-//            )
-//            faceRecognizer.runRecognizer(shouldStop.get())
 
             val webClient = WebClient.create(settings.getCompreFaceServer()!!)
             val tempDir = System.getProperty("java.io.tmpdir")
