@@ -22,7 +22,7 @@
                         <a id="cancelProfile" href="#" class="mt-2" style="display: none;float:right;">Cancel</a>
                     </div>
 
-                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile}" th:style="${'float: left; max-height: 200px; visibility: ' + user.profile==null or user.profile==''?'hidden;':'visible;'}" />
+                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile}" th:style="${'float: left; max-height: 200px; visibility: ' + {user.profile==null or user.profile==''?'hidden;':'visible;'}}" />
                 </div>
             </div>
 
