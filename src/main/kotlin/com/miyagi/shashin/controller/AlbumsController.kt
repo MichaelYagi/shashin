@@ -340,6 +340,7 @@ class AlbumsController {
                             albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
                             albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
                             albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
+                            albumCommentMap["userProfile"] = albumComment.getUserProfile().toString()
                             albumCommentMap["username"] = albumComment.getUsername().toString()
                             albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
                             albumCommentsList.add(albumCommentMap)
@@ -530,20 +531,25 @@ class AlbumsController {
         val response = mutableMapOf<String, Any?>()
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = "No results"
-        val albumCommentsList = ArrayList<HashMap<String, Any>>()
+//        val albumCommentsList = ArrayList<HashMap<String, Any>>()
 
         // Get comments for this album
         val albumComments = commentRepository.findCommentsByAlbumId(albumId)
-        for (albumComment in albumComments) {
-            val albumCommentMap = HashMap<String, Any>()
-            albumCommentMap["comment"] = albumComment.getComment().toString()
-            albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
-            albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
-            albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
-            albumCommentMap["username"] = albumComment.getUsername().toString()
-            albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
-            albumCommentsList.add(albumCommentMap)
-        }
+//        for (albumComment in albumComments) {
+//            val albumCommentMap = HashMap<String, Any>()
+//            albumCommentMap["comment"] = albumComment.getComment().toString()
+//            albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
+//            albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
+//            albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
+//            albumCommentMap["userProfile"] = ""
+//            val albumUser = userRepository.findById(albumComment.getUserId().toString().toInt())
+//            if (albumUser.isPresent && !albumUser.get().getProfile().isNullOrBlank()) {
+//                albumCommentMap["userProfile"] = albumUser.get().getProfile().toString()
+//            }
+//            albumCommentMap["username"] = albumComment.getUsername().toString()
+//            albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
+//            albumCommentsList.add(albumCommentMap)
+//        }
 
         response["status"] = ApiResponse.SUCCESS.status
         response["msg"] = ""
@@ -1246,6 +1252,7 @@ class AlbumsController {
                                 albumPhotoCommentMap["metadataId"] = albumPhotoComment.getMetadataId().toString()
                                 albumPhotoCommentMap["albumId"] = albumPhotoComment.getAlbumId().toString().toInt()
                                 albumPhotoCommentMap["userId"] = albumPhotoComment.getUserId().toString().toInt()
+                                albumPhotoCommentMap["userProfile"] = albumPhotoComment.getUserProfile().toString()
                                 albumPhotoCommentMap["username"] = albumPhotoComment.getUsername().toString()
                                 albumPhotoCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumPhotoComment.getCreatedAt().toString())
                                 albumPhotoCommentsList.add(albumPhotoCommentMap)
@@ -1271,6 +1278,7 @@ class AlbumsController {
                         val userMap = HashMap<String, Any>()
                         userMap["id"] = currentUserObj.getId()
                         userMap["username"] = if (currentUserObj.getUsername() == null) "" else currentUserObj.getUsername()!!
+                        userMap["userProfile"] = if (currentUserObj.getProfile() == null) "" else currentUserObj.getProfile()!!
                         var showControls = false
                         if (currentUserObj.getAuthority() != null && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
                             showControls = true

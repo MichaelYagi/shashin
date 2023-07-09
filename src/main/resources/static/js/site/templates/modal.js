@@ -16,11 +16,11 @@ class ModalTemplates {
                         <ul class="list-group" id="commentList${metadata.id}">
     `};
 
-    static AlbumComment({commentId, commentText, userId, commentUserId, username}) { return `
+    static AlbumComment({commentId, commentText, userId, commentUserId, username, userProfile, createdAt}) { return `
         <li class="list-group-item${(commentUserId === userId) ? ` list-group-item-secondary` : ''}" id="comment${commentId}">
             <span id="commentcontainer${commentId}">
                 <p id="commentcontent${commentId}">${commentText}</p>
-                ${(commentUserId === userId) ? `<small>${username}<span style="float: right"><a href="#" id="deletecomment${commentId}"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment${commentId}"><span class="bi-pencil"></span></a></span></small>` : ''}
+                ${(commentUserId === userId) ? `<small>${userProfile !== undefined ? userProfile!==""?`<img src="${userProfile}" class="me-1" style="display:inline-block;width:24px;height:24px;" />`:`<span class="bi-person-circle me-1" style="font-size:1.0rem;"></span>`:``} <strong>${username}</strong>${createdAt !== undefined? ` on ${createdAt}`:``}<span style="float: right"><a href="#" id="deletecomment${commentId}"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment${commentId}"><span class="bi-pencil"></span></a></span></small>` : ''}
             </span>
             <span id="textareacontainer${commentId}"></span>
         </li>
