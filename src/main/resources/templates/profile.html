@@ -56,14 +56,20 @@
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     /*<![CDATA[*/
     shashin.nonce = /*[[${cspNonce}]]*/ '';
-    var profileUrl = /*[[${user.profile}]]*/ '';
+    let profileUrl = /*[[${user.profile}]]*/ '';
     /*]]>*/
+
+    let croppieObject = null;
 
     if (profileUrl === null || profileUrl === "") {
         profileUrl = "#";
     }
 
-    $("#profilePhoto").on("change", function(){
+    $("#profilePhoto").on("change", function() {
+        if (croppieObject !== null) {
+            $("#profilePictureEdit").croppie('destroy');
+            croppieObject = null;
+        }
         readURL(this);
     });
 
@@ -77,7 +83,7 @@
                 $("#saveProfile").css("display", "block");
                 $("#cancelProfile").css("display", "block");
 
-                const croppieObject = $("#profilePictureEdit").croppie({
+                croppieObject = $("#profilePictureEdit").croppie({
                     customClass: "croppieContainer",
                     enableExif: true,
                     viewport: {
@@ -101,6 +107,7 @@
                         $("#profilePictureEdit").css("visibility", "visible");
                     }
                     $("#profilePictureEdit").croppie('destroy');
+                    croppieObject = null;
                     $("#saveProfile").css("display", "none");
                     $("#cancelProfile").css("display", "none");
                     $("#profilePhoto").val("");
@@ -122,6 +129,7 @@
                                 $("#profilePictureEdit").attr("src", profileUrl);
                                 $("#profilePictureEdit").css("visibility", "visible");
                                 $("#profilePictureEdit").croppie('destroy');
+                                croppieObject = null;
                                 $("#saveProfile").css("display", "none");
                                 $("#cancelProfile").css("display", "none");
                                 $("#profilePhoto").val("");
