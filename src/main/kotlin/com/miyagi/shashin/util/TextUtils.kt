@@ -89,11 +89,11 @@ class TextUtils {
 
         fun generateUUID(
             filePath:String?,
-            createdAt:String?,
-            type: String?,
-            fStopNumber: Double?,
-            iso: Int?,
-            exposure: String?): UUID {
+            createdAt:String? = null,
+            type: String? = null,
+            fStopNumber: Double? = null,
+            iso: Int? = null,
+            exposure: String? = null): UUID {
             val uuidInput = "$filePath-$createdAt-$type-$fStopNumber-$iso-$exposure"
             val uuid = UUID.nameUUIDFromBytes(uuidInput.toByteArray())
             logger.log(Level.INFO, "UUID $uuid generated from input $uuidInput")
