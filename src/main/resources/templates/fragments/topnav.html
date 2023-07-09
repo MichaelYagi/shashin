@@ -145,9 +145,9 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownMenuButton" style="z-index: 9999">
                 <h6 class="dropdown-header" th:text="${currentUser.username}"></h6>
-                <a class="dropdown-item" href="/users/profile">Edit profile</a>
-                <a class="dropdown-item" href="/users/update">Change password</a>
-                <a class="dropdown-item" href="/users/apikey">Manage API key</a>
+                <a th:class="'dropdown-item'+${activePage=='profile'?' active':''}" href="/users/profile">Edit profile</a>
+                <a th:class="'dropdown-item'+${activePage=='update'?' active':''}" href="/users/update">Change password</a>
+                <a th:class="'dropdown-item'+${activePage=='apikey'?' active':''}" href="/users/apikey">Manage API key</a>
                 <div class="dropdown-item">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" id="darkModeSwitch" th:checked="${currentUser.darkMode}">
