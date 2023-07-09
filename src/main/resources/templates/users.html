@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
+
 <body class="thumb d-flex flex-column vh-100">
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
@@ -14,6 +15,7 @@
                 <th:block th:if="${not #lists.isEmpty(users)}">
                     <thead>
                         <tr>
+                            <th scope="col">Profile</th>
                             <th scope="col">Username</th>
                             <th scope="col">Role</th>
                             <th scope="col">Authorized</th>
@@ -27,6 +29,12 @@
                     <th:block th:each="user: ${users}">
                         <th:block th:if="${user.id != currentUser.id}">
                             <tr>
+                                <th:block th:if="${user.profile==null or user.profile==''}">
+                                    <td><span class="bi-person-circle position-absolute" style="font-size:1.5rem;overflow: hidden;display: grid;"></span></td>
+                                </th:block>
+                                <th:block th:unless="${user.profile==null or user.profile==''}">
+                                    <td><img th:src="${user.profile}" style="display:inline-block;width:24px;height:24px;" /></td>
+                                </th:block>
                                 <td><span th:text="${user.username}"></span></td>
                                 <td>
                                     <a href="#" th:id="${'permissiontoggle' + user.id}">
