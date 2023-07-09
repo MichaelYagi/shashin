@@ -30,7 +30,7 @@
                         <th:block th:if="${user.id != currentUser.id}">
                             <tr>
                                 <th:block th:if="${user.profile==null or user.profile==''}">
-                                    <td><span class="bi-person-circle position-absolute" style="font-size:1.5rem;overflow: hidden;display: grid;"></span></td>
+                                    <td><span class="bi-person-circle" style="font-size:1.5rem;overflow: hidden;display: grid;"></span></td>
                                 </th:block>
                                 <th:block th:unless="${user.profile==null or user.profile==''}">
                                     <td><img th:src="${user.profile}" style="display:inline-block;width:24px;height:24px;" /></td>
