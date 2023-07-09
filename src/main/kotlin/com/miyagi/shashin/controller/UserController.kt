@@ -169,8 +169,10 @@ class UserController {
                     val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                     val sidecarDir = rootPath + relativeSidecarDir
 
+                    val uuidFromUsername = TextUtils.generateUUID(currentUserObj.getUsername())
+
                     val profileDirectory = sidecarDir.dropLast(1) + "/profile"
-                    val profileFileStr = "$profileDirectory/profile.$extension"
+                    val profileFileStr = "$profileDirectory/$uuidFromUsername.$extension"
                     if (File(profileFileStr).exists()) {
                         File(profileFileStr).delete()
                     }
@@ -182,7 +184,7 @@ class UserController {
                     }
 
                     // save as url
-                    val profileUrl = "/api/$apiVersion/profile/profile.$extension"
+                    val profileUrl = "/api/$apiVersion/profile/$uuidFromUsername.$extension"
                     currentUserObj.setProfile(profileUrl)
                     userRepository?.save(currentUserObj)
 

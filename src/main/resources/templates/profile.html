@@ -22,15 +22,9 @@
                         <a id="cancelProfile" href="#" class="mt-2" style="display: none;float:right;">Cancel</a>
                     </div>
 
-                    <img id="profilePictureEdit" src="#" style="float: left; max-height: 200px; visibility: hidden;" />
+                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile}" th:style="${'float: left; max-height: 200px; visibility: ' + user.profile==null or user.profile==''?'hidden;':'visible;'}" />
                 </div>
             </div>
-
-<!--            <div class="row">-->
-<!--                <div class="col-lg-4">-->
-<!--                    <button type="button" class="btn btn-primary" id="saveProfile" style="visibility: hidden;">Save</button>-->
-<!--                </div>-->
-<!--            </div>-->
 
             <th:block th:if="${message != '' and alertClass != ''}">
                 <div class="col-12">
@@ -62,7 +56,12 @@
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
     /*<![CDATA[*/
     shashin.nonce = /*[[${cspNonce}]]*/ '';
+    var profileUrl = /*[[${user.profile}]]*/ '';
     /*]]>*/
+
+    if (profileUrl === null || profileUrl === "") {
+        profileUrl = "#";
+    }
 
     $("#profilePhoto").on("change", function(){
         readURL(this);
@@ -95,8 +94,12 @@
                 $("#cancelProfile").on("click", async function (e) {
                     e.preventDefault();
 
-                    $("#profilePictureEdit").attr("src", "#");
-                    $("#profilePictureEdit").css("visibility", "hidden");
+                    $("#profilePictureEdit").attr("src", profileUrl);
+                    if (profileUrl === null || profileUrl === "") {
+                        $("#profilePictureEdit").css("visibility", "hidden");
+                    } else {
+                        $("#profilePictureEdit").css("visibility", "visible");
+                    }
                     $("#profilePictureEdit").croppie('destroy');
                     $("#saveProfile").css("display", "none");
                     $("#cancelProfile").css("display", "none");
@@ -111,12 +114,13 @@
                         let json = {base64: base64Result}
                         http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
                             if (data.hasOwnProperty("imageUrl") && data["imageUrl"] !== "") {
-                                $("#profileImage").attr("src", data["imageUrl"]);
+                                profileUrl = data["imageUrl"];
+                                $("#profileImage").attr("src", profileUrl);
                                 $("#profileImage").css("display", "inline-block");
                                 $("#profileImagePlaceholder").css("display", "none");
 
-                                $("#profilePictureEdit").attr("src", "#");
-                                $("#profilePictureEdit").css("visibility", "hidden");
+                                $("#profilePictureEdit").attr("src", profileUrl);
+                                $("#profilePictureEdit").css("visibility", "visible");
                                 $("#profilePictureEdit").croppie('destroy');
                                 $("#saveProfile").css("display", "none");
                                 $("#cancelProfile").css("display", "none");
