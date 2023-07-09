@@ -327,7 +327,7 @@
             if (comment.length > 0) {
                 const http = new Http("saving album photo comment");
                 const json = {metadataId: metadata.id, albumId: album.id, comment: comment};
-                const data = await http.ajax("post", "/comment/albumphoto/save/", JSON.stringify(json));
+                const data = await http.ajax("post", "/comment/albumphoto/save", JSON.stringify(json));
 
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                     let commentId = data["commentId"];
@@ -370,7 +370,7 @@
             const comments = albumPhotoCommentsMap[metadata.id][index];
             commentIdArray.push(comments["commentId"]);
 
-            html += ModalTemplates.AlbumComment({commentId:comments["commentId"],commentText:comments["comment"],userId:userMap.id,commentUserId:comments['userId'],username:comments["username"]});
+            html += ModalTemplates.AlbumComment({commentId:comments["commentId"],commentText:comments["comment"],userId:userMap.id,commentUserId:comments['userId'],username:comments["username"],userProfile:comments["userProfile"],createdAt:comments["createdAt"]});
         }
 
         html += ModalTemplates.AlbumCommentsModalFooter({metadata:metadata});

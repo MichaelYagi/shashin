@@ -223,7 +223,14 @@ class Albums {
                             html += '<li id="comment' + comments.commentId + '" class="list-group-item' + (comments.userId === currentUserId ? ' list-group-item-secondary' : '') + '">';
                             html += '<span id="commentcontainer' + comments.commentId + '">';
                             html += '<p id="commentcontent' + comments.commentId + '">' + comments.comment + '</p>';
-                            html += '<small><strong>' + comments.username + '</strong> <span>on ' + comments.createdAt + '</span></small>';
+                            html += '<small>';
+
+                            if (comments.userProfile !== "" && comments.userProfile !== null) {
+                                html += '<img src="'+comments.userProfile+'" class="me-1" style="display:inline-block;width:24px;height:24px;" />';
+                            } else {
+                                html += '<span class="bi-person-circle me-1" style="font-size:1.0rem;"></span>';
+                            }
+                            html += '<strong>' + comments.username + '</strong> <span>on ' + comments.createdAt + '</span></small>';
 
                             if (parseInt(comments.userId, 10) === parseInt(currentUserId, 10)) {
                                 html += '<small><span style="float: right">';
