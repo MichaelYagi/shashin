@@ -19,8 +19,8 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, private var apiVe
     ) {
         var uriPath = request.requestURI.toString()
 
-        if (uriPath.contains("api/v1/")) {
-            uriPath = "/albums"
+        if (uriPath.contains("api/$apiVersion/")) {
+            uriPath = loginFormUrl
         }
         request.session.setAttribute("ShashinReferer",uriPath)
 
