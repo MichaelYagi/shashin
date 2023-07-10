@@ -541,11 +541,7 @@ class AlbumsController {
             albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
             albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
             albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
-            albumCommentMap["userProfile"] = ""
-            val albumUser = userRepository.findById(albumComment.getUserId().toString().toInt())
-            if (albumUser.isPresent && !albumUser.get().getProfile().isNullOrBlank()) {
-                albumCommentMap["userProfile"] = albumUser.get().getProfile().toString()
-            }
+            albumCommentMap["userProfile"] = albumComment.getUserProfile().toString()
             albumCommentMap["username"] = albumComment.getUsername().toString()
             albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
             albumCommentsList.add(albumCommentMap)
