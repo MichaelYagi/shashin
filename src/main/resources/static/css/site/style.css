@@ -432,3 +432,11 @@ footer {
 .croppieContainer {
   float: left;
 }
+
+.dropdown-toggle[aria-expanded="true"]:after {
+  transform: rotate(180deg);
+}
+/*for animation*/
+.dropdown-toggle:after {
+  transition: 0.7s;
+}
