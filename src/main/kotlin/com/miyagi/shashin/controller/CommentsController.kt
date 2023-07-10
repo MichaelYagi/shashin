@@ -96,7 +96,7 @@ class CommentsController {
                     "<tr><td>commentCount</td><td>int</td><td>The number of comments for this album</td></tr>" +
                     "<tr><td>commentId</td><td>int</td><td>The comment ID</td></tr>" +
                     "<tr><td>userProfile</td><td>string</td><td>URL of the users profile picture</td></tr>" +
-                    "<tr><td>createdAt</td><td>int</td><td>Datetime the comment was created</td></tr>" +
+                    "<tr><td>createdAt</td><td>string</td><td>Datetime the comment was created</td></tr>" +
                     "</tbody></table>"
         )
     )
@@ -220,7 +220,7 @@ class CommentsController {
                     "</thead><tbody>" +
                     "<tr><td>commentId</td><td>int</td><td>The comment ID</td></tr>" +
                     "<tr><td>userProfile</td><td>string</td><td>URL of the users profile picture</td></tr>" +
-                    "<tr><td>createdAt</td><td>int</td><td>Datetime the comment was created</td></tr>" +
+                    "<tr><td>createdAt</td><td>string</td><td>Datetime the comment was created</td></tr>" +
                     "</tbody></table>"
         )
     )
