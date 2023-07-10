@@ -331,6 +331,8 @@
 
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId")) {
                     let commentId = data["commentId"];
+                    let userProfile = data["userProfile"];
+                    let createdAt = data["createdAt"];
 
                     // Insert comment at top of list
                     $("#commentText" + metadata.id).val("")
@@ -339,7 +341,9 @@
                         commentText: comment,
                         userId: userMap.id,
                         commentUserId: userMap.id,
-                        username: userMap.username
+                        username: userMap.username,
+                        userProfile: userProfile,
+                        createdAt: createdAt
                     }));
 
                     $("#deletecomment" + commentId).on("click", function (e) {

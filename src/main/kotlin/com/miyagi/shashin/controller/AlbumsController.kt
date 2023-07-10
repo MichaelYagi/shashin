@@ -531,30 +531,30 @@ class AlbumsController {
         val response = mutableMapOf<String, Any?>()
         response["status"] = ApiResponse.FAIL.status
         response["msg"] = "No results"
-//        val albumCommentsList = ArrayList<HashMap<String, Any>>()
+        val albumCommentsList = ArrayList<HashMap<String, Any>>()
 
         // Get comments for this album
         val albumComments = commentRepository.findCommentsByAlbumId(albumId)
-//        for (albumComment in albumComments) {
-//            val albumCommentMap = HashMap<String, Any>()
-//            albumCommentMap["comment"] = albumComment.getComment().toString()
-//            albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
-//            albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
-//            albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
-//            albumCommentMap["userProfile"] = ""
-//            val albumUser = userRepository.findById(albumComment.getUserId().toString().toInt())
-//            if (albumUser.isPresent && !albumUser.get().getProfile().isNullOrBlank()) {
-//                albumCommentMap["userProfile"] = albumUser.get().getProfile().toString()
-//            }
-//            albumCommentMap["username"] = albumComment.getUsername().toString()
-//            albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
-//            albumCommentsList.add(albumCommentMap)
-//        }
+        for (albumComment in albumComments) {
+            val albumCommentMap = HashMap<String, Any>()
+            albumCommentMap["comment"] = albumComment.getComment().toString()
+            albumCommentMap["commentId"] = albumComment.getCommentId().toString().toInt()
+            albumCommentMap["albumId"] = albumComment.getAlbumId().toString().toInt()
+            albumCommentMap["userId"] = albumComment.getUserId().toString().toInt()
+            albumCommentMap["userProfile"] = ""
+            val albumUser = userRepository.findById(albumComment.getUserId().toString().toInt())
+            if (albumUser.isPresent && !albumUser.get().getProfile().isNullOrBlank()) {
+                albumCommentMap["userProfile"] = albumUser.get().getProfile().toString()
+            }
+            albumCommentMap["username"] = albumComment.getUsername().toString()
+            albumCommentMap["createdAt"] = TextUtils.formatToLongDateWithTime(albumComment.getCreatedAt().toString())
+            albumCommentsList.add(albumCommentMap)
+        }
 
         response["status"] = ApiResponse.SUCCESS.status
         response["msg"] = ""
 
-        response["albumCommentsList"] = albumComments
+        response["albumCommentsList"] = albumCommentsList
 
         return response
     }

@@ -84,14 +84,19 @@ class CommentsController {
                     "Response body on success:<br>" +
                     "<code><pre>{\n" +
                     "    \"commentCount\": &lt;comment_count&gt;,\n" +
-                    "    \"commentId\": &lt;comment_id&gt;\n" +
+                    "    \"commentId\": &lt;comment_id&gt;,\n" +
+                    "    \"userProfile\": \"&lt;user_profile&gt;\",\n" +
+                    "    \"createdAt\": \"&lt;date_created&gt;\"\n" +
                     "}" +
+                    "</code></pre>" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
                     "</thead><tbody>" +
                     "<tr><td>commentCount</td><td>int</td><td>The number of comments for this album</td></tr>" +
                     "<tr><td>commentId</td><td>int</td><td>The comment ID</td></tr>" +
+                    "<tr><td>userProfile</td><td>string</td><td>URL of the users profile picture</td></tr>" +
+                    "<tr><td>createdAt</td><td>int</td><td>Datetime the comment was created</td></tr>" +
                     "</tbody></table>"
         )
     )
@@ -166,6 +171,8 @@ class CommentsController {
                 resp["msg"] = "Comment saved!"
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
+                resp["userProfile"] = if (currentUserObj.getProfile()==null) "" else currentUserObj.getProfile().toString()
+                resp["createdAt"] = TextUtils.formatToLongDateWithTime(savedCommentObj.getCreatedAt().toString())
                 return mapper.writeValueAsString(resp)
             } else {
                 return returnForbiddenError(response)
@@ -176,6 +183,8 @@ class CommentsController {
         resp["msg"] = "Could not save to comment"
         resp["status"] = ApiResponse.FAIL.status
         resp["commentId"] = 0
+        resp["userProfile"] = ""
+        resp["createdAt"] = ""
         return mapper.writeValueAsString(resp)
     }
 
@@ -201,13 +210,17 @@ class CommentsController {
                     "</tbody></table><br>" +
                     "Response body on success:<br>" +
                     "<code><pre>{\n" +
-                    "    \"commentId\": &lt;comment_id&gt;\n" +
+                    "    \"commentId\": &lt;comment_id&gt;,\n" +
+                    "    \"userProfile\": \"&lt;user_profile&gt;\",\n" +
+                    "    \"createdAt\": \"&lt;date_created&gt;\"\n" +
                     "}" +
                     "</code></pre>" +
                     "<table class=\"table table-bordered\"><thead>" +
                     "<tr><th>Element</th><th>Type</th><th>Description</th></tr>" +
                     "</thead><tbody>" +
                     "<tr><td>commentId</td><td>int</td><td>The comment ID</td></tr>" +
+                    "<tr><td>userProfile</td><td>string</td><td>URL of the users profile picture</td></tr>" +
+                    "<tr><td>createdAt</td><td>int</td><td>Datetime the comment was created</td></tr>" +
                     "</tbody></table>"
         )
     )
@@ -283,6 +296,8 @@ class CommentsController {
                 resp["msg"] = "Comment saved!"
                 resp["status"] = ApiResponse.SUCCESS.status
                 resp["commentId"] = savedCommentObj.getId().toString()
+                resp["userProfile"] = if (currentUserObj.getProfile()==null) "" else currentUserObj.getProfile().toString()
+                resp["createdAt"] = TextUtils.formatToLongDateWithTime(savedCommentObj.getCreatedAt().toString())
                 return mapper.writeValueAsString(resp)
             } else {
                 return returnForbiddenError(response)
