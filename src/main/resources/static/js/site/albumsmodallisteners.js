@@ -295,6 +295,8 @@
                 if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("commentId") && data.hasOwnProperty("commentCount")) {
                     let commentId = data["commentId"];
                     let commentCount = data["commentCount"];
+                    let userProfile = data["userProfile"];
+                    let createdAt = data["createdAt"];
 
                     if (data["status"] === "success") {
                         $("#commentcount" + albumId).text(commentCount);
@@ -302,7 +304,7 @@
                         // Insert comment at top of list
                         const commentItem = '<li class="list-group-item list-group-item-secondary" id="comment' + commentId + '">\n' +
                             '<span id="commentcontainer' + commentId + '">\n<p id="commentcontent' + commentId + '">' + comment + '</p>\n' +
-                            '<small>' + username + '<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
+                            '<small>'+(userProfile!=="null" && userProfile!==null && userProfile!==""?'<img src="'+userProfile+'?'+uuidv4()+'" class="me-1" style="display:inline-block;width:24px;height:24px;" />':'<span class="bi-person-circle me-1" style="font-size:1.0rem;"></span>')+'<strong>' + username + '</strong> on '+createdAt+'<span style="float: right"><a href="#" id="deletecomment' + commentId + '"><span class="bi-trash"></span></a>&nbsp;&nbsp;<a href="#" id="editcomment' + commentId + '"><span class="bi-pencil"></span></a></span></small></span>' +
                             '<span id="textareacontainer' + commentId + '"></span></li>';
                         $("#commentText").val("")
                         $("#commentList").prepend(commentItem);
