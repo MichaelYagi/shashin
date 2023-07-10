@@ -1,6 +1,16 @@
 class Http {
     constructor(action) {
         this.action = action;
+        this.additionalParameters = {};
+        this.additionalHeaders = {};
+    }
+
+    async setAdditionalParameters(params) {
+        $.extend(this.additionalParameters, params);
+    }
+
+    async setAdditionalHeaders(params) {
+        $.extend(this.additionalHeaders, params);
     }
 
     async ajax(type,url,data,failFunction) {
@@ -13,9 +23,13 @@ class Http {
             retries: shashin.ajaxRetries
         }
 
+        $.extend(ajaxParams, this.additionalParameters);
+
         if (shashin.apikey !== "") {
             ajaxParams.headers = {"X-API-KEY": shashin.apikey};
         }
+
+        $.extend(ajaxParams.headers, this.additionalHeaders);
 
         if (data === "undefined" || data === null) {
             data = "";
