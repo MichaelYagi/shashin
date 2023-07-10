@@ -17,7 +17,11 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, private var apiVe
         response: HttpServletResponse,
         authException: AuthenticationException?
     ) {
-        val uriPath = request.requestURI.toString()
+        var uriPath = request.requestURI.toString()
+
+        if (uriPath.contains("api/v1/")) {
+            uriPath = "/"
+        }
         request.session.setAttribute("ShashinReferer",uriPath)
 
         val ajaxHeader = request.getHeader("X-Requested-With")
