@@ -3,7 +3,10 @@ package com.miyagi.shashin.component
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.util.ApiResponse
 import org.springframework.security.core.AuthenticationException
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
+import org.springframework.ui.set
 import java.io.IOException
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -20,7 +23,26 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, private var apiVe
         var uriPath = request.requestURI.toString()
 
         if (uriPath.contains("api/$apiVersion/")) {
-            uriPath = loginFormUrl
+            try {
+                val securityContext: SecurityContext =
+                    request.session.getAttribute("SPRING_SECURITY_CONTEXT") as SecurityContext
+                val authorities = securityContext.authentication.authorities as Collection<GrantedAuthority>
+
+                var currauthority = ""
+
+                for (authority in authorities) {
+                    currauthority = authority.authority
+                }
+
+                if (currauthority == "ROLE_ADMIN") {
+                    uriPath = "/timeline"
+                } else if (currauthority == "ROLE_USER") {
+                    uriPath = "/albums"
+                }
+
+            } catch (e: Exception) {
+                uriPath = loginFormUrl
+            }
         }
         request.session.setAttribute("ShashinReferer",uriPath)
 
