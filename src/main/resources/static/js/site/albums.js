@@ -225,7 +225,7 @@ class Albums {
                             html += '<p id="commentcontent' + comments.commentId + '">' + comments.comment + '</p>';
                             html += '<small>';
 
-                            if (comments.userProfile !== "" && comments.userProfile !== null) {
+                            if (comments.userProfile !== "" && comments.userProfile !== null && comments.userProfile !== "null") {
                                 html += '<img src="'+comments.userProfile+'?'+uuidv4()+'" class="me-1" style="display:inline-block;width:24px;height:24px;" />';
                             } else {
                                 html += '<span class="bi-person-circle me-1" style="font-size:1.0rem;"></span>';
