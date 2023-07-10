@@ -139,7 +139,7 @@
                 </th:block>
                 <th:block th:unless="${currentUser.profile == null or currentUser.profile == ''}">
                     <span id="profileImagePlaceholder" class="bi-person-circle" style="display:none;font-size:1.5rem;"></span>
-                    <img th:src="${currentUser.profile}" id="profileImage" style="display:inline-block;width:32px;height:32px" />
+                    <img th:src="${currentUser.profile + '?' + randomString}" id="profileImage" style="display:inline-block;width:32px;height:32px" />
                 </th:block>
                 <span class="caret"></span>
             </a>

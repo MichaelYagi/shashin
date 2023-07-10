@@ -22,7 +22,7 @@
                         <a id="cancelProfile" href="#" class="mt-2" style="display: none;float:right;">Cancel</a>
                     </div>
 
-                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile}" th:style="${'float: left; max-height: 200px; visibility: ' + {user.profile==null or user.profile==''?'hidden;':'visible;'}}" />
+                    <img id="profilePictureEdit" th:src="${user.profile==null or user.profile==''?'#':user.profile + '?' + randomString}" th:style="${'float: left; max-height: 200px; visibility: ' + {user.profile==null or user.profile==''?'hidden;':'visible;'}}" />
                 </div>
             </div>
 
@@ -128,11 +128,11 @@
                         http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
                             if (data.hasOwnProperty("imageUrl") && data["imageUrl"] !== "") {
                                 profileUrl = data["imageUrl"];
-                                $("#profileImage").attr("src", profileUrl);
+                                $("#profileImage").attr("src", profileUrl + '?' + data["randomString"]);
                                 $("#profileImage").css("display", "inline-block");
                                 $("#profileImagePlaceholder").css("display", "none");
 
-                                $("#profilePictureEdit").attr("src", profileUrl);
+                                $("#profilePictureEdit").attr("src", profileUrl + '?' + data["randomString"]);
                                 $("#profilePictureEdit").css("visibility", "visible");
                                 $("#profilePictureEdit").croppie('destroy');
                                 croppieObject = null;
