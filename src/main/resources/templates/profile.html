@@ -118,6 +118,12 @@
                     croppieObject.croppie('result', 'base64').then(function (base64Result) {
                         // send to server
                         const http = new Http("upload profile picture");
+                        http.setAdditionalParameters({cache: false});
+                        http.setAdditionalHeaders({
+                            'Cache-Control': 'no-cache, no-store, max-age=0',
+                            'Expires': 'Thu, 1 Jan 1970 00:00:00 GMT',
+                            'Pragma': 'no-cache'
+                        });
                         let json = {base64: base64Result}
                         http.ajax("post", "/users/profile", JSON.stringify(json)).then(function (data) {
                             if (data.hasOwnProperty("imageUrl") && data["imageUrl"] !== "") {
