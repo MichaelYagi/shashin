@@ -7,6 +7,7 @@ import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -194,6 +195,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["authority"] = ""
         model["username"] = ""
         model["apikey"] = ""
+        model["randomString"] = TextUtils.generateUUID(getCurrentTimestamp())
         val requestAttributes = RequestContextHolder.currentRequestAttributes()
         val attributes = requestAttributes as ServletRequestAttributes
         val request = attributes.request

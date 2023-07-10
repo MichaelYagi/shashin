@@ -153,6 +153,7 @@ class UserController {
     fun postUpdateProfile(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
         val base64Map = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
+        response["randomString"] = TextUtils.generateUUID(getCurrentTimestamp())
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
