@@ -1328,8 +1328,7 @@ class SettingsController {
                     deleteThreadScan()
 
                     // Iterate through directory in another thread
-                    runBlocking {
-                        launch {
+                    Thread {
                         //Create file with thread name and write file name iterated
                         val tempDir = System.getProperty("java.io.tmpdir")
                         val threadFile = FileUtils.createFile(
@@ -1667,9 +1666,7 @@ class SettingsController {
                                 logger.log(Level.SEVERE, "Could not delete thread file: " + threadFile.name)
                             }
                         }
-                    }
-                }
-                    //}.start()
+                    }.start()
 
                     return "Start Scan"
                 }
