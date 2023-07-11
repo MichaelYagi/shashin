@@ -63,14 +63,14 @@
             $("#dateSliderContainer").hide();
         }
 
-        // Jump to date
+        let hash = "";
         if (window.location.hash) {
-            //Puts hash in variable, and removes the # character
-            const hash = window.location.hash.substring(1);
+            hash = window.location.hash.substring(1);
+        }
 
-            if ($("#offcanvas_"+hash).length > 0) {
-                timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
-            }
+        // Jump to date
+        if (hash.length > 0 && $("#offcanvas_"+hash).length > 0) {
+            timelineSettings.jumpFromTimelineToc(null, hash, mediaTypeFilter);
         } else if ($('.scrollspy').length > 0) {
             const firstElem = $('.scrollspy')[0];
             const elementsInViewport = Util.elementsInViewport($(".scrollspy"));
