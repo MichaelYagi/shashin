@@ -296,7 +296,7 @@
                     let commentId = data["commentId"];
                     let commentCount = data["commentCount"];
                     let userProfile = data["userProfile"];
-                    let createdAt = data["createdAt"];
+                    let createdAt = data["createdAt"]; //dateFormat(new Date(data["createdAt"]), "ddd, mmm d, yyyy 'at' h:mm TT");
 
                     if (data["status"] === "success") {
                         $("#commentcount" + albumId).text(commentCount);
