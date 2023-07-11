@@ -968,7 +968,8 @@
                         timelineSettings.jumpFromTimelineToc(null, currentDateObj.year + '-' + currentDateObj.month + '-' + currentDateObj.day, mediaTypeFilter);
                         timelineSettings.enableScrollSpy = true;
                     }
-                    //$(".monthYearSlider").show();
+
+                    $(".monthYearSlider").show();
                 },
                 change: function (event, ui) {
                     const currentDateObj = dateList[Math.round((dateList.length - 1) - ui.value)];
