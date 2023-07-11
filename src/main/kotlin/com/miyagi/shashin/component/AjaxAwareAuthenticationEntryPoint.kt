@@ -22,7 +22,7 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, private var apiVe
     ) {
         var uriPath = request.requestURI.toString()
 
-        if (uriPath.contains("api/$apiVersion/")) {
+        if (uriPath.contains("api/$apiVersion/") || uriPath.contains("/save") || uriPath.contains("/update") || uriPath.contains("/delete")) {
             try {
                 val securityContext: SecurityContext =
                     request.session.getAttribute("SPRING_SECURITY_CONTEXT") as SecurityContext
