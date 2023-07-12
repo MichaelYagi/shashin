@@ -762,7 +762,7 @@ class Util {
             }
             const getUrl = window.location;
             const baseUrl = getUrl.protocol + "//" + getUrl.host;
-            const shareUrl = baseUrl + relativeShareLink;
+            const shareUrl = baseUrl + relativeShareLink.replace('/api/v1','');
             $(".shareUrlLabel").show();
 
             let page = "/viewer"
