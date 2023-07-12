@@ -73,7 +73,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "/settings/scanmessage",
             "/dashboard/statmessages",
             "/dashboard/statmessage",
-            "/api/v1/thumbnails/**"
+            "/api/v1/thumbnails/**",
+            "/image/**",
+            "/video/**"
         )
 
         var adminList = arrayOf(
