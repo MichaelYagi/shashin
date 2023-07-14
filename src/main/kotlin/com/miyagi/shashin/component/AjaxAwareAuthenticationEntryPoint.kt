@@ -46,19 +46,21 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, private var apiVe
         }
         request.session.setAttribute("ShashinReferer",uriPath)
 
-        val ajaxHeader = request.getHeader("X-Requested-With")
-        if ("XMLHttpRequest" == ajaxHeader || request.requestURI.startsWith("/api/$apiVersion/")) {
-            response.contentType = "application/json"
-            val payload: MutableMap<String, Any> = HashMap()
-            payload["msg"] = "Unauthorized"
-            payload["statusCode"] = HttpServletResponse.SC_UNAUTHORIZED
-            payload["status"] = ApiResponse.FAIL.status
-            val json = ObjectMapper().writeValueAsString(payload)
-            response.writer.append(json)
-            response.status = HttpServletResponse.SC_UNAUTHORIZED
-            //response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ajax Request Denied (Session Expired)")
-        } else {
-            super.commence(request, response, authException)
-        }
+        super.commence(request, response, authException)
+
+//        val ajaxHeader = request.getHeader("X-Requested-With")
+//        if ("XMLHttpRequest" == ajaxHeader || request.requestURI.startsWith("/api/$apiVersion/")) {
+//            response.contentType = "application/json"
+//            val payload: MutableMap<String, Any> = HashMap()
+//            payload["msg"] = "Unauthorized"
+//            payload["statusCode"] = HttpServletResponse.SC_UNAUTHORIZED
+//            payload["status"] = ApiResponse.FAIL.status
+//            val json = ObjectMapper().writeValueAsString(payload)
+//            response.writer.append(json)
+//            response.status = HttpServletResponse.SC_UNAUTHORIZED
+//            //response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ajax Request Denied (Session Expired)")
+//        } else {
+//            super.commence(request, response, authException)
+//        }
     }
 }

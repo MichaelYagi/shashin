@@ -118,8 +118,8 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `profile` VARCHAR(255) DEFAULT NULL,
-    `username` VARCHAR(50) NOT NULL,
-    `password` VARCHAR(50) NOT NULL,
+    `username` VARCHAR(64) NOT NULL,
+    `password` VARCHAR(64) NOT NULL,
     `authority` VARCHAR(50) NOT NULL,
     `isAuthorized` BOOLEAN NOT NULL DEFAULT FALSE,
     `darkMode` BOOLEAN NOT NULL DEFAULT FALSE,
@@ -129,6 +129,15 @@ CREATE TABLE `user` (
     CHECK(`username` <> ''),
     CHECK(`password` <> '')
 );
+
+DROP TABLE IF EXISTS `persistent_logins`;
+CREATE TABLE `persistent_logins` (
+     `username` VARCHAR(64) NOT NULL,
+     `series` VARCHAR(64) NOT NULL,
+     `token` VARCHAR(64) NOT NULL,
+     `last_used` TIMESTAMP NOT NULL,
+     PRIMARY KEY (`series`)
+ );
 
 DROP TABLE IF EXISTS `mediadir`;
 CREATE TABLE `mediadir` (

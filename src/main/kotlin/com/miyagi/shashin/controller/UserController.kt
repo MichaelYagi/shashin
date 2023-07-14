@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
+import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
@@ -67,6 +68,9 @@ class UserController {
 
     @Autowired
     var userRepository: UserRepository? = null
+
+    @Autowired
+    var persistentLoginsRepository: PersistentLoginsRepository? = null
 
     @Autowired
     private lateinit var notificationRepository: NotificationRepository
@@ -402,6 +406,7 @@ class UserController {
             if (user != null) {
                 user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
+                persistentLoginsRepository?.deleteByUsername(user.getUsername()!!)
             }
         }
 
