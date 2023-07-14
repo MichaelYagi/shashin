@@ -20,11 +20,14 @@ import org.springframework.security.core.session.SessionRegistryImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
 import javax.sql.DataSource
+
 
 @EnableGlobalMethodSecurity(securedEnabled = true)
 class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
@@ -73,7 +76,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "/settings/scanmessage",
             "/dashboard/statmessages",
             "/dashboard/statmessage",
-            "/api/v1/thumbnails/**",
+            "/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**",
             "/image/**",
             "/video/**"
         )
@@ -130,6 +133,12 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Autowired
         private val apiAccessDeniedHandler: ApiAccessDeniedHandler? = null
 
+        @Value("\${app.role.admin}")
+        private var adminRole: String? = null
+
+        @Value("\${app.role.user}")
+        private var userRole: String? = null
+
         @Bean
         fun passwordApiEncoder(): PasswordEncoder? {
             return BCryptPasswordEncoder()
@@ -154,7 +163,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-                .antMatcher("/api/**")
+                .antMatcher("/api/v1/**")
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()
@@ -164,7 +173,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         }
 
         override fun configure(web: WebSecurity) {
-            web.ignoring().antMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**", "/api/v1/profile/**")
+            web.ignoring().antMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**")
         }
     }
 
@@ -261,7 +270,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .logout()
                 .deleteCookies("JSESSIONID")
                 .and()
-                .rememberMe().key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!)
+                .rememberMe()
+                .tokenRepository(persistentTokenRepository()) // Persistent Token
+                //.key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Cookie based
                 .and()
                 .csrf().disable()
                 .httpBasic()
@@ -277,6 +288,13 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         }
 
         @Bean
+        fun persistentTokenRepository(): PersistentTokenRepository? {
+            val tokenRepo = JdbcTokenRepositoryImpl()
+            tokenRepo.setDataSource(dataSource!!)
+            return tokenRepo
+        }
+
+        @Bean
         fun allowUrlEncodedSlashHttpFirewall(): HttpFirewall {
             val firewall = StrictHttpFirewall()
             firewall.setAllowUrlEncodedPercent(true)
@@ -289,6 +307,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         override fun configure(web: WebSecurity) {
             super.configure(web)
             web.httpFirewall(allowUrlEncodedSlashHttpFirewall())
+                //.ignoring().antMatchers("/api/v1/**")
         }
     }
 }
