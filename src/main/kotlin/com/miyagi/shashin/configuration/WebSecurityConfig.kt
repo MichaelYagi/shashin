@@ -271,7 +271,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .deleteCookies("JSESSIONID")
                 .and()
                 .rememberMe()
-                .tokenRepository(persistentTokenRepository()) // Persistent Token
+                .tokenRepository(persistentTokenRepository()).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
                 //.key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Cookie based
                 .and()
                 .csrf().disable()

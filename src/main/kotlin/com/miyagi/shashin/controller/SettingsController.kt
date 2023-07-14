@@ -588,6 +588,22 @@ class SettingsController {
             val deleteFlag = userDeleteMap["delete"].toString().toBoolean()
 
             if (deleteFlag && userId == userIdRequest) {
+                // Delete profile picture
+                val user = userRepository?.findById(userId)
+                if (user != null && user.isPresent) {
+                    val profileImage =
+                        if (user.get().getProfile() == null) "" else user.get().getProfile()!!.replace("/api/v1/profile/", "")
+                    if (profileImage.isNotEmpty()) {
+                        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                        val sidecarDir = rootPath + relativeSidecarDir
+                        val profileDirectory = sidecarDir.dropLast(1) + "/profile"
+                        val profileFileStr = "$profileDirectory/$profileImage"
+                        if (File(profileFileStr).exists()) {
+                            File(profileFileStr).delete()
+                        }
+                    }
+                }
+
                 userRepository?.deleteById(userId)
                 userAlbumRepository?.deleteByUserId(userId)
                 favoriteRepository?.deleteByUserId(userId)

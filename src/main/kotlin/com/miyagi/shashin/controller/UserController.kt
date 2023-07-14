@@ -445,41 +445,6 @@ class UserController {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/users/delete"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
-    @ResponseBody
-    @Secured("ROLE_ADMIN")
-    fun deleteUser(model: Model, @ModelAttribute user: @Valid User?): String? {
-        resp["status"] = ApiResponse.FAIL.status
-
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-
-            val users: List<User?> = userRepository?.findAll() as List<User?>
-            for (other in users) {
-                if (other != null && user != null) {
-                    if (other.equals(user)) {
-                        userRepository?.delete(user)
-
-                        resp["msg"] = "Deleted user " + user.getUsername()
-                        resp["status"] = ApiResponse.SUCCESS.status
-                        return mapper.writeValueAsString(resp)
-                    }
-                }
-            }
-
-            resp["msg"] = "Could not delete user"
-            if (user != null) {
-                resp["msg"] = "Could not delete user " + user.getUsername()
-            }
-            resp["status"] = ApiResponse.FAIL.status
-        }
-        return mapper.writeValueAsString(resp)
-    }
-
-    private fun md5(input:String): String {
-        val md = MessageDigest.getInstance("MD5")
-        return BigInteger(1, md.digest(input.toByteArray())).toString(16).padStart(32, '0')
-    }
-
     @RouterOperation(
         operation =
         Operation(
