@@ -18,11 +18,14 @@ import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?) : LoginUrlAuthenticationEntryPoint(loginFormUrl) {
+class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, apiVersion: String?) : LoginUrlAuthenticationEntryPoint(loginFormUrl) {
 
-    @Value("\${app.api.version}")
-    private lateinit var apiVersion: String
+    private var apiVersion: String?
 
+    init {
+        this.apiVersion = apiVersion
+    }
+    
     @Throws(IOException::class, ServletException::class)
     override fun commence(
         request: HttpServletRequest,
