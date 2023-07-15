@@ -143,8 +143,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                             rememberMeServices.setTokenValiditySeconds(3600)
                             rememberMeServices.loginSuccess(request, response, authentication)
                         }
-
-
                     }
 
                     if (uriPath.isNotEmpty()) {

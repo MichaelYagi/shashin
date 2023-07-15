@@ -210,6 +210,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Value("\${app.rememberme.expiration.seconds}")
         private var expirationSeconds: Int? = null
 
+        @Value("\${app.rememberme.key}")
+        private var rememberMeKey: String? = null
+
         @Autowired
         @Throws(java.lang.Exception::class)
         fun configAuthentication(auth: AuthenticationManagerBuilder) {
@@ -278,14 +281,13 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .failureHandler(authFailureHandler)
                 .permitAll()
                 .and()
+                .rememberMe()
+                .tokenRepository(persistentTokenRepository()).key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
+                .and()
                 .logout()
                 .invalidateHttpSession(true)
+                .clearAuthentication(true)
                 .deleteCookies("JSESSIONID","remember-me")
-                .and()
-                .rememberMe().rememberMeParameter("remember-me")
-                //.rememberMeServices(rememberMeServices()).key(rememberMeKey)
-                .tokenRepository(persistentTokenRepository()).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
-                //.key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Cookie based
                 .and()
                 .csrf().disable()
                 .httpBasic()
