@@ -204,6 +204,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Value("\${app.role.user}")
         private var userRole: String? = null
 
+        @Value("\${app.api.version}")
+        private val apiVersion: String? = null
+
         @Autowired
         @Throws(java.lang.Exception::class)
         fun configAuthentication(auth: AuthenticationManagerBuilder) {
@@ -285,7 +288,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .httpBasic()
 
             http.exceptionHandling()
-                .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login"))
+                .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login", apiVersion))
 
             http.sessionManagement()
                 .maximumSessions(100)
