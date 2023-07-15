@@ -207,6 +207,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Value("\${app.api.version}")
         private val apiVersion: String? = null
 
+        @Value("\${app.rememberme.expiration.seconds}")
+        private var expirationSeconds: Int? = null
+
         @Autowired
         @Throws(java.lang.Exception::class)
         fun configAuthentication(auth: AuthenticationManagerBuilder) {
@@ -271,17 +274,17 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .and()
                 .formLogin()
                 .loginPage("/users/login")
-                .successHandler(authSuccessHandler?.setPersistentTokenRepository(persistentTokenRepository())) // Set remember me cookie on successful login
+                .successHandler(authSuccessHandler) // Set remember me cookie on successful login
                 .failureHandler(authFailureHandler)
                 .permitAll()
                 .and()
                 .logout()
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID","remember-me-shashin")
-                //.and()
-                //.rememberMe()
+                .and()
+                .rememberMe()
                 //.rememberMeServices(rememberMeServices()).key(rememberMeKey)
-                //.tokenRepository(persistentTokenRepository()).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
+                .tokenRepository(persistentTokenRepository()).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
                 //.key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Cookie based
                 .and()
                 .csrf().disable()
