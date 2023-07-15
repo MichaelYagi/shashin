@@ -7,15 +7,20 @@ import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.service.CustomUserDetailsService
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Component
 import java.io.IOException
 import java.net.URI
@@ -29,10 +34,12 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import javax.sql.DataSource
 
 
 @Component
 class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
+
     private val redirectStrategy = DefaultRedirectStrategy()
 
     @Value("\${app.role.admin}")
@@ -44,11 +51,31 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     @Value("\${app.build.properties.version}")
     private val appVersion: String? = null
 
+    @Value("\${app.rememberme.key}")
+    private var rememberMeKey: String? = null
+
+    @Value("\${app.rememberme.expiration.seconds}")
+    private var expirationSeconds: Int? = null
+
+    @Autowired
+    private val dataSource: DataSource? = null
+
     @Autowired
     var userRepository: UserRepository? = null
 
     @Autowired
     var notificationRepository: NotificationRepository? = null
+
+    @Autowired
+    var customUserDetailsService: CustomUserDetailsService? = null
+
+    private var persistentTokenRepository: PersistentTokenRepository? = null
+
+    fun setPersistentTokenRepository(persistentTokenRepository: PersistentTokenRepository?): AuthSuccessHandler {
+        this.persistentTokenRepository = persistentTokenRepository
+
+        return this
+    }
 
     @Throws(IOException::class)
     override fun handle(request: HttpServletRequest?, response: HttpServletResponse?, authentication: Authentication?) {
@@ -100,6 +127,19 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         notifyLogin(user)
 //                        checkLatestAppVersion(user)
                     }
+
+                    val rememberMeServices =
+                        PersistentTokenBasedRememberMeServices(rememberMeKey, customUserDetailsService, this.persistentTokenRepository)
+                    rememberMeServices.setAlwaysRemember(true)
+                    rememberMeServices.setCookieName("remember-me-shashin")
+                    if (request.getParameter(rememberMeServices.parameter) == "on") {
+                        rememberMeServices.setTokenValiditySeconds(expirationSeconds!!)
+                    } else {
+                        // 1 Hour
+                        rememberMeServices.setTokenValiditySeconds(3600)
+                    }
+
+                    rememberMeServices.loginSuccess(request, response, authentication)
 
                     if (uriPath.isNotEmpty()) {
                         redirectStrategy.sendRedirect(request, response, uriPath)
@@ -212,5 +252,4 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
             }
         }
     }
-
 }

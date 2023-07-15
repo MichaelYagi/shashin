@@ -228,7 +228,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 SecurityContextHolder.clearContext()
                 val session = request.getSession(true)
                 session?.invalidate()
-                val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
+                val cookie = Cookie("remember-me-shashin", null) // Not necessary, but saves bandwidth.
                 cookie.path = "/"
                 cookie.isHttpOnly = true
                 cookie.maxAge = 0
@@ -245,7 +245,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
 //            } else {
 //                val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
 //                model["currentUser"] = User()
-//                val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
+//                val cookie = Cookie("remember-me-shashin", null) // Not necessary, but saves bandwidth.
 //                cookie.path = "/"
 //                cookie.isHttpOnly = true
 //                cookie.maxAge = 0
