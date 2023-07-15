@@ -417,7 +417,7 @@ class UserController {
         httpsession.invalidate()
         SecurityContextHolder.clearContext()
 
-        val cookie = Cookie("remember-me-shashin", null) // Not necessary, but saves bandwidth.
+        val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
         cookie.path = "/"
         cookie.isHttpOnly = true
         cookie.maxAge = 0

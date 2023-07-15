@@ -135,16 +135,16 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                                 customUserDetailsService,
                                 this.persistentTokenRepository
                             )
-                        rememberMeServices.setAlwaysRemember(true)
-                        rememberMeServices.setCookieName("remember-me-shashin")
-                        if (request.getParameter(rememberMeServices.parameter) == "on") {
-                            rememberMeServices.setTokenValiditySeconds(expirationSeconds!!)
-                        } else {
+
+                        if (request.getParameter(rememberMeServices.parameter) != "on") {
+                            rememberMeServices.setAlwaysRemember(true)
+                            rememberMeServices.setCookieName("remember-me")
                             // 1 Hour
                             rememberMeServices.setTokenValiditySeconds(3600)
+                            rememberMeServices.loginSuccess(request, response, authentication)
                         }
 
-                        rememberMeServices.loginSuccess(request, response, authentication)
+
                     }
 
                     if (uriPath.isNotEmpty()) {
