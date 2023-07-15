@@ -408,7 +408,7 @@ class UserController {
             if (user != null) {
                 user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
-
+// TODO: delete expired tokens
 //                persistentLoginsRepository?.deleteByUsername(user.getUsername()!!)
             }
         }
