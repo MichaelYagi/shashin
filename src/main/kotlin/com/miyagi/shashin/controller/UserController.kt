@@ -409,7 +409,7 @@ class UserController {
                 user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
 
-                persistentLoginsRepository?.deleteByUsername(user.getUsername()!!)
+//                persistentLoginsRepository?.deleteByUsername(user.getUsername()!!)
             }
         }
 
