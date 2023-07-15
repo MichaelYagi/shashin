@@ -282,7 +282,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .permitAll()
                 .and()
                 .rememberMe()
-                .tokenRepository(persistentTokenRepository()).key(rememberMeKey).tokenValiditySeconds(/*expirationSeconds!!*/5) // Persistent Token
+                .tokenRepository(persistentTokenRepository()).key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
                 .and()
                 .logout()
                 .logoutUrl("/users/logout")

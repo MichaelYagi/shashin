@@ -409,11 +409,7 @@ class UserController {
                 user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
 
-                println("test")
-                for (headerName in request.headerNames) {
-                    println(request.getHeader(headerName))
-                }
-// TODO: delete expired tokens
+// TODO: delete expired tokens when token expired
 //                persistentLoginsRepository?.deleteByUsername(user.getUsername()!!)
             }
         }
