@@ -128,18 +128,24 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 //                        checkLatestAppVersion(user)
                     }
 
-                    val rememberMeServices =
-                        PersistentTokenBasedRememberMeServices(rememberMeKey, customUserDetailsService, this.persistentTokenRepository)
-                    rememberMeServices.setAlwaysRemember(true)
-                    rememberMeServices.setCookieName("remember-me-shashin")
-                    if (request.getParameter(rememberMeServices.parameter) == "on") {
-                        rememberMeServices.setTokenValiditySeconds(expirationSeconds!!)
-                    } else {
-                        // 1 Hour
-                        rememberMeServices.setTokenValiditySeconds(3600)
-                    }
+                    if (this.persistentTokenRepository != null) {
+                        val rememberMeServices =
+                            PersistentTokenBasedRememberMeServices(
+                                rememberMeKey,
+                                customUserDetailsService,
+                                this.persistentTokenRepository
+                            )
+                        rememberMeServices.setAlwaysRemember(true)
+                        rememberMeServices.setCookieName("remember-me-shashin")
+                        if (request.getParameter(rememberMeServices.parameter) == "on") {
+                            rememberMeServices.setTokenValiditySeconds(expirationSeconds!!)
+                        } else {
+                            // 1 Hour
+                            rememberMeServices.setTokenValiditySeconds(3600)
+                        }
 
-                    rememberMeServices.loginSuccess(request, response, authentication)
+                        rememberMeServices.loginSuccess(request, response, authentication)
+                    }
 
                     if (uriPath.isNotEmpty()) {
                         redirectStrategy.sendRedirect(request, response, uriPath)
