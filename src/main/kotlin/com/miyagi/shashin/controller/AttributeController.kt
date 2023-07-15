@@ -228,7 +228,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 SecurityContextHolder.clearContext()
                 val session = request.getSession(true)
                 session?.invalidate()
-                val cookie = Cookie("remember-me-shashin", null) // Not necessary, but saves bandwidth.
+                val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
                 cookie.path = "/"
                 cookie.isHttpOnly = true
                 cookie.maxAge = 0
