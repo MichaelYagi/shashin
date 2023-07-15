@@ -2,6 +2,7 @@ package com.miyagi.shashin.configuration
 
 import com.miyagi.shashin.component.*
 import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.service.CustomUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
@@ -17,15 +18,19 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.core.session.SessionRegistry
 import org.springframework.security.core.session.SessionRegistryImpl
+import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
+import javax.servlet.http.HttpServletRequest
 import javax.sql.DataSource
 
 
@@ -185,6 +190,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         private val dataSource: DataSource? = null
 
         @Autowired
+        private var userDetailsService: UserDetailsService? = null
+
+        @Autowired
         private val authFailureHandler: AuthFailureHandler? = null
 
         @Autowired
@@ -196,14 +204,11 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Value("\${app.role.user}")
         private var userRole: String? = null
 
-        @Value("\${app.rememberme.key}")
-        private var rememberMeKey: String? = null
-
-        @Value("\${app.rememberme.expiration.seconds}")
-        private var expirationSeconds: Int? = null
-
-        @Value("\${app.api.version}")
-        private lateinit var apiVersion: String
+        @Autowired
+        @Throws(java.lang.Exception::class)
+        fun configAuthentication(auth: AuthenticationManagerBuilder) {
+            auth.userDetailsService(userDetailsService)
+        }
 
         @Bean
         fun passwordEncoder(): PasswordEncoder? {
@@ -263,22 +268,24 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .and()
                 .formLogin()
                 .loginPage("/users/login")
-                .successHandler(authSuccessHandler)
+                .successHandler(authSuccessHandler?.setPersistentTokenRepository(persistentTokenRepository())) // Set remember me cookie on successful login
                 .failureHandler(authFailureHandler)
                 .permitAll()
                 .and()
                 .logout()
-                .deleteCookies("JSESSIONID")
-                .and()
-                .rememberMe()
-                .tokenRepository(persistentTokenRepository()).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID","remember-me-shashin")
+                //.and()
+                //.rememberMe()
+                //.rememberMeServices(rememberMeServices()).key(rememberMeKey)
+                //.tokenRepository(persistentTokenRepository()).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
                 //.key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Cookie based
                 .and()
                 .csrf().disable()
                 .httpBasic()
 
             http.exceptionHandling()
-                .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login", apiVersion))
+                .authenticationEntryPoint(AjaxAwareAuthenticationEntryPoint("/users/login"))
 
             http.sessionManagement()
                 .maximumSessions(100)
@@ -307,7 +314,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         override fun configure(web: WebSecurity) {
             super.configure(web)
             web.httpFirewall(allowUrlEncodedSlashHttpFirewall())
-                //.ignoring().antMatchers("/api/v1/**")
         }
     }
 }

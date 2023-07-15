@@ -19,6 +19,7 @@ import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
+import org.springframework.http.HttpRequest
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.authentication.AuthenticationManager
@@ -43,6 +44,7 @@ import java.util.logging.Logger
 import javax.annotation.Resource
 import javax.imageio.ImageIO
 import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.validation.Valid
@@ -392,12 +394,12 @@ class UserController {
     }
 
     @GetMapping("/users/logout")
-    fun logUserOut(httpsession: HttpSession, status: SessionStatus, response: HttpServletResponse): String {
-        logoutProcedure(httpsession, status, response)
+    fun logUserOut(httpsession: HttpSession, status: SessionStatus, request: HttpServletRequest, response: HttpServletResponse): String {
+        logoutProcedure(httpsession, status, request, response)
         return "redirect:/users/login"
     }
 
-    private fun logoutProcedure(httpsession: HttpSession, status: SessionStatus, response: HttpServletResponse) {
+    private fun logoutProcedure(httpsession: HttpSession, status: SessionStatus, request: HttpServletRequest, response: HttpServletResponse) {
         val authentication = SecurityContextHolder.getContext().authentication
 
         if (!authentication.name.isNullOrBlank()) {
@@ -406,6 +408,7 @@ class UserController {
             if (user != null) {
                 user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
+
                 persistentLoginsRepository?.deleteByUsername(user.getUsername()!!)
             }
         }
@@ -414,7 +417,7 @@ class UserController {
         httpsession.invalidate()
         SecurityContextHolder.clearContext()
 
-        val cookie = Cookie("remember-me", null) // Not necessary, but saves bandwidth.
+        val cookie = Cookie("remember-me-shashin", null) // Not necessary, but saves bandwidth.
         cookie.path = "/"
         cookie.isHttpOnly = true
         cookie.maxAge = 0
