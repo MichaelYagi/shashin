@@ -169,7 +169,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         val persistentLoginsExpiryList = persistentLoginsExpiryRepository?.findAll()
         if (persistentLoginsExpiryList != null && persistentLoginsExpiryList.count() > 0) {
             for (persistentLoginsExpiryObj in persistentLoginsExpiryList) {
-                if (persistentLoginsExpiryObj != null && persistentLoginsExpiryObj.getExpiry()!!.toLong() > System.currentTimeMillis()) {
+                if (persistentLoginsExpiryObj != null && System.currentTimeMillis() > persistentLoginsExpiryObj.getExpiry()!!.toLong()) {
                     // delete entry in repos
                     persistentLoginsRepository?.deleteBySeries(persistentLoginsExpiryObj.getSeries().toString())
                     persistentLoginsExpiryRepository?.deleteBySeries(persistentLoginsExpiryObj.getSeries().toString())
