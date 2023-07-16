@@ -9,6 +9,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @Repository
 interface PersistentLoginsRepository : CrudRepository<PersistentLogins?, String?> {
-    fun deleteByUsername(username: String): Int
+    fun countPersistentLoginsBySeries(series: String): Int
     fun deleteBySeries(series: String): Int
 }

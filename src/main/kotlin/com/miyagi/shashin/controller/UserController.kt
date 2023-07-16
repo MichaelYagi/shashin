@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
+import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -13,13 +14,11 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
-import net.coobird.thumbnailator.Thumbnails
 import org.apache.commons.text.StringEscapeUtils
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.HttpRequest
 import org.springframework.http.MediaType
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.authentication.AuthenticationManager
@@ -34,8 +33,6 @@ import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.math.BigInteger
-import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
@@ -79,6 +76,8 @@ class UserController {
 
     @Resource(name = "authenticationManager")
     private val authManager: AuthenticationManager? = null
+    @Autowired
+    private lateinit var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository
 
     @GetMapping("/users/update")
     fun getUpdateUser(model: Model): String {
@@ -401,7 +400,6 @@ class UserController {
 
     private fun logoutProcedure(httpsession: HttpSession, status: SessionStatus, request: HttpServletRequest, response: HttpServletResponse) {
         val authentication = SecurityContextHolder.getContext().authentication
-
         if (!authentication.name.isNullOrBlank()) {
             val user = userRepository?.findByUsername(authentication.name)
 
@@ -409,8 +407,18 @@ class UserController {
                 user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
 
-// TODO: delete expired tokens when token expired
-//                persistentLoginsRepository?.deleteByUsername(user.getUsername()!!)
+                val persistentLoginsExpiryList = persistentLoginsExpiryRepository?.findAll()
+                if (persistentLoginsExpiryList != null && persistentLoginsExpiryList.count() > 0) {
+                    for (persistentLoginsExpiryObj in persistentLoginsExpiryList) {
+                        val series = persistentLoginsExpiryObj?.getSeries()
+                        if (series != null) {
+                            val persistentLoginsCount = persistentLoginsRepository?.countPersistentLoginsBySeries(series)
+                            if (persistentLoginsCount != null && persistentLoginsCount == 0) {
+                                persistentLoginsExpiryRepository.deleteBySeries(series)
+                            }
+                        }
+                    }
+                }
             }
         }
 
