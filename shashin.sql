@@ -139,6 +139,13 @@ CREATE TABLE `persistent_logins` (
      PRIMARY KEY (`series`)
  );
 
+DROP TABLE IF EXISTS `persistent_logins_expiry`;
+CREATE TABLE `persistent_logins_expiry` (
+    `series` VARCHAR(64) NOT NULL,
+    `expiry` TIMESTAMP NOT NULL,
+    FOREIGN KEY (`series`) REFERENCES persistent_logins(`series`)
+);
+
 DROP TABLE IF EXISTS `mediadir`;
 CREATE TABLE `mediadir` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
