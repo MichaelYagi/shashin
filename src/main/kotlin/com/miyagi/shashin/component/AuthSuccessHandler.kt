@@ -17,7 +17,6 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.env.Environment
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.DefaultRedirectStrategy
@@ -27,24 +26,17 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Component
 import java.io.IOException
-import java.net.InetAddress
-import java.net.NetworkInterface
 import java.net.URI
-import java.net.URLDecoder
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import javax.sql.DataSource
-import kotlin.collections.HashMap
 
 
 @Component
@@ -181,7 +173,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                             val persistentLoginsExpiry = PersistentLoginsExpiry()
                             persistentLoginsExpiry.setSeries(series)
                             persistentLoginsExpiry.setExpiry(System.currentTimeMillis()+(expiry.toLong()*1000))
-                            persistentLoginsExpiry.setHost(request.requestURL.toString())
+                            val uri = URI(request.requestURL.toString())
+                            val host = uri.host
+                            persistentLoginsExpiry.setHost(host)
                             persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
                         }
 
