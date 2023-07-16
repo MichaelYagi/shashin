@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -13,6 +15,7 @@ import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletResponse
+import kotlin.collections.HashMap
 
 
 @Component
@@ -21,7 +24,46 @@ class TextUtils {
 
         private var logger: Logger = Logger.getLogger(TextUtils::class.simpleName)
 
-        fun getCommonDateFormat(): String {
+        fun parseRememberMeCookie(cookie: String): HashMap<String,String> {
+            val seriesExpiryMap = HashMap<String,String>()
+            seriesExpiryMap["series"] = ""
+            seriesExpiryMap["expiry"] = ""
+
+            val cookieArray = cookie.split("; ")
+            for (keyValue in cookieArray) {
+                val keyValueArray = keyValue.split("=")
+                val key = keyValueArray[0]
+                var value = ""
+
+                if (keyValueArray.size > 1) {
+                    value = keyValueArray[1]
+                }
+
+                if (key.lowercase() == "remember-me" && value.isNotEmpty()) {
+                    seriesExpiryMap["series"] = decodePersistenceToken(value)
+                }
+
+                if (key.lowercase() == "max-age" && value.isNotEmpty()) {
+                    seriesExpiryMap["expiry"] = value
+                }
+            }
+
+            return seriesExpiryMap
+        }
+
+        fun decodePersistenceToken(token: String): String {
+            if (token.isNotBlank()) {
+                var decodedSeriesToken = String(Base64.getDecoder().decode(token))
+                decodedSeriesToken = URLDecoder.decode(decodedSeriesToken, StandardCharsets.UTF_8.toString())
+                val decodedSeriesTokenArray = decodedSeriesToken.split(":")
+                return decodedSeriesTokenArray[0]
+            }
+
+            return ""
+        }
+
+
+            fun getCommonDateFormat(): String {
             return "yyyy-MM-dd HH:mm:ss"
         }
 
