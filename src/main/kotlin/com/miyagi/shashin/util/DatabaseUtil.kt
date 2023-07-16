@@ -24,7 +24,7 @@ object DatabaseUtil {
                 }
 
                 var seriesDeleted = false
-                if (persistentLoginsExpiryObj != null && System.currentTimeMillis() > persistentLoginsExpiryObj.getExpiry()!!.toLong()) {
+                if (persistentLoginsExpiryObj != null && System.currentTimeMillis() > persistentLoginsExpiryObj.getExpiry()!!) {
                     // delete entry in repos
                     persistentLoginsRepository?.deleteBySeries(series.toString())
                     persistentLoginsExpiryRepository.deleteBySeries(series.toString())

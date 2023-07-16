@@ -10,7 +10,7 @@ class PersistentLoginsExpiry {
     @NotBlank
     private var series: String? = null
     @NotBlank
-    private var expiry: String? = null
+    private var expiry: Long? = null
     private var host: String? = null
 
     fun getSeries(): String? {
@@ -21,11 +21,11 @@ class PersistentLoginsExpiry {
         this.series = series
     }
 
-    fun getExpiry(): String? {
+    fun getExpiry(): Long? {
         return this.expiry
     }
 
-    fun setExpiry(expiry: String?) {
+    fun setExpiry(expiry: Long?) {
         this.expiry = expiry
     }
 

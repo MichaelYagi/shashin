@@ -14,7 +14,7 @@ class PersistentLogins {
     @NotBlank
     private var token: String? = null
     @NotBlank
-    private var lastUsed: String? = null
+    private var lastUsed: Long? = null
 
     fun getUsername(): String? {
         return this.username
@@ -40,11 +40,11 @@ class PersistentLogins {
         this.token = token
     }
 
-    fun getLastUsed(): String? {
+    fun getLastUsed(): Long? {
         return this.lastUsed
     }
 
-    fun setLastUsed(lastUsed: String?) {
+    fun setLastUsed(lastUsed: Long?) {
         this.lastUsed = lastUsed
     }
 }
