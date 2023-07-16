@@ -163,7 +163,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                                 val cookieArray = cookie.split("; ")
                                 for (keyValue in cookieArray) {
                                     val keyValueArray = keyValue.split("=")
-                                    var key = keyValueArray[0]
+                                    val key = keyValueArray[0]
                                     var value = ""
 
                                     if (keyValueArray.size > 1) {
