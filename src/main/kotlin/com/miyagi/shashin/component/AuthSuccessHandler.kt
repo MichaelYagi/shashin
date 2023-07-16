@@ -178,6 +178,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                             val persistentLoginsExpiry = PersistentLoginsExpiry()
                             persistentLoginsExpiry.setSeries(series)
                             persistentLoginsExpiry.setExpiry((System.currentTimeMillis()+(expiry.toLong()*1000)).toString())
+                            persistentLoginsExpiry.setHost(request.remoteHost)
                             persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
                         }
 
