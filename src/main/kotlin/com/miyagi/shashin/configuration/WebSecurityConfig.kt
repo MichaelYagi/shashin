@@ -286,7 +286,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                     .tokenValiditySeconds(expirationSeconds!!) // Persistent Token
             } else {
                 http
-                    .rememberMe().key(rememberMeKey).tokenValiditySeconds(3600)
+                    .rememberMe().key(rememberMeKey).tokenValiditySeconds(3600) // Use cookie based remember me for tests
             }
             http
                 .logout()
