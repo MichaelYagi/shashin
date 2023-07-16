@@ -285,7 +285,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .tokenRepository(persistentTokenRepository()).key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
                 .and()
                 .logout()
-                .logoutUrl("/users/logout")
+//                .logoutUrl("/users/logout")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID","remember-me")
