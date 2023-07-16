@@ -3,6 +3,8 @@ package com.miyagi.shashin.controller
 import com.miyagi.shashin.component.ApiError
 import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.model.User
+import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
+import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -55,6 +57,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
     @Autowired
     private var settingsRepository: SettingsRepository? = null
+
+    @Autowired
+    var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository? = null
+
+    @Autowired
+    var persistentLoginsRepository: PersistentLoginsRepository? = null
 
     @Autowired
     private var buildProperties: BuildProperties? = null
@@ -155,6 +163,17 @@ class AttributeController: ResponseEntityExceptionHandler() {
             val profile = environment.activeProfiles[0]
             if (profile != "prod") {
                 model["activeProfile"] = capitalize(profile)
+            }
+        }
+
+        val persistentLoginsExpiryList = persistentLoginsExpiryRepository?.findAll()
+        if (persistentLoginsExpiryList != null && persistentLoginsExpiryList.count() > 0) {
+            for (persistentLoginsExpiryObj in persistentLoginsExpiryList) {
+                if (persistentLoginsExpiryObj != null && persistentLoginsExpiryObj.getExpiry()!!.toLong() > System.currentTimeMillis()) {
+                    // delete entry in repos
+                    persistentLoginsRepository?.deleteBySeries(persistentLoginsExpiryObj.getSeries().toString())
+                    persistentLoginsExpiryRepository?.deleteBySeries(persistentLoginsExpiryObj.getSeries().toString())
+                }
             }
         }
 

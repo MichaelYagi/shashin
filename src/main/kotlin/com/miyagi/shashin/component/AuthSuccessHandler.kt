@@ -4,37 +4,43 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.Notification
+import com.miyagi.shashin.model.PersistentLoginsExpiry
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
+import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.service.CustomUserDetailsService
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.context.annotation.Bean
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.DefaultRedirectStrategy
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
-import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Component
 import java.io.IOException
+import java.net.InetAddress
+import java.net.NetworkInterface
 import java.net.URI
+import java.net.URLDecoder
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.sql.DataSource
+import kotlin.collections.HashMap
 
 
 @Component
@@ -68,6 +74,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     @Autowired
     var customUserDetailsService: CustomUserDetailsService? = null
+
+    @Autowired
+    var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository? = null
 
     private var persistentTokenRepository: PersistentTokenRepository? = null
 
@@ -142,6 +151,46 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                             // 1 Hour
                             rememberMeServices.setTokenValiditySeconds(3600)
                             rememberMeServices.loginSuccess(request, response, authentication)
+                        }
+                    }
+
+                    if (response != null) {
+                        var series = ""
+                        var expiry = ""
+
+                        for (cookie in response.getHeaders("Set-Cookie")) {
+                            if (cookie.contains("remember-me")) {
+                                val cookieArray = cookie.split("; ")
+                                for (keyValue in cookieArray) {
+                                    val keyValueArray = keyValue.split("=")
+                                    var key = keyValueArray[0]
+                                    var value = ""
+
+                                    if (keyValueArray.size > 1) {
+                                        value = keyValueArray[1]
+                                    }
+
+                                    if (key.lowercase() == "remember-me" && value.isNotEmpty()) {
+                                        var decodedSeriesToken = String(Base64.getDecoder().decode(value))
+                                        decodedSeriesToken = URLDecoder.decode(decodedSeriesToken, StandardCharsets.UTF_8.toString())
+                                        val decodedSeriesTokenArray = decodedSeriesToken.split(":")
+                                        series = decodedSeriesTokenArray[0]
+                                    }
+
+                                    if (key.lowercase() == "max-age" && value.isNotEmpty()) {
+                                        expiry = value
+                                    }
+                                }
+
+                                break
+                            }
+                        }
+
+                        if (series.isNotEmpty() && expiry.isNotEmpty()) {
+                            val persistentLoginsExpiry = PersistentLoginsExpiry()
+                            persistentLoginsExpiry.setSeries(series)
+                            persistentLoginsExpiry.setExpiry((System.currentTimeMillis()+(expiry.toLong()*1000)).toString())
+                            persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
                         }
                     }
 
