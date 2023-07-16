@@ -17,6 +17,7 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.env.Environment
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.DefaultRedirectStrategy
@@ -63,9 +64,6 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
 
-    @Value("\${app.env}")
-    private var environment: String? = null
-
     @Autowired
     var userRepository: UserRepository? = null
 
@@ -83,8 +81,16 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     private var persistentTokenRepository: PersistentTokenRepository? = null
 
+    private var profile: String? = null
+
     fun setPersistentTokenRepository(persistentTokenRepository: PersistentTokenRepository?): AuthSuccessHandler {
         this.persistentTokenRepository = persistentTokenRepository
+
+        return this
+    }
+
+    fun setProfile(profile: String?): AuthSuccessHandler {
+        this.profile = profile
 
         return this
     }
@@ -140,7 +146,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 //                        checkLatestAppVersion(user)
                     }
 
-                    if (environment != "test" && this.persistentTokenRepository != null) {
+                    if (this.profile != "test" && this.persistentTokenRepository != null) {
                         val rememberMeServices =
                             PersistentTokenBasedRememberMeServices(
                                 rememberMeKey,
