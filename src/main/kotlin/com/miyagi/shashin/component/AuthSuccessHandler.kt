@@ -8,8 +8,11 @@ import com.miyagi.shashin.model.PersistentLoginsExpiry
 import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.NotificationRepository
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
+import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.service.CustomUserDetailsService
+import com.miyagi.shashin.util.DatabaseUtil
+import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
@@ -74,6 +77,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     @Autowired
     var customUserDetailsService: CustomUserDetailsService? = null
+
+    @Autowired
+    var persistentLoginsRepository: PersistentLoginsRepository? = null
 
     @Autowired
     var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository? = null
@@ -160,27 +166,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
                         for (cookie in response.getHeaders("Set-Cookie")) {
                             if (cookie.contains("remember-me")) {
-                                val cookieArray = cookie.split("; ")
-                                for (keyValue in cookieArray) {
-                                    val keyValueArray = keyValue.split("=")
-                                    val key = keyValueArray[0]
-                                    var value = ""
-
-                                    if (keyValueArray.size > 1) {
-                                        value = keyValueArray[1]
-                                    }
-
-                                    if (key.lowercase() == "remember-me" && value.isNotEmpty()) {
-                                        var decodedSeriesToken = String(Base64.getDecoder().decode(value))
-                                        decodedSeriesToken = URLDecoder.decode(decodedSeriesToken, StandardCharsets.UTF_8.toString())
-                                        val decodedSeriesTokenArray = decodedSeriesToken.split(":")
-                                        series = decodedSeriesTokenArray[0]
-                                    }
-
-                                    if (key.lowercase() == "max-age" && value.isNotEmpty()) {
-                                        expiry = value
-                                    }
-                                }
+                                val seriesExpiryMap = TextUtils.parseRememberMeCookie(cookie)
+                                series = seriesExpiryMap["series"].toString()
+                                expiry = seriesExpiryMap["expiry"].toString()
 
                                 break
                             }
@@ -192,6 +180,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                             persistentLoginsExpiry.setExpiry((System.currentTimeMillis()+(expiry.toLong()*1000)).toString())
                             persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
                         }
+
+                        // Cleanup tasks
+                        DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
                     }
 
                     if (uriPath.isNotEmpty()) {

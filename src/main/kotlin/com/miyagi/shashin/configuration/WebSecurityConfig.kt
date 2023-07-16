@@ -2,7 +2,6 @@ package com.miyagi.shashin.configuration
 
 import com.miyagi.shashin.component.*
 import com.miyagi.shashin.repository.UserRepository
-import com.miyagi.shashin.service.CustomUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
@@ -22,15 +21,12 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
-import org.springframework.security.web.authentication.rememberme.AbstractRememberMeServices
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.security.web.firewall.HttpFirewall
 import org.springframework.security.web.firewall.StrictHttpFirewall
 import org.springframework.security.web.header.HeaderWriterFilter
 import org.springframework.security.web.session.HttpSessionEventPublisher
-import javax.servlet.http.HttpServletRequest
 import javax.sql.DataSource
 
 
@@ -285,7 +281,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .tokenRepository(persistentTokenRepository()).key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
                 .and()
                 .logout()
-//                .logoutUrl("/users/logout")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("JSESSIONID","remember-me")

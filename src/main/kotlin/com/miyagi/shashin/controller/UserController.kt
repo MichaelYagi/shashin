@@ -10,6 +10,7 @@ import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.DatabaseUtil
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -407,18 +408,19 @@ class UserController {
                 user.setModifiedAt(getCurrentTimestamp())
                 userRepository?.save(user)
 
-                val persistentLoginsExpiryList = persistentLoginsExpiryRepository?.findAll()
-                if (persistentLoginsExpiryList != null && persistentLoginsExpiryList.count() > 0) {
-                    for (persistentLoginsExpiryObj in persistentLoginsExpiryList) {
-                        val series = persistentLoginsExpiryObj?.getSeries()
-                        if (series != null) {
-                            val persistentLoginsCount = persistentLoginsRepository?.countPersistentLoginsBySeries(series)
-                            if (persistentLoginsCount != null && persistentLoginsCount == 0) {
-                                persistentLoginsExpiryRepository.deleteBySeries(series)
-                            }
+                for (cookie in request.cookies!!) {
+                    if (cookie.name.contains("remember-me")) {
+                        val series = TextUtils.decodePersistenceToken(cookie.value)
+                        if (series.isNotEmpty()) {
+                            persistentLoginsExpiryRepository.deleteBySeries(series)
+                            persistentLoginsRepository?.deleteBySeries(series)
                         }
+
+                        break
                     }
                 }
+
+                DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
             }
         }
 

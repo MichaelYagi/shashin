@@ -59,12 +59,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
     private var settingsRepository: SettingsRepository? = null
 
     @Autowired
-    var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository? = null
-
-    @Autowired
-    var persistentLoginsRepository: PersistentLoginsRepository? = null
-
-    @Autowired
     private var buildProperties: BuildProperties? = null
 
     @Value("\${app.sidecar.path}")
@@ -163,17 +157,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
             val profile = environment.activeProfiles[0]
             if (profile != "prod") {
                 model["activeProfile"] = capitalize(profile)
-            }
-        }
-
-        val persistentLoginsExpiryList = persistentLoginsExpiryRepository?.findAll()
-        if (persistentLoginsExpiryList != null && persistentLoginsExpiryList.count() > 0) {
-            for (persistentLoginsExpiryObj in persistentLoginsExpiryList) {
-                if (persistentLoginsExpiryObj != null && System.currentTimeMillis() > persistentLoginsExpiryObj.getExpiry()!!.toLong()) {
-                    // delete entry in repos
-                    persistentLoginsRepository?.deleteBySeries(persistentLoginsExpiryObj.getSeries().toString())
-                    persistentLoginsExpiryRepository?.deleteBySeries(persistentLoginsExpiryObj.getSeries().toString())
-                }
             }
         }
 
