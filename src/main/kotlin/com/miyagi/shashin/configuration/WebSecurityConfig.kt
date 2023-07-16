@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.ServletListenerRegistrationBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.annotation.Order
+import org.springframework.core.env.Environment
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
@@ -183,6 +184,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
     class WebSecurityConfig : WebSecurityConfigurerAdapter() {
 
         @Autowired
+        private val environment: Environment? = null
+
+        @Autowired
         private val dataSource: DataSource? = null
 
         @Autowired
@@ -208,9 +212,6 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
 
         @Value("\${app.rememberme.key}")
         private var rememberMeKey: String? = null
-
-        @Value("\${app.env}")
-        private var environment: String? = null
 
         @Autowired
         @Throws(java.lang.Exception::class)
@@ -255,6 +256,11 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
 
         @Throws(Exception::class)
         override fun configure(http: HttpSecurity) {
+            var profile = ""
+            if (environment != null && environment.activeProfiles.isNotEmpty()) {
+                profile = environment.activeProfiles[0]
+            }
+
             http
                 .addFilterBefore(CSPNonceFilter(), HeaderWriterFilter::class.java)
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
@@ -276,18 +282,21 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .and()
                 .formLogin()
                 .loginPage("/users/login")
-                .successHandler(authSuccessHandler?.setPersistentTokenRepository(persistentTokenRepository())) // Set remember me cookie on successful login
+                .successHandler(authSuccessHandler?.setPersistentTokenRepository(persistentTokenRepository())?.setProfile(profile)) // Set remember me cookie on successful login
                 .failureHandler(authFailureHandler)
                 .permitAll()
-            if (environment != "test") {
+
+            if (profile == "test") {
+                http
+                    .rememberMe().key(rememberMeKey)
+                    .tokenValiditySeconds(3600) // Use cookie based remember me for tests
+            } else {
                 http
                     .rememberMe()
                     .tokenRepository(persistentTokenRepository()).key(rememberMeKey)
                     .tokenValiditySeconds(expirationSeconds!!) // Persistent Token
-            } else {
-                http
-                    .rememberMe().key(rememberMeKey).tokenValiditySeconds(3600) // Use cookie based remember me for tests
             }
+
             http
                 .logout()
                 .invalidateHttpSession(true)
