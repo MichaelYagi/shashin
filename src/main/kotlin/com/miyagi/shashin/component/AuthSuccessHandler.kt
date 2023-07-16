@@ -63,11 +63,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
 
-    @Value("\${app.rememberme.expiration.seconds}")
-    private var expirationSeconds: Int? = null
-
-    @Autowired
-    private val dataSource: DataSource? = null
+    @Value("\${app.env}")
+    private var environment: String? = null
 
     @Autowired
     var userRepository: UserRepository? = null
@@ -143,7 +140,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 //                        checkLatestAppVersion(user)
                     }
 
-                    if (this.persistentTokenRepository != null) {
+                    if (environment != "test" && this.persistentTokenRepository != null) {
                         val rememberMeServices =
                             PersistentTokenBasedRememberMeServices(
                                 rememberMeKey,
@@ -177,7 +174,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         if (series.isNotEmpty() && expiry.isNotEmpty()) {
                             val persistentLoginsExpiry = PersistentLoginsExpiry()
                             persistentLoginsExpiry.setSeries(series)
-                            persistentLoginsExpiry.setExpiry((System.currentTimeMillis()+(expiry.toLong()*1000)).toString())
+                            persistentLoginsExpiry.setExpiry(System.currentTimeMillis()+(expiry.toLong()*1000))
                             persistentLoginsExpiry.setHost(request.remoteHost)
                             persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
                         }

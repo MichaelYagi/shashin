@@ -209,6 +209,9 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         @Value("\${app.rememberme.key}")
         private var rememberMeKey: String? = null
 
+        @Value("\${app.env}")
+        private var environment: String? = null
+
         @Autowired
         @Throws(java.lang.Exception::class)
         fun configAuthentication(auth: AuthenticationManagerBuilder) {
@@ -276,10 +279,16 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .successHandler(authSuccessHandler?.setPersistentTokenRepository(persistentTokenRepository())) // Set remember me cookie on successful login
                 .failureHandler(authFailureHandler)
                 .permitAll()
-                .and()
-                .rememberMe()
-                .tokenRepository(persistentTokenRepository()).key(rememberMeKey).tokenValiditySeconds(expirationSeconds!!) // Persistent Token
-                .and()
+            if (environment != "test") {
+                http
+                    .rememberMe()
+                    .tokenRepository(persistentTokenRepository()).key(rememberMeKey)
+                    .tokenValiditySeconds(expirationSeconds!!) // Persistent Token
+            } else {
+                http
+                    .rememberMe().key(rememberMeKey).tokenValiditySeconds(3600)
+            }
+            http
                 .logout()
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
