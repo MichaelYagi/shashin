@@ -176,6 +176,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                             val uri = URI(request.requestURL.toString())
                             val host = uri.host
                             persistentLoginsExpiry.setHost(host)
+                            val userAgent = request.getHeader("User-Agent")
+                            persistentLoginsExpiry.setUseragent(userAgent)
                             persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
                         }
 

@@ -40,22 +40,43 @@
 
             <br><th:block th:text="${'Using minified JS: '+@environment.getProperty('app.js.useMinified')}"></th:block><br><br>
 
-            <h2>API Endpoints</h2>
+            <h2>Persistent Tokens</h2>
 
-            <th:block th:each="endpoint, iterStat: ${apiEndpointsMap}">
-                <br><th:block th:utext="${'<strong>Path</strong>: '+endpoint.key}"></th:block>
-                <br><th:block th:utext="${'<strong>Method</strong>: '+endpoint.value}"></th:block>
+            <th:block th:each="persistentLoginsDetail, iterStat: ${persistentLoginsDetails}">
+                <br><th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>
+                <br><th:block th:utext="${'<strong>Series</strong>: '+persistentLoginsDetail.series}"></th:block>
+                <br><th:block th:utext="${'<strong>Token</strong>: '+persistentLoginsDetail.token}"></th:block>
+                <br><th:block th:utext="${'<strong>Expiry</strong>: '+persistentLoginsDetail.expiry}"></th:block>
+                <br><th:block th:utext="${'<strong>Host</strong>: '+persistentLoginsDetail.host}"></th:block>
+                <br><th:block th:utext="${'<strong>Useragent</strong>: '+persistentLoginsDetail.useragent}"></th:block>
                 <br>
             </th:block>
 
             <br><br>
-            <h2>Non API Endpoints</h2>
+            <h2>Decode Persistent Login Cookie</h2>
+            <input type="text" id="decodePersistentLogin" size="100">
+            <button type="button" id="decode">Decode</button><br>
+            <span id="decoded"></span>
 
-            <th:block th:each="endpoint, iterStat: ${nonApiEndpointsMap}">
-                <br><th:block th:utext="${'<strong>Path</strong>: '+endpoint.key}"></th:block>
-                <br><th:block th:utext="${'<strong>Method</strong>: '+endpoint.value}"></th:block>
-                <br>
-            </th:block>
+            <script type="text/javascript">
+                $(document).ready(function() {
+                    $("#decode").on("click", function (e) {
+                        e.preventDefault();
+                        $("#decoded").text("");
+
+                        const cookieVal = $("#decodePersistentLogin").val();
+                        if (cookieVal.length > 0) {
+                            let decodedSeriesToken = atob(cookieVal);
+
+                            decodedSeriesToken = decodeURIComponent(decodedSeriesToken)
+                            const decodedSeriesTokenArray = decodedSeriesToken.split(":")
+                            console.log(decodedSeriesTokenArray[0])
+                            $("#decoded").text(decodedSeriesTokenArray[0]+":"+decodedSeriesTokenArray[1]);
+                        }
+                    });
+
+                });
+            </script>
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>

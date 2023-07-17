@@ -1,6 +1,8 @@
 package com.miyagi.shashin.controller
 
+import com.miyagi.shashin.model.PersistentLoginsDetails
 import com.miyagi.shashin.repository.MetadataRepository
+import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.util.FileUtils
 import com.sun.management.OperatingSystemMXBean
 import jdk.jfr.Description
@@ -36,6 +38,9 @@ class TestController {
     private lateinit var metaRepository: MetadataRepository
 
     @Autowired
+    private lateinit var persistentLoginsRepository: PersistentLoginsRepository
+
+    @Autowired
     private var buildProperties: BuildProperties? = null
 
     @Value("\${app.endpoint.url.geocode}")
@@ -46,31 +51,8 @@ class TestController {
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
         model["somevalue"] = "This is a test"
 
-
-
-
-        val applicationContext =
-            WebApplicationContextUtils.getRequiredWebApplicationContext(request.session.servletContext)
-        val requestMappingHandlerMapping = applicationContext
-            .getBean("requestMappingHandlerMapping", RequestMappingHandlerMapping::class.java)
-        val map = requestMappingHandlerMapping.handlerMethods
-        model["apiEndpointsMap"] = mutableMapOf<String, String>()
-        model["nonApiEndpointsMap"] = mutableMapOf<String, String>()
-        val apiMap = mutableMapOf<String, String>()
-        val nonApiMap = mutableMapOf<String, String>()
-
-        map.forEach { (key, value) ->
-            if (key.toString().contains("/api/v1/", ignoreCase = true) && !key.toString().contains("/docs/", ignoreCase = true)) {
-                apiMap[key.toString()] = key.toString()
-            } else {
-                nonApiMap[key.toString()] = value.toString()
-            }
-        }
-
-        model["apiEndpointsMap"] = apiMap
-        model["nonApiEndpointsMap"] = nonApiMap
-
-
+        val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
+        model["persistentLoginsDetails"] = persistentLoginsDetails as Any
 
 
         return "test"

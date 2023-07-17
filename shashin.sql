@@ -144,6 +144,7 @@ CREATE TABLE `persistent_logins_expiry` (
     `series` VARCHAR(64) NOT NULL,
     `expiry` INTEGER NOT NULL,
     `host` VARCHAR(3000),
+    `useragent` TEXT,
     FOREIGN KEY (`series`) REFERENCES persistent_logins(`series`)
 );
 

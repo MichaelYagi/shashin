@@ -12,6 +12,7 @@ class PersistentLoginsExpiry {
     @NotBlank
     private var expiry: Long? = null
     private var host: String? = null
+    private var useragent: String? = null
 
     fun getSeries(): String? {
         return this.series
@@ -35,5 +36,13 @@ class PersistentLoginsExpiry {
 
     fun setHost(host: String?) {
         this.host = host
+    }
+
+    fun getUseragent(): String? {
+        return this.useragent
+    }
+
+    fun setUseragent(useragent: String?) {
+        this.useragent = useragent
     }
 }
