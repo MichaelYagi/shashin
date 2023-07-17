@@ -82,6 +82,16 @@ class TestController {
         return FileSystemResource(path)
     }
 
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/rememberme"], method = [RequestMethod.GET])
+    fun getPersistentTokens(model: Model): String? {
+
+        val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
+        model["persistentLoginsDetails"] = persistentLoginsDetails as Any
+
+        return "rememberme"
+    }
+
     @GetMapping("/health")
     fun getHealth(model: Model): String {
 
