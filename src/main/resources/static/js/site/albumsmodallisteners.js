@@ -210,6 +210,10 @@
             const data = await http.ajax("get", "/notifications/markread/album/" + albumId);
         })
 
+        $("#propcommentalbums").on('hide.bs.modal', async function () {
+            $("#commentList").empty();
+        })
+
         $("#updateCommentAlbum").hide();
         $("#cancelEditCommentAlbum").hide();
 
