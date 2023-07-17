@@ -2,10 +2,13 @@ package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.*
+import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.util.ApiResponse
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
+import org.springframework.ui.set
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
@@ -18,6 +21,10 @@ import java.io.InputStreamReader
 @Controller
 @Secured("ROLE_ADMIN")
 class ToolsController {
+
+    @Autowired
+    private lateinit var persistentLoginsRepository: PersistentLoginsRepository
+
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
@@ -39,6 +46,16 @@ class ToolsController {
         response["message"] = "Success"
 
         return mapper.writeValueAsString(response)
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/tools/rememberme"], method = [RequestMethod.GET])
+    fun getPersistentTokens(model: Model): String? {
+
+        val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
+        model["persistentLoginsDetails"] = persistentLoginsDetails as Any
+
+        return "rememberme"
     }
 
     private fun compile(code: String?): String? {
