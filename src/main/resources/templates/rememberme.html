@@ -3,8 +3,6 @@
 <head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
 <body>
 
-<script type="text/babel" src="/js/site/test.js"></script>
-
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
 <div class="container-fluid">
@@ -38,7 +36,12 @@
                 </div>
             </div>
 
-            <br><th:block th:text="${'Using minified JS: '+@environment.getProperty('app.js.useMinified')}"></th:block><br><br>
+            <h2>Decode Persistent Login Cookie</h2>
+            <input type="text" id="decodePersistentLogin" size="100">
+            <button type="button" id="decode">Decode</button><br>
+            <span id="decoded"></span>
+
+            <br><br>
 
             <h2>Persistent Tokens</h2>
 
@@ -51,12 +54,6 @@
                 <br><th:block th:utext="${'<strong>Useragent</strong>: '+persistentLoginsDetail.useragent}"></th:block>
                 <br>
             </th:block>
-
-            <br><br>
-            <h2>Decode Persistent Login Cookie</h2>
-            <input type="text" id="decodePersistentLogin" size="100">
-            <button type="button" id="decode">Decode</button><br>
-            <span id="decoded"></span>
 
             <script type="text/javascript">
                 $(document).ready(function() {
