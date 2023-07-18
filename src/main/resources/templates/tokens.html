@@ -45,6 +45,8 @@
 
             <h2>Persistent Tokens</h2>
 
+            <p>Current time: <span id="currentTime" th:utext="${currentTimeMS}"></span> - <span id="currentTimeLocal"></span></p>
+
             <th:block th:each="persistentLoginsDetail, iterStat: ${persistentLoginsDetails}">
                 <br><th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>
                 <br><th:block th:utext="${'<strong>Series</strong>: '+persistentLoginsDetail.series}"></th:block>
@@ -85,6 +87,10 @@
                         }
                     });
 
+                    const currentTime = parseInt($("#currentTime").text());
+                    const currentDateLocal = new Date(currentTime).toLocaleDateString("en-US");
+                    const currentTimeLocal = new Date(currentTime).toLocaleTimeString("en-US");
+                    $("#currentTimeLocal").text(currentDateLocal + ' ' + currentTimeLocal);
                 });
             </script>
 
