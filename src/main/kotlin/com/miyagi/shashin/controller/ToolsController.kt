@@ -49,13 +49,13 @@ class ToolsController {
     }
 
     @Secured("ROLE_ADMIN")
-    @RequestMapping(value = ["/tools/rememberme"], method = [RequestMethod.GET])
+    @RequestMapping(value = ["/tools/tokens"], method = [RequestMethod.GET])
     fun getPersistentTokens(model: Model): String? {
 
         val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
         model["persistentLoginsDetails"] = persistentLoginsDetails as Any
 
-        return "rememberme"
+        return "tokens"
     }
 
     private fun compile(code: String?): String? {
