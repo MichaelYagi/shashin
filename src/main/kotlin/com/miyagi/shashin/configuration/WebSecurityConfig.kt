@@ -276,7 +276,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .and()
                 .formLogin()
                 .loginPage("/users/login")
-                .successHandler(authSuccessHandler/*?.setPersistentTokenRepository(persistentTokenRepository())?.setProfile(profile)*/) // Set remember me cookie on successful login
+                .successHandler(authSuccessHandler?.setPersistentTokenRepository(persistentTokenRepository())?.setProfile(profile)) // Set remember me cookie on successful login
                 .failureHandler(authFailureHandler)
                 .permitAll()
 
