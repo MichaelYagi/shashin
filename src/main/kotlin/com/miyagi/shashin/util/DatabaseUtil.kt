@@ -11,11 +11,11 @@ import java.time.format.DateTimeFormatter
 
 object DatabaseUtil {
     fun cleanupPersistence(persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository?, persistentLoginsRepository: PersistentLoginsRepository?) {
-        // Cleanup tasks
         val persistentLoginsExpiryList = persistentLoginsExpiryRepository?.findAll()
         if (persistentLoginsExpiryList != null && persistentLoginsExpiryList.count() > 0) {
             for (persistentLoginsExpiryObj in persistentLoginsExpiryList) {
                 val series = persistentLoginsExpiryObj?.getSeries()
+
                 if (series != null) {
                     val persistentLoginsCount = persistentLoginsRepository?.countPersistentLoginsBySeries(series)
                     if (persistentLoginsCount != null && persistentLoginsCount == 0) {

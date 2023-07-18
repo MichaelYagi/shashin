@@ -62,8 +62,18 @@ class TextUtils {
             return ""
         }
 
+        fun decodePersistenceSeries(token: String): String {
+            if (token.isNotBlank()) {
+                var decodedSeriesToken = String(Base64.getDecoder().decode(token))
+                decodedSeriesToken = URLDecoder.decode(decodedSeriesToken, StandardCharsets.UTF_8.toString())
+                val decodedSeriesTokenArray = decodedSeriesToken.split(":")
+                return decodedSeriesTokenArray[1]
+            }
 
-            fun getCommonDateFormat(): String {
+            return ""
+        }
+
+        fun getCommonDateFormat(): String {
             return "yyyy-MM-dd HH:mm:ss"
         }
 

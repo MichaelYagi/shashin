@@ -12,4 +12,6 @@ import org.springframework.transaction.annotation.Transactional
 @Repository
 interface PersistentLoginsExpiryRepository : CrudRepository<PersistentLoginsExpiry?, String?> {
     fun deleteBySeries(series: String): Long
+
+    fun countPersistentLoginsExpiryBySeries(series: String): Int
 }
