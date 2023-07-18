@@ -401,7 +401,7 @@ class UserController {
 
     private fun logoutProcedure(httpsession: HttpSession, status: SessionStatus, request: HttpServletRequest, response: HttpServletResponse) {
         val authentication = SecurityContextHolder.getContext().authentication
-        if (!authentication.name.isNullOrBlank()) {
+        if (authentication != null && !authentication.name.isNullOrBlank()) {
             val user = userRepository?.findByUsername(authentication.name)
 
             if (user != null) {
