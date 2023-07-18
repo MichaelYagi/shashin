@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.google.javascript.jscomp.*
 import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.io.ClassPathResource
 import org.springframework.security.access.annotation.Secured
@@ -17,6 +18,8 @@ import java.io.BufferedReader
 import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStreamReader
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 
 @Controller
@@ -94,11 +97,20 @@ class ToolsController {
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/tools/tokens"], method = [RequestMethod.GET])
-    fun getPersistentTokens(model: Model): String? {
+    fun getPersistentTokens(model: Model, request: HttpServletRequest, response: HttpServletResponse): String? {
+        var currentRememberMeToken = ""
+        for (cookie in request.cookies!!) {
+            if (cookie.name.contains("remember-me")) {
+                currentRememberMeToken = cookie.value
+
+                break
+            }
+        }
 
         val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
         model["persistentLoginsDetails"] = persistentLoginsDetails as Any
         model["currentTimeMS"] = System.currentTimeMillis()
+        model["currentRememberMeToken"] = currentRememberMeToken
 
         return "tokens"
     }
