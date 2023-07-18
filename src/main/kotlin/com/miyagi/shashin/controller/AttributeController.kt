@@ -229,7 +229,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             val authorities = authentication.authorities as Collection<GrantedAuthority>
             model["username"] = authentication.name
 
-            //println("Session: "+securityContext.authentication.name)
+//            println("Session: "+authentication.name)
 
             for (authority in authorities) {
                 model["authority"] = authority.authority
@@ -257,16 +257,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 }
                 model["currentUser"] = currentUser
             }
-//            } else {
-//                val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
-//                model["currentUser"] = User()
-//                val cookie = Cookie("remember-me-shashin", null) // Not necessary, but saves bandwidth.
-//                cookie.path = "/"
-//                cookie.isHttpOnly = true
-//                cookie.maxAge = 0
-//                response.addCookie(cookie)
-//                logger.log(Level.INFO, "Not logged in. Authentication is null")
-//            }
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
 

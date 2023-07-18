@@ -125,59 +125,59 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
         )
     }
 
-    @Configuration
-    @Order(1)
-    class ApiSecurityConfig : WebSecurityConfigurerAdapter() {
-
-        @Autowired
-        private val userRepository: UserRepository? = null
-
-        @Autowired
-        private val apiAccessDeniedHandler: ApiAccessDeniedHandler? = null
-
-        @Value("\${app.role.admin}")
-        private var adminRole: String? = null
-
-        @Value("\${app.role.user}")
-        private var userRole: String? = null
-
-        @Bean
-        fun passwordApiEncoder(): PasswordEncoder? {
-            return BCryptPasswordEncoder()
-        }
-
-        @Throws(java.lang.Exception::class)
-        override fun configure(auth: AuthenticationManagerBuilder) {
-//        auth
-//            .jdbcAuthentication()
-//            .dataSource(dataSource)
-//            .passwordEncoder(passwordApiEncoder())
-//            .usersByUsernameQuery(
-//                "SELECT username, password, TRUE from user where apikey = ?")
-//            .authoritiesByUsernameQuery(
-//                "SELECT username, authority from user where apikey = ?")
-        }
-
-        @Throws(Exception::class)
-        override fun configure(http: HttpSecurity) {
-            http
-                .csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-                .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
-                .antMatcher("/api/v1/**")
-                .authorizeRequests()
-                .anyRequest()
-                .authenticated()
-                .and()
-                .exceptionHandling()
-                .accessDeniedHandler(apiAccessDeniedHandler)
-        }
-
-        override fun configure(web: WebSecurity) {
-            web.ignoring().antMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**")
-        }
-    }
+//    @Configuration
+//    @Order(1)
+//    class ApiSecurityConfig : WebSecurityConfigurerAdapter() {
+//
+//        @Autowired
+//        private val userRepository: UserRepository? = null
+//
+//        @Autowired
+//        private val apiAccessDeniedHandler: ApiAccessDeniedHandler? = null
+//
+//        @Value("\${app.role.admin}")
+//        private var adminRole: String? = null
+//
+//        @Value("\${app.role.user}")
+//        private var userRole: String? = null
+//
+//        @Bean
+//        fun passwordApiEncoder(): PasswordEncoder? {
+//            return BCryptPasswordEncoder()
+//        }
+//
+//        @Throws(java.lang.Exception::class)
+//        override fun configure(auth: AuthenticationManagerBuilder) {
+////        auth
+////            .jdbcAuthentication()
+////            .dataSource(dataSource)
+////            .passwordEncoder(passwordApiEncoder())
+////            .usersByUsernameQuery(
+////                "SELECT username, password, TRUE from user where apikey = ?")
+////            .authoritiesByUsernameQuery(
+////                "SELECT username, authority from user where apikey = ?")
+//        }
+//
+//        @Throws(Exception::class)
+//        override fun configure(http: HttpSecurity) {
+//            http
+//                .csrf().disable()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                .and()
+//                .addFilterBefore(AuthenticationFilter(userRepository), UsernamePasswordAuthenticationFilter::class.java)
+//                .antMatcher("/api/v1/**")
+//                .authorizeRequests()
+//                .anyRequest()
+//                .authenticated()
+//                .and()
+//                .exceptionHandling()
+//                .accessDeniedHandler(apiAccessDeniedHandler)
+//        }
+//
+//        override fun configure(web: WebSecurity) {
+//            web.ignoring().antMatchers("/api/v1/thumbnails/**","/api/v1/image/**","/api/v1/video/**","/api/v1/profile/**")
+//        }
+//    }
 
     @Configuration
     @Order(2)
@@ -301,7 +301,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .logout()
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
-                .deleteCookies("JSESSIONID","remember-me")
+                .deleteCookies("JSESSIONID")
                 .and()
                 .csrf().disable()
                 .httpBasic()
