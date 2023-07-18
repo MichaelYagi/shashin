@@ -160,8 +160,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         var expiry = ""
 
                         for (cookie in response.getHeaders("Set-Cookie")) {
-
-                            if (cookie.contains("remember-me")) {
+                            if (cookie.lowercase().contains("remember-me")) {
                                 val seriesExpiryMap = TextUtils.parseRememberMeCookie(cookie)
                                 series = seriesExpiryMap["series"].toString()
                                 expiry = seriesExpiryMap["expires"].toString()

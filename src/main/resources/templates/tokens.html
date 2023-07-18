@@ -45,20 +45,32 @@
 
             <h2>Persistent Tokens</h2>
 
+            <p>Current remember-me cookie value: <span th:utext="${currentRememberMeToken}"></span></p>
             <p>Current time: <span id="currentTime" th:utext="${currentTimeMS}"></span> - <span id="currentTimeLocal"></span></p>
-
+            <h4>All persistent tokens captured</h4>
             <th:block th:each="persistentLoginsDetail, iterStat: ${persistentLoginsDetails}">
-                <br><th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>
+                <th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>
                 <br><th:block th:utext="${'<strong>Series</strong>: '+persistentLoginsDetail.series}"></th:block>
                 <br><th:block th:utext="${'<strong>Token</strong>: '+persistentLoginsDetail.token}"></th:block>
                 <br><th:block th:utext="${'<strong>Expiry</strong>: '+persistentLoginsDetail.expiry}"></th:block> <span class="expiries" th:id="${persistentLoginsDetail.expiry}"></span>
                 <br><th:block th:utext="${'<strong>Host</strong>: '+persistentLoginsDetail.host}"></th:block>
                 <br><th:block th:utext="${'<strong>Useragent</strong>: '+persistentLoginsDetail.useragent}"></th:block>
-                <br>
+                <br><br>
             </th:block>
 
             <script type="text/javascript">
                 $(document).ready(function() {
+                    function readCookie(name) {
+                        const nameEQ = name + "=";
+                        const ca = document.cookie.split(';');
+                        for (let i = 0; i < ca.length; i++) {
+                            let c = ca[i];
+                            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                            if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+                        }
+                        return null;
+                    }
+
                     $('.expiries').each(function(i, obj) {
                         const idunixtime = $(obj).attr("id");
                         const localDateTime = timeConverter(parseInt(idunixtime));
