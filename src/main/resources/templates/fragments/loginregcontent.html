@@ -32,11 +32,11 @@
             <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
         </p>
         <th:block th:if="${activePage == 'login'}">
-            <input type="hidden" id="remember-me" name="remember-me" value="on">
-<!--        <p>-->
-<!--            <input type="checkbox" id="remember-me" name="remember-me" class="form-check-inline">-->
-<!--            <label class="form-check-label" for="remember-me">Remember me</label>-->
-<!--        </p>-->
+<!--            <input type="hidden" id="remember-me" name="remember-me" value="on">-->
+        <p>
+            <input type="checkbox" id="remember-me" name="remember-me" class="form-check-inline">
+            <label class="form-check-label" for="remember-me">Remember me</label>
+        </p>
         </th:block>
 
         <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><th:block th:text="${#strings.capitalize(activePage)}"></th:block></button>
