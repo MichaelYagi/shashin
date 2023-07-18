@@ -5,6 +5,7 @@ import com.google.javascript.jscomp.*
 import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.util.ApiResponse
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.core.io.ClassPathResource
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -28,11 +29,11 @@ class ToolsController {
     val mapper = ObjectMapper()
     val resp = mutableMapOf<String, Any?>()
 
-    @RequestMapping(value = ["tools/minifyassets"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
-    @ResponseBody
-    fun getMinifyAssets(model: Model): String {
-        val response = mutableMapOf<String, Any?>()
-
+//    @RequestMapping(value = ["tools/minifyassets"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+//    @ResponseBody
+//    fun getMinifyAssets(model: Model): String {
+//        val response = mutableMapOf<String, Any?>()
+//
 //        var input = "static/js/site/app.js"
 //        var ouput = "static/js/site/app.min.js"
 //        var resource = ClassPathResource("static/js/site/app.js")
@@ -41,12 +42,55 @@ class ToolsController {
 //        var compiled = compile(fileContents)
 //
 //        println(compiled)
+//
+//        response["msg"] = ApiResponse.SUCCESS.status
+//        response["message"] = "Success"
+//
+//        return mapper.writeValueAsString(response)
+//    }
 
-        response["msg"] = ApiResponse.SUCCESS.status
-        response["message"] = "Success"
-
-        return mapper.writeValueAsString(response)
-    }
+//    private fun compile(code: String?): String? {
+//        val compiler = Compiler()
+//        val options = CompilerOptions()
+//        // Advanced mode is used here, but additional options could be set, too.
+//        CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(
+//            options
+//        )
+//
+//        // To get the complete set of externs, the logic in
+//        // CompilerRunner.getDefaultExterns() should be used here.
+//        val extern = SourceFile.fromCode(
+//            "externs.js",
+//            "function alert(x) {}"
+//        )
+//
+//        // The dummy input name "input.js" is used here so that any warnings or
+//        // errors will cite line numbers in terms of input.js.
+//        val input = SourceFile.fromCode("input.js", code)
+//
+//        // compile() returns a Result, but it is not needed here.
+//        compiler.compile(extern, input, options)
+//
+//        // The compiler is responsible for generating the compiled code; it is not
+//        // accessible via the Result.
+//        return compiler.toSource()
+//    }
+//
+//    @Throws(IOException::class)
+//    private fun getFileContent(
+//        fis: FileInputStream,
+//        encoding: String
+//    ): String {
+//        BufferedReader(InputStreamReader(fis, encoding)).use { br ->
+//            val sb = StringBuilder()
+//            var line: String?
+//            while (br.readLine().also { line = it } != null) {
+//                sb.append(line)
+//                sb.append('\n')
+//            }
+//            return sb.toString()
+//        }
+//    }
 
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/tools/tokens"], method = [RequestMethod.GET])
@@ -56,48 +100,5 @@ class ToolsController {
         model["persistentLoginsDetails"] = persistentLoginsDetails as Any
 
         return "tokens"
-    }
-
-    private fun compile(code: String?): String? {
-        val compiler = Compiler()
-        val options = CompilerOptions()
-        // Advanced mode is used here, but additional options could be set, too.
-        CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(
-            options
-        )
-
-        // To get the complete set of externs, the logic in
-        // CompilerRunner.getDefaultExterns() should be used here.
-        val extern = SourceFile.fromCode(
-            "externs.js",
-            "function alert(x) {}"
-        )
-
-        // The dummy input name "input.js" is used here so that any warnings or
-        // errors will cite line numbers in terms of input.js.
-        val input = SourceFile.fromCode("input.js", code)
-
-        // compile() returns a Result, but it is not needed here.
-        compiler.compile(extern, input, options)
-
-        // The compiler is responsible for generating the compiled code; it is not
-        // accessible via the Result.
-        return compiler.toSource()
-    }
-
-    @Throws(IOException::class)
-    private fun getFileContent(
-        fis: FileInputStream,
-        encoding: String
-    ): String {
-        BufferedReader(InputStreamReader(fis, encoding)).use { br ->
-            val sb = StringBuilder()
-            var line: String?
-            while (br.readLine().also { line = it } != null) {
-                sb.append(line)
-                sb.append('\n')
-            }
-            return sb.toString()
-        }
     }
 }
