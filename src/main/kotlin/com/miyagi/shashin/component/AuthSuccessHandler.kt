@@ -160,11 +160,11 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         var expiry = ""
 
                         for (cookie in response.getHeaders("Set-Cookie")) {
+
                             if (cookie.contains("remember-me")) {
                                 val seriesExpiryMap = TextUtils.parseRememberMeCookie(cookie)
                                 series = seriesExpiryMap["series"].toString()
-                                expiry = seriesExpiryMap["expiry"].toString()
-
+                                expiry = seriesExpiryMap["expires"].toString()
                                 break
                             }
                         }
@@ -172,7 +172,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         if (series.isNotEmpty() && expiry.isNotEmpty()) {
                             val persistentLoginsExpiry = PersistentLoginsExpiry()
                             persistentLoginsExpiry.setSeries(series)
-                            persistentLoginsExpiry.setExpiry(System.currentTimeMillis()+(expiry.toLong()*1000))
+                            persistentLoginsExpiry.setExpiry(expiry.toLong())
                             val uri = URI(request.requestURL.toString())
                             val host = uri.host
                             persistentLoginsExpiry.setHost(host)

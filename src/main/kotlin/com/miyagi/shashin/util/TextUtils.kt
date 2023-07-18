@@ -43,8 +43,8 @@ class TextUtils {
                     seriesExpiryMap["series"] = decodePersistenceToken(value)
                 }
 
-                if (key.lowercase() == "max-age" && value.isNotEmpty()) {
-                    seriesExpiryMap["expiry"] = value
+                if (key.lowercase() == "expires" && value.isNotEmpty()) {
+                    seriesExpiryMap["expires"] = Date(value).time.toString()
                 }
             }
 
