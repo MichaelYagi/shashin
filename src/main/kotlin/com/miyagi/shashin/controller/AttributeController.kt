@@ -32,6 +32,7 @@ import org.springframework.util.StringUtils.capitalize
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.support.SessionStatus
 import org.springframework.web.client.HttpClientErrorException.Unauthorized
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
@@ -43,6 +44,7 @@ import java.util.logging.Logger
 import javax.persistence.EntityNotFoundException
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
+import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 
 
@@ -247,8 +249,13 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 // Cleanup persistent tokens on non api requests
                 DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
 
+                // Check remember me cookie
+                var loginFlag = true
+                var hasRememberMeCookie = false
+
                 for (cookie in request.cookies) {
                     if (cookie.name.contains("remember-me")) {
+                        hasRememberMeCookie = true
                         val series = TextUtils.decodePersistenceToken(cookie.value)
 
                         if (series.isNotEmpty()) {
@@ -256,12 +263,16 @@ class AttributeController: ResponseEntityExceptionHandler() {
                             val seriesExpiryCount = persistentLoginsExpiryRepository?.countPersistentLoginsExpiryBySeries(series)
 
                             if (seriesCount == 0 || seriesExpiryCount == 0) {
+                                SecurityContextHolder.clearContext()
+                                val session = request.getSession(true)
+                                session?.invalidate()
                                 // create a cookie to delete by name
                                 val cookieToDelete = Cookie(cookie.name, null);
                                 cookieToDelete.path = "/"
                                 cookieToDelete.isHttpOnly = true
                                 cookieToDelete.maxAge = 0
                                 response.addCookie(cookie)
+                                loginFlag = false
                             }
                         }
 
@@ -269,15 +280,19 @@ class AttributeController: ResponseEntityExceptionHandler() {
                     }
                 }
 
-
-
-                if (currentUser.getDarkMode() == null) {
-                    currentUser.setDarkMode(false)
+                if (loginFlag && hasRememberMeCookie) {
+                    if (currentUser.getDarkMode() == null) {
+                        currentUser.setDarkMode(false)
+                    }
+                    if (!currentUser.getApikey().isNullOrBlank()) {
+                        model["apikey"] = currentUser.getApikey()!!
+                    }
+                    model["currentUser"] = currentUser
+                } else {
+                    SecurityContextHolder.clearContext()
+                    val session = request.getSession(true)
+                    session?.invalidate()
                 }
-                if (!currentUser.getApikey().isNullOrBlank()) {
-                    model["apikey"] = currentUser.getApikey()!!
-                }
-                model["currentUser"] = currentUser
             }
 //            } else {
 //                val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
