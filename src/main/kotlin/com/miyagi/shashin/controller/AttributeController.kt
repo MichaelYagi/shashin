@@ -247,6 +247,33 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 // Cleanup persistent tokens on non api requests
                 DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
 
+                for (cookie in request.cookies) {
+                    if (cookie.name.contains("remember-me")) {
+                        val series = TextUtils.decodePersistenceToken(cookie.value)
+
+                        if (series.isNotEmpty()) {
+                            val seriesCount = persistentLoginsRepository?.countPersistentLoginsBySeries(series)
+                            val seriesExpiryCount = persistentLoginsExpiryRepository?.countPersistentLoginsExpiryBySeries(series)
+
+                            if (seriesCount == 0 || seriesExpiryCount == 0) {
+                                // create a cookie to delete by name
+                                val cookieToDelete = Cookie(cookie.name, null);
+                                cookieToDelete.maxAge = 0;
+                                cookieToDelete.secure = true;
+                                cookieToDelete.isHttpOnly = true;
+                                cookieToDelete.path = "/";
+
+                                //add cookie to response
+                                response.addCookie(cookieToDelete)
+                            }
+                        }
+
+                        break
+                    }
+                }
+
+
+
                 if (currentUser.getDarkMode() == null) {
                     currentUser.setDarkMode(false)
                 }
