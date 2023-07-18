@@ -258,13 +258,10 @@ class AttributeController: ResponseEntityExceptionHandler() {
                             if (seriesCount == 0 || seriesExpiryCount == 0) {
                                 // create a cookie to delete by name
                                 val cookieToDelete = Cookie(cookie.name, null);
-                                cookieToDelete.maxAge = 0;
-                                cookieToDelete.secure = true;
-                                cookieToDelete.isHttpOnly = true;
-                                cookieToDelete.path = "/";
-
-                                //add cookie to response
-                                response.addCookie(cookieToDelete)
+                                cookieToDelete.path = "/"
+                                cookieToDelete.isHttpOnly = true
+                                cookieToDelete.maxAge = 0
+                                response.addCookie(cookie)
                             }
                         }
 
