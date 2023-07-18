@@ -8,6 +8,7 @@ import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
+import com.miyagi.shashin.util.DatabaseUtil
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -57,6 +58,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
     @Autowired
     private var settingsRepository: SettingsRepository? = null
+
+    @Autowired
+    private var persistentLoginsRepository: PersistentLoginsRepository? = null
+
+    @Autowired
+    private var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository? = null
 
     @Autowired
     private var buildProperties: BuildProperties? = null
@@ -153,6 +160,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["adminRole"] = adminRole
         model["settings"] = Settings()
         model["activeProfile"] = ""
+
         if (environment != null && environment.activeProfiles.isNotEmpty()) {
             val profile = environment.activeProfiles[0]
             if (profile != "prod") {
@@ -236,6 +244,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 cookie.maxAge = 0
                 response.addCookie(cookie)
             } else {
+                // Cleanup persistent tokens on non api requests
+                DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
+
                 if (currentUser.getDarkMode() == null) {
                     currentUser.setDarkMode(false)
                 }
