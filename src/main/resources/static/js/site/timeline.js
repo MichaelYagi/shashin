@@ -245,7 +245,7 @@
         if ($(imageIdentifier).length > 0 && $(imageIdentifier).src === undefined) {
             const http = new Http("attaching associated metadata in viewport");
             const version = Util.getMetadataLocalStorage();
-            http.ajax("get", "/api/v1/metadata/" + metadataId + (version === "" ? "" : "?v=" + version)).then(function (data) {
+            http.ajax("get", "/metadata/" + metadataId + (version === "" ? "" : "?v=" + version)).then(function (data) {
                 const metadata = data["metadata"];
                 const favoritesMap = data["favorites"];
                 timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
@@ -1360,7 +1360,7 @@
     timelineSettings.attachAssociatedMetadata = async function(date,mediaTypeFilter) {
         const http = new Http("attaching associated metadata");
         const version = Util.getMetadataLocalStorage();
-        http.ajax("get", "/api/v1/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
+        http.ajax("get", "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + (version === "" ? "" : "?v=" + version)).then(function (data) {
             if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 if (data["status"] === timelineSettings.success) {
                     if (data.hasOwnProperty("metadataList") &&
@@ -1410,7 +1410,7 @@
 
         const ajaxParams = {
             type: 'get',
-            url: "/api/v1/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
+            url: "/timeline/mediatype/" + mediaTypeFilter + "/date/" + date + "/metadata" + (version === "" ? "" : "?v=" + version),
             contentType: 'application/json; charset=utf-8',
             async: true,
             retries: shashin.ajaxRetries
@@ -1585,7 +1585,7 @@
 
     timelineSettings.refreshTimeline = async function (mediaTypeFilter) {
         const http = new Http("refreshing timeline TOC");
-        const data = await http.ajax("get", "/api/v1/timeline/dates/"+mediaTypeFilter);
+        const data = await http.ajax("get", "/timeline/dates/"+mediaTypeFilter);
 
         if (data.hasOwnProperty("metadataDates")) {
             const metadataDates = data["metadataDates"];
