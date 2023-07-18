@@ -205,10 +205,10 @@
     }
 
     albumsModalListeners.setCommentModalListeners = function (albumId, username) {
-        $("#propcommentalbums").on('show.bs.modal', async function () {
-            const http = new Http("album notification read");
-            const data = await http.ajax("get", "/notifications/markread/album/" + albumId);
-        })
+        // $("#propcommentalbums").on('show.bs.modal', async function () {
+        //     const http = new Http("album notification read");
+        //     const data = await http.ajax("get", "/notifications/markread/album/" + albumId);
+        // })
 
         $("#propcommentalbums").on('hide.bs.modal', async function () {
             $("#commentList").empty();
