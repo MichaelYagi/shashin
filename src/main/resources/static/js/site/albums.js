@@ -38,7 +38,7 @@ class Albums {
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/api/v1/" + activePage + "/" + nextPage);
+            data = await this.http.ajax("get", "/" + activePage + "/" + nextPage);
         }
 
         if (data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("albumsList") && data["status"] === "success") {
@@ -106,7 +106,7 @@ class Albums {
                 e.preventDefault();
 
                 let http = new Http("sharealbums");
-                let data = await http.ajax("get", "/api/v1/album/" + albumId + "/page/0");
+                let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
                     if (data["status"] === "success") {
@@ -128,7 +128,7 @@ class Albums {
                             $("#copyLink").attr("data-clipboard-text", fullShareLink);
                         }
 
-                        let sharedAlbumsList = await http.ajax("get", "/api/v1/sharedalbums");
+                        let sharedAlbumsList = await http.ajax("get", "/sharedalbums");
 
                         if (sharedAlbumsList != null && sharedAlbumsList["sharedAlbums"].length > 0) {
                             let html = "<strong>Share with other users</strong><br>";
@@ -165,7 +165,7 @@ class Albums {
                 $("#albumEditName").val("");
 
                 let http = new Http("sharealbums");
-                let data = await http.ajax("get", "/api/v1/album/" + albumId + "/page/0");
+                let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === "success") {
                     let album = data["album"];
@@ -183,7 +183,7 @@ class Albums {
                 e.preventDefault();
 
                 let http = new Http("sharealbums");
-                let data = await http.ajax("get", "/api/v1/album/" + albumId + "/page/0");
+                let data = await http.ajax("get", "/album/" + albumId + "/page/0");
 
                 if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album")) {
                     if (data["status"] === "success") {
@@ -204,7 +204,7 @@ class Albums {
             e.preventDefault();
 
             let http = new Http("albumcomments");
-            let data = await http.ajax("get", "/api/v1/album/" + albumId + "/page/0");
+            let data = await http.ajax("get", "/album/" + albumId + "/page/0");
             let currentUserId = $("#currentUserId").val();
 
             if (data != null && data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("album") && data["status"] === "success") {
@@ -213,7 +213,7 @@ class Albums {
                 $("#albumNameComments").text(album["name"]);
                 $("#albumCoverCommentThumb").attr("src", album["coverUrl"]);
 
-                let albumCommentsList = await http.ajax("get", "/api/v1/albumcomments/"+albumId);
+                let albumCommentsList = await http.ajax("get", "/albumcomments/"+albumId);
 
                 if (albumCommentsList != null && albumCommentsList["albumCommentsList"].length > 0) {
                     let html = "";

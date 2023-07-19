@@ -25,10 +25,6 @@ class Http {
 
         $.extend(ajaxParams, this.additionalParameters);
 
-        if (shashin.apikey !== "") {
-            ajaxParams.headers = {"X-API-KEY": shashin.apikey};
-        }
-
         $.extend(ajaxParams.headers, this.additionalHeaders);
 
         if (data === "undefined" || data === null) {

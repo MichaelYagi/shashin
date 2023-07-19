@@ -184,7 +184,7 @@ class AlbumsController {
         )
     )
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/albums/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/albums/{page}","/albums/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumsApi(model: Model, @PathVariable page: Int): String {
         return mapper.writeValueAsString(buildAlbums(model, page))
@@ -440,7 +440,7 @@ class AlbumsController {
         )
     )
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/sharedalbums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/sharedalbums","/sharedalbums"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getSharedAlbumsApi(model: Model): String {
         return mapper.writeValueAsString(buildSharedAlbumsList(model))
@@ -522,7 +522,7 @@ class AlbumsController {
         )
     )
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/api/v1/albumcomments/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/albumcomments/{albumId}","/albumcomments/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getAlbumCommentsApi(@PathVariable albumId: Int): String {
         return mapper.writeValueAsString(buildAlbumComments(albumId))
