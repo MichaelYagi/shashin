@@ -276,7 +276,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                 .and()
                 .formLogin()
                 .loginPage("/users/login")
-                .successHandler(authSuccessHandler?.setPersistentTokenRepository(persistentTokenRepository())?.setProfile(profile)) // Set remember me cookie on successful login
+                .successHandler(authSuccessHandler?.setProfile(profile)/*?.setPersistentTokenRepository(persistentTokenRepository())*/) // Set remember me cookie on successful login
                 .failureHandler(authFailureHandler)
                 .permitAll()
 
@@ -286,9 +286,12 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
                     .tokenValiditySeconds(3600) // Use cookie based remember me for tests
             } else {
                 http
-                    .rememberMe()
-                    .tokenRepository(persistentTokenRepository()).key(rememberMeKey)
-                    .tokenValiditySeconds(expirationSeconds!!) // Persistent Token
+                    .rememberMe().key(rememberMeKey)
+                    .tokenValiditySeconds(expirationSeconds!!)
+
+//                    .rememberMe()
+//                    .tokenRepository(persistentTokenRepository()).key(rememberMeKey)
+//                    .tokenValiditySeconds(expirationSeconds!!) // Persistent Token
             }
 
             http

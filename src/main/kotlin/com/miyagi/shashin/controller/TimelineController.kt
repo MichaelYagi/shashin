@@ -1681,7 +1681,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/timeline/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/timeline/metadata/{id}","/timeline/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
         val response = mutableMapOf<String, Any?>()
@@ -1766,7 +1766,7 @@ class TimelineController: BaseController() {
                     "Different outputs depending on media. See <a href=\"https://github.com/drewnoakes/metadata-extractor\">Metadata Extractor</a> for more details."
         )
     )
-    @RequestMapping(value = ["/api/v1/exif/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/exif/metadata/{id}","/exif/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getExifData(model: Model, @PathVariable(required = true) id: String, response: HttpServletResponse): String {
         val responseMap = mutableMapOf<String, Any?>()

@@ -9,7 +9,6 @@
     shashin.darkMode = true;
     shashin.lgSubHtmlTimeout = null;
     shashin.nonce = "";
-    shashin.apikey = "";
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -120,7 +119,7 @@
 
     shashin.getTimelineMetadata = async function(metadataId) {
         const http = new Http("get timeline metadata");
-        const data = await http.ajax("get", "/api/v1/timeline/metadata/"+metadataId);
+        const data = await http.ajax("get", "/timeline/metadata/"+metadataId);
 
         let ret = {};
         if (data.hasOwnProperty("metadata")) {
@@ -132,7 +131,7 @@
 
     shashin.getMetadata = async function(metadataId) {
         const http = new Http("get metadata");
-        const data = await http.ajax("get", "/api/v1/metadata/"+metadataId);
+        const data = await http.ajax("get", "/metadata/"+metadataId);
 
         let metadata = {};
         if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList")) {

@@ -1416,10 +1416,6 @@
             retries: shashin.ajaxRetries
         }
 
-        if (shashin.apikey !== "") {
-            ajaxParams.headers = {"X-API-KEY": shashin.apikey};
-        }
-
         return await $.ajax(ajaxParams)
             .fail(function(xhr, textStatus) {shashin.onFail(xhr, textStatus, ajaxParams, " updating timeline")}).then(function (data) {
                 let ret = "fail";

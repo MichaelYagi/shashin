@@ -307,7 +307,7 @@ $("#exifTabLink").on("click", async function (e) {
     // Get exif yaml data and display
     const metadataId = $("#metadataId").val();
     const http = new Http("get exif");
-    const data = await http.ajax("get", "/api/v1/exif/metadata/" + metadataId);
+    const data = await http.ajax("get", "/exif/metadata/" + metadataId);
 
     let exif = "";
     if (data.hasOwnProperty("exif")) {

@@ -191,7 +191,7 @@ class SearchController {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/api/v1/search/history"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/api/v1/search/history","/search/history"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getSearchHistory(model: Model, request: HttpServletRequest, @RequestParam size: Optional<Int>): String {
         val searchHistoryLimit = size.orElse(model.getAttribute("searchHistoryLimit").toString().toInt())
