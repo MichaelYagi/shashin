@@ -286,7 +286,7 @@ async function showMap(mapdata,showControls) {
             progressBar.attr("aria-valuenow", currentProgress.toString());
             const width = currentProgress.toString() + "%";
             progressBar.css("width", width);
-            shashin.printMessageToConsole(currentProgress);
+            shashin.printMessageToConsole("currentProgress for map: "+currentProgress.toString());
         }
 
         $("#progressBarWrapper").css("visibility", "hidden");
@@ -522,7 +522,7 @@ async function showMap(mapdata,showControls) {
                 try {
                     dynamicGallery.$container.remove();
                 } catch (e) {
-                    shashin.printMessageToConsole(e);
+                    shashin.printMessageToConsole("Error removing lightGallery instance: "+e.message);
                 }
                 lightGalleryConfigs["dynamicEl"] = mediaContentList;
                 dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
