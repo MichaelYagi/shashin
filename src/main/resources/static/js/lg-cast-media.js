@@ -11,14 +11,14 @@
     });
 
     cjs.on('event', (e) => {
-        shashin.printMessageToConsole("Cast Event: " + e.message);
+        shashin.printMessageToConsole("Cast Event: " + e);
         if (e === "connect" && $("#chromecasting").hasClass("bi-cast")) {
             $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
         }
     });
 
     cjs.on('error', (e) => {
-        shashin.printMessageToConsole("Cast Error: " + e.message);
+        shashin.printMessageToConsole("Cast Error: " + e);
         if (e !== "invalid_parameter") {
             $("#chromecasting").css({"display": "none", "font-size": "1rem"});
         }
