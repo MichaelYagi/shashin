@@ -97,10 +97,19 @@
                         if (metadata !== null && metadata.hasOwnProperty("id")) {
                             const getUrl = window.location;
                             const baseUrl = getUrl.protocol + "//" + getUrl.host;
+                            const cjsMetadata = {
+                                title      : metadata.title
+                            }
+
+                            if (metadata.description !== null && metadata.description !== "") {
+                                cjsMetadata["description"] = metadata.description;
+                            }
 
                             if (metadata.videoUrl !== null) {
                                 try {
-                                    cjs.cast(baseUrl + metadata.videoUrl);
+                                    cjsMetadata["poster"] = baseUrl + metadata.thumbnailUrlSmall;
+
+                                    cjs.cast(baseUrl + metadata.videoUrl, cjsMetadata);
                                 } catch(e) {
                                     // Error
                                     // console.log(e)
@@ -108,7 +117,7 @@
                                 }
                             } else if (metadata.thumbnailUrlOriginal !== null) {
                                 try {
-                                    cjs.cast(baseUrl + metadata.thumbnailUrlOriginal + ".jpg");
+                                    cjs.cast(baseUrl + metadata.thumbnailUrlOriginal + ".jpg", cjsMetadata);
                                 } catch(e) {
                                     // Error
                                     // console.log(e)
