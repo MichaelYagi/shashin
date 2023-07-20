@@ -1022,8 +1022,12 @@
         const transparent = 1.0
 
         let metadataIdArray = shashin.getMetdataIdList();
+        shashin.printMessageToConsole("shashin.setPhotoOverlays for "+metadata.id);
         shashin.printMessageToConsole(metadataIdArray);
+        // Track already selected
         const index = metadataIdArray.indexOf(metadata.id);
+
+        // If the current metadata present in metadata array, mark as selected while scrolling
         if (index > -1) {
             $("#tntl" + metadata.id).show();
             $("#tlicon" + metadata.id).addClass('bi-circle-fill').removeClass('bi-circle');
@@ -1044,6 +1048,7 @@
                 $("#tncentered" + metadata.id).hide();
                 $("#tnbr" + metadata.id).hide();
                 $("#tnbl" + metadata.id).hide();
+                // List of selected media
                 shashin.addToMetadataIdList(metadata.id);
                 shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
                 shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
@@ -1114,6 +1119,7 @@
                     $("#tncentered" + metadata.id).hide();
                     $("#tnbr" + metadata.id).hide();
                     $("#tnbl" + metadata.id).hide();
+                    // List of selected media
                     shashin.addToMetadataIdList(metadata.id);
                     shashin.addToMetadataFilenamesList($('#filename' + metadata.id).val());
                     shashin.addToMetadataThumbnailsList($('#thumbnailCentered' + metadata.id).val());
@@ -1481,15 +1487,31 @@
     // Call in console
     shashin.enableDebug = function () {
         shashin.showDebug = true;
+
+        if (Util.localStorageAvailable() === true) {
+            localStorage.setItem("showDebug", "on");
+        }
     }
 
     // Call in console
     shashin.disableDebug = function () {
         shashin.showDebug = false;
+
+        if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null) {
+            localStorage.removeItem("showDebug");
+        }
     }
 
     shashin.printMessageToConsole = function (msg) {
-        if (shashin.showDebug === true) {
+        let localStorageDebugFlag = false;
+        if (Util.localStorageAvailable() === true && localStorage.getItem("showDebug") !== null && localStorage.getItem("showDebug").length > 0) {
+            let getFlag = localStorage.getItem("showDebug")
+            if (getFlag === "on") {
+                localStorageDebugFlag = true;
+            }
+        }
+
+        if (shashin.showDebug === true || localStorageDebugFlag === true) {
             console.log(msg);
         }
     }

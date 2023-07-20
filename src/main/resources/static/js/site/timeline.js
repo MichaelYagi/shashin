@@ -274,7 +274,7 @@
                     try {
                         shashin.getLightGallery().$container.remove();
                     } catch (e) {
-                        shashin.printMessageToConsole(e)
+                        shashin.printMessageToConsole("Error removing lightGallery instance: "+e.message);
                     }
 
                     shashin.lg = null;

@@ -82,6 +82,7 @@
                     const userMap = data["userMap"];
                     const favoritesMap = data["favorites"];
 
+                    shashin.printMessageToConsole("albumSettings.updateAlbum");
                     shashin.printMessageToConsole(albumData);
                     shashin.printMessageToConsole(albumMetadataList);
                     shashin.printMessageToConsole(albumPhotoCommentsMap);

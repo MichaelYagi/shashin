@@ -112,6 +112,7 @@
                                     cjs.cast(baseUrl + metadata.videoUrl, cjsMetadata);
                                 } catch(e) {
                                     // Error
+                                    shashin.printMessageToConsole("Could not cast video "+metadata.videoUrl+": "+e.message);
                                     // console.log(e)
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
@@ -120,7 +121,7 @@
                                     cjs.cast(baseUrl + metadata.thumbnailUrlOriginal + ".jpg", cjsMetadata);
                                 } catch(e) {
                                     // Error
-                                    // console.log(e)
+                                    shashin.printMessageToConsole("Could not cast image "+metadata.thumbnailUrlOriginal+": "+e.message);
                                     $("#chromecasting").css({"display": "none", "font-size": "1rem"});
                                 }
                             }
