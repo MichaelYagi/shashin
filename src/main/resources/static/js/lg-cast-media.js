@@ -11,7 +11,7 @@
     });
 
     cjs.on('event', (e) => {
-        shashin.printMessageToConsole("Cast Event: " + e);
+        shashin.printMessageToConsole("Cast Event: " + e.message);
         if (e === "connect" && $("#chromecasting").hasClass("bi-cast")) {
             $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
         }
