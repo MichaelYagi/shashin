@@ -47,16 +47,16 @@
 
             <p>Current remember-me cookie value: <span th:utext="${currentRememberMeToken}"></span></p>
             <p>Current time: <span id="currentTime" th:utext="${currentTimeMS}"></span> - <span id="currentTimeLocal"></span></p>
-            <h4>All persistent tokens captured</h4>
-            <th:block th:each="persistentLoginsDetail, iterStat: ${persistentLoginsDetails}">
-                <th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>
-                <br><th:block th:utext="${'<strong>Series</strong>: '+persistentLoginsDetail.series}"></th:block>
-                <br><th:block th:utext="${'<strong>Token</strong>: '+persistentLoginsDetail.token}"></th:block>
-                <br><th:block th:utext="${'<strong>Expiry</strong>: '+persistentLoginsDetail.expiry}"></th:block> <span class="expiries" th:id="${persistentLoginsDetail.expiry}"></span>
-                <br><th:block th:utext="${'<strong>Host</strong>: '+persistentLoginsDetail.host}"></th:block>
-                <br><th:block th:utext="${'<strong>Useragent</strong>: '+persistentLoginsDetail.useragent}"></th:block>
-                <br><br>
-            </th:block>
+<!--            <h4>All persistent tokens captured</h4>-->
+<!--            <th:block th:each="persistentLoginsDetail, iterStat: ${persistentLoginsDetails}">-->
+<!--                <th:block th:utext="${'<strong>Username</strong>: '+persistentLoginsDetail.username}"></th:block>-->
+<!--                <br><th:block th:utext="${'<strong>Series</strong>: '+persistentLoginsDetail.series}"></th:block>-->
+<!--                <br><th:block th:utext="${'<strong>Token</strong>: '+persistentLoginsDetail.token}"></th:block>-->
+<!--                <br><th:block th:utext="${'<strong>Expiry</strong>: '+persistentLoginsDetail.expiry}"></th:block> <span class="expiries" th:id="${persistentLoginsDetail.expiry}"></span>-->
+<!--                <br><th:block th:utext="${'<strong>Host</strong>: '+persistentLoginsDetail.host}"></th:block>-->
+<!--                <br><th:block th:utext="${'<strong>Useragent</strong>: '+persistentLoginsDetail.useragent}"></th:block>-->
+<!--                <br><br>-->
+<!--            </th:block>-->
 
             <script type="text/javascript">
                 $(document).ready(function() {

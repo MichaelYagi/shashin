@@ -107,8 +107,8 @@ class ToolsController {
             }
         }
 
-        val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
-        model["persistentLoginsDetails"] = persistentLoginsDetails as Any
+//        val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
+//        model["persistentLoginsDetails"] = persistentLoginsDetails as Any
         model["currentTimeMS"] = System.currentTimeMillis()
         model["currentRememberMeToken"] = currentRememberMeToken
 
