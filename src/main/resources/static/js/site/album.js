@@ -18,7 +18,7 @@
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
                 // console.log(albumSettings.page)
-                albumSettings.updateAlbum(albumId, albumSettings.page, activePage).then(function (additionalMediaContentList) {
+                albumSettings.getPagedAlbum(albumId, albumSettings.page, activePage).then(function (additionalMediaContentList) {
                     // console.log(additionalMediaContentList)
                     albumSettings.page++;
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
@@ -56,7 +56,7 @@
         });
     }
 
-    albumSettings.updateAlbum = async function(albumId,nextPage,activePage) {
+    albumSettings.getPagedAlbum = async function(albumId,nextPage,activePage) {
         albumSettings.rendering = true;
 
         let data = null
@@ -82,7 +82,7 @@
                     const userMap = data["userMap"];
                     const favoritesMap = data["favorites"];
 
-                    shashin.printMessageToConsole("albumSettings.updateAlbum");
+                    shashin.printMessageToConsole("albumSettings.getPagedAlbum");
                     shashin.printMessageToConsole(albumData);
                     shashin.printMessageToConsole(albumMetadataList);
                     shashin.printMessageToConsole(albumPhotoCommentsMap);
