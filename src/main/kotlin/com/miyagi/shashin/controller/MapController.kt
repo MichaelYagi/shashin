@@ -90,7 +90,7 @@ class MapController {
     @Secured("ROLE_ADMIN", "ROLE_USER")
     @RequestMapping(value = ["/api/v1/mapdata", "/mapdata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    fun getMapData(model: Model): String {
+    fun getMapData(model: Model): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         response["mapdata"] = mutableListOf<Metadata>()
@@ -109,6 +109,10 @@ class MapController {
             response["status"] = ApiResponse.SUCCESS.status
         }
 
-        return mapper.writeValueAsString(response)
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
     }
 }

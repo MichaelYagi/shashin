@@ -336,12 +336,12 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataAndAttributesByDate"], key = "{#date, #mediaType}")
-    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String { //ResponseEntity<String> {
-        return mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
-//        return ResponseEntity
-//            .ok()
-//            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-//            .body(json)
+    fun getTimelineByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
+        val json = mapper.writeValueAsString(buildTimelineDataByDate(model,mediaType,date,false))
+        return ResponseEntity
+            .ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
     }
 
     @RouterOperation(
@@ -401,9 +401,13 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/timeline/mediatype/{mediaType}/date/{date}/metadata"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Cacheable(value = ["allMetadataOnlyByDate"], key = "{#date, #mediaType}")
-    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): String {
+    fun getTimelineMetadataByDate(model: Model, @PathVariable date: String,@PathVariable mediaType: String): ResponseEntity<String> {
         val jsonMap = buildTimelineDataByDate(model,mediaType,date,true)
-        return mapper.writeValueAsString(jsonMap)
+        val json = mapper.writeValueAsString(jsonMap)
+        return ResponseEntity
+            .ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
     }
 
     @RouterOperation(
@@ -1583,7 +1587,7 @@ class TimelineController: BaseController() {
     @ResponseBody
     @Cacheable(value = ["singleMetadataRequest"], key = "{#id}")
     @Secured("ROLE_ADMIN","ROLE_USER")
-    fun getMetadata(model: Model, @PathVariable(required = true) id: String): String {
+    fun getMetadata(model: Model, @PathVariable(required = true) id: String): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val keywordArray = mutableListOf<String>()
         val keywords = keywordRepository.findKeywordsByMetadataId(id)
@@ -1619,7 +1623,11 @@ class TimelineController: BaseController() {
         response["msg"] = ""
         response["status"] = ApiResponse.SUCCESS.status
 
-        return mapper.writeValueAsString(response)
+        val json = mapper.writeValueAsString(response)
+        return ResponseEntity
+            .ok()
+            .cacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .body(json)
     }
 
     @RouterOperation(
