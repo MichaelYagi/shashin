@@ -110,7 +110,17 @@ class ArticlesController {
 //                println(regex)
                     apiMatchResult = apiRegex.find(endpointArray[0])
                     val apiCall = apiMatchResult?.value?.dropLast(1)
-                    roleController["apiCall"] = apiCall.toString().replace(" || ", ", ")
+                    val apiCalls = apiCall.toString().split("||")
+                    val pathArray = mutableListOf<String>()
+                    for (path in apiCalls) {
+                        if (path.trim().startsWith("/api/v1/")) {
+                            pathArray.add(path.trim())
+                        }
+                    }
+
+                    if (pathArray.size > 0) {
+                        roleController["apiCall"] = pathArray.joinToString(separator = ", ")
+                    }
                     if (value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description != null) {
                         roleController["description"] =
                             value.getMethodAnnotation(RouterOperation::class.java)?.operation?.description.toString()
