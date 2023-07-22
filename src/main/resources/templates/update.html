@@ -11,25 +11,33 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
             <div class="row image-group-padding">
-                <form action="/users/update" method="post">
+                <form action="/users/update" method="post" oninput='newpasswordconfirm.setCustomValidity(newpasswordconfirm.value != newpassword.value ? "Passwords do not match." : "")'>
                     <h2 class="form-signin-heading">Change Password</h2>
-                    <th:block th:if="${message != '' and alertClass != ''}">
+                    <th:block th:if="${msg != '' and alertClass != ''}">
                         <div class="col-12">
-                            <div th:if="${message}" th:text="${message}" th:class="${'alert ' + alertClass}"/>
+                            <div th:if="${msg}" th:text="${msg}" th:class="${'alert ' + alertClass}"/>
                         </div>
                     </th:block>
-                    <p>
-                        <label for="oldpassword" class="sr-only">Old Password</label>
-                        <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" required autofocus>
-                    </p>
-                    <p>
-                        <label for="newpassword" class="sr-only">New Password</label>
-                        <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" required>
-                    </p>
-                    <p>
-                        <label for="newpasswordconfirm" class="sr-only">New Password Confirm</label>
-                        <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" required>
-                    </p>
+
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="unhideold"><span id="unhideoldicon" class="bi-eye"></span></button>
+                        </div>
+                        <input type="password" id="oldpassword" name="oldpassword" class="form-control" placeholder="Old password" aria-label="" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="unhidenew"><span id="unhidenewicon" class="bi-eye"></span></button>
+                        </div>
+                        <input type="password" id="newpassword" name="newpassword" class="form-control" placeholder="New password" aria-label="" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <button class="btn btn-outline-secondary" type="button" id="unhideconfirm"><span id="unhideconfirmicon" class="bi-eye"></span></button>
+                        </div>
+                        <input type="password" id="newpasswordconfirm" name="newpasswordconfirm" class="form-control" placeholder="New password confirm" aria-label="" aria-describedby="basic-addon1">
+                    </div>
+
                     <button class="btn btn-lg btn-primary btn-block" type="submit">Save</button>
                 </form>
             </div>
@@ -43,6 +51,31 @@
     /*<![CDATA[*/
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
+
+    $("#unhideold").on("click", function (e) {
+        e.preventDefault();
+        changeTypes($("#oldpassword"), $("#unhideoldicon"));
+    });
+
+    $("#unhidenew").on("click", function (e) {
+        e.preventDefault();
+        changeTypes($("#newpassword"), $("#unhidenewicon"));
+    });
+
+    $("#unhideconfirm").on("click", function (e) {
+        e.preventDefault();
+        changeTypes($("#newpasswordconfirm"), $("#unhideconfirmicon"));
+    });
+
+    function changeTypes(elem, icon) {
+        if (elem.attr("type") === "password") {
+            elem.prop("type", "text");
+            icon.removeClass("bi-eye").addClass("bi-eye-slash");
+        } else {
+            elem.prop("type", "password");
+            icon.removeClass("bi-eye-slash").addClass("bi-eye");
+        }
+    }
 </script>
 
 </body>

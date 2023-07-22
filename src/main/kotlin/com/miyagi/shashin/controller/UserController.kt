@@ -102,8 +102,11 @@ class UserController {
 
     @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
-        model["message"] = "Could not save password"
+        val module = "update"
+        model["message"] = ""
+        model["msg"] = "Could not save password"
         model["alertClass"] = "alert-danger"
+
         if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
             val oldPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("oldpassword")))
             val newPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpassword")))
@@ -116,17 +119,14 @@ class UserController {
                         currentUserObj.setModifiedAt(getCurrentTimestamp())
                         currentUserObj.setPassword(bcrypt.encode(newPassword))
                         userRepository?.save(currentUserObj)
-                        model["message"] = "Success"
+                        model["msg"] = "Success"
                         model["alertClass"] = "alert-success"
+                        return module
                     }
                 }
             }
         }
 
-        val module = "update"
-        model["msg"] = ""
-        model["status"] = ApiResponse.SUCCESS.status
-        model["message"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
