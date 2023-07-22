@@ -81,6 +81,7 @@ class UserController {
     private lateinit var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository
 
     @GetMapping("/users/update")
+    @Secured("ROLE_ADMIN","ROLE_USER")
     fun getUpdateUser(model: Model): String {
         model["message"] = ""
         model["user"] = User()
@@ -101,6 +102,7 @@ class UserController {
     }
 
     @RequestMapping(value = ["/users/update"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
+    @Secured("ROLE_ADMIN","ROLE_USER")
     fun postUpdateUser(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
         val module = "update"
         model["message"] = ""
@@ -134,6 +136,7 @@ class UserController {
     }
 
     @GetMapping("/users/profile")
+    @Secured("ROLE_ADMIN","ROLE_USER")
     fun getProfile(model: Model): String {
         model["message"] = ""
         model["user"] = User()
@@ -214,6 +217,7 @@ class UserController {
     }
 
     @GetMapping("/users/apikey")
+    @Secured("ROLE_ADMIN","ROLE_USER")
     fun getApiKey(model: Model): String {
         model["message"] = ""
         model["user"] = User()
