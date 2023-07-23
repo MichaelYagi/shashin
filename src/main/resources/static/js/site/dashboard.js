@@ -183,6 +183,130 @@ class Dashboard {
         });
     }
 
+    displayAgentNameChart(data) {
+        const ctx = $('#browserChart');
+        const agentNameCountObj = JSON.parse(data.agentNameCountJson);
+
+        // Click label
+        document.getElementById("browserChart").onclick = function (evt) {
+            let point = Chart.helpers.getRelativePosition(event, agentNameChart);
+            let datasetIndex = agentNameChart.scales.y.getValueForPixel(point.y);
+            if (datasetIndex >= 0) {
+                let label = agentNameCountObj[datasetIndex].y;
+                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
+                    window.open("/search?searchTerm=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
+                }
+            }
+        };
+
+        return new Chart(ctx, {
+            type: 'bar',
+            data: {
+                datasets: [{
+                    data: agentNameCountObj,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        ticks: {
+                            // Truncate ticks
+                            callback: function (index) {
+                                let labelValue = agentNameCountObj[index].y;
+                                if (labelValue.length > 9) {
+                                    labelValue = labelValue.substr(0, 8) + "...";
+                                }
+                                return labelValue;
+                            },
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    },
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: false
+                },
+                maintainAspectRatio: false
+            }
+        });
+    }
+
+    displayOsNameChart(data) {
+        const ctx = $('#osChart');
+        const osNameCountObj = JSON.parse(data.osNameCountJson);
+
+        // Click label
+        document.getElementById("osChart").onclick = function (evt) {
+            let point = Chart.helpers.getRelativePosition(event, osNameChart);
+            let datasetIndex = osNameChart.scales.y.getValueForPixel(point.y);
+            if (datasetIndex >= 0) {
+                let label = osNameCountObj[datasetIndex].y;
+                if (typeof label !== "undefined" && label !== "" && label !== "Unknown") {
+                    window.open("/search?searchTerm=" + encodeURI(label.split(' ').join('+')), '_blank').focus();
+                }
+            }
+        };
+
+        return new Chart(ctx, {
+            type: 'bar',
+            data: {
+                datasets: [{
+                    data: osNameCountObj,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                indexAxis: 'y',
+                scales: {
+                    y: {
+                        ticks: {
+                            // Truncate ticks
+                            callback: function (index) {
+                                let labelValue = osNameCountObj[index].y;
+                                if (labelValue.length > 9) {
+                                    labelValue = labelValue.substr(0, 8) + "...";
+                                }
+                                return labelValue;
+                            },
+                            maxRotation: 0,
+                            minRotation: 0
+                        }
+                    },
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                },
+                plugins: {
+                    legend: false
+                },
+                maintainAspectRatio: false
+            }
+        });
+    }
+
     displayKeywordChart(data) {
         const ctx = $('#keywordChart');
         const keywordCounts = JSON.parse(Util.decodeHtml(data.keywordCountJson));

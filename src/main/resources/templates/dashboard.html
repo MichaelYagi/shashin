@@ -82,7 +82,38 @@
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <div class="row pb-4">
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 th:text="${osTotalCount}"></h2>
+                            <p class="text-muted">OS</p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">OS Stats</h5>
+                            <p class="card-text">
+                                <canvas id="osChart" height="600"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 th:text="${browserTotalCount}"></h2>
+                            <p class="text-muted">Total Browsers</p>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">Browser Stats</h5>
+                            <p class="card-text">
+                                <canvas id="browserChart" height="600"></canvas>
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="row pb-4">
@@ -151,6 +182,12 @@
     const cameraChartData = {};
     cameraChartData["cameraCountJson"] = /*[[${cameraCountJson}]]*/ '[{"x":0,"y":""}]';
 
+    const agentNameChartData = {};
+    agentNameChartData["agentNameCountJson"] = /*[[${agentNameCountJson}]]*/ '[{"x":0,"y":""}]';
+
+    const osNameChartData = {};
+    osNameChartData["osNameCountJson"] = /*[[${osNameCountJson}]]*/ '[{"x":0,"y":""}]';
+
     const keywordChartData = {};
     keywordChartData["keywordCountJson"] = /*[[${keywordCountJson}]]*/ '[{"x":0,"y":""}]';
     /*]]>*/
@@ -161,6 +198,8 @@
     const userChart = dashboard.displayUserChart(userChartData);
     const mediaChart = dashboard.displayMediaChart(mediaChartData);
     const cameraChart = dashboard.displayCameraChart(cameraChartData);
+    const agentNameChart = dashboard.displayAgentNameChart(agentNameChartData);
+    const osNameChart = dashboard.displayOsNameChart(osNameChartData);
     const keywordChart = dashboard.displayKeywordChart(keywordChartData);
     const cpuChart = dashboard.displayCpuChart();
     const memoryChart = dashboard.displayMemoryChart();
