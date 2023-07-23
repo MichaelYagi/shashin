@@ -222,6 +222,12 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.4.0-b180830.0359</version>
         </dependency>
+        <!-- Useragent Parser for stats: https://yauaa.basjes.nl/using/ -->
+        <dependency>
+            <groupId>nl.basjes.parse.useragent</groupId>
+            <artifactId>yauaa</artifactId>
+            <version>7.20.0</version>
+        </dependency>
         <!-- Facial Recog-->
         <dependency>
             <groupId>org.bytedeco</groupId>

@@ -148,6 +148,20 @@ CREATE TABLE `persistent_logins_expiry` (
     FOREIGN KEY (`series`) REFERENCES persistent_logins(`series`)
 );
 
+DROP TABLE IF EXISTS `useragent`;
+CREATE TABLE `useragent` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `userId` INTEGER,
+    `deviceClass` VARCHAR(64) DEFAULT NULL,
+    `osClass` VARCHAR(64) DEFAULT NULL,
+    `osName` VARCHAR(64) DEFAULT NULL,
+    `osVersion` VARCHAR(64) DEFAULT NULL,
+    `agentName` VARCHAR(64) DEFAULT NULL,
+    `agentVersion` VARCHAR(64) DEFAULT NULL,
+    `createdAt` DATETIME DEFAULT NULL,
+    FOREIGN KEY (`userId`) REFERENCES user(`id`)
+);
+
 DROP TABLE IF EXISTS `mediadir`;
 CREATE TABLE `mediadir` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,

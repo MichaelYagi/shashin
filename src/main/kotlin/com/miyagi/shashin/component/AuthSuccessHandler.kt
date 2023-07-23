@@ -6,14 +6,13 @@ import com.miyagi.shashin.configuration.MultiSecurityConfig
 import com.miyagi.shashin.model.Notification
 import com.miyagi.shashin.model.PersistentLoginsExpiry
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.NotificationRepository
-import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
-import com.miyagi.shashin.repository.PersistentLoginsRepository
-import com.miyagi.shashin.repository.UserRepository
+import com.miyagi.shashin.model.Useragent
+import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.CustomUserDetailsService
 import com.miyagi.shashin.util.DatabaseUtil
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import nl.basjes.parse.useragent.UserAgentAnalyzer
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -71,6 +70,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     @Autowired
     var persistentLoginsExpiryRepository: PersistentLoginsExpiryRepository? = null
 
+    @Autowired
+    var useragentRepository: UseragentRepository? = null
+
     private var persistentTokenRepository: PersistentTokenRepository? = null
 
     private var profile: String? = null
@@ -90,6 +92,8 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     @Throws(IOException::class)
     override fun handle(request: HttpServletRequest?, response: HttpServletResponse?, authentication: Authentication?) {
         val logger: Logger = Logger.getLogger(AuthSuccessHandler::class.simpleName)
+
+        var userId = 0
 
         var uriPath = request!!.session.getAttribute("ShashinReferer")
         if (uriPath == null || !validSubPaths(uriPath.toString())) {
@@ -115,6 +119,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                 var isAuthorized = true
                 val user = userRepository?.findByUsername(authentication.name)
                 if (user != null && user.getId() > 0) {
+                    userId = user.getId()
                     if (user.getIsAuthorized() == false) {
                         user.setModifiedAt(getCurrentTimestamp())
                         userRepository?.save(user)
@@ -183,6 +188,39 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         // Cleanup tasks
                         DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
                     }
+
+                    // Capture UA data
+                    val userAgent = request.getHeader("User-Agent")
+                    val uaa = UserAgentAnalyzer
+                        .newBuilder()
+                        .hideMatcherLoadStats()
+                        .withCache(10000)
+                        .build()
+                    val agentObj = uaa.parse(userAgent)
+
+                    // eg. phone
+                    val deviceClass = if (agentObj.getValue("DeviceClass") == "??") null else agentObj.getValue("DeviceClass").lowercase()
+                    // eg. mobile
+                    val osClass = if (agentObj.getValue("OperatingSystemClass") == "??") null else agentObj.getValue("OperatingSystemClass").lowercase()
+                    // eg. android
+                    val osName = if (agentObj.getValue("OperatingSystemName") == "??") null else agentObj.getValue("OperatingSystemName").lowercase()
+                    // eg. 13
+                    val osVersion = if (agentObj.getValue("OperatingSystemVersion") == "??") null else agentObj.getValue("OperatingSystemVersion").lowercase()
+                    // eg. chrome
+                    val agentName = if (agentObj.getValue("AgentName") == "??") null else agentObj.getValue("AgentName").lowercase()
+                    // eg. 114
+                    val agentVersion = if (agentObj.getValue("AgentVersion") == "??") null else agentObj.getValue("AgentVersion").lowercase()
+
+                    val useragentObj = Useragent()
+                    useragentObj.setDeviceClass(deviceClass)
+                    useragentObj.setOsClass(osClass)
+                    useragentObj.setOsName(osName)
+                    useragentObj.setOsVersion(osVersion)
+                    useragentObj.setAgentName(agentName)
+                    useragentObj.setAgentVersion(agentVersion)
+                    useragentObj.setUserId(userId)
+                    useragentObj.setCreatedAt(getCurrentTimestamp())
+                    useragentRepository?.save(useragentObj)
 
                     if (uriPath.isNotEmpty()) {
                         redirectStrategy.sendRedirect(request, response, uriPath)

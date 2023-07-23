@@ -63,6 +63,9 @@ class DashboardController {
     @Autowired
     private lateinit var keywordRepository: KeywordRepository
 
+    @Autowired
+    private lateinit var useragentRepository: UseragentRepository
+
     private var logger: Logger = Logger.getLogger(DashboardController::class.simpleName)
 
     val mapper = ObjectMapper()
@@ -144,11 +147,47 @@ class DashboardController {
         val commentsCount = commentRepository.count()
         val albumCount = albumRepository.count()
         val keywordCount = keywordRepository.count()
+        val browserCount = useragentRepository.countDistinctAgentName()
+        val osCount = useragentRepository.countDistinctOsName()
         response["photosWithPeopleTaggedCount"] = photosWithPeopleTaggedCount
         response["favoritesCount"] = favoritesCount
         response["commentsCount"] = commentsCount
         response["albumCount"] = albumCount
         response["keywordCount"] = keywordCount
+        response["browserTotalCount"] = browserCount
+        response["osTotalCount"] = osCount
+
+        // Browser stats
+        val browserCounts = useragentRepository.countByAgentName()
+        val browserCountList = ArrayList<HashMap<String, Any>>()
+
+        for (agentNameCount in browserCounts) {
+            val agentNameCountMap = HashMap<String, Any>()
+            var agentName = agentNameCount.getAgentName().toString()
+            if (agentNameCount.getAgentName() == null) {
+                agentName = "Unknown"
+            }
+            agentNameCountMap["y"] = agentName
+            agentNameCountMap["x"] = agentNameCount.getCount().toString().toInt()
+            browserCountList.add(agentNameCountMap)
+        }
+        response["agentNameCountJson"] = mapper.writeValueAsString(browserCountList)
+
+        // OS name stats
+        val osNameCounts = useragentRepository.countByOsName()
+        val osNameCountList = ArrayList<HashMap<String, Any>>()
+
+        for (osNameCount in osNameCounts) {
+            val osNameCountMap = HashMap<String, Any>()
+            var osName = osNameCount.getOsName().toString()
+            if (osNameCount.getOsName() == null) {
+                osName = "Unknown"
+            }
+            osNameCountMap["y"] = osName
+            osNameCountMap["x"] = osNameCount.getCount().toString().toInt()
+            osNameCountList.add(osNameCountMap)
+        }
+        response["osNameCountJson"] = mapper.writeValueAsString(osNameCountList)
 
         // Files stats
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
