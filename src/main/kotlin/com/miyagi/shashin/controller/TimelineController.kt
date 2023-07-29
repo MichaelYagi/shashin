@@ -909,39 +909,36 @@ class TimelineController: BaseController() {
                         albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
                         val count = albumPhotoRepository.countByAlbumId(albumId)
 
-                        if (count != null) {
-                            if (count.toInt() > 0) {
-                                val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
-                                val album = albumRepository.findById(albumId)
-                                if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
-                                    // Use the first photo in album
-                                    val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
-                                    if (albumPhoto != null) {
-                                        val albumMetadataObj =
-                                            metadataRepository.findById(albumPhoto.getMetadataId().toString())
-                                        album.get().setCoverUrl(albumMetadataObj.get().getThumbnailUrlCentered())
-                                        albumRepository.save(album.get())
+                        if (count != null && count.toInt() > 0) {
+                            val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
+                            val album = albumRepository.findById(albumId)
+                            if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
+                                // Use the first photo in album
+                                val albumPhoto = albumPhotoRepository.findFirstByAlbumId(albumId)
+                                if (albumPhoto != null) {
+                                    val albumMetadataObj =
+                                        metadataRepository.findById(albumPhoto.getMetadataId().toString())
+                                    album.get().setCoverUrl(albumMetadataObj.get().getThumbnailUrlCentered())
+                                    albumRepository.save(album.get())
+                                }
+                            }
+                        } else {
+                            userAlbumRepository.deleteByAlbumId(albumId)
+                            albumRepository.deleteById(albumId)
+                            // Delete comments
+                            val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                            if (albumComments != null) {
+                                val commentIdList = ArrayList<Int>()
+                                for (albumComment in albumComments) {
+                                    if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
+                                        commentIdList.add(albumComment.getCommentId()!!)
                                     }
                                 }
 
-                            } else {
-                                userAlbumRepository.deleteByAlbumId(albumId)
-                                albumRepository.deleteById(albumId)
-                                // Delete comments
-                                val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
-                                if (albumComments != null) {
-                                    val commentIdList = ArrayList<Int>()
-                                    for (albumComment in albumComments) {
-                                        if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
-                                            commentIdList.add(albumComment.getCommentId()!!)
-                                        }
-                                    }
-
-                                    if (commentIdList.isNotEmpty()) {
-                                        commentRepository.deleteAllById(commentIdList)
-                                        albumCommentRepository.deleteByAlbumId(albumId)
-                                        albumPhotoCommentRepository.deleteByAlbumId(albumId)
-                                    }
+                                if (commentIdList.isNotEmpty()) {
+                                    commentRepository.deleteAllById(commentIdList)
+                                    albumCommentRepository.deleteByAlbumId(albumId)
+                                    albumPhotoCommentRepository.deleteByAlbumId(albumId)
                                 }
                             }
                         }
