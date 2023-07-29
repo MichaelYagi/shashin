@@ -642,7 +642,7 @@ class AlbumsController {
                     val album = albumRepository.findById(albumId)
                     if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
                         // Use the first photo in album
-                        val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
+                        val albumPhoto = albumPhotoRepository.findFirstByAlbumId(albumId)
                         if (albumPhoto != null) {
                             metadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
                             album.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
@@ -708,45 +708,43 @@ class AlbumsController {
                 albumPhotoRepository.deleteByMetadataIdAndAlbumId(metadataId, albumId)
                 val count = albumPhotoRepository.countByAlbumId(albumId)
 
-                if (count != null) {
-                    if (count.toInt() > 0) {
-                        var metadataObj = metadataRepository.findById(metadataId)
-                        val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
-                        val album = albumRepository.findById(albumId)
-                        if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
-                            // Use the first photo in album
-                            val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
-                            if (albumPhoto != null) {
-                                metadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
-                                album.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
-                                albumRepository.save(album.get())
-                            }
+                if (count != null && count.toInt() > 0) {
+                    var metadataObj = metadataRepository.findById(metadataId)
+                    val coverAlbumUrl = metadataObj.get().getThumbnailUrlCentered()
+                    val album = albumRepository.findById(albumId)
+                    if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
+                        // Use the first photo in album
+                        val albumPhoto = albumPhotoRepository.findFirstByAlbumId(albumId)
+                        if (albumPhoto != null) {
+                            metadataObj = metadataRepository.findById(albumPhoto.getMetadataId().toString())
+                            album.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                            albumRepository.save(album.get())
                         }
-                    } else {
-                        userAlbumRepository.deleteByAlbumId(albumId)
-                        albumRepository.deleteById(albumId)
-                        // Delete comments
-                        val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
-                        if (albumComments != null) {
-                            val commentIdList = ArrayList<Int>()
-                            for (albumComment in albumComments) {
-                                if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
-                                    commentIdList.add(albumComment.getCommentId()!!)
-                                }
-                            }
-
-                            if (commentIdList.count() > 0) {
-                                commentRepository.deleteAllById(commentIdList)
-                                albumCommentRepository.deleteByAlbumId(albumId)
-                                albumPhotoCommentRepository.deleteByAlbumId(albumId)
-                            }
-
-                        }
-
-                        resp["msg"] = "/albums"
-                        resp["status"] = "redirect"
-                        return mapper.writeValueAsString(resp)
                     }
+                } else {
+                    userAlbumRepository.deleteByAlbumId(albumId)
+                    albumRepository.deleteById(albumId)
+                    // Delete comments
+                    val albumComments = albumCommentRepository.findAllByAlbumId(albumId)
+                    if (albumComments != null) {
+                        val commentIdList = ArrayList<Int>()
+                        for (albumComment in albumComments) {
+                            if (albumComment != null && albumComment.getCommentId() !in commentIdList) {
+                                commentIdList.add(albumComment.getCommentId()!!)
+                            }
+                        }
+
+                        if (commentIdList.count() > 0) {
+                            commentRepository.deleteAllById(commentIdList)
+                            albumCommentRepository.deleteByAlbumId(albumId)
+                            albumPhotoCommentRepository.deleteByAlbumId(albumId)
+                        }
+
+                    }
+
+                    resp["msg"] = "/albums"
+                    resp["status"] = "redirect"
+                    return mapper.writeValueAsString(resp)
                 }
             } else if (setCoverAlbum) {
                 val metadataObj = metadataRepository.findById(metadataId)
