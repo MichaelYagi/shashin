@@ -740,13 +740,12 @@ class AlbumsController {
                                 albumCommentRepository.deleteByAlbumId(albumId)
                                 albumPhotoCommentRepository.deleteByAlbumId(albumId)
                             }
-
                         }
-
-                        resp["msg"] = "/albums"
-                        resp["status"] = "redirect"
-                        return mapper.writeValueAsString(resp)
                     }
+
+                    resp["msg"] = "/albums"
+                    resp["status"] = "redirect"
+                    return mapper.writeValueAsString(resp)
                 }
             } else if (setCoverAlbum) {
                 val metadataObj = metadataRepository.findById(metadataId)
