@@ -160,34 +160,34 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                         }
                     }
 
-                    if (response != null) {
-                        var series = ""
-                        var expiry = ""
-
-                        for (cookie in response.getHeaders("Set-Cookie")) {
-                            if (cookie.lowercase().contains("remember-me")) {
-                                val seriesExpiryMap = TextUtils.parseRememberMeCookie(cookie)
-                                series = seriesExpiryMap["series"].toString()
-                                expiry = seriesExpiryMap["expires"].toString()
-                                break
-                            }
-                        }
-
-                        if (series.isNotEmpty() && expiry.isNotEmpty()) {
-                            val persistentLoginsExpiry = PersistentLoginsExpiry()
-                            persistentLoginsExpiry.setSeries(series)
-                            persistentLoginsExpiry.setExpiry(expiry.toLong())
-                            val uri = URI(request.requestURL.toString())
-                            val host = uri.host
-                            persistentLoginsExpiry.setHost(host)
-                            val userAgent = request.getHeader("User-Agent")
-                            persistentLoginsExpiry.setUseragent(userAgent)
-                            persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
-                        }
-
-                        // Cleanup tasks
-                        DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
-                    }
+//                    if (response != null) {
+//                        var series = ""
+//                        var expiry = ""
+//
+//                        for (cookie in response.getHeaders("Set-Cookie")) {
+//                            if (cookie.lowercase().contains("remember-me")) {
+//                                val seriesExpiryMap = TextUtils.parseRememberMeCookie(cookie)
+//                                series = seriesExpiryMap["series"].toString()
+//                                expiry = seriesExpiryMap["expires"].toString()
+//                                break
+//                            }
+//                        }
+//
+//                        if (series.isNotEmpty() && expiry.isNotEmpty()) {
+//                            val persistentLoginsExpiry = PersistentLoginsExpiry()
+//                            persistentLoginsExpiry.setSeries(series)
+//                            persistentLoginsExpiry.setExpiry(expiry.toLong())
+//                            val uri = URI(request.requestURL.toString())
+//                            val host = uri.host
+//                            persistentLoginsExpiry.setHost(host)
+//                            val userAgent = request.getHeader("User-Agent")
+//                            persistentLoginsExpiry.setUseragent(userAgent)
+//                            persistentLoginsExpiryRepository?.save(persistentLoginsExpiry)
+//                        }
+//
+//                        // Cleanup tasks
+//                        DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
+//                    }
 
                     // Capture UA data
                     val userAgent = request.getHeader("User-Agent")
