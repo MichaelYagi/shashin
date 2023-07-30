@@ -44,7 +44,9 @@ class TextUtils {
                 }
 
                 if (key.lowercase() == "expires" && value.isNotEmpty()) {
-                    seriesExpiryMap["expires"] = Date(value).time.toString()
+                    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                    sdf.timeZone = TimeZone.getTimeZone("GMT")
+                    seriesExpiryMap["expires"] = sdf.parse(value).time.toString()
                 }
             }
 
