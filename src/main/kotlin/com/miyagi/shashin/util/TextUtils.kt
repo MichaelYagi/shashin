@@ -9,6 +9,7 @@ import java.net.URL
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -44,9 +45,8 @@ class TextUtils {
                 }
 
                 if (key.lowercase() == "expires" && value.isNotEmpty()) {
-                    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                    sdf.timeZone = TimeZone.getTimeZone("GMT")
-                    seriesExpiryMap["expires"] = sdf.parse(value).time.toString()
+                    val datetime = SimpleDateFormat("EEE, dd-MMM-yyyy HH:mm:ss z").parse(value);
+                    seriesExpiryMap["expires"] = datetime.time.toString()
                 }
             }
 
