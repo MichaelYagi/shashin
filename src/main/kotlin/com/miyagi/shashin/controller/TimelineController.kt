@@ -915,7 +915,7 @@ class TimelineController: BaseController() {
                                 val album = albumRepository.findById(albumId)
                                 if (album.isPresent && album.get().getCoverUrl() == coverAlbumUrl) {
                                     // Use the first photo in album
-                                    val albumPhoto = albumPhotoRepository.findFirstByOrderByIdAsc()
+                                    val albumPhoto = albumPhotoRepository.findFirstByAlbumId(albumId)
                                     if (albumPhoto != null) {
                                         val albumMetadataObj =
                                             metadataRepository.findById(albumPhoto.getMetadataId().toString())
