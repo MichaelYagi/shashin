@@ -1,6 +1,6 @@
 class GalleryTemplates {
     static PhotoGalleryItem({activePage, appendClass, dateHeadingObj, metadata, currentMediaLinkIndex, overlayData}) { return `
-        ${(typeof dateHeadingObj === "undefined" || dateHeadingObj === null) ? '' : `<section class="dateSection" id="${dateHeadingObj.heading}"><p><strong>${dateHeadingObj.display}</strong></p></section>`}
+        ${(typeof dateHeadingObj === "undefined" || dateHeadingObj === null) ? '' : `<section class="dateSection" id="${dateHeadingObj.heading}"><p>${(activePage === "trash") ? `<span class="text-muted">Removed </span>` : ''}${(activePage === "recent") ? `<span class="text-muted">Added </span>` : ''}${(activePage === "modified") ? `<span class="text-muted">Modified </span>` : ''}<strong>${dateHeadingObj.display}</strong></p></section>`}
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" name="lightGalleryIndex${currentMediaLinkIndex}"></a>
             <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
