@@ -613,8 +613,22 @@
                     const coordArray = ol.proj.transform(obj.coordinate, 'EPSG:3857', 'EPSG:4326');
                     if (coordArray.length > 1) {
                         const copyText = coordArray[1]+","+coordArray[0];
-                        $("#latlng").val(copyText);
-                        shashin.showToastMessage("Coordinates copied", copyText + " copied to the latitude and longitude field in the General tab", "bi-info-circle", "#777777");
+
+                        const tempText = document.createElement("input");
+                        tempText.value = copyText;
+                        tempText.type = "hidden";
+                        tempText.id = "tempClipboardMapId";
+                        tempText.setAttribute('data-clipboard-text', copyText);
+                        document.body.appendChild(tempText);
+                        tempText.select();
+
+                        const clipboard = new ClipboardJS('#tempClipboardMapId',{container: document.getElementById("propTimelineModal")});
+                        $("#tempClipboardMapId").click();
+
+                        shashin.showToastMessage("Coordinates copied to clipboard", copyText + " copied to the clipboard", "bi-info-circle", "#777777");
+
+                        $("#tempClipboardMapId").remove();
+                        clipboard.destroy();
                     }
                 };
 
