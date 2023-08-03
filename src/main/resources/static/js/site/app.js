@@ -587,10 +587,12 @@
                 shashin.map.addControl(attributions);
 
                 const copyCoordinates = function (obj) {
+                    $("#copiedCoordinates").text("");
                     const coordArray = ol.proj.transform(obj.coordinate, 'EPSG:3857', 'EPSG:4326');
                     if (coordArray.length > 1) {
                         const copyText = coordArray[1]+","+coordArray[0];
                         $("#latlng").val(copyText);
+                        $("#copiedCoordinates").text(copyText + " copied!");
                     }
                 };
 
