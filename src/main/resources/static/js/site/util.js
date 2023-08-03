@@ -527,7 +527,7 @@ class Util {
         try {
             const successful = document.execCommand('copy');
             const msg = successful ? 'successful' : 'unsuccessful';
-            shashin.printMessageToConsole('Fallback: Copying text command was ' + msg);
+            shashin.printMessageToConsole('Fallback: Copying text "'+text+'" was ' + msg);
         } catch (err) {
             shashin.printMessageToConsole('Fallback: Oops, unable to copy', err);
         }
@@ -540,7 +540,7 @@ class Util {
             return;
         }
         navigator.clipboard.writeText(text).then(function() {
-            shashin.printMessageToConsole('Async: Copying to clipboard was successful!');
+            shashin.printMessageToConsole('Async: Copying test "'+text+'" to clipboard was successful');
         }, function(err) {
             shashin.printMessageToConsole('Async: Could not copy text: ', err);
         });
