@@ -591,8 +591,7 @@
                     if (coordArray.length > 1) {
                         const copyText = coordArray[1]+","+coordArray[0];
 
-                        // Copy the text inside the text field
-                        navigator.clipboard.writeText(copyText);
+                        Util.copyTextToClipboard(copyText);
                     }
                 };
 
