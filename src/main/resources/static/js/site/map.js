@@ -619,7 +619,7 @@ async function showMap(mapdata,showControls) {
             const clipboard = new ClipboardJS('#tempClipboardMapId');
             $("#tempClipboardMapId").click();
 
-            shashin.showToastMessage("Coordinates copied to clipboard", copyText + " copied to the clipboard", "bi-info-circle", "#777777");
+            shashin.showToastMessage("Coordinates copied to clipboard", copyText + " copied to clipboard", "bi-info-circle", "#777777");
 
             $("#tempClipboardMapId").remove();
             clipboard.destroy();
