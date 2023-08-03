@@ -590,17 +590,16 @@
                     const coordArray = ol.proj.transform(obj.coordinate, 'EPSG:3857', 'EPSG:4326');
                     if (coordArray.length > 1) {
                         const copyText = coordArray[1]+","+coordArray[0];
-
-                        Util.copyTextToClipboard(copyText);
+                        $("#latlng").val(copyText);
                     }
                 };
 
                 const contextmenu = new ContextMenu({
-                    width: 170,
+                    width: 300,
                     defaultItems: false, // defaultItems are (for now) Zoom In/Zoom Out
                     items: [
                         {
-                            text: 'Copy coordinates',
+                            text: 'Copy coordinates to Latitude, Longitude field',
                             callback: copyCoordinates
                         }
                     ],
