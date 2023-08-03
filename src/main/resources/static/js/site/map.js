@@ -608,7 +608,19 @@ async function showMap(mapdata,showControls) {
         if (coordArray.length > 1) {
             const copyText = coordArray[1]+","+coordArray[0];
 
-            Util.copyTextToClipboard(copyText);
+            const tempText = document.createElement("input");
+            tempText.value = copyText;
+            tempText.type = "hidden";
+            tempText.id = "tempClipboardMapId";
+            tempText.setAttribute('data-clipboard-text', copyText);
+            document.body.appendChild(tempText);
+            tempText.select();
+
+            const clipboard = new ClipboardJS('#tempClipboardMapId');
+            $("#tempClipboardMapId").click();
+
+            $("#tempClipboardMapId").remove();
+            clipboard.destroy();
         }
     };
 
