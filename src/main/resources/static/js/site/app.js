@@ -633,15 +633,24 @@
                 };
 
                 const contextmenu = new ContextMenu({
-                    width: 215,
-                    defaultItems: false, // defaultItems are (for now) Zoom In/Zoom Out
-                    items: [
-                        {
-                            text: 'Copy coordinates to lat/lng field',
-                            callback: copyCoordinates
-                        }
-                    ],
+                    width: 275,
+                    defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
                 });
+                contextmenu.on('open', function (evt) {
+                    const coordArray = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+
+                    if (coordArray.length > 1) {
+                        const copyText = coordArray[1] + "," + coordArray[0];
+                        contextmenu.clear();
+                        contextmenu.extend([
+                            {
+                                text: copyText,
+                                callback: copyCoordinates
+                            }
+                        ]);
+                    }
+                });
+
                 shashin.map.addControl(contextmenu);
             }
 
