@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Interface to manage Traing Images on CompreFace server
 - API management endpoint and interface
 - Profile photos 
+- Custom context menu in map views
 
 ### Changed
 - Updated API calls to reflect appropriate request types
