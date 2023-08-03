@@ -599,7 +599,7 @@
                     defaultItems: false, // defaultItems are (for now) Zoom In/Zoom Out
                     items: [
                         {
-                            text: 'Copy coordinates to Latitude, Longitude field',
+                            text: 'Copy coordinates to lat/lng field',
                             callback: copyCoordinates
                         }
                     ],
