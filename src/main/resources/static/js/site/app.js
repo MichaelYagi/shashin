@@ -131,7 +131,8 @@
 
     shashin.getMetadata = async function(metadataId) {
         const http = new Http("get metadata");
-        const data = await http.ajax("get", "/metadata/"+metadataId);
+        const version = Util.getMetadataLocalStorage();
+        const data = await http.ajax("get", "/metadata/"+metadataId+(version === "" ? "" : "?v=" + version));
 
         let metadata = {};
         if (data.hasOwnProperty("metadata") && data.hasOwnProperty("keywordList")) {
