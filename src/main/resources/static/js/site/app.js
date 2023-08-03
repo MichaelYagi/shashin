@@ -19,6 +19,29 @@
         }
     }
 
+    shashin.showToastMessage = function(title, message, icon, iconHexColor) {
+        if (title) {
+            $("#toastTitle").text(title);
+        }
+
+        if (message) {
+            $("#toastMessage").text(message);
+        }
+
+        if (icon) {
+            let cssStyle = {"font-size":"1rem"};
+            if (iconHexColor) {
+                cssStyle["color"] = iconHexColor;
+            }
+            $("#toastIcon").css(cssStyle);
+            $("#toastIcon").addClass(icon);
+        }
+
+        const toastLiveExample = document.getElementById('liveToast');
+        const toast = new bootstrap.Toast(toastLiveExample);
+        toast.show();
+    }
+
     shashin.getMediaContent = function(metadata) {
         const mediaContent = {};
 
@@ -587,17 +610,16 @@
                 shashin.map.addControl(attributions);
 
                 const copyCoordinates = function (obj) {
-                    $("#copiedCoordinates").text("");
                     const coordArray = ol.proj.transform(obj.coordinate, 'EPSG:3857', 'EPSG:4326');
                     if (coordArray.length > 1) {
                         const copyText = coordArray[1]+","+coordArray[0];
                         $("#latlng").val(copyText);
-                        $("#copiedCoordinates").text(copyText + " copied!");
+                        shashin.showToastMessage("Coordinates copied", copyText + " copied to the latitude and longitude field in the General tab", "bi-info-circle", "#777777");
                     }
                 };
 
                 const contextmenu = new ContextMenu({
-                    width: 300,
+                    width: 215,
                     defaultItems: false, // defaultItems are (for now) Zoom In/Zoom Out
                     items: [
                         {

@@ -21,7 +21,25 @@
             $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
         }
     })
+
+    $('#liveToast').on('hidden.bs.toast', function () {
+        $("#toastIcon").removeClass();
+        $("#toastIcon").removeAttr('style');
+        $("#toastTitle").text("");
+        $("#toastMessage").text("");
+    })
 </script>
+
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <span id="toastIcon"></span>&nbsp;
+            <strong id="toastTitle" class="me-auto"></strong>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div id="toastMessage" class="toast-body"></div>
+    </div>
+</div>
 
 <header class="py-2 mb-1 border-bottom shadow">
     <div class="container-fluid align-items-center d-flex">
