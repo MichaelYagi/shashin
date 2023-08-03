@@ -603,6 +603,28 @@ async function showMap(mapdata,showControls) {
 
     map.addControl(attributions);
 
+    const copyCoordinates = function (obj) {
+        const coordArray = ol.proj.transform(obj.coordinate, 'EPSG:3857', 'EPSG:4326');
+        if (coordArray.length > 1) {
+            const copyText = coordArray[1]+","+coordArray[0];
+
+            // Copy the text inside the text field
+            navigator.clipboard.writeText(copyText);
+        }
+    };
+
+    const contextmenu = new ContextMenu({
+        width: 170,
+        defaultItems: false, // defaultItems are (for now) Zoom In/Zoom Out
+        items: [
+            {
+                text: 'Copy coordinates',
+                callback: copyCoordinates
+            }
+        ],
+    });
+    map.addControl(contextmenu);
+
     map.once("postrender", function() {
         dateInputs.css("visibility", "visible");
     });
