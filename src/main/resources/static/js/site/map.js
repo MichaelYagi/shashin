@@ -619,17 +619,19 @@ async function showMap(mapdata,showControls) {
             const clipboard = new ClipboardJS('#tempClipboardMapId');
             $("#tempClipboardMapId").click();
 
+            shashin.showToastMessage("Coordinates copied to clipboard", copyText + " copied to the clipboard", "bi-info-circle", "#777777");
+
             $("#tempClipboardMapId").remove();
             clipboard.destroy();
         }
     };
 
     const contextmenu = new ContextMenu({
-        width: 170,
+        width: 200,
         defaultItems: false, // defaultItems are (for now) Zoom In/Zoom Out
         items: [
             {
-                text: 'Copy coordinates',
+                text: 'Copy coordinates to clipboard',
                 callback: copyCoordinates
             }
         ],
