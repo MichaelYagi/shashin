@@ -592,6 +592,32 @@
             $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata}));
 
             if (shashin.map === null) {
+                const duration = 400;
+                const interactions = [
+                    new ol.interaction.DoubleClickZoom({
+                        duration: duration
+                    }),
+                    new ol.interaction.KeyboardPan({
+                        pixelDelta: 256
+                    }),
+                    new ol.interaction.KeyboardZoom({
+                        duration: duration
+                    }),
+                    new ol.interaction.MouseWheelZoom({
+                        duration: duration
+                    }),
+                    new ol.interaction.PinchRotate(),
+                    new ol.interaction.PinchZoom({
+                        duration: duration
+                    }),
+                    new ol.interaction.DragPan({
+                        kinetic: new ol.Kinetic(-0.005, 0.05, 100)
+                    }),
+                    new ol.interaction.DblClickDragZoom(),
+                    new ol.interaction.DragZoom(),
+                    new ol.interaction.DragRotate()
+                ];
+
                 shashin.map = new ol.Map({
                     controls: [],
                     layers: [
@@ -600,7 +626,8 @@
                             source: shashin.getMapSource("osm")
                         })
                     ],
-                    target: 'map'
+                    target: 'map',
+                    interactions: interactions
                 });
             } else {
                 const baseLayer = new ol.layer.Tile({
