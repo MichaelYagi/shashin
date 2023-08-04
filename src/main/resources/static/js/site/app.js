@@ -652,12 +652,14 @@
                     const coordArray = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
 
                     if (coordArray.length > 1) {
+                        // Clear all previous coordinates
                         shashin.map.getLayers().forEach(layer => {
                             if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
                                 shashin.map.removeLayer(layer);
                             }
                         });
 
+                        // Create icon for temp coordinate
                         const feature = new ol.Feature({
                             geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
                             name: 'tempMarker'
@@ -694,16 +696,16 @@
                         feature.setStyle(styleIcon);
                         layer.getSource().addFeature(feature);
 
-                        // copy coordinates to menu item
+                        // Create menu for context menu
                         const copyText = coordArray[1] + "," + coordArray[0];
                         contextmenu.clear();
                         contextmenu.extend([
                             {
-                                text: copyText,
+                                text: copyText, // Copy coordinates from context menu
                                 callback: copyCoordinates
                             },
                             {
-                                text: "Recenter",
+                                text: "Recenter", // Recenter map to media location
                                 callback: recenterCoordinates
                             }
                         ]);
