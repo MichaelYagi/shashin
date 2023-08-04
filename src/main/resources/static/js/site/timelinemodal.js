@@ -236,6 +236,7 @@ $("#saveMetadata").on("click", async function (e) {
 // Clear message on modal close
 $('#propTimelineModal').on('hide.bs.modal', function () {
     if (shashin.map !== null) {
+        // Set map target to null and reset
         shashin.map.setTarget(null);
         shashin.map = null;
     }
