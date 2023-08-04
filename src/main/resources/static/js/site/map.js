@@ -630,10 +630,59 @@ async function showMap(mapdata,showControls) {
         width: 275,
         defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
     });
+    contextmenu.on('close', function (evt) {
+        map.getLayers().forEach(layer => {
+            if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                map.removeLayer(layer);
+            }
+        });
+    });
     contextmenu.on('open', function (evt) {
         const coordArray = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
 
         if (coordArray.length > 1) {
+            map.getLayers().forEach(layer => {
+                if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                    map.removeLayer(layer);
+                }
+            });
+
+            const feature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
+                name: 'tempMarker'
+            });
+
+            const iconSize = 15;
+
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-pin-fill" style="color: grey;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.146.146A.5.5 0 014.5 0h7a.5.5 0 01.5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 01-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 01-.5-.5c0-.973.64-1.725 1.17-2.189A5.921 5.921 0 015 6.708V2.277a2.77 2.77 0 01-.354-.298C4.342 1.674 4 1.179 4 .5a.5.5 0 01.146-.354z"/></svg>';
+            const icon = 'data:image/svg+xml;utf8,' + svg;
+
+            const styleIcon = new ol.style.Style({
+                image: new ol.style.Icon({
+                    opacity: 1,
+                    src: icon,
+                    anchor: [0.5, iconSize],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    anchorOrigin: 'top-left',
+                    offset: [0, 0]
+                })
+            });
+
+            feature.setStyle(styleIcon);
+            feature.setId("tempCoordinates");
+
+            const layer = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: [feature]
+                })
+            });
+            layer.set('name', 'tempCoordinates')
+            map.addLayer(layer);
+
+            feature.setStyle(styleIcon);
+            layer.getSource().addFeature(feature);
+
             const copyText = coordArray[1] + "," + coordArray[0];
             contextmenu.clear();
             contextmenu.extend([
