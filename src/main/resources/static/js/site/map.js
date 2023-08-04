@@ -617,9 +617,18 @@ async function showMap(mapdata,showControls) {
             tempText.select();
 
             const clipboard = new ClipboardJS('#tempClipboardMapId');
-            $("#tempClipboardMapId").click();
 
-            shashin.showToastMessage("Coordinates copied to clipboard", copyText + " copied to clipboard", "bi-info-circle", "#777777");
+            $("#tempClipboardMapId").on( "click", function () {
+
+                clipboard.on('success', function(e) {
+                    shashin.showToastMessage("Coordinates copied to clipboard", e.text + " copied to clipboard", "bi-info-circle", "#777777");
+                });
+
+                clipboard.on('error', function(e) {
+                    shashin.showToastMessage("Could not copy coordinates", copyText + " could not be copied: " + e, "bi-exclamation-triangle", "#FF0000");
+                });
+            });
+            $("#tempClipboardMapId").trigger( "click" );
 
             $("#tempClipboardMapId").remove();
             clipboard.destroy();
