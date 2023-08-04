@@ -637,9 +637,9 @@
                     defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
                 });
                 contextmenu.on('close', function (evt) {
-                    map.getLayers().forEach(layer => {
+                    shashin.map.getLayers().forEach(layer => {
                         if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
-                            map.removeLayer(layer);
+                            shashin.map.removeLayer(layer);
                         }
                     });
                 });
