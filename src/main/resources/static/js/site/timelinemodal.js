@@ -235,6 +235,11 @@ $("#saveMetadata").on("click", async function (e) {
 
 // Clear message on modal close
 $('#propTimelineModal').on('hide.bs.modal', function () {
+    if (shashin.map !== null) {
+        shashin.map.setTarget(null);
+        shashin.map = null;
+    }
+
     $("#timelineModalStatus").attr("class","spinner-grow me-auto");
     $("#timelineModalStatus").css("visibility","hidden");
     $("#timelineModalMsg").html("");

@@ -9,6 +9,8 @@
     shashin.darkMode = true;
     shashin.lgSubHtmlTimeout = null;
     shashin.nonce = "";
+    shashin.contextMenu = null;
+    shashin.tempVector = null;
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -598,122 +600,125 @@
                             source: shashin.getMapSource("osm")
                         })
                     ],
-                    target: 'map',
-                    view: new ol.View({
-                        center: ol.proj.fromLonLat([metadata.lng, metadata.lat]),
-                        maxZoom: 19,
-                        zoom: 19
-                    })
+                    target: 'map'
                 });
+            } else {
+                const baseLayer = new ol.layer.Tile({
+                    visible: true,
+                    source: shashin.getMapSource("osm")
+                });
+                shashin.map.addLayer(baseLayer);
+            }
 
-                const attributions = new ol.control.Attribution({collapsible: true});
-                shashin.map.addControl(attributions);
+            const attributions = new ol.control.Attribution({collapsible: true});
 
-                const copyCoordinates = function (obj) {
-                    const coordArray = ol.proj.transform(obj.coordinate, 'EPSG:3857', 'EPSG:4326');
-                    if (coordArray.length > 1) {
-                        const copyText = coordArray[1]+","+coordArray[0];
+            shashin.map.addControl(attributions);
 
-                        const tempText = document.createElement("input");
-                        tempText.value = copyText;
-                        tempText.type = "hidden";
-                        tempText.id = "tempClipboardMapId";
-                        tempText.setAttribute('data-clipboard-text', copyText);
-                        document.body.appendChild(tempText);
-                        tempText.select();
+            const copyCoordinates = function (obj) {
+                const coordArray = ol.proj.transform(obj.coordinate, 'EPSG:3857', 'EPSG:4326');
+                if (coordArray.length > 1) {
+                    const copyText = coordArray[1]+","+coordArray[0];
 
-                        const clipboard = new ClipboardJS('#tempClipboardMapId',{container: document.getElementById("propTimelineModal")});
-                        $("#tempClipboardMapId").click();
+                    const tempText = document.createElement("input");
+                    tempText.value = copyText;
+                    tempText.type = "hidden";
+                    tempText.id = "tempClipboardMapId";
+                    tempText.setAttribute('data-clipboard-text', copyText);
+                    document.body.appendChild(tempText);
+                    tempText.select();
 
-                        shashin.showToastMessage("Coordinates copied to clipboard", copyText + " copied to clipboard", "bi-info-circle", "#777777");
+                    const clipboard = new ClipboardJS('#tempClipboardMapId',{container: document.getElementById("propTimelineModal")});
+                    $("#tempClipboardMapId").click();
 
-                        $("#tempClipboardMapId").remove();
-                        clipboard.destroy();
+                    shashin.showToastMessage("Coordinates copied to clipboard", copyText + " copied to clipboard", "bi-info-circle", "#777777");
+
+                    $("#tempClipboardMapId").remove();
+                    clipboard.destroy();
+                }
+            };
+
+            const recenterCoordinates = function (obj) {
+                shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+                shashin.map.getView().setZoom(15);
+            };
+
+            shashin.contextMenu = new ContextMenu({
+                width: 275,
+                defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
+            });
+            shashin.contextMenu.on('close', function (evt) {
+                shashin.map.getLayers().forEach(layer => {
+                    if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                        shashin.map.removeLayer(layer);
                     }
-                };
-
-                const recenterCoordinates = function (obj) {
-                    shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
-                    shashin.map.getView().setZoom(15);
-                };
-
-                const contextmenu = new ContextMenu({
-                    width: 275,
-                    defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
                 });
-                contextmenu.on('close', function (evt) {
+            });
+            shashin.contextMenu.on('open', function (evt) {
+                const coordArray = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+                if (coordArray.length > 1) {
+                    // Clear all previous coordinates
                     shashin.map.getLayers().forEach(layer => {
                         if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
                             shashin.map.removeLayer(layer);
                         }
                     });
-                });
-                contextmenu.on('open', function (evt) {
-                    const coordArray = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
 
-                    if (coordArray.length > 1) {
-                        // Clear all previous coordinates
-                        shashin.map.getLayers().forEach(layer => {
-                            if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
-                                shashin.map.removeLayer(layer);
-                            }
-                        });
+                    // Create icon for temp coordinate
+                    const feature = new ol.Feature({
+                        geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
+                        name: 'tempMarker'
+                    });
 
-                        // Create icon for temp coordinate
-                        const feature = new ol.Feature({
-                            geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
-                            name: 'tempMarker'
-                        });
+                    const iconSize = 15;
 
-                        const iconSize = 15;
+                    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-pin-fill" style="color: grey;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.146.146A.5.5 0 014.5 0h7a.5.5 0 01.5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 01-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 01-.5-.5c0-.973.64-1.725 1.17-2.189A5.921 5.921 0 015 6.708V2.277a2.77 2.77 0 01-.354-.298C4.342 1.674 4 1.179 4 .5a.5.5 0 01.146-.354z"/></svg>';
+                    const icon = 'data:image/svg+xml;utf8,' + svg;
 
-                        const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-pin-fill" style="color: grey;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.146.146A.5.5 0 014.5 0h7a.5.5 0 01.5.5c0 .68-.342 1.174-.646 1.479-.126.125-.25.224-.354.298v4.431l.078.048c.203.127.476.314.751.555C12.36 7.775 13 8.527 13 9.5a.5.5 0 01-.5.5h-4v4.5c0 .276-.224 1.5-.5 1.5s-.5-1.224-.5-1.5V10h-4a.5.5 0 01-.5-.5c0-.973.64-1.725 1.17-2.189A5.921 5.921 0 015 6.708V2.277a2.77 2.77 0 01-.354-.298C4.342 1.674 4 1.179 4 .5a.5.5 0 01.146-.354z"/></svg>';
-                        const icon = 'data:image/svg+xml;utf8,' + svg;
+                    const styleIcon = new ol.style.Style({
+                        image: new ol.style.Icon({
+                            opacity: 1,
+                            src: icon,
+                            anchor: [0.5, iconSize],
+                            anchorXUnits: 'fraction',
+                            anchorYUnits: 'pixels',
+                            anchorOrigin: 'top-left',
+                            offset: [0, 0]
+                        })
+                    });
 
-                        const styleIcon = new ol.style.Style({
-                            image: new ol.style.Icon({
-                                opacity: 1,
-                                src: icon,
-                                anchor: [0.5, iconSize],
-                                anchorXUnits: 'fraction',
-                                anchorYUnits: 'pixels',
-                                anchorOrigin: 'top-left',
-                                offset: [0, 0]
-                            })
-                        });
+                    feature.setStyle(styleIcon);
+                    feature.setId("tempCoordinates");
 
-                        feature.setStyle(styleIcon);
-                        feature.setId("tempCoordinates");
+                    shashin.tempVector = new ol.source.Vector({
+                        features: [feature]
+                    });
 
-                        const layer = new ol.layer.Vector({
-                            source: new ol.source.Vector({
-                                features: [feature]
-                            })
-                        });
-                        layer.set('name', 'tempCoordinates')
-                        shashin.map.addLayer(layer);
+                    const layer = new ol.layer.Vector({
+                        source: shashin.tempVector
+                    });
+                    layer.set('name', 'tempCoordinates')
+                    shashin.map.addLayer(layer);
 
-                        feature.setStyle(styleIcon);
-                        layer.getSource().addFeature(feature);
+                    feature.setStyle(styleIcon);
+                    layer.getSource().addFeature(feature);
 
-                        // Create menu for context menu
-                        const copyText = coordArray[1] + "," + coordArray[0];
-                        contextmenu.clear();
-                        contextmenu.extend([
-                            {
-                                text: copyText, // Copy coordinates from context menu
-                                callback: copyCoordinates
-                            },
-                            {
-                                text: "Recenter", // Recenter map to media location
-                                callback: recenterCoordinates
-                            }
-                        ]);
-                    }
-                });
+                    // Create menu for context menu
+                    const copyText = coordArray[1] + "," + coordArray[0];
+                    shashin.contextMenu.clear();
+                    shashin.contextMenu.extend([
+                        {
+                            text: copyText, // Copy coordinates from context menu
+                            callback: copyCoordinates
+                        },
+                        {
+                            text: "Recenter", // Recenter map to media location
+                            callback: recenterCoordinates
+                        }
+                    ]);
+                }
+            });
 
-                shashin.map.addControl(contextmenu);
-            }
+            shashin.map.addControl(shashin.contextMenu);
 
             if (shashin.layer !== null && shashin.feature !== null) {
                 shashin.layer.getSource().clear();
