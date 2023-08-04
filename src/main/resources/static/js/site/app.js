@@ -632,6 +632,11 @@
                     }
                 };
 
+                const recenterCoordinates = function (obj) {
+                    shashin.map.getView().setCenter(ol.proj.fromLonLat([metadata.lng, metadata.lat]));
+                    shashin.map.getView().setZoom(15);
+                };
+
                 const contextmenu = new ContextMenu({
                     width: 275,
                     defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
@@ -696,6 +701,10 @@
                             {
                                 text: copyText,
                                 callback: copyCoordinates
+                            },
+                            {
+                                text: "Recenter",
+                                callback: recenterCoordinates
                             }
                         ]);
                     }
