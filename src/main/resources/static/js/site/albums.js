@@ -261,7 +261,8 @@ class Albums {
             const downloadLocation = $("#download"+albumId).attr("href");
             const albumName = $("#albumName"+albumId).text();
 
-            $("#albumsMessage").html("<span class='spinner-grow spinner-grow-sm'></span> <strong>Exporting album \""+albumName+"\". Downloading photos only.</strong>").animate({opacity: 100}, 0);
+            // $("#albumsMessage").html("<span class='spinner-grow spinner-grow-sm'></span> <strong>Exporting album \""+albumName+"\". Downloading photos only.</strong>").animate({opacity: 100}, 0);
+            shashin.showToastMessage("Downloading album", "Downloading album \""+albumName+"\". Downloading photos only.", "bi-info-circle", "#777777");
             setTimeout(function () { $("#download"+albumId).removeAttr("href") }, 0);
                 Util.setCookie(tokenName, "", "/");
                 Util.setCookie(tokenSize, "", "/");
@@ -274,9 +275,10 @@ class Albums {
 
                 if ((tokenCookieValue !== "" && tokenCookieSize !== "") || attempts === 0) {
                     if (attempts === 0) {
-                        $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
+                        // $("#albumsMessage").html("&nbsp;").animate({opacity: 0}, 5000);
                     } else {
-                        $("#albumsMessage").html("<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize)).animate({opacity: 0}, 10000);
+                        shashin.showToastMessage("Album downloaded", "<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize), "bi-info-circle", "#777777");
+                        // $("#albumsMessage").html("<strong>File name</strong> " + tokenCookieValue + " <strong>File size</strong> " + Util.formatBytes(tokenCookieSize)).animate({opacity: 0}, 10000);
                         $("#download" + albumId).attr("href", downloadLocation);
                         Util.deleteCookie(tokenName, "/");
                         Util.deleteCookie(tokenSize, "/");

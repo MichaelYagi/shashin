@@ -23,11 +23,11 @@
 
     shashin.showToastMessage = function(title, message, icon, iconHexColor) {
         if (title) {
-            $("#toastTitle").text(title);
+            $("#toastTitle").html(title);
         }
 
         if (message) {
-            $("#toastMessage").text(message);
+            $("#toastMessage").html(message);
         }
 
         if (icon) {
@@ -654,22 +654,30 @@
                     document.body.appendChild(tempText);
                     tempText.select();
 
-                    const clipboard = new ClipboardJS('#tempClipboardMapId',{container: document.getElementById("propTimelineModal")});
+                    let clipboard = null;
 
-                    $("#tempClipboardMapId").on( "click", function () {
+                    if ($("#propTimelineModal").length > 0) {
+                        clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propTimelineModal")});
+                    } else if ($("#propInfoModal").length > 0) {
+                        clipboard = new ClipboardJS('#tempClipboardMapId', {container: document.getElementById("propInfoModal")});
+                    }
 
-                        clipboard.on('success', function(e) {
-                            shashin.showToastMessage("Coordinates copied to clipboard", e.text + " copied to clipboard", "bi-info-circle", "#777777");
+                    if (clipboard !== null) {
+                        $("#tempClipboardMapId").on("click", function () {
+
+                            clipboard.on('success', function (e) {
+                                shashin.showToastMessage("Coordinates copied to clipboard", e.text + " copied to clipboard", "bi-info-circle", "#777777");
+                            });
+
+                            clipboard.on('error', function (e) {
+                                shashin.showToastMessage("Could not copy coordinates", copyText + " could not be copied: " + e, "bi-exclamation-triangle", "#FF0000");
+                            });
                         });
+                        $("#tempClipboardMapId").trigger("click");
 
-                        clipboard.on('error', function(e) {
-                            shashin.showToastMessage("Could not copy coordinates", copyText + " could not be copied: " + e, "bi-exclamation-triangle", "#FF0000");
-                        });
-                    });
-                    $("#tempClipboardMapId").trigger( "click" );
-
-                    $("#tempClipboardMapId").remove();
-                    clipboard.destroy();
+                        $("#tempClipboardMapId").remove();
+                        clipboard.destroy();
+                    }
                 }
             };
 
