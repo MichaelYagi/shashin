@@ -1804,6 +1804,7 @@ class TimelineController: BaseController() {
         method = [RequestMethod.POST],
         consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE]
     )
+    @Secured("ROLE_ADMIN","ROLE_USER")
     @ResponseBody
     fun downloadBatchMetadata(model: Model, @RequestParam paramMap: Map<String, String>): ResponseEntity<InputStreamResource>? {
 

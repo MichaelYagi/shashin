@@ -43,11 +43,10 @@
 
                                 <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},${authority == 'ROLE_ADMIN' and labelPhotoMap.get(metadata.id).get('isTagged')})"></div>
 
+                                <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
+
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                    <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
-
                                     <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, 'propperson', null, null, null)"></div>
-
                                 </th:block>
 
                                 <th:block th:if="${authority == 'ROLE_USER'}">

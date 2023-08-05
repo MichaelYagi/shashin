@@ -54,8 +54,9 @@
 
                                 <div th:replace="fragments/toprightoverlay :: toprightoverlay(${metadata.type},${metadata.id},${metadata.duration != null ? metadata.duration : '0:00'},${metadata.originalImageWidth},${metadata.originalImageHeight},${metadata.expectedExtension},false)"></div>
 
+                                <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
+
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                    <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
                                     <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText')"></div>
                                 </th:block>
 
