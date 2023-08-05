@@ -111,7 +111,9 @@
             </div>
             <th:block th:if="${activePage == 'matches' or activePage == 'person'}">
                 <div id="matchesAppTools">
+                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
                     <a href="#" id="matchToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
+                    </th:block>
                     <a href="#" id="matchToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
                     <a href="#" id="matchToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="matchesNumberSelected"></span>
