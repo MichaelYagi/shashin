@@ -4,7 +4,7 @@ async function showMap(mapdata,showControls) {
     // Must be format yyyy-mm-dd
     const qssd = Util.getParameterByName("sd");
     const qsed = Util.getParameterByName("ed");
-    const qsvo = Util.getParameterByName("vo") === "true";
+    const qsvo = Util.getParameterByName("vo");
 
     const videoOnlyCheckbox = $("#videoOnlyInput");
     const startDateField = $("#startDateInput");
@@ -15,7 +15,6 @@ async function showMap(mapdata,showControls) {
     const propMetadataLocation = $("#propMetadataLocation");
     const metadataLocationModalStatus = $("#metadataLocationModalStatus");
     const metadataLocationModalCancel = $("#metadataLocationModalCancel");
-    const dateValidationMessage = $("#dateValidationMessage");
 
     shashin.mouseMoveListener();
 
@@ -30,6 +29,19 @@ async function showMap(mapdata,showControls) {
         color: 'rgba(255, 255, 255, 0.01)',
     });
 
+    // Set an initial date to 1 month ago
+    const initDate = new Date();
+    const initMonth = initDate.getMonth();
+    initDate.setMonth(initDate.getMonth() - 1);
+
+    // If still in same month, set date to last day of previous month
+    if (initDate.getMonth() === initMonth) {
+        initDate.setDate(0);
+    }
+    // Date fields are format "yyyy-MM-dd"
+    let initialStartDate = initDate.getFullYear() + '-' + ((initDate.getMonth() > 8) ? (initDate.getMonth() + 1) : ('0' + (initDate.getMonth() + 1))) + '-' + ((initDate.getDate() > 9) ? initDate.getDate() : ('0' + initDate.getDate()))
+    startDateField.val(initialStartDate);
+
     let initialCoord = [-73.1234, 45.678];
     let initialZoom = 2;
     if (qslat !== null && qslng !== null && qslat !== '' && qslng !== '') {
@@ -37,7 +49,7 @@ async function showMap(mapdata,showControls) {
             initialCoord = [qslng, qslat];
             initialZoom = 20;
         } else {
-            dateValidationMessage.text("Invalid lat/lng format.");
+            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
         }
     } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
         initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
@@ -48,37 +60,35 @@ async function showMap(mapdata,showControls) {
 
     // Query param takes precedence over localstorage
     if ((qssd !== null && qssd !== "") || (qsed !== null && qsed !== "") || qsvo !== null) {
-        if (qssd !== "") {
+        if (qssd !== null && qssd !== "") {
             if (true === isValidQsDate(qssd)) {
                 startDateField.val(qssd);
             } else {
-                dateValidationMessage.text("Date format must be yyyy-mm-dd.");
+                shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", "bi-exclamation-triangle", "#FF0000");
             }
         }
-        if (qsed !== "") {
+        if (qsed !== null && qsed !== "") {
             if (true === isValidQsDate(qsed)) {
                 endDateField.val(qsed);
             } else {
-                dateValidationMessage.text("Date format must be yyyy-mm-dd.");
+                shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", "bi-exclamation-triangle", "#FF0000");
             }
         }
         if (qsvo !== null) {
-            videoOnlyCheckbox.prop("checked", qsvo);
+            videoOnlyCheckbox.prop("checked", qsvo === "true");
         }
     } else if (
       Util.localStorageAvailable() === true &&
-      "sd" in localStorage &&
-      "ed" in localStorage &&
-      "vo" in localStorage
+        ("sd" in localStorage || "ed" in localStorage || "vo" in localStorage)
     ) {
         const sd = localStorage.getItem("sd");
         const ed = localStorage.getItem("ed");
         const vo = localStorage.getItem("vo") === "true";
 
-        if (sd !== "") {
+        if (sd !== "" && sd !== null) {
             startDateField.val(sd);
         }
-        if (ed !== "") {
+        if (ed !== "" && ed !== null) {
             endDateField.val(ed);
         }
         videoOnlyCheckbox.prop("checked",vo);
@@ -173,18 +183,18 @@ async function showMap(mapdata,showControls) {
         if (startDateField.val() === "" && endDateField.val() === "") {
             return true;
         } else if (startDateField.val() !== "" && startDateFormat == null && endDateField.val() !== "" && endDateFormat === null) {
-            dateValidationMessage.text("Invalid dates.");
+            shashin.showToastMessage("Validation error", "Invalid dates.", "bi-exclamation-triangle", "#FF0000");
             return false;
         } else if (startDateFormat && endDateFormat) {
             if (endDateFormat < startDateFormat) {
-                dateValidationMessage.text("Start date must be before end date.");
+                shashin.showToastMessage("Validation error", "Start date must be before end date.", "bi-exclamation-triangle", "#FF0000");
             }
             return endDateFormat >= startDateFormat;
         } else if (startDateField.val() !== "" && startDateFormat === null) {
-            dateValidationMessage.text("Invalid start date.");
+            shashin.showToastMessage("Validation error", "Invalid start date.", "bi-exclamation-triangle", "#FF0000");
             return false;
         } else if (endDateField.val() !== "" && endDateFormat === null) {
-            dateValidationMessage.text("Invalid end date.");
+            shashin.showToastMessage("Validation error", "Invalid end date.", "bi-exclamation-triangle", "#FF0000");
             return false;
         }
 
@@ -739,8 +749,6 @@ async function showMap(mapdata,showControls) {
     function setLayerInputs(e) {
         e.preventDefault();
 
-        dateValidationMessage.text("");
-
         // Validate fields
         if (true === checkDateInputs(new Date(startDateField.val()),new Date(endDateField.val()))) {
             initialZoom = map.getView().getZoom();
@@ -754,7 +762,6 @@ async function showMap(mapdata,showControls) {
 
         startDateField.val("");
         endDateField.val("");
-        dateValidationMessage.text("");
         videoOnlyCheckbox.prop("checked", false);
 
         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
