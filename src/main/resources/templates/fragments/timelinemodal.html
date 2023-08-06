@@ -12,23 +12,28 @@
             </div>
             <div class="modal-body ui-front">
                 <ul class="nav nav-tabs">
+                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
                     <li class="nav-item">
                         <a class="nav-link show active" data-bs-toggle="tab" id="generalTabLink" href="#generalTab">General</a>
                     </li>
+                    </th:block>
                     <li class="nav-item">
-                        <a class="nav-link" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
+                        <a th:class="'nav-link'+${authority == 'ROLE_USER' ? ' show active':''}" data-bs-toggle="tab" id="detailsTabLink" href="#detailsTab">Details</a>
                     </li>
+                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" id="exifTabLink" href="#exifTab">EXIF data</a>
                     </li>
+                    </th:block>
                     <li class="nav-item">
                         <a class="nav-link" data-bs-toggle="tab" id="mapTabLink" href="#mapTab">Map</a>
                     </li>
                 </ul>
                 <div class="tab-content">
+                    <input type="hidden" name="metadataId" id="metadataId" value="">
+                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
                     <div class="tab-pane container show active" id="generalTab">
                         <form id="saveTimelineModalForm">
-                            <input type="hidden" name="metadataId" id="metadataId" value="">
                             <div class="form-group row">
                                 <div class="col-sm">
                                     <label for="title" class="col-form-label">Title</label>
@@ -135,12 +140,15 @@
                             </div>
                         </form>
                     </div>
-                    <div class="tab-pane container fade" id="detailsTab">
+                    </th:block>
+                    <div th:class="'tab-pane container fade'+${authority == 'ROLE_USER' ? ' show active':''}" id="detailsTab">
                         <div th:replace="fragments/detailsinfo :: detailsinfo(${currentUser})"></div>
                     </div>
+                    <th:block th:if="${authority == 'ROLE_ADMIN'}">
                     <div class="tab-pane container fade" id="exifTab">
                         <textarea class="form-control" id="exifInfo" rows="20" readonly></textarea>
                     </div>
+                    </th:block>
                     <div class="tab-pane container fade" id="mapTab">
                         <br>
                         <span id="mapTabMessage">No map data</span>
@@ -150,8 +158,13 @@
             </div>
             <div class="modal-footer">
                 <div id="timelineModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                <th:block th:if="${authority == 'ROLE_ADMIN'}">
                 <button type="button" class="btn btn-primary" id="saveMetadata">Save</button>
                 <button id="timelineModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </th:block>
+                <th:block th:if="${authority == 'ROLE_USER'}">
+                <button id="timelineModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </th:block>
             </div>
         </div>
     </div>

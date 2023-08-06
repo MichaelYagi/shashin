@@ -191,8 +191,12 @@
                 // Clear modal data
                 $('#propTimelineModal').find(':input').val('');
                 $("#propTimelineModalThumbnail").html("");
-                $("#isobject")[0].checked = false;
-                $("#hidden")[0].checked = false;
+                if ($("#isobject").length > 0) {
+                    $("#isobject")[0].checked = false;
+                }
+                if ($("#hidden").length > 0) {
+                    $("#hidden")[0].checked = false;
+                }
 
                 $("#timelineModalTitle").text(metadata.title);
                 $("#currentfilename").val(metadata.fileName)
@@ -381,20 +385,26 @@
                 $("#albumDetailRow").remove();
                 Util.populateDetailsInfo(metadata, "propTimelineModal");
 
-                const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function (v) {
-                    return v !== ''
-                });
-                shashin.createAutocomplete("#keywords", keywordAvailableList, true, 10);
+                if ($("#keywordsString").length > 0) {
+                    const keywordAvailableList = $($("#keywordsString").val().split(",")).not($("#keywords").val().split(",")).get().filter(function (v) {
+                        return v !== ''
+                    });
+                    shashin.createAutocomplete("#keywords", keywordAvailableList, true, 10);
+                }
 
-                const camerasAvailableList = $($("#camerasString").val().split(",")).not($("#camera").val().split(",")).get().filter(function (v) {
-                    return v !== ''
-                });
-                shashin.createAutocomplete("#camera", camerasAvailableList, false);
+                if ($("#camerasString").length > 0) {
+                    const camerasAvailableList = $($("#camerasString").val().split(",")).not($("#camera").val().split(",")).get().filter(function (v) {
+                        return v !== ''
+                    });
+                    shashin.createAutocomplete("#camera", camerasAvailableList, false);
+                }
 
-                const lensesAvailableList = $($("#lensesString").val().split(",")).not($("#lens").val().split(",")).get().filter(function (v) {
-                    return v !== ''
-                });
-                shashin.createAutocomplete("#lens", lensesAvailableList, false);
+                if ($("#lensesString").length > 0) {
+                    const lensesAvailableList = $($("#lensesString").val().split(",")).not($("#lens").val().split(",")).get().filter(function (v) {
+                        return v !== ''
+                    });
+                    shashin.createAutocomplete("#lens", lensesAvailableList, false);
+                }
 
                 // Open modal window
                 $("#propTimelineModal").modal('show');
@@ -809,22 +819,24 @@
     }
 
     shashin.openInfoModal = function(metadataId) {
-        shashin.getMetadata(metadataId).then(function (metadata) {
-            $("#infoModalTitle").text(metadata.title);
-            $("#currentfilename").val(metadata.fileName);
-            $("#currentlat").val(metadata.lat);
-            $("#currentlng").val(metadata.lng);
-            $("#metadataId").val(metadata.id);
+        shashin.openEditMetadataModal(metadataId);
 
-            if (metadata.thumbnailUrlCentered !== null) {
-                $("#propInfoModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
-            }
-
-            Util.populateDetailsInfo(metadata,"propInfoModal");
-
-            // Open modal window
-            $("#propInfoModal").modal('show');
-        });
+        // shashin.getMetadata(metadataId).then(function (metadata) {
+        //     $("#infoModalTitle").text(metadata.title);
+        //     $("#currentfilename").val(metadata.fileName);
+        //     $("#currentlat").val(metadata.lat);
+        //     $("#currentlng").val(metadata.lng);
+        //     $("#metadataId").val(metadata.id);
+        //
+        //     if (metadata.thumbnailUrlCentered !== null) {
+        //         $("#propInfoModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata:metadata}));
+        //     }
+        //
+        //     Util.populateDetailsInfo(metadata,"propInfoModal");
+        //
+        //     // Open modal window
+        //     $("#propInfoModal").modal('show');
+        // });
     }
 
     shashin.openInfoSidebar = function(metadataId) {

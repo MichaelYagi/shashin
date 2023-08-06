@@ -13,5 +13,14 @@
 <th:block th:if="${message != ''}">
     <br><p id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></p>
 </th:block>
+
+<input type="hidden" id="currentlat" name="currentlat">
+<input type="hidden" id="currentlng" name="currentlng">
+<input type="hidden" id="currentyear" name="currentyear">
+<input type="hidden" id="currentmonth" name="currentmonth">
+<input type="hidden" id="currentday" name="currentday">
+<input type="hidden" id="currentfilename" name="currentfilename">
+<input type="hidden" id="currentPage" name="currentPage" value="0">
+<input type="hidden" id="activePage" th:value="${activePage}">
 </body>
 </html>
