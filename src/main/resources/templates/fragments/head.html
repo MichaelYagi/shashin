@@ -13,7 +13,7 @@
         <meta name="theme-color" content="#ffffff">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <meta name="robots" content="noindex">
-        <th:block th:if="${activePageLower == 'share' or activePageLower == 'album'}">
+        <th:block th:if="${(activePageLower == 'share' or activePageLower == 'album') and album.coverUrl != null}">
             <th:block th:if="${activePageLower == 'share'}">
                 <meta property="og:url" th:content="${album.shareUrl}">
             </th:block>

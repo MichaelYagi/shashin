@@ -188,6 +188,11 @@ $("#saveMetadata").on("click", async function (e) {
                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                     }
 
+                    $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
+                    if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
+                        $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
+                    }
+
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
                         dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                     }
@@ -245,8 +250,13 @@ $('#propTimelineModal').on('hide.bs.modal', function () {
     $("#timelineModalStatus").css("visibility","hidden");
     $("#timelineModalMsg").html("");
     $("#saveMetadata").prop('disabled', false);
-    const tab = new bootstrap.Tab($("#generalTabLink"));
-    tab.show();
+    if ($("#generalTabLink").length > 0) {
+        const tab = new bootstrap.Tab($("#generalTabLink"));
+        tab.show();
+    } else if ($("#detailsTabLink").length > 0) {
+        const tab = new bootstrap.Tab($("#detailsTabLink"));
+        tab.show();
+    }
 });
 
 // Clear message on input editing

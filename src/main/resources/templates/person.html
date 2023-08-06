@@ -5,7 +5,9 @@
 
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
-<div th:replace="fragments/infomodal :: infomodal(${currentUser})"></div>
+<!--<div th:replace="fragments/infomodal :: infomodal(${currentUser})"></div>-->
+
+<div th:replace="fragments/timelinemodal :: timelinemodal(${currentUser})"></div>
 
 <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
 
@@ -17,9 +19,6 @@
             <div id="infinite-scroll-gallery">
 
                 <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
-                <input type="hidden" id="currentfilename" name="currentfilename">
-                <input type="hidden" id="currentPage" name="currentPage" value="0">
-                <input type="hidden" id="activePage" th:value="${activePage}">
                 <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">

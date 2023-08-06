@@ -1691,6 +1691,7 @@ class TimelineController: BaseController() {
     )
     @RequestMapping(value = ["/api/v1/timeline/metadata/{id}","/timeline/metadata/{id}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
+    @Secured("ROLE_ADMIN","ROLE_USER")
     fun getTimelineMetadata(model: Model, @PathVariable(required = true) id: String): String {
         val response = mutableMapOf<String, Any?>()
 
