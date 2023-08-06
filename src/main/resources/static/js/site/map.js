@@ -616,7 +616,7 @@ async function showMap(mapdata,showControls) {
     map.addControl(attributions);
 
     const copyCoordinates = function (obj) {
-        const coordArray = ol.proj.transform(obj.coordinate, 'EPSG:3857', 'EPSG:4326');
+        const coordArray = ol.proj.toLonLat(obj.coordinate);
         if (coordArray.length > 1) {
             const copyText = coordArray[1]+","+coordArray[0];
 
@@ -659,7 +659,7 @@ async function showMap(mapdata,showControls) {
         });
     });
     contextmenu.on('open', function (evt) {
-        const coordArray = ol.proj.transform(evt.coordinate, 'EPSG:3857', 'EPSG:4326');
+        const coordArray = ol.proj.toLonLat(evt.coordinate);
 
         if (coordArray.length > 1) {
             map.getLayers().forEach(layer => {
