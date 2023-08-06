@@ -66,7 +66,7 @@ class Person {
                             let overlayData;
 
                             if (this.canEdit === true) {
-                                overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,onClickIdPrefix:"propperson",cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
+                                overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap/*,onClickIdPrefix:"propperson"*/,cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
                             } else {
                                 overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
                             }
