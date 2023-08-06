@@ -20,7 +20,7 @@ class GalleryTemplates {
         }) : ''}
             
             ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderBottomLeft") && overlayData["data"]["overlayFlags"]["renderBottomLeft"] === true) ? GalleryTemplates.getBottomLeftOverlay({
-            id: metadata.id,
+            metadata: metadata,
             overlays: overlayData.overlays,
             data: overlayData.data
         }) : ''}
@@ -43,10 +43,6 @@ class GalleryTemplates {
         <span class="${appendClass}" style="width:0;height:0;padding:0"></span>
         
         <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
-            $("#infoModalEdit${metadata.id} span").removeClass("bi-info-circle").addClass("bi-info-square");
-            ${(metadata.lat !== null && metadata.lng !== null) ?
-                `$("#infoModalEdit${metadata.id} span").removeClass("bi-info-square").addClass("bi-info-circle");` : ''}
-        
             shashin.setPhotoOverlays({id:"${metadata.id}",lat:"${(metadata.lat === null) ? '' : `${metadata.lat}`}", lng:"${(metadata.lng === null) ? '' : `${metadata.lng}`}", year:${metadata.year}, month:${metadata.month}, day:${metadata.day}, fileName:"${metadata.fileName}"}, "${activePage}");
             Util.activateMetadataListeners("${metadata.id}");
             $("#mediaLink${metadata.id}").attr("tag", "${metadata.id}");
@@ -141,33 +137,33 @@ class GalleryTemplates {
         </div>
     `};
 
-    static getBottomLeftOverlay({id, overlays, data}) { return `
-        <div class="thumbnail-bl" id="tnbl${id}">
+    static getBottomLeftOverlay({metadata, overlays, data}) { return `
+        <div class="thumbnail-bl" id="tnbl${metadata.id}">
             ${($.inArray("isEditControls", overlays) !== -1) ?
             `
-            <a href="#" id="timelineModalEdit${id}" data-bs-target="#propTimelinModal">
+            <a href="#" id="timelineModalEdit${metadata.id}" data-bs-target="#propTimelinModal">
                 <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
         
             ${($.inArray("isInfo", overlays) !== -1) ?
             `
-            <a href="#" id="infoModalEdit${id}">
-                <span class="bi-info-square" style="font-size: 1rem;color: lightgray;"></span>
+            <a href="#" id="infoModalEdit${metadata.id}">
+                <span class="${(metadata.lat !== null && metadata.lng !== null) ? `bi-info-circle` : `bi-info-square`}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
             
             ${($.inArray("isBlOnClickFunction", overlays) !== -1) ?
             `
             <br>
-            <a href="#" id="${data.onClickIdPrefix}${id}">
+            <a href="#" id="${data.onClickIdPrefix}${metadata.id}">
                 <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
             </a>
     
             <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
-                $("#${data.onClickIdPrefix}${id}").on("click", function (e) {
+                $("#${data.onClickIdPrefix}${metadata.id}").on("click", function (e) {
                     e.preventDefault();
-                    ${data.blOnClickFunction}(e,"${id}");
+                    ${data.blOnClickFunction}(e,"${metadata.id}");
                 });
             </script>
             ` : ''}
@@ -175,7 +171,7 @@ class GalleryTemplates {
             ${($.inArray("isOnClickIdPrefix", overlays) !== -1) ?
             `
             <br>
-            <a href="#" data-bs-toggle="modal" data-bs-target="#${data.onClickIdPrefix}${id}">
+            <a href="#" data-bs-toggle="modal" data-bs-target="#${data.onClickIdPrefix}${metadata.id}">
                 <span class="bi-pencil" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
