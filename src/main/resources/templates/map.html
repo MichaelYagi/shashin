@@ -119,6 +119,7 @@
         /*]]>*/
 
         const http = new Http("Getting map data");
+        Util.setMetadataLocalStorage();
         const version = Util.getMetadataLocalStorage();
         http.ajax("get", "/mapdata" + (version === "" ? "" : "?v=" + version)).then(function (mapdataObj) {
             let mapdata = [];
