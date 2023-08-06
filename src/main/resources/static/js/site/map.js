@@ -847,6 +847,7 @@ async function showMap(mapdata,showControls) {
                 metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
                 metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
                 metadataLocationModalCancel.prop('disabled', false);
+                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
             }
         } else {
             metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
