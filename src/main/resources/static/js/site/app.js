@@ -378,7 +378,7 @@
                     $("#isobject")[0].checked = true;
                 }
 
-                if (metadata.hidden !== null && metadata.hidden === true) {
+                if ($("#hidden").length > 0 && metadata.hidden !== null && metadata.hidden === true) {
                     $("#hidden")[0].checked = true;
                 }
 
