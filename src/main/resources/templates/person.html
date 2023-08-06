@@ -46,11 +46,11 @@
                                 <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
 
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, 'propperson', null, null, null)"></div>
+                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, 'propperson', null, null, null)"></div>
                                 </th:block>
 
                                 <th:block th:if="${authority == 'ROLE_USER'}">
-                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
+                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
                                 </th:block>
 
                                 <div th:replace="fragments/centeredoverlay :: centeredoverlay(${metadata},'shashin.openGallery',${iterStat.index})"></div>

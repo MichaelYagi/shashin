@@ -57,11 +57,11 @@
                                 <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
 
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText')"></div>
+                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, 'albumModalEdit', 'albumSettings.openAlbumModal', 'overlayCommentText')"></div>
                                 </th:block>
 
                                 <th:block th:if="${authority == 'ROLE_USER'}">
-                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata.id}, null, null, null, null)"></div>
+                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
                                 </th:block>
 
                                 <div class="thumbnail-br" th:id="'tnbr'+${metadata.id}">

@@ -43,6 +43,10 @@ class GalleryTemplates {
         <span class="${appendClass}" style="width:0;height:0;padding:0"></span>
         
         <script type="text/javascript"${(shashin.nonce.length > 0 ? ' nonce="' + shashin.nonce + '"' : '')}>
+            $("#infoModalEdit${metadata.id} span").removeClass("bi-info-circle").addClass("bi-info-square");
+            ${(metadata.lat !== null && metadata.lng !== null) ?
+                `$("#infoModalEdit${metadata.id} span").removeClass("bi-info-square").addClass("bi-info-circle");` : ''}
+        
             shashin.setPhotoOverlays({id:"${metadata.id}",lat:"${(metadata.lat === null) ? '' : `${metadata.lat}`}", lng:"${(metadata.lng === null) ? '' : `${metadata.lng}`}", year:${metadata.year}, month:${metadata.month}, day:${metadata.day}, fileName:"${metadata.fileName}"}, "${activePage}");
             Util.activateMetadataListeners("${metadata.id}");
             $("#mediaLink${metadata.id}").attr("tag", "${metadata.id}");
@@ -149,7 +153,7 @@ class GalleryTemplates {
             ${($.inArray("isInfo", overlays) !== -1) ?
             `
             <a href="#" id="infoModalEdit${id}">
-                <span class="bi-info-circle" style="font-size: 1rem;color: lightgray;"></span>
+                <span class="bi-info-square" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}
             
