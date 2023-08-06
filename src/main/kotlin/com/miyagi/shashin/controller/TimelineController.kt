@@ -1344,6 +1344,12 @@ class TimelineController: BaseController() {
             val lng = coordinateMap["lng"]
             val place = coordinateMap["place"]
             val timezone = coordinateMap["timezone"]
+            if (!latlng.isNullOrEmpty() && (lat == null || lng == null)) {
+                logger.log(Level.WARNING, "Updating batch metadata failed. Could not save due to invalid latlng.")
+                resp["msg"] = "Could not save. Invalid latlng."
+                resp["status"] = ApiResponse.FAIL.status
+                return mapper.writeValueAsString(resp)
+            }
 
             var keywordList = mutableListOf<String>()
             if (keywords != null && keywords.isNotBlank()) {
