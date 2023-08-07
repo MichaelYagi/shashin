@@ -133,6 +133,7 @@
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
+        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", "bi-exclamation-triangle", "#FF0000");
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
         if (xhr.status === 403 || xhr.status === 401) {
             $(location).prop('href', '/users/login');
