@@ -21,13 +21,38 @@
         }
     }
 
-    shashin.showToastMessage = function(title, message, icon, iconHexColor) {
+    shashin.showToastMessage = function(title, message, icon, iconHexColor, target) {
+        let titleField,messageField,iconField;
+
+        if (target === "liveToast1") {
+            titleField = $("#toastTitle1");
+            messageField = $("#toastMessage1");
+            iconField = $("#toastIcon1");
+        } else if (target === "liveToast2") {
+            titleField = $("#toastTitle2");
+            messageField = $("#toastMessage2");
+            iconField = $("#toastIcon2");
+        } else if (target === "liveToast3") {
+            titleField = $("#toastTitle3");
+            messageField = $("#toastMessage3");
+            iconField = $("#toastIcon3");
+        } else if (target === "liveToast4") {
+            titleField = $("#toastTitle4");
+            messageField = $("#toastMessage4");
+            iconField = $("#toastIcon4");
+        } else {
+            target = "liveToast";
+            titleField = $("#toastTitle");
+            messageField = $("#toastMessage");
+            iconField = $("#toastIcon");
+        }
+
         if (title) {
-            $("#toastTitle").html(title);
+            titleField.html(title);
         }
 
         if (message) {
-            $("#toastMessage").html(message);
+            messageField.html(message);
         }
 
         if (icon) {
@@ -35,11 +60,11 @@
             if (iconHexColor) {
                 cssStyle["color"] = iconHexColor;
             }
-            $("#toastIcon").css(cssStyle);
-            $("#toastIcon").addClass(icon);
+            iconField.css(cssStyle);
+            iconField.addClass(icon);
         }
 
-        const toastLiveExample = document.getElementById('liveToast');
+        const toastLiveExample = document.getElementById(target);
         const toast = new bootstrap.Toast(toastLiveExample);
         toast.show();
     }

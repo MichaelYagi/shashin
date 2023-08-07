@@ -110,13 +110,13 @@ class UserController {
         model["alertClass"] = "alert-danger"
 
         if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
-            val oldPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("oldpassword")))
-            val newPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpassword")))
-            val newPasswordConfirm = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpasswordconfirm")))
+            val oldPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("oldpassword"))).trim()
+            val newPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpassword"))).trim()
+            val newPasswordConfirm = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpasswordconfirm"))).trim()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                if (newPassword == newPasswordConfirm) {
+                if (newPassword.isNotEmpty() && newPassword == newPasswordConfirm) {
                     if (bcrypt.matches(oldPassword, currentUserObj.getPassword())) {
                         currentUserObj.setModifiedAt(getCurrentTimestamp())
                         currentUserObj.setPassword(bcrypt.encode(newPassword))
