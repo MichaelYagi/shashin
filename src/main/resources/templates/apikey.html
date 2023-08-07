@@ -6,107 +6,125 @@
 <div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},'')"></div>
 
 <div id="container" class="container-fluid pb-3 flex-grow-1 d-flex flex-column overflow-auto">
-  <div class="row flex-grow-sm-1 flex-grow-0">
-    <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
-    <main role="main" class="col overflow-auto h-100">
-      <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
-      <div class="row image-group-padding">
-        <h2 class="form-signin-heading">Manage API key</h2>
+    <div class="row flex-grow-sm-1 flex-grow-0">
+        <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
+        <main role="main" class="col overflow-auto h-100">
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})"
+                 class="col-sm p-3 min-vh-100"></div>
+            <div class="row image-group-padding">
+                <h2 class="form-signin-heading">Manage API key</h2>
 
-        <br><br><br>
-        <div class="col-12">
-          <div class="input-group mb-3">
-            <span data-clipboard-target="#apikey" class="input-group-prepend"><button id="copyapikey" data-clipboard-target="#apikey" class="btn btn-outline-secondary" type="button"><span id="apikeycopyicon" class="bi-clipboard" style="font-size: 1rem;"></span></button></span>
-            <input id="apikey" type="text" class="form-control" aria-label="API key" th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
-            <span class="input-group-append"><button id="updateapikey" class="btn btn-outline-secondary" type="button"><span class="bi-arrow-clockwise" style="font-size: 1rem;"></span></button></span>
-            <div id="msg"></div>
-          </div>
-        </div>
-        <p>View API documentaion <a href="/articles/endpoints">here</a>.</p>
-      </div>
+                <br><br><br>
+                <div class="col-12">
+                    <div class="input-group mb-3">
+                        <span data-clipboard-target="#apikey" class="input-group-prepend"><button id="copyapikey"
+                                                                                                  data-clipboard-target="#apikey"
+                                                                                                  class="btn btn-outline-secondary"
+                                                                                                  type="button"><span
+                                id="apikeycopyicon" class="bi-clipboard"
+                                style="font-size: 1rem;"></span></button></span>
+                        <input id="apikey" type="text" class="form-control" aria-label="API key"
+                               th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
+                        <span class="input-group-append"><button id="updateapikey" class="btn btn-outline-secondary"
+                                                                 type="button"><span class="bi-arrow-clockwise"
+                                                                                     style="font-size: 1rem;"></span></button></span>
+                        <div id="msg"></div>
+                    </div>
+                </div>
+                <p>View API documentaion <a href="/articles/endpoints">here</a>.</p>
+            </div>
 
-      <th:block th:if="${message != '' and alertClass != ''}">
-        <div class="col-12">
-          <div th:class="${'alert ' + alertClass + ' alert-dismissible fade show'}" role="alert" th:utext="${message+'&lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;'}"/>
-        </div>
-      </th:block>
+            <th:block th:if="${message != '' and alertClass != ''}">
+                <div class="col-12">
+                    <div th:class="${'alert ' + alertClass + ' alert-dismissible fade show'}" role="alert"
+                         th:utext="${message+'&lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;'}"/>
+                </div>
+            </th:block>
 
-      <div id="footer" th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
-    </main>
-  </div>
+            <div id="footer"
+                 th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
+        </main>
+    </div>
 </div>
 
-<div class="modal fade" id="apikeyUpdateConfirmation" tabindex="-1" role="dialog" aria-labelledby="apikey" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="trashModalLabel">Update API key</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">Are you sure you want to update your API key?</div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmUpdateApiKey">Confirm</button>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-      </div>
+<div class="modal fade" id="apikeyUpdateConfirmation" tabindex="-1" role="dialog" aria-labelledby="apikey"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="trashModalLabel">Update API key</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">Are you sure you want to update your API key?</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="confirmUpdateApiKey">Confirm
+                </button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <script type="text/javascript" th:inline="javascript" th:nonce="${cspNonce}">
-  /*<![CDATA[*/
-  shashin.nonce = /*[[${cspNonce}]]*/ '';
-  /*]]>*/
+    /*<![CDATA[*/
+    shashin.nonce = /*[[${cspNonce}]]*/ '';
+    /*]]>*/
 
-  $("#copyapikey").on("click", function (e) {
-    e.preventDefault();
+    $("#copyapikey").on("click", function (e) {
+        e.preventDefault();
 
-    const apikey = $("#apikey").val();
-    $("#msg").html("");
+        let apikey = $("#apikey").val();
 
-    if (apikey !== null && apikey !== "") {
-      const clipboard = new ClipboardJS("#copyapikey");
+        if (apikey !== null && apikey !== "") {
+            const clipboard = new ClipboardJS("#copyapikey");
 
-      clipboard.on('success', function (e) {
-        $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
-        $('#apikeycopyicon').fadeOut(5000, function () {
-          $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard");
-        }).fadeIn(400)
+            clipboard.on('success', function (e) {
+                $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                $('#apikeycopyicon').fadeOut(5000, function () {
+                    $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard");
+                }).fadeIn(400)
 
-      });
+            });
 
-      clipboard.on('error', function (e) {
-        // console.log("fail:" + e.message)
-        $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
-        $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Operation failed: "+e.message+"</div>");
-      });
-    } else {
-      $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
-      $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
-    }
-  });
+            clipboard.on('error', function (e) {
+                // console.log("fail:" + e.message)
+                $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                shashin.showToastMessage("Operation failed", "Operation failed: " + e.message, "bi-exclamation-triangle", "#FF0000");
+                // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Operation failed: "+e.message+"</div>");
+            });
+        } else {
+            $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+            shashin.showToastMessage("Operation failed", "API key must not be blank", "bi-exclamation-triangle", "#FF0000");
+            // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+        }
+    });
 
-  $("#updateapikey").on("click", async function (e) {
-    $("#apikeyUpdateConfirmation").modal('show');
-  });
+    $("#updateapikey").on("click", async function (e) {
+        $("#apikeyUpdateConfirmation").modal('show');
+    });
 
-  $("#confirmUpdateApiKey").on("click", async function (e) {
-    e.preventDefault();
+    $("#confirmUpdateApiKey").on("click", async function (e) {
+        e.preventDefault();
 
-    $("#msg").html("");
+        const currentApikey = $("#apikey").val();
 
-    const currentApikey = $("#apikey").val();
+        if (currentApikey !== null && currentApikey !== "") {
+            const http = new Http("apikey update");
+            const json = {currentApikey: currentApikey};
 
-    const http = new Http("apikey update");
-    const json = {currentApikey: currentApikey};
+            let data = await http.ajax("post", "/users/apikey/update", JSON.stringify(json));
+            if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "") {
+                $("#apikey").val(data["updatedApikey"]);
+            } else {
+                shashin.showToastMessage("Operation failed", "Could not regenerate API key", "bi-exclamation-triangle", "#FF0000");
+                // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not regenerate API key</div>");
+            }
+        } else {
+            shashin.showToastMessage("Operation failed", "API key must not be blank", "bi-exclamation-triangle", "#FF0000");
+            // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+        }
 
-    let data = await http.ajax("post", "/users/apikey/update", JSON.stringify(json));
-    if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "") {
-      $("#apikey").val(data["updatedApikey"]);
-    } else {
-      $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not regenerate API key</div>");
-    }
-
-  });
+    });
 </script>
 
 </body>
