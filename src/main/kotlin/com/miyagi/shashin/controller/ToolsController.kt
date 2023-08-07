@@ -1,23 +1,25 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.google.javascript.jscomp.*
+import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
-import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.TextUtils
+import com.miyagi.shashin.util.FileUtils
+import com.sun.management.OperatingSystemMXBean
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.core.io.ClassPathResource
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.info.BuildProperties
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.ResponseBody
-import java.io.BufferedReader
-import java.io.FileInputStream
-import java.io.IOException
-import java.io.InputStreamReader
+import java.lang.management.ManagementFactory
+import java.math.RoundingMode
+import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -25,6 +27,15 @@ import javax.servlet.http.HttpServletResponse
 @Controller
 @Secured("ROLE_ADMIN")
 class ToolsController {
+
+    @Autowired
+    private lateinit var metaRepository: MetadataRepository
+
+    @Autowired
+    private var buildProperties: BuildProperties? = null
+
+    @Value("\${app.endpoint.url.geocode}")
+    private lateinit var geocodeUrl: String
 
     @Autowired
     private lateinit var persistentLoginsRepository: PersistentLoginsRepository
@@ -113,5 +124,80 @@ class ToolsController {
         model["currentRememberMeToken"] = currentRememberMeToken
 
         return "tokens"
+    }
+
+    @GetMapping("/health")
+    fun getHealth(model: Model): String {
+
+        var status = "OK"
+
+        val timingOne = Date()
+        val allMetadata = metaRepository.findAll()
+        val timingTwo = Date()
+        if (allMetadata.count() >= 0) {
+            model["dbConnect"] = "OK"
+        } else {
+            model["dbConnect"] = "FAIL"
+            status = "FAIL"
+        }
+
+        val diff: Long = timingTwo.time - timingOne.time
+
+        if (diff >= 0) {
+            model["dbTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+        } else {
+            model["dbTiming"] = "FAIL"
+            status = "FAIL"
+        }
+
+        val memoryMXBean = ManagementFactory.getMemoryMXBean()
+        model["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
+        model["usedHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824)
+        model["maxHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824)
+        model["committedMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824)
+//        println("Used Heap Memory GB:"+metricsMap["usedHeapMemoryGB"])
+//        println("Max Heap Memory GB:"+metricsMap["maxHeapMemoryGB"])
+
+        val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
+
+        val cores = Runtime.getRuntime().availableProcessors()
+        if (cores < 1) {
+            status = "FAIL"
+        }
+        model["availableCores"] = cores
+
+//        println("Process CPU load:"+(osMXBean.processCpuLoad * 100).toInt())
+//        println("System CPU load:"+(osMXBean.cpuLoad * 100).toInt())
+        model["processCpuLoadPercentDouble"] = (osMXBean.processCpuLoad * 100).toInt()
+        @Suppress("DEPRECATION")
+        model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
+        model["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
+        val reachable: Boolean = FileUtils.pingURL(geocodeUrl, 200)
+        if (reachable) {
+            model["geocoderServicesAvailable"] = "OK"
+        } else {
+            model["geocoderServicesAvailable"] = "FAIL"
+            status = "FAIL"
+        }
+
+        // Not an essential service - no status check
+        val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
+        if (faceRecogServicesAvailable) {
+            model["faceRecogAvailable"] = "OK"
+        } else {
+            model["faceRecogAvailable"] = "FAIL"
+        }
+
+        model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
+
+        model["status"] = status
+
+        return "health"
+    }
+
+    private fun roundOffDecimal(number: Double): Any {
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.CEILING
+        return df.format(number).toDouble()
     }
 }
