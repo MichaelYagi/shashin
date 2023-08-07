@@ -35,16 +35,7 @@ import javax.servlet.http.HttpServletResponse
 class TestController {
 
     @Autowired
-    private lateinit var metaRepository: MetadataRepository
-
-    @Autowired
     private lateinit var persistentLoginsRepository: PersistentLoginsRepository
-
-    @Autowired
-    private var buildProperties: BuildProperties? = null
-
-    @Value("\${app.endpoint.url.geocode}")
-    private lateinit var geocodeUrl: String
 
     @Secured("ROLE_ADMIN")
     @GetMapping("/test")
@@ -80,73 +71,5 @@ class TestController {
     fun getTestAudio(response: HttpServletResponse?): FileSystemResource? {
         val path = "c:/some/audio.mp3";
         return FileSystemResource(path)
-    }
-
-    @GetMapping("/health")
-    fun getHealth(model: Model): String {
-
-        var status = "OK"
-
-        val timingOne = Date()
-        val allMetadata = metaRepository.findAll()
-        val timingTwo = Date()
-        if (allMetadata.count() >= 0) {
-            model["dbConnect"] = "OK"
-        } else {
-            model["dbConnect"] = "FAIL"
-            status = "FAIL"
-        }
-
-        val diff: Long = timingTwo.time - timingOne.time
-
-        if (diff >= 0) {
-            model["dbTiming"] = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
-        } else {
-            model["dbTiming"] = "FAIL"
-            status = "FAIL"
-        }
-
-        val memoryMXBean = ManagementFactory.getMemoryMXBean()
-        model["initialMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.init.toDouble() / 1073741824)
-        model["usedHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.used.toDouble() / 1073741824)
-        model["maxHeapMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.max.toDouble() / 1073741824)
-        model["committedMemoryGB"] = roundOffDecimal(memoryMXBean.heapMemoryUsage.committed.toDouble() / 1073741824)
-//        println("Used Heap Memory GB:"+metricsMap["usedHeapMemoryGB"])
-//        println("Max Heap Memory GB:"+metricsMap["maxHeapMemoryGB"])
-
-        val osMXBean: OperatingSystemMXBean = ManagementFactory.getOperatingSystemMXBean() as OperatingSystemMXBean
-
-//        println("Process CPU load:"+(osMXBean.processCpuLoad * 100).toInt())
-//        println("System CPU load:"+(osMXBean.cpuLoad * 100).toInt())
-        model["processCpuLoadPercentDouble"] = (osMXBean.processCpuLoad * 100).toInt()
-        @Suppress("DEPRECATION")
-        model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
-        model["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
-        val reachable: Boolean = FileUtils.pingURL(geocodeUrl, 200)
-        if (reachable) {
-            model["geocoderServicesAvailable"] = "OK"
-        } else {
-            model["geocoderServicesAvailable"] = "FAIL"
-            status = "FAIL"
-        }
-
-        val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
-        if (faceRecogServicesAvailable) {
-            model["faceRecogAvailable"] = "OK"
-        } else {
-            model["faceRecogAvailable"] = "FAIL"
-        }
-
-        model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
-
-        model["status"] = status
-
-        return "health"
-    }
-
-    private fun roundOffDecimal(number: Double): Any {
-        val df = DecimalFormat("#.##")
-        df.roundingMode = RoundingMode.CEILING
-        return df.format(number).toDouble()
     }
 }
