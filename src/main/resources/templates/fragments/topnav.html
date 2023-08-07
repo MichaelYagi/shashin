@@ -28,18 +28,84 @@
         $("#toastIcon").removeAttr('style');
         $("#toastTitle").text("");
         $("#toastMessage").text("");
-    })
+    });
+
+    $('#liveToast1').on('hidden.bs.toast', function () {
+        $("#toastIcon1").removeClass();
+        $("#toastIcon1").removeAttr('style');
+        $("#toastTitle1").text("");
+        $("#toastMessage1").text("");
+    });
+
+    $('#liveToast2').on('hidden.bs.toast', function () {
+        $("#toastIcon2").removeClass();
+        $("#toastIcon2").removeAttr('style');
+        $("#toastTitle2").text("");
+        $("#toastMessage2").text("");
+    });
+
+    $('#liveToast3').on('hidden.bs.toast', function () {
+        $("#toastIcon3").removeClass();
+        $("#toastIcon3").removeAttr('style');
+        $("#toastTitle3").text("");
+        $("#toastMessage3").text("");
+    });
+
+    $('#liveToast4').on('hidden.bs.toast', function () {
+        $("#toastIcon4").removeClass();
+        $("#toastIcon4").removeAttr('style');
+        $("#toastTitle4").text("");
+        $("#toastMessage4").text("");
+    });
 </script>
 
 <!-- For live toast messages -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 999999">
-    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <span id="toastIcon"></span>&nbsp;
-            <strong id="toastTitle" class="me-auto"></strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+<div class="toast-container">
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 999999">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon"></span>&nbsp;
+                <strong id="toastTitle" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage" class="toast-body"></div>
         </div>
-        <div id="toastMessage" class="toast-body"></div>
+
+        <div id="liveToast1" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon1"></span>&nbsp;
+                <strong id="toastTitle1" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage1" class="toast-body"></div>
+        </div>
+
+        <div id="liveToast2" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon2"></span>&nbsp;
+                <strong id="toastTitle2" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage2" class="toast-body"></div>
+        </div>
+
+        <div id="liveToast3" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon3"></span>&nbsp;
+                <strong id="toastTitle3" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage3" class="toast-body"></div>
+        </div>
+
+        <div id="liveToast4" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <span id="toastIcon4"></span>&nbsp;
+                <strong id="toastTitle4" class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div id="toastMessage4" class="toast-body"></div>
+        </div>
     </div>
 </div>
 

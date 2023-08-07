@@ -11,7 +11,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
             <div class="row image-group-padding">
-                <form action="/users/update" method="post" oninput='newpasswordconfirm.setCustomValidity(newpasswordconfirm.value != newpassword.value ? "Passwords do not match." : "")'>
+                <form action="/users/update" method="post" id="passwordForm">
                     <h2 class="form-signin-heading">Change Password</h2>
                     <th:block th:if="${msg != '' and alertClass != ''}">
                         <div class="col-12">
@@ -52,6 +52,14 @@
     shashin.nonce = /*[[${cspNonce}]]*/ '';
     /*]]>*/
 
+    $("#passwordForm").on("submit", function (e) {
+        e.preventDefault();
+
+        if (validateFields() === true) {
+            this.submit();
+        }
+    });
+
     $("#unhideold").on("click", function (e) {
         e.preventDefault();
         changeTypes($("#oldpassword"), $("#unhideoldicon"));
@@ -75,6 +83,22 @@
             elem.prop("type", "password");
             icon.removeClass("bi-eye-slash").addClass("bi-eye");
         }
+    }
+
+    function validateFields() {
+        let fieldsValid = true;
+
+        if ($("#oldpassword").val().trim().length === 0 || $("#newpassword").val().trim().length === 0 || $("#newpasswordconfirm").val().trim().length === 0) {
+            shashin.showToastMessage("Validation error", "Password fields cannot be empty.", "bi-exclamation-triangle", "#FF7900");
+            fieldsValid = false;
+        }
+
+        if ($("#newpassword").val().trim() !== $("#newpasswordconfirm").val().trim()) {
+            shashin.showToastMessage("Validation error", "Passwords do not match.", "bi-exclamation-triangle", "#FF7900", "liveToast1");
+            fieldsValid = false;
+        }
+
+        return fieldsValid;
     }
 </script>
 
