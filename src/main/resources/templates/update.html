@@ -15,7 +15,7 @@
                     <h2 class="form-signin-heading">Change Password</h2>
                     <th:block th:if="${msg != '' and alertClass != ''}">
                         <div class="col-12">
-                            <div th:if="${msg}" th:text="${msg}" th:class="${'alert ' + alertClass}"/>
+                            <div th:class="${'alert ' + alertClass + ' alert-dismissible fade show'}" role="alert" th:utext="${msg+'&lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;'}"/>
                         </div>
                     </th:block>
 

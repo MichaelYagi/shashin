@@ -18,7 +18,7 @@
                     <input type="hidden" id="selectedPathInput" value="">
                     <th:block th:if="${statusMessage != '' and alertClass != ''}">
                         <div class="col-12">
-                            <div th:if="${statusMessage}" th:text="${statusMessage}" th:class="${'alert ' + alertClass}"/>
+                            <div th:class="${'statusMessage ' + alertClass + ' alert-dismissible fade show'}" role="alert" th:utext="${msg+'&lt;button type=&quot;button&quot; class=&quot;btn-close&quot; data-bs-dismiss=&quot;alert&quot; aria-label=&quot;Close&quot;&gt;&lt;/button&gt;'}"/>
                         </div>
                     </th:block>
                     <div class="row">
