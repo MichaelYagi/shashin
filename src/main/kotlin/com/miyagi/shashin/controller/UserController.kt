@@ -108,6 +108,7 @@ class UserController {
         model["message"] = ""
         model["msg"] = "Could not save password"
         model["alertClass"] = "alert-danger"
+        model["status"] = ApiResponse.FAIL.status
 
         if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
             val oldPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("oldpassword"))).trim()
@@ -122,9 +123,22 @@ class UserController {
                         currentUserObj.setPassword(bcrypt.encode(newPassword))
                         userRepository?.save(currentUserObj)
                         model["msg"] = "Success"
+                        model["status"] = ApiResponse.SUCCESS.status
                         model["alertClass"] = "alert-success"
                         return module
+                    } else {
+                        model["message"] = ""
+                        model["msg"] = "Invalid password"
+                        model["status"] = ApiResponse.FAIL.status
+                        model["alertClass"] = "alert-danger"
+                        return module
                     }
+                } else {
+                    model["message"] = ""
+                    model["msg"] = "Passwords do not match"
+                    model["status"] = ApiResponse.FAIL.status
+                    model["alertClass"] = "alert-danger"
+                    return module
                 }
             }
         }
