@@ -2,63 +2,6 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body th:fragment="topnav(currentUser,activePage,searchTerm)">
 
-<script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-    $(window).bind("load", function () {
-        $("header .placeholder").removeClass("placeholder");
-    });
-
-    $(document).ready(async function () {
-        /*<![CDATA[*/
-        shashin.darkMode = /*[[${currentUser.darkMode}]]*/ true;
-        const userId = /*[[${currentUser.id}]]*/ 0;
-        /*]]>*/
-
-        const http = new Http("check notifications");
-        const data = await http.ajax("get", "/notifications/check/" + userId);
-
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications") && data["hasNotifications"] === true) {
-            $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
-            $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
-        }
-    })
-
-    // Clear live toast message on close
-    $('#liveToast').on('hidden.bs.toast', function () {
-        $("#toastIcon").removeClass();
-        $("#toastIcon").removeAttr('style');
-        $("#toastTitle").text("");
-        $("#toastMessage").text("");
-    });
-
-    $('#liveToast1').on('hidden.bs.toast', function () {
-        $("#toastIcon1").removeClass();
-        $("#toastIcon1").removeAttr('style');
-        $("#toastTitle1").text("");
-        $("#toastMessage1").text("");
-    });
-
-    $('#liveToast2').on('hidden.bs.toast', function () {
-        $("#toastIcon2").removeClass();
-        $("#toastIcon2").removeAttr('style');
-        $("#toastTitle2").text("");
-        $("#toastMessage2").text("");
-    });
-
-    $('#liveToast3').on('hidden.bs.toast', function () {
-        $("#toastIcon3").removeClass();
-        $("#toastIcon3").removeAttr('style');
-        $("#toastTitle3").text("");
-        $("#toastMessage3").text("");
-    });
-
-    $('#liveToast4').on('hidden.bs.toast', function () {
-        $("#toastIcon4").removeClass();
-        $("#toastIcon4").removeAttr('style');
-        $("#toastTitle4").text("");
-        $("#toastMessage4").text("");
-    });
-</script>
-
 <!-- For live toast messages -->
 <div class="toast-container">
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 999999">
@@ -268,6 +211,63 @@
     <div class="progress" id="progressBarWrapper" style="height: 1px;visibility: hidden;">
         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progressBar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax=""></div>
     </div>
+
+    <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
+        $(window).bind("load", function () {
+            $("header .placeholder").removeClass("placeholder");
+        });
+
+        $(document).ready(async function () {
+            /*<![CDATA[*/
+            shashin.darkMode = /*[[${currentUser.darkMode}]]*/ true;
+            const userId = /*[[${currentUser.id}]]*/ 0;
+            /*]]>*/
+
+            const http = new Http("check notifications");
+            const data = await http.ajax("get", "/notifications/check/" + userId);
+
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg") && data.hasOwnProperty("hasNotifications") && data["hasNotifications"] === true) {
+                $("#sidebarMenuDrawer").html('<span id="topNavAlertBadge" class="position-absolute top-0 start-50 p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+                $("#sidebarNotification").html('<span id="sideBarAlertBadge" class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"><span class="visually-hidden">New alerts</span></span>');
+            }
+
+            // Clear live toast message on close
+            $('#liveToast').on('hidden.bs.toast', function () {
+                $("#toastIcon").removeClass();
+                $("#toastIcon").removeAttr('style');
+                $("#toastTitle").text("");
+                $("#toastMessage").text("");
+            });
+
+            $('#liveToast1').on('hidden.bs.toast', function () {
+                $("#toastIcon1").removeClass();
+                $("#toastIcon1").removeAttr('style');
+                $("#toastTitle1").text("");
+                $("#toastMessage1").text("");
+            });
+
+            $('#liveToast2').on('hidden.bs.toast', function () {
+                $("#toastIcon2").removeClass();
+                $("#toastIcon2").removeAttr('style');
+                $("#toastTitle2").text("");
+                $("#toastMessage2").text("");
+            });
+
+            $('#liveToast3').on('hidden.bs.toast', function () {
+                $("#toastIcon3").removeClass();
+                $("#toastIcon3").removeAttr('style');
+                $("#toastTitle3").text("");
+                $("#toastMessage3").text("");
+            });
+
+            $('#liveToast4').on('hidden.bs.toast', function () {
+                $("#toastIcon4").removeClass();
+                $("#toastIcon4").removeAttr('style');
+                $("#toastTitle4").text("");
+                $("#toastMessage4").text("");
+            });
+        });
+    </script>
 </header>
 
 </body>
