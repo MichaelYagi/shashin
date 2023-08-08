@@ -723,7 +723,7 @@
             };
 
             shashin.contextMenu = new ContextMenu({
-                width: 275,
+                width: 300,
                 defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
             });
             shashin.contextMenu.on('close', function (evt) {
@@ -784,6 +784,7 @@
                     // Create menu for context menu
                     const copyText = coordArray[1] + "," + coordArray[0];
                     shashin.contextMenu.clear();
+                    shashin.contextMenu.updatePosition([evt.pixel[0], evt.pixel[1]+12]);
                     shashin.contextMenu.extend([
                         {
                             text: copyText, // Copy coordinates from context menu

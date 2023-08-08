@@ -678,7 +678,7 @@ async function showMap(mapdata,showControls) {
     };
 
     const contextmenu = new ContextMenu({
-        width: 275,
+        width: 300,
         defaultItems: false // defaultItems are (for now) Zoom In/Zoom Out
     });
     contextmenu.on('close', function (evt) {
@@ -736,6 +736,7 @@ async function showMap(mapdata,showControls) {
 
             const copyText = coordArray[1] + "," + coordArray[0];
             contextmenu.clear();
+            contextmenu.updatePosition([evt.pixel[0], evt.pixel[1]+12]);
             contextmenu.extend([
                 {
                     text: copyText,
