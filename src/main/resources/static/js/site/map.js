@@ -1,6 +1,7 @@
 async function showMap(mapdata,showControls) {
-    const qslat = Util.getParameterByName("lat");
-    const qslng = Util.getParameterByName("lng");
+    let qslat = Util.getParameterByName("lat");
+    let qslng = Util.getParameterByName("lng");
+    const qslatlng = Util.getParameterByName("latlng");
     // Must be format yyyy-mm-dd
     const qssd = Util.getParameterByName("sd");
     const qsed = Util.getParameterByName("ed");
@@ -52,12 +53,41 @@ async function showMap(mapdata,showControls) {
         } else {
             shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
         }
+    } else if (qslatlng !== null && qslatlng !== "") {
+        const latlngArr = qslatlng.split(",");
+
+        if (latlngArr.length > 1) {
+            qslat = latlngArr[0].trim();
+            qslng = latlngArr[1].trim();
+
+            if (true === isValidQsLatLon(qslat, qslng)) {
+                initialCoord = [qslng, qslat];
+                initialZoom = 20;
+                startDateField.val("");
+            } else {
+                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
+            }
+        } else {
+            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
+        }
     } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
         initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
         initialZoom = 20;
         startDateField.val("");
         localStorage.removeItem('lat');
         localStorage.removeItem('lng');
+    } else if (Util.localStorageAvailable() === true && "latlng" in localStorage) {
+        const latlngArr = localStorage.getItem("latlng").split(",");
+
+        if (latlngArr.length > 1) {
+            const lslat = latlngArr[0].trim();
+            const lslng = latlngArr[1].trim();
+
+            initialCoord = [lslat, lslng];
+            initialZoom = 20;
+            startDateField.val("");
+            localStorage.removeItem('latlng');
+        }
     }
 
     // Query param takes precedence over localstorage
