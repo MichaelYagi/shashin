@@ -856,10 +856,8 @@
                             action = "below";
                         }
 
-
                         // Stage 2 - network call to create image placeholders and UI skeleton for month
                         const msg = await timelineSettings.updateTimeline(currentDate, mediaTypeFilter, action, anchorPoint);
-
 
                         if (timelineSettings.initialized === false) {
                             if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
@@ -876,6 +874,8 @@
                                 }
                             }, 1000);
                         }
+
+                        timelineSettings.distanceToFooter = calculateDistanceToFooter();
 
                         // Break if footer not in viewport
                         if (closeToFooter() === false) {
