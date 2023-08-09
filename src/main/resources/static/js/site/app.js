@@ -21,47 +21,86 @@
         }
     }
 
-    shashin.showToastMessage = function(title, message, icon, iconHexColor, target) {
-        let titleField,messageField,iconField;
+    shashin.showToastMessage = function(title, message, options) {
+        let titleField = null;
+        let messageField = null;
+        let spacerField = null;
+        let iconField = null;
+        let icon = null;
+        let iconColor = null;
+        let target = null;
+        let autohide = null;
+
+        if (options === undefined || options === null) {
+            target = "liveToast";
+            autohide = true;
+        } else {
+            if (options.hasOwnProperty("icon")) {
+                icon = options["icon"];
+            }
+            if (options.hasOwnProperty("iconColor")) {
+                iconColor = options["iconColor"];
+            }
+            if (options.hasOwnProperty("target")) {
+                target = options["target"];
+            } else {
+                target = "liveToast";
+            }
+            if (options.hasOwnProperty("autohide")) {
+                autohide = options["autohide"];
+            } else {
+                autohide = true;
+            }
+        }
 
         if (target === "liveToast1") {
             titleField = $("#toastTitle1");
             messageField = $("#toastMessage1");
             iconField = $("#toastIcon1");
+            spacerField = $("#toastSpacer1");
         } else if (target === "liveToast2") {
             titleField = $("#toastTitle2");
             messageField = $("#toastMessage2");
             iconField = $("#toastIcon2");
+            spacerField = $("#toastSpacer2");
         } else if (target === "liveToast3") {
             titleField = $("#toastTitle3");
             messageField = $("#toastMessage3");
             iconField = $("#toastIcon3");
+            spacerField = $("#toastSpacer3");
         } else if (target === "liveToast4") {
             titleField = $("#toastTitle4");
             messageField = $("#toastMessage4");
             iconField = $("#toastIcon4");
+            spacerField = $("#toastSpacer4");
         } else {
             target = "liveToast";
             titleField = $("#toastTitle");
             messageField = $("#toastMessage");
             iconField = $("#toastIcon");
+            spacerField = $("#toastSpacer");
         }
 
-        if (title) {
+        if (title !== undefined && title !== null) {
             titleField.html(title);
         }
 
-        if (message) {
+        if (message !== undefined && message !== null) {
             messageField.html(message);
         }
 
-        if (icon) {
+        if (icon !== undefined && icon !== null) {
             let cssStyle = {"font-size":"1rem"};
-            if (iconHexColor) {
-                cssStyle["color"] = iconHexColor;
+            if (iconColor !== null) {
+                cssStyle["color"] = iconColor;
             }
             iconField.css(cssStyle);
             iconField.addClass(icon);
+            spacerField.html("&nbsp;");
+        }
+
+        if (autohide === false) {
+            $("#"+target).attr("data-bs-autohide", autohide);
         }
 
         const toastLiveExample = document.getElementById(target);
@@ -133,7 +172,7 @@
 
     shashin.onFail = function(xhr, textStatus, ajaxParams, description, failFunction) {
         $("#spinner").hide();
-        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", "bi-exclamation-triangle", "#FF0000");
+        shashin.showToastMessage("AJAX error", "AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
         shashin.printMessageToConsole("AJAX error"+description+". Attempts left: "+ajaxParams.retries + ". Status: " + xhr.status + ". Text Status: " + textStatus + ".");
         if (xhr.status === 403 || xhr.status === 401) {
             $(location).prop('href', '/users/login');
@@ -702,11 +741,11 @@
                         $("#tempClipboardMapId").on("click", function () {
 
                             clipboard.on('success', function (e) {
-                                shashin.showToastMessage("Coordinates copied to clipboard", e.text + " copied to clipboard", "bi-info-circle", "#777777");
+                                shashin.showToastMessage("Coordinates copied to clipboard", e.text + " copied to clipboard", {icon:"bi-info-circle", iconColor:"#777777"});
                             });
 
                             clipboard.on('error', function (e) {
-                                shashin.showToastMessage("Could not copy coordinates", copyText + " could not be copied: " + e, "bi-exclamation-triangle", "#FF0000");
+                                shashin.showToastMessage("Could not copy coordinates", copyText + " could not be copied: " + e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                             });
                         });
                         $("#tempClipboardMapId").trigger("click");

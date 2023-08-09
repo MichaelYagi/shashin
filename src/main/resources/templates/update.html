@@ -89,12 +89,12 @@
         let fieldsValid = true;
 
         if ($("#oldpassword").val().trim().length === 0 || $("#newpassword").val().trim().length === 0 || $("#newpasswordconfirm").val().trim().length === 0) {
-            shashin.showToastMessage("Validation error", "Password fields cannot be empty.", "bi-exclamation-triangle", "#FF7900");
+            shashin.showToastMessage("Validation error", "Password fields cannot be empty.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             fieldsValid = false;
         }
 
         if ($("#newpassword").val().trim() !== $("#newpasswordconfirm").val().trim()) {
-            shashin.showToastMessage("Validation error", "Passwords do not match.", "bi-exclamation-triangle", "#FF7900", "liveToast1");
+            shashin.showToastMessage("Validation error", "Passwords do not match.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000", target:"liveToast1"});
             fieldsValid = false;
         }
 

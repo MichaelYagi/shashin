@@ -103,12 +103,12 @@
                     $("#albumName" + albumId).text(albumName);
                     $("#editAlbumNameStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 } else {
-                    shashin.showToastMessage("Could not edit album", data["msg"], "bi-exclamation-triangle", "#FF0000");
+                    shashin.showToastMessage("Could not edit album", data["msg"], {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                     $("#editAlbumNameStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                     $("#editAlbumNameStatus").attr("title", data["msg"]);
                 }
             } else {
-                shashin.showToastMessage("Could not edit album", "Something went wrong", "bi-exclamation-triangle", "#FF0000");
+                shashin.showToastMessage("Could not edit album", "Something went wrong", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
 
             $("#cancelAlbum").prop('disabled', false);
