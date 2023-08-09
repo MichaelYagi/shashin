@@ -44,21 +44,21 @@ class SearchController {
     @GetMapping("/search")
     fun getSearch(model: Model, request: HttpServletRequest): String {
         val module = "search"
-        val hasSearchTerm = request.parameterMap.containsKey("searchTerm")
-        var searchTerm = ""
+        val hasSearchTerm = request.parameterMap.containsKey("term")
+        var term = ""
         if (hasSearchTerm) {
-            searchTerm = request.getParameter("searchTerm").toString()
+            term = request.getParameter("term").toString()
         }
-        val response = buildSearchData(model,searchTerm,0)
+        val response = buildSearchData(model,term,0)
 
-        model["searchTerm"] = response["searchTerm"]!!
+        model["term"] = response["term"]!!
         model["metadataSearchList"] = response["metadataSearchList"]!!
         model["status"] = response["status"]!!
 
         model["msg"] = ""
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module) + " - " + searchTerm
+        model["titleDescriptor"] = TextUtils.capitalized(module) + " - " + term
 
         return module
     }
@@ -66,31 +66,31 @@ class SearchController {
     @RequestMapping(value = ["/search/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedSearch(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
-        val hasSearchTerm = request.parameterMap.containsKey("searchTerm")
-        var searchTerm = ""
+        val hasSearchTerm = request.parameterMap.containsKey("term")
+        var term = ""
         if (hasSearchTerm) {
-            searchTerm = request.getParameter("searchTerm").toString()
+            term = request.getParameter("term").toString()
         }
-        return mapper.writeValueAsString(buildSearchData(model,searchTerm,page))
+        return mapper.writeValueAsString(buildSearchData(model,term,page))
     }
 
-    private fun buildSearchData(model: Model,searchTerm: String?, page: Int): MutableMap<String, Any?> {
+    private fun buildSearchData(model: Model,term: String?, page: Int): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
-        response["searchTerm"] = ""
+        response["term"] = ""
         response["metadataSearchList"] = mutableListOf<Metadata>()
         response["keywordMap"] = mutableMapOf<String, String>()
 
-        if (!searchTerm.isNullOrBlank()) {
-            response["searchTerm"] = searchTerm
+        if (!term.isNullOrBlank()) {
+            response["term"] = term
             val queryLimit = model.getAttribute("queryLimit").toString().toInt()
             val pageValue = page*queryLimit
             if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
-                val metadataList = searchRepository?.findMetadataBySearchTerm(searchTerm,pageValue,queryLimit)
+                val metadataList = searchRepository?.findMetadataBySearchTerm(term,pageValue,queryLimit)
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 val currentUserObj = model.getAttribute("currentUser") as User?
                 if (currentUserObj != null) {
-                    val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(searchTerm,currentUserObj.getId(),pageValue,queryLimit)
+                    val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(term,currentUserObj.getId(),pageValue,queryLimit)
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
                 }
             }
@@ -110,18 +110,18 @@ class SearchController {
 
     @RequestMapping(value = ["/search"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     fun postSearch(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
-        model["searchTerm"] = ""
+        model["term"] = ""
         if (formData.containsKey("appSearchInput")) {
-            val searchTerm: String = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("appSearchInput")))
+            val term: String = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("appSearchInput")))
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
-                val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), searchTerm.lowercase())
-                if (searchTerm.isNotBlank()) {
+                val searchTermCount = searchHistoryRepository?.countByUserIdAndTermIgnoreCase(currentUserObj.getId(), term.lowercase())
+                if (term.isNotBlank()) {
                     val searchHistoryCount = searchHistoryRepository?.countByUserId(currentUserObj.getId())
                     if (searchTermCount == 0) {
                         val searchHistory = SearchHistory()
-                        searchHistory.setTerm(searchTerm)
+                        searchHistory.setTerm(term)
                         searchHistory.setUserId(currentUserObj.getId())
                         searchHistory.setCreatedAt(TextUtils.getCurrentTimestamp())
                         searchHistory.setModifiedAt(TextUtils.getCurrentTimestamp())
@@ -138,7 +138,7 @@ class SearchController {
                 }
             }
 
-            redirectAttributes.addAttribute("searchTerm", searchTerm)
+            redirectAttributes.addAttribute("term", term)
         }
 
         val module = "search"
