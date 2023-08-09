@@ -52,6 +52,10 @@
                 if (cjs.available) {
                     $("#chromecasting").css({"display": "block", "font-size": "1rem"});
                 }
+
+                if (cjs.connected && $("#chromecasting").hasClass('bi-cast')) {
+                    $("#chromecasting").addClass('bi-stop-circle').removeClass('bi-cast');
+                }
             }
 
             this.core.outer
