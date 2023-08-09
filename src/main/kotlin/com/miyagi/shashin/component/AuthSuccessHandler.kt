@@ -237,7 +237,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
     private fun validSubPaths(pathToCompare: String): Boolean {
         val validWebSubPaths = MultiSecurityConfig.validWebSubPaths
         for (path in validWebSubPaths) {
-            if (pathToCompare.lowercase().contains(path)) {
+            if (path.toRegex().matches(pathToCompare.drop(1))) {
                 return true
             }
         }

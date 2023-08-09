@@ -32,47 +32,13 @@ class AjaxAwareAuthenticationEntryPoint(loginFormUrl: String?, apiVersion: Strin
         response: HttpServletResponse,
         authException: AuthenticationException?
     ) {
-        var uriPath = request.requestURI.toString()
 
-        if (uriPath.contains("api/$apiVersion/") || uriPath.contains("/save") || uriPath.contains("/update") || uriPath.contains("/delete")) {
-            try {
-                val securityContext: SecurityContext =
-                    request.session.getAttribute("SPRING_SECURITY_CONTEXT") as SecurityContext
-                val authorities = securityContext.authentication.authorities as Collection<GrantedAuthority>
-
-                var currauthority = ""
-
-                for (authority in authorities) {
-                    currauthority = authority.authority
-                }
-
-                if (currauthority == "ROLE_ADMIN") {
-                    uriPath = "/timeline"
-                } else if (currauthority == "ROLE_USER") {
-                    uriPath = "/albums"
-                }
-
-            } catch (e: Exception) {
-                uriPath = loginFormUrl
-            }
+        var requestUri = request.requestURI.toString()
+        if (request.queryString != null) {
+            requestUri = requestUri + "?" + request.queryString
         }
-        request.session.setAttribute("ShashinReferer",uriPath)
+        request.session.setAttribute("ShashinReferer", requestUri)
 
         super.commence(request, response, authException)
-
-//        val ajaxHeader = request.getHeader("X-Requested-With")
-//        if ("XMLHttpRequest" == ajaxHeader || request.requestURI.startsWith("/api/$apiVersion/")) {
-//            response.contentType = "application/json"
-//            val payload: MutableMap<String, Any> = HashMap()
-//            payload["msg"] = "Unauthorized"
-//            payload["statusCode"] = HttpServletResponse.SC_UNAUTHORIZED
-//            payload["status"] = ApiResponse.FAIL.status
-//            val json = ObjectMapper().writeValueAsString(payload)
-//            response.writer.append(json)
-//            response.status = HttpServletResponse.SC_UNAUTHORIZED
-//            //response.sendError(HttpServletResponse.SC_FORBIDDEN, "Ajax Request Denied (Session Expired)")
-//        } else {
-//            super.commence(request, response, authException)
-//        }
     }
 }
