@@ -1,10 +1,10 @@
 class Search {
 
-    constructor(searchTerm, activePage, metadataSearchList) {
+    constructor(term, activePage, metadataSearchList) {
         this.http = new Http(activePage);
         this.page = 1;
         this.rendering = false;
-        this.searchTerm = searchTerm;
+        this.term = term;
         this.activePage = activePage;
         this.metadataSearchList = metadataSearchList;
         this.eol = false;
@@ -20,7 +20,7 @@ class Search {
     async loadNextPage() {
         if (this.rendering === false) {
             // console.log(this.page)
-            this.updateSearch(this.page, this.searchTerm, this.activePage).then(function (additionalMediaContentList) {
+            this.updateSearch(this.page, this.term, this.activePage).then(function (additionalMediaContentList) {
                 // console.log(additionalMediaContentList)
                 this.page++;
                 this.mediaContentList = shashin.updateMediaContent(this.mediaContentList, additionalMediaContentList);
@@ -29,14 +29,14 @@ class Search {
         }
     }
 
-    async updateSearch(nextPage,searchTerm,activePage) {
+    async updateSearch(nextPage,term,activePage) {
         this.rendering = true;
 
         let data = null
 
         if (false === this.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get", "/search/" + nextPage + "?searchTerm=" + encodeURIComponent(searchTerm));
+            data = await this.http.ajax("get", "/search/" + nextPage + "?term=" + encodeURIComponent(term));
         }
 
         const mediaContentList = [];

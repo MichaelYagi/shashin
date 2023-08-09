@@ -35,7 +35,7 @@ import javax.sql.DataSource
 class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
     // Used to validate URL paths for login redirect
     companion object {
-        val validWebSubPaths = arrayOf(
+        val validWebPaths = arrayOf(
             "timeline",
             "albums",
             "album\\/(\\d+)",
@@ -61,7 +61,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "setting\\/scan",
             "dashboard",
             "search",
-            "search\\?searchTerm=.*",
+            "search\\?term=.*",
             "users\\/profile",
             "users\\/update",
             "users\\/apikey",

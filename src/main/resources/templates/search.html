@@ -3,7 +3,7 @@
 <head th:insert="fragments/head :: head(${activePage},${titleDescriptor})"></head>
 <body class="thumb d-flex flex-column vh-100">
 
-<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},${searchTerm})"></div>
+<div th:replace="fragments/topnav :: topnav(${currentUser},${activePage},${term})"></div>
 
 <!--<div th:replace="fragments/infomodal :: infomodal(${currentUser})"></div>-->
 
@@ -18,8 +18,8 @@
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
 
             <div id="scroll-gallery">
-                <th:block th:if="${searchTerm != '' and not #lists.isEmpty(metadataSearchList)}">
-                    <h1 th:text="'Results for \''+${searchTerm}+'\''"></h1>
+                <th:block th:if="${term != '' and not #lists.isEmpty(metadataSearchList)}">
+                    <h1 th:text="'Results for \''+${term}+'\''"></h1>
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataSearchList}">
 
@@ -62,7 +62,7 @@
                     </div>
                 </th:block>
                 <th:block th:if="${#lists.isEmpty(metadataSearchList)}">
-                    <h1 th:text="'No results for \''+${searchTerm}+'\''"></h1>
+                    <h1 th:text="'No results for \''+${term}+'\''"></h1>
                     <span class="appendSearchPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
                 </th:block>
             </div>
@@ -89,11 +89,11 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'search';
-        const searchTerm = /*[[${searchTerm}]]*/ '';
+        const term = /*[[${term}]]*/ '';
         const metadataSearchList = /*[[${metadataSearchList}]]*/ '[]';
         /*]]>*/
 
-        const searchInstance = new Search(searchTerm, activePage, metadataSearchList);
+        const searchInstance = new Search(term, activePage, metadataSearchList);
         searchInstance.init();
         Util.checkErrorImage();
     });
