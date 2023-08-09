@@ -779,6 +779,34 @@ async function showMap(mapdata,showControls) {
         setLayerInputs(e);
     });
 
+    // get all date input fields
+    let allDateInputs = document.querySelectorAll('[type="date"]');
+    allDateInputs.forEach(el => {
+        const singleDateInput = $(el);
+
+        // register double click event to change date input to text input and select the value
+        singleDateInput.on('dblclick', () => {
+            el.type = "text";
+
+            // After changing input type with JS .select() wont work as usual
+            // Needs timeout fn() to make it work
+            setTimeout(() => {
+                el.select();
+            })
+        });
+
+        // register the focusout event to reset the input back to a date input field
+        singleDateInput.on('focusout', () => {
+            el.type = "date";
+        });
+        singleDateInput.on('keypress',function(e) {
+            // Enter key
+            if(e.which === 13) {
+                el.type = "date";
+            }
+        });
+    });
+
     function setLayerInputs(e) {
         e.preventDefault();
 
