@@ -51,7 +51,7 @@ async function showMap(mapdata,showControls) {
             initialZoom = 20;
             startDateField.val("");
         } else {
-            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
+            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
         }
     } else if (qslatlng !== null && qslatlng !== "") {
         const latlngArr = qslatlng.split(",");
@@ -65,10 +65,10 @@ async function showMap(mapdata,showControls) {
                 initialZoom = 20;
                 startDateField.val("");
             } else {
-                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
+                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
         } else {
-            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
+            shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
         }
     } else if (Util.localStorageAvailable() === true && "lat" in localStorage && "lng" in localStorage) {
         initialCoord = [localStorage.getItem("lng"), localStorage.getItem("lat")];
@@ -96,14 +96,14 @@ async function showMap(mapdata,showControls) {
             if (true === isValidQsDate(qssd)) {
                 startDateField.val(qssd);
             } else {
-                shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", "bi-exclamation-triangle", "#FF0000");
+                shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
         }
         if (qsed !== null && qsed !== "") {
             if (true === isValidQsDate(qsed)) {
                 endDateField.val(qsed);
             } else {
-                shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", "bi-exclamation-triangle", "#FF0000");
+                shashin.showToastMessage("Validation error", "Date format must be yyyy-mm-dd.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
         }
         if (qsvo !== null) {
@@ -215,18 +215,18 @@ async function showMap(mapdata,showControls) {
         if (startDateField.val() === "" && endDateField.val() === "") {
             return true;
         } else if (startDateField.val() !== "" && startDateFormat == null && endDateField.val() !== "" && endDateFormat === null) {
-            shashin.showToastMessage("Validation error", "Invalid dates.", "bi-exclamation-triangle", "#FF0000");
+            shashin.showToastMessage("Validation error", "Invalid dates.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             return false;
         } else if (startDateFormat && endDateFormat) {
             if (endDateFormat < startDateFormat) {
-                shashin.showToastMessage("Validation error", "Start date must be before end date.", "bi-exclamation-triangle", "#FF0000");
+                shashin.showToastMessage("Validation error", "Start date must be before end date.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
             return endDateFormat >= startDateFormat;
         } else if (startDateField.val() !== "" && startDateFormat === null) {
-            shashin.showToastMessage("Validation error", "Invalid start date.", "bi-exclamation-triangle", "#FF0000");
+            shashin.showToastMessage("Validation error", "Invalid start date.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             return false;
         } else if (endDateField.val() !== "" && endDateFormat === null) {
-            shashin.showToastMessage("Validation error", "Invalid end date.", "bi-exclamation-triangle", "#FF0000");
+            shashin.showToastMessage("Validation error", "Invalid end date.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             return false;
         }
 
@@ -663,11 +663,11 @@ async function showMap(mapdata,showControls) {
             $("#tempClipboardMapId").on( "click", function () {
 
                 clipboard.on('success', function(e) {
-                    shashin.showToastMessage("Coordinates copied to clipboard", e.text + " copied to clipboard", "bi-info-circle", "#777777");
+                    shashin.showToastMessage("Coordinates copied to clipboard", e.text + " copied to clipboard", {icon:"bi-info-circle", iconColor:"#777777"});
                 });
 
                 clipboard.on('error', function(e) {
-                    shashin.showToastMessage("Could not copy coordinates", copyText + " could not be copied: " + e, "bi-exclamation-triangle", "#FF0000");
+                    shashin.showToastMessage("Could not copy coordinates", copyText + " could not be copied: " + e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                 });
             });
             $("#tempClipboardMapId").trigger( "click" );
@@ -906,7 +906,7 @@ async function showMap(mapdata,showControls) {
                 metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
                 metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
                 metadataLocationModalCancel.prop('disabled', false);
-                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", "bi-exclamation-triangle", "#FF0000");
+                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             }
         } else {
             metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');

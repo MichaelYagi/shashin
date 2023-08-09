@@ -89,12 +89,12 @@
             clipboard.on('error', function (e) {
                 // console.log("fail:" + e.message)
                 $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
-                shashin.showToastMessage("Operation failed", "Operation failed: " + e.message, "bi-exclamation-triangle", "#FF0000");
+                shashin.showToastMessage("Operation failed", "Operation failed: " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                 // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Operation failed: "+e.message+"</div>");
             });
         } else {
             $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
-            shashin.showToastMessage("Operation failed", "API key must not be blank", "bi-exclamation-triangle", "#FF0000");
+            shashin.showToastMessage("Operation failed", "API key must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
         }
     });
@@ -116,11 +116,11 @@
             if (data.hasOwnProperty("updatedApikey") && data["updatedApikey"] !== "") {
                 $("#apikey").val(data["updatedApikey"]);
             } else {
-                shashin.showToastMessage("Operation failed", "Could not regenerate API key", "bi-exclamation-triangle", "#FF0000");
+                shashin.showToastMessage("Operation failed", "Could not regenerate API key", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                 // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not regenerate API key</div>");
             }
         } else {
-            shashin.showToastMessage("Operation failed", "API key must not be blank", "bi-exclamation-triangle", "#FF0000");
+            shashin.showToastMessage("Operation failed", "API key must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
         }
 
