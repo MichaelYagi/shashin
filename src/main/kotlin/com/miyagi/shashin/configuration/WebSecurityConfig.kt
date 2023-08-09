@@ -54,7 +54,11 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "trash",
             "users",
             "dashboard",
-            "search"
+            "search",
+            "users/profile",
+            "users/update",
+            "users/apikey",
+            "test"
         )
 
         var publicList = arrayOf(
