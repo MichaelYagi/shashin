@@ -1703,6 +1703,7 @@ class TimelineController: BaseController() {
 
         response["allAlbumList"] = mutableListOf<Album>()
         response["allRecognitionLabels"] = mutableListOf<RecognitionLabel>()
+        val allAlbumArray = mutableListOf<Album>()
         val albumArray = mutableListOf<String>()
         response["albumList"] = albumArray
         val labelArray = mutableListOf<String>()
@@ -1727,15 +1728,6 @@ class TimelineController: BaseController() {
             }
             response["taggedPeopleList"] = labelArray
 
-            val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(id)
-            if (albumPhotos != null) {
-                for (albumPhoto in albumPhotos) {
-                    val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
-                    albumArray.add(album.get().getName()!!)
-                }
-            }
-            response["albumList"] = albumArray
-
             val keywordArray = mutableListOf<String>()
             val keywords = keywordRepository.findKeywordsByMetadataId(id)
             for (keyword in keywords) {
@@ -1748,9 +1740,41 @@ class TimelineController: BaseController() {
                 response["allRecognitionLabels"] = allRecognitionLabels
             }
 
-            val allAlbumList = albumRepository.findAllOrderByAlbumName()
-            if (allAlbumList.count() > 0) {
-                response["allAlbumList"] = allAlbumList
+//            val allAlbumList = albumRepository.findAllOrderByAlbumName()
+//            if (allAlbumList.count() > 0) {
+//                response["allAlbumList"] = allAlbumList
+//            }
+
+            val currentUserObj = model.getAttribute("currentUser") as User?
+            val albumIds = userAlbumRepository.findUserAlbumIdByUserId(currentUserObj!!.getId())
+            val albumPhotos = albumPhotoRepository.findAlbumPhotoByMetadataId(id)
+
+            if (albumIds != null) {
+                for (albumId in albumIds) {
+                    val album = albumRepository.findById(albumId)
+                    allAlbumArray.add(album.get())
+
+                    if (albumPhotos != null) {
+                        for (albumPhoto in albumPhotos) {
+                            if (albumPhoto?.getAlbumId() == album.get().getId() && !albumArray.contains(album.get().getName()!!)) {
+                                albumArray.add(album.get().getName()!!)
+                                break
+                            }
+                        }
+                    }
+                }
+            }
+
+//            if (albumPhotos != null) {
+//                for (albumPhoto in albumPhotos) {
+//                    val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
+//                    albumArray.add(album.get().getName()!!)
+//                }
+//            }
+            response["albumList"] = albumArray
+
+            if (allAlbumArray.count() > 0) {
+                response["allAlbumList"] = allAlbumArray
             }
         }
 
