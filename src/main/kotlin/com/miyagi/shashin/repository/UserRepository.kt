@@ -16,7 +16,7 @@ interface UserRepository : CrudRepository<User?, Int?> {
     fun findByUsername(username: String?): User?
     fun findById(userId: Int?): User?
     fun findByApikey(apikey: String?): User?
-    @Query("SELECT DISTINCT u.id as userId, u.username, a.id as albumId, CASE WHEN ua.user_id IS NULL THEN FALSE ELSE TRUE END AS isShared FROM user u, album a LEFT JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id != :userId", nativeQuery = true)
+    @Query("SELECT DISTINCT u.id as userId, u.username, a.id as albumId, CASE WHEN ua.user_id IS NULL THEN FALSE ELSE TRUE END AS isShared FROM user u, album a LEFT JOIN useralbum ua ON u.id = ua.user_id AND ua.album_id = a.id WHERE u.id != :userId AND u.authority = 'ROLE_USER'", nativeQuery = true)
     fun findUserBySharedAlbum(@Param("userId") userId: Int): MutableIterable<UserSharedAlbums>
     fun findAllByAuthorityEquals(authority: String): MutableIterable<User>
     fun countAllByIsAuthorizedIsFalseAndAuthorityEquals(authority: String): Int

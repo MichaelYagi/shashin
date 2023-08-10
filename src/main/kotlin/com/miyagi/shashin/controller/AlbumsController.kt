@@ -298,10 +298,21 @@ class AlbumsController {
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
-            if (currentUserObj.getAuthority() != null && currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
-                showControls = true
+            var userAlbums: MutableList<UserAlbum?>? = null
+            if (currentUserObj.getAuthority() != null) {
+                if (currentUserObj.getAuthority()!! == "ROLE_ADMIN") {
+                    showControls = true
+                    userAlbums =
+                        userAlbumRepository.findAllOffsetAndLimit((page * size), size) as MutableList<UserAlbum?>?
+                } else {
+                    userAlbums =
+                        userAlbumRepository.findAllByUserIdAndOffsetAndLimit(
+                            currentUserObj.getId(),
+                            (page * size),
+                            size
+                        ) as MutableList<UserAlbum?>?
+                }
             }
-            val userAlbums = userAlbumRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(), (page*size), size)
 
             if (userAlbums != null && userAlbums.count() > 0) {
                 val albumsCommentsMap = HashMap<Int, ArrayList<HashMap<String, Any>>>()
@@ -587,7 +598,8 @@ class AlbumsController {
 
             val currentUserObj = model.getAttribute("currentUser") as User?
 
-            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumIdRequest)
+//            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumIdRequest)
+            val userAlbumCount = userAlbumRepository.countByAlbumId(albumIdRequest)
 
             if (userAlbumCount != null && userAlbumCount > 0) {
                 userAlbumRepository.deleteByAlbumId(albumIdRequest)
@@ -1208,8 +1220,12 @@ class AlbumsController {
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
-            val userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
-            if (userAlbums != null) {
+            var userAlbums: UserAlbum? = null
+            if (currentUserObj.getAuthority()!! == "ROLE_USER") {
+                userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+            }
+
+            if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
                 val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,page*size, size)
                 val albumMetadataList = ArrayList<Metadata>()
@@ -1297,8 +1313,12 @@ class AlbumsController {
     fun postAlbumDownload(model: Model, @RequestParam download: Int, @PathVariable albumId: Int, response: HttpServletResponse): ResponseEntity<InputStreamResource>? {
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0 && download == albumId) {
-            val userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
-            if (userAlbums != null) {
+            var userAlbums: UserAlbum? = null
+            if (currentUserObj.getAuthority()!! == "ROLE_USER") {
+                userAlbums = userAlbumRepository.findDistinctByUserIdAndAlbumId(currentUserObj.getId(), albumId)
+            }
+
+            if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
                 val albumPhotos = albumPhotoRepository.findAllByAlbumId(albumId)
                 if (albumPhotos != null) {
