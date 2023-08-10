@@ -30,8 +30,8 @@ async function showMap(mapdata,showControls) {
         color: 'rgba(255, 255, 255, 0.01)',
     });
 
-    // Set an initial date to 1000 photos ago
-    let initIndex = 1000;
+    // Set an initial date to 500 photos ago
+    let initIndex = 500;
     if (mapdata.length < initIndex) {
         initIndex = mapdata.length;
     }
