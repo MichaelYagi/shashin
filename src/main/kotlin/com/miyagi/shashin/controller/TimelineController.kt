@@ -1765,17 +1765,8 @@ class TimelineController: BaseController() {
                 }
             }
 
-//            if (albumPhotos != null) {
-//                for (albumPhoto in albumPhotos) {
-//                    val album = albumRepository.findById(albumPhoto!!.getAlbumId()!!)
-//                    albumArray.add(album.get().getName()!!)
-//                }
-//            }
             response["albumList"] = albumArray
-
-            if (allAlbumArray.count() > 0) {
-                response["allAlbumList"] = allAlbumArray
-            }
+            response["allAlbumList"] = allAlbumArray
         }
 
         response["msg"] = ""
