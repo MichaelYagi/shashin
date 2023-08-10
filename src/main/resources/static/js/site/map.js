@@ -30,17 +30,15 @@ async function showMap(mapdata,showControls) {
         color: 'rgba(255, 255, 255, 0.01)',
     });
 
-    // Set an initial date to 1 month ago
-    const initDate = new Date();
-    const initMonth = initDate.getMonth();
-    initDate.setMonth(initDate.getMonth() - 1);
-
-    // If still in same month, set date to last day of previous month
-    if (initDate.getMonth() === initMonth) {
-        initDate.setDate(0);
+    // Set an initial date to 1000 photos ago
+    let initIndex = 1000;
+    if (mapdata.length < initIndex) {
+        initIndex = mapdata.length;
     }
+    initIndex = initIndex - 1;
+
     // Date fields are format "yyyy-MM-dd"
-    let initialStartDate = initDate.getFullYear() + '-' + ((initDate.getMonth() > 8) ? (initDate.getMonth() + 1) : ('0' + (initDate.getMonth() + 1))) + '-' + ((initDate.getDate() > 9) ? initDate.getDate() : ('0' + initDate.getDate()))
+    let initialStartDate = mapdata[initIndex]["year"] + '-' + ((mapdata[initIndex]["month"] > 9) ? (mapdata[initIndex]["month"]) : ('0' + (mapdata[initIndex]["month"]))) + '-' + ((mapdata[initIndex]["day"] > 9) ? mapdata[initIndex]["day"] : ('0' + mapdata[initIndex]["day"]))
     startDateField.val(initialStartDate);
 
     let initialCoord = [-73.1234, 45.678];
