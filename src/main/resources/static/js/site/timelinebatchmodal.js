@@ -174,6 +174,10 @@ $("#saveBatchMetadata").on("click", async function (e) {
                                     Util.setMetadataLocalStorage();
                                 }
                             }
+
+                            if ($("#latlngBatchData").val().trim() !== "") {
+                                Util.setMetadataLocalStorage();
+                            }
                         }
                     }
                 }
