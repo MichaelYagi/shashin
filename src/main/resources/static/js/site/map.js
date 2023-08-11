@@ -340,7 +340,7 @@ async function showMap(mapdata,showControls) {
             });
 
             const clusterSource = new ol.source.Cluster({
-                distance: 40,
+                distance: 200, // Bigger number for better performance, smaller number for better accuracy
                 source: vectorSource,
             });
 
