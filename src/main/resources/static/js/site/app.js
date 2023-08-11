@@ -1689,6 +1689,8 @@
     shashin.clearTimelineSelection = function () {
         if (shashin.downloadInstance !== null) {
             shashin.downloadInstance.abort();
+            shashin.downloadInstance = null;
+            shashin.showToastMessage("Download cancelled", "Download cancelled.", {icon:"bi-info-circle", iconColor:"#777777"});
             $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
         }
         shashin.removeAllMetadataFilenamesList();
@@ -1714,6 +1716,8 @@
     shashin.clearAlbumSelection = function () {
         if (shashin.downloadInstance !== null) {
             shashin.downloadInstance.abort();
+            shashin.downloadInstance = null;
+            shashin.showToastMessage("Download cancelled", "Download cancelled.", {icon:"bi-info-circle", iconColor:"#777777"});
             $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
         }
         shashin.removeAllMetadataFilenamesList();
