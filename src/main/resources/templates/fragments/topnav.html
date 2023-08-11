@@ -123,7 +123,7 @@
                 <a href="#" id="appToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
                 </th:block>
                 <a href="#" id="appToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                <a href="#" id="appToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
+                <a href="#" id="appToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                 &nbsp;&nbsp;<span id="timelineNumberSelected"></span>
             </div>
             <th:block th:if="${activePage == 'matches' or activePage == 'person'}">
@@ -132,7 +132,7 @@
                     <a href="#" id="matchToolsBatchEdit" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit Photos"><span th:class="'bi-pencil placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
                     </th:block>
                     <a href="#" id="matchToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="matchToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="matchToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="matchesNumberSelected"></span>
                 </div>
             </th:block>
@@ -140,14 +140,14 @@
                 <div id="albumAppTools">
                     <a href="#" id="albumAppToolsRemoveFavorites" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Favorites"><span th:class="'bi-heart placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
                     <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="favoritesNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'trash'}">
                 <div id="albumAppTools">
                     <a href="#" id="albumAppToolsRestore" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Restore"><span th:class="'bi-arrow-repeat placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="trashNumberSelected"></span>
                 </div>
             </th:block>
@@ -157,14 +157,14 @@
                     <a href="#" id="albumAppToolsRemoveAlbum" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Album"><span th:class="'bi-bookmark-x placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
                     </th:block>
                     <a href="#" id="albumAppToolsBatchDownload" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Download"><span th:class="'bi-download placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="albumAppToolsDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="albumNumberSelected"></span>
                 </div>
             </th:block>
             <th:block th:if="${activePage == 'compreface'}">
                 <div id="comprefaceAppTools">
                     <a href="#" id="comprefaceBatchDelete" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From CompreFace"><span th:class="'bi-trash placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
-                    <a href="#" id="comprefaceDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-backspace placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
+                    <a href="#" id="comprefaceDeselectAll" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Clear Selection"><span th:class="'bi-x-circle placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>
                     &nbsp;&nbsp;<span id="comprefaceNumberSelected"></span>
                 </div>
             </th:block>
