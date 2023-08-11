@@ -4,7 +4,7 @@ class GalleryTemplates {
         <div id="photoThumbnailContainer${metadata.id}" class="photo-thumbnail-container photo-thumbnail" style="width:${metadata.thumbnailSmallWidth}px;height:${metadata.thumbnailSmallHeight}px;padding-left:0;padding-right:0;">
             <a class="lightGalleryIndexAnchor" name="lightGalleryIndex${currentMediaLinkIndex}"></a>
             <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlSmall)}" class="photo-thumbnail-image" id="image${metadata.id}" width="${metadata.thumbnailSmallWidth}" height="${metadata.thumbnailSmallHeight}" style="background-color:lightgray;">
-            <input type="hidden" name="filenamee${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
+            <input type="hidden" name="filename${metadata.id}" id="filename${metadata.id}" value="${metadata.fileName}">
             <input type="hidden" name="thumbnailCentered${metadata.id}" id="thumbnailCentered${metadata.id}" value="${encodeURI(metadata.thumbnailUrlCentered)}">
     
             ${(overlayData.hasOwnProperty("data") && overlayData["data"].hasOwnProperty("overlayFlags") && overlayData["data"]["overlayFlags"].hasOwnProperty("renderTopRight") && overlayData["data"]["overlayFlags"]["renderTopRight"] === true) ? GalleryTemplates.getTopRightOverlay({
