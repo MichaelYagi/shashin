@@ -4,7 +4,7 @@
     albumSettings.http = null;
     albumSettings.eol = false;
 
-    albumSettings.init = async function (albumId, activePage, albumMetadataList) {
+    albumSettings.init = async function (albumId, mediaTypeFilter, activePage, albumMetadataList) {
         albumSettings.http = new Http(activePage);
 
         let mediaContentList = shashin.initLightGallery('infinite-scroll-gallery', {
@@ -18,7 +18,7 @@
         async function loadNextPage() {
             if (albumSettings.rendering === false) {
                 // console.log(albumSettings.page)
-                albumSettings.getPagedAlbum(albumId, albumSettings.page, activePage).then(function (additionalMediaContentList) {
+                albumSettings.getPagedAlbum(albumId, mediaTypeFilter, albumSettings.page, activePage).then(function (additionalMediaContentList) {
                     // console.log(additionalMediaContentList)
                     albumSettings.page++;
                     mediaContentList = shashin.updateMediaContent(mediaContentList, additionalMediaContentList);
@@ -56,14 +56,14 @@
         });
     }
 
-    albumSettings.getPagedAlbum = async function(albumId,nextPage,activePage) {
+    albumSettings.getPagedAlbum = async function(albumId,mediaTypeFilter, nextPage,activePage) {
         albumSettings.rendering = true;
 
         let data = null
 
         if (false === albumSettings.eol) {
             $("#spinner").css("display", "block");
-            data = await this.http.ajax("get","/album/"+albumId+"/page/"+nextPage);
+            data = await this.http.ajax("get","/album/"+albumId+"/mediatype/"+mediaTypeFilter+"/page/"+nextPage);
         }
 
         const mediaContentList = [];

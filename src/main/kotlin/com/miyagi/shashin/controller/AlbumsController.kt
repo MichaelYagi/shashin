@@ -1069,9 +1069,9 @@ class AlbumsController {
     }
 
     @Secured("ROLE_ADMIN", "ROLE_USER")
-    @RequestMapping(value = ["/album/{albumId}"], method = [RequestMethod.GET])
-    fun getAlbum(model: Model, @PathVariable albumId: Int): String {
-        val response = buildAlbum(model,albumId,0)
+    @RequestMapping(value = ["/album/{albumId}","/album/{albumId}/{mediaType}"], method = [RequestMethod.GET])
+    fun getAlbum(model: Model, @PathVariable albumId: Int,@PathVariable(required = false) mediaType: String?): String {
+        val response = buildAlbum(model,albumId,0,model.getAttribute("queryLimit").toString().toInt(),mediaType)
         for ((k, v) in response) {
             model[k] = v!!
         }
@@ -1134,7 +1134,14 @@ class AlbumsController {
     @RequestMapping(value = ["/album/{albumId}/page/{page}","/api/v1/album/{albumId}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedAlbum(model: Model, @PathVariable albumId: Int, @PathVariable page: Int): String {
-        return mapper.writeValueAsString(buildAlbum(model,albumId,page))
+        return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),"all"))
+    }
+
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/album/{albumId}/mediatype/{mediaType}/page/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedAlbumWithMediaType(model: Model, @PathVariable albumId: Int, @PathVariable page: Int,@PathVariable mediaType: String): String {
+        return mapper.writeValueAsString(buildAlbum(model,albumId,page,model.getAttribute("queryLimit").toString().toInt(),mediaType))
     }
 
     @RouterOperation(
@@ -1193,10 +1200,10 @@ class AlbumsController {
     @RequestMapping(value = ["/api/v1/album/{albumId}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getPagedSizeAlbum(model: Model, @PathVariable albumId: Int, @RequestParam page: Optional<Int>, @RequestParam size: Optional<Int>): String {
-        return mapper.writeValueAsString(buildAlbum(model, albumId, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
+        return mapper.writeValueAsString(buildAlbum(model, albumId, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt()), "all"))
     }
 
-    private fun buildAlbum(model: Model, albumId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
+    private fun buildAlbum(model: Model, albumId: Int, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt(), mediaTypeFilter: String?): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
         val module = "album"
@@ -1217,6 +1224,14 @@ class AlbumsController {
         response["status"] = "noop"
         response["canEdit"] = model.getAttribute("authority") == adminRole
 
+        var mediaType = mediaTypeFilter
+
+        if (mediaTypeFilter.isNullOrEmpty()) {
+            mediaType = "all"
+        }
+
+        response["mediaTypeFilter"] = mediaType
+
         val favoritesMap = HashMap<String, HashMap<String, Any>>()
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null && albumId > 0) {
@@ -1227,7 +1242,21 @@ class AlbumsController {
 
             if (currentUserObj.getAuthority()!! == "ROLE_ADMIN" || (userAlbums != null && currentUserObj.getAuthority()!! == "ROLE_USER")) {
                 // Get album photos
-                val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId,page*size, size)
+                var albumPhotos: MutableIterable<AlbumPhoto?>?
+                if (mediaType == "all") {
+                    albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(
+                        albumId,
+                        page * size,
+                        size
+                    )
+                } else {
+                    albumPhotos = albumPhotoRepository.findAllByAlbumIdAndMediaTypeAndOffsetAndLimit(
+                        albumId,
+                        mediaType!!,
+                        page * size,
+                        size
+                    )
+                }
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()

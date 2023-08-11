@@ -1326,6 +1326,9 @@
                 $("#appSearch").hide();
                 if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").show();
+                    if (view === "album") {
+                        $("#albumTools").hide();
+                    }
                 } else if (view === "timeline" || view === "recent" || view === "modified" || view === "folder") {
                     $("#timelineAppTools").show();
                     if (view === "timeline") {
@@ -1347,6 +1350,8 @@
                 $("#matchesAppTools").hide();
                 if (view === "timeline") {
                     $("#timelineTools").show();
+                } else if (view === "album") {
+                    $("#albumTools").show();
                 }
             }
 
@@ -1397,6 +1402,9 @@
                 $("#appSearch").hide();
                 if (view === "album" || view === "favorites" || view === "trash") {
                     $("#albumAppTools").show();
+                    if (view === "album") {
+                        $("#albumTools").hide();
+                    }
                 } else if (view === "timeline" || view === "recent" || view === "modified" || view === "folder") {
                     $("#timelineAppTools").show();
                     if (view === "timeline") {
@@ -1417,6 +1425,8 @@
                 $("#timelineAppTools").hide();
                 if (view === "timeline") {
                     $("#timelineTools").show();
+                } else if (view === "album") {
+                    $("#albumTools").show();
                 }
                 $("#albumAppTools").hide();
                 $("#matchesAppTools").hide();
@@ -1690,6 +1700,28 @@
         $("#appSearch").show();
         $("#timelineAppTools").hide();
         $("#timelineTools").show();
+        $("#albumTools").hide();
+        $("#albumAppTools").hide();
+        $("#matchesAppTools").hide();
+        $("#comprefaceAppTools").hide();
+    }
+
+    shashin.clearAlbumSelection = function () {
+        shashin.removeAllMetadataFilenamesList();
+        shashin.removeAllMetadataThumbnailsList();
+        shashin.removeAllMetadataIdList();
+        $(".thumbnail-centered").hide();
+        //$(".thumbnail-tr").hide();
+        $(".thumbnail-br").hide();
+        $(".thumbnail-bl").hide();
+        $(".thumbnail-tl").hide();
+        $(".photo-thumbnail-image").css("opacity", 1.0);
+        $(".thumbnail-tl a span").addClass('bi-circle').removeClass('bi-circle-fill');
+
+        $("#appSearch").show();
+        $("#timelineAppTools").hide();
+        $("#timelineTools").hide();
+        $("#albumTools").show();
         $("#albumAppTools").hide();
         $("#matchesAppTools").hide();
         $("#comprefaceAppTools").hide();
@@ -1710,6 +1742,7 @@
             $("#appSearch").show();
             $("#timelineAppTools").hide();
             $("#timelineTools").show();
+            $("#albumTools").hide();
             $("#albumAppTools").hide();
             $("#matchesAppTools").hide();
         })

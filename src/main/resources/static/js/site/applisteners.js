@@ -59,7 +59,7 @@ $("#appToolsDeselectAll").on("click", function(e) {
 $("#albumAppToolsDeselectAll").on("click", function(e) {
     e.preventDefault();
 
-    shashin.clearTimelineSelection();
+    shashin.clearAlbumSelection();
 });
 
 $("#comprefaceDeselectAll").on("click", function(e) {
@@ -174,10 +174,17 @@ $("#albumAppToolsRestore").on("click", async function (e) {
     return false;
 });
 
+let albumVideoRegex = new RegExp("\\/album\\/(\\d+)\\/video$");
+let albumRegex = new RegExp("\\/album\\/(\\d+)$");
+
 if (window.location.href.indexOf("/timeline/video") > -1) {
     $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video").addClass("bi-camera-video-fill");
 } else if (window.location.href.indexOf("/timeline") > -1) {
     $("#timelineMediaTypeToggleIcon").removeClass("bi-camera-video-fill").addClass("bi-camera-video");
+} else if (albumVideoRegex.test(window.location.href)) {
+    $("#albumMediaTypeToggleIcon").removeClass("bi-camera-video").addClass("bi-camera-video-fill");
+} else if (albumRegex.test(window.location.href)) {
+    $("#albumMediaTypeToggleIcon").removeClass("bi-camera-video-fill").addClass("bi-camera-video");
 }
 
 $("#timelineMediaTypeToggle").on("click", function(e) {
@@ -187,5 +194,16 @@ $("#timelineMediaTypeToggle").on("click", function(e) {
         window.location.replace("/timeline");
     } else {
         window.location.replace("/timeline/video");
+    }
+});
+
+$("#albumMediaTypeToggleIcon").on("click", function(e) {
+    e.preventDefault();
+
+    const updatedStr = window.location.href.replace("\/video","")
+    if (albumVideoRegex.test(window.location.href)) {
+        window.location.replace(updatedStr);
+    } else {
+        window.location.replace(updatedStr + "/video");
     }
 });

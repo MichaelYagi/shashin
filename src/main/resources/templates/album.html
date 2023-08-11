@@ -157,10 +157,11 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'album';
-        const albumMetadataList = /*[[${albumMetadataList}]]*/ '[]'
+        const albumMetadataList = /*[[${albumMetadataList}]]*/ '[]';
+        const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
         /*]]>*/
 
-        albumSettings.init(albumId, activePage, albumMetadataList);
+        albumSettings.init(albumId, mediaTypeFilter, activePage, albumMetadataList);
         Util.checkErrorImage();
     });
 </script>
