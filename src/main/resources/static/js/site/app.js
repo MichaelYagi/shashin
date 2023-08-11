@@ -11,6 +11,7 @@
     shashin.nonce = "";
     shashin.contextMenu = null;
     shashin.tempVector = null;
+    shashin.downloadInstance = null;
 
     function fixContentHeight() {
         if ($("div[data-role='dialog']").is(":visible")) {
@@ -1039,7 +1040,7 @@
             const endpoint = "/timeline/download/batch";
 
             if (Util.isMobile() === false) {
-                $.fileDownload(endpoint, {
+                shashin.downloadInstance = $.fileDownload(endpoint, {
                     httpMethod: "POST",
                     data: "batchMetadataIds=" + JSON.stringify(metadataIdList),
                     successCallback: function (url) {
@@ -1061,7 +1062,7 @@
                     }
                 });
             } else {
-                fetch(endpoint, {
+                shashin.downloadInstance = fetch(endpoint, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
@@ -1686,6 +1687,10 @@
     }
 
     shashin.clearTimelineSelection = function () {
+        if (shashin.downloadInstance !== null) {
+            shashin.downloadInstance.abort();
+            $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
+        }
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
@@ -1707,6 +1712,10 @@
     }
 
     shashin.clearAlbumSelection = function () {
+        if (shashin.downloadInstance !== null) {
+            shashin.downloadInstance.abort();
+            $("button").find("span").addClass('bi-download').removeClass('spinner-grow');
+        }
         shashin.removeAllMetadataFilenamesList();
         shashin.removeAllMetadataThumbnailsList();
         shashin.removeAllMetadataIdList();
