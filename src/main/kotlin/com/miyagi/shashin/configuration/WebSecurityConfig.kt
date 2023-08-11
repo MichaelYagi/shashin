@@ -37,8 +37,10 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
     companion object {
         val validWebPaths = arrayOf(
             "timeline",
+            "timeline\\/video",
             "albums",
             "album\\/(\\d+)",
+            "album\\/(\\d+)\\/video",
             "recent",
             "modified",
             "folders",
