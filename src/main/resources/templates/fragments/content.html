@@ -14,6 +14,9 @@
     <br><p id="msg" th:text="${message == 'No message available' ? 'Oops! Something went wrong.' : message}"></p>
 </th:block>
 
+<input type="hidden" id="multiSelectMetadataIds" name="multiSelectMetadataIds" value="[]">
+<input type="hidden" id="multiSelectFilenames" name="multiSelectFilenames" value="[]">
+<input type="hidden" id="multiSelectThumbnails" name="multiSelectThumbnails" value="[]">
 <input type="hidden" id="currentlat" name="currentlat">
 <input type="hidden" id="currentlng" name="currentlng">
 <input type="hidden" id="currentyear" name="currentyear">
