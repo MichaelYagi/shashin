@@ -15,6 +15,18 @@ class Http {
 
     async ajax(type,url,data,failFunction) {
 
+        function isJSON(something) {
+            if (typeof something != 'string')
+                something = JSON.stringify(something);
+
+            try {
+                JSON.parse(something);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
         const ajaxParams = {
             type: type,
             url: url,
@@ -42,9 +54,13 @@ class Http {
         return await $.ajax(ajaxParams).fail(function(xhr, textStatus) {
             const message = " executing " + (this.action && this.action.length > 0 ? this.action : "unknown.");
             shashin.onFail(xhr, textStatus, ajaxParams, message, failFunction);
-        }).then(function (data) {
-            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+        }).then(function (data, statusText, xhr) {
+            if (isJSON(data) && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 return data;
+            } else if (isJSON(data) === false) {
+                if (data.indexOf("Shashin: Login") >= 0) {
+                    $(location).prop('href', '/users/login');
+                }
             } else {
                 return {"message": "Error: No status or msg keys."}
             }
