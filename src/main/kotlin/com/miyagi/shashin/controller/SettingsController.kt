@@ -1163,6 +1163,7 @@ class SettingsController {
                                 // Insert record
                                 val albumObj = Album()
                                 albumObj.setName(importedAlbum.getName())
+                                albumObj.setCoverUrl(importedAlbum.getCoverUrl())
                                 albumObj.setCreatedAt(getCurrentTimestamp())
                                 albumObj.setModifiedAt(getCurrentTimestamp())
                                 albumRepository?.save(albumObj)
