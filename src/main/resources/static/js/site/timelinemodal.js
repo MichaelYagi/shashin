@@ -223,6 +223,10 @@ $("#saveMetadata").on("click", async function (e) {
 
                 $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 $("#timelineModalCancel").prop('disabled', false);
+
+                if (window.location.pathname.includes("timeline") === false) {
+                    location.reload();
+                }
             } else {
                 $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
