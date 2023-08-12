@@ -342,7 +342,7 @@ class PeopleController {
 
                     FileUtils.deleteThreadFiles(threadExtensionName)
                     writeToThreadFileAndLogMessage("Matching Complete", threadFile!!)
-                }.run()
+                }.start()
 
             }
 
