@@ -20,6 +20,7 @@
 
                 <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
                 <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
+                <input type="hidden" id="personId" name="personId" th:value="${personInfo.id}">
 
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
                     <div th:replace="fragments/personmodal :: personmodal()"></div>
@@ -45,7 +46,7 @@
                                 <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
 
                                 <th:block th:if="${authority == 'ROLE_ADMIN'}">
-                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, null, null, null)"></div>
+                                    <div th:replace="fragments/bottomleftoverlay :: bottomleftoverlay(${metadata}, null, 'personModalEdit', 'personSettings.openPersonModal', 'overlayCommentText')"></div>
                                 </th:block>
 
                                 <th:block th:if="${authority == 'ROLE_USER'}">
@@ -87,6 +88,35 @@
             <div id="spinner" class="spinner-border justify-content-center align-items-center" role="status" style="display: none"></div>
             <div th:replace="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></div>
         </main>
+    </div>
+</div>
+
+<div class="modal fade" id="propPersonModal" tabindex="-1" role="dialog" aria-labelledby="labelPersonModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit &ldquo;<span id="personModalTitle"></span>&rdquo;<div id="propPersonModalThumbnail"></div></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+            </div>
+            <div class="modal-body">
+                <form id="savePersonModalForm">
+<!--                    <input type="hidden" name="metadataId" id="metadataId" value="">-->
+                    <div class="col-auto form-check">
+                        <input type="radio" class="form-check-input" id="setCoverPerson" name="personAction">
+                        <label class="form-check-label" for="setCoverPerson">Set as cover</label>
+                    </div>
+                </form>
+                <div class="col-sm">
+                    <span id="personModalMsg"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="personModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                <button type="button" class="btn btn-primary" id="savePersonModal">Save</button>
+                <button id="personModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
 

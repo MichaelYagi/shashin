@@ -980,6 +980,7 @@ class PeopleController {
     @ResponseBody
     fun postPersonUpdate(model: Model, @RequestBody requestBody: JsonNode): String {
         val personMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
+
         if (personMap.containsKey("metadataId") &&
             personMap.containsKey("tagpeople") &&
             personMap.containsKey("isObject")
@@ -1003,6 +1004,8 @@ class PeopleController {
                     }
                 }
 
+                val metadata = metadataRepository?.findById(metadataId)
+
                 if (recognitionLabelArray.count() > 0) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }
@@ -1016,6 +1019,7 @@ class PeopleController {
                             recognitionLabelObj.setName(recognitionLabelString.trim())
                             recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                             recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setCoverUrl(metadata?.get()?.getThumbnailUrlCentered())
                             recognitionLabelRepository?.save(recognitionLabelObj)
                         } else {
                             recognitionLabelObj = recognitionLabelRecord
@@ -1026,7 +1030,6 @@ class PeopleController {
                                 metadataId
                             )
                         if (recognitionLabelPhotoCount == 0) {
-                            val metadata = metadataRepository?.findById(metadataId)
                             val uploadResp = mapper.writeValueAsString(FileUtils.buildPersonUpload(model.getAttribute("settings") as Settings, recognitionLabelString.trim(), metadata?.get(), compreFaceImageIdMap))
                             val jsonRespObj = mapper.readTree(uploadResp)
 
@@ -1098,6 +1101,29 @@ class PeopleController {
                 resp["msg"] = "Saved"
                 resp["status"] = ApiResponse.SUCCESS.status
                 return mapper.writeValueAsString(resp)
+            }
+        } else if (personMap.containsKey("setCoverPerson") &&
+            personMap.containsKey("metadataId") &&
+            personMap.containsKey("personId")
+        ) {
+            val metadataId = StringEscapeUtils.escapeHtml4(personMap["metadataId"].toString())
+            val personId = StringEscapeUtils.escapeHtml4(personMap["personId"].toString()).toInt()
+            val setCoverPerson = personMap["setCoverPerson"].toString().toBoolean()
+
+            if (setCoverPerson) {
+                val personObj = recognitionLabelRepository?.findById(personId)
+                val metadataObj = metadataRepository?.findByMetadataId(metadataId)
+                val coverAlbumUrl = metadataObj?.getThumbnailUrlCentered()
+
+                if (personObj != null && metadataObj != null) {
+                    personObj.get().setCoverUrl(coverAlbumUrl)
+                    personObj.get().setModifiedAt(getCurrentTimestamp())
+                    recognitionLabelRepository?.save(personObj.get())
+
+                    resp["msg"] = "Saved"
+                    resp["status"] = ApiResponse.SUCCESS.status
+                    return mapper.writeValueAsString(resp)
+                }
             }
         }
 

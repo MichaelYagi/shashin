@@ -96,6 +96,7 @@ DROP TABLE IF EXISTS `recognitionlabel`;
 CREATE TABLE `recognitionlabel` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `name` VARCHAR(50) NOT NULL,
+    `coverUrl` VARCHAR(255) DEFAULT NULL,
     `createdAt` DATETIME DEFAULT NULL,
     `modifiedAt` DATETIME DEFAULT NULL,
     CHECK(`name` <> '')
