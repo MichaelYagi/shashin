@@ -1,17 +1,6 @@
 $(document).ready(function () {
     const albumId = $("#albumId").val();
 
-    $("#removeFromAlbum").change(function() {
-        if(this.checked) {
-            $('#setCoverAlbum').prop('checked', false);
-        }
-    });
-    $("#setCoverAlbum").change(function() {
-        if(this.checked) {
-            $('#removeFromAlbum').prop('checked', false);
-        }
-    });
-
     $('#saveAlbumModal').on("click", async function (e) {
         e.preventDefault();
         $("#albumsModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
@@ -23,7 +12,6 @@ $(document).ready(function () {
         const metadataId = $("#metadataId").val();
 
         let requestJson = {
-            removeFromAlbum: $('#removeFromAlbum').prop("checked"),
             setCoverAlbum: $('#setCoverAlbum').prop("checked"),
             metadataId: metadataId,
             albumId: albumId
