@@ -1993,7 +1993,7 @@ class TimelineController: BaseController() {
                 val compreFaceImageIdMap = mutableMapOf<String, Any?>()
 
                 for (recognitionLabel in recognitionLabelArray) {
-                    if (recognitionLabel.trim().isNotBlank()) {
+                    if (!recognitionLabel.trim().isNullOrBlank() && recognitionLabel.trim() != "null") {
                         val uploadResp = mapper.writeValueAsString(FileUtils.buildPersonUpload(settings, recognitionLabel, metadataObj, compreFaceImageIdMap))
                         val jsonRespObj = mapper.readTree(uploadResp)
 
