@@ -1011,7 +1011,7 @@ class PeopleController {
                 }
 
                 for (recognitionLabelString in recognitionLabelArray) {
-                    if (recognitionLabelString.trim().isNotBlank()) {
+                    if (!recognitionLabelString.trim().isNullOrBlank() && recognitionLabelString.trim() != "null") {
                         val recognitionLabelRecord =
                             recognitionLabelRepository?.findByNameIgnoreCase(recognitionLabelString.trim())
                         var recognitionLabelObj = RecognitionLabel()
