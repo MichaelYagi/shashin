@@ -170,7 +170,7 @@ class PeopleController {
                                 FileSystemResource(metadataObj?.getThumbnailPathSmall()!!)
                             )
 
-                            writeToThreadFileAndLogMessage("Matching " + metadataObj.getPath(), threadFile)
+                            //writeToThreadFileAndLogMessage("Matching " + metadataObj.getPath(), threadFile)
 
                             var response: String? = null
 
@@ -299,6 +299,8 @@ class PeopleController {
                                                         "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
                                                     )
 
+                                                    writeToThreadFileAndLogMessage("Uploaded subject " +subject+ " for " + metadataObj.getPath() + " with similarity " + similarity.toString(), threadFile)
+
                                                     val recognitionLabelObj =
                                                         recognitionLabelRepository?.findByNameIgnoreCase(
                                                             subject
@@ -331,6 +333,12 @@ class PeopleController {
                                                             recognitionLabelPhotoObj
                                                         )
                                                     }
+                                                } else {
+                                                    writeToThreadFileAndLogMessage("Did not upload subject " +subject+ " for " + metadataObj.getPath() + " with similarity " + similarity.toString(), threadFile)
+                                                    logger.log(
+                                                        Level.INFO,
+                                                        "Did not upload subject " +subject+ " for " + metadataObj.getPath() + " with similarity " + similarity.toString()
+                                                    )
                                                 }
                                             }
                                         }
