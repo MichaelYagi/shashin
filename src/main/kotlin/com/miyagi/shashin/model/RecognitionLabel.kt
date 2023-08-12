@@ -13,6 +13,7 @@ class RecognitionLabel {
     private var id: Int = 0
     @NotBlank
     private var name: String? = null
+    private var coverUrl: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -32,6 +33,14 @@ class RecognitionLabel {
 
     fun setName(name: String?) {
         this.name = name
+    }
+
+    fun getCoverUrl(): String? {
+        return this.coverUrl
+    }
+
+    fun setCoverUrl(coverUrl: String?) {
+        this.coverUrl = coverUrl
     }
 
     fun getCreatedAt(): String? {
@@ -54,6 +63,7 @@ class RecognitionLabel {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["name"] = this.name
+        map["coverUrl"] = this.coverUrl
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

@@ -2013,6 +2013,7 @@ class TimelineController: BaseController() {
                             recognitionLabelObj.setName(recognitionLabel.trim())
                             recognitionLabelObj.setCreatedAt(getCurrentTimestamp())
                             recognitionLabelObj.setModifiedAt(getCurrentTimestamp())
+                            recognitionLabelObj.setCoverUrl(metadataObj.getThumbnailUrlCentered())
                             recognitionLabelRepository?.save(recognitionLabelObj)
                         } else {
                             recognitionLabelObj = recognitionLabelRecord

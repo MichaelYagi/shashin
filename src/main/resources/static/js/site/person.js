@@ -1,5 +1,4 @@
 class Person {
-
     constructor(metadataList, activePage, personId, canEdit) {
         this.http = new Http(activePage);
         this.page = 1;
@@ -17,6 +16,60 @@ class Person {
         shashin.setVideoWidth($("#infinite-scroll-gallery")[0]);
         shashin.matchingListeners();
         shashin.mouseMoveListener();
+
+        $('#savePersonModal').on("click", async function (e) {
+
+            e.preventDefault();
+            $("#personModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+            $("#personModalStatus").css("visibility", "visible");
+            $("#personModalStatus").attr("title", "");
+            $("#personModalCancel").prop('disabled', true);
+
+            $('#personModalMsg').html("");
+            const metadataId = $("#metadataId").val();
+            const personId = $("#personId").val();
+
+            let requestJson = {
+                setCoverPerson: $('#setCoverPerson').prop("checked"),
+                metadataId: metadataId,
+                personId: personId
+            }
+
+            const http = new Http("updating album");
+            const data = await http.ajax("post", "/person/update", JSON.stringify(requestJson), function () {
+                $("#personModalStatus").removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+                $("#personModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#personModalCancel").prop('disabled', false);
+            });
+
+            if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                if (data["status"] === "redirect") {
+                    // window.location.replace(data["msg"]);
+                    window.top.location = window.top.location
+                    $("#personMessage").html('<div class="alert alert-success" role="alert">' + data["msg"] + '</div>');
+                } else {
+                    if (data["status"] === "success") {
+                        $("#personModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                        $("#personModalCancel").prop('disabled', false);
+                    } else {
+                        $("#personModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                        $("#personModalStatus").attr("title", shashin.modalStatusFailMessage());
+                        $("#personModalCancel").prop('disabled', false);
+                    }
+                }
+            } else {
+                $("#personModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#personModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#personModalCancel").prop('disabled', false);
+            }
+
+            return false;
+        });
+
+        $('#propPersonModal').on('hide.bs.modal', function () {
+            $("#personModalStatus").attr("class","spinner-grow me-auto");
+            $("#personModalStatus").css("visibility","hidden");
+        });
     }
 
     async loadNextPage() {
@@ -66,7 +119,7 @@ class Person {
                             let overlayData;
 
                             if (this.canEdit === true) {
-                                overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap/*,onClickIdPrefix:"propperson"*/,cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
+                                overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,/*onClickIdPrefix:"propperson"*/blOnClickFunction:"personSettings.openPersonModal",cOnClickFunction:"shashin.openGallery",onClickIdPrefix:"personModalEdit",galleryIndex:currentMediaLinkIndex,overlayFlags});
                             } else {
                                 overlayData = shashin.getOverlayData(metadata, {labelPhotoMap:labelPhotoMap,cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});
                             }
@@ -106,3 +159,27 @@ class Person {
         return mediaContentList;
     }
 }
+
+(function( personSettings, $, undefined ) {
+    personSettings.openPersonModal = function (e,metadataId) {
+    e.preventDefault();
+
+    shashin.getMetadata(metadataId).then(function (metadata) {
+        if (metadata !== null) {
+            // Clear modal data
+            $("#personModalTitle").text(metadata.title)
+            $('#propPersonModal').find(':input').val('');
+            $("#setCoverPerson")[0].checked = true;
+            $("#propPersonModalThumbnail").html("");
+
+            $("#metadataId").val(metadata.id);
+            if (metadata.thumbnailUrlCentered !== null) {
+                $("#propPersonModalThumbnail").html('<img loading="lazy" src="' + encodeURI(metadata.thumbnailUrlCentered) + '" height="100" width="100">');
+            }
+
+            // Open modal window
+            $("#propPersonModal").modal('show');
+        }
+    });
+}
+}( window.personSettings = window.personSettings || {}, jQuery ));
