@@ -42,4 +42,5 @@ Tech Stack
 * [OpenLayers](https://openlayers.org/) with [OpenStreetMap](https://www.openstreetmap.org/) - Display map tiles, vector data and markers loaded from multiple map sources, like OpenStreetMap
 * [Bootstrap](https://getbootstrap.com/) - Frontend toolkit
 * [CompreFace](https://github.com/exadel-inc/CompreFace) - Self hosted REST API for face recognition
+* [Deep Java Library](https://djl.ai/) - Object recognition library
 * [Croppie](https://foliotek.github.io/Croppie/) - Image cropping Javascript plugin

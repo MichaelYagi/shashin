@@ -31,6 +31,8 @@ class Settings {
     private var port: String? = null
     @NotBlank
     private var scanAutomatically: Boolean? = null
+    @NotBlank
+    private var objectDetection: Boolean? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -120,6 +122,14 @@ class Settings {
         this.scanAutomatically = scanAutomatically
     }
 
+    fun getObjectDetection(): Boolean? {
+        return this.objectDetection
+    }
+
+    fun setObjectDetection(objectDetection: Boolean?) {
+        this.objectDetection = objectDetection
+    }
+
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -147,6 +157,7 @@ class Settings {
         map["searchHistoryLimit"] = this.searchHistoryLimit
         map["port"] = this.port
         map["scanAutomatically"] = this.scanAutomatically
+        map["objectDetection"] = this.objectDetection
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

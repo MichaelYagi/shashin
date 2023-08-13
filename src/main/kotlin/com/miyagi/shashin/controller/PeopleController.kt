@@ -1,5 +1,11 @@
 package com.miyagi.shashin.controller
 
+import ai.djl.Application
+import ai.djl.modality.Classifications
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.repository.zoo.ModelZoo
+import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -34,6 +40,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
+import java.awt.image.BufferedImage
 import java.io.*
 import java.net.URL
 import java.net.URLConnection
@@ -41,6 +48,7 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 
@@ -59,6 +67,9 @@ class PeopleController {
 
     @Autowired
     private val keywordRepository: KeywordRepository? = null
+
+    @Autowired
+    private val keywordPhotoRepository: KeywordPhotoRepository? = null
 
     @Value("\${app.role.admin}")
     private lateinit var adminRole: String
@@ -159,15 +170,95 @@ class PeopleController {
                         "Thread"
                     )
 
+                    // Object and person recognition
                     if (threadFile != null) {
                         for (testImage in testImages) {
 
                             val metadataObj = metadataRepository?.findById(testImage.getId())?.get()
 
+                            if (settings.getObjectDetection() == true) {
+                                try {
+                                    val file = File(metadataObj?.getPath()!!)
+
+                                    // Object recognition
+                                    val img: BufferedImage = ImageIO.read(file);
+                                    val criteria: Criteria<BufferedImage, DetectedObjects> = Criteria.builder()
+                                        .optApplication(Application.CV.OBJECT_DETECTION)
+                                        .setTypes(BufferedImage::class.java, DetectedObjects::class.java)
+                                        .optFilter("backbone", "resnet50")
+                                        .optProgress(ProgressBar())
+                                        .build()
+
+                                    ModelZoo.loadModel(criteria).use { objmodel ->
+                                        objmodel.newPredictor().use { predictor ->
+                                            try {
+                                                val detection = predictor.predict(img)
+                                                for (i in 0..detection.numberOfObjects) {
+                                                    val objProbability =
+                                                        detection.item<Classifications.Classification?>(i).probability
+                                                    val objSubject =
+                                                        detection.item<Classifications.Classification?>(i).className
+
+                                                    logger.log(
+                                                        Level.INFO,
+                                                        "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                                    )
+
+                                                    writeToThreadFileAndLogMessage(
+                                                        "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
+                                                        threadFile
+                                                    )
+
+                                                    if (objProbability >= settings.getRecognitionConfidenceThreshold()
+                                                            .toString().toDouble()
+                                                    ) {
+                                                        var keywordObj =
+                                                            keywordRepository?.findByKeywordIgnoreCase(objSubject)
+                                                        if (keywordObj == null) {
+                                                            keywordObj = Keyword()
+                                                            keywordObj.setKeyword(objSubject)
+                                                            keywordObj.setCreatedAt(getCurrentTimestamp())
+                                                            keywordObj.setModifiedAt(getCurrentTimestamp())
+                                                            keywordRepository?.save(keywordObj)
+                                                        }
+
+                                                        val keywordPhotoCount =
+                                                            keywordPhotoRepository?.countByKeywordIdAndMetadataId(
+                                                                keywordObj.getId(),
+                                                                metadataObj.getId()
+                                                            )
+                                                        if (keywordPhotoCount == 0) {
+                                                            val keywordPhotoObj = KeywordPhoto()
+                                                            keywordPhotoObj.setKeywordId(keywordObj.getId())
+                                                            keywordPhotoObj.setMetadataId(metadataObj.getId())
+                                                            keywordPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                                            keywordPhotoObj.setModifiedAt(getCurrentTimestamp())
+                                                            keywordPhotoRepository?.save(keywordPhotoObj)
+                                                        }
+                                                    }
+                                                }
+                                            } catch (e: Exception) {
+                                                logger.log(
+                                                    Level.INFO,
+                                                    "Could not identify objects for " + metadataObj.getThumbnailUrlSmall()
+                                                )
+                                            }
+                                        }
+                                    }
+                                } catch (e: Exception) {
+                                    logger.log(
+                                        Level.INFO,
+                                        "Could not open file for " + metadataObj?.getPath()!!
+                                    )
+                                }
+                            }
+
+                            // Facial recognition
+                            val faceFsr = FileSystemResource(metadataObj?.getThumbnailPathSmall()!!)
                             var builder = MultipartBodyBuilder()
                             builder.part(
                                 "file",
-                                FileSystemResource(metadataObj?.getThumbnailPathSmall()!!)
+                                faceFsr
                             )
 
                             //writeToThreadFileAndLogMessage("Matching " + metadataObj.getPath(), threadFile)
@@ -257,7 +348,7 @@ class PeopleController {
                                                         builder = MultipartBodyBuilder()
                                                         builder.part(
                                                             "file",
-                                                            FileSystemResource(metadataObj.getThumbnailPathSmall()!!)
+                                                            faceFsr
                                                         )
 
                                                         response = webClient.post()

@@ -97,6 +97,12 @@
                                 <strong>Automatic Media Indexing</strong>
                             </label>
                         </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="objectDetection" name="objectDetection" th:checked="${settings.objectDetection}">
+                            <label class="form-check-label" for="objectDetection">
+                                <strong>Enable object detection</strong>&nbsp;<span id="objectDetectionInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Enabling object detection puts CPU under load"></span>
+                            </label>
+                        </div>
                     </th:block>
                     <br>
                     <div class="row">
