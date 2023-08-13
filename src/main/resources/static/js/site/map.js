@@ -8,6 +8,7 @@ async function showMap(mapdata,showControls) {
     const qsvo = Util.getParameterByName("vo");
 
     const videoOnlyCheckbox = $("#videoOnlyInput");
+    const showMarkersCheckbox = $("#showMarkersInput");
     const startDateField = $("#startDateInput");
     const endDateField = $("#endDateInput");
     const dateInputs = $("#dateInputs");
@@ -339,8 +340,13 @@ async function showMap(mapdata,showControls) {
                 features: iconFeatures //add an array of features
             });
 
+            let clusterDistance = 50;
+            if (showMarkersCheckbox.prop("checked") === true) {
+                clusterDistance = 200;
+            }
+
             const clusterSource = new ol.source.Cluster({
-                distance: 200, // Bigger number for better performance, smaller number for better accuracy
+                distance: clusterDistance, // Bigger number for better performance, smaller number for better accuracy
                 source: vectorSource,
             });
 
@@ -456,27 +462,32 @@ async function showMap(mapdata,showControls) {
 
         const features = feature.get('features');
         const size = features.length;
+        const thisStyle = new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: feature.get('radius'),
+                fill: new ol.style.Fill({
+                    color: [0, 77, 255, Math.min(0.8, 0.4 + size / maxFeatureCount)],
+                }),
+            }),
+            text: new ol.style.Text({
+                text: size.toString(),
+                fill: textFill,
+                stroke: textStroke,
+                scale: 1.5
+            }),
+        });
 
-        // if (size > 1) {
-            return new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: feature.get('radius'),
-                    fill: new ol.style.Fill({
-                        color: [0, 77, 255, Math.min(0.8, 0.4 + size / maxFeatureCount)],
-                    }),
-                }),
-                text: new ol.style.Text({
-                    text: size.toString(),
-                    fill: textFill,
-                    stroke: textStroke,
-                    scale: 1.5
-                }),
-            });
-        // } else {
-        //     // Performance hit when there are a lot of markers
-        //     const originalFeature = features[0];
-        //     return originalFeature.get('mapMarkerIcon');
-        // }
+        if (showMarkersCheckbox.prop("checked") === true) {
+            if (size > 1) {
+                return thisStyle;
+            } else {
+                // Performance hit when there are a lot of markers
+                const originalFeature = features[0];
+                return originalFeature.get('mapMarkerIcon');
+            }
+        } else {
+            return thisStyle;
+        }
     }
 
     let clicked = false;
@@ -780,6 +791,10 @@ async function showMap(mapdata,showControls) {
         setLayerInputs(e);
     });
 
+    $("#showMarkersInput").on("change", function(e) {
+        setLayerInputs(e);
+    });
+
     // get all date input fields
     let allDateInputs = document.querySelectorAll('[type="date"]');
     allDateInputs.forEach(el => {
@@ -825,6 +840,7 @@ async function showMap(mapdata,showControls) {
         startDateField.val("");
         endDateField.val("");
         videoOnlyCheckbox.prop("checked", false);
+        showMarkersCheckbox.prop("checked", false);
 
         setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
     });
