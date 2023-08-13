@@ -1,12 +1,18 @@
 package com.miyagi.shashin.util
 
+import ai.djl.Application
+import ai.djl.modality.Classifications
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.repository.zoo.ModelZoo
+import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
-import com.miyagi.shashin.model.Folder
-import com.miyagi.shashin.model.Metadata
-import com.miyagi.shashin.model.Settings
+import com.miyagi.shashin.model.*
+import com.miyagi.shashin.repository.KeywordPhotoRepository
+import com.miyagi.shashin.repository.KeywordRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
@@ -16,6 +22,7 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.client.WebClient
+import java.awt.image.BufferedImage
 import java.io.*
 import java.net.HttpURLConnection
 import java.net.URL
@@ -28,6 +35,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import javax.imageio.ImageIO
 import javax.xml.bind.DatatypeConverter
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
 
@@ -481,6 +489,78 @@ class FileUtils {
             }
 
             return null
+        }
+
+        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataObj: Metadata, settings: Settings) {
+            try {
+                val file = File(metadataObj.getPath()!!)
+
+                // Object recognition
+                val img: BufferedImage = ImageIO.read(file);
+                val criteria: Criteria<BufferedImage, DetectedObjects> = Criteria.builder()
+                    .optApplication(Application.CV.OBJECT_DETECTION)
+                    .setTypes(BufferedImage::class.java, DetectedObjects::class.java)
+                    .optFilter("backbone", "resnet50")
+                    .optProgress(ProgressBar())
+                    .build()
+
+                ModelZoo.loadModel(criteria).use { objmodel ->
+                    objmodel.newPredictor().use { predictor ->
+                        try {
+                            val detection = predictor.predict(img)
+                            for (i in 0..detection.numberOfObjects) {
+                                val objProbability =
+                                    detection.item<Classifications.Classification?>(i).probability
+                                val objSubject =
+                                    detection.item<Classifications.Classification?>(i).className
+
+                                logger.log(
+                                    Level.INFO,
+                                    "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                )
+
+                                if (objSubject.trim() != "person" && objProbability >= settings.getRecognitionConfidenceThreshold()
+                                        .toString().toDouble()
+                                ) {
+                                    var keywordObj =
+                                        keywordRepository.findByKeywordIgnoreCase(objSubject)
+                                    if (keywordObj == null) {
+                                        keywordObj = Keyword()
+                                        keywordObj.setKeyword(objSubject)
+                                        keywordObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                                        keywordObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                                        keywordRepository.save(keywordObj)
+                                    }
+
+                                    val keywordPhotoCount =
+                                        keywordPhotoRepository.countByKeywordIdAndMetadataId(
+                                            keywordObj.getId(),
+                                            metadataObj.getId()
+                                        )
+                                    if (keywordPhotoCount == 0) {
+                                        val keywordPhotoObj = KeywordPhoto()
+                                        keywordPhotoObj.setKeywordId(keywordObj.getId())
+                                        keywordPhotoObj.setMetadataId(metadataObj.getId())
+                                        keywordPhotoObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                                        keywordPhotoObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                                        keywordPhotoRepository.save(keywordPhotoObj)
+                                    }
+                                }
+                            }
+                        } catch (e: Exception) {
+                            logger.log(
+                                Level.INFO,
+                                "Could not identify objects for " + metadataObj.getThumbnailUrlSmall()
+                            )
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                logger.log(
+                    Level.INFO,
+                    "Could not open file for " + metadataObj?.getPath()!!
+                )
+            }
         }
 
         /**
