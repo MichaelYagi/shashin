@@ -457,7 +457,7 @@ async function showMap(mapdata,showControls) {
         const features = feature.get('features');
         const size = features.length;
 
-        if (size > 1) {
+        // if (size > 1) {
             return new ol.style.Style({
                 image: new ol.style.Circle({
                     radius: feature.get('radius'),
@@ -472,10 +472,11 @@ async function showMap(mapdata,showControls) {
                     scale: 1.5
                 }),
             });
-        } else {
-            const originalFeature = features[0];
-            return originalFeature.get('mapMarkerIcon');
-        }
+        // } else {
+        //     // Performance hit when there are a lot of markers
+        //     const originalFeature = features[0];
+        //     return originalFeature.get('mapMarkerIcon');
+        // }
     }
 
     let clicked = false;
