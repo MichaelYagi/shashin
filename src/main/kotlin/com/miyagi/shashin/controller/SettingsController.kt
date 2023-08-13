@@ -1,5 +1,11 @@
 package com.miyagi.shashin.controller
 
+import ai.djl.Application
+import ai.djl.modality.Classifications
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.repository.zoo.ModelZoo
+import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
@@ -59,6 +65,8 @@ import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlinx.coroutines.*
+import java.awt.image.BufferedImage
+import javax.imageio.ImageIO
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -295,6 +303,7 @@ class SettingsController {
         @RequestParam("searchHistoryLimit") searchHistoryLimit: Int,
         @RequestParam("changePort") port: String,
         @RequestParam("scanAutomatically") scanAutomatically: String?,
+        @RequestParam("objectDetection") objectDetection: String?
     ): String {
         var resetServer = false
         var mediaDirs: List<String>? = null
@@ -418,6 +427,11 @@ class SettingsController {
             settings?.setScanAutomatically(true)
         } else {
             settings?.setScanAutomatically(false)
+        }
+        if (objectDetection == "on") {
+            settings?.setObjectDetection(true)
+        } else {
+            settings?.setObjectDetection(false)
         }
 
         if (settings != null) {
@@ -1781,6 +1795,92 @@ class SettingsController {
 
                                         try {
                                             metadataRepository?.save(metadataObj)
+
+                                            if (settings?.getObjectDetection() == true) {
+                                                try {
+                                                    val origfile = File(metadataObj.getPath()!!)
+
+                                                    // Object recognition
+                                                    val img: BufferedImage = ImageIO.read(origfile);
+                                                    val criteria: Criteria<BufferedImage, DetectedObjects> =
+                                                        Criteria.builder()
+                                                            .optApplication(Application.CV.OBJECT_DETECTION)
+                                                            .setTypes(
+                                                                BufferedImage::class.java,
+                                                                DetectedObjects::class.java
+                                                            )
+                                                            .optFilter("backbone", "resnet50")
+                                                            .optProgress(ProgressBar())
+                                                            .build()
+
+                                                    ModelZoo.loadModel(criteria).use { objmodel ->
+                                                        objmodel.newPredictor().use { predictor ->
+                                                            try {
+                                                                val detection = predictor.predict(img)
+                                                                for (j in 0..detection.numberOfObjects) {
+                                                                    val objProbability =
+                                                                        detection.item<Classifications.Classification?>(
+                                                                            j
+                                                                        ).probability
+                                                                    val objSubject =
+                                                                        detection.item<Classifications.Classification?>(
+                                                                            j
+                                                                        ).className
+
+                                                                    logger.log(
+                                                                        Level.INFO,
+                                                                        "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                                                    )
+
+                                                                    if (objProbability >= settings.getRecognitionConfidenceThreshold()
+                                                                            .toString().toDouble()
+                                                                    ) {
+                                                                        var keywordObj =
+                                                                            keywordRepository?.findByKeywordIgnoreCase(
+                                                                                objSubject
+                                                                            )
+                                                                        if (keywordObj == null) {
+                                                                            keywordObj = Keyword()
+                                                                            keywordObj.setKeyword(objSubject)
+                                                                            keywordObj.setCreatedAt(getCurrentTimestamp())
+                                                                            keywordObj.setModifiedAt(getCurrentTimestamp())
+                                                                            keywordRepository?.save(keywordObj)
+                                                                        }
+
+                                                                        val keywordPhotoCount =
+                                                                            keywordPhotoRepository?.countByKeywordIdAndMetadataId(
+                                                                                keywordObj.getId(),
+                                                                                metadataObj.getId()
+                                                                            )
+                                                                        if (keywordPhotoCount == 0) {
+                                                                            val keywordPhotoObj = KeywordPhoto()
+                                                                            keywordPhotoObj.setKeywordId(keywordObj.getId())
+                                                                            keywordPhotoObj.setMetadataId(metadataObj.getId())
+                                                                            keywordPhotoObj.setCreatedAt(
+                                                                                getCurrentTimestamp()
+                                                                            )
+                                                                            keywordPhotoObj.setModifiedAt(
+                                                                                getCurrentTimestamp()
+                                                                            )
+                                                                            keywordPhotoRepository?.save(keywordPhotoObj)
+                                                                        }
+                                                                    }
+                                                                }
+                                                            } catch (e: Exception) {
+                                                                logger.log(
+                                                                    Level.INFO,
+                                                                    "Could not identify objects for " + metadataObj.getThumbnailUrlSmall()
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                } catch (e: Exception) {
+                                                    logger.log(
+                                                        Level.INFO,
+                                                        "Could not open file for " + metadataObj.getPath()!!
+                                                    )
+                                                }
+                                            }
 
                                             try {
                                                 if (settings != null && webClient != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {

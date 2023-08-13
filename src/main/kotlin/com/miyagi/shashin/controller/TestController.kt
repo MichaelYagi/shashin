@@ -1,32 +1,30 @@
 package com.miyagi.shashin.controller
 
-import com.miyagi.shashin.model.PersistentLoginsDetails
+import ai.djl.Application
+import ai.djl.inference.Predictor
+import ai.djl.modality.Classifications
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.repository.zoo.ModelZoo
+import ai.djl.repository.zoo.ZooModel
+import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
-import com.miyagi.shashin.util.FileUtils
-import com.sun.management.OperatingSystemMXBean
-import jdk.jfr.Description
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.info.BuildProperties
-import org.springframework.context.ApplicationContext
 import org.springframework.core.io.FileSystemResource
-import org.springframework.http.*
-import org.springframework.messaging.handler.HandlerMethod
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.*
-import org.springframework.web.context.support.WebApplicationContextUtils
-import org.springframework.web.reactive.result.method.RequestMappingInfo
-import org.springframework.web.server.adapter.WebHttpHandlerBuilder.applicationContext
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
-import java.lang.management.ManagementFactory
-import java.math.RoundingMode
-import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.util.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.ResponseBody
+import java.awt.image.BufferedImage
+import java.io.File
+import java.net.URL
+import java.util.logging.Level
+import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -37,6 +35,9 @@ class TestController {
     @Autowired
     private lateinit var persistentLoginsRepository: PersistentLoginsRepository
 
+    @Autowired
+    private lateinit var metadataRepository: MetadataRepository
+
     @Secured("ROLE_ADMIN")
     @GetMapping("/test")
     fun test(model: Model, request: HttpServletRequest, response: HttpServletResponse): String {
@@ -44,6 +45,47 @@ class TestController {
 
         val persistentLoginsDetails = persistentLoginsRepository.findAllPersistentLoginsDetails()
         model["persistentLoginsDetails"] = persistentLoginsDetails as Any
+
+        // http://127.0.0.1:6624/image/68bcd16b-b362-304c-b521-f21bb6ee23d3/viewer
+        val metadataId = "68bcd16b-b362-304c-b521-f21bb6ee23d3"
+        val metadataObj = metadataRepository.findById(metadataId).get()
+
+        val file = File(metadataObj.getPath()!!+"a")
+        println(file)
+        val img: BufferedImage = ImageIO.read(file)
+
+//        val url = URL("http://michaelyagi.tplinkdns.com:66/api/v1/image/$metadataId.jpg")
+//
+//        val img = ImageIO.read(url)
+        println(img)
+
+        val criteria: Criteria<BufferedImage, DetectedObjects> = Criteria.builder()
+            .optApplication(Application.CV.OBJECT_DETECTION)
+            .setTypes(BufferedImage::class.java, DetectedObjects::class.java)
+            .optFilter("backbone", "resnet50")
+            .optProgress(ProgressBar())
+            .build()
+
+        ModelZoo.loadModel(criteria).use { objmodel ->
+            objmodel.newPredictor().use { predictor ->
+                try {
+                    val detection = predictor.predict(img)
+                    println("testzzzz12")
+                    println(detection.numberOfObjects)
+                    for (i in 0..detection.numberOfObjects) {
+                        println("testzzz")
+                        println(detection.item<Classifications.Classification?>(i).probability)
+                        println(detection.item<Classifications.Classification?>(i).className)
+                    }
+                    //println(detection)
+
+                } catch (e: Exception) {
+                    println(e.message)
+                }
+            }
+        }
+
+
 
 
         return "test"
