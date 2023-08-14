@@ -106,7 +106,7 @@
 
                                 <th:block th:if="${#lists.size(recognitionLabels)} > 0">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+                                        <button class="btn btn-outline-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <th:block th:if="${recognitionLabel.name != null and recognitionLabel.name != 'null'}">
@@ -121,7 +121,7 @@
                                             $(".recognitionLabel").on("click", function (e) {
                                                 timelineBatchModal.populateBatchLabel();
                                             });
-                                            $("#tagpeopledropdown").on("click", function (e) {
+                                            $("#tagbatchpeopledropdown").on("click", function (e) {
                                                 e.preventDefault();
                                                 timelineBatchModal.toggleBatchTagPeopleDropdown();
                                             });

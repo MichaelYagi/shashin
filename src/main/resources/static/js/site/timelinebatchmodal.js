@@ -1,11 +1,11 @@
 (function( timelineBatchModal, $, undefined ) {
 
     timelineBatchModal.toggleBatchTagPeopleDropdown = function() {
-        $("#tagpeopledropdown").dropdown('toggle');
+        $("#tagbatchpeopledropdown").dropdown('toggle');
     }
 
     timelineBatchModal.closeBatchTagPeopleDropdown = function() {
-        $("#tagpeopledropdown").dropdown('hide');
+        $("#tagbatchpeopledropdown").dropdown('hide');
     }
 
     timelineBatchModal.populateBatchLabel = function() {
@@ -254,7 +254,7 @@ $('body').on("click", function(event) {
         timelineBatchModal.toggleBatchTagAlbumDropdown();
     }
 
-    if (!$(event.target).closest("#tagpeopledropdown").length && !$(event.target).closest("#peopleNameList").length && $("#tagpeopledropdown").hasClass("show")) {
+    if (!$(event.target).closest("#tagbatchpeopledropdown").length && !$(event.target).closest("#peopleNameList").length && $("#tagbatchpeopledropdown").hasClass("show")) {
         timelineBatchModal.toggleBatchTagPeopleDropdown();
     }
 });

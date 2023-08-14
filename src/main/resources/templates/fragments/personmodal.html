@@ -39,7 +39,7 @@
                                             </th:block>
                                         </div>
                                         <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                                            $("#tagpeopledropdown").on("click", function (e) {
+                                            $("#tagbatchpeopledropdown").on("click", function (e) {
                                                e.preventDefault();
                                                 personModalBatchSettings.toggleBatchTagPeopleDropdown();
                                             });
@@ -71,11 +71,11 @@
             <script type="text/javascript" th:nonce="${cspNonce}">
                 (function( personModalBatchSettings, $, undefined ) {
                     personModalBatchSettings.toggleBatchTagPeopleDropdown = function() {
-                        $("#tagpeopledropdown").dropdown('toggle');
+                        $("#tagbatchpeopledropdown").dropdown('toggle');
                     }
 
                     personModalBatchSettings.closeBatchTagPeopleDropdown = function() {
-                        $("#tagpeopledropdown").dropdown('hide');
+                        $("#tagbatchpeopledropdown").dropdown('hide');
                     }
 
                     personModalBatchSettings.populateBatchLabel = function() {

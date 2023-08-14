@@ -1898,7 +1898,7 @@
             let batchHtml =
                 '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
                 '       <div class="input-group-append">\n' +
-                '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
+                '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                 '           <div class="dropdown-menu" id="peopleNameList">';
 
             for (let index in recognitionLabels) {
@@ -1926,7 +1926,7 @@
                     e.preventDefault();
                     timelineBatchModal.closeBatchTagPeopleDropdown();
                 });
-                $("#tagpeopledropdown").on("click", function (e) {
+                $("#tagbatchpeopledropdown").on("click", function (e) {
                     e.preventDefault();
                     timelineBatchModal.toggleBatchTagPeopleDropdown();
                 });
