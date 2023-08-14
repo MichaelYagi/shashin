@@ -378,10 +378,10 @@ class PeopleController {
                     }
 
                     if (settings.getObjectDetection() == true) {
-                        val withouKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
-                        if (withouKeywords != null) {
-                            for (withouKeyword in withouKeywords) {
-                                val metadataWithoutKeywordsObj = metadataRepository?.findById(withouKeyword.getId())?.get()
+                        val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
+                        if (withoutKeywords != null) {
+                            for (withoutKeyword in withoutKeywords) {
+                                val metadataWithoutKeywordsObj = metadataRepository?.findById(withoutKeyword.getId())?.get()
 
                                 FileUtils.objectRecognizer(
                                     keywordRepository!!,
