@@ -264,7 +264,10 @@ class SettingsController {
             model.addAttribute("settings", settings)
         }
 
-        val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
+        val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
+            settings.getCompreFaceServer(),
+            settings.getCompreFaceKey()
+        )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
         model["faceRecogAvailableStatusColor"] = "red"
