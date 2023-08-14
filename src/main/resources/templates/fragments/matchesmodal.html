@@ -32,7 +32,7 @@
                                 <th:block th:if="${not #lists.isEmpty(recognitionLabels)}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary dropdown-toggle"
-                                                id="tagpeopledropdown" type="button" aria-haspopup="true"
+                                                id="tagbatchpeopledropdown" type="button" aria-haspopup="true"
                                                 aria-expanded="false">People
                                         </button>
                                         <div class="dropdown-menu" id="peopleNameList">
@@ -51,7 +51,7 @@
                                             </th:block>
                                         </div>
                                         <script type="text/javascript" th:nonce="${cspNonce}">
-                                            $("#tagpeopledropdown").on("click", function (e) {
+                                            $("#tagbatchpeopledropdown").on("click", function (e) {
                                                 e.preventDefault();
                                                 matchModalBatchSettings.toggleBatchTagPeopleDropdown();
                                             });

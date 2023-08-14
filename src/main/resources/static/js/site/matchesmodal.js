@@ -1,11 +1,11 @@
 (function (matchModalBatchSettings, $, undefined) {
 
     matchModalBatchSettings.toggleBatchTagPeopleDropdown = function () {
-        $("#tagpeopledropdown").dropdown('toggle');
+        $("#tagbatchpeopledropdown").dropdown('toggle');
     }
 
     matchModalBatchSettings.closeBatchTagPeopleDropdown = function () {
-        $("#tagpeopledropdown").dropdown('hide');
+        $("#tagbatchpeopledropdown").dropdown('hide');
     }
 
     matchModalBatchSettings.populateBatchLabel = function () {
