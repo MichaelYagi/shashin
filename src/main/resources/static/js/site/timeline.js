@@ -1307,7 +1307,7 @@
         }
 
         if ($("#timelineModalEdit" + metadata.id).length === 0) {
-            const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-pencil-square" : "bi-pencil";
+            const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle";
             $("#tnbl" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomLeftOverlay({metadata:metadata,editIcon:editIcon}));
             $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
             $("#timelineModalEdit" + metadata.id).on("click", function (e) {
