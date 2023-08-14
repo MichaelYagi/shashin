@@ -50,6 +50,7 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
             settingsObj.setCompreFaceServer(comprefaceServer)
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
+            settingsObj.setObjectDetection(false)
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(TextUtils.getCurrentTimestamp())
             settingsObj.setModifiedAt(TextUtils.getCurrentTimestamp())

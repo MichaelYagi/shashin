@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="content(message,activePage,authority,parameter,counts,faceRecogServicesAvailable)">
+<body th:fragment="content(message,activePage,authority,parameter,counts,faceRecogServicesAvailable,objectRecogEnabled)">
 <th:block th:if="${activePage == 'settings' or activePage == 'scan' or activePage == 'users' or (faceRecogServicesAvailable and activePage == 'match') or activePage == 'snapshot' or activePage == 'logs'}">
-    <div th:replace="fragments/settingsgroup :: settings(${activePage},${faceRecogServicesAvailable})"></div>
+    <div th:replace="fragments/settingsgroup :: settings(${activePage},${faceRecogServicesAvailable},${objectRecogEnabled})"></div>
 </th:block>
 <th:block th:if="${activePage == 'recent' or activePage == 'folders' or activePage == 'modified'}">
     <div th:replace="fragments/browsegroup :: browse(${activePage})"></div>

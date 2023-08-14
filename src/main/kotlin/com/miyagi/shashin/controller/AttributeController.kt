@@ -43,6 +43,7 @@ import java.util.logging.Level
 import java.util.logging.Logger
 import javax.persistence.EntityNotFoundException
 import javax.servlet.http.Cookie
+import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
@@ -157,7 +158,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
     @ModelAttribute
     @Transactional
-    fun addAttributes(model: Model, response: HttpServletResponse, authentication: Authentication?) {
+    fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
         model["userRole"] = userRole
         model["adminRole"] = adminRole
         model["settings"] = Settings()
@@ -177,6 +178,15 @@ class AttributeController: ResponseEntityExceptionHandler() {
         if (settings != null) {
             queryLimit = settings.getQueryLimit()!!
             searchHistoryLimit = settings.getSearchHistoryLimit()!!
+
+            if (request.requestURI.toString() != "/settings") {
+                model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
+                model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
+                    settings.getCompreFaceServer(),
+                    settings.getCompreFaceKey()
+                )
+            }
+
             model["settings"] = settings
         } else {
             val settingsObj = Settings()
@@ -188,11 +198,13 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setCompreFaceServer(comprefaceServer)
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
+            settingsObj.setObjectDetection(false)
+            model["objectRecogEnabled"] = false
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
-
             model["settings"] = settingsObj
+            model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settingsObj.getCompreFaceServer(), settingsObj.getCompreFaceKey())
         }
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
@@ -259,8 +271,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
             }
         }
         model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
-
-        model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settings?.getCompreFaceServer(), settings?.getCompreFaceKey())
 
         model["operatingSystemInfo"] = ""
         if (model.getAttribute("authority") ==  adminRole) {

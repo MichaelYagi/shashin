@@ -71,7 +71,7 @@
                     $("#timelineMain").css("visibility","hidden");
                 </script>
             </th:block>
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="mediaTypeFilter" name="mediaTypeFilter" th:value="${mediaTypeFilter}">
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
 

@@ -9,7 +9,7 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
             <span class="bi-info-circle" style="font-size: 1rem;color: blue;"></span> This is experimental! There should be at least 3 distinct people already tagged before scanning, and should be a single subject in each of the photos. Object detection needs to be enabled in settings to detect objects.<br>
             <button class="btn btn-primary" id="matchAction">Scan For Matches</button>
             <button class="btn btn-danger" id="cancelThread">Cancel</button>

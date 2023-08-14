@@ -15,7 +15,7 @@
     <div class="row flex-grow-sm-1 flex-grow-0">
         <div th:replace="fragments/sidebaroffcanvas :: sidebaroffcanvas(${activeSidebar},${currentUser})"></div>
         <main role="main" class="col overflow-auto h-100">
-            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
+            <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="albumId" name="albumId" th:value="${album.id}">
             <input type="hidden" id="albumNameInput" name="albumNameInput" th:value="${album.name}">
 
