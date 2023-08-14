@@ -15,7 +15,7 @@
         <main role="main" class="col overflow-auto h-100">
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
-            <div th:replace="fragments/matchesmodal :: matchesmodal(${recognitionLabels})"></div>
+<!--            <div th:replace="fragments/matchesmodal :: matchesmodal(${recognitionLabels})"></div>-->
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
             <h1 th:inline="text">
@@ -47,11 +47,11 @@
                         <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                             /*<![CDATA[*/
                             shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'matches');
-                            matchModalSettings.renderMatchesModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id)}]]*/"");
+                            // matchModalSettings.renderMatchesModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id)}]]*/"");
                             $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                             $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
                                 e.preventDefault();
-                                shashin.openInfoModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
+                                shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                             });
                             /*]]>*/
                         </script>
