@@ -265,6 +265,7 @@ class SettingsController {
         }
 
         val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
+        model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
         model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
         model["faceRecogAvailableStatusColor"] = "red"
         model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
@@ -273,6 +274,8 @@ class SettingsController {
             model["faceRecogAvailableStatusColor"] = "green"
             model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
         }
+
+        model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
 
         model["msg"] = ""
         model["status"] = ApiResponse.SUCCESS.status
@@ -395,12 +398,9 @@ class SettingsController {
 
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
-        if (compreFaceServer.isNotEmpty()) {
-            settings?.setCompreFaceServer(compreFaceServer)
-        }
-        if (compreFaceKey.isNotEmpty()) {
-            settings?.setCompreFaceKey(compreFaceKey)
-        }
+        settings?.setCompreFaceServer(compreFaceServer)
+        settings?.setCompreFaceKey(compreFaceKey)
+
         if (recognitionConfidenceThreshold.isNotEmpty()) {
             settings?.setRecognitionConfidenceThreshold(recognitionConfidenceThreshold)
         }
@@ -453,6 +453,9 @@ class SettingsController {
                 logger.log(Level.INFO, "Error CompreFace connection: " + e.localizedMessage)
             }
 
+            model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(),
+                settings.getCompreFaceKey()
+            )
             model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
             model["faceRecogAvailableStatusColor"] = "red"
             model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
@@ -461,6 +464,8 @@ class SettingsController {
                 model["faceRecogAvailableStatusColor"] = "green"
                 model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
             }
+
+            model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
         }
 
         if (statusMessage.isBlank() && model.getAttribute("alertClass") == "alert-success") {
@@ -1377,12 +1382,12 @@ class SettingsController {
 
                                 for (metadata in metadataList) {
                                     if (shouldStop.get()) {
-                                        writeToThreadFile("Scan Cancelled", threadFile)
+                                        FileUtils.writeToThreadFileAndLogMessage("Scan Cancelled", threadFile)
                                         break
                                     }
                                     if (metadata != null) {
                                         if (!metadata.getPath().isNullOrBlank()) {
-                                            writeToThreadFile(
+                                            FileUtils.writeToThreadFileAndLogMessage(
                                                 "Checking for changes for file: " + metadata.getPath(),
                                                 threadFile
                                             )
@@ -1737,16 +1742,6 @@ class SettingsController {
         logger.log(Level.INFO, "shashinscan thread file deleted")
     }
 
-    private fun writeToThreadFile(threadText: String, threadFile: File) {
-        try {
-            val writer = BufferedWriter(FileWriter(threadFile))
-            writer.write(threadText)
-            writer.close()
-        } catch(e: Exception) {
-            logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
-        }
-    }
-
     private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, webClient: WebClient?, recognitionLabelPhotoLabels:  MutableIterable<RecognitionLabelId>?) {
         val f = File(dirPath)
         val files = f.listFiles()
@@ -1759,7 +1754,7 @@ class SettingsController {
 
                 if (shouldStop.get()) {
                     threadText = "Scan Cancelled"
-                    writeToThreadFile(threadText, threadFile)
+                    FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     break
                 }
 
@@ -1796,12 +1791,8 @@ class SettingsController {
                                         try {
                                             metadataRepository?.save(metadataObj)
 
-                                            if (settings?.getObjectDetection() == true) {
-                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataObj, settings)
-                                            }
-
-                                            try {
-                                                if (settings != null && webClient != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                                            if (settings != null && webClient != null && FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                                                try {
                                                     // Have at least 3 people tagged
                                                     val compreFaceTagAllow = 3
                                                     if (recognitionLabelPhotoLabels!!.count() >= compreFaceTagAllow) {
@@ -1830,8 +1821,9 @@ class SettingsController {
                                                                 Level.INFO,
                                                                 "Recognizing face for " + metadataObj.getPath() + ": " + response
                                                             )
-                                                        } catch(e: Exception) {
-                                                            val recognitionLabelRecord = recognitionLabelRepository?.findByNameIgnoreCase("object")
+                                                        } catch (e: Exception) {
+                                                            val recognitionLabelRecord =
+                                                                recognitionLabelRepository?.findByNameIgnoreCase("object")
                                                             var recognitionLabelObj = RecognitionLabel()
                                                             if (recognitionLabelRecord == null) {
                                                                 recognitionLabelObj.setName("object")
@@ -1844,9 +1836,13 @@ class SettingsController {
 
                                                             val recognitionLabelPhotoObj = RecognitionLabelPhoto()
                                                             recognitionLabelPhotoObj.setMetadataId(metadataObj.getId())
-                                                            recognitionLabelPhotoObj.setRecognitionLabelId(recognitionLabelObj.getId())
+                                                            recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                                recognitionLabelObj.getId()
+                                                            )
                                                             recognitionLabelPhotoObj.setConfidence("-0.1")
-                                                            recognitionLabelPhotoRepository?.save(recognitionLabelPhotoObj)
+                                                            recognitionLabelPhotoRepository?.save(
+                                                                recognitionLabelPhotoObj
+                                                            )
 
                                                             logger.log(
                                                                 Level.WARNING,
@@ -1938,7 +1934,11 @@ class SettingsController {
                                                                                     subject
                                                                                 )
 
-                                                                            val recognitionLabelPhoto = recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(recognitionLabelObj!!.getId(), metadataObj.getId())
+                                                                            val recognitionLabelPhoto =
+                                                                                recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                                                                    recognitionLabelObj!!.getId(),
+                                                                                    metadataObj.getId()
+                                                                                )
 
                                                                             if (recognitionLabelObj != null && recognitionLabelPhoto == 0) {
                                                                                 val recognitionLabelPhotoObj =
@@ -1972,12 +1972,16 @@ class SettingsController {
                                                             "You need to manually tag at least $compreFaceTagAllow different people to use face recognition service"
                                                         )
                                                     }
+                                                } catch (e: Exception) {
+                                                    logger.log(
+                                                        Level.INFO,
+                                                        "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
+                                                    )
                                                 }
-                                            } catch (e: Exception) {
-                                                logger.log(
-                                                    Level.INFO,
-                                                    "Issue connecting to face recognizer: " + metadataObj.getPath() + ": " + e.localizedMessage
-                                                )
+                                            }
+
+                                            if (settings?.getObjectDetection() == true) {
+                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataObj, settings, threadFile)
                                             }
 
                                             threadText = file.path + " indexed"
@@ -2006,10 +2010,10 @@ class SettingsController {
                             logger.log(Level.WARNING, "File not supported: " + threadFile.name)
                         }
 
-                        writeToThreadFile(threadText, threadFile)
+                        FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     }
                 } else {
-                    writeToThreadFile(threadText, threadFile)
+                    FileUtils.writeToThreadFileAndLogMessage(threadText, threadFile)
                     logger.log(Level.INFO, "Entry exists: " + file.name)
                 }
 

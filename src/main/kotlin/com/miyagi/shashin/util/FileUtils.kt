@@ -491,7 +491,17 @@ class FileUtils {
             return null
         }
 
-        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataObj: Metadata, settings: Settings) {
+        fun writeToThreadFileAndLogMessage(message: String, threadFile: File) {
+            try {
+                val writer = BufferedWriter(FileWriter(threadFile))
+                writer.write(message)
+                writer.close()
+            } catch(e: Exception) {
+                logger.log(Level.WARNING, "Could not write to thread file: " + threadFile.name)
+            }
+        }
+
+        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataObj: Metadata, settings: Settings, threadFile: File?) {
             try {
                 val file = File(metadataObj.getPath()!!)
 
@@ -518,6 +528,10 @@ class FileUtils {
                                     Level.INFO,
                                     "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
                                 )
+
+                                if (threadFile != null) {
+                                    writeToThreadFileAndLogMessage("Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability, threadFile)
+                                }
 
                                 if (objSubject.trim() != "person" && objProbability >= settings.getRecognitionConfidenceThreshold()
                                         .toString().toDouble()

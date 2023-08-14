@@ -18,7 +18,7 @@
 
             <div id="infinite-scroll-gallery">
 
-                <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable})" class="col-sm p-3 min-vh-100"></div>
+                <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
                 <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
                 <input type="hidden" id="personId" name="personId" th:value="${personInfo.id}">
 
