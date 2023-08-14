@@ -148,35 +148,39 @@ class PeopleController {
             shouldStop.set(true)
         }
 
-        // Scan records of photos that haven't been scanned in a separate thread
-        val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
-//        val trainingData = metadataRepository?.findTrainingData(settings.getRecognitionConfidenceThreshold()!!, settings.getTrainingDataLimit()!!)
-        val distinctLabelRecords = this.recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
+        val webClient = WebClient.create(settings.getCompreFaceServer()!!)
+        val tempDir = System.getProperty("java.io.tmpdir")
 
-        // Start matching in a separate thread
-        if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
+        if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
+            // Clean up any existing thread files
+            FileUtils.deleteThreadFiles(threadExtensionName)
 
-            val webClient = WebClient.create(settings.getCompreFaceServer()!!)
-            val tempDir = System.getProperty("java.io.tmpdir")
+            Thread {
+                val threadFile = FileUtils.createFile(
+                    tempDir,
+                    tempDir + "/" + Thread.currentThread().name + "." + threadExtensionName,
+                    "Thread"
+                )
 
-            if (!FileUtils.checkThreadFileAlive(threadExtensionName)) {
-                // Clean up any existing thread files
-                FileUtils.deleteThreadFiles(threadExtensionName)
+                // Object and person recognition
+                if (threadFile != null) {
 
-                Thread {
-                    val threadFile = FileUtils.createFile(
-                        tempDir,
-                        tempDir + "/" + Thread.currentThread().name + "." + threadExtensionName,
-                        "Thread"
-                    )
+                    // Scan records of photos that haven't been scanned in a separate thread
+                    val testImages = metadataRepository?.findNonMatched(settings.getMatchScanLimit()!!)
+                    val distinctLabelRecords = this.recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
-                    // Object and person recognition
-                    if (threadFile != null) {
+                    // Start matching in a separate thread
+                    if (testImages != null && distinctLabelRecords != null && distinctLabelRecords.count() > 0) {
+
                         for (testImage in testImages) {
 
                             val metadataObj = metadataRepository?.findById(testImage.getId())?.get()
 
-                            if (FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(), settings.getCompreFaceKey())) {
+                            if (FileUtils.checkCompreFaceConnection(
+                                    settings.getCompreFaceServer(),
+                                    settings.getCompreFaceKey()
+                                )
+                            ) {
                                 // Facial recognition
                                 val faceFsr = FileSystemResource(metadataObj?.getThumbnailPathSmall()!!)
                                 var builder = MultipartBodyBuilder()
@@ -350,6 +354,9 @@ class PeopleController {
                                                             recognitionLabelPhotoRepository?.save(
                                                                 recognitionLabelPhotoObj
                                                             )
+
+                                                            metadataObj.setModifiedAt(getCurrentTimestamp())
+                                                            metadataRepository?.save(metadataObj)
                                                         }
                                                     } else {
                                                         FileUtils.writeToThreadFileAndLogMessage(
@@ -367,29 +374,38 @@ class PeopleController {
                                     }
                                 }
                             }
-
-                            if (settings.getObjectDetection() == true) {
-                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataObj!!, settings, threadFile)
-                            }
                         }
                     }
 
-                    FileUtils.deleteThreadFiles(threadExtensionName)
-                    FileUtils.writeToThreadFileAndLogMessage("Matching Complete", threadFile!!)
-                }.start()
+                    if (settings.getObjectDetection() == true) {
+                        val withouKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
+                        if (withouKeywords != null) {
+                            for (withouKeyword in withouKeywords) {
+                                val metadataWithoutKeywordsObj = metadataRepository?.findById(withouKeyword.getId())?.get()
 
-            }
+                                FileUtils.objectRecognizer(
+                                    keywordRepository!!,
+                                    keywordPhotoRepository!!,
+                                    metadataRepository!!,
+                                    metadataWithoutKeywordsObj!!,
+                                    settings,
+                                    threadFile
+                                )
+                            }
+                        }
+                    }
+                }
 
-            if (shouldStop.get()) {
                 FileUtils.deleteThreadFiles(threadExtensionName)
-            }
-
-            shouldStop.set(false)
-        } else {
-            resp["msg"] = "Training data not detected."
-            resp["status"] = ApiResponse.FAIL.status
-            return mapper.writeValueAsString(resp)
+                FileUtils.writeToThreadFileAndLogMessage("Matching Complete", threadFile!!)
+            }.start()
         }
+
+        if (shouldStop.get()) {
+            FileUtils.deleteThreadFiles(threadExtensionName)
+        }
+
+        shouldStop.set(false)
 
         resp["msg"] = "Start Matching"
         resp["status"] = ApiResponse.SUCCESS.status

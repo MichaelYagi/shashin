@@ -13,6 +13,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.miyagi.shashin.model.*
 import com.miyagi.shashin.repository.KeywordPhotoRepository
 import com.miyagi.shashin.repository.KeywordRepository
+import com.miyagi.shashin.repository.MetadataRepository
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
@@ -41,7 +42,7 @@ import javax.xml.bind.DatatypeConverter.parseBase64Binary
 
 @Suppress("UNCHECKED_CAST")
 @Component
-class FileUtils {
+class FileUtils(private val metadataRepository: MetadataRepository) {
     companion object {
         private var logger: Logger = Logger.getLogger(FileUtils::class.simpleName)
 
@@ -501,7 +502,7 @@ class FileUtils {
             }
         }
 
-        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataObj: Metadata, settings: Settings, threadFile: File?) {
+        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository, metadataObj: Metadata, settings: Settings, threadFile: File?) {
             try {
                 val file = File(metadataObj.getPath()!!)
 
@@ -524,17 +525,13 @@ class FileUtils {
                                 val objSubject =
                                     detection.item<Classifications.Classification?>(i).className
 
-                                logger.log(
-                                    Level.INFO,
-                                    "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
-                                )
-
-                                if (threadFile != null) {
-                                    writeToThreadFileAndLogMessage("Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability, threadFile)
+                                var threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()-0.30
+                                if (threshold <= 0.0) {
+                                    threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()
                                 }
 
-                                if (objSubject.trim() != "person" && objProbability >= settings.getRecognitionConfidenceThreshold()
-                                        .toString().toDouble()
+                                // Give a little more leeway for object probability
+                                if (objSubject.trim() != "person" && objProbability >= threshold
                                 ) {
                                     var keywordObj =
                                         keywordRepository.findByKeywordIgnoreCase(objSubject)
@@ -558,7 +555,23 @@ class FileUtils {
                                         keywordPhotoObj.setCreatedAt(TextUtils.getCurrentTimestamp())
                                         keywordPhotoObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                                         keywordPhotoRepository.save(keywordPhotoObj)
+                                        metadataObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                                        metadataRepository.save(metadataObj)
                                     }
+
+                                    if (threadFile != null) {
+                                        writeToThreadFileAndLogMessage("Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability, threadFile)
+                                    }
+
+                                    logger.log(
+                                        Level.INFO,
+                                        "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                    )
+                                } else {
+                                    logger.log(
+                                        Level.INFO,
+                                        "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                    )
                                 }
                             }
                         } catch (e: Exception) {
@@ -572,7 +585,7 @@ class FileUtils {
             } catch (e: Exception) {
                 logger.log(
                     Level.INFO,
-                    "Could not open file for " + metadataObj?.getPath()!!
+                    "Could not open file for " + metadataObj.getPath()!!
                 )
             }
         }
