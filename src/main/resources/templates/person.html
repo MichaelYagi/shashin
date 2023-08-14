@@ -23,7 +23,7 @@
                 <input type="hidden" id="personId" name="personId" th:value="${personInfo.id}">
 
                 <th:block th:if="${not #lists.isEmpty(metadataList)}">
-                    <div th:replace="fragments/personmodal :: personmodal()"></div>
+<!--                    <div th:replace="fragments/personmodal :: personmodal()"></div>-->
 
                     <h1 th:inline="text">
                         [[${personInfo.name}]]
@@ -62,11 +62,11 @@
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'person');
-                                personModalSettings.renderPersonModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id).get('labels')}]]*/"");
+                                // personModalSettings.renderPersonModal(/*[[${metadata}]]*/{},/*[[${recognitionLabels}]]*/"",/*[[${labelPhotoMap.get(metadata.id).get('labels')}]]*/"");
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
                                     e.preventDefault();
-                                    shashin.openInfoModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
+                                    shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                                 });
                                 /*]]>*/
                             </script>

@@ -440,9 +440,9 @@
                     });
                 }
 
-                if (isObject === true) {
-                    $("#isobject")[0].checked = true;
-                }
+                // if (isObject === true) {
+                //     $("#isobject")[0].checked = true;
+                // }
 
                 if ($("#hidden").length > 0 && metadata.hidden !== null && metadata.hidden === true) {
                     $("#hidden")[0].checked = true;
