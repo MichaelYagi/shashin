@@ -1963,6 +1963,9 @@ class SettingsController {
                                                                                 recognitionLabelPhotoRepository?.save(
                                                                                     recognitionLabelPhotoObj
                                                                                 )
+
+                                                                                metadataObj.setModifiedAt(getCurrentTimestamp())
+                                                                                metadataRepository?.save(metadataObj)
                                                                             }
                                                                         }
                                                                     }
@@ -1984,7 +1987,7 @@ class SettingsController {
                                             }
 
                                             if (settings?.getObjectDetection() == true) {
-                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataObj, settings, threadFile)
+                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!, metadataObj, settings, threadFile)
                                             }
 
                                             threadText = file.path + " indexed"

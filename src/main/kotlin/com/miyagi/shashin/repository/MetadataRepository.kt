@@ -99,7 +99,8 @@ interface MetadataRepository : PagingAndSortingRepository<Metadata?, String?> {
 
    @Query("SELECT DISTINCT m.* FROM metadata m INNER JOIN recognitionlabelphoto rlp ON m.id = rlp.metadata_id WHERE m.hidden = false AND confidence > :recognitionConfidenceThreshold AND confidence < 1.0 AND confidence != 0.0 AND rlp.recognition_label_id = :recognitionLabelId", nativeQuery = true) //  LIMIT 0, :matchScanLimit - ,@Param("matchScanLimit") matchScanLimit: Int
    fun findLowMatchesByPerson(@Param("recognitionLabelId") recognitionLabelId: Int,@Param("recognitionConfidenceThreshold") recognitionConfidenceThreshold: String): MutableIterable<Metadata>
-
+   @Query("SELECT DISTINCT m.* FROM metadata m WHERE m.id NOT IN (SELECT metadata_id FROM keywordphoto) AND m.hidden = false ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
+   fun findWithoutKeywords(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
    @Query("SELECT DISTINCT m.* FROM metadata m WHERE m.id NOT IN (SELECT metadata_id FROM recognitionlabelphoto) AND m.hidden = false ORDER BY RANDOM() LIMIT 0, :matchScanLimit",nativeQuery = true)
    fun findNonMatched(@Param("matchScanLimit") matchScanLimit: Int): MutableIterable<Metadata>
 
