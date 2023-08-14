@@ -29,7 +29,7 @@
 
                                 <th:block th:if="${not #lists.isEmpty(recognitionLabels)}">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary dropdown-toggle" id="tagpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
+                                        <button class="btn btn-outline-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu batchPersonDropdown" id="peopleNameList">
                                             <th:block th:each="recognitionLabel, iterStat: ${recognitionLabels}">
                                                 <button class="dropdown-item" type="button">
@@ -50,7 +50,7 @@
                                     </div>
                                 </th:block>
                             </div>
-                            <div class="form-group row">
+                            <div class="form-group row" style="display: none;">
                                 <div class="col-sm">
                                     <input type="checkbox" name="batchisobject" id="batchisobject">
                                     <label class="form-check-label" for="batchisobject">These are objects</label>
