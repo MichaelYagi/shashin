@@ -22,14 +22,18 @@
         }
         return n.prototype.init = function() {
             var e = "";
+            var icon = "bi-info-circle";
+            if (this.settings.showControls) {
+                icon = "bi-geo-alt";
+            }
             if (this.settings.editLocation) {
-                e = '<button type="button" aria-label="Edit location" class="bi-geo-alt lg-icon" style="font-size: 1rem;"></button>',
+                e = '<button type="button" aria-label="Edit location" class="'+icon+' lg-icon" style="font-size: 1rem;"></button>',
                     this.core.$toolbar.append(e),
                     this.editLocation()
             }
 
             this.core.outer
-                .find('.bi-geo-alt')
+                .find('.'+icon)
                 .first()
                 .on('click.lg', () => {
                     let currentDynamicEl = this.settings.dynamicEl[this.core.index];
