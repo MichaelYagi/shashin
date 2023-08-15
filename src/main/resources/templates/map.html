@@ -65,7 +65,6 @@
     $(document).ready(function () {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
-        const showControls = /*[[${showControls}]]*/ false;
         /*]]>*/
 
         const http = new Http("Getting map data");
@@ -81,7 +80,7 @@
                 }
             }
 
-            showMap(mapdata, showControls);
+            showMap(mapdata);
         });
     });
 </script>

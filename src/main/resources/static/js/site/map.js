@@ -1,4 +1,4 @@
-async function showMap(mapdata,showControls) {
+async function showMap(mapdata) {
     let qslat = Util.getParameterByName("lat");
     let qslng = Util.getParameterByName("lng");
     const qslatlng = Util.getParameterByName("latlng");
@@ -13,10 +13,6 @@ async function showMap(mapdata,showControls) {
     const endDateField = $("#endDateInput");
     const dateInputs = $("#dateInputs");
     const progressBar = $("#progressBar");
-    const locationDataInput = $("#locationDataInput");
-    const propMetadataLocation = $("#propMetadataLocation");
-    const metadataLocationModalStatus = $("#metadataLocationModalStatus");
-    const metadataLocationModalCancel = $("#metadataLocationModalCancel");
 
     shashin.mouseMoveListener();
 
@@ -287,37 +283,14 @@ async function showMap(mapdata,showControls) {
 
                     const iconFeature = new ol.Feature({
                         geometry: new ol.geom.Point(ol.proj.transform([data["lng"], data["lat"]], 'EPSG:4326', 'EPSG:900913')),
-                        fileName: data["fileName"],
-                        compressionType: data["compressionType"],
-                        thumbnailUrlSmall: data["thumbnailUrlSmall"],
                         thumbnailUrlOriginal: data["thumbnailUrlOriginal"],
-                        originalImageHeight: data["originalImageHeight"],
-                        originalImageWidth: data["originalImageWidth"],
                         mapMarkerUrl: data["mapMarkerUrl"],
                         mapMarkerIcon: mapMarkerIcon,
                         videoUrl: data["videoUrl"],
-                        year: data["year"],
-                        month: data["month"],
-                        day: data["day"],
-                        placeName: data["placeName"],
                         metadataId: data["id"],
-                        title: data["title"],
                         lat: data["lat"],
                         lng: data["lng"],
-                        type: data["type"],
-                        path: data["path"],
-                        iso: data["iso"],
-                        exposure: data["exposure"],
-                        fstopNumber: data["fstopNumber"],
-                        camera: data["camera"],
-                        lens: data["lens"],
-                        quality: data["quality"],
-                        createdAt: data["createdAt"],
-                        modifiedAt: data["modifiedAt"],
-                        takenAt: data["takenAt"],
-                        time: data["time"],
-                        timeZone: data["timeZone"],
-                        description: data["description"]
+                        type: data["type"]
                     });
 
                     iconFeature.setStyle(data["mapMarkerIcon"]);
@@ -364,54 +337,14 @@ async function showMap(mapdata,showControls) {
     function editLocation(...args) {
         const locationArgs = [].concat(...args);
         let metadataId = "";
-        let modalLabel = "";
-
-        const metadata = {}
 
         if (arguments.length > 0) {
             metadataId = locationArgs[0];
-            metadata.lat = locationArgs[1];
-            metadata.lng = locationArgs[2];
-            modalLabel = locationArgs[3];
-            metadata.path = locationArgs[4];
-            metadata.compressionType = locationArgs[5];
-            metadata.type = locationArgs[6];
-            metadata.iso = locationArgs[7];
-            metadata.exposure = locationArgs[8];
-            metadata.fstopNumber = locationArgs[9];
-            metadata.focalLength = locationArgs[10];
-            metadata.camera = locationArgs[11];
-            metadata.lens = locationArgs[12];
-            metadata.quality = locationArgs[13];
-            metadata.createdAt = locationArgs[14];
-            metadata.modifiedAt = locationArgs[15];
-            metadata.takenAt = locationArgs[16];
-            metadata.year = locationArgs[17];
-            metadata.month = locationArgs[18];
-            metadata.day = locationArgs[19];
-            metadata.time = locationArgs[20];
-            metadata.timeZone = locationArgs[21];
-            metadata.placeName = locationArgs[22];
-            metadata.thumbnailUrlOriginal = locationArgs[23];
-            metadata.originalImageHeight = locationArgs[24];
-            metadata.originalImageWidth = locationArgs[25];
-            metadata.videoUrl = locationArgs[26];
-            metadata.description = locationArgs[27];
         }
-        if (modalLabel && modalLabel.length > 0) {
-            $("#editPhotoLocationModalLabel").text("for " + modalLabel);
-        }
-        $("#mapMetadataId").val(metadataId);
+
         $("#metadataId").val(metadataId);
-        if (metadata.lat && metadata.lng) {
-            locationDataInput.val(metadata.lat + "," + metadata.lng);
-        }
-        propMetadataLocation.css('z-index', 9999);
 
         shashin.openEditMetadataModal(metadataId);
-
-        // Util.populateDetailsInfo(metadata);
-        // propMetadataLocation.modal('show');
     }
 
     let maxFeatureCount;
@@ -515,36 +448,10 @@ async function showMap(mapdata,showControls) {
                 const mediaContent = {
                     func: editLocation,
                     args: [
-                        featureProperties["metadataId"],
-                        featureProperties["lat"],
-                        featureProperties["lng"],
-                        featureProperties["title"],
-                        featureProperties["path"],
-                        featureProperties["compressionType"],
-                        featureProperties["type"],
-                        featureProperties["iso"],
-                        featureProperties["exposure"],
-                        featureProperties["fstopNumber"],
-                        featureProperties["focalLength"],
-                        featureProperties["camera"],
-                        featureProperties["lens"],
-                        featureProperties["quality"],
-                        featureProperties["createdAt"],
-                        featureProperties["modifiedAt"],
-                        featureProperties["takenAt"],
-                        featureProperties["year"],
-                        featureProperties["month"],
-                        featureProperties["day"],
-                        featureProperties["time"],
-                        featureProperties["timeZone"],
-                        featureProperties["placeName"],
-                        featureProperties["thumbnailUrlOriginal"],
-                        featureProperties["originalImageHeight"],
-                        featureProperties["originalImageWidth"],
-                        featureProperties["videoUrl"],
-                        featureProperties["description"]
+                        featureProperties["metadataId"]
                     ]
                 };
+
                 if (featureProperties.type.includes("image")) {
                     mediaContent.src = featureProperties.thumbnailUrlOriginal;
                     mediaContent.downloadUrl = encodeURI(featureProperties.thumbnailUrlOriginal) + "/download";
@@ -860,80 +767,4 @@ async function showMap(mapdata,showControls) {
             this.getTargetElement().style.cursor = '';
         }
     });
-
-    // $('#propMetadataLocation').on('hide.bs.modal', function () {
-    //     $("#locationMapResponseMsg").html("");
-    //     $("#saveMetadata").prop('disabled', false);
-    //     metadataLocationModalStatus.attr("class","spinner-grow me-auto");
-    //     metadataLocationModalStatus.css("visibility","hidden");
-    //     $(this).find(':input').val('');
-    //
-    //     if (true === showControls) {
-    //         const tab = new bootstrap.Tab($("#locationTabLink"));
-    //         tab.show();
-    //     }
-    // });
-    //
-    // $("#detailsTabLink").on("click", function (e) {
-    //     e.preventDefault();
-    //     $("#locationMapResponseMsg").html("");
-    //     $("#saveMetadata").prop('disabled', true);
-    // });
-    //
-    // $("#locationTabLink").on("click", function (e) {
-    //     e.preventDefault();
-    //     $("#saveMetadata").prop('disabled', false);
-    // });
-
-    // $("#saveMetadata").on("click", async function (e) {
-    //     e.preventDefault();
-    //
-    //     metadataLocationModalStatus.css("visibility", "visible");
-    //     metadataLocationModalStatus.attr("title", "");
-    //     metadataLocationModalCancel.prop('disabled', true);
-    //     let metadataIdList = [];
-    //     metadataIdList.push($("#mapMetadataId").val());
-    //
-    //     const http = new Http("saving map location data");
-    //     const json = {
-    //         "batchMetadataIds": metadataIdList,
-    //         "latlngBatchData": locationDataInput.val()
-    //     };
-    //     const data = await http.ajax("put", "/timeline/update/batch", JSON.stringify(json), function () {
-    //         metadataLocationModalStatus.removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-    //         metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
-    //         metadataLocationModalCancel.prop('disabled', false);
-    //     });
-    //
-    //     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-    //         if (data["status"] === "success") {
-    //             metadataLocationModalStatus.addClass('bi-check-circle').removeClass('spinner-grow');
-    //
-    //             const latlng = locationDataInput.val();
-    //             const latlngArray = latlng.split(",");
-    //             const lat = latlngArray[0].trim();
-    //             const lng = latlngArray[1].trim();
-    //
-    //             if (Util.localStorageAvailable() === true) {
-    //                 localStorage.setItem("lat", lat);
-    //                 localStorage.setItem("lng", lng);
-    //                 localStorage.setItem("sd", startDateField.val());
-    //                 localStorage.setItem("ed", endDateField.val());
-    //                 localStorage.setItem("vo", videoOnlyCheckbox.prop("checked"));
-    //             }
-    //
-    //             metadataLocationModalCancel.prop('disabled', false);
-    //             window.top.location = window.location.href.split("?")[0];
-    //         } else {
-    //             metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
-    //             metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
-    //             metadataLocationModalCancel.prop('disabled', false);
-    //             shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-    //         }
-    //     } else {
-    //         metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
-    //         metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
-    //         metadataLocationModalCancel.prop('disabled', false);
-    //     }
-    // });
 }

@@ -1,9 +1,8 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.MapData
 import com.miyagi.shashin.model.User
-import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.TextUtils
@@ -93,16 +92,16 @@ class MapController {
     fun getMapData(model: Model): ResponseEntity<String> {
         val response = mutableMapOf<String, Any?>()
         val currentUserObj = model.getAttribute("currentUser") as User?
-        response["mapdata"] = mutableListOf<Metadata>()
+        response["mapdata"] = mutableListOf<MapData>()
         response["msg"] = "Not logged in"
         response["status"] = ApiResponse.SUCCESS.status
 
         // If ROLE_ADMIN get lat lng for timeline
         if (currentUserObj != null) {
             if (currentUserObj.getAuthority() == model.getAttribute("adminRole")) {
-                response["mapdata"] = metadataRepository!!.findTimelineAllWithCoordinates()
+                response["mapdata"] = metadataRepository!!.findTimelineAllForMap()
             } else {
-                response["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserIdWithCoordinates(currentUserObj.getId())
+                response["mapdata"] = metadataRepository!!.findByAlbumMetadataByUserIdForMap(currentUserObj.getId())
             }
 
             response["msg"] = ""
