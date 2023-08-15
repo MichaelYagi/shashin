@@ -23,13 +23,13 @@
         return n.prototype.init = function() {
             var e = "";
             if (this.settings.editLocation) {
-                e = '<button type="button" aria-label="Edit location" class="bi-pin-map lg-icon" style="font-size: 1rem;"></button>',
+                e = '<button type="button" aria-label="Edit location" class="bi-geo-alt lg-icon" style="font-size: 1rem;"></button>',
                     this.core.$toolbar.append(e),
                     this.editLocation()
             }
 
             this.core.outer
-                .find('.bi-pin-map')
+                .find('.bi-geo-alt')
                 .first()
                 .on('click.lg', () => {
                     let currentDynamicEl = this.settings.dynamicEl[this.core.index];
