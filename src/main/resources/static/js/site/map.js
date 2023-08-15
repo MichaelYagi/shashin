@@ -601,6 +601,7 @@ async function showMap(mapdata,showControls) {
     lightGalleryConfigs["dynamic"] = true;
     lightGalleryConfigs["counter"] = true;
     lightGalleryConfigs["editLocation"] = true;
+    lightGalleryConfigs["showControls"] = showControls;
     lightGalleryConfigs["castMedia"] = true;
     const $dynamicGallery = document.getElementById('light-gallery-photo');
     let dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
