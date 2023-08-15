@@ -702,7 +702,7 @@
                             source: shashin.getMapSource("osm")
                         })
                     ],
-                    target: 'map',
+                    target: 'modalmap',
                     interactions: interactions
                 });
             } else {
