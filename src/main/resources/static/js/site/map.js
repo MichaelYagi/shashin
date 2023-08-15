@@ -408,9 +408,10 @@ async function showMap(mapdata,showControls) {
         }
         propMetadataLocation.css('z-index', 9999);
 
-        Util.populateDetailsInfo(metadata);
+        shashin.openEditMetadataModal(metadataId);
 
-        propMetadataLocation.modal('show');
+        // Util.populateDetailsInfo(metadata);
+        // propMetadataLocation.modal('show');
     }
 
     let maxFeatureCount;
@@ -595,14 +596,17 @@ async function showMap(mapdata,showControls) {
     });
 
     const lightGalleryConfigs = shashin.getLightGalleryConfigs();
-    lightGalleryConfigs["plugins"].push(lgEditLocation);
+    // lightGalleryConfigs["plugins"].push(lgEditLocation);
+    lightGalleryConfigs["plugins"].push(lgMetadataDetail);
     lightGalleryConfigs["plugins"].push(lgCastMedia);
     lightGalleryConfigs["controls"] = true;
     lightGalleryConfigs["dynamic"] = true;
     lightGalleryConfigs["counter"] = true;
-    lightGalleryConfigs["editLocation"] = true;
-    lightGalleryConfigs["showControls"] = showControls;
+    lightGalleryConfigs["metadataDetail"] = true;
+    // lightGalleryConfigs["editLocation"] = true;
+    // lightGalleryConfigs["showControls"] = showControls;
     lightGalleryConfigs["castMedia"] = true;
+
     const $dynamicGallery = document.getElementById('light-gallery-photo');
     let dynamicGallery = lightGallery($dynamicGallery, lightGalleryConfigs);
 
@@ -857,79 +861,79 @@ async function showMap(mapdata,showControls) {
         }
     });
 
-    $('#propMetadataLocation').on('hide.bs.modal', function () {
-        $("#locationMapResponseMsg").html("");
-        $("#saveMetadata").prop('disabled', false);
-        metadataLocationModalStatus.attr("class","spinner-grow me-auto");
-        metadataLocationModalStatus.css("visibility","hidden");
-        $(this).find(':input').val('');
+    // $('#propMetadataLocation').on('hide.bs.modal', function () {
+    //     $("#locationMapResponseMsg").html("");
+    //     $("#saveMetadata").prop('disabled', false);
+    //     metadataLocationModalStatus.attr("class","spinner-grow me-auto");
+    //     metadataLocationModalStatus.css("visibility","hidden");
+    //     $(this).find(':input').val('');
+    //
+    //     if (true === showControls) {
+    //         const tab = new bootstrap.Tab($("#locationTabLink"));
+    //         tab.show();
+    //     }
+    // });
+    //
+    // $("#detailsTabLink").on("click", function (e) {
+    //     e.preventDefault();
+    //     $("#locationMapResponseMsg").html("");
+    //     $("#saveMetadata").prop('disabled', true);
+    // });
+    //
+    // $("#locationTabLink").on("click", function (e) {
+    //     e.preventDefault();
+    //     $("#saveMetadata").prop('disabled', false);
+    // });
 
-        if (true === showControls) {
-            const tab = new bootstrap.Tab($("#locationTabLink"));
-            tab.show();
-        }
-    });
-
-    $("#detailsTabLink").on("click", function (e) {
-        e.preventDefault();
-        $("#locationMapResponseMsg").html("");
-        $("#saveMetadata").prop('disabled', true);
-    });
-
-    $("#locationTabLink").on("click", function (e) {
-        e.preventDefault();
-        $("#saveMetadata").prop('disabled', false);
-    });
-
-    $("#saveMetadata").on("click", async function (e) {
-        e.preventDefault();
-
-        metadataLocationModalStatus.css("visibility", "visible");
-        metadataLocationModalStatus.attr("title", "");
-        metadataLocationModalCancel.prop('disabled', true);
-        let metadataIdList = [];
-        metadataIdList.push($("#mapMetadataId").val());
-
-        const http = new Http("saving map location data");
-        const json = {
-            "batchMetadataIds": metadataIdList,
-            "latlngBatchData": locationDataInput.val()
-        };
-        const data = await http.ajax("put", "/timeline/update/batch", JSON.stringify(json), function () {
-            metadataLocationModalStatus.removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
-            metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
-            metadataLocationModalCancel.prop('disabled', false);
-        });
-
-        if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
-            if (data["status"] === "success") {
-                metadataLocationModalStatus.addClass('bi-check-circle').removeClass('spinner-grow');
-
-                const latlng = locationDataInput.val();
-                const latlngArray = latlng.split(",");
-                const lat = latlngArray[0].trim();
-                const lng = latlngArray[1].trim();
-
-                if (Util.localStorageAvailable() === true) {
-                    localStorage.setItem("lat", lat);
-                    localStorage.setItem("lng", lng);
-                    localStorage.setItem("sd", startDateField.val());
-                    localStorage.setItem("ed", endDateField.val());
-                    localStorage.setItem("vo", videoOnlyCheckbox.prop("checked"));
-                }
-
-                metadataLocationModalCancel.prop('disabled', false);
-                window.top.location = window.location.href.split("?")[0];
-            } else {
-                metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
-                metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
-                metadataLocationModalCancel.prop('disabled', false);
-                shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
-            }
-        } else {
-            metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
-            metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
-            metadataLocationModalCancel.prop('disabled', false);
-        }
-    });
+    // $("#saveMetadata").on("click", async function (e) {
+    //     e.preventDefault();
+    //
+    //     metadataLocationModalStatus.css("visibility", "visible");
+    //     metadataLocationModalStatus.attr("title", "");
+    //     metadataLocationModalCancel.prop('disabled', true);
+    //     let metadataIdList = [];
+    //     metadataIdList.push($("#mapMetadataId").val());
+    //
+    //     const http = new Http("saving map location data");
+    //     const json = {
+    //         "batchMetadataIds": metadataIdList,
+    //         "latlngBatchData": locationDataInput.val()
+    //     };
+    //     const data = await http.ajax("put", "/timeline/update/batch", JSON.stringify(json), function () {
+    //         metadataLocationModalStatus.removeClass('bi-check-circle').removeClass('spinner-grow').addClass('bi-x-circle');
+    //         metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
+    //         metadataLocationModalCancel.prop('disabled', false);
+    //     });
+    //
+    //     if (data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+    //         if (data["status"] === "success") {
+    //             metadataLocationModalStatus.addClass('bi-check-circle').removeClass('spinner-grow');
+    //
+    //             const latlng = locationDataInput.val();
+    //             const latlngArray = latlng.split(",");
+    //             const lat = latlngArray[0].trim();
+    //             const lng = latlngArray[1].trim();
+    //
+    //             if (Util.localStorageAvailable() === true) {
+    //                 localStorage.setItem("lat", lat);
+    //                 localStorage.setItem("lng", lng);
+    //                 localStorage.setItem("sd", startDateField.val());
+    //                 localStorage.setItem("ed", endDateField.val());
+    //                 localStorage.setItem("vo", videoOnlyCheckbox.prop("checked"));
+    //             }
+    //
+    //             metadataLocationModalCancel.prop('disabled', false);
+    //             window.top.location = window.location.href.split("?")[0];
+    //         } else {
+    //             metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
+    //             metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
+    //             metadataLocationModalCancel.prop('disabled', false);
+    //             shashin.showToastMessage("Validation error", "Invalid lat/lng format.", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+    //         }
+    //     } else {
+    //         metadataLocationModalStatus.addClass('bi-x-circle').removeClass('spinner-grow');
+    //         metadataLocationModalStatus.attr("title", shashin.modalStatusFailMessage());
+    //         metadataLocationModalCancel.prop('disabled', false);
+    //     }
+    // });
 }
