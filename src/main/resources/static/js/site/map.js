@@ -35,9 +35,12 @@ async function showMap(mapdata) {
     initIndex = initIndex - 1;
 
     // Date fields are format "yyyy-MM-dd"
-    let initialStartDate = mapdata[initIndex]["year"] + '-' +
+    let initialStartDate = "";
+    if (mapdata.length > 0) {
+    initialStartDate = mapdata[initIndex]["year"] + '-' +
         ((mapdata[initIndex]["month"] > 9) ? (mapdata[initIndex]["month"]) : ('0' + (mapdata[initIndex]["month"]))) + '-' +
         ((mapdata[initIndex]["day"] > 9) ? mapdata[initIndex]["day"] : ('0' + mapdata[initIndex]["day"]));
+    }
     startDateField.val(initialStartDate);
 
     let initialCoord = [-73.1234, 45.678];
