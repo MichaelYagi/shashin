@@ -949,19 +949,17 @@ class TimelineController: BaseController() {
                 }
 
                 // Process tagged people
-                var taggedPeople = metadataMap["tagpeople"].toString()
+                val taggedPeople = metadataMap["tagpeople"].toString()
                 if (taggedPeople.isBlank()) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-
-                    val recognizedArray = FileUtils.recognizePerson(model.getAttribute("settings") as Settings, metadataObj.get())
-                    taggedPeople = recognizedArray.joinToString(",")
+                } else {
+                    processPeople(
+                        model.getAttribute("settings") as Settings,
+                        metadataObj.get(),
+                        taggedPeople,
+                        metadataMap["isObject"].toString().toBoolean()
+                    )
                 }
-                processPeople(
-                    model.getAttribute("settings") as Settings,
-                    metadataObj.get(),
-                    taggedPeople,
-                    metadataMap["isObject"].toString().toBoolean()
-                )
 
 
                 if (metadataMap["title"].toString().trim() == "") {
@@ -1400,17 +1398,10 @@ class TimelineController: BaseController() {
                             }
                         }
 
-                        var taggedPeople = recognitionLabelNames.toString()
-                        if (taggedPeople.isBlank()) {
-                            recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
-
-                            val recognizedArray = FileUtils.recognizePerson(model.getAttribute("settings") as Settings, metadata)
-                            taggedPeople = recognizedArray.joinToString(",")
-                        }
                         processPeople(
                             model.getAttribute("settings") as Settings,
                             metadata,
-                            taggedPeople,
+                            recognitionLabelNames.toString(),
                             isObject
                         )
 
