@@ -859,6 +859,7 @@ class TimelineController: BaseController() {
         ) {
             resp["msg"] = "Saved!"
             resp["status"] = ApiResponse.SUCCESS.status
+            resp["keywordsIdentified"] = ""
 
             val metadataObj = metadataRepository.findById(metadataId)
 
@@ -1043,7 +1044,10 @@ class TimelineController: BaseController() {
                     val settings = model.getAttribute("settings") as Settings
                     val keywordCount = keywordPhotoRepository.countByMetadataId(metadataId)
                     if ((metadataMap["keywords"].toString().isBlank() || keywordCount == 0) && settings.getObjectDetection() == true) {
-                        FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), settings, null)
+                        val keywordArray = FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), settings, null)
+                        if (!keywordArray.isNullOrEmpty()) {
+                            resp["keywordsIdentified"] = keywordArray.joinToString(",")
+                        }
                     }
                 }
 
@@ -1442,7 +1446,7 @@ class TimelineController: BaseController() {
                             processKeywords(keywordList, metadata.getId())
                         } else {
                             val keywordCount = keywordPhotoRepository.countByMetadataId(metadata.getId())
-                            if ((keywordList.size == 0 || keywordCount == 0) && settings.getObjectDetection() == true) {
+                            if (settings.getObjectDetection() == true && (keywordList.size == 0 || keywordCount == 0)) {
                                 FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadata, settings, null)
                             }
                         }

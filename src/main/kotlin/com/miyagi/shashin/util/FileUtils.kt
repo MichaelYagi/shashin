@@ -586,7 +586,9 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             }
         }
 
-        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository, metadataObj: Metadata, settings: Settings, threadFile: File?) {
+        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository, metadataObj: Metadata, settings: Settings, threadFile: File?): MutableList<String>? {
+            val keywordArray = mutableListOf<String>()
+
             try {
                 val file = File(metadataObj.getPath()!!)
 
@@ -609,6 +611,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                 val objSubject =
                                     detection.item<Classifications.Classification?>(i).className
 
+                                // Adjust threshold for object recognition
                                 var threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()-0.30
                                 if (threshold <= 0.0) {
                                     threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()
@@ -626,6 +629,8 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                         keywordObj.setModifiedAt(TextUtils.getCurrentTimestamp())
                                         keywordRepository.save(keywordObj)
                                     }
+
+                                    keywordArray.add(objSubject)
 
                                     val keywordPhotoCount =
                                         keywordPhotoRepository.countByKeywordIdAndMetadataId(
@@ -672,6 +677,8 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                     "Could not open file for " + metadataObj.getPath()!!
                 )
             }
+
+            return keywordArray
         }
 
         /**
