@@ -1444,11 +1444,6 @@ class TimelineController: BaseController() {
                         if (keywordList.isNotEmpty()) {
                             keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
                             processKeywords(keywordList, metadata.getId())
-                        } else {
-                            val keywordCount = keywordPhotoRepository.countByMetadataId(metadata.getId())
-                            if (settings.getObjectDetection() == true && (keywordList.size == 0 || keywordCount == 0)) {
-                                FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadata, settings, null)
-                            }
                         }
                     }
 
