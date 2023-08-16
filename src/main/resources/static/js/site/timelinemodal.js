@@ -56,9 +56,11 @@ $("#saveMetadata").on("click", async function (e) {
     $("#timelineModalCancel").prop('disabled', true);
     const metadataId = $("#metadataId").val();
     let prevTimeTaken = $("#timeTaken").val();
+    let prevPeople = $("#tagpeople").val();
 
     timelineModal.closeTagPeopleDropdown(metadataId);
 
+    let prevPeopleArray = [];
     let takenDateUpdated = false;
     let captionUpdated = false;
     let prevLat = "";
@@ -73,6 +75,10 @@ $("#saveMetadata").on("click", async function (e) {
         if ($("#description").val() !== metadataObj.description) {
             captionUpdated = true;
         }
+
+        prevPeopleArray = prevPeople.split(",").map(function(item) {
+            return item.trim();
+        });
 
         prevTimeTaken = metadataObj.time;
         prevLat = metadataObj.lat;
@@ -109,27 +115,29 @@ $("#saveMetadata").on("click", async function (e) {
             isObject: $("#isobject").prop("checked")
         }
 
-        // let compreFaceImageId = "";
+        let compreFaceImageId = "";
         const peopleArray = people.split(",").map(function(item) {
             return item.trim();
         });
 
-        $.each(peopleArray, async function (index, person) {
-            person = person.trim();
+        if (Util.arraysEqual(prevPeopleArray,peopleArray) === false) {
+            $.each(peopleArray, async function (index, person) {
+                person = person.trim();
 
-            if (person !== '') {
-                const personJson = {
-                    personName: person,
-                    metadataId: metadataId
+                if (person !== '' && $.inArray(person, prevPeopleArray) === -1) {
+                    const personJson = {
+                        personName: person,
+                        metadataId: metadataId
+                    }
+                    const http = new Http("upload faces");
+                    let persondata = await http.ajax("post", "/person/recognition/faces", JSON.stringify(personJson));
+
+                    if (persondata.hasOwnProperty("responseDataUpload") && persondata["responseDataUpload"].hasOwnProperty("image_id")) {
+                        compreFaceImageId = persondata["responseDataUpload"]["image_id"];
+                    }
                 }
-//                 const http = new Http("upload faces");
-//                 let persondata = await http.ajax("post", "/person/recognition/faces", JSON.stringify(personJson));
-// console.log(persondata)
-//                 if (persondata.hasOwnProperty("responseDataUpload") && persondata["responseDataUpload"].hasOwnProperty("image_id")) {
-//                     compreFaceImageId = persondata["responseDataUpload"]["image_id"];
-//                 }
-            }
-        });
+            });
+        }
 
         const http = new Http("save timeline");
         let data;
