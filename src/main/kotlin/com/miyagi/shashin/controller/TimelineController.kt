@@ -949,16 +949,20 @@ class TimelineController: BaseController() {
                 }
 
                 // Process tagged people
-                if (metadataMap["tagpeople"].toString().isBlank()) {
+                var taggedPeople = metadataMap["tagpeople"].toString()
+                if (taggedPeople.isBlank()) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
-                } else {
-                    processPeople(
-                        model.getAttribute("settings") as Settings,
-                        metadataObj.get(),
-                        metadataMap["tagpeople"].toString(),
-                        metadataMap["isObject"].toString().toBoolean()
-                    )
+
+                    val recognizedArray = FileUtils.recognizePerson(model.getAttribute("settings") as Settings, metadataObj.get())
+                    taggedPeople = recognizedArray.joinToString(",")
                 }
+                processPeople(
+                    model.getAttribute("settings") as Settings,
+                    metadataObj.get(),
+                    taggedPeople,
+                    metadataMap["isObject"].toString().toBoolean()
+                )
+
 
                 if (metadataMap["title"].toString().trim() == "") {
                     metadataObj.get().setTitle(metadataObj.get().getFileName())
@@ -1037,6 +1041,12 @@ class TimelineController: BaseController() {
                     }
                     val keywordList = keywords.split(",").map { it.trim() }
                     processKeywords(keywordList, metadataId)
+                } else {
+                    val settings = model.getAttribute("settings") as Settings
+                    val keywordCount = keywordPhotoRepository.countByMetadataId(metadataId)
+                    if ((metadataMap["keywords"].toString().isBlank() || keywordCount == 0) && settings.getObjectDetection() == true) {
+                        FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), settings, null)
+                    }
                 }
 
                 val keywordIdsToDelete = keywordRepository.findAllOrphanedKeywordIds()
@@ -1390,10 +1400,17 @@ class TimelineController: BaseController() {
                             }
                         }
 
+                        var taggedPeople = recognitionLabelNames.toString()
+                        if (taggedPeople.isBlank()) {
+                            recognitionLabelPhotoRepository?.deleteByMetadataId(metadata.getId())
+
+                            val recognizedArray = FileUtils.recognizePerson(model.getAttribute("settings") as Settings, metadata)
+                            taggedPeople = recognizedArray.joinToString(",")
+                        }
                         processPeople(
                             model.getAttribute("settings") as Settings,
                             metadata,
-                            recognitionLabelNames.toString(),
+                            taggedPeople,
                             isObject
                         )
 
@@ -1432,6 +1449,11 @@ class TimelineController: BaseController() {
                         if (keywordList.isNotEmpty()) {
                             keywordPhotoRepository.deleteAllByMetadataId(metadata.getId())
                             processKeywords(keywordList, metadata.getId())
+                        } else {
+                            val keywordCount = keywordPhotoRepository.countByMetadataId(metadata.getId())
+                            if ((keywordList.size == 0 || keywordCount == 0) && settings.getObjectDetection() == true) {
+                                FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadata, settings, null)
+                            }
                         }
                     }
 
