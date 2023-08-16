@@ -8,6 +8,7 @@ import javax.transaction.Transactional
 @Transactional
 @Repository
 interface KeywordPhotoRepository : CrudRepository<KeywordPhoto?, Int?> {
+    fun countByMetadataId(metadataId: String): Int
     fun countByKeywordIdAndMetadataId(keywordId: Int, metadataId: String): Int
     fun countByKeywordId(keywordId: Int): Int
     fun deleteAllByMetadataId(metadataId: String): Long?

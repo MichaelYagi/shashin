@@ -428,6 +428,90 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             return uploadresponse
         }
 
+        fun recognizePerson(settings: Settings?, metadataObj: Metadata?): MutableList<String> {
+            var personList = mutableListOf<String>()
+            var response: String? = null
+
+            try {
+                var webClient: WebClient? = null
+                if (settings != null && checkCompreFaceConnection(
+                        settings.getCompreFaceServer(),
+                        settings.getCompreFaceKey()
+                    )
+                ) {
+                    webClient = WebClient.create(settings.getCompreFaceServer()!!)
+                    if (webClient != null) {
+                        var builder = MultipartBodyBuilder()
+                        builder.part(
+                            "file",
+                            FileSystemResource(metadataObj?.getThumbnailPathSmall()!!)
+                        )
+
+                        response = webClient.post()
+                            .uri("api/v1/recognition/recognize")
+                            .header(
+                                HttpHeaders.CONTENT_TYPE,
+                                MediaType.MULTIPART_FORM_DATA.toString()
+                            )
+                            .header("x-api-key", settings.getCompreFaceKey())
+                            .body(BodyInserters.fromMultipartData(builder.build()))
+                            .retrieve()
+                            .bodyToMono(String::class.java)
+                            .block()
+                    }
+
+                    logger.log(
+                        Level.INFO,
+                        "Recognizing face for " + metadataObj?.getPath() + ": " + response
+                    )
+                }
+
+
+            } catch (e: Exception) {
+                logger.log(
+                    Level.WARNING,
+                    "Error recognizing face for " + metadataObj?.getPath() + ": " + e.localizedMessage
+                )
+            }
+
+            if (response != null) {
+                val mapper = ObjectMapper()
+                val jsonObj = mapper.readTree(response)
+                val resultMap = mapper.convertValue(
+                    jsonObj,
+                    object :
+                        TypeReference<Map<String, ArrayList<Map<String, Any>>>>() {})
+                val resultList =
+                    resultMap["result"] as ArrayList<Map<String, Any>>
+                if (resultList.isNotEmpty() && resultList[0].containsKey("subjects")) {
+                    for (singleResult in resultList) {
+                        val subjects =
+                            singleResult["subjects"] as ArrayList<Map<String, Any>>
+
+                        for (subjectObj in subjects) {
+                            var subject = ""
+                            var similarity = 0.0
+
+                            if (subjectObj.isNotEmpty()) {
+                                subject = subjectObj["subject"].toString()
+                                similarity =
+                                    subjectObj["similarity"].toString()
+                                        .toDouble()
+                            }
+
+                            if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings?.getRecognitionConfidenceThreshold()
+                                    .toString().toDouble())
+                            ) {
+                                personList.add(subject)
+                            }
+                        }
+                    }
+                }
+            }
+
+            return personList
+        }
+
         fun buildPersonRecognition(settings: Settings, metadata: Metadata?): MutableMap<String, Any?> {
             val mapper = ObjectMapper()
             val recogresponse = mutableMapOf<String, Any?>()
