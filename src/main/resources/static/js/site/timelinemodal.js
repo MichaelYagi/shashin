@@ -55,7 +55,7 @@ $("#saveMetadata").on("click", async function (e) {
     $("#timelineModalStatus").attr("title", "");
     $("#timelineModalCancel").prop('disabled', true);
     const metadataId = $("#metadataId").val();
-    let timeTakenPrev = $("#timeTaken").val();
+    let prevTimeTaken = $("#timeTaken").val();
 
     timelineModal.closeTagPeopleDropdown(metadataId);
 
@@ -74,7 +74,7 @@ $("#saveMetadata").on("click", async function (e) {
             captionUpdated = true;
         }
 
-        timeTakenPrev = metadataObj.time;
+        prevTimeTaken = metadataObj.time;
         prevLat = metadataObj.lat;
         prevLng = metadataObj.lng;
     });
@@ -224,7 +224,7 @@ $("#saveMetadata").on("click", async function (e) {
                     });
                 }
 
-                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || metadataObj.time !== timeTakenPrev)) {
+                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || metadataObj.time !== prevTimeTaken)) {
                     Util.setMetadataLocalStorage();
                 }
 
