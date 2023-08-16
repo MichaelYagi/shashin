@@ -195,6 +195,10 @@ $("#saveMetadata").on("click", async function (e) {
                     $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
                     $("#mediaLink" + metadataId).attr("tag", metadataId);
 
+                    if ($("#keywords").val() === "" && data.hasOwnProperty("keywordsIdentified") && data["keywordsIdentified"] !== "") {
+                        $("#keywords").val(data["keywordsIdentified"]);
+                    }
+
                     $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
