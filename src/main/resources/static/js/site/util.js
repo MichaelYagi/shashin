@@ -664,12 +664,12 @@ class Util {
             $(".coordinatesLabel").show();
             $(".coordinatesDetails").text(metadata.lat + ", " + metadata.lng);
 
-            if (metadata.placeName != null) {
+            // if (metadata.placeName != null) {
                 $(".locationLabel").show();
-                const linkHtml = "<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'>" + metadata.placeName + "</a>" +
+                const linkHtml = "<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'><span class='bi-geo-alt-fill' style='font-size:1.0rem;'></span>" + ((metadata.placeName === null) ? '' : metadata.placeName) + "</a>" +
                 "&nbsp;<a href='https://www.google.com/maps/search/?api=1&query="+metadata.lat+"%2C"+metadata.lng+"' target='_blank' class='bi-google'></a>";
                 $(".locationDetails").html(linkHtml);
-            }
+            // }
         }
         if (metadata.path != null) {
             $(".pathLabel").show();
