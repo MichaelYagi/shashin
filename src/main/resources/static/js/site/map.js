@@ -642,7 +642,7 @@ async function showMap(mapdata) {
 
     // Query params marker
     if (qslat !== "" && qslng !== "") {
-        renderMarker('tempQpCoordinates',qslat,qslng,"orange");
+        renderMarker('tempQpCoordinates',qslat,qslng,"red");
     }
 
     map.on('click', function () {
