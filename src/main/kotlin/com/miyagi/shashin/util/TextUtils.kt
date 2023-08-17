@@ -9,14 +9,12 @@ import java.net.URL
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletResponse
-import kotlin.collections.HashMap
 
 
 @Component
@@ -178,8 +176,8 @@ class TextUtils {
                     if (addressObj.get("address").has("country") && addressObj.get("address").get("country") != null) {
                         buildPlace += addressObj.get("address").get("country").textValue()
                     }
-                    if (buildPlace.isNotBlank()) {
-                        buildPlace = buildPlace.trim()
+                    if (buildPlace.trim().isNotBlank()) {
+                        buildPlace = buildPlace.replace(", $".toRegex(), "").trim()
                     }
                 }
             }
