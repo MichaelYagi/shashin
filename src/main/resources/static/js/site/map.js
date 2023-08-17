@@ -642,7 +642,7 @@ async function showMap(mapdata) {
 
     // Query params marker
     if (qslat !== "" && qslng !== "") {
-        renderMarker('tempQpCoordinates',qslat,qslng,"darkblue");
+        renderMarker('tempQpCoordinates',qslat,qslng,"orange");
     }
 
     map.on('click', function () {
@@ -763,7 +763,8 @@ async function showMap(mapdata) {
                     features: [qslatlngfeature]
                 })
             });
-            qslatlngLayer.set('name', id)
+            qslatlngLayer.set('name', id);
+            qslatlngLayer.setZIndex(1000);
             map.addLayer(qslatlngLayer);
 
             qslatlngfeature.setStyle(qslatlngstyleIcon);
