@@ -610,7 +610,7 @@ async function showMap(mapdata) {
     });
     contextmenu.on('close', function (evt) {
         map.getLayers().forEach(layer => {
-            if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
                 map.removeLayer(layer);
             }
         });
@@ -620,46 +620,12 @@ async function showMap(mapdata) {
 
         if (coordArray.length > 1) {
             map.getLayers().forEach(layer => {
-                if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                if (layer && layer.getProperties().hasOwnProperty("name") && (layer.getProperties()["name"] === "tempCoordinates" || layer.getProperties()["name"] === "tempQpCoordinates")) {
                     map.removeLayer(layer);
                 }
             });
 
-            const feature = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.fromLonLat(coordArray)),
-                name: 'tempMarker'
-            });
-
-            const iconSize = 25;
-
-            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: grey;" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
-            const icon = 'data:image/svg+xml;utf8,' + svg;
-
-            const styleIcon = new ol.style.Style({
-                image: new ol.style.Icon({
-                    opacity: 1,
-                    src: icon,
-                    anchor: [0.5, iconSize],
-                    anchorXUnits: 'fraction',
-                    anchorYUnits: 'pixels',
-                    anchorOrigin: 'top-left',
-                    offset: [0, 0]
-                })
-            });
-
-            feature.setStyle(styleIcon);
-            feature.setId("tempCoordinates");
-
-            const layer = new ol.layer.Vector({
-                source: new ol.source.Vector({
-                    features: [feature]
-                })
-            });
-            layer.set('name', 'tempCoordinates')
-            map.addLayer(layer);
-
-            feature.setStyle(styleIcon);
-            layer.getSource().addFeature(feature);
+            renderMarker('tempCoordinates',coordArray[1],coordArray[0],"grey");
 
             const copyText = coordArray[1] + "," + coordArray[0];
             contextmenu.clear();
@@ -673,6 +639,19 @@ async function showMap(mapdata) {
         }
     });
     map.addControl(contextmenu);
+
+    // Query params marker
+    if (qslat !== "" && qslng !== "") {
+        renderMarker('tempQpCoordinates',qslat,qslng,"darkblue");
+    }
+
+    map.on('click', function () {
+        map.getLayers().forEach(layer => {
+            if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempQpCoordinates") {
+                map.removeLayer(layer);
+            }
+        });
+    });
 
     map.once("postrender", function() {
         dateInputs.css("visibility", "visible");
@@ -746,6 +725,49 @@ async function showMap(mapdata) {
             initialZoom = map.getView().getZoom();
             // Filter results
             setLayer(startDateField.val(),endDateField.val(),videoOnlyCheckbox.prop("checked"));
+        }
+    }
+
+    function renderMarker(id,lat,lng,color) {
+        if (color === undefined || color === null || color === "") {
+            color = "grey";
+        }
+        if (lat && lat !== "" && lng && lng !== "") {
+            const qslatlngfeature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.fromLonLat([lng, lat])),
+                name: 'tempMarker'
+            });
+
+            const iconSize = 25;
+
+            const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + iconSize + '" height="' + iconSize + '" fill="currentColor" class="bi bi-geo-alt-fill" style="color: ' + color + ';" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/></svg>';
+            const icon = 'data:image/svg+xml;utf8,' + svg;
+
+            const qslatlngstyleIcon = new ol.style.Style({
+                image: new ol.style.Icon({
+                    opacity: 1,
+                    src: icon,
+                    anchor: [0.5, iconSize],
+                    anchorXUnits: 'fraction',
+                    anchorYUnits: 'pixels',
+                    anchorOrigin: 'top-left',
+                    offset: [0, 0]
+                })
+            });
+
+            qslatlngfeature.setStyle(qslatlngstyleIcon);
+            qslatlngfeature.setId("tempCoordinates");
+
+            const qslatlngLayer = new ol.layer.Vector({
+                source: new ol.source.Vector({
+                    features: [qslatlngfeature]
+                })
+            });
+            qslatlngLayer.set('name', id)
+            map.addLayer(qslatlngLayer);
+
+            qslatlngfeature.setStyle(qslatlngstyleIcon);
+            qslatlngLayer.getSource().addFeature(qslatlngfeature);
         }
     }
 
