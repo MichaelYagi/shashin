@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="timelinebatchmodal(recognitionLabels,allAlbumList)">
+<body th:fragment="metadatabatchmodal(recognitionLabels,allAlbumList)">
 <div class="modal fade" id="propBatchMetadata" tabindex="-1" role="dialog" aria-labelledby="labelBatchMetadata" aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
         <div class="modal-content">
@@ -68,7 +68,7 @@
                                 <div class="input-group" id="albumListForModal">
                                     <input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">
 
-                                    <th:block th:if="${#lists.size(allAlbumList)} > 0">
+                                    <th:block th:if="${allAlbumList != null && #lists.size(allAlbumList) > 0}">
                                         <div class="input-group-append dropdown">
                                             <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>
                                             <div class="dropdown-menu" id="albumNameList">
@@ -104,7 +104,7 @@
                                     });
                                 </script>
 
-                                <th:block th:if="${#lists.size(recognitionLabels)} > 0">
+                                <th:block th:if="${recognitionLabels != null && #lists.size(recognitionLabels) > 0}">
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>
                                         <div class="dropdown-menu" id="peopleNameList">
@@ -163,10 +163,10 @@
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/timelinebatchmodal.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/metadatabatchmodal.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/min/timelinebatchmodal.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/min/metadatabatchmodal.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 </body>
 </html>

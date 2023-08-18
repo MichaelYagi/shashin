@@ -60,6 +60,9 @@ class PeopleController {
     private var metadataRepository: MetadataRepository? = null
 
     @Autowired
+    private var albumRepository: AlbumRepository? = null
+
+    @Autowired
     private var recognitionLabelRepository: RecognitionLabelRepository? = null
 
     @Autowired
@@ -419,6 +422,7 @@ class PeopleController {
         model["message"] = "There are no photos."
         model["lowMatchResults"] = mutableListOf<Metadata>()
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        model["allAlbumList"] = mutableListOf<Album>()
         model["labelPhotoMap"] = mutableMapOf<String, Any>()
         model["keywordMap"] = mutableMapOf<String, String>()
         val counts = HashMap<String,Int>()
@@ -436,6 +440,11 @@ class PeopleController {
         val recognitionLabel = recognitionLabelRepository?.findById(personId)
         if (recognitionLabel != null && recognitionLabel.isPresent) {
             model["personInfo"] = recognitionLabel.get()
+        }
+
+        val albumList = albumRepository?.findAllOrderByAlbumName()
+        if (albumList != null && albumList.count() > 0) {
+            model["allAlbumList"] = albumList
         }
 
         val settings = model.getAttribute("settings") as Settings
@@ -903,6 +912,7 @@ class PeopleController {
         response["labelPhotoMap"] = mutableMapOf<String, Any>()
         response["personInfo"] = RecognitionLabel()
         response["recognitionLabels"] = mutableListOf<RecognitionLabel>()
+        response["allAlbumList"] = mutableListOf<Album>()
         response["parameter"] = personId
         response["keywordMap"] = mutableMapOf<String, Any>()
         val counts = HashMap<String,Int>()
@@ -944,6 +954,11 @@ class PeopleController {
                     response["recognitionLabels"] = recognitionLabels
                 }
                 metadataList = metadataRepository?.findMetadataByPerson(settings.getRecognitionConfidenceThreshold()!!,personId,pageValue,size)
+            }
+
+            val albumList = albumRepository?.findAllOrderByAlbumName()
+            if (albumList != null && albumList.count() > 0) {
+                response["allAlbumList"] = albumList
             }
 
             if (metadataList != null && metadataList.count() > 0) {

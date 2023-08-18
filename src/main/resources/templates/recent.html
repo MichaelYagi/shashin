@@ -11,7 +11,7 @@
         <main role="main" class="col overflow-auto h-100">
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},'',${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
 
-            <div th:replace="fragments/timelinemodal :: timelinemodal(${currentUser})"></div>
+            <div th:replace="fragments/metadatamodal :: metadatamodal(${currentUser})"></div>
 
             <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
 
@@ -70,7 +70,7 @@
                 </th:block>
             </div>
 
-            <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels},${allAlbumList})"></div>
+            <div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"></div>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                 /*<![CDATA[*/
                 const albumList = /*[[${albumList}]]*/[];
