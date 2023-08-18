@@ -12,18 +12,21 @@ class Snapshot {
 
         if (fileChooser.val() === "") {
             $("#import").addClass('disabled');
+            $("#importDatabase").prop('disabled', true);
         }
 
         fileChooser.on("change", function(){
             if (fileChooser.val() === "") {
                 $("#import").addClass('disabled');
+                $("#importDatabase").prop('disabled', true);
             } else {
                 $("#import").removeClass('disabled');
+                $("#importDatabase").prop('disabled', false);
             }
         });
 
         $("#import").on("click", function() {
-            $("#msg").text("Importing metadata.");
+            $("#msg").text("Importing data.");
         });
 
         const tokenName = this.tokenName;
@@ -34,7 +37,7 @@ class Snapshot {
         $("#export").on("click", function() {
             let attempts = this.configuredAttempts;
 
-            $("#msg").text("Exporting metadata.");
+            $("#msg").text("Exporting data.");
             setTimeout(function () { $("#export").prop("disabled", true); }, 0);
 
             Util.setCookie(tokenName, "", "/settings/snapshot");
