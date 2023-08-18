@@ -55,16 +55,18 @@ $("#saveMetadata").on("click", async function (e) {
     $("#timelineModalStatus").attr("title", "");
     $("#timelineModalCancel").prop('disabled', true);
     const metadataId = $("#metadataId").val();
-    let prevTimeTaken = $("#timeTaken").val();
     let prevPeople = $("#tagpeople").val();
+    let prevAlbums = $("#albumList").val();
 
     timelineModal.closeTagPeopleDropdown(metadataId);
 
     let prevPeopleArray = [];
+    let prevAlbumsArray = [];
     let takenDateUpdated = false;
     let captionUpdated = false;
     let prevLat = "";
     let prevLng = "";
+
     shashin.getMetadata(metadataId).then(function (metadataObj) {
         if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
             parseInt(metadataObj.month) !== parseInt($("#monthTaken").val()) ||
@@ -77,6 +79,10 @@ $("#saveMetadata").on("click", async function (e) {
         }
 
         prevPeopleArray = prevPeople.split(",").map(function(item) {
+            return item.trim();
+        });
+
+        prevAlbumsArray = prevAlbums.split(",").map(function(item) {
             return item.trim();
         });
 
@@ -94,6 +100,7 @@ $("#saveMetadata").on("click", async function (e) {
         "timelineModalMsg"
     ) === true) {
         const people = $("#tagpeople").val();
+        const albums = $("#albumnames").val();
 
         const json = {
             id: metadataId,
@@ -116,6 +123,10 @@ $("#saveMetadata").on("click", async function (e) {
 
         let compreFaceImageId = "";
         const peopleArray = people.split(",").map(function(item) {
+            return item.trim();
+        });
+
+        const albumsArray = albums.split(",").map(function(item) {
             return item.trim();
         });
 
@@ -264,7 +275,9 @@ $("#saveMetadata").on("click", async function (e) {
                         Util.setMetadataLocalStorage();
                     }
                     // Reload page
-                    if (takenDateUpdated === true || metadataObj.hidden === true) {
+                    if (takenDateUpdated === true || metadataObj.hidden === true ||
+                        (window.location.pathname.includes("album") === true && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
+                    ) {
                         window.location.reload();
                     }
                 }

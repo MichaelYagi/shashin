@@ -264,11 +264,12 @@
                     $("#hidden")[0].checked = false;
                 }
 
+                $("#metadataId").val(metadata.id);
+                $("#albumList").val("");
                 $("#timelineModalTitle").text(metadata.title);
                 $("#currentfilename").val(metadata.fileName)
                 $("#currentlat").val(metadata.lat)
                 $("#currentlng").val(metadata.lng)
-                $("#metadataId").val(metadata.id);
                 $("#keywordsString").val(keywordsAvailable);
                 $("#camerasString").val(camerasList);
                 $("#lensesString").val(lensList);
@@ -394,8 +395,10 @@
 
                 if (albumListString !== "") {
                     $("#albumnames").val(albumListString);
+                    $("#albumList").val(albumListString);
                 } else if (metadata.albumlist !== null) {
                     $("#albumnames").val(metadata.albumlist);
+                    $("#albumList").val(metadata.albumlist);
                 }
 
                 if ($("#albumListInput").length > 0) {
