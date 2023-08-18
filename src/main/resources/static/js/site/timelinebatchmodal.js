@@ -53,6 +53,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
     timelineBatchModal.closeBatchTagPeopleDropdown();
     timelineBatchModal.closeBatchTagAlbumDropdown();
     const activePage = $("#activePage").val();
+    const markedHidden = $("#batchhidden").prop("checked");
 
     const metadataIds = JSON.parse($("#batchMetadataIds").val());
 
@@ -142,7 +143,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                             }
                         }
 
-                        metadataObj.hidden = $("#batchhidden").prop("checked")
+                        metadataObj.hidden = markedHidden;
 
                         if (metadataObj.hidden === false) {
                             $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
@@ -184,6 +185,22 @@ $("#saveBatchMetadata").on("click", async function (e) {
 
                 $("#timelineBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
                 $("#timelineBatchModalCancel").prop("disabled", false);
+
+                if (activePage !== "timeline") {
+                    if (markedHidden === true ||
+                        (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" &&
+                            ($("#yearTakenBatchData").val() !== "" ||
+                            $("#monthTakenBatchData").val() !== "" ||
+                            $("#dayTakenBatchData").val() !== "")
+                        )
+                    ) {
+                        window.location.reload();
+                    }
+
+                    if (activePage === "album" && $("#albumNameInput").val() !== "") {
+                        window.location.reload();
+                    }
+                }
             } else {
                 $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
