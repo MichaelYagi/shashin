@@ -219,28 +219,20 @@ $("#saveMetadata").on("click", async function (e) {
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
                         dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                     }
-                } else if (($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folders") || $("#activePage").length === 0) {
-                    dateGalleryRemoved = shashin.removeThumbnail(metadataId);
-                }
-
-                if (metadataObj.hidden === true) {
+                } else if (window.location.pathname.includes("map") === true && metadataObj.hidden === true) {
                     $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
-                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         // Reload in map view if removed
-                        if (window.location.pathname.includes("map") === true) {
-                            window.location.replace("/map");
-                        }
+                        window.location.replace("/map");
                     }
 
                     $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
-                        $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         // Reload in map view if removed
-                        if (window.location.pathname.includes("map") === true) {
-                            window.location.replace("/map");
-                        }
+                        window.location.replace("/map");
                     }
+                } else if (($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folders") || $("#activePage").length === 0) {
+                    dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                 }
 
                 if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
@@ -255,6 +247,7 @@ $("#saveMetadata").on("click", async function (e) {
                     });
                 }
 
+                // If in timeline and date change or hidden, refresh version
                 if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
                     Util.setMetadataLocalStorage();
                 }
@@ -264,17 +257,20 @@ $("#saveMetadata").on("click", async function (e) {
                     timelineSettings.reinitLightGalleryInstance();
                 }
 
-                $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                $("#timelineModalCancel").prop('disabled', false);
-
+                // If not timeline or map
                 if (window.location.pathname.includes("timeline") === false && window.location.pathname.includes("map") === false) {
+                    // refresh version
                     if (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng) {
                         Util.setMetadataLocalStorage();
                     }
+                    // Reload page
                     if (takenDateUpdated === true || metadataObj.hidden === true) {
                         window.location.reload();
                     }
                 }
+
+                $("#timelineModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                $("#timelineModalCancel").prop('disabled', false);
             } else {
                 $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
                 $("#timelineModalStatus").attr("title", shashin.modalStatusFailMessage());
