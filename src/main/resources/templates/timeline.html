@@ -75,7 +75,7 @@
             <input type="hidden" id="mediaTypeFilter" name="mediaTypeFilter" th:value="${mediaTypeFilter}">
             <input type="hidden" id="initialLgData" name="initialLgData" value="[]">
 
-            <div th:replace="fragments/timelinemodal :: timelinemodal(${currentUser})"></div>
+            <div th:replace="fragments/metadatamodal :: metadatamodal(${currentUser})"></div>
 
             <div th:replace="fragments/infosidebar :: infosidebar(${currentUser})"></div>
 
@@ -139,7 +139,7 @@
 
                             <div th:id="'tncentered'+${metadata.id}"></div>
 
-                            <span th:id="'timelinemodal'+${metadata.id}"></span>
+                            <span th:id="'metadatamodal'+${metadata.id}"></span>
                         </div>
 
                     </th:block>
@@ -164,7 +164,7 @@
                 $("#timelineMain").css("visibility","visible");
             </script>
 
-            <div th:replace="fragments/timelinebatchmodal :: timelinebatchmodal(${recognitionLabels},${allAlbumList})"></div>
+            <div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"></div>
 
             <!-- <div id="msgTimeline"></div> -->
             <div id="spinner_bottom" class="spinner-border justify-content-center align-items-center mt-2" role="status" style="display: none"></div>

@@ -80,7 +80,7 @@ class TimelineTemplates {
             <div id="tntr${metadata.id}"></div>
             <div id="tncentered${metadata.id}"></div>
     
-            <span id="timelinemodal${metadata.id}"></span>
+            <span id="metadatamodal${metadata.id}"></span>
         </div>
     `};
 

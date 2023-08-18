@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<body th:fragment="timelinemodal(${currentUser})">
+<body th:fragment="metadatamodal(${currentUser})">
 
 <!--Modal for each photo-->
 <div class="modal fade" id="propTimelineModal" tabindex="-1" role="dialog" aria-labelledby="labelTimelineModal" aria-hidden="true">
@@ -173,10 +173,10 @@
 </div>
 
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
-    <script src="/js/site/timelinemodal.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/metadatamodal.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
-    <script src="/js/site/min/timelinemodal.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
+    <script src="/js/site/min/metadatamodal.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 </body>
 </html>
