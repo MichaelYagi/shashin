@@ -80,7 +80,6 @@ $("#saveMetadata").on("click", async function (e) {
             return item.trim();
         });
 
-        prevTimeTaken = metadataObj.time;
         prevLat = metadataObj.lat;
         prevLng = metadataObj.lng;
     });
@@ -203,8 +202,8 @@ $("#saveMetadata").on("click", async function (e) {
                     if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         // Reload in map view if latlng changed
-                        if (window.location.pathname.includes("map") === true && prevLat !== metadataObj.lat && prevLng !== metadataObj.lng) {
-                            window.location.replace("/map?latlng="+$("#latlng").val());
+                        if (window.location.pathname.includes("map") === true && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
+                            window.location.replace("/map?latlng=" + $("#latlng").val());
                         }
                     }
 
@@ -212,8 +211,8 @@ $("#saveMetadata").on("click", async function (e) {
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         // Reload in map view if latlng changed
-                        if (window.location.pathname.includes("map") === true && prevLat !== metadataObj.lat && prevLng !== metadataObj.lng) {
-                            window.location.replace("/map?latlng="+$("#latlng").val());
+                        if (window.location.pathname.includes("map") === true && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
+                            window.location.replace("/map?latlng=" + $("#latlng").val());
                         }
                     }
 
@@ -222,6 +221,26 @@ $("#saveMetadata").on("click", async function (e) {
                     }
                 } else if (($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folders") || $("#activePage").length === 0) {
                     dateGalleryRemoved = shashin.removeThumbnail(metadataId);
+                }
+
+                if (metadataObj.hidden === true) {
+                    $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
+                    if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
+                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
+                        // Reload in map view if removed
+                        if (window.location.pathname.includes("map") === true) {
+                            window.location.replace("/map");
+                        }
+                    }
+
+                    $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
+                    if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
+                        $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
+                        // Reload in map view if removed
+                        if (window.location.pathname.includes("map") === true) {
+                            window.location.replace("/map");
+                        }
+                    }
                 }
 
                 if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
@@ -236,7 +255,7 @@ $("#saveMetadata").on("click", async function (e) {
                     });
                 }
 
-                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || metadataObj.time !== prevTimeTaken)) {
+                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
                     Util.setMetadataLocalStorage();
                 }
 
@@ -249,7 +268,12 @@ $("#saveMetadata").on("click", async function (e) {
                 $("#timelineModalCancel").prop('disabled', false);
 
                 if (window.location.pathname.includes("timeline") === false && window.location.pathname.includes("map") === false) {
-                    location.reload();
+                    if (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng) {
+                        Util.setMetadataLocalStorage();
+                    }
+                    if (takenDateUpdated === true || metadataObj.hidden === true) {
+                        window.location.reload();
+                    }
                 }
             } else {
                 $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
