@@ -57,6 +57,7 @@ $("#saveMetadata").on("click", async function (e) {
     const metadataId = $("#metadataId").val();
     let prevPeople = $("#peopleList").val();
     let prevAlbums = $("#albumList").val();
+    const activePage = $("#activePage").val();
 
     timelineModal.closeTagPeopleDropdown(metadataId);
 
@@ -213,7 +214,7 @@ $("#saveMetadata").on("click", async function (e) {
                     if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
                         $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         // Reload in map view if latlng changed
-                        if (window.location.pathname.includes("map") === true && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
+                        if (activePage === "map" && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
                             window.location.replace("/map?latlng=" + $("#latlng").val());
                         }
                     }
@@ -222,15 +223,15 @@ $("#saveMetadata").on("click", async function (e) {
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         // Reload in map view if latlng changed
-                        if (window.location.pathname.includes("map") === true && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
+                        if (activePage === "map" && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
                             window.location.replace("/map?latlng=" + $("#latlng").val());
                         }
                     }
 
-                    if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
+                    if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
                         dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                     }
-                } else if (window.location.pathname.includes("map") === true && metadataObj.hidden === true) {
+                } else if (activePage === "map" && metadataObj.hidden === true) {
                     $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
                         // Reload in map view if removed
@@ -269,14 +270,16 @@ $("#saveMetadata").on("click", async function (e) {
                 }
 
                 // If not timeline or map
-                if (window.location.pathname.includes("timeline") === false && window.location.pathname.includes("map") === false) {
+                if (activePage !== "timeline" && activePage !== "map") {
                     // refresh version
                     if (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng) {
                         Util.setMetadataLocalStorage();
                     }
                     // Reload page
-                    if (takenDateUpdated === true || metadataObj.hidden === true ||
-                        (window.location.pathname.includes("album") === true && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
+                    if (
+                        (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && takenDateUpdated === true) ||
+                        metadataObj.hidden === true ||
+                        (activePage === "album" && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
                     ) {
                         window.location.reload();
                     }
