@@ -3,8 +3,7 @@ package com.miyagi.shashin.util
 import com.miyagi.shashin.repository.PersistentLoginsExpiryRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
 import org.springframework.core.io.FileSystemResource
-import java.io.File
-import java.io.IOException
+import java.io.*
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -42,8 +41,8 @@ object DatabaseUtil {
     }
 
     @Throws(IOException::class, InterruptedException::class)
-    fun backup(fullDbName: String?): String {
-        var backupName = ""
+    fun backup(fullDbName: String?): File? {
+        var backupDbFile: File? = null
         val fullDbNameArray = fullDbName?.split(":")
         if (!fullDbNameArray.isNullOrEmpty() && fullDbNameArray.size > 2) {
             val dbNameArray = fullDbNameArray[2].split("?")
@@ -66,15 +65,61 @@ object DatabaseUtil {
 
                 val dtf = DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")
                 val now = LocalDateTime.now()
-                val backupDbFile = File(rootPath + "/" + dbName + "." + dtf.format(now) + ".bak")
+                backupDbFile = File(rootPath + "/" + dbName + "." + dtf.format(now) + ".bak")
                 val dbFile = File("$rootPath/$dbName")
                 if (dbFile.exists()) {
                     dbFile.copyTo(backupDbFile)
-                    backupName = dbName + "." + dtf.format(now) + ".bak"
                 }
             }
         }
 
-        return backupName
+        return backupDbFile
+    }
+
+    fun import(fullDbName: String?, inputStream: InputStream?): Boolean {
+        var success = false
+        var backupDbFile: File? = null
+        val fullDbNameArray = fullDbName?.split(":")
+        if (!fullDbNameArray.isNullOrEmpty() && fullDbNameArray.size > 2) {
+            val dbNameArray = fullDbNameArray[2].split("?")
+            if (dbNameArray.isNotEmpty()) {
+                val dbName = dbNameArray[0]
+                val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+
+                val dir = File(rootPath)
+
+                val names = dir.list { _, name ->
+                    name == dbName
+                }
+
+                for (name in names) {
+                    val fileToDelete = File("$rootPath/$name")
+                    if (fileToDelete.exists()) {
+                        fileToDelete.delete()
+                    }
+                }
+
+                backupDbFile = File("$rootPath/$dbName")
+                if (inputStream != null) {
+                    copyInputStreamToFile(inputStream, backupDbFile)
+                    success = true
+                }
+            }
+        }
+
+        return success
+    }
+
+    @Throws(IOException::class)
+    fun copyInputStreamToFile(inputStream: InputStream, file: File?) {
+
+        // append = false
+        FileOutputStream(file, false).use { outputStream ->
+            var read: Int
+            val bytes = ByteArray(DEFAULT_BUFFER_SIZE)
+            while (inputStream.read(bytes).also { read = it } != -1) {
+                outputStream.write(bytes, 0, read)
+            }
+        }
     }
 }

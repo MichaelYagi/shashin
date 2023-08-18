@@ -14,14 +14,19 @@
             <div class="row">
                 <div class="col-md-auto">
                     <form method="post" action="/settings/snapshot/export">
-                        <button class="btn btn-primary" type="submit" id="export" name="snapshot" value="export">Export metadata</button>
+                        <button class="btn btn-primary" type="submit" id="export" name="snapshot" value="export">Export data</button>
                     </form>
                 </div>
                 <div class="col-lg-10">
                     <form method="post" enctype="multipart/form-data" action="/settings/snapshot" class="col-lg-4">
                         <div class="input-group">
                             <input type="file" class="form-control" id="snapshotFile" name="snapshotFile" aria-describedby="snapshotFile" aria-label="Upload">
-                            <button class="btn btn-secondary" id="import" type="submit" name="snapshot" value="import">Import metadata</button>
+                            <button class="btn btn-secondary" id="import" type="submit" name="snapshot" value="import">Import data</button>
+                        </div>
+
+                        <div class="input-group">
+                            <input class="form-check-input" type="checkbox" name="importDatabase" id="importDatabase">&nbsp;
+                            <label class="form-check-label" for="importDatabase">Import database only</label>
                         </div>
                     </form>
                 </div>

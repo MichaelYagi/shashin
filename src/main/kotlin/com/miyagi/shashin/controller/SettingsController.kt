@@ -66,6 +66,8 @@ import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlinx.coroutines.*
 import java.awt.image.BufferedImage
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import javax.imageio.ImageIO
 
 @Suppress("UNCHECKED_CAST")
@@ -987,12 +989,18 @@ class SettingsController {
             }
 
             // Backup the database
-            val dbBackupName = DatabaseUtil.backup(dataSourceUrl)
-            if (dbBackupName == "") {
+            val dbBackupFile = DatabaseUtil.backup(dataSourceUrl)
+            var dbBackupName = ""
+            if (dbBackupFile == null) {
                 logger.log(
                     Level.WARNING,
                     "Could not backup database"
                 )
+            } else {
+                dbBackupName = dbBackupFile.name
+                val tempDatabaseExportDir = Files.createDirectories(Paths.get(tempExportBaseDir.pathString+"/database"))
+                val tempFile = File(tempDatabaseExportDir.toAbsolutePath().toString() + "/" + dbBackupName)
+                dbBackupFile.copyTo(tempFile)
             }
 
             if (tempExportBaseDir.isDirectory() && tempExportBaseDir.toList().isNotEmpty()) {
@@ -1076,12 +1084,17 @@ class SettingsController {
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @PostMapping("/settings/snapshot")
     @Transactional
-    fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam snapshotFile: MultipartFile): String {
+    fun postImportSnapshot(model: Model, @RequestParam snapshot: String, @RequestParam importDatabase: Optional<String>, @RequestParam snapshotFile: MultipartFile): String {
         val module = "snapshot"
 
         model["message"] = "Invalid file"
         val user = model.getAttribute("currentUser") as User?
         val userId = user?.getId()
+
+        var importDatabaseOnly = false
+        if (importDatabase.isPresent && importDatabase.get() == "on") {
+            importDatabaseOnly = true
+        }
 
         if (snapshot == "import" && !snapshotFile.isEmpty && userId != null && userId > 0) {
 
@@ -1103,172 +1116,198 @@ class SettingsController {
             while (entries.hasMoreElements()) {
                 val entry = entries.nextElement()
                 val stream: InputStream = zipFile.getInputStream(entry)
-                val inputAsString = stream.bufferedReader().use { it.readText() }
-                val tempEntry = entry.name.replace("\\", "/")
+                val tempEntryName = entry.name.replace("\\", "/")
 
-                logger.log(
-                    Level.INFO,
-                    "Importing Entry: " + entry.name + "."
-                )
-
-                if (tempEntry.startsWith("metadata/") || entry.name.startsWith("metadata\\")) {
-                    val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
-                    if (importedMetadata != null) {
-                        val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId())
-
-                        if (foundMetadataRecord != null && foundMetadataRecord.isPresent && !foundMetadataRecord.isEmpty) {
-                            val foundMetadata = foundMetadataRecord.get()
-                            var message = "not imported"
-                            val saved = saveImportedMetadata(importedMetadata, foundMetadata)
-                            if (saved) {
-                                message = "imported"
-                            }
-
+                if (importDatabaseOnly) {
+                    if (tempEntryName.startsWith("database/") || entry.name.startsWith("database\\")) {
+                        DatabaseUtil.backup(dataSourceUrl)
+                        if (DatabaseUtil.import(dataSourceUrl, stream)) {
                             logger.log(
                                 Level.INFO,
-                                "Metadata: " + importedMetadata.getId() + " pointing to " + importedMetadata.getPath() + " " + message + "."
-                            )
-                        }
-                    }
-                }
-
-                if (tempEntry.startsWith("albumphoto/") || entry.name.startsWith("albumphoto\\")) {
-                    val importedAlbumPhoto = mapper.readValue(inputAsString, AlbumPhoto::class.java)
-                    albumPhotoList.add(importedAlbumPhoto)
-                }
-
-                if (tempEntry.startsWith("album/") || entry.name.startsWith("album\\")) {
-                    val importedAlbum = mapper.readValue(inputAsString, Album::class.java)
-                    albumList.add(importedAlbum)
-                }
-
-                if (tempEntry.startsWith("favorite/") || entry.name.startsWith("favorite\\")) {
-                    val importedFavorite = mapper.readValue(inputAsString, Favorite::class.java)
-                    if (importedFavorite != null && importedFavorite.getUserId() == userId) {
-                        val importedFavoriteRecord = favoriteRepository?.findByMetadataIdAndUserId(importedFavorite.getMetadataId(), userId)
-
-                        if (importedFavoriteRecord == null) {
-                            val favoriteObj = Favorite()
-                            favoriteObj.setUserId(importedFavorite.getUserId())
-                            favoriteObj.setMetadataId(importedFavorite.getMetadataId())
-                            favoriteObj.setCreatedAt(getCurrentTimestamp())
-                            favoriteObj.setModifiedAt(getCurrentTimestamp())
-                            favoriteList.add(favoriteObj)
-
-                            logger.log(
-                                Level.INFO,
-                                "Favorite: " + importedFavorite.getMetadataId() + " imported."
+                                "Database : $dataSourceUrl imported."
                             )
                         } else {
                             logger.log(
                                 Level.INFO,
-                                "Favorite: " + importedFavorite.getMetadataId() + " not imported."
+                                "Database : $dataSourceUrl not imported."
                             )
                         }
+
+                        break
                     }
-                }
-            }
+                } else {
+                    logger.log(
+                        Level.INFO,
+                        "Importing Entry: " + entry.name + "."
+                    )
 
-            saveImportedFavorites(favoriteList)
+                    if (tempEntryName.startsWith("metadata/") || entry.name.startsWith("metadata\\")) {
+                        val inputAsString = stream.bufferedReader().use { it.readText() }
+                        val importedMetadata = mapper.readValue(inputAsString, Metadata::class.java)
+                        if (importedMetadata != null) {
+                            val foundMetadataRecord = metadataRepository?.findById(importedMetadata.getId())
 
-            val albumPhotoListInsert = mutableListOf<AlbumPhoto>()
-
-            if (albumList.isNotEmpty() && albumPhotoList.isNotEmpty()) {
-                for (albumPhoto in albumPhotoList) {
-                    for (importedAlbum in albumList) {
-                        if (albumPhoto.getAlbumId() == importedAlbum.getId()) {
-                            var hasAlbumCover = true
-                            val foundAlbumRecord = albumRepository?.findAlbumByNameIgnoreCase(importedAlbum.getName()!!)
-                            var albumId: Int?
-
-                            if (foundAlbumRecord == null) {
-                                // Insert record
-                                val albumObj = Album()
-                                albumObj.setName(importedAlbum.getName())
-                                albumObj.setCoverUrl(importedAlbum.getCoverUrl())
-                                albumObj.setCreatedAt(getCurrentTimestamp())
-                                albumObj.setModifiedAt(getCurrentTimestamp())
-                                albumRepository?.save(albumObj)
-                                albumId = albumObj.getId()
-                                hasAlbumCover = false
+                            if (foundMetadataRecord != null && foundMetadataRecord.isPresent && !foundMetadataRecord.isEmpty) {
+                                val foundMetadata = foundMetadataRecord.get()
+                                var message = "not imported"
+                                val saved = saveImportedMetadata(importedMetadata, foundMetadata)
+                                if (saved) {
+                                    message = "imported"
+                                }
 
                                 logger.log(
                                     Level.INFO,
-                                    "Album: " + importedAlbum.getName()!! + " created."
+                                    "Metadata: " + importedMetadata.getId() + " pointing to " + importedMetadata.getPath() + " " + message + "."
+                                )
+                            }
+                        }
+                    }
+
+                    if (tempEntryName.startsWith("albumphoto/") || entry.name.startsWith("albumphoto\\")) {
+                        val inputAsString = stream.bufferedReader().use { it.readText() }
+                        val importedAlbumPhoto = mapper.readValue(inputAsString, AlbumPhoto::class.java)
+                        albumPhotoList.add(importedAlbumPhoto)
+                    }
+
+                    if (tempEntryName.startsWith("album/") || entry.name.startsWith("album\\")) {
+                        val inputAsString = stream.bufferedReader().use { it.readText() }
+                        val importedAlbum = mapper.readValue(inputAsString, Album::class.java)
+                        albumList.add(importedAlbum)
+                    }
+
+                    if (tempEntryName.startsWith("favorite/") || entry.name.startsWith("favorite\\")) {
+                        val inputAsString = stream.bufferedReader().use { it.readText() }
+                        val importedFavorite = mapper.readValue(inputAsString, Favorite::class.java)
+                        if (importedFavorite != null && importedFavorite.getUserId() == userId) {
+                            val importedFavoriteRecord =
+                                favoriteRepository?.findByMetadataIdAndUserId(importedFavorite.getMetadataId(), userId)
+
+                            if (importedFavoriteRecord == null) {
+                                val favoriteObj = Favorite()
+                                favoriteObj.setUserId(importedFavorite.getUserId())
+                                favoriteObj.setMetadataId(importedFavorite.getMetadataId())
+                                favoriteObj.setCreatedAt(getCurrentTimestamp())
+                                favoriteObj.setModifiedAt(getCurrentTimestamp())
+                                favoriteList.add(favoriteObj)
+
+                                logger.log(
+                                    Level.INFO,
+                                    "Favorite: " + importedFavorite.getMetadataId() + " imported."
                                 )
                             } else {
-                                albumId = foundAlbumRecord.getId()
-
                                 logger.log(
                                     Level.INFO,
-                                    "Album: " + importedAlbum.getName()!! + " already exists."
+                                    "Favorite: " + importedFavorite.getMetadataId() + " not imported."
                                 )
-                            }
-
-                            val userAlbumCount = userAlbumRepository?.countByUserIdAndAlbumId(userId, albumId)
-                            if (userAlbumCount == 0) {
-                                val userAlbumObj = UserAlbum()
-                                userAlbumObj.setAlbumId(albumId)
-                                userAlbumObj.setUserId(userId)
-                                userAlbumObj.setModifiedAt(getCurrentTimestamp())
-                                userAlbumObj.setCreatedAt(getCurrentTimestamp())
-                                userAlbumRepository?.save(userAlbumObj)
-                            }
-
-                            val metadataObj = metadataRepository?.findById(albumPhoto.getMetadataId()!!)
-                            if (metadataObj != null && metadataObj.isPresent) {
-                                albumPhotoRepository?.deleteByMetadataId(metadataObj.get().getId())
-                                hasAlbumCover = false
-                            }
-
-                            if (!hasAlbumCover) {
-                                val albumObj = albumRepository?.findById(albumId)
-                                if (albumObj != null && metadataObj != null && metadataObj.isPresent && !metadataObj.get()
-                                        .getHidden()!!
-                                ) {
-                                    albumObj.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
-                                    albumRepository?.save(albumObj.get())
-                                }
-                            }
-
-                            if (metadataObj != null && metadataObj.isPresent && !metadataObj.get()
-                                    .getHidden()!!
-                            ) {
-                                val albumPhotoCount = albumPhotoRepository?.countByMetadataIdAndAlbumId(
-                                    albumPhoto.getMetadataId()!!,
-                                    albumId
-                                )
-                                if (albumPhotoCount == 0) {
-                                    val albumPhotoObj = AlbumPhoto()
-                                    albumPhotoObj.setAlbumId(albumId)
-                                    albumPhotoObj.setMetadataId(albumPhoto.getMetadataId())
-                                    albumPhotoObj.setCreatedAt(getCurrentTimestamp())
-                                    albumPhotoObj.setModifiedAt(getCurrentTimestamp())
-//                                    albumPhotoRepository?.save(albumPhotoObj)
-                                    albumPhotoListInsert.add(albumPhotoObj)
-                                }
                             }
                         }
                     }
                 }
             }
 
-            if (albumPhotoListInsert.size > 0) {
-                albumPhotoRepository?.saveAll(albumPhotoListInsert)
-            }
+            if (!importDatabaseOnly) {
+                saveImportedFavorites(favoriteList)
 
-            val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
-            if (albumPhotoCounts != null) {
-                for (albumPhotoCount in albumPhotoCounts) {
-                    if (albumPhotoCount != null && albumPhotoCount.getPhotoCount() == 0) {
-                        // Delete the album
-                        albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
-                        userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
+                val albumPhotoListInsert = mutableListOf<AlbumPhoto>()
+
+                if (albumList.isNotEmpty() && albumPhotoList.isNotEmpty()) {
+                    for (albumPhoto in albumPhotoList) {
+                        for (importedAlbum in albumList) {
+                            if (albumPhoto.getAlbumId() == importedAlbum.getId()) {
+                                var hasAlbumCover = true
+                                val foundAlbumRecord =
+                                    albumRepository?.findAlbumByNameIgnoreCase(importedAlbum.getName()!!)
+                                var albumId: Int?
+
+                                if (foundAlbumRecord == null) {
+                                    // Insert record
+                                    val albumObj = Album()
+                                    albumObj.setName(importedAlbum.getName())
+                                    albumObj.setCoverUrl(importedAlbum.getCoverUrl())
+                                    albumObj.setCreatedAt(getCurrentTimestamp())
+                                    albumObj.setModifiedAt(getCurrentTimestamp())
+                                    albumRepository?.save(albumObj)
+                                    albumId = albumObj.getId()
+                                    hasAlbumCover = false
+
+                                    logger.log(
+                                        Level.INFO,
+                                        "Album: " + importedAlbum.getName()!! + " created."
+                                    )
+                                } else {
+                                    albumId = foundAlbumRecord.getId()
+
+                                    logger.log(
+                                        Level.INFO,
+                                        "Album: " + importedAlbum.getName()!! + " already exists."
+                                    )
+                                }
+
+                                val userAlbumCount = userAlbumRepository?.countByUserIdAndAlbumId(userId, albumId)
+                                if (userAlbumCount == 0) {
+                                    val userAlbumObj = UserAlbum()
+                                    userAlbumObj.setAlbumId(albumId)
+                                    userAlbumObj.setUserId(userId)
+                                    userAlbumObj.setModifiedAt(getCurrentTimestamp())
+                                    userAlbumObj.setCreatedAt(getCurrentTimestamp())
+                                    userAlbumRepository?.save(userAlbumObj)
+                                }
+
+                                val metadataObj = metadataRepository?.findById(albumPhoto.getMetadataId()!!)
+                                if (metadataObj != null && metadataObj.isPresent) {
+                                    albumPhotoRepository?.deleteByMetadataId(metadataObj.get().getId())
+                                    hasAlbumCover = false
+                                }
+
+                                if (!hasAlbumCover) {
+                                    val albumObj = albumRepository?.findById(albumId)
+                                    if (albumObj != null && metadataObj != null && metadataObj.isPresent && !metadataObj.get()
+                                            .getHidden()!!
+                                    ) {
+                                        albumObj.get().setCoverUrl(metadataObj.get().getThumbnailUrlCentered())
+                                        albumRepository?.save(albumObj.get())
+                                    }
+                                }
+
+                                if (metadataObj != null && metadataObj.isPresent && !metadataObj.get()
+                                        .getHidden()!!
+                                ) {
+                                    val albumPhotoCount = albumPhotoRepository?.countByMetadataIdAndAlbumId(
+                                        albumPhoto.getMetadataId()!!,
+                                        albumId
+                                    )
+                                    if (albumPhotoCount == 0) {
+                                        val albumPhotoObj = AlbumPhoto()
+                                        albumPhotoObj.setAlbumId(albumId)
+                                        albumPhotoObj.setMetadataId(albumPhoto.getMetadataId())
+                                        albumPhotoObj.setCreatedAt(getCurrentTimestamp())
+                                        albumPhotoObj.setModifiedAt(getCurrentTimestamp())
+//                                    albumPhotoRepository?.save(albumPhotoObj)
+                                        albumPhotoListInsert.add(albumPhotoObj)
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-            }
 
-            tempFile.delete();
+                if (albumPhotoListInsert.size > 0) {
+                    albumPhotoRepository?.saveAll(albumPhotoListInsert)
+                }
+
+                val albumPhotoCounts = albumRepository?.countNumberOfPhotosInAlbums()
+                if (albumPhotoCounts != null) {
+                    for (albumPhotoCount in albumPhotoCounts) {
+                        if (albumPhotoCount != null && albumPhotoCount.getPhotoCount() == 0) {
+                            // Delete the album
+                            albumRepository?.deleteById(albumPhotoCount.getAlbumId()!!)
+                            userAlbumRepository?.deleteByAlbumId(albumPhotoCount.getAlbumId()!!)
+                        }
+                    }
+                }
+
+                tempFile.delete()
+            }
         }
 
         model["msg"] = ""
