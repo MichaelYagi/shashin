@@ -55,7 +55,7 @@ $("#saveMetadata").on("click", async function (e) {
     $("#timelineModalStatus").attr("title", "");
     $("#timelineModalCancel").prop('disabled', true);
     const metadataId = $("#metadataId").val();
-    let prevPeople = $("#tagpeople").val();
+    let prevPeople = $("#peopleList").val();
     let prevAlbums = $("#albumList").val();
 
     timelineModal.closeTagPeopleDropdown(metadataId);
@@ -116,7 +116,7 @@ $("#saveMetadata").on("click", async function (e) {
             latlng: Util.decodeHtml($("#latlng").val()),
             keywords: Util.decodeHtml($("#keywords").val()),
             tagpeople: Util.decodeHtml(people),
-            albumnames: Util.decodeHtml($("#albumnames").val()),
+            albumnames: Util.decodeHtml(albums),
             hidden: $("#hidden").prop("checked"),
             isObject: $("#isobject").prop("checked")
         }

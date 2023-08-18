@@ -266,6 +266,7 @@
 
                 $("#metadataId").val(metadata.id);
                 $("#albumList").val("");
+                $("#peopleList").val("");
                 $("#timelineModalTitle").text(metadata.title);
                 $("#currentfilename").val(metadata.fileName)
                 $("#currentlat").val(metadata.lat)
@@ -339,8 +340,10 @@
 
                 if (taggedPeopleString !== "") {
                     $("#tagpeople").val(taggedPeopleString);
+                    $("#peopleList").val(taggedPeopleString);
                 } else if (metadata.tagpeople !== null) {
                     $("#tagpeople").val(metadata.tagpeople);
+                    $("#peopleList").val(metadata.tagpeople);
                 }
 
                 if ($("#recognitionLabelInput").length > 0) {
