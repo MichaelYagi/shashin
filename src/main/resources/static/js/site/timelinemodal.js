@@ -199,9 +199,9 @@ $("#saveMetadata").on("click", async function (e) {
                         $("#keywords").val(data["keywordsIdentified"]);
                     }
 
-                    $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
+                    $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
-                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                         // Reload in map view if latlng changed
                         if (window.location.pathname.includes("map") === true && prevLat !== metadataObj.lat && prevLng !== metadataObj.lng) {
                             window.location.replace("/map?latlng="+$("#latlng").val());
