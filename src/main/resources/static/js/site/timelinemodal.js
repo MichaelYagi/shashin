@@ -231,7 +231,7 @@ $("#saveMetadata").on("click", async function (e) {
                         // Reload in map view if removed
                         window.location.replace("/map");
                     }
-                } else if (($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "folders") || $("#activePage").length === 0) {
+                } else if (($("#activePage").length > 0 && $("#offcanvasToc").length > 0) || $("#activePage").length === 0) {
                     dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                 }
 
@@ -247,8 +247,8 @@ $("#saveMetadata").on("click", async function (e) {
                     });
                 }
 
-                // If in timeline and date change or hidden, refresh version
-                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
+                // If in timeline and date, lat, lng changed, or hidden, refresh cache version
+                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
                     Util.setMetadataLocalStorage();
                 }
 
