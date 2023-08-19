@@ -81,11 +81,11 @@
                                             </div>
                                             <script type="text/javascript" th:nonce="${cspNonce}">
                                                 $(".album").on("click", function (e) {
-                                                    timelineBatchModal.populateBatchAlbum();
+                                                    metadataBatchModal.populateBatchAlbum();
                                                 });
                                                 $("#tagalbumdropdown").on("click", function (e) {
                                                     e.preventDefault();
-                                                    timelineBatchModal.toggleBatchTagAlbumDropdown();
+                                                    metadataBatchModal.toggleBatchTagAlbumDropdown();
                                                 });
                                             </script>
                                         </div>
@@ -100,7 +100,7 @@
                                 <script type="text/javascript" th:nonce="${cspNonce}">
                                     $("#tagBatchDataInput").on("focus", function (e) {
                                         e.preventDefault();
-                                        timelineBatchModal.closeBatchTagPeopleDropdown();
+                                        metadataBatchModal.closeBatchTagPeopleDropdown();
                                     });
                                 </script>
 
@@ -119,11 +119,11 @@
                                         </div>
                                         <script type="text/javascript" th:nonce="${cspNonce}">
                                             $(".recognitionLabel").on("click", function (e) {
-                                                timelineBatchModal.populateBatchLabel();
+                                                metadataBatchModal.populateBatchLabel();
                                             });
                                             $("#tagbatchpeopledropdown").on("click", function (e) {
                                                 e.preventDefault();
-                                                timelineBatchModal.toggleBatchTagPeopleDropdown();
+                                                metadataBatchModal.toggleBatchTagPeopleDropdown();
                                             });
                                         </script>
                                     </div>
@@ -154,9 +154,9 @@
 
             </div>
             <div class="modal-footer">
-                <div id="timelineBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
+                <div id="metadataBatchModalStatus" class="spinner-grow me-auto" style="visibility: hidden;font-size: 2rem;" role="status" aria-hidden="true" data-bs-toggle="tooltip" data-bs-placement="right" title=""></div>
                 <button type="button" class="btn btn-primary" id="saveBatchMetadata">Save</button>
-                <button id="timelineBatchModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button id="metadataBatchModalCancel" type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

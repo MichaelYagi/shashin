@@ -111,7 +111,7 @@ class TimelineTemplates {
     `};
 
     static TimelineGalleryBottomLeftOverlay({metadata, editIcon}) { return `
-        <a href="#" id="timelineModalEdit${metadata.id}" data-bs-target="#propTimelinModal">
+        <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal">
             <span class="${editIcon}" style="font-size: 1rem;color: lightgray;"></span>
         </a>
     `};

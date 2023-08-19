@@ -1306,11 +1306,11 @@
             $("#tncentered" + metadata.id).append(TimelineTemplates.TimelineGalleryCenterOverlay({metadata:metadata,mediaContent:mediaContent}));
         }
 
-        if ($("#timelineModalEdit" + metadata.id).length === 0) {
+        if ($("#metadataModalEdit" + metadata.id).length === 0) {
             const editIcon = (metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle";
             $("#tnbl" + metadata.id).append(TimelineTemplates.TimelineGalleryBottomLeftOverlay({metadata:metadata,editIcon:editIcon}));
-            $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
-            $("#timelineModalEdit" + metadata.id).on("click", function (e) {
+            $("#metadataModalEdit" + metadata.id).attr("tag", metadata.id);
+            $("#metadataModalEdit" + metadata.id).on("click", function (e) {
                 e.preventDefault();
                 shashin.openEditMetadataModal(metadata.id, timelineSettings)
             });
@@ -1464,7 +1464,7 @@
                                         html += loopedHtml;
                                         internalHtml += loopedHtml;
 
-                                        $("#timelineModalEdit" + metadata.id).attr("tag", metadata.id);
+                                        $("#metadataModalEdit" + metadata.id).attr("tag", metadata.id);
                                     }
 
                                     const lastDateParts = $("#offcanvasTocBody div a").last().attr("id").split("offcanvas_");
