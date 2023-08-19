@@ -1827,7 +1827,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(responseMap)
     }
 
-    @RequestMapping(value = ["/timeline/download/batch"],
+    @RequestMapping(value = ["/metadata/download/batch"],
         method = [RequestMethod.POST],
         consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE]
     )

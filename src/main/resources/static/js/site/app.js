@@ -1043,7 +1043,7 @@
                 });
             }
 
-            const endpoint = "/timeline/download/batch";
+            const endpoint = "/metadata/download/batch";
 
             if (Util.isMobile() === false) {
                 shashin.downloadInstance = $.fileDownload(endpoint, {
