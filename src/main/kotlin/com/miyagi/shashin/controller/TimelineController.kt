@@ -667,7 +667,7 @@ class TimelineController: BaseController() {
         return response
     }
 
-    @RequestMapping(value = ["/timeline/remove/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/remove/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -832,7 +832,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/timeline/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/update/{metadataId}","/api/v1/update/metadata/{metadataId}"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateMetadata(model: Model, @RequestBody requestBody: JsonNode, @PathVariable metadataId: String, response: HttpServletResponse): String? {
@@ -961,7 +961,7 @@ class TimelineController: BaseController() {
                         metadataMap["isObject"].toString().toBoolean()
                     )
                 }
-
+                cleanupOrphanedSubjects()
 
                 if (metadataMap["title"].toString().trim() == "") {
                     metadataObj.get().setTitle(metadataObj.get().getFileName())
@@ -1093,7 +1093,7 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(resp)
     }
 
-    @RequestMapping(value = ["/timeline/remove/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/remove/batch"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @Transactional
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
@@ -1279,7 +1279,7 @@ class TimelineController: BaseController() {
                     "</tbody></table>"
         )
     )
-    @RequestMapping(value = ["/timeline/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
+    @RequestMapping(value = ["/metadata/update/batch","/api/v1/update/metadata/batch"], method = [RequestMethod.PUT], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     fun updateBatchMetadata(model: Model, @RequestBody requestBody: JsonNode): String? {
@@ -1483,7 +1483,15 @@ class TimelineController: BaseController() {
         albumPhotoRepository.deleteByMetadataId(id)
         favoriteRepository.deleteByMetadataId(id)
         albumPhotoCommentRepository.deleteByMetadataId(id)
+
         // Find albums
+        cleanupOrphanedAlbums()
+
+        // Find people
+        cleanupOrphanedSubjects()
+    }
+
+    fun cleanupOrphanedAlbums() {
         val allAlbums = albumRepository.findAll()
         for (album in allAlbums) {
             val albumId = album?.getId()
@@ -1497,8 +1505,9 @@ class TimelineController: BaseController() {
                 }
             }
         }
+    }
 
-        // Find people
+    fun cleanupOrphanedSubjects() {
         val allPeople = recognitionLabelRepository?.findAll()
         if (allPeople != null) {
             for (person in allPeople) {
@@ -1511,7 +1520,6 @@ class TimelineController: BaseController() {
                 }
             }
         }
-
     }
 
     @RequestMapping(value = ["/timeline/sync/{metadataId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])

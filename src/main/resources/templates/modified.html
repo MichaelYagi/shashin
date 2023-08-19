@@ -38,7 +38,7 @@
                                 <div th:replace="fragments/topleftoverlay :: topleftoverlay(${metadata.id})"></div>
 
                                 <div class="thumbnail-bl" th:id="${'tnbl'+metadata.id}">
-                                    <a href="#" th:id="${'timelineModalEdit'+metadata.id}" data-bs-target="#propTimelinModal">
+                                    <a href="#" th:id="${'metadataModalEdit'+metadata.id}" data-bs-target="#propTimelinModal">
                                         <span th:class="${metadata.lat == null || metadata.lng == null ? 'bi-info-square' : 'bi-info-circle'}" style="font-size: 1rem;color: lightgray;"></span>
                                     </a>
                                 </div>
@@ -50,7 +50,7 @@
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"");
-                                $("#timelineModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
+                                $("#metadataModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
                                     e.preventDefault();
                                     shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"");
                                 });
@@ -98,10 +98,10 @@
                     $("#albumListForModal").html(batchHtml);
                     $("#tagalbumdropdown").on("click", function (e) {
                         e.preventDefault();
-                        timelineBatchModal.toggleBatchTagAlbumDropdown();
+                        metadataBatchModal.toggleBatchTagAlbumDropdown();
                     });
                     $(".album").on("click", function (e) {
-                        timelineBatchModal.populateBatchAlbum();
+                        metadataBatchModal.populateBatchAlbum();
                     });
                 }
                 /*]]>*/

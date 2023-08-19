@@ -56,7 +56,7 @@ class GalleryTemplates {
                 `
             :
             `
-                $("#timelineModalEdit${metadata.id}").on("click", function (e) {
+                $("#metadataModalEdit${metadata.id}").on("click", function (e) {
                     e.preventDefault();
                     shashin.openEditMetadataModal("${metadata.id}");
                 })
@@ -141,7 +141,7 @@ class GalleryTemplates {
         <div class="thumbnail-bl" id="tnbl${metadata.id}">
             ${($.inArray("isEditControls", overlays) !== -1) ?
             `
-            <a href="#" id="timelineModalEdit${metadata.id}" data-bs-target="#propTimelinModal">
+            <a href="#" id="metadataModalEdit${metadata.id}" data-bs-target="#propTimelinModal">
                 <span class="${data.editIcon}" style="font-size: 1rem;color: lightgray;"></span>
             </a>
             ` : ''}

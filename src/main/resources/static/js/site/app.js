@@ -201,8 +201,8 @@
             metadata = JSON.parse($("#mediaLink"+metadataId).attr("tag"));
         }
 
-        if  ($("#timelineModalEdit"+metadataId).attr("tag") && $("#timelineModalEdit"+metadataId).attr("tag").trim() !== "") {
-            metadata = JSON.parse($("#timelineModalEdit"+metadataId).attr("tag"));
+        if  ($("#metadataModalEdit"+metadataId).attr("tag") && $("#metadataModalEdit"+metadataId).attr("tag").trim() !== "") {
+            metadata = JSON.parse($("#metadataModalEdit"+metadataId).attr("tag"));
         }
 
         return metadata;
@@ -267,7 +267,7 @@
                 $("#metadataId").val(metadata.id);
                 $("#albumList").val("");
                 $("#peopleList").val("");
-                $("#timelineModalTitle").text(metadata.title);
+                $("#metadataModalTitle").text(metadata.title);
                 $("#currentfilename").val(metadata.fileName)
                 $("#currentlat").val(metadata.lat)
                 $("#currentlng").val(metadata.lng)
@@ -380,10 +380,10 @@
                     $(html).insertAfter($("#labelIdData"));
                     $("#tagpeopledropdown" + metadata.id).on("click", function (e) {
                         e.preventDefault();
-                        timelineModal.toggleTagPeopleDropdown(metadata.id);
+                        metadataModal.toggleTagPeopleDropdown(metadata.id);
                     });
                     $(".recognitionLabel").on("click", function (e) {
-                        timelineModal.populateLabel(metadata.id);
+                        metadataModal.populateLabel(metadata.id);
                     });
                 }
 
@@ -439,10 +439,10 @@
                     $(html).insertAfter($("#albumNameData"))
                     $("#albumdropdown" + metadata.id).on("click", function (e) {
                         e.preventDefault();
-                        timelineModal.toggleAlbumDropdown(metadata.id);
+                        metadataModal.toggleAlbumDropdown(metadata.id);
                     });
                     $(".album").on("click", function (e) {
-                        timelineModal.populateAlbum(metadata.id);
+                        metadataModal.populateAlbum(metadata.id);
                     });
                 }
 
@@ -1885,12 +1885,12 @@
             if (true === renderAlbumList) {
                 $("#albumListForModal").html(batchHtml);
                 $(".album").on("click", function (e) {
-                    timelineBatchModal.populateBatchAlbum();
+                    metadataBatchModal.populateBatchAlbum();
                 });
 
                 $("#tagalbumdropdown").on("click", function (e) {
                     e.preventDefault();
-                    timelineBatchModal.toggleBatchTagAlbumDropdown();
+                    metadataBatchModal.toggleBatchTagAlbumDropdown();
                 });
             }
         }
@@ -1930,14 +1930,14 @@
                 $("#batchLabelIds").html(batchHtml);
                 $("#tagBatchDataInput").on("focus", function (e) {
                     e.preventDefault();
-                    timelineBatchModal.closeBatchTagPeopleDropdown();
+                    metadataBatchModal.closeBatchTagPeopleDropdown();
                 });
                 $("#tagbatchpeopledropdown").on("click", function (e) {
                     e.preventDefault();
-                    timelineBatchModal.toggleBatchTagPeopleDropdown();
+                    metadataBatchModal.toggleBatchTagPeopleDropdown();
                 });
                 $(".recognitionLabel").on("click", function (e) {
-                    timelineBatchModal.populateBatchLabel();
+                    metadataBatchModal.populateBatchLabel();
                 });
             }
         }

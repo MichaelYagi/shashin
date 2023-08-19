@@ -140,7 +140,7 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
 
         val timelineBottomLeft = "tnbl$metadataId"
         val timelineBottomLeftEl = this.driver!!.findElement(By.id(timelineBottomLeft))
-        val timelineModalEdit = this.driver!!.findElement(By.id("timelineModalEdit$metadataId"))
+        val metadataModalEdit = this.driver!!.findElement(By.id("metadataModalEdit$metadataId"))
 
         //Creating object of an Actions class
         val action = Actions(this.driver)
@@ -148,12 +148,12 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         //Performing the mouse hover action on the target element.
         action.moveToElement(imageEl).perform()
         action.moveToElement(timelineBottomLeftEl).perform()
-        action.moveToElement(timelineModalEdit).perform()
+        action.moveToElement(metadataModalEdit).perform()
 //        println(this.driver?.pageSource)
-        timelineModalEdit.click()
+        metadataModalEdit.click()
         this.logger.log(Level.INFO, "Timeline edit button clicked.")
 
-        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("timelineModalTitle")))
+        WebDriverWait(this.driver, 30).until(ExpectedConditions.visibilityOfElementLocated(By.id("metadataModalTitle")))
 
         //Save album in timeline
         val albumNamesInput = this.driver!!.findElement(By.id("albumnames"))
@@ -162,9 +162,9 @@ class AlbumSeleniumTest: BaseSeleniumTests() {
         saveMetadataButton.click()
 
         startTime = System.currentTimeMillis()
-        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("timelineModalStatus")),"bi-check-circle")
+        var elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
         while (!elementHasClass || (System.currentTimeMillis()-startTime)<this.elementScanTimeoutMillis) {
-            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("timelineModalStatus")),"bi-check-circle")
+            elementHasClass = elementHasClass(this.driver!!.findElement(By.id("metadataModalStatus")),"bi-check-circle")
         }
 
         this.driver!!.get("http://localhost:$port/albums")

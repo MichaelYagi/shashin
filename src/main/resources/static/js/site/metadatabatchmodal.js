@@ -1,14 +1,14 @@
-(function( timelineBatchModal, $, undefined ) {
+(function( metadataBatchModal, $, undefined ) {
 
-    timelineBatchModal.toggleBatchTagPeopleDropdown = function() {
+    metadataBatchModal.toggleBatchTagPeopleDropdown = function() {
         $("#tagbatchpeopledropdown").dropdown('toggle');
     }
 
-    timelineBatchModal.closeBatchTagPeopleDropdown = function() {
+    metadataBatchModal.closeBatchTagPeopleDropdown = function() {
         $("#tagbatchpeopledropdown").dropdown('hide');
     }
 
-    timelineBatchModal.populateBatchLabel = function() {
+    metadataBatchModal.populateBatchLabel = function() {
         const checkedBoxes = $('input[name="recognitionLabel[]"]:checked');
         let labelString = "";
         checkedBoxes.each(function() {
@@ -20,15 +20,15 @@
         $("#tagBatchDataInput").val(labelString);
     }
 
-    timelineBatchModal.toggleBatchTagAlbumDropdown = function() {
+    metadataBatchModal.toggleBatchTagAlbumDropdown = function() {
         $("#tagalbumdropdown").dropdown('toggle');
     }
 
-    timelineBatchModal.closeBatchTagAlbumDropdown = function() {
+    metadataBatchModal.closeBatchTagAlbumDropdown = function() {
         $("#tagalbumdropdown").dropdown('hide');
     }
 
-    timelineBatchModal.populateBatchAlbum = function() {
+    metadataBatchModal.populateBatchAlbum = function() {
         const checkedBoxes = $('input[name="albums[]"]:checked');
         let albumsString = "";
         checkedBoxes.each(function() {
@@ -40,18 +40,18 @@
         $("#albumNameInput").val(albumsString);
     }
 
-}( window.timelineBatchModal = window.timelineBatchModal || {}, jQuery ));
+}( window.metadataBatchModal = window.metadataBatchModal || {}, jQuery ));
 
 $("#saveBatchMetadata").on("click", async function (e) {
     e.preventDefault();
 
-    $("#timelineBatchModalCancel").prop("disabled", true);
+    $("#metadataBatchModalCancel").prop("disabled", true);
     $("#msgBatchMetadata").html("");
-    $("#timelineBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
-    $("#timelineBatchModalStatus").css("visibility", "visible");
-    $("#timelineBatchModalStatus").attr("title", "");
-    timelineBatchModal.closeBatchTagPeopleDropdown();
-    timelineBatchModal.closeBatchTagAlbumDropdown();
+    $("#metadataBatchModalStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
+    $("#metadataBatchModalStatus").css("visibility", "visible");
+    $("#metadataBatchModalStatus").attr("title", "");
+    metadataBatchModal.closeBatchTagPeopleDropdown();
+    metadataBatchModal.closeBatchTagAlbumDropdown();
     const activePage = $("#activePage").val();
     const markedHidden = $("#batchhidden").prop("checked");
 
@@ -91,16 +91,16 @@ $("#saveBatchMetadata").on("click", async function (e) {
         let data;
 
         if ($("#batchhidden").is(':checked')) {
-            data = await http.ajax("post", "/timeline/remove/batch", JSON.stringify(batchObj), function () {
-                $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-                $("#timelineBatchModalCancel").prop("disabled", false);
+            data = await http.ajax("post", "/metadata/remove/batch", JSON.stringify(batchObj), function () {
+                $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#metadataBatchModalCancel").prop("disabled", false);
             });
         } else {
-            data = await http.ajax("put", "/timeline/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
-                $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-                $("#timelineBatchModalCancel").prop("disabled", false);
+            data = await http.ajax("put", "/metadata/update/batch", JSON.stringify(Util.getBatchData(batchObj)), function () {
+                $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#metadataBatchModalCancel").prop("disabled", false);
             });
         }
 
@@ -130,7 +130,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                     const metadataId = metadataIds[index];
 
                     if ($("#image" + metadataId).length > 0) {
-                        $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
+                        $("#metadataModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
 
                         const metadataObj = {};
 
@@ -146,11 +146,11 @@ $("#saveBatchMetadata").on("click", async function (e) {
                         metadataObj.hidden = markedHidden;
 
                         if (metadataObj.hidden === false) {
-                            $("#timelineModalEdit" + metadataId).attr("tag", metadataId);
+                            $("#metadataModalEdit" + metadataId).attr("tag", metadataId);
                             $("#mediaLink" + metadataId).attr("tag", metadataId);
 
                             if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
-                                $("#timelineModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                                $("#metadataModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
                             }
 
                             if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true && activePage === "timeline") {
@@ -183,8 +183,8 @@ $("#saveBatchMetadata").on("click", async function (e) {
                     }
                 }
 
-                $("#timelineBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
-                $("#timelineBatchModalCancel").prop("disabled", false);
+                $("#metadataBatchModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
+                $("#metadataBatchModalCancel").prop("disabled", false);
 
                 if (activePage !== "timeline") {
                     if (markedHidden === true ||
@@ -202,17 +202,17 @@ $("#saveBatchMetadata").on("click", async function (e) {
                     }
                 }
             } else {
-                $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-                $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-                $("#timelineBatchModalCancel").prop("disabled", false);
+                $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+                $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+                $("#metadataBatchModalCancel").prop("disabled", false);
             }
         } else {
-            $("#timelineModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
-            $("#timelineBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
-            $("#timelineBatchModalCancel").prop("disabled", false);
+            $("#metadataModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+            $("#metadataBatchModalStatus").attr("title", shashin.modalStatusFailMessage());
+            $("#metadataBatchModalCancel").prop("disabled", false);
         }
     } else {
-        $("#timelineBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
+        $("#metadataBatchModalStatus").addClass('bi-x-circle').removeClass('spinner-grow');
     }
 
     return false;
@@ -229,7 +229,7 @@ $('#propAddAlbum').bind('keypress', function() {
 });
 
 $("#batchisobject").on("click", function (e) {
-    timelineBatchModal.closeBatchTagPeopleDropdown();
+    metadataBatchModal.closeBatchTagPeopleDropdown();
     if($(this).prop("checked") === true) {
         $("#tagBatchDataInput").val("");
     }
@@ -237,8 +237,8 @@ $("#batchisobject").on("click", function (e) {
 
 // Clear message on modal close
 $('#propBatchMetadata').on('hide.bs.modal', function () {
-    $("#timelineBatchModalStatus").attr("class","spinner-grow me-auto");
-    $("#timelineBatchModalStatus").css("visibility","hidden");
+    $("#metadataBatchModalStatus").attr("class","spinner-grow me-auto");
+    $("#metadataBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
     $("#msgBatchMetadata").html("");
     $('input:checkbox').prop('checked', false);
@@ -254,24 +254,24 @@ $('#propBatchMetadata').on('hide.bs.modal', function () {
     $('#cameraBatchData').val('');
     $('#lensBatchData').val('');
     $('#offsetTakenBatchData').val('');
-    timelineBatchModal.closeBatchTagPeopleDropdown();
-    timelineBatchModal.closeBatchTagAlbumDropdown();
+    metadataBatchModal.closeBatchTagPeopleDropdown();
+    metadataBatchModal.closeBatchTagAlbumDropdown();
     shashin.clearTimelineSelection();
 });
 
 // Clear message on input editing
 $('#propBatchMetadata').bind('keypress', function() {
-    $("#timelineBatchModalStatus").attr("class","spinner-grow me-auto");
-    $("#timelineBatchModalStatus").css("visibility","hidden");
+    $("#metadataBatchModalStatus").attr("class","spinner-grow me-auto");
+    $("#metadataBatchModalStatus").css("visibility","hidden");
     $("#msgBatchMetadata").html("");
 });
 
 $('body').on("click", function(event) {
     if (!$(event.target).closest("#tagalbumdropdown").length && !$(event.target).closest("#albumNameList").length && $("#tagalbumdropdown").hasClass("show")) {
-        timelineBatchModal.toggleBatchTagAlbumDropdown();
+        metadataBatchModal.toggleBatchTagAlbumDropdown();
     }
 
     if (!$(event.target).closest("#tagbatchpeopledropdown").length && !$(event.target).closest("#peopleNameList").length && $("#tagbatchpeopledropdown").hasClass("show")) {
-        timelineBatchModal.toggleBatchTagPeopleDropdown();
+        metadataBatchModal.toggleBatchTagPeopleDropdown();
     }
 });
