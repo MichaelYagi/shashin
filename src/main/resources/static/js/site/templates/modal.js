@@ -64,7 +64,7 @@ class ModalTemplates {
             <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Edit "${metadata.title}"
+                        <h5 class="modal-title" id="propEditLabel">Edit "${metadata.title}"
                             <div id="prop${module}Thumbnail${metadata.id}">
                                 <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" width="100" height="100">
                             </div>
