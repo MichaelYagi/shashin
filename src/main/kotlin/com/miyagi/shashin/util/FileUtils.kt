@@ -588,6 +588,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
         fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository, metadataObj: Metadata, settings: Settings, threadFile: File?): MutableList<String>? {
             val keywordArray = mutableListOf<String>()
+            val unidentifiedStr = "unidentified objects"
 
             try {
                 val file = File(metadataObj.getPath()!!)
@@ -605,65 +606,79 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                     objmodel.newPredictor().use { predictor ->
                         try {
                             val detection = predictor.predict(img)
-                            for (i in 0..detection.numberOfObjects) {
-                                val objProbability =
-                                    detection.item<Classifications.Classification?>(i).probability
-                                val objSubject =
-                                    detection.item<Classifications.Classification?>(i).className
+                            val numOfObjects = detection.numberOfObjects
+                            if (numOfObjects > 0) {
+                                for (i in 0..numOfObjects) {
+                                    val objProbability =
+                                        detection.item<Classifications.Classification?>(i).probability
+                                    val objSubject =
+                                        detection.item<Classifications.Classification?>(i).className
 
-                                // Adjust threshold for object recognition
-                                var threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()-0.30
-                                if (threshold <= 0.0) {
-                                    threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()
-                                }
-
-                                // Give a little more leeway for object probability
-                                if (objSubject.trim() != "person" && objProbability >= threshold
-                                ) {
-                                    var keywordObj =
-                                        keywordRepository.findByKeywordIgnoreCase(objSubject)
-                                    if (keywordObj == null) {
-                                        keywordObj = Keyword()
-                                        keywordObj.setKeyword(objSubject)
-                                        keywordObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                                        keywordObj.setModifiedAt(TextUtils.getCurrentTimestamp())
-                                        keywordRepository.save(keywordObj)
+                                    // Adjust threshold for object recognition
+                                    var threshold =
+                                        settings.getRecognitionConfidenceThreshold().toString().toDouble() - 0.30
+                                    if (threshold <= 0.0) {
+                                        threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()
                                     }
 
-                                    keywordArray.add(objSubject)
+                                    // Give a little more leeway for object probability
+                                    if (objSubject.trim() != "person" && objProbability >= threshold
+                                    ) {
+                                        saveObject(objSubject, metadataObj, keywordRepository, keywordPhotoRepository, metadataRepository)
+                                        keywordArray.add(objSubject)
 
-                                    val keywordPhotoCount =
-                                        keywordPhotoRepository.countByKeywordIdAndMetadataId(
-                                            keywordObj.getId(),
-                                            metadataObj.getId()
+                                        if (threadFile != null) {
+                                            writeToThreadFileAndLogMessage(
+                                                "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
+                                                threadFile
+                                            )
+                                        }
+
+                                        logger.log(
+                                            Level.INFO,
+                                            "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
                                         )
-                                    if (keywordPhotoCount == 0) {
-                                        val keywordPhotoObj = KeywordPhoto()
-                                        keywordPhotoObj.setKeywordId(keywordObj.getId())
-                                        keywordPhotoObj.setMetadataId(metadataObj.getId())
-                                        keywordPhotoObj.setCreatedAt(TextUtils.getCurrentTimestamp())
-                                        keywordPhotoObj.setModifiedAt(TextUtils.getCurrentTimestamp())
-                                        keywordPhotoRepository.save(keywordPhotoObj)
-                                        metadataObj.setModifiedAt(TextUtils.getCurrentTimestamp())
-                                        metadataRepository.save(metadataObj)
+                                    } else {
+                                        if (!keywordArray.contains(unidentifiedStr)) {
+                                            keywordArray.add(unidentifiedStr)
+                                            saveObject(
+                                                unidentifiedStr,
+                                                metadataObj,
+                                                keywordRepository,
+                                                keywordPhotoRepository,
+                                                metadataRepository
+                                            )
+                                        }
+                                        logger.log(
+                                            Level.INFO,
+                                            "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                        )
                                     }
-
-                                    if (threadFile != null) {
-                                        writeToThreadFileAndLogMessage("Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability, threadFile)
-                                    }
-
-                                    logger.log(
-                                        Level.INFO,
-                                        "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
-                                    )
-                                } else {
-                                    logger.log(
-                                        Level.INFO,
-                                        "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                }
+                            } else {
+                                if (!keywordArray.contains(unidentifiedStr)) {
+                                    keywordArray.add(unidentifiedStr)
+                                    saveObject(
+                                        unidentifiedStr,
+                                        metadataObj,
+                                        keywordRepository,
+                                        keywordPhotoRepository,
+                                        metadataRepository
                                     )
                                 }
                             }
                         } catch (e: Exception) {
+                            if (!keywordArray.contains(unidentifiedStr)) {
+                                keywordArray.add(unidentifiedStr)
+                                saveObject(
+                                    unidentifiedStr,
+                                    metadataObj,
+                                    keywordRepository,
+                                    keywordPhotoRepository,
+                                    metadataRepository
+                                )
+                            }
+
                             logger.log(
                                 Level.INFO,
                                 "Could not identify objects for " + metadataObj.getThumbnailUrlSmall()
@@ -679,6 +694,34 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             }
 
             return keywordArray
+        }
+
+        private fun saveObject(objSubject: String?, metadataObj: Metadata, keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository) {
+            var keywordObj =
+                keywordRepository.findByKeywordIgnoreCase(objSubject)
+            if (keywordObj == null) {
+                keywordObj = Keyword()
+                keywordObj.setKeyword(objSubject)
+                keywordObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                keywordObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                keywordRepository.save(keywordObj)
+            }
+
+            val keywordPhotoCount =
+                keywordPhotoRepository.countByKeywordIdAndMetadataId(
+                    keywordObj.getId(),
+                    metadataObj.getId()
+                )
+            if (keywordPhotoCount == 0) {
+                val keywordPhotoObj = KeywordPhoto()
+                keywordPhotoObj.setKeywordId(keywordObj.getId())
+                keywordPhotoObj.setMetadataId(metadataObj.getId())
+                keywordPhotoObj.setCreatedAt(TextUtils.getCurrentTimestamp())
+                keywordPhotoObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                keywordPhotoRepository.save(keywordPhotoObj)
+                metadataObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                metadataRepository.save(metadataObj)
+            }
         }
 
         /**
