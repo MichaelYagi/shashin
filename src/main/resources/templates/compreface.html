@@ -16,7 +16,6 @@
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
-            <input type="hidden" id="multiSelectMetadataIds" name="multiSelectMetadataIds" value="[]">
 
             <h1 th:inline="text">
                 [[${personInfo.name}]]

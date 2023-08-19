@@ -82,7 +82,7 @@
                             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                                 /*<![CDATA[*/
                                 shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'album');
-                                // albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{})
+                                albumModal.renderAlbumCommentsModal(/*[[${album}]]*/{},/*[[${metadata}]]*/{},/*[[${userMap}]]*/{},/*[[${albumPhotoCommentsMap}]]*/{})
                                 albumSettings.activateAlbumListeners(/*[[${metadata}]]*/{},/*[[${album}]]*/{})
                                 $("#mediaLink"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").attr("tag",/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000");
                                 $("#infoModalEdit"+/*[[${metadata.id}]]*/"00000000-00000000-00000000-00000000").on("click", function(e) {
@@ -122,7 +122,7 @@
             </div>
             <div class="modal-body">
                 <form id="saveAlbumModalForm">
-                    <input type="hidden" name="metadataId" id="metadataId" value="">
+<!--                    <input type="hidden" name="metadataId" id="metadataId" value="">-->
                     <div class="col-auto form-check">
                         <input type="radio" class="form-check-input" id="setCoverAlbum" name="albumAction">
                         <label class="form-check-label" for="setCoverAlbum">Set as album cover</label>

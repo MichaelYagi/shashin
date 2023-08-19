@@ -4,8 +4,8 @@ class ModalTemplates {
             <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="commentModalLabel">
-                            <div id="propalbumphotocomment${metadata.id}">
+                        <h5 class="modal-title" id="commentModalLabel${metadata.id}">
+                            <div id="thumbImage${metadata.id}">
                                 <img loading="lazy" src="${encodeURI(metadata.thumbnailUrlCentered)}" width="100" height="100">
                             </div>Comments for ${metadata.fileName}
                         </h5>
