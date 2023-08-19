@@ -1003,43 +1003,47 @@
                 if (timelineDateObj) {
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
                     if (i === 0 || i === dateList.length-1 || (i < dateList.length && dateList[i + 1].year !== timelineDateObj.year)) {
-                        // Label for year
-                        const el = $('<span class="badge rounded-pill bg-secondary yearLabel" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
-                            'width': '35px',
-                            'right': '15px',
-                            'font-size': 'xx-small',
-                            'position': 'absolute',
-                            'z-index': '2',
-                            'top': (tickTop-sliderOffset) + '%'
-                        });
+                        if ($('#sliderLabel' + dateObj.getFullYear()).length === 0) {
+                            // Label for year
+                            const el = $('<span class="badge rounded-pill bg-secondary yearLabel" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
+                                'width': '35px',
+                                'right': '15px',
+                                'font-size': 'xx-small',
+                                'position': 'absolute',
+                                'z-index': '2',
+                                'top': (tickTop - sliderOffset) + '%'
+                            });
 
-                        $("#dateSlider").append(el);
-                        setTimeout(function() {
-                            if (prevEl !== null && Util.isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                                $("#" + el.attr("id")).hide();
+                            $("#dateSlider").append(el);
+                            setTimeout(function () {
+                                if (prevEl !== null && Util.isOverlap($("#" + prevEl.attr("id")), $("#" + el.attr("id"))) === true) {
+                                    $("#" + el.attr("id")).hide();
 
-                                if (prevTickEl !== null && Util.isOverlap($("#" + prevTickEl.attr("id")), $("#" + el.attr("id"))) === true) {
-                                    $("#" + prevTickEl.attr("id")).hide();
+                                    if (prevTickEl !== null && Util.isOverlap($("#" + prevTickEl.attr("id")), $("#" + el.attr("id"))) === true) {
+                                        $("#" + prevTickEl.attr("id")).hide();
+                                    }
+                                } else {
+                                    prevEl = el;
                                 }
-                            } else {
-                                prevEl = el;
-                            }
-                        },0);
+                            }, 0);
+                        }
                     } else if (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month)) {
-                        // Tick for month/year
-                        const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '" style="color: #777777">' + '-' + '</span>').css({
-                            'width': '10px',
-                            'right': '15px',
-                            'position': 'absolute',
-                            'z-index': '1',
-                            'bottom': '50%',
-                            'top': (tickTop-sliderOffset) + '%'
-                        });
+                        if ($('#tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month).length === 0) {
+                            // Tick for month/year
+                            const tickEl = $('<span id="tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month + '" style="color: #777777">' + '-' + '</span>').css({
+                                'width': '10px',
+                                'right': '15px',
+                                'position': 'absolute',
+                                'z-index': '1',
+                                'bottom': '50%',
+                                'top': (tickTop - sliderOffset) + '%'
+                            });
 
-                        $("#dateSlider").append(tickEl);
-                        setTimeout(function() {
-                            prevTickEl = tickEl;
-                        },0);
+                            $("#dateSlider").append(tickEl);
+                            setTimeout(function () {
+                                prevTickEl = tickEl;
+                            }, 0);
+                        }
                     }
 
                     // Tooltip for month/year on slider
