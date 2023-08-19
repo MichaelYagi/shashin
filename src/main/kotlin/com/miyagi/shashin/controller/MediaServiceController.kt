@@ -1,10 +1,7 @@
 package com.miyagi.shashin.controller
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
 import com.miyagi.shashin.repository.MetadataRepository
-import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
@@ -25,13 +22,12 @@ import ws.schild.jave.encode.EncodingAttributes
 import ws.schild.jave.encode.VideoAttributes
 import ws.schild.jave.info.VideoSize
 import java.io.File
-import java.io.IOException
-import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
+import javax.activation.URLDataSource
 import javax.servlet.http.HttpServletResponse
 
 
@@ -146,20 +142,43 @@ class MediaServiceController {
     }
 
     private fun getVideoFactory(response: HttpServletResponse?, metadataObj: Metadata, path: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
-        val resource = FileSystemResource(path)
+        var resource = FileSystemResource(path)
         val headers = HttpHeaders()
-        headers.contentLength = resource.contentLength()
-        if (metadataObj.getType() != null && "/" in metadataObj.getType()!!) {
-            val typeList = metadataObj.getType()!!.split("/")
-            if (typeList.count() == 2) {
-                headers.contentType = MediaType(typeList[0],typeList[1])
+        try {
+            headers.contentLength = resource.contentLength()
+            if (metadataObj.getType() != null && "/" in metadataObj.getType()!!) {
+                val typeList = metadataObj.getType()!!.split("/")
+                if (typeList.count() == 2) {
+                    headers.contentType = MediaType(typeList[0], typeList[1])
+                }
             }
+
+            if (attachFile) {
+                response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+            }
+            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+        } catch (e: Exception) {
+            logger.log(
+                Level.SEVERE,
+                "Error setting video ResponseEntity for "+path+": " + e.message
+            )
+
+            val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
+            resource = FileSystemResource(source.url.path)
+            headers.contentLength = resource.contentLength()
+            if (metadataObj.getType() != null && "/" in metadataObj.getType()!!) {
+                val typeList = metadataObj.getType()!!.split("/")
+                if (typeList.count() == 2) {
+                    headers.contentType = MediaType(typeList[0], typeList[1])
+                }
+            }
+            if (attachFile) {
+                response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+            }
+            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+            return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         }
-        if (attachFile) {
-            response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
-        }
-        headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-        return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
     }
 
     @RequestMapping(value = ["/video/{metadataId}/player"], method = [RequestMethod.GET])
@@ -202,20 +221,42 @@ class MediaServiceController {
 
         return if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
             val path = metadataObj.get().getPath()!!
-            val resource = FileSystemResource(path)
+            var resource = FileSystemResource(path)
             val headers = HttpHeaders()
-            headers.contentLength = resource.contentLength()
-            if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
-                val typeList = metadataObj.get().getType()!!.split("/")
-                if (typeList.count() == 2) {
-                    headers.contentType = MediaType(typeList[0],typeList[1])
+            try {
+                headers.contentLength = resource.contentLength()
+                if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
+                    val typeList = metadataObj.get().getType()!!.split("/")
+                    if (typeList.count() == 2) {
+                        headers.contentType = MediaType(typeList[0], typeList[1])
+                    }
                 }
+                if (attachFile) {
+                    response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+                }
+                headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+            } catch (e: Exception) {
+                logger.log(
+                    Level.SEVERE,
+                    "Error setting image ResponseEntity for "+path+": " + e.message
+                )
+
+                val source = URLDataSource(this.javaClass.getResource("/static/images/fnf.png"))
+                resource = FileSystemResource(source.url.path)
+                headers.contentLength = resource.contentLength()
+                if (metadataObj.get().getType() != null && "/" in metadataObj.get().getType()!!) {
+                    val typeList = metadataObj.get().getType()!!.split("/")
+                    if (typeList.count() == 2) {
+                        headers.contentType = MediaType(typeList[0], typeList[1])
+                    }
+                }
+                if (attachFile) {
+                    response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+                }
+                headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
+                ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
             }
-            if (attachFile) {
-                response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
-            }
-            headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-            ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
         } else {
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
         }
