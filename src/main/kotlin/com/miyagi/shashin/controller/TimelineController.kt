@@ -1043,6 +1043,7 @@ class TimelineController: BaseController() {
                 } else {
                     val settings = model.getAttribute("settings") as Settings
                     val keywordCount = keywordPhotoRepository.countByMetadataId(metadataId)
+
                     if ((metadataMap["keywords"].toString().isBlank() || keywordCount == 0) && settings.getObjectDetection() == true) {
                         val keywordArray = FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), settings, null)
                         if (!keywordArray.isNullOrEmpty()) {

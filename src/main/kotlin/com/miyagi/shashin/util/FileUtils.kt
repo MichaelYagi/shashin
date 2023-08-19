@@ -591,10 +591,14 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             val unidentifiedStr = "unidentified objects"
 
             try {
-                val file = File(metadataObj.getPath()!!)
+                val file = if (metadataObj.getType()?.contains("video", ignoreCase = true)!!) {
+                    File(metadataObj.getThumbnailPathSmall())
+                } else {
+                    File(metadataObj.getPath())
+                }
 
                 // Object recognition
-                val img: BufferedImage = ImageIO.read(file);
+                val img: BufferedImage = ImageIO.read(file)
                 val criteria: Criteria<BufferedImage, DetectedObjects> = Criteria.builder()
                     .optApplication(Application.CV.OBJECT_DETECTION)
                     .setTypes(BufferedImage::class.java, DetectedObjects::class.java)
@@ -639,24 +643,25 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                             "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
                                         )
                                     } else {
-                                        if (!keywordArray.contains(unidentifiedStr)) {
-                                            keywordArray.add(unidentifiedStr)
-                                            saveObject(
-                                                unidentifiedStr,
-                                                metadataObj,
-                                                keywordRepository,
-                                                keywordPhotoRepository,
-                                                metadataRepository
-                                            )
-                                        }
                                         logger.log(
                                             Level.INFO,
                                             "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
                                         )
                                     }
                                 }
+
+                                if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
+                                    keywordArray.add(unidentifiedStr)
+                                    saveObject(
+                                        unidentifiedStr,
+                                        metadataObj,
+                                        keywordRepository,
+                                        keywordPhotoRepository,
+                                        metadataRepository
+                                    )
+                                }
                             } else {
-                                if (!keywordArray.contains(unidentifiedStr)) {
+                                if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
                                     keywordArray.add(unidentifiedStr)
                                     saveObject(
                                         unidentifiedStr,
@@ -668,7 +673,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                 }
                             }
                         } catch (e: Exception) {
-                            if (!keywordArray.contains(unidentifiedStr)) {
+                            if (keywordArray.size == 0 && !keywordArray.contains(unidentifiedStr)) {
                                 keywordArray.add(unidentifiedStr)
                                 saveObject(
                                     unidentifiedStr,
