@@ -1853,13 +1853,16 @@
         return shashin.autocompleteSplit(term).pop();
     }
 
-    shashin.processAlbumList = function(data) {
+    shashin.processBatchAlbumList = function(data, albumInputVal) {
+        if (albumInputVal === undefined) {
+            albumInputVal = "";
+        }
         if (data.hasOwnProperty("allAlbumList") && data["allAlbumList"].length > 0) {
             let renderAlbumList = false;
             const albumList = data["allAlbumList"];
 
             let batchHtml =
-                '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
+                '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="'+albumInputVal+'">\n' +
                 '<div class="input-group-append dropdown">\n' +
                 '   <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
                 '   <div class="dropdown-menu" id="albumNameList">\n';
@@ -1896,13 +1899,16 @@
         }
     }
 
-    shashin.processPeopleList = function(data) {
+    shashin.processBatchPeopleList = function(data, subjectInputVal) {
+        if (subjectInputVal === undefined) {
+            subjectInputVal = "";
+        }
         if (data.hasOwnProperty("recognitionLabels") && data["recognitionLabels"].length > 0) {
             let renderRecognitionLabels = false;
             const recognitionLabels = data["recognitionLabels"];
 
             let batchHtml =
-                '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="">\n' +
+                '       <input type="text" class="form-control" aria-label="Tag People" id="tagBatchDataInput" name="tagBatchDataInput" value="'+subjectInputVal+'">\n' +
                 '       <div class="input-group-append">\n' +
                 '           <button class="btn btn-outline-secondary dropdown-toggle" id="tagbatchpeopledropdown" type="button" aria-haspopup="true" aria-expanded="false">People</button>\n' +
                 '           <div class="dropdown-menu" id="peopleNameList">';

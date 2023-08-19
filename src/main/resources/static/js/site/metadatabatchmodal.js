@@ -54,7 +54,8 @@ $("#saveBatchMetadata").on("click", async function (e) {
     metadataBatchModal.closeBatchTagAlbumDropdown();
     const activePage = $("#activePage").val();
     const markedHidden = $("#batchhidden").prop("checked");
-
+    const albumInputVal = $("#albumNameInput").val();
+    const subjectInputVal = $("#tagBatchDataInput").val();
     const metadataIds = JSON.parse($("#batchMetadataIds").val());
 
     const metadataChangeMap = {};
@@ -121,9 +122,9 @@ $("#saveBatchMetadata").on("click", async function (e) {
                     $("#lensesBatchString").val(data["lenses"]);
                 }
 
-                shashin.processAlbumList(data);
+                shashin.processBatchAlbumList(data, albumInputVal);
 
-                shashin.processPeopleList(data);
+                shashin.processBatchPeopleList(data, subjectInputVal);
 
                 let dateGalleryRemoved = false;
                 for (const index in metadataIds) {
@@ -197,7 +198,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                         window.location.reload();
                     }
 
-                    if (activePage === "album" && $("#albumNameInput").val() !== "") {
+                    if (activePage === "album" && albumInputVal !== "") {
                         window.location.reload();
                     }
                 }
