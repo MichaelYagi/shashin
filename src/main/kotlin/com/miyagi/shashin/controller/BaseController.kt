@@ -24,7 +24,7 @@ class BaseController {
     @Autowired
     private var metadataRepository: MetadataRepository? = null
 
-    protected fun getAllAttribueData(model: Model): MutableMap<String, Any> {
+    protected fun getAllAttributeData(model: Model): MutableMap<String, Any> {
         val response = mutableMapOf<String,Any>()
 
         model["recognitionLabels"] = mutableListOf<RecognitionLabel>()

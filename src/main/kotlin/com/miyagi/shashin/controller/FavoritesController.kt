@@ -30,7 +30,7 @@ import javax.transaction.Transactional
 @Suppress("UNCHECKED_CAST")
 @Controller
 @Secured("ROLE_ADMIN","ROLE_USER")
-class FavoritesController {
+class FavoritesController: BaseController() {
     @Value("\${app.role.admin}")
     private var adminRole: String? = null
 
@@ -58,6 +58,9 @@ class FavoritesController {
         for ((k, v) in response) {
             model[k] = v!!
         }
+
+        getAllAttributeData(model)
+
         return model.getAttribute("activePage").toString()
     }
 

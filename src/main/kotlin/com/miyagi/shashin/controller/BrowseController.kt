@@ -568,7 +568,7 @@ class BrowseController: BaseController() {
             model[k] = v!!
         }
 
-        getAllAttribueData(model)
+        getAllAttributeData(model)
 
         return model
     }
@@ -584,7 +584,7 @@ class BrowseController: BaseController() {
             model[k] = v!!
         }
 
-        getAllAttribueData(model)
+        getAllAttributeData(model)
 
         return model
     }
@@ -732,7 +732,7 @@ class BrowseController: BaseController() {
             model[k] = v!!
         }
 
-        getAllAttribueData(model)
+        getAllAttributeData(model)
 
         model["activePage"] = module
         model["activeSidebar"] = module
