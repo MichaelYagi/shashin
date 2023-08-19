@@ -508,7 +508,7 @@ async function showMap(mapdata) {
     const lightGalleryConfigs = shashin.getLightGalleryConfigs();
     // lightGalleryConfigs["plugins"].push(lgEditLocation);
     lightGalleryConfigs["plugins"].push(lgMetadataDetail);
-    lightGalleryConfigs["plugins"].push(lgCastMedia);
+    // lightGalleryConfigs["plugins"].push(lgCastMedia);
     lightGalleryConfigs["controls"] = true;
     lightGalleryConfigs["dynamic"] = true;
     lightGalleryConfigs["counter"] = true;

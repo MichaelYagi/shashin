@@ -151,7 +151,7 @@
                     &nbsp;&nbsp;<span id="trashNumberSelected"></span>
                 </div>
             </th:block>
-            <th:block th:unless="${activePage == 'favorites'}">
+            <th:block th:unless="${activePage == 'favorites' or activePage == 'trash'}">
                 <div id="albumAppTools">
                     <th:block th:if="${authority == 'ROLE_ADMIN'}">
                     <a href="#" id="albumAppToolsRemoveAlbum" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Remove From Album"><span th:class="'bi-bookmark-x placeholder'+${currentUser.darkMode ? ' darkmodeIcons' : ' lightmodeIcons'}" style="font-size: 1.5rem;"></span></a>&nbsp;&nbsp;
