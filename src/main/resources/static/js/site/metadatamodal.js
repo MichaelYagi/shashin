@@ -184,10 +184,6 @@ $("#saveMetadata").on("click", async function (e) {
                     $("#lensesBatchString").val(data["lenses"]);
                 }
 
-                shashin.processAlbumList(data);
-
-                shashin.processPeopleList(data);
-
                 // Update tag
                 const metadataObj = {};
                 let dateGalleryRemoved = false;
