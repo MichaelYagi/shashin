@@ -145,7 +145,7 @@ class TimelineController: BaseController() {
             model["message"] = "Oops! $mediaType is not a valid media type!"
         }
 
-        getAllAttribueData(model)
+        getAllAttributeData(model)
 
         model["activePage"] = module
         model["activeSidebar"] = module
@@ -1077,7 +1077,7 @@ class TimelineController: BaseController() {
                 metadataObj.get().setModifiedAt(getCurrentTimestamp())
                 metadataRepository.save(metadataObj.get())
 
-                val attrResponse = getAllAttribueData(model)
+                val attrResponse = getAllAttributeData(model)
                 for ((k, v) in attrResponse) {
                     resp[k] = v
                 }
@@ -1463,7 +1463,7 @@ class TimelineController: BaseController() {
                 // Update record
                 metadataRepository.saveAll(metadataList)
 
-                val attrResponse = getAllAttribueData(model)
+                val attrResponse = getAllAttributeData(model)
                 for ((k, v) in attrResponse) {
                     resp[k] = v
                 }

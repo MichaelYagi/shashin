@@ -43,7 +43,7 @@ import kotlin.io.path.isDirectory
 
 @Suppress("UNCHECKED_CAST")
 @Controller
-class AlbumsController {
+class AlbumsController: BaseController() {
 
     @Autowired
     private lateinit var albumRepository: AlbumRepository
@@ -1076,6 +1076,9 @@ class AlbumsController {
             model[k] = v!!
         }
         model["currentUser"] = model.getAttribute("currentUser") as User
+
+        getAllAttributeData(model)
+
         return model.getAttribute("activePage").toString()
     }
 
