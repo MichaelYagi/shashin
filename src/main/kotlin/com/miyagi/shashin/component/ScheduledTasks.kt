@@ -34,7 +34,7 @@ class CronProperties {
 
         if (settings != null) {
             val scheduledTimeSetting = settings.getScheduledTime()
-            val scheduledTimeSettingGmt = doTimeConversion(scheduledTimeSetting!!, true)
+            val scheduledTimeSettingGmt = TextUtils.doTimeConversion(scheduledTimeSetting!!, true)
             val scheduledTimeSettingArray = scheduledTimeSettingGmt.split(":")
             hourSetting = scheduledTimeSettingArray[0]
             if (hourSetting.first() == '0') {
@@ -42,7 +42,7 @@ class CronProperties {
             }
 
             if (scheduledTime != null) {
-                val scheduledTimePropertyGmt = doTimeConversion(scheduledTime, true)
+                val scheduledTimePropertyGmt = TextUtils.doTimeConversion(scheduledTime, true)
                 val scheduledTimePropArray = scheduledTimePropertyGmt.split(":")
                 hourProperty = scheduledTimePropArray[0]
                 if (hourProperty.first() == '0') {
@@ -67,32 +67,6 @@ class CronProperties {
         }
 
         return if (settings != null) cronSettings else cronProperty
-    }
-
-    private fun doTimeConversion(time: String?, type: Boolean): String {
-        if (time != null) {
-            val timeArray = time.split(':')
-            var hour: String
-            if (timeArray.size > 1) {
-                hour = timeArray[0]
-                if (hour.count() == 1) {
-                    hour = "0$hour"
-                }
-                val reformattedTime = "$hour:${timeArray[1]}"
-
-                val localZone = ZoneId.systemDefault()
-                val lt = LocalTime.parse(reformattedTime)
-                val ldt = LocalDate.now(localZone).atTime(lt)
-                val resultTime: ZonedDateTime = if (type) {
-                    ldt.atZone(localZone).withZoneSameInstant(ZoneOffset.UTC)
-                } else {
-                    ldt.atOffset(ZoneOffset.UTC).atZoneSameInstant(localZone)
-                }
-                val newTime = resultTime.toLocalTime()
-                return newTime.toString()
-            }
-        }
-        return ""
     }
 }
 
