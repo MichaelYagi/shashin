@@ -131,7 +131,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                     const metadataId = metadataIds[index];
 
                     if ($("#image" + metadataId).length > 0) {
-                        $("#metadataModalEdit" + metadataId + " span").removeClass("bi-pencil").addClass("bi-pencil-square");
+                        $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
 
                         const metadataObj = {};
 
@@ -151,7 +151,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                             $("#mediaLink" + metadataId).attr("tag", metadataId);
 
                             if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlngBatchData").val().trim !== "") {
-                                $("#metadataModalEdit" + metadataId + " span").removeClass("bi-pencil-square").addClass("bi-pencil");
+                                $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
                             }
 
                             if (metadataChangeMap.hasOwnProperty(metadataId) && metadataChangeMap[metadataId] === true && activePage === "timeline") {
