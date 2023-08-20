@@ -681,6 +681,13 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                                 subjectObj["similarity"].toString().toDouble()
                                         }
 
+                                        if (threadFile != null) {
+                                            writeToThreadFileAndLogMessage(
+                                                "Analyzing subject " + subject + " for " + metadataObj.getPath(),
+                                                threadFile
+                                            )
+                                        }
+
                                         if (similarity != 1.0 && (similarity <= 0.0 || similarity >= settings.getRecognitionConfidenceThreshold()
                                                 .toString().toDouble())
                                         ) {
@@ -730,56 +737,56 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
                                             logger.log(
                                                 Level.INFO,
-                                                "Uploaded face for " + metadataObj.getPath() + " for subject " + subject + ": " + response
+                                                "Uploaded subject for " + metadataObj.getPath() + " for subject " + subject + ": " + response
                                             )
 
-                                            if (threadFile != null) {
-                                                writeToThreadFileAndLogMessage(
-                                                    "Uploaded subject " + subject + " for " + metadataObj.getPath() + " with similarity " + similarity.toString(),
-                                                    threadFile
+                                            val recognitionLabelObj =
+                                                recognitionLabelRepository?.findByNameIgnoreCase(
+                                                    subject
                                                 )
 
-                                                val recognitionLabelObj =
-                                                    recognitionLabelRepository?.findByNameIgnoreCase(
-                                                        subject
-                                                    )
+                                            val recognitionLabelPhoto =
+                                                recognitionLabelPhotoRepository.countByRecognitionLabelIdAndMetadataId(
+                                                    recognitionLabelObj!!.getId(),
+                                                    metadataObj.getId()
+                                                )
 
-                                                val recognitionLabelPhoto =
-                                                    recognitionLabelPhotoRepository.countByRecognitionLabelIdAndMetadataId(
-                                                        recognitionLabelObj!!.getId(),
-                                                        metadataObj.getId()
+                                            if (recognitionLabelPhoto == 0) {
+                                                val recognitionLabelPhotoObj =
+                                                    RecognitionLabelPhoto()
+                                                recognitionLabelPhotoObj.setMetadataId(
+                                                    metadataObj.getId()
+                                                )
+                                                recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                    recognitionLabelObj.getId()
+                                                )
+                                                recognitionLabelPhotoObj.setConfidence(
+                                                    similarity.toString()
+                                                )
+                                                if (compreFaceImageId != null) {
+                                                    recognitionLabelPhotoObj.setCompreFaceImageId(
+                                                        compreFaceImageId
                                                     )
-
-                                                if (recognitionLabelPhoto == 0) {
-                                                    val recognitionLabelPhotoObj =
-                                                        RecognitionLabelPhoto()
-                                                    recognitionLabelPhotoObj.setMetadataId(
-                                                        metadataObj.getId()
-                                                    )
-                                                    recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                        recognitionLabelObj.getId()
-                                                    )
-                                                    recognitionLabelPhotoObj.setConfidence(
-                                                        similarity.toString()
-                                                    )
-                                                    if (compreFaceImageId != null) {
-                                                        recognitionLabelPhotoObj.setCompreFaceImageId(
-                                                            compreFaceImageId
-                                                        )
-                                                    }
-                                                    recognitionLabelPhotoRepository.save(
-                                                        recognitionLabelPhotoObj
-                                                    )
-
-                                                    metadataObj.setModifiedAt(TextUtils.getCurrentTimestamp())
-                                                    metadataRepository.save(metadataObj)
                                                 }
-                                            } else {
-                                                logger.log(
-                                                    Level.INFO,
-                                                    "Did not upload subject " + subject + " for " + metadataObj.getPath() + " with similarity " + similarity.toString()
+                                                recognitionLabelPhotoRepository.save(
+                                                    recognitionLabelPhotoObj
                                                 )
+
+                                                metadataObj.setModifiedAt(TextUtils.getCurrentTimestamp())
+                                                metadataRepository.save(metadataObj)
+
+                                                if (threadFile != null) {
+                                                    writeToThreadFileAndLogMessage(
+                                                        "Processed subject " + subject + " for " + metadataObj.getPath() + " with similarity " + similarity.toString(),
+                                                        threadFile
+                                                    )
+                                                }
                                             }
+                                        } else {
+                                            logger.log(
+                                                Level.INFO,
+                                                "Did not upload subject " + subject + " for " + metadataObj.getPath() + " with similarity " + similarity.toString()
+                                            )
                                         }
                                     }
                                 }
@@ -851,6 +858,13 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                             "Objects saved for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
                                         )
                                     } else {
+                                        if (threadFile != null) {
+                                            writeToThreadFileAndLogMessage(
+                                                "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability,
+                                                threadFile
+                                            )
+                                        }
+
                                         logger.log(
                                             Level.INFO,
                                             "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
