@@ -199,6 +199,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setPort(portProperty)
             settingsObj.setScanAutomatically(false)
             settingsObj.setObjectDetection(false)
+            settingsObj.setScheduledMatching(false)
             model["objectRecogEnabled"] = false
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(getCurrentTimestamp())
@@ -221,9 +222,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["username"] = ""
         model["apikey"] = ""
         model["randomString"] = TextUtils.generateUUID(getCurrentTimestamp())
-        val requestAttributes = RequestContextHolder.currentRequestAttributes()
-        val attributes = requestAttributes as ServletRequestAttributes
-        val request = attributes.request
+//        val requestAttributes = RequestContextHolder.currentRequestAttributes()
+//        val attributes = requestAttributes as ServletRequestAttributes
+//        val request = attributes.request
         var currentUser: User?
 
         if (!request.getHeader("X-API-KEY").isNullOrBlank()) {

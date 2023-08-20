@@ -1,11 +1,5 @@
 package com.miyagi.shashin.controller
 
-import ai.djl.Application
-import ai.djl.modality.Classifications
-import ai.djl.modality.cv.output.DetectedObjects
-import ai.djl.repository.zoo.Criteria
-import ai.djl.repository.zoo.ModelZoo
-import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
@@ -65,10 +59,6 @@ import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 import kotlinx.coroutines.*
-import java.awt.image.BufferedImage
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import javax.imageio.ImageIO
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -311,7 +301,8 @@ class SettingsController {
         @RequestParam("searchHistoryLimit") searchHistoryLimit: Int,
         @RequestParam("changePort") port: String,
         @RequestParam("scanAutomatically") scanAutomatically: String?,
-        @RequestParam("objectDetection") objectDetection: String?
+        @RequestParam("objectDetection") objectDetection: String?,
+        @RequestParam("scheduledMatching") scheduledMatching: String?
     ): String {
         var resetServer = false
         var mediaDirs: List<String>? = null
@@ -437,6 +428,11 @@ class SettingsController {
             settings?.setObjectDetection(true)
         } else {
             settings?.setObjectDetection(false)
+        }
+        if (scheduledMatching == "on") {
+            settings?.setScheduledMatching(true)
+        } else {
+            settings?.setScheduledMatching(false)
         }
 
         if (settings != null) {
@@ -2026,7 +2022,7 @@ class SettingsController {
                                             }
 
                                             if (settings?.getObjectDetection() == true) {
-                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!, metadataObj, settings, threadFile)
+                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!, metadataObj, settings, threadFile, shouldStop.get())
                                             }
 
                                             threadText = file.path + " indexed"

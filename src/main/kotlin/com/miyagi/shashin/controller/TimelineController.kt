@@ -1045,7 +1045,7 @@ class TimelineController: BaseController() {
                     val keywordCount = keywordPhotoRepository.countByMetadataId(metadataId)
 
                     if ((metadataMap["keywords"].toString().isBlank() || keywordCount == 0) && settings.getObjectDetection() == true) {
-                        val keywordArray = FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), settings, null)
+                        val keywordArray = FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), settings, null, null)
                         if (!keywordArray.isNullOrEmpty()) {
                             resp["keywordsIdentified"] = keywordArray.joinToString(",")
                         }

@@ -596,8 +596,7 @@ class AlbumsController: BaseController() {
         if (albumDeleteMap.containsKey("albumId")) {
             val albumIdRequest = albumDeleteMap["albumId"].toString().toInt()
 
-            val currentUserObj = model.getAttribute("currentUser") as User?
-
+//            val currentUserObj = model.getAttribute("currentUser") as User?
 //            val userAlbumCount = userAlbumRepository.countByUserIdAndAlbumId(currentUserObj?.getId(), albumIdRequest)
             val userAlbumCount = userAlbumRepository.countByAlbumId(albumIdRequest)
 
