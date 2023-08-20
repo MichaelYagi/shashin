@@ -6,6 +6,7 @@ import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.FileUtils.Companion.subjectRecognizer
 import com.miyagi.shashin.util.TextUtils
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.util.logging.Level
@@ -36,7 +37,7 @@ class ScheduledTasks {
     private var keywordPhotoRepository: KeywordPhotoRepository? = null
 
     // Run everyday at 2am
-    @Scheduled(cron = "0 0 2 * * *")
+    @Scheduled(cron = "\${app.config.cron.expression.matchscan}", zone="GMT")
     fun scanSubjectsAndObjectsJob() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 
