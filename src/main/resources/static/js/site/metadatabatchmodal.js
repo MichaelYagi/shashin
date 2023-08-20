@@ -198,7 +198,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                         window.location.reload();
                     }
 
-                    if (activePage === "album" && albumInputVal !== "") {
+                    if (activePage === "matches" || (activePage === "album" && albumInputVal !== "")) {
                         window.location.reload();
                     }
                 }

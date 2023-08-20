@@ -279,6 +279,10 @@ $("#saveMetadata").on("click", async function (e) {
                     ) {
                         window.location.reload();
                     }
+
+                    if (activePage === "matches" || (Util.arraysEqual(prevPeopleArray,peopleArray) === false && activePage === "person")) {
+                        window.location.reload();
+                    }
                 }
 
                 $("#metadataModalStatus").addClass('bi-check-circle').removeClass('spinner-grow');
