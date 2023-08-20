@@ -9,7 +9,7 @@ import java.net.URL
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
+import java.time.*
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.logging.Level
@@ -260,6 +260,32 @@ class TextUtils {
                 "+13:00",
                 "+14:00"
             )
+        }
+
+        fun doTimeConversion(time: String?, type: Boolean): String {
+            if (time != null) {
+                val timeArray = time.split(':')
+                var hour: String
+                if (timeArray.size > 1) {
+                    hour = timeArray[0]
+                    if (hour.count() == 1) {
+                        hour = "0$hour"
+                    }
+                    val reformattedTime = "$hour:${timeArray[1]}"
+
+                    val localZone = ZoneId.systemDefault()
+                    val lt = LocalTime.parse(reformattedTime)
+                    val ldt = LocalDate.now(localZone).atTime(lt)
+                    val resultTime: ZonedDateTime = if (type) {
+                        ldt.atZone(localZone).withZoneSameInstant(ZoneOffset.UTC)
+                    } else {
+                        ldt.atOffset(ZoneOffset.UTC).atZoneSameInstant(localZone)
+                    }
+                    val newTime = resultTime.toLocalTime()
+                    return newTime.toString()
+                }
+            }
+            return ""
         }
 
         fun escape(raw: String): String {

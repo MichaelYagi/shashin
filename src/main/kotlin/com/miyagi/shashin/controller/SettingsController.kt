@@ -49,6 +49,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
@@ -274,20 +275,9 @@ class SettingsController {
         }
 
         model["timeScheduleList"] = TextUtils.timeSchedules()
+        model["currentTimezone"] = ZoneId.systemDefault()
         val scheduledTime = settings.getScheduledTime()
         model["scheduledTime"] = scheduledTime as String
-        val scheduledTimeArray = scheduledTime.split(":")
-        val cronString = "0 0 "+ scheduledTimeArray[0] +" * * *"
-        val cronExpression = CronExpression.parse(cronString)
-        val inputFormat = SimpleDateFormat(
-            "yyyy-MM-dd HH:mm z",
-            Locale.US
-        )
-        val date = inputFormat.parse(cronExpression.next(LocalDateTime.now())?.toString()?.replace("T", " ") + " UTC")
-        val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US)
-        val outputText = outputFormat.format(date)
-        model["cronNextRunDate"] = outputText
-
         model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
 
         model["msg"] = ""
@@ -478,19 +468,8 @@ class SettingsController {
             }
 
             model["timeScheduleList"] = TextUtils.timeSchedules()
-            val scheduledTime = settings.getScheduledTime()
+            model["currentTimezone"] = ZoneId.systemDefault()
             model["scheduledTime"] = scheduledTime as String
-            val scheduledTimeArray = scheduledTime.split(":")
-            val cronString = "0 0 "+ scheduledTimeArray[0] +" * * *"
-            val cronExpression = CronExpression.parse(cronString)
-            val inputFormat = SimpleDateFormat(
-                "yyyy-MM-dd HH:mm z",
-                Locale.US
-            )
-            val date = inputFormat.parse(cronExpression.next(LocalDateTime.now())?.toString()?.replace("T", " ") + " UTC")
-            val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US)
-            val outputText = outputFormat.format(date)
-            model["cronNextRunDate"] = outputText
 
             model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
