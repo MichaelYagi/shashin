@@ -207,21 +207,18 @@ $("#saveMetadata").on("click", async function (e) {
                     }
 
                     $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
-                    if (metadataObj.lat !== null && metadataObj.lng !== null && prevLng !== metadataObj.lng && $("#latlng").val() !== "") {
+                    if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
-                        // Reload in map view if latlng changed
-                        if (activePage === "map" && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
-                            window.location.replace("/map?latlng=" + $("#latlng").val());
-                        }
                     }
 
                     $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
-                        // Reload in map view if latlng changed
-                        if (activePage === "map" && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
-                            window.location.replace("/map?latlng=" + $("#latlng").val());
-                        }
+                    }
+
+                    // Reload in map view if latlng changed
+                    if (activePage === "map" && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
+                        window.location.replace("/map?latlng=" + $("#latlng").val());
                     }
 
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
