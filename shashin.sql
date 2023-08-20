@@ -66,6 +66,7 @@ CREATE TABLE `settings` (
     `port` VARCHAR(10) NOT NULL DEFAULT '6624',
     `scanAutomatically` BOOLEAN DEFAULT FALSE,
     `scheduledMatching` BOOLEAN DEFAULT FALSE,
+    `scheduledTime` VARCHAR(20) DEFAULT '2:00',
     `objectDetection` BOOLEAN DEFAULT FALSE,
     `compreFaceKey` VARCHAR(36) DEFAULT 'http://127.0.0.1:8000/',
     `compreFaceServer` VARCHAR(150),
