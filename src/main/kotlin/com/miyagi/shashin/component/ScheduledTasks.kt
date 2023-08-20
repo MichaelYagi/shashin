@@ -45,6 +45,11 @@ class ScheduledTasks {
 
             Thread {
 
+                logger.log(
+                    Level.INFO,
+                    "Scheduled scanning started at " + TextUtils.getCurrentTimestamp()
+                )
+
                 // Object and person recognition
 
                 // Start subject matching
@@ -53,11 +58,20 @@ class ScheduledTasks {
                         settings.getCompreFaceKey()
                     )
                 ) {
+                    logger.log(
+                        Level.INFO,
+                        "Scheduled scanning for facial recognition started at " + TextUtils.getCurrentTimestamp()
+                    )
                     subjectRecognizer(metadataRepository, recognitionLabelRepository, recognitionLabelPhotoRepository, settings, null, null)
                 }
 
                 // Start object recognition
                 if (settings.getObjectDetection() == true) {
+                    logger.log(
+                        Level.INFO,
+                        "Scheduled scanning for object recognition started at " + TextUtils.getCurrentTimestamp()
+                    )
+
                     val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
                     if (withoutKeywords != null) {
                         for (withoutKeyword in withoutKeywords) {
