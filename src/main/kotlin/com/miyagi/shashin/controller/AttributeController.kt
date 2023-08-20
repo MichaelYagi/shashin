@@ -110,6 +110,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @Value("\${server.port}")
     private lateinit var portProperty: String
 
+    @Value("\${app.config.default.scheduledTime}")
+    private lateinit var scheduledTime: String
+
 //    @ExceptionHandler(Exception::class)
 //    fun globeExceptionHandler(ex: java.lang.Exception, request: WebRequest): ResponseEntity<*>? {
 //        return buildResponseEntity(ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex.localizedMessage, ex))
@@ -200,6 +203,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setScanAutomatically(false)
             settingsObj.setObjectDetection(false)
             settingsObj.setScheduledMatching(false)
+            settingsObj.setScheduledTime(scheduledTime)
             model["objectRecogEnabled"] = false
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(getCurrentTimestamp())

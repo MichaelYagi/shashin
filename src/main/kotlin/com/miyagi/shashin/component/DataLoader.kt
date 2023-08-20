@@ -37,6 +37,9 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
     @Value("\${server.port}")
     private lateinit var portProperty: String
 
+    @Value("\${app.config.default.scheduledTime}")
+    private lateinit var scheduledTime: String
+
     @CacheEvict(value = ["firstSettingQuery"], allEntries = true)
     override fun run(args: ApplicationArguments) {
         val settings = settingsRepository.findFirstByOrderByIdAsc()
@@ -52,6 +55,7 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
             settingsObj.setScanAutomatically(false)
             settingsObj.setObjectDetection(false)
             settingsObj.setScheduledMatching(false)
+            settingsObj.setScheduledTime(scheduledTime)
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(TextUtils.getCurrentTimestamp())
             settingsObj.setModifiedAt(TextUtils.getCurrentTimestamp())

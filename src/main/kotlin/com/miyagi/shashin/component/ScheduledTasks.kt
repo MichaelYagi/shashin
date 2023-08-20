@@ -9,9 +9,92 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import java.text.SimpleDateFormat
+import java.time.*
+import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
 
+
+@Component
+class CronProperties {
+    private var logger: Logger = Logger.getLogger(TimelineController::class.simpleName)
+
+    @Autowired
+    private var settingsRepository: SettingsRepository? = null
+
+    @Value("\${app.config.default.scheduledTime}")
+    private var scheduledTime: String? = null
+
+    fun expression(): String {
+        val settings = settingsRepository?.findFirstByOrderByIdAsc()
+
+        var hourSetting = "9"
+        var hourProperty = "9"
+
+        if (settings != null) {
+            val scheduledTimeSetting = settings.getScheduledTime()
+            val scheduledTimeSettingGmt = doTimeConversion(scheduledTimeSetting!!, true)
+            val scheduledTimeSettingArray = scheduledTimeSettingGmt.split(":")
+            hourSetting = scheduledTimeSettingArray[0]
+            if (hourSetting.first() == '0') {
+                hourSetting = hourSetting.drop(1)
+            }
+
+            if (scheduledTime != null) {
+                val scheduledTimePropertyGmt = doTimeConversion(scheduledTime, true)
+                val scheduledTimePropArray = scheduledTimePropertyGmt.split(":")
+                hourProperty = scheduledTimePropArray[0]
+                if (hourProperty.first() == '0') {
+                    hourProperty = hourProperty.drop(1)
+                }
+            }
+        }
+
+        val cronSettings = "0 0 $hourSetting * * *"
+        val cronProperty = "0 0 $hourProperty * * *"
+
+        if (settings != null) {
+            logger.log(
+                Level.INFO,
+                "Cron from settings used: '$cronSettings' GMT"
+            )
+        } else {
+            logger.log(
+                Level.INFO,
+                "Cron from property used: '$cronProperty' GMT"
+            )
+        }
+
+        return if (settings != null) cronSettings else cronProperty
+    }
+
+    private fun doTimeConversion(time: String?, type: Boolean): String {
+        if (time != null) {
+            val timeArray = time.split(':')
+            var hour: String
+            if (timeArray.size > 1) {
+                hour = timeArray[0]
+                if (hour.count() == 1) {
+                    hour = "0$hour"
+                }
+                val reformattedTime = "$hour:${timeArray[1]}"
+
+                val localZone = ZoneId.systemDefault()
+                val lt = LocalTime.parse(reformattedTime)
+                val ldt = LocalDate.now(localZone).atTime(lt)
+                val resultTime: ZonedDateTime = if (type) {
+                    ldt.atZone(localZone).withZoneSameInstant(ZoneOffset.UTC)
+                } else {
+                    ldt.atOffset(ZoneOffset.UTC).atZoneSameInstant(localZone)
+                }
+                val newTime = resultTime.toLocalTime()
+                return newTime.toString()
+            }
+        }
+        return ""
+    }
+}
 
 @Component
 class ScheduledTasks {
@@ -36,8 +119,7 @@ class ScheduledTasks {
     @Autowired
     private var keywordPhotoRepository: KeywordPhotoRepository? = null
 
-    // Run everyday at 2am
-    @Scheduled(cron = "\${app.config.cron.expression.matchscan}", zone="GMT")
+    @Scheduled(cron = "#{cronProperties.expression()}", zone="GMT")
     fun scanSubjectsAndObjectsJob() {
         val settings = settingsRepository?.findFirstByOrderByIdAsc()
 

@@ -79,9 +79,6 @@ class SettingsController {
     @Value("\${app.build.properties.name}")
     private val appName: String? = null
 
-    @Value("\${app.config.cron.expression.matchscan}")
-    private val matchScanCronExpression: String? = null
-
     @Autowired
     private val metadataRepository: MetadataRepository? = null
 
@@ -276,7 +273,12 @@ class SettingsController {
             model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
         }
 
-        val cronExpression = CronExpression.parse(matchScanCronExpression!!)
+        model["timeScheduleList"] = TextUtils.timeSchedules()
+        val scheduledTime = settings.getScheduledTime()
+        model["scheduledTime"] = scheduledTime as String
+        val scheduledTimeArray = scheduledTime.split(":")
+        val cronString = "0 0 "+ scheduledTimeArray[0] +" * * *"
+        val cronExpression = CronExpression.parse(cronString)
         val inputFormat = SimpleDateFormat(
             "yyyy-MM-dd HH:mm z",
             Locale.US
@@ -315,10 +317,11 @@ class SettingsController {
         @RequestParam("trainingDataLimit") trainingDataLimit: Int,
         @RequestParam("notificationLimit") notificationLimit: Int,
         @RequestParam("searchHistoryLimit") searchHistoryLimit: Int,
-        @RequestParam("changePort") port: String,
+        @RequestParam("changePort") port: String?,
         @RequestParam("scanAutomatically") scanAutomatically: String?,
         @RequestParam("objectDetection") objectDetection: String?,
-        @RequestParam("scheduledMatching") scheduledMatching: String?
+        @RequestParam("scheduledMatching") scheduledMatching: String?,
+        @RequestParam("scheduledTime") scheduledTime: String?
     ): String {
         var resetServer = false
         var mediaDirs: List<String>? = null
@@ -431,8 +434,12 @@ class SettingsController {
         if (searchHistoryLimit > 0) {
             settings?.setSearchHistoryLimit(searchHistoryLimit)
         }
-        if (settings != null && port.isNotEmpty() && port != settings.getPort()) {
+        if (settings != null && !port.isNullOrEmpty() && port != settings.getPort()) {
             settings.setPort(port)
+            resetServer = true
+        }
+        if (settings != null && !scheduledTime.isNullOrEmpty() && scheduledTime != settings.getScheduledTime()) {
+            settings.setScheduledTime(scheduledTime)
             resetServer = true
         }
         if (scanAutomatically == "on") {
@@ -470,7 +477,12 @@ class SettingsController {
                 logger.log(Level.INFO, "Error CompreFace connection: " + e.localizedMessage)
             }
 
-            val cronExpression = CronExpression.parse(matchScanCronExpression!!)
+            model["timeScheduleList"] = TextUtils.timeSchedules()
+            val scheduledTime = settings.getScheduledTime()
+            model["scheduledTime"] = scheduledTime as String
+            val scheduledTimeArray = scheduledTime.split(":")
+            val cronString = "0 0 "+ scheduledTimeArray[0] +" * * *"
+            val cronExpression = CronExpression.parse(cronString)
             val inputFormat = SimpleDateFormat(
                 "yyyy-MM-dd HH:mm z",
                 Locale.US

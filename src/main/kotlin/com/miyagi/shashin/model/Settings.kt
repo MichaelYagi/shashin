@@ -35,6 +35,8 @@ class Settings {
     private var objectDetection: Boolean? = null
     @NotBlank
     private var scheduledMatching: Boolean? = null
+    @NotBlank
+    private var scheduledTime: String? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -42,6 +44,14 @@ class Settings {
 
     fun getId(): Int {
         return this.id
+    }
+
+    fun getScheduledTime(): String? {
+        return this.scheduledTime
+    }
+
+    fun setScheduledTime(scheduledTime: String?) {
+        this.scheduledTime = scheduledTime
     }
 
     fun getRecognitionConfidenceThreshold(): String? {
@@ -169,6 +179,7 @@ class Settings {
         map["scanAutomatically"] = this.scanAutomatically
         map["objectDetection"] = this.objectDetection
         map["scheduledMatching"] = this.scheduledMatching
+        map["scheduledTime"] = this.scheduledTime
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {

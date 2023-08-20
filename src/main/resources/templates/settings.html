@@ -92,21 +92,39 @@
                             </div>
                         </div>
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="scanAutomatically" name="scanAutomatically" th:checked="${settings.scanAutomatically}">
-                            <label class="form-check-label" for="scanAutomatically">
-                                <strong>Automatic Media Indexing</strong>&nbsp;<span id="scanAutomaticallyInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Automatically scans media when changes detected in media directories"></span>
-                            </label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="scheduledMatching" name="scheduledMatching" th:checked="${settings.scheduledMatching}">
-                            <label class="form-check-label" for="scheduledMatching">
-                                <strong>Enable scheduled background matching</strong>&nbsp;<span id="scheduledMatchingInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" th:title="${'Scans people and objects as a background job. Next run is at '+cronNextRunDate}"></span>
-                            </label>
+                            <div class="col-3">
+                                <input class="form-check-input" type="checkbox" id="scheduledMatching" name="scheduledMatching" th:checked="${settings.scheduledMatching}">
+                                <label class="form-check-label" for="scheduledMatching">
+                                    <strong>Enable scheduled background matching</strong>&nbsp;<span id="scheduledMatchingInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" th:title="${'Scans people and objects as a background job. Next run is at '+cronNextRunDate}"></span>
+                                </label>
+                            </div>
+
+                            <div class="col-2 form-group">
+                                <label for="scheduledTime">Time at which tasks run</label>&nbsp;<span id="scheduledTimeInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Restarts app after updated and saved"></span>
+                                <div class="col-4">
+                                    <select class="form-select" id="scheduledTime" name="scheduledTime">
+                                        <th:block th:each="time, iterStat: ${timeScheduleList}">
+                                            <th:block th:if="${scheduledTime==time}">
+                                                <option th:value="${time}" th:text="${time}" selected></option>
+                                            </th:block>
+                                            <th:block th:if="${scheduledTime!=time}">
+                                                <option th:value="${time}" th:text="${time}"></option>
+                                            </th:block>
+                                        </th:block>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="objectDetection" name="objectDetection" th:checked="${settings.objectDetection}">
                             <label class="form-check-label" for="objectDetection">
                                 <strong>Enable object detection</strong>&nbsp;<span id="objectDetectionInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Enabling puts CPU under load during processing"></span>
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="scanAutomatically" name="scanAutomatically" th:checked="${settings.scanAutomatically}">
+                            <label class="form-check-label" for="scanAutomatically">
+                                <strong>Automatic Media Indexing</strong>&nbsp;<span id="scanAutomaticallyInfo" style="color: blue;font-size: 1rem;" class="bi-info-circle" data-toggle="tooltip" title="Automatically scans media when changes detected in media directories"></span>
                             </label>
                         </div>
                     </th:block>
