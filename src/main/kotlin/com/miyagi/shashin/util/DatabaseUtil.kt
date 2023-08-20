@@ -78,7 +78,7 @@ object DatabaseUtil {
 
     fun import(fullDbName: String?, inputStream: InputStream?): Boolean {
         var success = false
-        var backupDbFile: File? = null
+        var backupDbFile: File?
         val fullDbNameArray = fullDbName?.split(":")
         if (!fullDbNameArray.isNullOrEmpty() && fullDbNameArray.size > 2) {
             val dbNameArray = fullDbNameArray[2].split("?")

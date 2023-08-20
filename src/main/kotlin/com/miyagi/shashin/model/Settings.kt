@@ -33,6 +33,8 @@ class Settings {
     private var scanAutomatically: Boolean? = null
     @NotBlank
     private var objectDetection: Boolean? = null
+    @NotBlank
+    private var scheduledMatching: Boolean? = null
     private var createdAt: String? = null
     private var modifiedAt: String? = null
 
@@ -130,6 +132,14 @@ class Settings {
         this.objectDetection = objectDetection
     }
 
+    fun getScheduledMatching(): Boolean? {
+        return this.scheduledMatching
+    }
+
+    fun setScheduledMatching(scheduledMatching: Boolean?) {
+        this.scheduledMatching = scheduledMatching
+    }
+
     fun getCreatedAt(): String? {
         return this.createdAt
     }
@@ -158,6 +168,7 @@ class Settings {
         map["port"] = this.port
         map["scanAutomatically"] = this.scanAutomatically
         map["objectDetection"] = this.objectDetection
+        map["scheduledMatching"] = this.scheduledMatching
         val mapper = ObjectMapper()
         var mapJson: String? = "{}"
         try {
