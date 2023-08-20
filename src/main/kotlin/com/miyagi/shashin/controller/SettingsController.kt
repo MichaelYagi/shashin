@@ -13,6 +13,7 @@ import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.service.RestartService
 import com.miyagi.shashin.util.*
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
+import kotlinx.coroutines.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
@@ -27,6 +28,7 @@ import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
+import org.springframework.scheduling.support.CronExpression
 import org.springframework.security.access.annotation.Secured
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
@@ -46,6 +48,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
@@ -58,7 +61,7 @@ import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
-import kotlinx.coroutines.*
+
 
 @Suppress("UNCHECKED_CAST")
 @Controller
@@ -75,6 +78,9 @@ class SettingsController {
 
     @Value("\${app.build.properties.name}")
     private val appName: String? = null
+
+    @Value("\${app.config.cron.expression.matchscan}")
+    private val matchScanCronExpression: String? = null
 
     @Autowired
     private val metadataRepository: MetadataRepository? = null
@@ -270,6 +276,16 @@ class SettingsController {
             model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
         }
 
+        val cronExpression = CronExpression.parse(matchScanCronExpression!!)
+        val inputFormat = SimpleDateFormat(
+            "yyyy-MM-dd HH:mm z",
+            Locale.US
+        )
+        val date = inputFormat.parse(cronExpression.next(LocalDateTime.now())?.toString()?.replace("T", " ") + " UTC")
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US)
+        val outputText = outputFormat.format(date)
+        model["cronNextRunDate"] = outputText
+
         model["objectRecogEnabled"] = settings.getObjectDetection() as Boolean
 
         model["msg"] = ""
@@ -453,6 +469,16 @@ class SettingsController {
             } catch (e: Exception) {
                 logger.log(Level.INFO, "Error CompreFace connection: " + e.localizedMessage)
             }
+
+            val cronExpression = CronExpression.parse(matchScanCronExpression!!)
+            val inputFormat = SimpleDateFormat(
+                "yyyy-MM-dd HH:mm z",
+                Locale.US
+            )
+            val date = inputFormat.parse(cronExpression.next(LocalDateTime.now())?.toString()?.replace("T", " ") + " UTC")
+            val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss z", Locale.US)
+            val outputText = outputFormat.format(date)
+            model["cronNextRunDate"] = outputText
 
             model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
