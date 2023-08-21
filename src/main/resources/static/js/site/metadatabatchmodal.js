@@ -172,9 +172,9 @@ $("#saveBatchMetadata").on("click", async function (e) {
                                         timelineSettings.jumpFromTimelineToc(null, firstVisibleId, $("#mediaTypeFilter").val());
                                     }
                                 });
-                                if (index === metadataIds.length - 1) {
+                                // if (index === metadataIds.length - 1) {
                                     Util.setMetadataLocalStorage();
-                                }
+                                // }
                             }
 
                             if ($("#latlngBatchData").val().trim() !== "") {
