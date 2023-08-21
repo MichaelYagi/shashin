@@ -162,7 +162,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
                         }
 
                         if (parseInt(index) === (metadataIds.length - 1)) {
-                            if ($("#offcanvasToc").length > 0 && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "" || $("#dayTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
+                            if (activePage === "timeline" && (($("#yearTakenBatchData").val().trim() !== "" || $("#monthTakenBatchData").val().trim() !== "" || $("#dayTakenBatchData").val().trim() !== "") || metadataObj.hidden === true)) {
                                 timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function () {
                                     // If a date section was removed refresh the timeline
                                     if (dateGalleryRemoved === true) {

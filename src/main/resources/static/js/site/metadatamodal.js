@@ -236,11 +236,11 @@ $("#saveMetadata").on("click", async function (e) {
                         // Reload in map view if removed
                         window.location.replace("/map");
                     }
-                } else if (($("#activePage").length > 0 && $("#offcanvasToc").length > 0) || $("#activePage").length === 0) {
+                } else if (activePage === "timeline" || $("#activePage").length === 0) {
                     dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                 }
 
-                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true)) {
+                if (activePage === "timeline" && (takenDateUpdated === true || metadataObj.hidden === true)) {
                     timelineSettings.refreshTimeline($("#mediaTypeFilter").val()).then(function (data) {
                         // If a date section was removed refresh the timeline
                         if (dateGalleryRemoved === true) {
@@ -253,7 +253,7 @@ $("#saveMetadata").on("click", async function (e) {
                 }
 
                 // If in timeline and date, lat, lng changed, or hidden, refresh cache version
-                if ($("#offcanvasToc").length > 0 && (takenDateUpdated === true || metadataObj.hidden === true || prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
+                if (activePage === "timeline" && (takenDateUpdated === true || metadataObj.hidden === true || prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
                     Util.setMetadataLocalStorage();
                 }
 
