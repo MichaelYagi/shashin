@@ -153,7 +153,7 @@ class TextUtils {
         }
 
         fun getGeoData(geocodeUrl: String,lat: String, lng: String): String? {
-            val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng
+            val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng+"&extratags=1&namedetails=1"
             return readUrl(geoLookupUrl)
         }
 
@@ -163,22 +163,58 @@ class TextUtils {
                 val mapper = ObjectMapper()
                 val addressObj = mapper.readTree(geoDataJsonString)
 
-                if (!addressObj.isNull && addressObj.has("address")) {
-                    if (addressObj.get("address").has("road") && addressObj.get("address").get("road") != null) {
-                        buildPlace += addressObj.get("address").get("road").textValue() + ", "
+                if (!addressObj.isNull) {
+                    if (addressObj.has("name") && addressObj.get("name") != null && addressObj.get("name").textValue() != "") {
+                        buildPlace += addressObj.get("name").textValue()  + ", "
                     }
-                    if (addressObj.get("address").has("city") && addressObj.get("address").get("city") != null) {
-                        buildPlace += addressObj.get("address").get("city").textValue() + ", "
+
+                    if (addressObj.has("address")) {
+                        if (addressObj.get("address").has("house_number") && addressObj.get("address").get("house_number") != null && addressObj.get("address").get("house_number").textValue() != "") {
+                            buildPlace += addressObj.get("address").get("house_number").textValue() + ", "
+                        }
+                        if (addressObj.get("address").has("road") && addressObj.get("address").get("road") != null && addressObj.get("address").get("road").textValue() != "") {
+                            buildPlace += addressObj.get("address").get("road").textValue() + ", "
+                        }
+                        if (addressObj.get("address").has("suburb") && addressObj.get("address")
+                                .get("suburb") != null && addressObj.get("address").get("suburb").textValue() != ""
+                        ) {
+                            buildPlace += addressObj.get("address").get("suburb").textValue() + ", "
+                        }
+                        if (addressObj.get("address").has("city") && addressObj.get("address").get("city") != null && addressObj.get("address").get("city").textValue() != "") {
+                            buildPlace += addressObj.get("address").get("city").textValue() + ", "
+                        }
+                        if (addressObj.get("address").has("state") && addressObj.get("address").get("state") != null && addressObj.get("address").get("state").textValue() != "") {
+                            buildPlace += addressObj.get("address").get("state").textValue() + ", "
+                        }
+                        if (addressObj.get("address").has("country") && addressObj.get("address")
+                                .get("country") != null && addressObj.get("address").get("country").textValue() != ""
+                        ) {
+                            buildPlace += addressObj.get("address").get("country").textValue()  + ", "
+                        }
+
+                        if (buildPlace.trim().isNotBlank()) {
+                            buildPlace = buildPlace.replace(", $".toRegex(), "").trim()
+                            buildPlace += "; "
+                        }
                     }
-                    if (addressObj.get("address").has("state") && addressObj.get("address").get("state") != null) {
-                        buildPlace += addressObj.get("address").get("state").textValue() + " "
+
+                    if (buildPlace == "" && addressObj.has("display_name") && addressObj.get("display_name") != null && addressObj.get("display_name").textValue() != "") {
+                        buildPlace = addressObj.get("display_name").textValue() + ", "
                     }
-                    if (addressObj.get("address").has("country") && addressObj.get("address").get("country") != null) {
-                        buildPlace += addressObj.get("address").get("country").textValue()
+
+                    if (addressObj.has("class") && addressObj.get("class") != null && addressObj.get("class").textValue() != "") {
+                        buildPlace += addressObj.get("class").textValue()  + ", "
                     }
+
+                    if (addressObj.has("type") && addressObj.get("type") != null && addressObj.get("type").textValue() != "") {
+                        buildPlace += addressObj.get("type").textValue()  + ", "
+                    }
+
                     if (buildPlace.trim().isNotBlank()) {
                         buildPlace = buildPlace.replace(", $".toRegex(), "").trim()
                     }
+
+                    buildPlace = buildPlace.trim()
                 }
             }
 
