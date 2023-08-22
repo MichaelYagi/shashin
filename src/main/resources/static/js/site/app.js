@@ -680,6 +680,7 @@
             if (placeNameDisplayNameArray.length > 1) {
                 placeNameDisplayName = placeNameDisplayNameArray[0];
             }
+            shashin.printMessageToConsole("Opening modal map - original placename: " + metadata.placeName + " - Display placename: " + placeNameDisplayName);
             $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata, placeNameDisplayName:placeNameDisplayName}));
 
             if (shashin.map === null) {
