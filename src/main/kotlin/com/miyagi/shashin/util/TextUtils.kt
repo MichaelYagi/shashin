@@ -222,6 +222,8 @@ class TextUtils {
                 buildPlace = "Unknown location name"
             }
 
+            logger.log(Level.INFO, "Place string built: $buildPlace")
+
             return buildPlace
         }
 
