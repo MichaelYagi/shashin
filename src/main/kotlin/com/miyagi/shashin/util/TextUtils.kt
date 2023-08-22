@@ -164,8 +164,12 @@ class TextUtils {
                 val addressObj = mapper.readTree(geoDataJsonString)
 
                 if (!addressObj.isNull) {
-                    if (addressObj.has("name") && addressObj.get("name") != null && addressObj.get("name").textValue() != "") {
-                        buildPlace += addressObj.get("name").textValue()  + ", "
+                    if (addressObj.has("name") && addressObj.get("name") != null &&
+                        addressObj.get("name").textValue() != "") {
+                        if (addressObj.has("address") && addressObj.get("address").has("road") && addressObj.get("address").get("road") != null &&
+                            addressObj.get("address").get("road").textValue() != "" && addressObj.get("address").get("road").textValue() != addressObj.get("name").textValue()) {
+                            buildPlace += addressObj.get("name").textValue() + ", "
+                        }
                     }
 
                     if (addressObj.has("address")) {
