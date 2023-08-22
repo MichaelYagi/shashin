@@ -372,14 +372,13 @@ $("#mapTabLink").on("click", function (e) {
     $("#metadataModalMsg").html("");
     $("#saveMetadata").prop('disabled', true);
 
-    if (shashin.map !== null) {
-        shashin.map = null;
-    }
-
     const metadataId = $("#metadataId").val();
-    shashin.getMetadata(metadataId).then(function (metadataObj) {
-        shashin.openMap(metadataObj);
-    });
+
+    if (shashin.map === null && metadataId.length > 0) {
+        shashin.getMetadata(metadataId).then(function (metadataObj) {
+            shashin.openMap(metadataObj);
+        });
+    }
 });
 
 $("#exifTabLink").on("click", async function (e) {
