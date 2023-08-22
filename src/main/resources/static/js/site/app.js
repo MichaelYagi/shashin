@@ -774,7 +774,7 @@
             });
             shashin.contextMenu.on('close', function (evt) {
                 shashin.map.getLayers().forEach(layer => {
-                    if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                    if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
                         shashin.map.removeLayer(layer);
                     }
                 });
@@ -784,7 +784,7 @@
                 if (coordArray.length > 1) {
                     // Clear all previous coordinates
                     shashin.map.getLayers().forEach(layer => {
-                        if (layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
+                        if (layer && layer.getProperties().hasOwnProperty("name") && layer.getProperties()["name"] === "tempCoordinates") {
                             shashin.map.removeLayer(layer);
                         }
                     });
@@ -846,7 +846,7 @@
 
             shashin.map.addControl(shashin.contextMenu);
 
-            if (shashin.layer !== null && shashin.feature !== null) {
+            if (shashin.layer !== null) {
                 shashin.layer.getSource().clear();
             }
 
@@ -881,7 +881,7 @@
 
             setTimeout(fixContentHeight, 1000);
         } else {
-            if (shashin.layer !== null && shashin.feature !== null) {
+            if (shashin.layer !== null) {
                 shashin.layer.getSource().clear();
             }
             $("#map").css("display","none");

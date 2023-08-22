@@ -366,6 +366,11 @@ $("#mapTabLink").on("click", function (e) {
     $("#metadataModalMsg").html("");
     $("#saveMetadata").prop('disabled', true);
 
+    if (shashin.map !== null) {
+        shashin.map.clear();
+        shashin.map = null;
+    }
+
     const metadataId = $("#metadataId").val();
     shashin.getMetadata(metadataId).then(function (metadataObj) {
         shashin.openMap(metadataObj);
