@@ -666,7 +666,12 @@ class Util {
 
             // if (metadata.placeName != null) {
                 $(".locationLabel").show();
-                const linkHtml = "<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'><span class='bi-geo-alt-fill' style='font-size:1.0rem;'></span>" + ((metadata.placeName === null) ? '' : metadata.placeName) + "</a>" +
+                let placeNameDisplayName = (metadata.placeName === null) ? 'Unknown location name' : metadata.placeName;
+                let placeNameDisplayNameArray = placeNameDisplayName.split(";");
+                if (placeNameDisplayNameArray.length > 1) {
+                    placeNameDisplayName = placeNameDisplayNameArray[0];
+                }
+                const linkHtml = "<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'><span class='bi-geo-alt-fill' style='font-size:1.0rem;'></span>" + placeNameDisplayName + "</a>" +
                 "&nbsp;<a href='https://www.google.com/maps/search/?api=1&query="+metadata.lat+"%2C"+metadata.lng+"' target='_blank' class='bi-google'></a>";
                 $(".locationDetails").html(linkHtml);
             // }
