@@ -373,7 +373,6 @@ $("#mapTabLink").on("click", function (e) {
     $("#saveMetadata").prop('disabled', true);
 
     if (shashin.map !== null) {
-        shashin.map.clear();
         shashin.map = null;
     }
 
