@@ -206,7 +206,7 @@ class TextUtils {
                         buildPlace += addressObj.get("class").textValue()  + ", "
                     }
 
-                    if (addressObj.has("type") && addressObj.get("type") != null && addressObj.get("type").textValue() != "") {
+                    if (addressObj.has("type") && addressObj.get("type") != null && addressObj.get("type").textValue() != "" && addressObj.get("type").textValue() != "yes") {
                         buildPlace += addressObj.get("type").textValue()  + ", "
                     }
 
