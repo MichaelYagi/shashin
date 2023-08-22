@@ -209,11 +209,17 @@ $("#saveMetadata").on("click", async function (e) {
                     $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
+                        $("#mapTabLink").show();
+                    } else {
+                        $("#mapTabLink").hide();
                     }
 
                     $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
                     if (metadataObj.lat !== null && metadataObj.lng !== null && $("#latlng").val() !== "") {
                         $("#infoModalEdit" + metadataId + " span").removeClass("bi-info-square").addClass("bi-info-circle");
+                        $("#mapTabLink").show();
+                    } else {
+                        $("#mapTabLink").hide();
                     }
 
                     // Reload in map view if latlng changed
