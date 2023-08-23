@@ -207,12 +207,12 @@ class TextUtils {
                     }
 
                     if (addressObj.has("class") && addressObj.get("class") != null && addressObj.get("class").textValue() != "") {
-                        buildPlace += addressObj.get("class").textValue()  + ", "
+                        buildPlace += addressObj.get("class").textValue().replace("_", " ")  + ", "
                     }
 
                     if (addressObj.has("type") && addressObj.get("type") != null && addressObj.get("type").textValue() != "" &&
                         addressObj.get("type").textValue() != "yes" && addressObj.get("type").textValue() != "no") {
-                        buildPlace += addressObj.get("type").textValue()  + ", "
+                        buildPlace += addressObj.get("type").textValue().replace("_", " ")  + ", "
                     }
 
                     if (buildPlace.trim().isNotBlank()) {
