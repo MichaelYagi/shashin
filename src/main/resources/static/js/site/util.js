@@ -776,7 +776,11 @@ class Util {
                 page = "/player"
             }
 
-            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download'></a>&nbsp;<a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>Share Link</a>&nbsp;<span class='copyLink bi-clipboard-plus' data-clipboard-text='" + shareUrl + page + "'></span>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
+            $(".shareUrlDetails").html("<a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>View share Link</a><br><a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo'></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link'></a>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
+
+            $(".sharecopy").on("click", function (e) {
+                e.preventDefault();
+            })
 
             const clipboard = new ClipboardJS(".copyLink.bi-clipboard-plus",{container: document.getElementById(containerModalId)});
             clipboard.on('success', function (e) {
