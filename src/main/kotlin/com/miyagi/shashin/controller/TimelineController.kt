@@ -105,7 +105,7 @@ class TimelineController: BaseController() {
     private fun buildTimelineModel(model: Model,mediaTypeFilter: String?): String {
         val module = "timeline"
 
-        val validMediaTypes = arrayOf("all","video")
+//        val validMediaTypes = arrayOf("all","video")
 
         var mediaType = mediaTypeFilter
 
@@ -141,9 +141,9 @@ class TimelineController: BaseController() {
         }
         model["metadataYearMonthCount"] = countByYearAndMonthMap
 
-        if (!validMediaTypes.contains(mediaType)) {
-            model["message"] = "Oops! $mediaType is not a valid media type!"
-        }
+//        if (!validMediaTypes.contains(mediaType)) {
+//            model["message"] = "Oops! $mediaType is not a valid media type!"
+//        }
 
         getAllAttributeData(model)
 
