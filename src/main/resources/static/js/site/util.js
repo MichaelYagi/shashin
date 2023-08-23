@@ -776,7 +776,7 @@ class Util {
                 page = "/player"
             }
 
-            $(".shareUrlDetails").html("<a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>View share Link</a><br><a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo'></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link'></a>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span>");
+            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo'></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link'></a>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span><br><a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>View share Link</a>");
 
             $(".sharecopy").on("click", function (e) {
                 e.preventDefault();
