@@ -48,10 +48,10 @@
         <th:block th:if="${activePageLower == 'timeline'}">
             <link rel="stylesheet" href="/css/jquery-ui.css">
         </th:block>
-        <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true'}">
+        <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'true' and activePageLower != 'login' and activePageLower != 'register'}">
             <link rel="stylesheet" href="/css/site/min/style.min.css">
         </th:block>
-        <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false'}">
+        <th:block th:if="${@environment.getProperty('app.js.useMinified') == 'false' and activePageLower != 'login' and activePageLower != 'register'}">
             <link rel="stylesheet" href="/css/site/style.css">
         </th:block>
         <th:block th:if="${activePageLower == 'login' or activePageLower == 'register'}">

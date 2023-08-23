@@ -2,10 +2,10 @@
 <html lang="en" xmlns:th="http://thymeleaf.org">
 <head></head>
 <body th:fragment="loginregcontent(activePage, message)">
-<div class="container" style="max-width: 450px;">
-    <header class="mb-2">
+<div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+    <header class="mb-auto">
         <div>
-            <h3 class="text-center float-md-start mb-0"><a class="link-unstyled" href="/">Shashin</a></h3>
+            <h3 class="float-md-start mb-0"><a style="color: inherit;text-decoration: inherit;" href="/">Shashin</a></h3>
             <nav class="nav justify-content-center float-md-end">
                 <a class="nav-link" aria-current="page" href="/">Home</a>
                 <a class="nav-link" aria-current="page" href="/features">Features</a>
@@ -14,54 +14,53 @@
         </div>
     </header>
 
-    <br><br><br><br><br><br>
+    <main class="px-3">
+        <form class="form-signin" method="post" th:object="${user}" th:action="'/users/'+${activePage}">
+            <th:block th:if="${message != ''}">
+                <div class="alert alert-info" role="alert">
+                    <th:block th:text="${message}"></th:block>
+                </div>
+            </th:block>
+            <h2 class="form-signin-heading"><th:block th:text="'Please ' + ${#strings.capitalize(activePage)}"></th:block></h2>
+            <p>
+                <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+            </p>
+            <p>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+            </p>
+            <th:block th:if="${activePage == 'login'}">
+            <p class="float-start">
+                <input type="checkbox" id="remember-me" name="remember-me" class="form-check-inline">
+                <label class="form-check-label" for="remember-me">Remember me</label>
+            </p>
+            </th:block>
 
-    <form class="form-signin" method="post" th:object="${user}" th:action="'/users/'+${activePage}">
-        <th:block th:if="${message != ''}">
-            <div class="alert alert-info" role="alert">
-                <th:block th:text="${message}"></th:block>
-            </div>
-        </th:block>
-        <h2 class="form-signin-heading"><th:block th:text="'Please ' + ${#strings.capitalize(activePage)}"></th:block></h2>
-        <p>
-            <label for="username" class="sr-only">Username</label>
-            <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
-        </p>
-        <p>
-            <label for="password" class="sr-only">Password</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-        </p>
-        <th:block th:if="${activePage == 'login'}">
-<!--            <input type="hidden" id="remember-me" name="remember-me" value="on">-->
-        <p>
-            <input type="checkbox" id="remember-me" name="remember-me" class="form-check-inline">
-            <label class="form-check-label" for="remember-me">Remember me</label>
-        </p>
-        </th:block>
-
-        <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><th:block th:text="${#strings.capitalize(activePage)}"></th:block></button>
-        <div class="row">
-            <div class="col">
-                <th:block th:if="${activePage == 'login'}">
-                    <a href="/users/register">Register</a>
-                </th:block>
-                <th:block th:if="${activePage == 'register'}">
-                    <a href="/users/login">Login</a>
-                </th:block>
-            </div>
-            <div class="col">
-                <div class="form-check form-switch float-end">
-                    <input class="form-check-input" type="checkbox" id="darkmodeSwitch">
-                    <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
+            <button class="btn btn-lg btn-primary btn-block form-control" type="submit"><th:block th:text="${#strings.capitalize(activePage)}"></th:block></button>
+            <div class="row">
+                <div class="col text-start">
+                    <th:block th:if="${activePage == 'login'}">
+                        <a href="/users/register">Register</a>
+                    </th:block>
+                    <th:block th:if="${activePage == 'register'}">
+                        <a href="/users/login">Login</a>
+                    </th:block>
+                </div>
+                <div class="col text-end">
+                    <div class="form-check form-switch float-end">
+                        <input class="form-check-input" type="checkbox" id="darkmodeSwitch">
+                        <label class="form-check-label" for="darkmodeSwitch">Dark mode</label>
+                    </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
+    </main>
 
-    <script type="text/javascript" th:nonce="${cspNonce}">
-        Util.activateDarkModeListener();
-    </script>
+    <span class="mt-auto" th:insert="fragments/footer :: footer(${copyrightYear},${operatingSystemInfo},${buildProperties},${activeProfile})"></span>
 </div>
+
+<script type="text/javascript" th:nonce="${cspNonce}">
+    Util.activateDarkModeListener();
+</script>
 
 </body>
 </html>
