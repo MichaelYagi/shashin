@@ -1447,7 +1447,7 @@ class TimelineController: BaseController() {
                             metadata.setTimeZone(offset)
                         }
 
-                        if (lat != null && lng != null) {
+                        if (lat != null && lng != null && (metadata.getLat() != lat || metadata.getLng() != lng)) {
                             metadata.setLat(lat)
                             metadata.setLng(lng)
 
