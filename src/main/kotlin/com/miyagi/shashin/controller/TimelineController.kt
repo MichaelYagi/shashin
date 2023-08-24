@@ -1061,16 +1061,26 @@ class TimelineController: BaseController() {
                     metadataObj.get().setLat(null)
                     metadataObj.get().setLng(null)
                 } else {
-                    val coordinateMap = processCoordinates(metadataMap["latlng"].toString())
-                    if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
-                        metadataObj.get().setLat(coordinateMap["lat"])
-                        metadataObj.get().setLng(coordinateMap["lng"])
-                    }
-                    if (coordinateMap["place"] != null) {
-                        metadataObj.get().setPlaceName(coordinateMap["place"])
-                    }
-                    if (coordinateMap["timezone"] != null) {
-                        metadataObj.get().setTimeZone(coordinateMap["timezone"])
+                    val latlng = metadataMap["latlng"].toString()
+                    val latlngArray = latlng.split(",")
+
+                    if (latlngArray.size == 2) {
+                        val newlat = latlngArray[0].trim()
+                        val newlng = latlngArray[1].trim()
+
+                        if (metadataObj.get().getLat() != newlat || metadataObj.get().getLng() != newlng) {
+                            val coordinateMap = processCoordinates(metadataMap["latlng"].toString())
+                            if (coordinateMap["lat"] != null && coordinateMap["lng"] != null) {
+                                metadataObj.get().setLat(coordinateMap["lat"])
+                                metadataObj.get().setLng(coordinateMap["lng"])
+                            }
+                            if (coordinateMap["place"] != null) {
+                                metadataObj.get().setPlaceName(coordinateMap["place"])
+                            }
+                            if (coordinateMap["timezone"] != null) {
+                                metadataObj.get().setTimeZone(coordinateMap["timezone"])
+                            }
+                        }
                     }
                 }
 
@@ -1352,16 +1362,24 @@ class TimelineController: BaseController() {
             val metadataList: ArrayList<Metadata> = ArrayList()
 
             // Process keyword and lat/lng data
-            val coordinateMap = processCoordinates(latlng)
-            val lat = coordinateMap["lat"]
-            val lng = coordinateMap["lng"]
-            val place = coordinateMap["place"]
-            val timezone = coordinateMap["timezone"]
-            if (!latlng.isNullOrEmpty() && (lat == null || lng == null)) {
-                logger.log(Level.WARNING, "Updating batch metadata failed. Could not save due to invalid latlng.")
-                resp["msg"] = "Could not save. Invalid latlng."
-                resp["status"] = ApiResponse.FAIL.status
-                return mapper.writeValueAsString(resp)
+            var lat: String? = null
+            var lng: String? = null
+            var place: String? = null
+            var timezone: String? = null
+
+            if (latlng != null && latlng != "") {
+                val coordinateMap = processCoordinates(latlng)
+                lat = coordinateMap["lat"]
+                lng = coordinateMap["lng"]
+                place = coordinateMap["place"]
+                timezone = coordinateMap["timezone"]
+
+                if (!latlng.isNullOrEmpty() && (lat == null || lng == null)) {
+                    logger.log(Level.WARNING, "Updating batch metadata failed. Could not save due to invalid latlng.")
+                    resp["msg"] = "Could not save. Invalid latlng."
+                    resp["status"] = ApiResponse.FAIL.status
+                    return mapper.writeValueAsString(resp)
+                }
             }
 
             var keywordList = mutableListOf<String>()
