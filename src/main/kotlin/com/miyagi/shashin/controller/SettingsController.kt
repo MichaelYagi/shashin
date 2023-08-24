@@ -486,7 +486,7 @@ class SettingsController {
             if (settings.getCompreFaceKey() == "") {
                 model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
                 model["faceRecogAvailableStatusColor"] = "orange"
-                model["faceRecogAvailableStatusText"] = "CompreFaceKey not configured"
+                model["faceRecogAvailableStatusText"] = "N/A"
             } else if (faceRecogServicesAvailable) {
                 model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
                 model["faceRecogAvailableStatusColor"] = "green"
