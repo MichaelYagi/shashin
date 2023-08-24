@@ -1,6 +1,7 @@
 package com.miyagi.shashin.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.model.Settings
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.util.FileUtils
@@ -180,12 +181,18 @@ class ToolsController {
             status = "FAIL"
         }
 
-        // Not an essential service - no status check
-        val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
-        if (faceRecogServicesAvailable) {
-            model["faceRecogAvailable"] = "OK"
+        // If enabled - status fail if not available
+        val settings = model.getAttribute("settings") as Settings?
+        if (settings != null && settings.getCompreFaceKey() != "" && settings.getCompreFaceServer() != "") {
+            val faceRecogServicesAvailable = model.getAttribute("faceRecogServicesAvailable").toString().toBoolean()
+            if (faceRecogServicesAvailable) {
+                model["faceRecogAvailable"] = "OK"
+            } else {
+                model["faceRecogAvailable"] = "FAIL"
+                status = "FAIL"
+            }
         } else {
-            model["faceRecogAvailable"] = "FAIL"
+            model["faceRecogAvailable"] = "Not configured"
         }
 
         model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"

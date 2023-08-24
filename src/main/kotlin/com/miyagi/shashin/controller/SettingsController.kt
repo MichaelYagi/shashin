@@ -265,10 +265,15 @@ class SettingsController {
             settings.getCompreFaceKey()
         )
         model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+
         model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
         model["faceRecogAvailableStatusColor"] = "red"
         model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
-        if (faceRecogServicesAvailable) {
+        if (settings.getCompreFaceKey() == "") {
+            model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
+            model["faceRecogAvailableStatusColor"] = "orange"
+            model["faceRecogAvailableStatusText"] = "CompreFaceKey not configured"
+        } else if (faceRecogServicesAvailable) {
             model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
             model["faceRecogAvailableStatusColor"] = "green"
             model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
@@ -474,10 +479,15 @@ class SettingsController {
             model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
             )
+
             model["faceRecogAvailableStatusIcon"] = "bi-x-circle"
             model["faceRecogAvailableStatusColor"] = "red"
             model["faceRecogAvailableStatusText"] = "Could not connect to CompreFace server"
-            if (faceRecogServicesAvailable) {
+            if (settings.getCompreFaceKey() == "") {
+                model["faceRecogAvailableStatusIcon"] = "bi-exclamation-triangle"
+                model["faceRecogAvailableStatusColor"] = "orange"
+                model["faceRecogAvailableStatusText"] = "CompreFaceKey not configured"
+            } else if (faceRecogServicesAvailable) {
                 model["faceRecogAvailableStatusIcon"] = "bi-check-circle"
                 model["faceRecogAvailableStatusColor"] = "green"
                 model["faceRecogAvailableStatusText"] = "Connected to CompreFace server"
