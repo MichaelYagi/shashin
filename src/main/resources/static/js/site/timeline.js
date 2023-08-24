@@ -1003,7 +1003,7 @@
                 if (timelineDateObj) {
                     const dateObj = new Date(timelineDateObj.month + "/" + timelineDateObj.day + "/" + timelineDateObj.year)
                     if (i === 0 || i === dateList.length-1 || (i < dateList.length && dateList[i + 1].year !== timelineDateObj.year)) {
-                        if ($('#sliderLabel' + dateObj.getFullYear()).length === 0) {
+                        // if ($('#sliderLabel' + dateObj.getFullYear()).length === 0) {
                             // Label for year
                             const el = $('<span class="badge rounded-pill bg-secondary yearLabel" id="sliderLabel' + dateObj.getFullYear() + '" style="background-color: slategray">' + dateObj.getFullYear() + '</span>').css({
                                 'width': '35px',
@@ -1026,7 +1026,7 @@
                                     prevEl = el;
                                 }
                             }, 0);
-                        }
+                        // }
                     } else if (i > 0 && (dateList[i - 1].year !== timelineDateObj.year || dateList[i - 1].month !== timelineDateObj.month)) {
                         if ($('#tickLabel' + timelineDateObj.year + '-' + timelineDateObj.month).length === 0) {
                             // Tick for month/year
