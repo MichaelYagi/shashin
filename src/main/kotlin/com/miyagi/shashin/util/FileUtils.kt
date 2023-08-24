@@ -835,7 +835,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
                                     // Adjust threshold for object recognition
                                     var threshold =
-                                        settings.getRecognitionConfidenceThreshold().toString().toDouble() - 0.30
+                                        settings.getRecognitionConfidenceThreshold().toString().toDouble() - 0.40
                                     if (threshold <= 0.0) {
                                         threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()
                                     }
