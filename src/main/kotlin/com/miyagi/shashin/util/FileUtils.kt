@@ -797,7 +797,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             }
         }
 
-        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository, metadataObj: Metadata, settings: Settings, threadFile: File?, shouldStop: Boolean?): MutableList<String>? {
+        fun objectRecognizer(keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository, metadataObj: Metadata, settings: Settings, threadFile: File?, shouldStop: Boolean?): List<String> {
             val keywordArray = mutableListOf<String>()
             val unidentifiedStr = "unidentified objects"
 
@@ -920,7 +920,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 )
             }
 
-            return keywordArray
+            return keywordArray.distinct()
         }
 
         private fun saveObject(objSubject: String?, metadataObj: Metadata, keywordRepository: KeywordRepository, keywordPhotoRepository: KeywordPhotoRepository, metadataRepository: MetadataRepository) {
