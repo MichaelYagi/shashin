@@ -192,7 +192,7 @@ class ToolsController {
                 status = "FAIL"
             }
         } else {
-            model["faceRecogAvailable"] = "Not configured"
+            model["faceRecogAvailable"] = "N/A"
         }
 
         model["buildVersion"] = if (buildProperties != null) buildProperties?.version.toString() else "Missing"
