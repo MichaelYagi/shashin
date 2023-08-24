@@ -627,12 +627,12 @@ class Util {
         $(".takenAtDetails").text("");
         $(".manualTakenAtDetails").text("");
         $(".timeZoneDetails").text("");
-        $(".keywordsDetails").text("");
+        $(".keywordsDetails").html("");
         $(".resolutionDetails").text("");
         $(".shareUrlDetails").html("");
         $(".coordinatesDetails").text("");
         $(".locationDetails").html("");
-        $(".locationTypeDetails").text("");
+        $(".locationTypeDetails").html("");
 
         $(".pathLabel").hide();
         $(".descriptionLabel").hide();
@@ -681,7 +681,19 @@ class Util {
                 $(".locationDetails").html(linkHtml);
                 if (locationType.length > 0) {
                     $(".locationTypeLabel").show();
-                    $(".locationTypeDetails").text(locationType);
+                    let locationTypeHtml = "";
+                    const locationTypeArray = locationType.split(",");
+                    if (locationTypeArray.length > 1) {
+                        for (let index in locationTypeArray) {
+                            const locationTypeSingle = locationTypeArray[index].trim();
+                            locationTypeHtml += "<a href='/search?term="+locationTypeSingle+"' target='_blank'>"+locationTypeSingle+"</a>, ";
+                        }
+                    } else {
+                        locationTypeHtml = "<a href='/search?term="+locationTypeArray[0]+"' target='_blank'>"+locationTypeArray[0]+"</a>";
+                    }
+
+                    locationTypeHtml = locationTypeHtml.replace(/,\s*$/, "");
+                    $(".locationTypeDetails").html(locationTypeHtml);
                 }
             // }
         }
@@ -695,7 +707,19 @@ class Util {
         }
         if (metadata.keywords != null && metadata.keywords.length > 0) {
             $(".keywordsLabel").show();
-            $(".keywordsDetails").text(metadata.keywords);
+            let keywordHtml = "";
+            const keywordArray = metadata.keywords;
+            if (keywordArray.length > 1) {
+                for (let index in keywordArray) {
+                    const keyword = keywordArray[index].trim();
+                    keywordHtml += "<a href='/search?term="+keyword+"' target='_blank'>"+keyword+"</a>, ";
+                }
+            } else {
+                keywordHtml = "<a href='/search?term="+keywordArray[0]+"' target='_blank'>"+keywordArray[0]+"</a>";
+            }
+
+            keywordHtml = keywordHtml.replace(/,\s*$/, "");
+            $(".keywordsDetails").html(keywordHtml);
         }
         if (metadata.type != null) {
             $(".typeLabel").show();
@@ -703,9 +727,9 @@ class Util {
             const type = metadata.type;
             const typeArray = type.split("/");
             if (typeArray.length > 1) {
-                typeHtml = "<a href='/timeline/"+typeArray[0]+"' target='_blank'>"+typeArray[0]+"</a>/<a href='/timeline/"+typeArray[1]+"' target='_blank'>"+typeArray[1]+"</a>";
+                typeHtml = "<a href='/timeline/"+typeArray[0].trim()+"' target='_blank'>"+typeArray[0].trim()+"</a>/<a href='/timeline/"+typeArray[1].trim()+"' target='_blank'>"+typeArray[1].trim()+"</a>";
             } else {
-                typeHtml = "<a href='/timeline/"+type+"' target='_blank'>"+type+"</a>";
+                typeHtml = "<a href='/timeline/"+type.trim()+"' target='_blank'>"+type.trim()+"</a>";
             }
             $(".typeDetails").html(typeHtml);
         }
