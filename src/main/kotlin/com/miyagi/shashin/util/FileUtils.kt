@@ -307,6 +307,34 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             return available
         }
 
+        fun checkNominatimConnection(nominatimUrl: String?): Boolean {
+            var available = false
+            if (!nominatimUrl.isNullOrBlank()) {
+                var response: ResponseEntity<String>?
+                try {
+                    val webClient = WebClient.create(nominatimUrl)
+                    response = webClient.get()
+                        .retrieve()
+                        .toEntity(String::class.java)
+                        .block()
+
+                    if (response != null) {
+                        val jsonResult = response.body
+                        val mapper = ObjectMapper()
+                        val jsonObj = mapper.readTree(jsonResult)
+                        val resultMap = mapper.convertValue(jsonObj, object : TypeReference<Map<String, Any>>() {})
+                        if (resultMap.containsKey("status") && resultMap["status"] == 0) {
+                            available = true
+                        }
+                    }
+                } catch (e: Exception) {
+                    available = false
+                }
+            }
+
+            return available
+        }
+
         fun buildPersonUpload(settings: Settings, personName: String?, metadata: Metadata?, compreFaceImageIdMap: MutableMap<String, Any?>): MutableMap<String, Any?> {
             val mapper = ObjectMapper()
             val uploadresponse = mutableMapOf<String, Any?>()

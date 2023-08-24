@@ -172,7 +172,7 @@ class ToolsController {
         @Suppress("DEPRECATION")
         model["systemCpuLoadPercentDouble"] = (osMXBean.systemCpuLoad * 100).toInt()
         model["os"] = System.getProperty("os.name") + " v" + System.getProperty("os.version") + " " + System.getProperty("os.arch")
-        val reachable: Boolean = FileUtils.pingURL(geocodeUrl, 200)
+        val reachable: Boolean = FileUtils.checkNominatimConnection(geocodeUrl+"status.php?format=json")
         if (reachable) {
             model["geocoderServicesAvailable"] = "OK"
         } else {
