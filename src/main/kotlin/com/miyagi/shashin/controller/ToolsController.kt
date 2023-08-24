@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse
 
 
 @Controller
-@Secured("ROLE_ADMIN")
 class ToolsController {
 
     @Autowired
