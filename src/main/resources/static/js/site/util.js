@@ -612,7 +612,7 @@ class Util {
         $(".descriptionDetails").text("");
         $(".pathDetails").text("");
         $(".timelineLink").html("");
-        $(".typeDetails").text("");
+        $(".typeDetails").html("");
         $(".isoDetails").text("");
         $(".compressionDetails").text("");
         $(".exposureDetails").text("");
@@ -699,7 +699,15 @@ class Util {
         }
         if (metadata.type != null) {
             $(".typeLabel").show();
-            $(".typeDetails").text(metadata.type);
+            let typeHtml = "";
+            const type = metadata.type;
+            const typeArray = type.split("/");
+            if (typeArray.length > 1) {
+                typeHtml = "<a href='/timeline/"+typeArray[0]+"' target='_blank'>"+typeArray[0]+"</a>/<a href='/timeline/"+typeArray[1]+"' target='_blank'>"+typeArray[1]+"</a>";
+            } else {
+                typeHtml = "<a href='/timeline/"+type+"' target='_blank'>"+type+"</a>";
+            }
+            $(".typeDetails").html(typeHtml);
         }
         if (metadata.iso != null) {
             $(".isoLabel").show();
