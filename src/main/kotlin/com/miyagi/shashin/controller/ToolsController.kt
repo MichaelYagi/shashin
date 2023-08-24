@@ -131,13 +131,13 @@ class ToolsController {
 
         var status = "OK"
 
-        model["dbConnect"] = 0
+        model["dbCount"] = 0
         val timingOne = Date()
         val allMetadata = metaRepository.findAll()
         val timingTwo = Date()
         if (allMetadata.count() >= 0) {
             model["dbConnect"] = "OK"
-            model["dbConnect"] = allMetadata.count()
+            model["dbCount"] = allMetadata.count()
         } else {
             model["dbConnect"] = "FAIL"
             status = "FAIL"
