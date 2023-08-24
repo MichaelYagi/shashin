@@ -67,6 +67,7 @@ $("#saveMetadata").on("click", async function (e) {
     let captionUpdated = false;
     let prevLat = "";
     let prevLng = "";
+    let prevPlaceName = "";
 
     shashin.getMetadata(metadataId).then(function (metadataObj) {
         if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
@@ -89,6 +90,7 @@ $("#saveMetadata").on("click", async function (e) {
 
         prevLat = metadataObj.lat;
         prevLng = metadataObj.lng;
+        prevPlaceName = metadataObj.placeName;
     });
 
     if (Util.validateMetadataInputs(
@@ -259,7 +261,7 @@ $("#saveMetadata").on("click", async function (e) {
                 }
 
                 // If in timeline and date, lat, lng changed, or hidden, refresh cache version
-                if (activePage === "timeline" && (takenDateUpdated === true || metadataObj.hidden === true || prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
+                if (activePage === "timeline" && (takenDateUpdated === true || metadataObj.hidden === true || prevLat !== metadataObj.lat || prevLng !== metadataObj.lng || prevPlaceName !== metadataObj.placeName)) {
                     Util.setMetadataLocalStorage();
                 }
 
