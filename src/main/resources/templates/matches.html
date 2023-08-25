@@ -15,13 +15,11 @@
         <main role="main" class="col overflow-auto h-100">
 
             <div th:replace="fragments/content :: content(${message},${activePage},${authority},${parameter},${counts},${faceRecogServicesAvailable},${objectRecogEnabled})" class="col-sm p-3 min-vh-100"></div>
-<!--            <div th:replace="fragments/matchesmodal :: matchesmodal(${recognitionLabels})"></div>-->
             <input type="hidden" id="currentPerson" th:value="${personInfo.name}">
 
-            <h1 th:inline="text">
-                [[${personInfo.name}]]
-                <a href="/people"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a>
-            </h1>
+            <h1 th:inline="text">[[${personInfo.name}]]</h1>
+            <small><a href="/people"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small>
+            <div class="mt-2" id="matchesMessage"></div>
 
             <div id="infinite-scroll-gallery">
             <th:block th:if="${not #lists.isEmpty(lowMatchResults)}">

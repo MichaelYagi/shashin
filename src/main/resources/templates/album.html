@@ -21,14 +21,10 @@
             <input type="hidden" id="albumId" name="albumId" th:value="${album.id}">
             <input type="hidden" id="albumNameInput" name="albumNameInput" th:value="${album.name}">
 
-            <div id="albumMessage"></div>
-
             <th:block th:if="${not #lists.isEmpty(albumMetadataList)}">
                 <span id="albumNameHeader">
-                    <h1 id="albumNameHeading" th:inline="text">
-                        [[${album.name}]]
-                        <a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a>
-                    </h1>
+                    <h1 id="albumNameHeading" th:inline="text">[[${album.name}]]</h1>
+                    <small><a href="/albums"><span class="bi-arrow-return-left" style="font-size: 1rem;text-decoration: none !important;color: #777777;" title="Go back"></span></a></small>
                 </span>
 
                 <div id="infinite-scroll-gallery">
