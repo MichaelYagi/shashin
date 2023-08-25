@@ -21,7 +21,7 @@
                                                                                                   data-clipboard-target="#apikey"
                                                                                                   class="btn btn-outline-secondary"
                                                                                                   type="button"><span
-                                id="apikeycopyicon" class="bi-clipboard"
+                                id="apikeycopyicon" class="bi-clipboard-plus"
                                 style="font-size: 1rem;"></span></button></span>
                         <input id="apikey" type="text" class="form-control" aria-label="API key"
                                th:data-clipboard-text="${user.apikey}" th:value="${user.apikey}" readonly>
@@ -79,21 +79,21 @@
             const clipboard = new ClipboardJS("#copyapikey");
 
             clipboard.on('success', function (e) {
-                $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                 $('#apikeycopyicon').fadeOut(5000, function () {
-                    $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard");
+                    $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
                 }).fadeIn(400)
 
             });
 
             clipboard.on('error', function (e) {
                 // console.log("fail:" + e.message)
-                $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
                 shashin.showToastMessage("Operation failed", "Operation failed: " + e.message, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
                 // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Operation failed: "+e.message+"</div>");
             });
         } else {
-            $("#apikeycopyicon").removeClass("bi-clipboard").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+            $("#apikeycopyicon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
             shashin.showToastMessage("Operation failed", "API key must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
         }
