@@ -822,15 +822,27 @@ class Util {
                 e.preventDefault();
             })
 
-            const clipboard = new ClipboardJS(".copyLink.bi-clipboard-plus",{container: document.getElementById(containerModalId)});
-            clipboard.on('success', function (e) {
-                $("#shareCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
-                shashin.showToastMessage("Link copied", "Link copied to clipboard!", {icon:"bi-info-circle", iconColor:"#777777"});
-            });
+            const clipboard = new ClipboardJS("#shareCopyLink",{container: document.getElementById(containerModalId)});
 
-            clipboard.on('error', function (e) {
-                $("#shareCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
-                shashin.showToastMessage("Could not copy share link", "Could not copy share link. "+e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+            $("#shareCopyLink").on("click", function () {
+                clipboard.on('success', function (e) {
+                    $("#shareCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                    $('#shareCopyLink').fadeOut(5000, function () {
+                        $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
+                    }).fadeIn(400)
+                    shashin.showToastMessage("Link copied", "Link copied to clipboard!", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777"
+                    });
+                });
+
+                clipboard.on('error', function (e) {
+                    $("#shareCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                    shashin.showToastMessage("Could not copy share link", "Could not copy share link. " + e, {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000"
+                    });
+                });
             });
         }
     }
