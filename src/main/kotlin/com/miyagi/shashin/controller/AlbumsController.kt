@@ -1018,6 +1018,38 @@ class AlbumsController: BaseController() {
         return response
     }
 
+
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/album/metadata/list/{albumId}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getAlbumMetadataList(model: Model, @PathVariable albumId: Int,@PathVariable page: Int): String? {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "No Results"
+        response["status"] = ApiResponse.FAIL.status
+        response["albumMetadataList"] = ArrayList<Metadata>()
+        val size: Int = model.getAttribute("queryLimit") as Int
+        val resultPage = page * size
+
+        val albumPhotos = albumPhotoRepository.findAllByAlbumIdAndOffsetAndLimit(albumId, resultPage, size)
+        val albumMetadataList = ArrayList<Metadata>()
+        if (albumPhotos != null) {
+            for (albumPhoto in albumPhotos) {
+                if (albumPhoto != null) {
+                    val metadata = metadataRepository.findById(albumPhoto.getMetadataId()!!)
+                    albumMetadataList.add(metadata.get())
+                }
+            }
+
+            if (albumMetadataList.isNotEmpty()) {
+                response["albumMetadataList"] = albumMetadataList
+                response["msg"] = "Results"
+                response["status"] = ApiResponse.SUCCESS.status
+            }
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/album/share/{albumId}"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody

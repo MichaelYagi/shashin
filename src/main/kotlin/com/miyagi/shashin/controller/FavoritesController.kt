@@ -153,6 +153,38 @@ class FavoritesController: BaseController() {
         return response
     }
 
+
+    @Secured("ROLE_ADMIN", "ROLE_USER")
+    @RequestMapping(value = ["/favorites/metadata/list/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getFavoritesMetadataList(model: Model,@PathVariable page: Int): String? {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "No Results"
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataList"] = ArrayList<Metadata>()
+        val size: Int = model.getAttribute("queryLimit") as Int
+
+        val currentUserObj = model.getAttribute("currentUser") as User?
+        if (currentUserObj != null) {
+            val favoriteList = favoriteRepository.findAllByUserIdAndOffsetAndLimit(currentUserObj.getId(),(page*size), size)
+            if (favoriteList != null && favoriteList.count() > 0) {
+                val metadataList = ArrayList<Metadata>()
+                model["message"] = ""
+                for (favorite in favoriteList) {
+                    if (favorite != null) {
+                        val metadataObj = metadataRepository.findById(favorite.getMetadataId().toString())
+                        metadataList.add(metadataObj.get())
+                    }
+                }
+                if (metadataList.count() > 0) {
+                    response["metadataList"] = metadataList
+                }
+            }
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/favorite/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @CacheEvict(value = ["allMetadataByDate", "allMetadataByDateAndType", "allMetadataOnlyByDate", "allMetadataAndAttributesByDate", "singleMetadataRequest", "allAlbumMetadataWithCoordinates", "allMetadataWithCoordinates"], allEntries = true)
     @ResponseBody

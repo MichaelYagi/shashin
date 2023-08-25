@@ -129,12 +129,17 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'recent';
-        const metadataList = /*[[${metadataList}]]*/ '[]';
         /*]]>*/
 
-        const recentInstance = new Recent(metadataList, activePage);
-        recentInstance.init();
-        Util.checkErrorImage();
+        const http = new Http(activePage);
+        http.ajax("get", "/metadata/list/"+activePage+"/0").then(function (data) {
+            if (data.hasOwnProperty("metadataList") === true) {
+                const metadataList = data["metadataList"];
+                const recentInstance = new Recent(metadataList, activePage);
+                recentInstance.init();
+                Util.checkErrorImage();
+            }
+        });
     });
 </script>
 

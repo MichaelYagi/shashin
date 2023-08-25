@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miyagi.shashin.model.Metadata
+import com.miyagi.shashin.model.User
 import com.miyagi.shashin.repository.KeywordRepository
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.util.ApiResponse
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
+import java.util.ArrayList
 import javax.transaction.Transactional
 
 @Controller
@@ -56,6 +58,24 @@ class TrashController {
         model["activeSidebar"] = module
         model["titleDescriptor"] = TextUtils.capitalized(module)
         return module
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/trash/metadata/list/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getTrashMetadataList(model: Model,@PathVariable page: Int): String? {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "No Results"
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataList"] = ArrayList<Metadata>()
+        val size: Int = model.getAttribute("queryLimit") as Int
+
+        val trashList = metadataRepository.findAllByHiddenAndOffsetAndLimit(page*size, size).toMutableList()
+        if (trashList.count() > 0) {
+            model["metadataList"] = trashList
+        }
+
+        return mapper.writeValueAsString(response)
     }
 
     @RequestMapping(value = ["/trash/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])

@@ -87,12 +87,17 @@
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'trash';
-        const metadataList = /*[[${metadataList}]]*/ '[]';
         /*]]>*/
 
-        const trashInstance = new Trash(activePage, metadataList);
-        trashInstance.init();
-        Util.checkErrorImage();
+        const http = new Http(activePage);
+        http.ajax("get", "/trash/metadata/list/0").then(function (data) {
+            if (data.hasOwnProperty("metadataList") === true) {
+                const metadataList = data["metadataList"];
+                const trashInstance = new Trash(activePage, metadataList);
+                trashInstance.init();
+                Util.checkErrorImage();
+            }
+        });
     });
 </script>
 
