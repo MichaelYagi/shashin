@@ -816,7 +816,7 @@ class Util {
                 page = "/player"
             }
 
-            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo'></a>&nbsp;&nbsp;&nbsp;&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link'></a>&nbsp;<span class='linkCopyStatus bi-check-circle' style='visibility: hidden;color:green;'></span><br><a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>View share Link</a>");
+            $(".shareUrlDetails").html("<a class='bi-download' href='" + relativeShareLink + "/download' title='Download photo' style='font-size: 1rem;padding-right: 20px;'></a><a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + shareUrl + page + "' title='Copy share link' style='font-size: 1rem;' id='shareCopyLink'></a><br><a href='" + relativeShareLink.replace('/api/v1','') + page + "' target='_blank'>View share Link</a>");
 
             $(".sharecopy").on("click", function (e) {
                 e.preventDefault();
@@ -824,13 +824,13 @@ class Util {
 
             const clipboard = new ClipboardJS(".copyLink.bi-clipboard-plus",{container: document.getElementById(containerModalId)});
             clipboard.on('success', function (e) {
-                $(".linkCopyStatus").addClass('bi-check-circle').removeClass('bi-x-circle');
-                $('.linkCopyStatus').css({'visibility':'visible', 'color':'green'}).hide().fadeIn("slow");
+                $("#shareCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                shashin.showToastMessage("Link copied", "Link copied to clipboard!", {icon:"bi-info-circle", iconColor:"#777777"});
             });
 
             clipboard.on('error', function (e) {
-                $(".linkCopyStatus").addClass('bi-x-circle').removeClass('bi-check-circle');
-                $('.linkCopyStatus').css({'visibility':'visible', 'color':'red'}).hide().fadeIn("slow");
+                $("#shareCopyLink").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                shashin.showToastMessage("Could not copy share link", "Could not copy share link. "+e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
             });
         }
     }
