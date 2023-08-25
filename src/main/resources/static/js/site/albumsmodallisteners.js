@@ -145,14 +145,20 @@
                 const clipboard = new ClipboardJS("#copyLink",{container: document.getElementById("propsharealbums")});
 
                 clipboard.on('success', function (e) {
-                    $("#msg").html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+                    // $("#msg").html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
+                    shashin.showToastMessage("Link copied", "Link copied to clipboard!", {icon:"bi-info-circle", iconColor:"#777777"});
+                    $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
                 });
 
                 clipboard.on('error', function (e) {
-                    $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
+                    // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Could not copy text</div>");
+                    shashin.showToastMessage("Could not copy text", "Could not copy text. "+e, {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                    $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
                 });
             } else {
-                $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+                // $("#msg").html("<div class=\"alert alert-warning\" role=\"alert\">Link must not be blank</div>");
+                shashin.showToastMessage("Could not copy text", "Link must not be blank", {icon:"bi-exclamation-triangle", iconColor:"#FF0000"});
+                $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
             }
         });
 
