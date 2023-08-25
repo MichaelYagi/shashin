@@ -434,10 +434,10 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                         }
                     } else {
                         logger.log(
-                            Level.WARNING,
-                            "Error - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
+                            Level.INFO,
+                            "Not processed - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
                         )
-                        uploadresponse["msg"] = "Error - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
+                        uploadresponse["msg"] = "Not processed - Similarity: $similarity, Threshold: ${settings.getRecognitionConfidenceThreshold().toString().toDouble()}"
                         uploadresponse["status"] = ApiResponse.FAIL.status
                     }
                 } else {
