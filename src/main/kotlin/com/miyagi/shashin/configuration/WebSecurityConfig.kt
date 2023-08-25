@@ -105,6 +105,7 @@ class MultiSecurityConfig: WebSecurityConfigurerAdapter() {
             "timeline/**",
             "users/delete",
             "albums/add",
+            "api/v1/update/**",
             "api/v1/folders",
             "api/v1/folders/**",
             "api/v1/folder",
