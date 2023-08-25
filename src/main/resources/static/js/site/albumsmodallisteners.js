@@ -148,6 +148,9 @@
                     // $("#msg").html("<div class=\"alert alert-success\" role=\"alert\">Link copied to clipboard!</div>");
                     shashin.showToastMessage("Link copied", "Link copied to clipboard!", {icon:"bi-info-circle", iconColor:"#777777"});
                     $("#copyLinkIcon").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                    $('#copyLinkIcon').fadeOut(5000, function () {
+                        $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
+                    }).fadeIn(400)
                 });
 
                 clipboard.on('error', function (e) {
