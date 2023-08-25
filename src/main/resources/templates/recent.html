@@ -72,39 +72,42 @@
 
             <div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"></div>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                /*<![CDATA[*/
-                const albumList = /*[[${albumList}]]*/[];
+                const httpRecent = new Http("recent");
+                httpRecent.ajax("get", "/browse/album/list").then(function (data) {
+                    if (data.hasOwnProperty("albumList") === true) {
+                        const albumList = data["albumList"];
 
-                if (albumList.length > 0) {
-                    let batchHtml =
-                        '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
-                        '<div class="input-group-append">\n' +
-                        '   <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
-                        '   <div class="dropdown-menu" id="albumNameList">\n';
+                        if (albumList.length > 0) {
+                            let batchHtml =
+                                '<input type="text" class="form-control" aria-label="Albums Name" id="albumNameInput" name="albumNameInput" value="">\n' +
+                                '<div class="input-group-append">\n' +
+                                '   <button class="btn btn-outline-secondary dropdown-toggle" id="tagalbumdropdown" type="button" aria-haspopup="true" aria-expanded="false">Albums</button>\n' +
+                                '   <div class="dropdown-menu" id="albumNameList">\n';
 
-                    for (let index in albumList) {
-                        const album = albumList[index];
-                        batchHtml +=
-                            '<button class="dropdown-item" type="button">\n' +
-                            '    <input type="checkbox" class="album" id="album'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
-                            '    <label for="album'+album.id+'">'+album.name+'</label>\n' +
-                            '</button>\n';
+                            for (let index in albumList) {
+                                const album = albumList[index];
+                                batchHtml +=
+                                    '<button class="dropdown-item" type="button">\n' +
+                                    '    <input type="checkbox" class="album" id="album'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
+                                    '    <label for="album'+album.id+'">'+album.name+'</label>\n' +
+                                    '</button>\n';
+                            }
+
+                            batchHtml +=
+                                '   </div>\n' +
+                                '</div>\n';
+
+                            $("#albumListForModal").html(batchHtml);
+                            $("#tagalbumdropdown").on("click", function (e) {
+                                e.preventDefault();
+                                metadataBatchModal.toggleBatchTagAlbumDropdown();
+                            });
+                            $(".album").on("click", function (e) {
+                                metadataBatchModal.populateBatchAlbum();
+                            });
+                        }
                     }
-
-                    batchHtml +=
-                        '   </div>\n' +
-                        '</div>\n';
-
-                    $("#albumListForModal").html(batchHtml);
-                    $("#tagalbumdropdown").on("click", function (e) {
-                        e.preventDefault();
-                        metadataBatchModal.toggleBatchTagAlbumDropdown();
-                    });
-                    $(".album").on("click", function (e) {
-                        metadataBatchModal.populateBatchAlbum();
-                    });
-                }
-                /*]]>*/
+                });
             </script>
 
             <!-- Back to top button -->

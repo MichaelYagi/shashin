@@ -479,6 +479,24 @@ class BrowseController: BaseController() {
         return mapper.writeValueAsString(response)
     }
 
+    @RequestMapping(value = ["/browse/album/list"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getBrowseAlbumList(model: Model): String? {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "No Results"
+        response["status"] = ApiResponse.FAIL.status
+        response["albumList"] = mutableListOf<Album>()
+
+        val albumList = albumRepository.findAllOrderByAlbumName()
+        if (albumList.count() > 0) {
+            response["albumList"] = albumList
+            response["msg"] = "Results"
+            response["status"] = ApiResponse.SUCCESS.status
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["message"] = "There are no photos. Please setup directories to scan in Settings and index media in Media Indexing."
