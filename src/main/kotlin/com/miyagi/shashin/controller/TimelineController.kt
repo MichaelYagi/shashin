@@ -220,6 +220,37 @@ class TimelineController: BaseController() {
         return mapper.writeValueAsString(buildTimelineData(model,mediaType,page))
     }
 
+    @RequestMapping(value = ["/timeline/yearmonthcounts/{mediaType}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getMetadataYearMonthCounts(model: Model, @PathVariable mediaType: String): String {
+        val response = mutableMapOf<String, Any?>()
+
+        response["msg"] = "Results"
+        response["status"] = ApiResponse.SUCCESS.status
+
+        response["metadataDates"] = mutableListOf<MetadataDate>()
+        val metadataDates = if (mediaType == "all") {
+            metadataRepository.findAllYearMonthDay()
+        } else {
+            metadataRepository.findAllYearMonthDayByMediaType(mediaType)
+        }
+        if (metadataDates != null) {
+            response["metadataDates"] = metadataDates
+        }
+
+        val countByYearAndMonthList = metadataRepository.countByYearAndMonth()
+        val countByYearAndMonthMap = mutableMapOf<String, Int>()
+        if (countByYearAndMonthList.count() > 0) {
+            for (yearMonthCount in countByYearAndMonthList) {
+                countByYearAndMonthMap[yearMonthCount.getYear().toString() + "-" + yearMonthCount.getMonth().toString()] = yearMonthCount.getCount()!!
+            }
+        }
+        response["metadataYearMonthCount"] = countByYearAndMonthMap
+
+        return mapper.writeValueAsString(response)
+    }
+
+
     @RouterOperation(
         operation =
         Operation(

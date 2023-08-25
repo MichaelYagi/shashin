@@ -191,10 +191,19 @@
     <script src="/js/site/min/applisteners.min.js" type="text/javascript" th:nonce="${cspNonce}"></script>
 </th:block>
 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-    $(document).ready(function() {
+    $(document).ready(function () {
         /*<![CDATA[*/
-        timelineSettings.init(/*[[${mediaTypeFilter}]]*/ 'all', /*[[${metadataDates}]]*/ [], /*[[${metadataYearMonthCount}]]*/ {});
+        const mediaTypeFilter = /*[[${mediaTypeFilter}]]*/ 'all';
         /*]]>*/
+
+        const http = new Http("timeline");
+        http.ajax("get", "/timeline/yearmonthcounts/"+mediaTypeFilter).then(function (data) {
+            if (data.hasOwnProperty("metadataDates") && data.hasOwnProperty("metadataYearMonthCount")) {
+                const timelineYearMonthCountsData = data["metadataYearMonthCount"];
+                const timelineDatesData = data["metadataDates"];
+                timelineSettings.init(mediaTypeFilter, timelineDatesData, timelineYearMonthCountsData);
+            }
+        });
     });
 </script>
 </body>

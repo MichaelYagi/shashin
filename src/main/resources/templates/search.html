@@ -90,12 +90,17 @@
         shashin.nonce = /*[[${cspNonce}]]*/ '';
         const activePage = /*[[${activePage}]]*/ 'search';
         const term = /*[[${term}]]*/ '';
-        const metadataSearchList = /*[[${metadataSearchList}]]*/ '[]';
         /*]]>*/
 
-        const searchInstance = new Search(term, activePage, metadataSearchList);
-        searchInstance.init();
-        Util.checkErrorImage();
+        const http = new Http(activePage);
+        http.ajax("get", "/search/metadata/list/0/"+term).then(function (data) {
+            if (data.hasOwnProperty("metadataSearchList") === true) {
+                const metadataSearchList = data["metadataSearchList"];
+                const searchInstance = new Search(term, activePage, metadataSearchList);
+                searchInstance.init();
+                Util.checkErrorImage();
+            }
+        });
     });
 </script>
 

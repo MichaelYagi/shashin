@@ -436,6 +436,49 @@ class BrowseController: BaseController() {
         return mapper.writeValueAsString(buildBrowseRecord("modified", model ,page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
     }
 
+    @RequestMapping(value = ["/metadata/list/{module}/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getMetadataList(model: Model,@PathVariable module: String,@PathVariable page: Int, @RequestParam folder: Optional<String>): String {
+        val response = mutableMapOf<String, Any?>()
+        var metadataList = mutableListOf<Metadata>()
+        response["metadataList"] = mutableListOf<Metadata>()
+        response["msg"] = "Results"
+        response["status"] = ApiResponse.SUCCESS.status
+        val size: Int = model.getAttribute("queryLimit") as Int
+        val pageValue = page*size
+
+        if (module == "recent") {
+            metadataList = metadataRepository.findRecentByOffsetAndLimit(
+                pageValue,
+                size
+            ).toMutableList()
+        } else if (module == "modified") {
+            metadataList = metadataRepository.findModifiedByOffsetAndLimit(
+                pageValue,
+                size
+            ).toMutableList()
+        } else if (module == "folder") {
+            val decodedValue = URLDecoder.decode(folder.orElse(""), StandardCharsets.UTF_8.toString())
+            if (decodedValue == "") {
+                metadataList = metadataRepository.findAllByFolderOffsetAndLimit(
+                    decodedValue,
+                    pageValue,
+                    size
+                ).toMutableList()
+            }
+
+            if (metadataList.isNotEmpty()) {
+                response["metadataList"] = metadataList
+            }
+        }
+
+        if (metadataList.isNotEmpty()) {
+            response["metadataList"] = metadataList
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     private fun buildBrowseRecord(module: String, model: Model, page: Int = 0, size: Int = model.getAttribute("queryLimit").toString().toInt()): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
         response["message"] = "There are no photos. Please setup directories to scan in Settings and index media in Media Indexing."

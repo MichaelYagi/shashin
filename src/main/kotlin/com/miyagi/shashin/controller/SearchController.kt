@@ -108,6 +108,38 @@ class SearchController {
         return response
     }
 
+    @Secured("ROLE_ADMIN")
+    @RequestMapping(value = ["/search/metadata/list/{page}/{term}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getSearchMetadataList(model: Model,@PathVariable page: Int,@PathVariable term: String?): String? {
+        val response = mutableMapOf<String, Any?>()
+        response["msg"] = "No Results"
+        response["status"] = ApiResponse.FAIL.status
+        response["metadataSearchList"] = ArrayList<Metadata>()
+
+        if (!term.isNullOrBlank()) {
+            val queryLimit = model.getAttribute("queryLimit").toString().toInt()
+            val pageValue = page * queryLimit
+            if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+                val metadataList = searchRepository?.findMetadataBySearchTerm(term, pageValue, queryLimit)
+                response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+            } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
+                val currentUserObj = model.getAttribute("currentUser") as User?
+                if (currentUserObj != null) {
+                    val metadataList = searchRepository?.findMetadataBySearchTermAndUserId(
+                        term,
+                        currentUserObj.getId(),
+                        pageValue,
+                        queryLimit
+                    )
+                    response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+                }
+            }
+        }
+
+        return mapper.writeValueAsString(response)
+    }
+
     @RequestMapping(value = ["/search"], method = [RequestMethod.POST], consumes = [MediaType.APPLICATION_FORM_URLENCODED_VALUE])
     fun postSearch(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
         model["term"] = ""
