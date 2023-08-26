@@ -813,7 +813,7 @@ class AlbumsController: BaseController() {
     @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/share/album/save","/api/v1/share/album/save"], method = [RequestMethod.POST], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
-    @Transactional
+    //@Transactional
     fun postAnonymousShareAlbum(@RequestBody requestBody: JsonNode, response: HttpServletResponse): String? {
         val albumShareInfo = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumShareInfo.containsKey("albumId") && albumShareInfo.containsKey("relativeShareUrl")) {
