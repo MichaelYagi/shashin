@@ -14,6 +14,7 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import com.miyagi.shashin.util.TextUtils.Companion.returnForbiddenError
 import io.swagger.v3.oas.annotations.Operation
 import org.apache.commons.text.StringEscapeUtils
+import org.bytedeco.javacpp.presets.opencv_core.Str
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -860,9 +861,11 @@ class AlbumsController: BaseController() {
         model["msg"] = response["msg"]!!
         model["status"] = response["status"]!!
 
+        val album = response["album"]!! as Album
+
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module)
+        model["titleDescriptor"] = album.getName() as String
         return module
     }
 
