@@ -277,10 +277,11 @@ class AttributeController: ResponseEntityExceptionHandler() {
             }
         }
 
-        val baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
-            .replacePath(null)
-            .build()
-            .toUriString()
+        var baseUrlBuilder = ServletUriComponentsBuilder.fromRequestUri(request).replacePath(null)
+        if (request.scheme == "https") {
+            baseUrlBuilder = baseUrlBuilder.scheme("https")
+        }
+        val baseUrl = baseUrlBuilder.build().toUriString()
         model["baseUrl"] = "$baseUrl/"
 
         model["operatingSystemInfo"] = ""
