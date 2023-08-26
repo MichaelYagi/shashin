@@ -38,17 +38,23 @@
 
 (function (albumsModalListeners, $, undefined) {
     albumsModalListeners.setDeleteAlbumsListeners = function (albumId) {
+        $("#proptrashalbums").on('hide.bs.modal', function () {
+            $("#deleteAlbum").off();
+
+            $("#proptrashalbums").off();
+        });
+
         $("#deleteAlbum").on("click", async function (e) {
             e.preventDefault();
             await deleteAlbum();
         });
 
-        $(document).keypress(async function (e) {
-            const key = e.which;
-            if(key === 13) {
-                await deleteAlbum();
-            }
-        });
+        // $(document).keypress(async function (e) {
+        //     const key = e.which;
+        //     if(key === 13) {
+        //         await deleteAlbum();
+        //     }
+        // });
 
         async function deleteAlbum() {
             const http = new Http("delete album");
@@ -69,17 +75,23 @@
     }
 
     albumsModalListeners.setEditAlbumsListeners = function (albumId) {
+        $("#propeditalbums").on('hide.bs.modal', function () {
+            $("#editAlbum").off();
+
+            $("#propeditalbums").off();
+        });
+
         $("#editAlbum").on("click", async function (e) {
             e.preventDefault();
             await editAlbum();
         });
 
-        $(document).keypress(async function (e) {
-            const key = e.which;
-            if(key === 13) {
-                await editAlbum();
-            }
-        });
+        // $(document).keypress(async function (e) {
+        //     const key = e.which;
+        //     if(key === 13) {
+        //         await editAlbum();
+        //     }
+        // });
 
         async function editAlbum() {
             $("#editAlbumNameStatus").removeClass('bi-check-circle').removeClass('bi-x-circle').addClass('spinner-grow');
@@ -116,6 +128,18 @@
     }
 
     albumsModalListeners.setAlbumModalListeners = function (albumId, baseUrl) {
+        $("#propsharealbums").on('hide.bs.modal', function () {
+            $("#clearLink").off();
+            $("#generateLink").off();
+            $("#copyLink").off();
+            $("#saveUserShare").off();
+
+            $("#albumsModalStatus").attr("class","spinner-grow me-auto");
+            $("#albumsModalStatus").css("visibility","hidden");
+            $("#msg").html("");
+            $("#propsharealbums").off();
+        });
+
         if ($("#shareLink").val() === "") {
             $("#copyLink").prop('disabled', true);
         }
@@ -129,12 +153,6 @@
             e.preventDefault();
             albumsModalSettings.updateShareLink(baseUrl, albumId, "generate");
         });
-
-        $("#propsharealbums").on('hide.bs.modal', function () {
-            $("#albumsModalStatus").attr("class","spinner-grow me-auto");
-            $("#albumsModalStatus").css("visibility","hidden");
-            $("#msg").html("");
-        })
 
         $("#copyLink").on("click", function (e) {
             e.preventDefault();
@@ -226,7 +244,12 @@
 
         $("#propcommentalbums").on('hide.bs.modal', async function () {
             $("#commentList").empty();
-        })
+
+            $("#cancelEditCommentAlbum").off();
+            $("#updateCommentAlbum").off();
+            $("#saveCommentAlbum").off();
+            $("#propcommentalbums").off();
+        });
 
         $("#updateCommentAlbum").hide();
         $("#cancelEditCommentAlbum").hide();
@@ -343,6 +366,14 @@
     }
 
     albumsModalListeners.setEditCommentModalListeners = function (commentId, albumId) {
+        $("#propcommentalbums").on('hide.bs.modal', async function () {
+            $("#commentList").empty();
+
+            $("#deletecomment"+commentId).off();
+            $("#editcomment"+commentId).off();
+            $("#propcommentalbums").off();
+        })
+
         $("#deletecomment"+commentId).on("click", function (e) {
             e.preventDefault();
             albumsCommentsSettings.deleteComment(commentId, albumId);
