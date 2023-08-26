@@ -861,11 +861,15 @@ class AlbumsController: BaseController() {
         model["msg"] = response["msg"]!!
         model["status"] = response["status"]!!
 
-        val album = response["album"]!! as Album
+        val album = response["album"] as Album?
 
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = album.getName() as String
+        if (album?.getName() != null) {
+            model["titleDescriptor"] = album.getName() as String
+        } else {
+            model["titleDescriptor"] = TextUtils.capitalized(module)
+        }
         return module
     }
 
