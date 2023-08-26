@@ -281,7 +281,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             .replacePath(null)
             .build()
             .toUriString()
-        model["baseUrl"] = baseUrl
+        model["baseUrl"] = "$baseUrl/"
 
         model["operatingSystemInfo"] = ""
         if (model.getAttribute("authority") ==  adminRole) {
