@@ -38,6 +38,7 @@ import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -275,7 +276,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 model["currentUser"] = currentUser
             }
         }
-        model["baseUrl"] = String.format("%s://%s:%d/",request.scheme,  request.serverName, request.serverPort);
+
+        val baseUrl = ServletUriComponentsBuilder.fromRequestUri(request)
+            .replacePath(null)
+            .build()
+            .toUriString()
+        model["baseUrl"] = baseUrl
 
         model["operatingSystemInfo"] = ""
         if (model.getAttribute("authority") ==  adminRole) {
