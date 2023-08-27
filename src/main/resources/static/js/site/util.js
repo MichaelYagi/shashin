@@ -676,7 +676,19 @@ class Util {
                     locationType = placeNameDisplayNameArray[1];
                 }
                 shashin.printMessageToConsole("Populating detail info - original placename: " + metadata.placeName + " - Display placename: " + placeNameDisplayName);
-                const linkHtml = "<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + "' target='_blank'><span class='bi-geo-alt-fill' style='font-size:1.0rem;'></span>" + placeNameDisplayName + "</a>" +
+                let queryParamDates = "";
+                if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
+                    let month = metadata.month;
+                    if (month < 10) {
+                        month = '0'+month;
+                    }
+                    let lastDay = metadata.day;
+                    if (lastDay < 29) {
+                        lastDay = 28;
+                    }
+                    queryParamDates = '&sd='+metadata.year+'-'+month+'-01&ed='+metadata.year+'-'+month+'-'+lastDay;
+                }
+                const linkHtml = "<a href='/map?lat=" + metadata.lat + "&lng=" + metadata.lng + queryParamDates + "' target='_blank'><span class='bi-geo-alt-fill' style='font-size:1.0rem;'></span>" + placeNameDisplayName + "</a>" +
                 "&nbsp;<a href='https://www.google.com/maps/search/?api=1&query="+metadata.lat+"%2C"+metadata.lng+"' target='_blank' class='bi-google'></a>";
                 $(".locationDetails").html(linkHtml);
                 if (locationType.length > 0) {
