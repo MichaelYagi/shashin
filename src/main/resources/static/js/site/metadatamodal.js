@@ -226,7 +226,23 @@ $("#saveMetadata").on("click", async function (e) {
 
                     // Reload in map view if latlng changed
                     if (activePage === "map" && (prevLat !== metadataObj.lat || prevLng !== metadataObj.lng)) {
-                        window.location.replace("/map?latlng=" + $("#latlng").val());
+                        let year = $("#yearTaken").val();
+                        let month = $("#monthTaken").val();
+                        let day = $("#dayTaken").val();
+
+                        let queryParamDates = "";
+                        if (year !== null && year !== "" && month !== null && month !== "" && day !== null && day !== "") {
+                            if (month < 10) {
+                                month = '0'+month;
+                            }
+                            let lastDay = day;
+                            if (lastDay < 29) {
+                                lastDay = 28;
+                            }
+                            queryParamDates = '&sd='+year+'-'+month+'-01&ed='+year+'-'+month+'-'+lastDay;
+                        }
+
+                        window.location.replace("/map?latlng=" + $("#latlng").val()+queryParamDates);
                     }
 
                     if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
