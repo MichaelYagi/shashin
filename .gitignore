@@ -40,9 +40,9 @@ build/
 .vscode/
 
 ### Other ###
-/sidecar/
-/sidecar_dev/
-/sidecar_test/
+**/sidecar/
+**/sidecar_dev/
+**/sidecar_test/
 /logs/
 /node_modules/
 /jdk-11.0.12/
