@@ -265,7 +265,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 response.addCookie(cookie)
             } else {
                 // Cleanup persistent tokens on non api requests
-                DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
+                //DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
 
                 if (currentUser.getDarkMode() == null) {
                     currentUser.setDarkMode(false)
