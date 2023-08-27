@@ -438,7 +438,7 @@ class UserController {
                     }
                 }
 
-                DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
+                //DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
             }
         }
 
