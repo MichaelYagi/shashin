@@ -25,6 +25,7 @@ import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
 import java.lang.management.ManagementFactory
+import java.nio.file.FileVisitOption
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDateTime
@@ -194,11 +195,15 @@ class DashboardController {
         val sidecarDir = rootPath + model.getAttribute("relativeSidecarDir")
         var sidecarSize = 0.toLong()
         try {
-            sidecarSize = Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
+            if (Files.isSymbolicLink(Paths.get(sidecarDir))) {
+                sidecarSize = Files.walk(Paths.get(sidecarDir), FileVisitOption.FOLLOW_LINKS).mapToLong { p -> p.toFile().length() }.sum()
+            } else {
+                sidecarSize = Files.walk(Paths.get(sidecarDir)).mapToLong { p -> p.toFile().length() }.sum()
+            }
         } catch(e: Exception) {
             logger.log(Level.SEVERE, "Error calculating sidecar size:"+ e.message)
         }
-        response["sidecarSizeMB"] = sidecarSize/(1024 * 1024)
+        response["sidecarSizeMB"] = String.format("%.2f", (sidecarSize.toDouble()/(1024 * 1024).toDouble()))
 
         // User stats
         val allowedUserCount = userRepository.countAllByIsAuthorizedIsTrueAndAuthorityEquals(userRole!!)
