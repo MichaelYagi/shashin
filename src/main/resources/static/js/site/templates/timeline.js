@@ -39,7 +39,7 @@ class TimelineTemplates {
         <img loading="lazy" src="${thumbnailImage}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
     `};
 
-    static TimelinePreLoadGalleryHeader({metadata}) { return `
+    static TimelinePreLoadGalleryHeader({metadata, placeNameHeader}) { return `
         ${(metadata["year"] === null || metadata["month"] === null || metadata["day"] === null) ?
             `
         <span class="dateContainer" id="container_undated">
@@ -51,7 +51,7 @@ class TimelineTemplates {
             `
         <span class="dateContainer" id="container_${metadata.year}-${metadata.month}-${metadata.day}">
         <br id="br${metadata.year}-${metadata.month}-${metadata.day}">
-        <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><p><strong class="dateHeading p-1">${Util.getDateString(metadata.year, metadata.month, metadata.day)}</strong></p></section>
+        <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><p><strong class="dateHeading p-1">${Util.getDateString(metadata.year, metadata.month, metadata.day)}</strong>${(placeNameHeader !== "") ? '<span class="text-muted">'+placeNameHeader+'</span>' : ''}</p></section>
         <div class="row image-group-padding" id="row${metadata.year}-${metadata.month}-${metadata.day}">
         <span style="display: none;" class="yearTaken">${metadata.year}</span>
         <span style="display: none;" class="monthTaken">${metadata.month}</span>
