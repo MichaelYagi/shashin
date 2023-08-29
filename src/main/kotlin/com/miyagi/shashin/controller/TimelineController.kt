@@ -692,7 +692,7 @@ class TimelineController: BaseController() {
                         .eachCount()
                         .toList()
                         .sortedByDescending{ it.second }.map{it.first}
-                    logger.log(Level.INFO, "Sorted places by popularity: " + sortedPlaces.joinToString(" - "))
+                    logger.log(Level.INFO, "Sorted places by popularity for date "+date+": " + sortedPlaces.joinToString(" - "))
                     if (sortedPlaces.isNotEmpty()) {
                         response["placeNameHeader"] = sortedPlaces[0]
                     }
