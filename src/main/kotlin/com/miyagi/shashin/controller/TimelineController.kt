@@ -742,7 +742,23 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                response["placeNameHeader"] = getPlaceNameForDate(year!!, month!!, day!!)
+                var placeName = ""
+                val metadataDates = getMetadataDates(mediaTypeFilter)
+                val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
+                for (i in 0 until dates.size) {
+                    if (dates[i].getDay() == day && dates[i].getMonth() == month && dates[i].getYear() == year) {
+                        var prevPlaceName = ""
+                        if (i > 0) {
+                            prevPlaceName = getPlaceNameForDate(dates[i-1].getYear()!!, dates[i-1].getMonth()!!, dates[i-1].getDay()!!)
+                        }
+                        placeName = getPlaceNameForDate(year!!, month!!, day!!)
+                        if (prevPlaceName == placeName) {
+                            placeName = ""
+                        }
+                        break
+                    }
+                }
+                response["placeNameHeader"] = placeName
 
                 response["msg"] = "Results"
                 response["status"] = ApiResponse.SUCCESS.status
