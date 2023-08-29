@@ -1443,7 +1443,10 @@
 
                                 html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0]});
                                 internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
-                                    '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'"><p><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong></p></section>' +
+                                    '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
+                                    '<p><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>' +
+                                    (data["placeNameHeader"] !== "" ? '<span class="text-muted">'+data["placeNameHeader"]+' </span>' : '') + '</p>' +
+                                    '</section>' +
                                     '<div class="row image-group-padding" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<span style="display: none;" class="yearTaken">'+metadataList[0].year+'</span>' +
                                     '<span style="display: none;" class="monthTaken">'+metadataList[0].month+'</span>' +
