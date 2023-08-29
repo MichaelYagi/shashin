@@ -349,7 +349,7 @@
                         }
 
                         // Set the timeline slider while scrolling
-                        if (Util.isMobile() === false) {
+                        if (Util.isMobile() === false && $("#dateSlider").length > 0) {
                             timelineDates.forEach(function (timelineDate, i) {
                                 if (id === timelineDate.year + "-" + timelineDate.month + "-" + timelineDate.day) {
                                     $("#dateSlider").slider("option", "value", timelineDates.length - i - 1);
@@ -1441,11 +1441,11 @@
                                     idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
                                 }
 
-                                html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0]});
+                                html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeader:data["placeNameHeader"]});
                                 internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<p><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>' +
-                                    (data["placeNameHeader"] !== "" ? '<span class="text-muted">'+data["placeNameHeader"]+' </span>' : '') + '</p>' +
+                                    (data["placeNameHeader"] !== "" ? '<span class="text-muted">'+data["placeNameHeader"]+'</span>' : '') + '</p>' +
                                     '</section>' +
                                     '<div class="row image-group-padding" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<span style="display: none;" class="yearTaken">'+metadataList[0].year+'</span>' +
