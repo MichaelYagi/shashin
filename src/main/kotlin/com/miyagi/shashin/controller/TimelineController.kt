@@ -12,22 +12,19 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.apache.commons.text.StringEscapeUtils
+import org.checkerframework.checker.units.qual.K
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.CacheEvict
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.InputStreamResource
 import org.springframework.http.*
-import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.security.access.annotation.Secured
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.reactive.function.BodyInserters
-import org.springframework.web.reactive.function.client.WebClient
 import java.io.File
 import java.io.FileInputStream
 import java.nio.file.Files
@@ -37,8 +34,10 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
+import java.util.function.Function
 import java.util.logging.Level
 import java.util.logging.Logger
+import java.util.stream.Collectors
 import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 import kotlin.io.path.Path
@@ -100,6 +99,22 @@ class TimelineController: BaseController() {
     @RequestMapping(value = ["/timeline", "/timeline/{mediaType}"], method = [RequestMethod.GET])
     fun getTimelineMediaTypeByDate(model: Model,@PathVariable(required = false) mediaType: String?): String {
         return buildTimelineModel(model,mediaType)
+    }
+
+    private fun buildTimelineLocationDate(model: Model,mediaTypeFilter: String?) {
+        var mediaType = mediaTypeFilter
+
+        if (mediaTypeFilter.isNullOrEmpty()) {
+            mediaType = "all"
+        }
+
+        val initialMetadataObj = if (mediaType != "all") {
+            metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType!!)
+        } else {
+            metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
+        }
+
+
     }
 
     private fun buildTimelineModel(model: Model,mediaTypeFilter: String?): String {
@@ -653,6 +668,34 @@ class TimelineController: BaseController() {
                             year, month, day
                         ).toMutableList()
                     }
+
+                    val placeList = metadataRepository.findTimelinePlaceByDate(year, month, day)
+                    response["placeNameHeader"] = ""
+                    val processedPlaceNameArray = mutableListOf<String>()
+                    if (placeList != null) {
+                        for (placeDescription in placeList) {
+                            if (placeDescription != null) {
+                                val placeDescriptionArray = placeDescription.split(";")
+                                if (placeDescriptionArray.size > 1) {
+                                    val placeName = placeDescriptionArray[0]
+                                    val placeNameArray = placeName.split(",")
+                                    if (placeNameArray.size > 2) {
+                                        val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                                        processedPlaceNameArray.add(processedPlaceName)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    val sortedPlaces = processedPlaceNameArray
+                        .groupingBy{ it }
+                        .eachCount()
+                        .toList()
+                        .sortedByDescending{ it.second }.map{it.first}
+                    if (sortedPlaces.isNotEmpty()) {
+                        response["placeNameHeader"] = sortedPlaces[0]
+                    }
+
 
                     if (metadataList.isNotEmpty()) {
                         response["metadataList"] = metadataList
