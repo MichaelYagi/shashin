@@ -12,7 +12,6 @@ import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
 import io.swagger.v3.oas.annotations.Operation
 import net.iakovlev.timeshape.TimeZoneEngine
 import org.apache.commons.text.StringEscapeUtils
-import org.checkerframework.checker.units.qual.K
 import org.springdoc.core.annotations.RouterOperation
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -34,10 +33,8 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.util.*
 import java.util.concurrent.TimeUnit
-import java.util.function.Function
 import java.util.logging.Level
 import java.util.logging.Logger
-import java.util.stream.Collectors
 import javax.servlet.http.HttpServletResponse
 import javax.transaction.Transactional
 import kotlin.io.path.Path
@@ -640,6 +637,13 @@ class TimelineController: BaseController() {
                         val placeNameArray = placeName.split(",")
                         if (placeNameArray.size > 2) {
                             val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                            processedPlaceNameArray.add(processedPlaceName)
+                        }
+                    } else {
+                        val placeNameArray = placeDescription.split(",")
+                        if (placeNameArray.size > 2) {
+                            val processedPlaceName =
+                                placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
                             processedPlaceNameArray.add(processedPlaceName)
                         }
                     }
