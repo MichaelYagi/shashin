@@ -627,6 +627,38 @@ class TimelineController: BaseController() {
         return response
     }
 
+    private fun getPlaceNameForDate(year: Int, month: Int, day: Int): String {
+        val placeList = metadataRepository.findTimelinePlaceByDate(year, month, day)
+        var placeNameHeader = ""
+        val processedPlaceNameArray = mutableListOf<String>()
+        if (placeList != null) {
+            for (placeDescription in placeList) {
+                if (placeDescription != null) {
+                    val placeDescriptionArray = placeDescription.split(";")
+                    if (placeDescriptionArray.size > 1) {
+                        val placeName = placeDescriptionArray[0]
+                        val placeNameArray = placeName.split(",")
+                        if (placeNameArray.size > 2) {
+                            val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                            processedPlaceNameArray.add(processedPlaceName)
+                        }
+                    }
+                }
+            }
+        }
+        val sortedPlaces = processedPlaceNameArray
+            .groupingBy{ it }
+            .eachCount()
+            .toList()
+            .sortedByDescending{ it.second }.map{it.first}
+
+        if (sortedPlaces.isNotEmpty()) {
+            placeNameHeader = sortedPlaces[0]
+        }
+
+        return placeNameHeader
+    }
+
     private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String?,metadataOnly: Boolean): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
@@ -638,6 +670,7 @@ class TimelineController: BaseController() {
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
+        response["placeNameHeader"] = ""
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
@@ -667,34 +700,6 @@ class TimelineController: BaseController() {
                             mediaTypeFilter,
                             year, month, day
                         ).toMutableList()
-                    }
-
-                    val placeList = metadataRepository.findTimelinePlaceByDate(year, month, day)
-                    response["placeNameHeader"] = ""
-                    val processedPlaceNameArray = mutableListOf<String>()
-                    if (placeList != null) {
-                        for (placeDescription in placeList) {
-                            if (placeDescription != null) {
-                                val placeDescriptionArray = placeDescription.split(";")
-                                if (placeDescriptionArray.size > 1) {
-                                    val placeName = placeDescriptionArray[0]
-                                    val placeNameArray = placeName.split(",")
-                                    if (placeNameArray.size > 2) {
-                                        val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
-                                        processedPlaceNameArray.add(processedPlaceName)
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    val sortedPlaces = processedPlaceNameArray
-                        .groupingBy{ it }
-                        .eachCount()
-                        .toList()
-                        .sortedByDescending{ it.second }.map{it.first}
-
-                    if (sortedPlaces.isNotEmpty()) {
-                        response["placeNameHeader"] = sortedPlaces[0]
                     }
 
                     if (metadataList.isNotEmpty()) {
@@ -732,6 +737,8 @@ class TimelineController: BaseController() {
                         response["favorites"] = favoritesMap
                     }
                 }
+
+                response["placeNameHeader"] = getPlaceNameForDate(year!!, month!!, day!!)
 
                 response["msg"] = "Results"
                 response["status"] = ApiResponse.SUCCESS.status
