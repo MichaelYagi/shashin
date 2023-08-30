@@ -624,9 +624,9 @@ class TimelineController: BaseController() {
         return response
     }
 
-    private fun getPlaceNameForDate(year: Int, month: Int, day: Int): String {
+    private fun getPlaceNamesForDate(year: Int, month: Int, day: Int): MutableList<String> {
         val placeList = metadataRepository.findTimelinePlaceByDate(year, month, day)
-        var placeNameHeader = ""
+        var placeNameHeaders = mutableListOf<String>()
         val processedPlaceNameArray = mutableListOf<String>()
         if (placeList != null) {
             for (placeDescription in placeList) {
@@ -657,10 +657,12 @@ class TimelineController: BaseController() {
             .sortedByDescending{ it.second }.map{it.first}
 
         if (sortedPlaces.isNotEmpty()) {
-            placeNameHeader = sortedPlaces[0]
+            placeNameHeaders = sortedPlaces as MutableList<String>
+        } else {
+            placeNameHeaders.add("")
         }
 
-        return placeNameHeader
+        return placeNameHeaders
     }
 
     private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String?,metadataOnly: Boolean): MutableMap<String, Any?> {
@@ -674,7 +676,7 @@ class TimelineController: BaseController() {
         response["metadataList"] = mutableListOf<Metadata>()
         response["favorites"] = mutableMapOf<String, Any>()
         response["mediaTypeFilter"] = mediaTypeFilter
-        response["placeNameHeader"] = ""
+        response["placeNameHeaders"] = ""
 
         response["msg"] = "Could not get results"
         response["status"] = ApiResponse.FAIL.status
@@ -742,23 +744,26 @@ class TimelineController: BaseController() {
                     }
                 }
 
-                var placeName = ""
+
+                val placeNames = getPlaceNamesForDate(year!!, month!!, day!!)
                 val metadataDates = getMetadataDates(mediaTypeFilter)
                 val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
                 for (i in 0 until dates.size) {
                     if (dates[i].getDay() == day && dates[i].getMonth() == month && dates[i].getYear() == year) {
-                        var prevPlaceName = ""
+                        var prevPlaceName: MutableList<String>? = null
                         if (i > 0) {
-                            prevPlaceName = getPlaceNameForDate(dates[i-1].getYear()!!, dates[i-1].getMonth()!!, dates[i-1].getDay()!!)
+                            prevPlaceName = getPlaceNamesForDate(dates[i-1].getYear()!!, dates[i-1].getMonth()!!, dates[i-1].getDay()!!)
                         }
-                        placeName = getPlaceNameForDate(year!!, month!!, day!!)
-                        if (prevPlaceName == placeName) {
-                            placeName = ""
+
+                        if (prevPlaceName != null && prevPlaceName.size == 1 && placeNames.size == 1 && prevPlaceName[0] == placeNames[0]) {
+                            placeNames.clear()
+                            placeNames.add("")
                         }
                         break
                     }
                 }
-                response["placeNameHeader"] = placeName
+
+                response["placeNameHeaders"] = placeNames
 
                 response["msg"] = "Results"
                 response["status"] = ApiResponse.SUCCESS.status

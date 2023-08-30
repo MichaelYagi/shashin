@@ -39,7 +39,7 @@ class TimelineTemplates {
         <img loading="lazy" src="${thumbnailImage}" height="75" width="75" data-bs-toggle="tooltip" data-bs-placement="top" title="${title}">
     `};
 
-    static TimelinePreLoadGalleryHeader({metadata, placeNameHeader}) { return `
+    static TimelinePreLoadGalleryHeader({metadata, placeNameHeaders, listHtml}) { return `
         ${(metadata["year"] === null || metadata["month"] === null || metadata["day"] === null) ?
             `
         <span class="dateContainer" id="container_undated">
@@ -51,7 +51,10 @@ class TimelineTemplates {
             `
         <span class="dateContainer" id="container_${metadata.year}-${metadata.month}-${metadata.day}">
         <br id="br${metadata.year}-${metadata.month}-${metadata.day}">
-        <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><p><strong class="dateHeading p-1">${Util.getDateString(metadata.year, metadata.month, metadata.day)}</strong>${(placeNameHeader !== "") ? '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeader+'" target="_blank">'+placeNameHeader+'</a></span>' : ''}</p></section>
+        <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><div class="mb-3"><strong class="dateHeading p-1">${Util.getDateString(metadata.year, metadata.month, metadata.day)}</strong>
+        ${(placeNameHeaders.length === 1) ? `<span class="text-muted"><a class="link-unstyled" href="/search?term=`+placeNameHeaders[0]+`" target="_blank">`+placeNameHeaders[0]+`</a></span>` : (placeNameHeaders.length > 1) ? `
+        <span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">`+placeNameHeaders[0]+`</a>
+        <ul class="dropdown-menu">`+listHtml+`</ul></div></span>` : ``}</div></section>
         <div class="row image-group-padding" id="row${metadata.year}-${metadata.month}-${metadata.day}">
         <span style="display: none;" class="yearTaken">${metadata.year}</span>
         <span style="display: none;" class="monthTaken">${metadata.month}</span>
