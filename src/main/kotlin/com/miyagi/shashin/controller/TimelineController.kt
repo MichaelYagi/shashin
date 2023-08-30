@@ -1166,7 +1166,7 @@ class TimelineController: BaseController() {
                 if (metadataMap["latlng"].toString() == "") {
                     metadataObj.get().setLat(null)
                     metadataObj.get().setLng(null)
-                    metadataObj.get().setPlaceName("")
+                    metadataObj.get().setPlaceName(null)
                 } else {
                     val latlng = metadataMap["latlng"].toString()
                     val latlngArray = latlng.split(",")
