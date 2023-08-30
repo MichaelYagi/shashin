@@ -51,7 +51,7 @@ class TimelineTemplates {
             `
         <span class="dateContainer" id="container_${metadata.year}-${metadata.month}-${metadata.day}">
         <br id="br${metadata.year}-${metadata.month}-${metadata.day}">
-        <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><p><strong class="dateHeading p-1">${Util.getDateString(metadata.year, metadata.month, metadata.day)}</strong>${(placeNameHeader !== "") ? '<span class="text-muted">'+placeNameHeader+'</span>' : ''}</p></section>
+        <section class="scrollspy" id="${metadata.year}-${metadata.month}-${metadata.day}"><p><strong class="dateHeading p-1">${Util.getDateString(metadata.year, metadata.month, metadata.day)}</strong>${(placeNameHeader !== "") ? '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeader+'" target="_blank">'+placeNameHeader+'</a></span>' : ''}</p></section>
         <div class="row image-group-padding" id="row${metadata.year}-${metadata.month}-${metadata.day}">
         <span style="display: none;" class="yearTaken">${metadata.year}</span>
         <span style="display: none;" class="monthTaken">${metadata.month}</span>
