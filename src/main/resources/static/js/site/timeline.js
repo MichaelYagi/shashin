@@ -1441,12 +1441,31 @@
                                     idCheck = metadataList[0].year + '-' + metadataList[0].month + '-' + metadataList[0].day;
                                 }
 
-                                html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeader:data["placeNameHeader"]});
+                                const placeNameHeaders = data["placeNameHeaders"];
+
+                                let listHtml = "";
+                                if (placeNameHeaders.length > 1) {
+                                    for (const index in placeNameHeaders) {
+                                        const placeNameHeader = placeNameHeaders[index];
+                                        listHtml += '        <li class="text-muted"><a class="dropdown-item" href="/search?term='+placeNameHeader+'" target="_blank">'+placeNameHeader+'</a></li>\n';
+                                    }
+                                }
+
+                                html += TimelineTemplates.TimelinePreLoadGalleryHeader({metadata:metadataList[0],placeNameHeaders:placeNameHeaders,listHtml:listHtml});
                                 internalHtml += '<br id="br'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<section class="scrollspy" id="'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
-                                    '<p><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>' +
-                                    (data["placeNameHeader"] !== "" ? '<span class="text-muted"><a class="link-unstyled" href="/search?term='+data["placeNameHeader"]+'" target="_blank">'+data["placeNameHeader"]+'</a></span>' : '') + '</p>' +
-                                    '</section>' +
+                                    '<div class="mb-3"><strong class="dateHeading p-1">'+Util.getDateString(metadataList[0].year, metadataList[0].month, metadataList[0].day)+'</strong>';
+
+                                    if (placeNameHeaders.length === 1) {
+                                        internalHtml += '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank">'+placeNameHeaders[0]+'</a></span>';
+                                    } else if (placeNameHeaders.length > 1) {
+                                        internalHtml += '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">'+placeNameHeaders[0]+'</a>\n' +
+                                            '    <ul class="dropdown-menu">\n';
+                                        internalHtml += listHtml;
+                                        internalHtml += '    </ul></div></span>';
+                                    }
+
+                                internalHtml += '</div></section>' +
                                     '<div class="row image-group-padding" id="row'+metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day+'">' +
                                     '<span style="display: none;" class="yearTaken">'+metadataList[0].year+'</span>' +
                                     '<span style="display: none;" class="monthTaken">'+metadataList[0].month+'</span>' +
