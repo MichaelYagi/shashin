@@ -39,20 +39,20 @@
                                 <td>
                                     <a href="#" th:id="${'permissiontoggle' + user.id}">
                                         <th:block th:if="${user.authority == 'ROLE_ADMIN'}">
-                                            <span class="bi-person-badge" style="font-size: 1rem;"></span>
+                                            <span class="bi-person-badge" style="font-size: 1rem;" data-bs-toggle="tooltip" data-bs-placement="right" title="Click to change to User"></span>
                                         </th:block>
                                         <th:block th:if="${user.authority == 'ROLE_USER'}">
-                                            <span class="bi-person" style="font-size: 1rem"></span>
+                                            <span class="bi-person" style="font-size: 1rem" data-bs-toggle="tooltip" data-bs-placement="right" title="Click to change to Admin"></span>
                                         </th:block>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="#" th:id="${'isauthorized' + user.id}">
                                         <th:block th:if="${user.isAuthorized}">
-                                            <span class="bi-check" style="font-size: 1rem;color: lightgreen;"></span>
+                                            <span class="bi-check" style="font-size: 1rem;color: lightgreen;" data-bs-toggle="tooltip" data-bs-placement="right" title="Click to disable authorization"></span>
                                         </th:block>
                                         <th:block th:unless="${user.isAuthorized}">
-                                            <span class="bi-x" style="font-size: 1rem;color: lightsalmon;"></span>
+                                            <span class="bi-x" style="font-size: 1rem;color: lightsalmon;" data-bs-toggle="tooltip" data-bs-placement="right" title="Click to enable authorization"></span>
                                         </th:block>
                                     </a>
                                 </td>
@@ -60,12 +60,12 @@
                                 <td><span th:text="${user.modifiedAt}"></span></td>
                                 <td>
                                     <a href="#" th:id="${'resetPassword' + user.id}">
-                                        <span class="bi-arrow-clockwise overlayIconBackground overlayIcon"></span>
+                                        <span class="bi-arrow-clockwise overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" th:title="${'Create a temporary password for ' + user.username}"></span>
                                     </a>
                                 </td>
                                 <td>
                                     <a href="#" th:id="${'trash' + user.id}">
-                                        <span class="bi-trash overlayIconBackground overlayIcon"></span>
+                                        <span class="bi-trash overlayIconBackground overlayIcon" data-bs-toggle="tooltip" data-bs-placement="right" title="Delete user"></span>
                                     </a>
                                 </td>
                             </tr>
