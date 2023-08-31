@@ -111,9 +111,9 @@ class UserController {
         model["status"] = ApiResponse.FAIL.status
 
         if (formData.containsKey("oldpassword") && formData.containsKey("newpassword") && formData.containsKey("newpasswordconfirm")) {
-            val oldPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("oldpassword"))).trim()
-            val newPassword = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpassword"))).trim()
-            val newPasswordConfirm = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("newpasswordconfirm"))).trim()
+            val oldPassword = java.lang.String.valueOf(formData.getFirst("oldpassword")).trim()
+            val newPassword = java.lang.String.valueOf(formData.getFirst("newpassword")).trim()
+            val newPasswordConfirm = java.lang.String.valueOf(formData.getFirst("newpasswordconfirm")).trim()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {

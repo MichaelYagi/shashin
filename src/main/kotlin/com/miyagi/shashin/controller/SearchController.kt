@@ -150,7 +150,6 @@ class SearchController {
     fun postSearch(model: Model, redirectAttributes: RedirectAttributes, @RequestBody formData: MultiValueMap<String, String>): String {
         model["term"] = ""
         if (formData.containsKey("appSearchInput")) {
-//            val term: String = StringEscapeUtils.escapeHtml4(java.lang.String.valueOf(formData.getFirst("appSearchInput")))
             val term: String = java.lang.String.valueOf(formData.getFirst("appSearchInput"))
 
             val currentUserObj = model.getAttribute("currentUser") as User?

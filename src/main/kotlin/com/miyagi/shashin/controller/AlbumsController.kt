@@ -1469,7 +1469,7 @@ class AlbumsController: BaseController() {
         val albumPayload = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (albumPayload.containsKey("albumId") && albumPayload.containsKey("albumName")) {
             val postAlbumId = albumPayload["albumId"].toString().toInt()
-            val albumName = StringEscapeUtils.escapeHtml4(albumPayload["albumName"].toString())
+            val albumName = albumPayload["albumName"].toString()
 
             if (postAlbumId == albumId && albumName.isNotEmpty()) {
                 val foundAlbumRecord = albumRepository.findAlbumByNameIgnoreCase(albumName)
