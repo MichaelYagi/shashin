@@ -1072,13 +1072,13 @@ class TimelineController: BaseController() {
                 if (metadataMap["title"].toString().trim() == "") {
                     metadataObj.get().setTitle(metadataObj.get().getFileName())
                 } else if (metadataObj.get().getTitle() != metadataMap["title"].toString().trim()) {
-                    metadataObj.get().setTitle(StringEscapeUtils.escapeHtml4(metadataMap["title"].toString()).trim())
+                    metadataObj.get().setTitle(metadataMap["title"].toString().trim())
                 }
                 if (metadataMap["description"].toString().trim() == "") {
                     metadataObj.get().setDescription(null)
                 } else if (metadataObj.get().getDescription() != metadataMap["description"].toString().trim()) {
                     metadataObj.get()
-                        .setDescription(StringEscapeUtils.escapeHtml4(metadataMap["description"].toString()).trim())
+                        .setDescription(metadataMap["description"].toString().trim())
                 }
                 if (metadataMap["camera"].toString().trim() != "") {
                     var camera = StringEscapeUtils.escapeHtml4(metadataMap["camera"].toString()).trim()
@@ -1140,7 +1140,7 @@ class TimelineController: BaseController() {
 
                 keywordPhotoRepository.deleteAllByMetadataId(metadataId)
                 if (metadataMap["keywords"].toString().isNotBlank()) {
-                    var keywords = StringEscapeUtils.escapeHtml4(metadataMap["keywords"].toString()).trim()
+                    var keywords = metadataMap["keywords"].toString().trim()
                     if (keywords.last() == ',') {
                         keywords = keywords.dropLast(1)
                     }
@@ -1412,9 +1412,9 @@ class TimelineController: BaseController() {
         val offset: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.offsetTakenBatchData)
         var camera: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.cameraBatchData)
         var lens: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.lensBatchData)
-        var keywords: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.keywordsBatchData)
-        val recognitionLabelNames: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.tagBatchDataInput)
-        val albumNames: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.albumNameInput)
+        var keywords: String? = batchMetadataMap.keywordsBatchData
+        val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
+        val albumNames: String? = batchMetadataMap.albumNameInput
 //        println(albumNames)
         val isObject = batchMetadataMap.batchisobject == "on"
         val isHidden = batchMetadataMap.batchhidden == "on"
@@ -2009,7 +2009,7 @@ class TimelineController: BaseController() {
         var albumId = 0
 
         if (albumNameRaw.trim().isNotBlank() && currentUserObj != null) {
-            val albumName = StringEscapeUtils.escapeHtml4(albumNameRaw).trim().replace(" +".toRegex()," ")
+            val albumName = albumNameRaw.trim().replace(" +".toRegex()," ")
             val albumObject = albumRepository.findAlbumByNameIgnoreCase(albumName)
             var albumObj = Album()
 
@@ -2131,7 +2131,7 @@ class TimelineController: BaseController() {
             }
 
             if (taggedPeople != null && taggedPeople.trim() != "") {
-                val recognitionLabelArray = StringEscapeUtils.escapeHtml4(taggedPeople).split(",")
+                val recognitionLabelArray = taggedPeople.split(",")
                 if (recognitionLabelArray.count() > 0) {
                     recognitionLabelPhotoRepository?.deleteByMetadataId(metadataId)
                 }

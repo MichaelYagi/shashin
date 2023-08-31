@@ -107,7 +107,7 @@ class CommentsController {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment")) {
             val albumId = commentMap["albumId"].toString().toInt()
-            val commentText = StringEscapeUtils.escapeHtml4(commentMap["comment"].toString())
+            val commentText = commentMap["comment"].toString()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -231,7 +231,7 @@ class CommentsController {
         if (commentMap.containsKey("albumId") && commentMap.containsKey("comment") && commentMap.containsKey("metadataId")) {
             val albumId = commentMap["albumId"].toString().toInt()
             val metadataId = StringEscapeUtils.escapeHtml4(commentMap["metadataId"].toString())
-            val commentText = StringEscapeUtils.escapeHtml4(commentMap["comment"].toString())
+            val commentText = commentMap["comment"].toString()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
 
@@ -347,7 +347,7 @@ class CommentsController {
         val commentMap = mapper.convertValue(requestBody, object : TypeReference<Map<String, Any>>() {})
         if (commentMap.containsKey("commentId") && commentMap.containsKey("comment")) {
             val commentId = commentMap["commentId"].toString().toInt()
-            val commentText = StringEscapeUtils.escapeHtml4(commentMap["comment"].toString())
+            val commentText = commentMap["comment"].toString()
 
             val currentUserObj = model.getAttribute("currentUser") as User?
             if (currentUserObj != null) {
