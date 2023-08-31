@@ -108,7 +108,6 @@ class SearchController {
         return response
     }
 
-    @Secured("ROLE_ADMIN")
     @RequestMapping(value = ["/search/metadata/list/{page}/{term}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
     @ResponseBody
     fun getSearchMetadataList(model: Model,@PathVariable page: Int,@PathVariable term: String?): String? {
