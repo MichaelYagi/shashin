@@ -16,6 +16,7 @@ import nl.basjes.parse.useragent.UserAgentAnalyzer
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.core.io.FileSystemResource
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.DefaultRedirectStrategy
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository
 import org.springframework.stereotype.Component
+import java.io.File
 import java.io.IOException
 import java.net.URI
 import java.net.http.HttpClient
@@ -51,6 +53,9 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
     @Value("\${app.build.properties.version}")
     private val appVersion: String? = null
+
+    @Value("\${app.sidecar.path}")
+    private var relativeSidecarDir: String? = null
 
     @Value("\${app.rememberme.key}")
     private var rememberMeKey: String? = null
@@ -141,24 +146,24 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
                     if (user != null && user.getId() > 0) {
                         notifyLogin(user)
 //                        checkLatestAppVersion(user)
-                    }
 
-                    if (this.profile != "test" && this.persistentTokenRepository != null) {
-                        val rememberMeServices =
-                            PersistentTokenBasedRememberMeServices(
-                                rememberMeKey,
-                                customUserDetailsService,
-                                this.persistentTokenRepository
-                            )
 
-                        if (request.getParameter(rememberMeServices.parameter) != "on") {
-                            rememberMeServices.setAlwaysRemember(true)
-                            rememberMeServices.setCookieName("remember-me")
-                            // 1 Hour
-                            rememberMeServices.setTokenValiditySeconds(3600)
-                            rememberMeServices.loginSuccess(request, response, authentication)
+                        if (this.profile != "test" && this.persistentTokenRepository != null) {
+                            val rememberMeServices =
+                                PersistentTokenBasedRememberMeServices(
+                                    rememberMeKey,
+                                    customUserDetailsService,
+                                    this.persistentTokenRepository
+                                )
+
+                            if (request.getParameter(rememberMeServices.parameter) != "on") {
+                                rememberMeServices.setAlwaysRemember(true)
+                                rememberMeServices.setCookieName("remember-me")
+                                // 1 Hour
+                                rememberMeServices.setTokenValiditySeconds(3600)
+                                rememberMeServices.loginSuccess(request, response, authentication)
+                            }
                         }
-                    }
 
 //                    if (response != null) {
 //                        var series = ""
@@ -189,45 +194,59 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 //                        DatabaseUtil.cleanupPersistence(persistentLoginsExpiryRepository, persistentLoginsRepository)
 //                    }
 
-                    // Capture UA data
-                    val userAgent = request.getHeader("User-Agent")
-                    val uaa = UserAgentAnalyzer
-                        .newBuilder()
-                        .hideMatcherLoadStats()
-                        .withCache(10000)
-                        .build()
-                    val agentObj = uaa.parse(userAgent)
+                        // Capture UA data
+                        val userAgent = request.getHeader("User-Agent")
+                        val uaa = UserAgentAnalyzer
+                            .newBuilder()
+                            .hideMatcherLoadStats()
+                            .withCache(10000)
+                            .build()
+                        val agentObj = uaa.parse(userAgent)
 
-                    // eg. phone
-                    val deviceClass = if (agentObj.getValue("DeviceClass") == "??") null else agentObj.getValue("DeviceClass").lowercase()
-                    // eg. mobile
-                    val osClass = if (agentObj.getValue("OperatingSystemClass") == "??") null else agentObj.getValue("OperatingSystemClass").lowercase()
-                    // eg. android
-                    val osName = if (agentObj.getValue("OperatingSystemName") == "??") null else agentObj.getValue("OperatingSystemName").lowercase()
-                    // eg. 13
-                    val osVersion = if (agentObj.getValue("OperatingSystemVersion") == "??") null else agentObj.getValue("OperatingSystemVersion").lowercase()
-                    // eg. chrome
-                    val agentName = if (agentObj.getValue("AgentName") == "??") null else agentObj.getValue("AgentName").lowercase()
-                    // eg. 114
-                    val agentVersion = if (agentObj.getValue("AgentVersion") == "??") null else agentObj.getValue("AgentVersion").lowercase()
+                        // eg. phone
+                        val deviceClass = if (agentObj.getValue("DeviceClass") == "??") null else agentObj.getValue("DeviceClass").lowercase()
+                        // eg. mobile
+                        val osClass = if (agentObj.getValue("OperatingSystemClass") == "??") null else agentObj.getValue("OperatingSystemClass").lowercase()
+                        // eg. android
+                        val osName = if (agentObj.getValue("OperatingSystemName") == "??") null else agentObj.getValue("OperatingSystemName").lowercase()
+                        // eg. 13
+                        val osVersion = if (agentObj.getValue("OperatingSystemVersion") == "??") null else agentObj.getValue("OperatingSystemVersion").lowercase()
+                        // eg. chrome
+                        val agentName = if (agentObj.getValue("AgentName") == "??") null else agentObj.getValue("AgentName").lowercase()
+                        // eg. 114
+                        val agentVersion = if (agentObj.getValue("AgentVersion") == "??") null else agentObj.getValue("AgentVersion").lowercase()
 
-                    val useragentObj = Useragent()
-                    useragentObj.setDeviceClass(deviceClass)
-                    useragentObj.setOsClass(osClass)
-                    useragentObj.setOsName(osName)
-                    useragentObj.setOsVersion(osVersion)
-                    useragentObj.setAgentName(agentName)
-                    useragentObj.setAgentVersion(agentVersion)
-                    useragentObj.setUserId(userId)
-                    useragentObj.setCreatedAt(getCurrentTimestamp())
-                    useragentRepository?.save(useragentObj)
+                        val useragentObj = Useragent()
+                        useragentObj.setDeviceClass(deviceClass)
+                        useragentObj.setOsClass(osClass)
+                        useragentObj.setOsName(osName)
+                        useragentObj.setOsVersion(osVersion)
+                        useragentObj.setAgentName(agentName)
+                        useragentObj.setAgentVersion(agentVersion)
+                        useragentObj.setUserId(userId)
+                        useragentObj.setCreatedAt(getCurrentTimestamp())
+                        useragentRepository?.save(useragentObj)
 
-                    if (uriPath.isNotEmpty()) {
-                        redirectStrategy.sendRedirect(request, response, uriPath)
-                    } else if (currentAuthority == adminRole) {
-                        redirectStrategy.sendRedirect(request, response, "/timeline")
-                    } else {
-                        redirectStrategy.sendRedirect(request, response, "/albums")
+                        val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
+                        val sidecarDir = rootPath + relativeSidecarDir
+                        val uuidFromUsername = TextUtils.generateUUID(user.getUsername())
+                        val profileDirectory = sidecarDir.dropLast(1) + "/profile"
+                        val profileFileStr = "$profileDirectory/$uuidFromUsername.png"
+                        // If image doesn't exist, delete profile entry
+                        if (!user.getProfile().isNullOrEmpty() && !File(profileFileStr).exists()) {
+                            logger.log(Level.WARNING, "Removing profile entry. Profile entry exists but image missing.")
+                            user.setProfile(null)
+                            user.setModifiedAt(getCurrentTimestamp())
+                            userRepository?.save(user)
+                        }
+
+                        if (uriPath.isNotEmpty()) {
+                            redirectStrategy.sendRedirect(request, response, uriPath)
+                        } else if (currentAuthority == adminRole) {
+                            redirectStrategy.sendRedirect(request, response, "/timeline")
+                        } else {
+                            redirectStrategy.sendRedirect(request, response, "/albums")
+                        }
                     }
                 }
             }
