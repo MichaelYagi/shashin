@@ -123,6 +123,8 @@ class SearchController {
             if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
                 val metadataList = searchRepository?.findMetadataBySearchTerm(term, pageValue, queryLimit)
                 response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+                response["msg"] = "Results"
+                response["status"] = ApiResponse.SUCCESS.status
             } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
                 val currentUserObj = model.getAttribute("currentUser") as User?
                 if (currentUserObj != null) {
@@ -133,8 +135,13 @@ class SearchController {
                         queryLimit
                     )
                     response["metadataSearchList"] = metadataList as MutableIterable<Metadata>
+                    response["msg"] = "Results"
+                    response["status"] = ApiResponse.SUCCESS.status
                 }
             }
+        } else {
+            response["msg"] = "No Results"
+            response["status"] = ApiResponse.SUCCESS.status
         }
 
         return mapper.writeValueAsString(response)
