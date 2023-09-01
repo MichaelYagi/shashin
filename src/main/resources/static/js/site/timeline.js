@@ -24,7 +24,11 @@
     }
 
     const closeToFooter = function() {
-        return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > -500 && timelineSettings.distanceToFooter < 1) || Util.elementsInViewport($("#subfooter")).length > 0);
+        let distanceToFooterThreshold = -100;
+        if (Util.isMobile()) {
+            distanceToFooterThreshold = -500;
+        }
+        return (timelineSettings.distanceToFooter === 9999 || (timelineSettings.distanceToFooter > distanceToFooterThreshold && timelineSettings.distanceToFooter < 1) || Util.elementsInViewport($("#subfooter")).length > 0);
     }
 
     const scrollByN = function(scrollBy) {
