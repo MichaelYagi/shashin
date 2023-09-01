@@ -1081,7 +1081,7 @@ class TimelineController: BaseController() {
                         .setDescription(metadataMap["description"].toString().trim())
                 }
                 if (metadataMap["camera"].toString().trim() != "") {
-                    var camera = StringEscapeUtils.escapeHtml4(metadataMap["camera"].toString()).trim()
+                    var camera = metadataMap["camera"].toString().trim()
                     val cameraTypes = metadataRepository.findByCameraTypeAlphabetical()
                     for (cameraType in cameraTypes) {
                         if (camera.trim().lowercase() == cameraType.trim().lowercase()) {
@@ -1097,7 +1097,7 @@ class TimelineController: BaseController() {
                     metadataObj.get().setCamera(null)
                 }
                 if (metadataMap["lens"].toString().trim() != "") {
-                    var lens = StringEscapeUtils.escapeHtml4(metadataMap["lens"].toString()).trim()
+                    var lens = metadataMap["lens"].toString().trim()
                     val lensTypes = metadataRepository.findByLensTypeAlphabetical()
                     for (lensType in lensTypes) {
                         if (lens.trim().lowercase() == lensType.trim().lowercase()) {
@@ -1410,8 +1410,8 @@ class TimelineController: BaseController() {
         val yearTaken: Int? = batchMetadataMap.yearTakenBatchData
         val latlng: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.latlngBatchData)
         val offset: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.offsetTakenBatchData)
-        var camera: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.cameraBatchData)
-        var lens: String? = StringEscapeUtils.escapeHtml4(batchMetadataMap.lensBatchData)
+        var camera: String? = batchMetadataMap.cameraBatchData
+        var lens: String? = batchMetadataMap.lensBatchData
         var keywords: String? = batchMetadataMap.keywordsBatchData
         val recognitionLabelNames: String? = batchMetadataMap.tagBatchDataInput
         val albumNames: String? = batchMetadataMap.albumNameInput
