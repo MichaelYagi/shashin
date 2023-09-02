@@ -13,7 +13,7 @@
         <ul class="nav nav-pills list-group flex-column mb-auto">
             <li class="nav-link text-dark"><h5><small class="text-muted"><span id="sidebarGreeting"></span> <th:block th:text="${currentUser.username}"></th:block></small></h5></li>
             <th:block th:if="${currentUser.authority == 'ROLE_ADMIN'}">
-                <th:block th:if="${agentName == 'safari'}">
+                <th:block th:if="${agentName != 'safari'}">
                     <li class="nav-item">
                         <a th:attr="class='nav-link list-group-item list-group-item-action rounded' + ${activeSidebar=='timeline' ? ' active' : ''}" href="/timeline">
                             <span class="bi-calendar4" style="font-size: 1rem;"></span> Timeline
