@@ -182,7 +182,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         } else if (user.contains("rv")) {
             browser = "IE"
         } else {
-            browser = "Unknown browser, More-Info: $browserDetails"
+            browser = "Unknown browser: $browserDetails"
         }
         logger.log(Level.INFO,"Browser Name: $browser")
         model["agentName"] = browser.lowercase()
