@@ -360,20 +360,21 @@ class TextUtils {
 
         private fun readUrl(urlString: String): String? {
             var place: String? = null
-            var reader: BufferedReader? = null
+//            var reader: BufferedReader? = null
             try {
-                val url = URL(urlString)
-                reader = BufferedReader(InputStreamReader(url.openStream()))
-                val buffer = StringBuffer()
-                var read: Int
-                val chars = CharArray(1024)
-                while (reader.read(chars).also { read = it } != -1) buffer.append(chars, 0, read)
-                place = buffer.toString()
+//                val url = URL(urlString)
+//                reader = BufferedReader(InputStreamReader(url.openStream()))
+//                val buffer = StringBuffer()
+//                var read: Int
+//                val chars = CharArray(1024)
+//                while (reader.read(chars).also { read = it } != -1) buffer.append(chars, 0, read)
+                place = URL(urlString).readText()
             } catch(e: Exception) {
                 logger.log(Level.WARNING, "Could not read URL: " + e.message)
-            } finally {
-                reader?.close()
             }
+//            finally {
+//                reader?.close()
+//            }
 
             return place
         }
