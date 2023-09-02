@@ -140,15 +140,21 @@ class TextUtils {
         }
 
         fun generateUUID(
-            filePath:String?,
-            createdAt:String? = null,
-            type: String? = null,
-            fStopNumber: Double? = null,
-            iso: Int? = null,
-            exposure: String? = null): UUID {
-            val uuidInput = "$filePath-$createdAt-$type-$fStopNumber-$iso-$exposure"
+            inputString:String?,
+            inputStringTwo:String? = null,
+            inputStringThree: String? = null,
+            someDouble: Double? = null,
+            someInt: Int? = null,
+            inputStringFour: String? = null,
+            location: String = ""): UUID {
+            val uuidInput = "$inputString-$inputStringTwo-$inputStringThree-$someDouble-$someInt-$inputStringFour"
             val uuid = UUID.nameUUIDFromBytes(uuidInput.toByteArray())
-            logger.log(Level.INFO, "UUID $uuid generated from input $uuidInput")
+
+            var logString = "UUID $uuid generated from input $uuidInput"
+            if (location.isNotEmpty()) {
+                logString += " from $location"
+            }
+            logger.log(Level.INFO, logString)
             return uuid
         }
 

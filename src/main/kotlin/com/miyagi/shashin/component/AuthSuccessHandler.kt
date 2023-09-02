@@ -229,7 +229,7 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
                         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                         val sidecarDir = rootPath + relativeSidecarDir
-                        val uuidFromUsername = TextUtils.generateUUID(user.getUsername())
+                        val uuidFromUsername = TextUtils.generateUUID(user.getUsername(),null,null,null,null,null,"profile creation")
                         val profileDirectory = sidecarDir.dropLast(1) + "/profile"
                         val profileFileStr = "$profileDirectory/$uuidFromUsername.png"
                         // If image doesn't exist, delete profile entry
