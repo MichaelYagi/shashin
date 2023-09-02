@@ -798,8 +798,10 @@ class Util {
             $(".manualTakenAtLabel").show();
             $(".manualTakenAtDetails").text(takenDetails);
 
-            $(".timelineLink").show();
-            $(".timelineLink").html("<a href='/timeline#" + takenDate + "' target='_blank'>View date in timeline</a>");
+            if (Util.isSafari() === false) {
+                $(".timelineLink").show();
+                $(".timelineLink").html("<a href='/timeline#" + takenDate + "' target='_blank'>View in timeline</a>");
+            }
         }
         if (metadata.timeZone != null) {
             $(".timeZoneLabel").show();

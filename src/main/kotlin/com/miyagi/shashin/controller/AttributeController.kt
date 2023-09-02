@@ -8,7 +8,6 @@ import com.miyagi.shashin.repository.PersistentLoginsRepository
 import com.miyagi.shashin.repository.SettingsRepository
 import com.miyagi.shashin.repository.UserRepository
 import com.miyagi.shashin.util.ApiResponse
-import com.miyagi.shashin.util.DatabaseUtil
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
@@ -24,7 +23,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -32,10 +30,6 @@ import org.springframework.util.StringUtils.capitalize
 import org.springframework.web.HttpMediaTypeNotSupportedException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.bind.support.SessionStatus
-import org.springframework.web.client.HttpClientErrorException.Unauthorized
-import org.springframework.web.context.request.RequestContextHolder
-import org.springframework.web.context.request.ServletRequestAttributes
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
@@ -46,7 +40,6 @@ import javax.persistence.EntityNotFoundException
 import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
-import javax.servlet.http.HttpSession
 import javax.transaction.Transactional
 
 
@@ -163,6 +156,37 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
+        val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
+
+        val browserDetails = request.getHeader("User-Agent")
+        val user = browserDetails.lowercase(Locale.getDefault())
+        var browser = ""
+
+        logger.log(Level.INFO,"User Agent: $browserDetails")
+        //===============Browser===========================
+        if (user.contains("msie")) {
+            browser = "IE"
+        } else if (user.contains("safari") && user.contains("version")) {
+            browser = "Safari"
+        } else if (user.contains("opr") || user.contains("opera")) {
+            browser = "Opera"
+        } else if (user.contains("chrome")) {
+            browser = "Chrome"
+        } else if (user.indexOf("mozilla/7.0") > -1 || user.indexOf("netscape6") != -1 || user.indexOf("mozilla/4.7") != -1 || user.indexOf(
+                "mozilla/4.78"
+            ) != -1 || user.indexOf("mozilla/4.08") != -1 || user.indexOf("mozilla/3") != -1
+        ) {
+            browser = "Netscape"
+        } else if (user.contains("firefox")) {
+            browser = "Firefox"
+        } else if (user.contains("rv")) {
+            browser = "IE"
+        } else {
+            browser = "Unknown browser, More-Info: $browserDetails"
+        }
+        logger.log(Level.INFO,"Browser Name: $browser")
+        model["agentName"] = browser.lowercase()
+
         model["userRole"] = userRole
         model["adminRole"] = adminRole
         model["settings"] = Settings()
@@ -210,7 +234,8 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
             model["settings"] = settingsObj
-            model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(settingsObj.getCompreFaceServer(), settingsObj.getCompreFaceKey())
+            model["faceRecogServicesAvailable"] =
+                FileUtils.checkCompreFaceConnection(settingsObj.getCompreFaceServer(), settingsObj.getCompreFaceKey())
         }
         model["searchHistoryLimit"] = searchHistoryLimit
         model["queryLimit"] = queryLimit
@@ -226,7 +251,15 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["authority"] = ""
         model["username"] = ""
         model["apikey"] = ""
-        model["randomString"] = TextUtils.generateUUID(getCurrentTimestamp(),null,null,null,null,null,"random string generated from AttributeController")
+        model["randomString"] = TextUtils.generateUUID(
+            getCurrentTimestamp(),
+            null,
+            null,
+            null,
+            null,
+            null,
+            "random string generated from AttributeController"
+        )
 //        val requestAttributes = RequestContextHolder.currentRequestAttributes()
 //        val attributes = requestAttributes as ServletRequestAttributes
 //        val request = attributes.request
@@ -240,7 +273,6 @@ class AttributeController: ResponseEntityExceptionHandler() {
                 model["username"] = currentUser.getUsername()!!
                 model["apikey"] = currentUser.getApikey()!!
             } else {
-                val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
                 logger.log(Level.INFO, "{\"message\":\"Invalid API Key\"}")
             }
         } else if (authentication != null) {
@@ -285,7 +317,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["baseUrl"] = "$baseUrl/"
 
         model["operatingSystemInfo"] = ""
-        if (model.getAttribute("authority") ==  adminRole) {
+        if (model.getAttribute("authority") == adminRole) {
             model["operatingSystemInfo"] = getOperatingSystemInfo()
         }
         model["copyrightYear"] = Calendar.getInstance().get(Calendar.YEAR)
