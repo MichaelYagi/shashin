@@ -774,7 +774,7 @@ class SettingsController {
         model["titleDescriptor"] = TextUtils.capitalized(module)
 
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val logFilePath = "$rootPath/logs/shashin.log"
+        val logFilePath = "$rootPath/logs/${appName?.lowercase()}.log"
         val f = File(logFilePath)
         if (f.exists() && !f.isDirectory) {
             model["message"] = ""
@@ -809,11 +809,11 @@ class SettingsController {
     @GetMapping("/settings/logs/download")
     fun getDownloadLogsLogs(): ResponseEntity<InputStreamResource>? {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val logFilePath = "$rootPath/logs/shashin.log"
+        val logFilePath = "$rootPath/logs/${appName?.lowercase()}.log"
         val f = File(logFilePath)
         if (f.exists() && !f.isDirectory) {
             val headers = HttpHeaders()
-            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+appName+"_"+java.time.Clock.systemUTC().instant()+".log")
+            headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename="+appName?.lowercase()+"_"+java.time.Clock.systemUTC().instant()+".log")
             headers.add("Cache-Control", "no-cache, no-store, must-revalidate")
             headers.add("Pragma", "no-cache")
             headers.add("Expires", "0")
