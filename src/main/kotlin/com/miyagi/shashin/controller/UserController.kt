@@ -176,7 +176,7 @@ class UserController {
     fun postUpdateProfile(model: Model, redirectAttributes: RedirectAttributes, @RequestBody requestBody: JsonNode): String {
         val base64Map = mapper.convertValue(requestBody, object : TypeReference<Map<String, String>>() {})
         val response = mutableMapOf<String, Any?>()
-        response["randomString"] = TextUtils.generateUUID(getCurrentTimestamp())
+        response["randomString"] = TextUtils.generateUUID(getCurrentTimestamp(),null,null,null,null,null,"random string generated from UserController")
 
         val currentUserObj = model.getAttribute("currentUser") as User?
         if (currentUserObj != null) {
@@ -193,7 +193,7 @@ class UserController {
                     val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
                     val sidecarDir = rootPath + relativeSidecarDir
 
-                    val uuidFromUsername = TextUtils.generateUUID(currentUserObj.getUsername())
+                    val uuidFromUsername = TextUtils.generateUUID(currentUserObj.getUsername(),null,null,null,null,null,"user UUID generated from UserController")
 
                     val profileDirectory = sidecarDir.dropLast(1) + "/profile"
                     val profileFileStr = "$profileDirectory/$uuidFromUsername.$extension"
@@ -270,7 +270,7 @@ class UserController {
                 // Generate a new key
                 val updatedUserObj = userRepository?.findById(currentUserObj.getId())
                 if (updatedUserObj != null && updatedUserObj.isPresent) {
-                    val updatedApikey = TextUtils.generateUUID(currentUserObj.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"").toString()
+                    val updatedApikey = TextUtils.generateUUID(currentUserObj.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"","API key generated from UserController").toString()
                     updatedUserObj.get().setApikey(updatedApikey)
                     userRepository?.save(updatedUserObj.get())
 
@@ -340,7 +340,7 @@ class UserController {
             newUser.setPassword(encodedPassword)
             newUser.setCreatedAt(getCurrentTimestamp())
             newUser.setModifiedAt(getCurrentTimestamp())
-            newUser.setApikey(TextUtils.generateUUID(newUser.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"").toString())
+            newUser.setApikey(TextUtils.generateUUID(newUser.getUsername(),System.currentTimeMillis().toString(),"",0.0,0,"","API key generated for new user from UserController").toString())
 
             if ((userCount != null) && (userCount.toInt() == 0)) {
                 newUser.setAuthority("ROLE_ADMIN")

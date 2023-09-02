@@ -93,7 +93,7 @@ class ArticlesController {
 
                 roleController["roleAnchor"] = roleController["role"].toString().lowercase().replace("\\s".toRegex(), "")
 
-                roleController["rolePath"] = TextUtils.generateUUID(key.toString(),"","",0.0,0,"").toString()
+                roleController["rolePath"] = TextUtils.generateUUID(key.toString(),"","",0.0,0,"","endpoint article creation").toString()
                 roleController["controller"] = value.toString()
                 val apiRegex = "\\/api\\/v1\\/.*\\]".toRegex()
                 var apiMatchResult = apiRegex.find(key.toString())

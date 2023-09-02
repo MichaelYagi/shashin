@@ -226,7 +226,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["authority"] = ""
         model["username"] = ""
         model["apikey"] = ""
-        model["randomString"] = TextUtils.generateUUID(getCurrentTimestamp())
+        model["randomString"] = TextUtils.generateUUID(getCurrentTimestamp(),null,null,null,null,null,"random string generated from AttributeController")
 //        val requestAttributes = RequestContextHolder.currentRequestAttributes()
 //        val attributes = requestAttributes as ServletRequestAttributes
 //        val request = attributes.request
