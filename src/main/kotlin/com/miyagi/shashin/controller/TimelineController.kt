@@ -744,25 +744,30 @@ class TimelineController: BaseController() {
                     }
                 }
 
+                var placeNames = mutableListOf<String>()
+                if (year != null && month != null && day != null) {
+                    placeNames = getPlaceNamesForDate(year, month, day)
+                    val metadataDates = getMetadataDates(mediaTypeFilter)
+                    val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
+                    for (i in 0 until dates.size) {
+                        if (dates[i].getDay() == day && dates[i].getMonth() == month && dates[i].getYear() == year) {
+                            var prevPlaceName: MutableList<String>? = null
+                            if (i > 0) {
+                                prevPlaceName = getPlaceNamesForDate(
+                                    dates[i - 1].getYear()!!,
+                                    dates[i - 1].getMonth()!!,
+                                    dates[i - 1].getDay()!!
+                                )
+                            }
 
-                val placeNames = getPlaceNamesForDate(year!!, month!!, day!!)
-                val metadataDates = getMetadataDates(mediaTypeFilter)
-                val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
-                for (i in 0 until dates.size) {
-                    if (dates[i].getDay() == day && dates[i].getMonth() == month && dates[i].getYear() == year) {
-                        var prevPlaceName: MutableList<String>? = null
-                        if (i > 0) {
-                            prevPlaceName = getPlaceNamesForDate(dates[i-1].getYear()!!, dates[i-1].getMonth()!!, dates[i-1].getDay()!!)
+                            if (prevPlaceName != null && prevPlaceName.size == 1 && placeNames.size == 1 && prevPlaceName[0] == placeNames[0]) {
+                                placeNames.clear()
+                                placeNames.add("")
+                            }
+                            break
                         }
-
-                        if (prevPlaceName != null && prevPlaceName.size == 1 && placeNames.size == 1 && prevPlaceName[0] == placeNames[0]) {
-                            placeNames.clear()
-                            placeNames.add("")
-                        }
-                        break
                     }
                 }
-
                 response["placeNameHeaders"] = placeNames
 
                 response["msg"] = "Results"
