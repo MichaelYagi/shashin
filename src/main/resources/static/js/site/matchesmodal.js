@@ -17,7 +17,7 @@
         if (labelString.length > 0) {
             labelString = labelString.slice(0, -1)
         }
-        $("#tagBatchDataInput").val(Util.decodeHtml(labelString));
+        $("#tagBatchDataInput").val(labelString);
     }
 }(window.matchModalBatchSettings = window.matchModalBatchSettings || {}, jQuery));
 
@@ -145,7 +145,7 @@ $('#propBatchMetadata').bind('keypress', function () {
         if (labelString.length > 0) {
             labelString = labelString.slice(0, -1)
         }
-        $("#tagpeople" + metadataId).val(Util.decodeHtml(labelString));
+        $("#tagpeople" + metadataId).val(labelString);
     }
 
     matchModalSettings.renderMatchesModal = function(metadata, recognitionLabels, taggedPeopleList) {

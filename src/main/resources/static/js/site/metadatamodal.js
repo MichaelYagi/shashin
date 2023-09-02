@@ -27,7 +27,7 @@
             labelString = labelString.slice(0,-1)
         }
 
-        $("#tagpeople").val(Util.decodeHtml(labelString));
+        $("#tagpeople").val(labelString);
     }
 
     metadataModal.populateAlbum = function (metadataId) {
@@ -42,7 +42,7 @@
             albumString = albumString.slice(0,-1)
         }
 
-        $("#albumnames").val(Util.decodeHtml(albumString));
+        $("#albumnames").val(albumString);
     }
 
 }( window.metadataModal = window.metadataModal || {}, jQuery ));
@@ -107,8 +107,8 @@ $("#saveMetadata").on("click", async function (e) {
 
         const json = {
             id: metadataId,
-            title: Util.decodeHtml($("#title").val().trim()),
-            description: Util.decodeHtml($("#description").val().trim()),
+            title: $("#title").val().trim(),
+            description: $("#description").val().trim(),
             camera: Util.decodeHtml($("#camera").val().trim()),
             lens: Util.decodeHtml($("#lens").val().trim()),
             year: $("#yearTaken").val(),
@@ -117,9 +117,9 @@ $("#saveMetadata").on("click", async function (e) {
             time: $("#timeTaken").val(),
             offset: $("#offsetTaken").val() === null ? "" : $("#offsetTaken").val(),
             latlng: Util.decodeHtml($("#latlng").val()),
-            keywords: Util.decodeHtml($("#keywords").val()),
-            tagpeople: Util.decodeHtml(people),
-            albumnames: Util.decodeHtml(albums),
+            keywords: $("#keywords").val(),
+            tagpeople: people,
+            albumnames: albums,
             hidden: $("#hidden").prop("checked"),
             isObject: $("#isobject").prop("checked")
         }
@@ -245,7 +245,7 @@ $("#saveMetadata").on("click", async function (e) {
                         window.location.replace("/map?latlng=" + $("#latlng").val()+queryParamDates);
                     }
 
-                    if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
+                    if (takenDateUpdated === true && ($("#activePage").length > 0 && $("#activePage").val() !== "recent" && $("#activePage").val() !== "modified" && $("#activePage").val() !== "taken" && $("#activePage").val() !== "folder") || $("#activePage").length === 0) {
                         dateGalleryRemoved = shashin.removeThumbnail(metadataId);
                     }
                 } else if (activePage === "map" && metadataObj.hidden === true) {
@@ -294,7 +294,7 @@ $("#saveMetadata").on("click", async function (e) {
                     }
                     // Reload page
                     if (
-                        (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && takenDateUpdated === true) ||
+                        (activePage !== "recent" && activePage !== "modified" && activePage !== "folder" && activePage !== "taken" && takenDateUpdated === true) ||
                         metadataObj.hidden === true ||
                         (activePage === "album" && Util.arraysEqual(prevAlbumsArray,albumsArray) === false)
                     ) {
