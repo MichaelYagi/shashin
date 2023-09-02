@@ -87,7 +87,7 @@
                         if (labelString.length > 0) {
                             labelString = labelString.slice(0,-1)
                         }
-                        $("#tagBatchDataInput").val(Util.decodeHtml(labelString));
+                        $("#tagBatchDataInput").val(labelString);
                     }
                 }( window.personModalBatchSettings = window.personModalBatchSettings || {}, jQuery ));
 
@@ -176,7 +176,7 @@
             if (labelString.length > 0) {
                 labelString = labelString.slice(0,-1)
             }
-            $("#tagpeople"+metadataId).val(Util.decodeHtml(labelString));
+            $("#tagpeople"+metadataId).val(labelString);
         }
 
         personModalSettings.renderPersonModal = function (metadata,recognitionLabels,taggedPeopleList) {

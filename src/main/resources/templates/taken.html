@@ -21,8 +21,8 @@
                         <th:block th:each="metadata, iterStat: ${metadataList}">
 
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
-                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.modifiedAt!=null and #dates.format(sdf.parse(metadataList[iterStat.index-1].modifiedAt),'yyyy-M-dd')==#dates.format(sdf.parse(metadata.modifiedAt),'yyyy-M-dd')}">
-                                    <section class="dateSection" th:id="${#dates.format(sdf.parse(metadata.modifiedAt),'yyyy-MM-dd')}"><p><span class="text-muted">Modified </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.modifiedAt), 'EEE, MMM d, yyyy'),'.','')}"></strong></p></section>
+                                <th:block th:if="${iterStat.count > 0}" th:unless="${!iterStat.first and metadata.year!=null and (metadataList[iterStat.index-1].year+'-'+metadataList[iterStat.index-1].month+'-'+metadataList[iterStat.index-1].day)==metadata.year+'-'+metadata.month+'-'+metadata.day}">
+                                    <section class="dateSection" th:id="${metadata.year + '-' + metadata.month + '-' + metadata.day}"><p><span class="text-muted">Taken </span><strong th:text="${#strings.replace(#dates.format(sdf.parse(metadata.year+'-'+metadata.month+'-'+metadata.day), 'EEE, MMM d, yyyy'),'.','')}"></strong></p></section>
                                 </th:block>
                             </th:block>
 
@@ -55,25 +55,25 @@
                                     shashin.openEditMetadataModal(/*[[${metadata.id}]]*/"");
                                 });
 
-                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'modified');
+                                shashin.setPhotoOverlays(/*[[${metadata}]]*/{}, /*[[${activePage}]]*/'taken');
                                 Util.activateMetadataListeners(/*[[${metadata.id}]]*/"");
                                 /*]]>*/
                             </script>
 
-                            <span class="appendModifiedPhotos" style="width:0;height:0;padding:0"></span>
+                            <span class="appendTakenPhotos" style="width:0;height:0;padding:0"></span>
 
                         </th:block>
                     </div>
                 </th:block>
                 <th:block th:if="${#lists.isEmpty(metadataList)}">
-                    <span class="appendModifiedPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
+                    <span class="appendTakenPhotos" style="width:0;height:0;padding:0;display:none;">EOL</span>
                 </th:block>
             </div>
 
             <div th:replace="fragments/metadatabatchmodal :: metadatabatchmodal(${recognitionLabels},${allAlbumList})"></div>
             <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
-                const httpModified = new Http("modified");
-                httpRecent.ajax("get", "/browse/album/list").then(function (data) {
+                const httpTaken = new Http("taken");
+                httpTaken.ajax("get", "/browse/album/list").then(function (data) {
                     if (data.hasOwnProperty("albumList") === true) {
                         const albumList = data["albumList"];
 
@@ -131,15 +131,15 @@
     $(document).ready(function() {
         /*<![CDATA[*/
         shashin.nonce = /*[[${cspNonce}]]*/ '';
-        const activePage = /*[[${activePage}]]*/ 'modified';
+        const activePage = /*[[${activePage}]]*/ 'taken';
         /*]]>*/
 
         const http = new Http(activePage);
         http.ajax("get", "/metadata/list/"+activePage+"/0").then(function (data) {
             if (data.hasOwnProperty("metadataList") === true) {
                 const metadataList = data["metadataList"];
-                const modifiedInstance = new Modified(metadataList, activePage);
-                modifiedInstance.init();
+                const takenInstance = new Taken(metadataList, activePage);
+                takenInstance.init();
                 Util.checkErrorImage();
             }
         });

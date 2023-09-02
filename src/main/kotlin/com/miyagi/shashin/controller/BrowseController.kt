@@ -242,6 +242,24 @@ class BrowseController: BaseController() {
         return mapper.writeValueAsString(buildBrowseRecord("recent", model, page.orElse(0), size.orElse(model.getAttribute("queryLimit").toString().toInt())))
     }
 
+    @RequestMapping(value = ["/taken"], method = [RequestMethod.GET])
+    fun getTaken(model: Model): String {
+        val module = "taken"
+
+        buildInitialPage(module,model)
+
+        model["activePage"] = module
+        model["activeSidebar"] = module
+        model["titleDescriptor"] = TextUtils.capitalized(module)
+        return module
+    }
+
+    @RequestMapping(value = ["/taken/{page}","/api/v1/taken/{page}"], method = [RequestMethod.GET], consumes = ["application/json"], produces = ["application/json"])
+    @ResponseBody
+    fun getPagedTaken(model: Model, request: HttpServletRequest, @PathVariable page: Int): String {
+        return mapper.writeValueAsString(buildBrowseRecord("taken",model,page))
+    }
+
     @RequestMapping(value = ["/modified"], method = [RequestMethod.GET])
     fun getModified(model: Model): String {
         val module = "modified"
@@ -526,6 +544,11 @@ class BrowseController: BaseController() {
                 ).toMutableList()
             } else if (module == "modified") {
                 metadataList = metadataRepository.findModifiedByOffsetAndLimit(
+                    pageValue,
+                    size
+                ).toMutableList()
+            } else if (module == "taken") {
+                metadataList = metadataRepository.findTakenByOffsetAndLimit(
                     pageValue,
                     size
                 ).toMutableList()

@@ -1346,7 +1346,7 @@
                     if (view === "album") {
                         $("#albumTools").hide();
                     }
-                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "folder") {
+                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder") {
                     $("#timelineAppTools").show();
                     if (view === "timeline") {
                         $("#timelineTools").hide();
@@ -1422,7 +1422,7 @@
                     if (view === "album") {
                         $("#albumTools").hide();
                     }
-                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "folder") {
+                } else if (view === "timeline" || view === "recent" || view === "modified" || view === "taken" || view === "folder") {
                     $("#timelineAppTools").show();
                     if (view === "timeline") {
                         $("#timelineTools").hide();
@@ -1886,8 +1886,8 @@
 
                 batchHtml +=
                     '<button class="dropdown-item" type="button">\n' +
-                    '    <input type="checkbox" class="album" id="album'+album.id+'" value="'+album.name+'" name="albums[]">\n' +
-                    '    <label for="'+album.id+'">'+album.name+'</label>\n' +
+                    '    <input type="checkbox" class="album" id="album'+album.id+'" value="'+Util.escapeHtml(album.name)+'" name="albums[]">\n' +
+                    '    <label for="'+album.id+'">'+Util.escapeHtml(album.name)+'</label>\n' +
                     '</button>\n';
             }
 
@@ -1933,8 +1933,8 @@
                 if (recognitionLabel.name !== null && recognitionLabel.name !== "null") {
                     batchHtml +=
                         '           <button class="dropdown-item" type="button">\n' +
-                        '               <input type="checkbox" class="recognitionLabel" id="recognitionLabel' + recognitionLabel.id + '" value="' + recognitionLabel.name + '" name="recognitionLabel[]">\n' +
-                        '               <label for="recognitionLabel' + recognitionLabel.id + '">' + recognitionLabel.name + '</label>\n' +
+                        '               <input type="checkbox" class="recognitionLabel" id="recognitionLabel' + recognitionLabel.id + '" value="' + Util.escapeHtml(recognitionLabel.name) + '" name="recognitionLabel[]">\n' +
+                        '               <label for="recognitionLabel' + recognitionLabel.id + '">' + Util.escapeHtml(recognitionLabel.name) + '</label>\n' +
                         '           </button>'
                 }
             }
