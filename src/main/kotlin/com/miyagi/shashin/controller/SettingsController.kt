@@ -809,7 +809,7 @@ class SettingsController {
     @GetMapping("/settings/logs/download")
     fun getDownloadLogsLogs(): ResponseEntity<InputStreamResource>? {
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val logFilePath = "$rootPath/logs/spring-boot-logger.log"
+        val logFilePath = "$rootPath/logs/shashin.log"
         val f = File(logFilePath)
         if (f.exists() && !f.isDirectory) {
             val headers = HttpHeaders()
