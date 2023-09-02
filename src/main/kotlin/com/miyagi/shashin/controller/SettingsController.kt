@@ -774,7 +774,7 @@ class SettingsController {
         model["titleDescriptor"] = TextUtils.capitalized(module)
 
         val rootPath = FileSystemResource("").file.absolutePath.replace('\\', '/')
-        val logFilePath = "$rootPath/logs/spring-boot-logger.log"
+        val logFilePath = "$rootPath/logs/shashin.log"
         val f = File(logFilePath)
         if (f.exists() && !f.isDirectory) {
             model["message"] = ""
