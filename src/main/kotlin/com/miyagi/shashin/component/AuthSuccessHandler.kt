@@ -242,8 +242,10 @@ class AuthSuccessHandler : SimpleUrlAuthenticationSuccessHandler() {
 
                         if (uriPath.isNotEmpty()) {
                             redirectStrategy.sendRedirect(request, response, uriPath)
-                        } else if (currentAuthority == adminRole) {
+                        } else if (currentAuthority == adminRole && agentName != "safari") {
                             redirectStrategy.sendRedirect(request, response, "/timeline")
+                        } else if (currentAuthority == adminRole && agentName == "safari") {
+                            redirectStrategy.sendRedirect(request, response, "/recent")
                         } else {
                             redirectStrategy.sendRedirect(request, response, "/albums")
                         }

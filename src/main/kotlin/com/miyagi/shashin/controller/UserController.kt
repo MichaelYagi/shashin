@@ -380,14 +380,14 @@ class UserController {
         return module
     }
 
-
-
     @GetMapping("/users/login")
     fun getLoginUser(model: Model, @RequestParam(name="error",required=false) error: String?, @RequestParam(name="msg",required=false) message: String?): String {
         val module = "login"
 
-        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole")) {
+        if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && model.getAttribute("agentName") != "safari") {
             return "redirect:/timeline"
+        } else if (model.getAttribute("authority").toString() == model.getAttribute("adminRole") && model.getAttribute("agentName") == "safari") {
+            return "redirect:/recent"
         } else if (model.getAttribute("authority").toString() == model.getAttribute("userRole")) {
             return "redirect:/albums"
         } else {
