@@ -1301,6 +1301,7 @@ class AlbumsController: BaseController() {
                 val albumMetadataList = ArrayList<Metadata>()
                 if (albumPhotos != null) {
                     val albumPhotosCommentsMap = HashMap<String, ArrayList<HashMap<String, Any>>>()
+                    val placenameMap = mutableMapOf<String, MutableList<String>?>()
 
                     for (albumPhoto in albumPhotos) {
                         val albumPhotoCommentsList = ArrayList<HashMap<String, Any>>()
@@ -1341,12 +1342,18 @@ class AlbumsController: BaseController() {
                             if (albumPhotoCommentsList.isNotEmpty()) {
                                 albumPhotosCommentsMap[metadata.get().getId()] = albumPhotoCommentsList
                             }
+
+                            val placenameKey = metadata.get().getYear().toString()+"-"+metadata.get().getMonth().toString()+"-"+metadata.get().getDay().toString()
+                            if (!placenameMap.containsKey(placenameKey)) {
+                                placenameMap[placenameKey] = TextUtils.getPlaceNamesForDate(metadata.get().getYear()!!, metadata.get().getMonth()!!, metadata.get().getDay()!!, metadataRepository)
+                            }
                         }
                     }
                     if (albumMetadataList.count() > 0) {
                         val album = albumRepository.findById(albumId)
                         response["titleDescriptor"] = TextUtils.capitalized(module) + " - " + album.get().getName()
                         response["favorites"] = favoritesMap
+                        response["placenameMap"] = placenameMap
                         response["albumPhotoCommentsMap"] = albumPhotosCommentsMap
                         response["album"] = album.get()
                         response["albumId"] = album.get().getId()
