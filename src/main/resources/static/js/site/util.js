@@ -293,7 +293,7 @@ class Util {
         return months[index];
     }
 
-    static validateMetadataInputs(day, month, year, time, offset, latlng, msgId) {
+    static validateMetadataInputs(day, month, year, time, offset, latlng, duration, test=false) {
         if (offset === null ) {
             offset = "";
         }
@@ -332,8 +332,20 @@ class Util {
             }
         }
 
+        if (duration !== "") {
+            const isValidWithoutHour = /^([1-5]?[0-9])(:[0-5][0-9])?$/.test(duration);
+            const isValidWithHour = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/.test(duration);
+
+            if (isValidWithoutHour === false && isValidWithHour === false) {
+                msg = "Enter Valid Duration";
+            }
+        }
+
         if (msg !== "") {
-            $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
+            if (test === false) {
+                // $("#"+msgId).html('<div class="alert alert-danger" role="alert">'+msg+'</div>');
+                shashin.showToastMessage("Input errors", msg, {icon: "bi-exclamation-triangle", iconColor: "#FF0000"});
+            }
             return false;
         } else {
             return true;

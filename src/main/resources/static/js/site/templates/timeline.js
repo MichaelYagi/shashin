@@ -128,7 +128,7 @@ class TimelineTemplates {
     static TimelineGalleryTopRightOverlay({metadata}) { return `
         ${metadata.type.indexOf("video") >= 0 ?
             `
-            <span class="overlayIconBackground">${(metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00"}&nbsp;<span id="video${metadata.id}" class="bi-camera-video overlayIcon"></span></span>
+            <span class="overlayIconBackground"><span id="duration${metadata.id}">${(metadata.hasOwnProperty("duration") && metadata.duration !== null && metadata.duration !== "") ? metadata.duration : "0:00"}</span>&nbsp;<span id="video${metadata.id}" class="bi-camera-video overlayIcon"></span></span>
             `
             :
             ` 

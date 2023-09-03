@@ -78,7 +78,7 @@ $("#saveBatchMetadata").on("click", async function (e) {
         "",
         $("#offsetTakenBatchData").val(),
         $("#latlngBatchData").val(),
-        "msgBatchMetadata"
+        ""
     ) === true) {
         if ($("#batchisobject").is(':checked')) {
             $("#batchisobject").val("on");

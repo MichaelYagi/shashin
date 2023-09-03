@@ -4,7 +4,7 @@
 <div class="thumbnail-tr" th:id="${'tntr'+id}">
 
 <th:block th:if="${type.contains('video')}">
-    <span class="overlayIconBackground"><th:block th:text="${content}"></th:block>&nbsp;<span th:id="${'video'+id}" class="bi-camera-video overlayIcon"></span></span>
+    <span class="overlayIconBackground"><span th:id="${'duration'+id}" th:text="${content}"></span>&nbsp;<span th:id="${'video'+id}" class="bi-camera-video overlayIcon"></span></span>
     <br>
 </th:block>
 
