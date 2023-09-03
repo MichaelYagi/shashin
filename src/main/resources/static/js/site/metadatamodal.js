@@ -213,7 +213,12 @@ $("#saveMetadata").on("click", async function (e) {
                     }
 
                     if (type.indexOf("video") >= 0) {
-                        $("#duration"+metadataId).text(Util.decodeHtml($("#duration").val().trim()));
+                        let duration = $("#duration").val().trim();
+                        if (duration === "" || duration === null) {
+                            duration = "0:00";
+                        }
+                        $("#duration"+metadataId).text(Util.decodeHtml(duration));
+                        $("#duration").val(duration);
                     }
 
                     $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
