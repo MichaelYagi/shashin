@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -156,6 +157,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @ModelAttribute
     @Transactional
     fun addAttributes(model: Model, request: HttpServletRequest, response: HttpServletResponse, authentication: Authentication?) {
+        val timingOne = Date()
         val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
 
         val browserDetails = request.getHeader("User-Agent")
@@ -330,6 +332,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
         model["titleDescriptor"] = ""
         model["msg"] = "Response status not set. Defaulting to status fail."
         model["status"] = ApiResponse.FAIL.status
+
+        val timingTwo = Date()
+        val diff: Long = timingTwo.time - timingOne.time
+
+        val processingTime = SimpleDateFormat("mm:ss:SSS").format(Date(diff))
+        logger.log(Level.INFO, "AttributeController processing time: $processingTime")
     }
 
     private fun getOperatingSystemInfo(): String {
