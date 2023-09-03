@@ -61,8 +61,26 @@ class Taken {
                     const currentDate = dateFormat((metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"]).replace(/-/g, "/"), "isoDate");
                     const displayCurrentDate = dateFormat((metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"]).replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
+                    const placenameMap = data["placenameMap"];
+                    let placename = "";
+                    if (placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day].length === 1) {
+                        const placeNameHeaders = placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day];
+                        placename = '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank">'+placeNameHeaders[0]+'</a></span>';
+                    } else if (placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day].length > 1) {
+                        const placeNameHeaders = placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day];
+                        let listHtml = "";
+                        if (placeNameHeaders.length > 1) {
+                            for (const index in placeNameHeaders) {
+                                const placeNameHeader = placeNameHeaders[index];
+                                listHtml += '<li class="text-muted"><a class="dropdown-item" href="/search?term='+placeNameHeader+'" target="_blank">'+placeNameHeader+'</a></li>\n';
+                            }
+                        }
+                        placename = '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">'+placeNameHeaders[0]+'</a>\n' +
+                            '<ul class="dropdown-menu">'+listHtml+'</ul></div></span>';
+                    }
+
                     if (lastDateHeading !== currentDate) {
-                        dateHeadingObj = {heading: currentDate, display: displayCurrentDate};
+                        dateHeadingObj = {heading: currentDate, display: displayCurrentDate, placename: placename};
                     }
 
                     const overlayData = shashin.getOverlayData(metadata, {editControls:true,editIcon: ((metadata.lat === null || metadata.lng === null) ? "bi-info-square" : "bi-info-circle"),cOnClickFunction:"shashin.openGallery",galleryIndex:currentMediaLinkIndex,overlayFlags});

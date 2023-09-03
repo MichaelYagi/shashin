@@ -567,6 +567,7 @@ class BrowseController: BaseController() {
                 val labelPhotoMap = mutableMapOf<String, String>()
                 val albumMap = mutableMapOf<String, String>()
                 val keywordMap = mutableMapOf<String, String>()
+                val placenameMap = mutableMapOf<String, MutableList<String>?>()
 
                 for (metadata in metadataList) {
                     val favorites = favoriteRepository.findAllByMetadataId(metadata.getId())
@@ -621,7 +622,13 @@ class BrowseController: BaseController() {
                         keywordMetadataList = keywordMetadataList.dropLast(1)
                         keywordMap[metadata.getId()] = keywordMetadataList
                     }
+
+                    val placenameKey = metadata.getYear().toString()+"-"+metadata.getMonth().toString()+"-"+metadata.getDay().toString()
+                    if (!placenameMap.containsKey(placenameKey)) {
+                        placenameMap[placenameKey] = TextUtils.getPlaceNamesForDate(metadata.getYear()!!, metadata.getMonth()!!, metadata.getDay()!!, metadataRepository)
+                    }
                 }
+                response["placenameMap"] = placenameMap
                 response["labelPhotoMap"] = labelPhotoMap
                 response["albumMap"] = albumMap
                 response["keywordMap"] = keywordMap

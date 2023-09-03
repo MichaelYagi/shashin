@@ -624,47 +624,6 @@ class TimelineController: BaseController() {
         return response
     }
 
-    private fun getPlaceNamesForDate(year: Int, month: Int, day: Int): MutableList<String> {
-        val placeList = metadataRepository.findTimelinePlaceByDate(year, month, day)
-        var placeNameHeaders = mutableListOf<String>()
-        val processedPlaceNameArray = mutableListOf<String>()
-        if (placeList != null) {
-            for (placeDescription in placeList) {
-                if (placeDescription != null) {
-                    val placeDescriptionArray = placeDescription.split(";")
-                    if (placeDescriptionArray.size > 1) {
-                        val placeName = placeDescriptionArray[0]
-                        val placeNameArray = placeName.split(",")
-                        if (placeNameArray.size > 2) {
-                            val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
-                            processedPlaceNameArray.add(processedPlaceName)
-                        }
-                    } else {
-                        val placeNameArray = placeDescription.split(",")
-                        if (placeNameArray.size > 2) {
-                            val processedPlaceName =
-                                placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
-                            processedPlaceNameArray.add(processedPlaceName)
-                        }
-                    }
-                }
-            }
-        }
-        val sortedPlaces = processedPlaceNameArray
-            .groupingBy{ it }
-            .eachCount()
-            .toList()
-            .sortedByDescending{ it.second }.map{it.first}
-
-        if (sortedPlaces.isNotEmpty()) {
-            placeNameHeaders = sortedPlaces as MutableList<String>
-        } else {
-            placeNameHeaders.add("")
-        }
-
-        return placeNameHeaders
-    }
-
     private fun buildTimelineDataByDate(model: Model,mediaTypeFilter: String,date: String?,metadataOnly: Boolean): MutableMap<String, Any?> {
         val response = mutableMapOf<String, Any?>()
 
@@ -746,17 +705,18 @@ class TimelineController: BaseController() {
 
                 var placeNames = mutableListOf<String>()
                 if (year != null && month != null && day != null) {
-                    placeNames = getPlaceNamesForDate(year, month, day)
+                    placeNames = TextUtils.getPlaceNamesForDate(year, month, day, metadataRepository)
                     val metadataDates = getMetadataDates(mediaTypeFilter)
                     val dates = metadataDates["metadataDates"] as MutableList<MetadataDate>
                     for (i in 0 until dates.size) {
                         if (dates[i].getDay() == day && dates[i].getMonth() == month && dates[i].getYear() == year) {
                             var prevPlaceName: MutableList<String>? = null
                             if (i > 0) {
-                                prevPlaceName = getPlaceNamesForDate(
+                                prevPlaceName = TextUtils.getPlaceNamesForDate(
                                     dates[i - 1].getYear()!!,
                                     dates[i - 1].getMonth()!!,
-                                    dates[i - 1].getDay()!!
+                                    dates[i - 1].getDay()!!,
+                                    metadataRepository
                                 )
                             }
 
