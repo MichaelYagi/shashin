@@ -63,20 +63,22 @@ class Taken {
 
                     const placenameMap = data["placenameMap"];
                     let placename = "";
-                    if (placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day].length === 1) {
-                        const placeNameHeaders = placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day];
-                        placename = '<span class="text-muted"><a class="link-unstyled" href="/search?term='+placeNameHeaders[0]+'" target="_blank">'+placeNameHeaders[0]+'</a></span>';
-                    } else if (placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day].length > 1) {
-                        const placeNameHeaders = placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day];
-                        let listHtml = "";
-                        if (placeNameHeaders.length > 1) {
-                            for (const index in placeNameHeaders) {
-                                const placeNameHeader = placeNameHeaders[index];
-                                listHtml += '<li class="text-muted"><a class="dropdown-item" href="/search?term='+placeNameHeader+'" target="_blank">'+placeNameHeader+'</a></li>\n';
+                    if (index === 0 || (index > 0 && placenameMap[metadataList[index-1].year+"-"+metadataList[index-1].month+"-"+metadataList[index-1].day].join(",") !== placenameMap[metadata.year+'-'+metadata.month+'-'+metadata.day].join(","))) {
+                        if (placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].length === 1) {
+                            const placeNameHeaders = placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day];
+                            placename = '<span class="text-muted"><a class="link-unstyled" href="/search?term=' + placeNameHeaders[0] + '" target="_blank">' + placeNameHeaders[0] + '</a></span>';
+                        } else if (placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day].length > 1) {
+                            const placeNameHeaders = placenameMap[metadata.year + '-' + metadata.month + '-' + metadata.day];
+                            let listHtml = "";
+                            if (placeNameHeaders.length > 1) {
+                                for (const index in placeNameHeaders) {
+                                    const placeNameHeader = placeNameHeaders[index];
+                                    listHtml += '<li class="text-muted"><a class="dropdown-item" href="/search?term=' + placeNameHeader + '" target="_blank">' + placeNameHeader + '</a></li>\n';
+                                }
                             }
+                            placename = '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">' + placeNameHeaders[0] + '</a>\n' +
+                                '<ul class="dropdown-menu">' + listHtml + '</ul></div></span>';
                         }
-                        placename = '<span class="text-muted"><div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#">'+placeNameHeaders[0]+'</a>\n' +
-                            '<ul class="dropdown-menu">'+listHtml+'</ul></div></span>';
                     }
 
                     if (lastDateHeading !== currentDate) {
