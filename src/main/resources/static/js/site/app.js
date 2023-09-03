@@ -274,6 +274,7 @@
                 $("#keywordsString").val(keywordsAvailable);
                 $("#camerasString").val(camerasList);
                 $("#lensesString").val(lensList);
+                $("#videoduration").css("display","none");
 
                 if (metadata.thumbnailUrlCentered !== null) {
                     $("#propTimelineModalThumbnail").html(TimelineTemplates.HeaderThumbnail({metadata: metadata}));
@@ -307,6 +308,15 @@
                 } else {
                     $("#keywords").val(keywordList);
                     metadata.keywords = keywordList
+                }
+
+                if (metadata.type.indexOf("video") >= 0) {
+                    $("#videoduration").css("display","block");
+                    let duration = metadata.duration
+                    if (duration === null) {
+                        duration = "0:00";
+                    }
+                    $("#duration").val(duration);
                 }
 
                 if (metadata.day !== null) {

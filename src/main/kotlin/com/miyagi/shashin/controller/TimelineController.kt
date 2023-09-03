@@ -926,6 +926,7 @@ class TimelineController: BaseController() {
             metadataMap.containsKey("isObject") &&
             metadataMap.containsKey("camera") &&
             metadataMap.containsKey("lens") &&
+            metadataMap.containsKey("duration") &&
             metadataMap["id"].toString() == metadataId
         ) {
             resp["msg"] = "Saved!"
@@ -1076,6 +1077,14 @@ class TimelineController: BaseController() {
                     }
                 } else {
                     metadataObj.get().setLens(null)
+                }
+                if (metadataObj.get().getType()?.contains("video")!! &&
+                    metadataMap["duration"].toString().trim() != "" && metadataMap["duration"].toString().trim() != "0:00" &&
+                    metadataObj.get().getDuration() != metadataMap["duration"].toString())
+                {
+                    metadataObj.get().setDuration(metadataMap["duration"].toString().trim())
+                } else {
+                    metadataObj.get().setDuration(null)
                 }
                 if (metadataMap["year"].toString() == "") {
                     metadataObj.get().setYear(null)

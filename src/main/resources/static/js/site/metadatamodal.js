@@ -68,6 +68,7 @@ $("#saveMetadata").on("click", async function (e) {
     let prevLat = "";
     let prevLng = "";
     let prevPlaceName = "";
+    let type = "";
 
     shashin.getMetadata(metadataId).then(function (metadataObj) {
         if (parseInt(metadataObj.year) !== parseInt($("#yearTaken").val()) ||
@@ -88,6 +89,8 @@ $("#saveMetadata").on("click", async function (e) {
             return item.trim();
         });
 
+        type = metadataObj.type;
+
         prevLat = metadataObj.lat;
         prevLng = metadataObj.lng;
         prevPlaceName = metadataObj.placeName;
@@ -100,7 +103,7 @@ $("#saveMetadata").on("click", async function (e) {
         $("#timeTaken").val(),
         $("#offsetTaken").val(),
         $("#latlng").val(),
-        "metadataModalMsg"
+        $("#duration").val()
     ) === true) {
         const people = $("#tagpeople").val();
         const albums = $("#albumnames").val();
@@ -111,6 +114,7 @@ $("#saveMetadata").on("click", async function (e) {
             description: $("#description").val().trim(),
             camera: Util.decodeHtml($("#camera").val().trim()),
             lens: Util.decodeHtml($("#lens").val().trim()),
+            duration: Util.decodeHtml($("#duration").val().trim()),
             year: $("#yearTaken").val(),
             month: $("#monthTaken").val(),
             day: $("#dayTaken").val(),
@@ -206,6 +210,10 @@ $("#saveMetadata").on("click", async function (e) {
 
                     if ($("#keywords").val() === "" && data.hasOwnProperty("keywordsIdentified") && data["keywordsIdentified"] !== "") {
                         $("#keywords").val(data["keywordsIdentified"]);
+                    }
+
+                    if (type.indexOf("video") >= 0) {
+                        $("#duration"+metadataId).text(Util.decodeHtml($("#duration").val().trim()));
                     }
 
                     $("#metadataModalEdit" + metadataId + " span").removeClass("bi-info-circle").addClass("bi-info-square");
