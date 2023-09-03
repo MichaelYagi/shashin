@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Updated API calls to reflect appropriate request types
 
 ### Fixed
+- Bug fixes for modal edits
 
 ## [2.2.3] - 2023-04-26
 ### Added
