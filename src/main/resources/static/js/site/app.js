@@ -313,7 +313,7 @@
                 if (metadata.type.indexOf("video") >= 0) {
                     $("#videoduration").css("display","block");
                     let duration = metadata.duration
-                    if (duration === null) {
+                    if (duration === "" || duration === null) {
                         duration = "0:00";
                     }
                     $("#duration").val(duration);
