@@ -681,7 +681,19 @@
                 placeNameDisplayName = placeNameDisplayNameArray[0];
             }
             shashin.printMessageToConsole("Opening modal map - original placename: " + metadata.placeName + " - Display placename: " + placeNameDisplayName);
-            $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata, placeNameDisplayName:placeNameDisplayName}));
+            let queryParamDates = "";
+            if (metadata.year !== null && metadata.month !== null && metadata.day !== null) {
+                let month = metadata.month;
+                if (month < 10) {
+                    month = '0'+month;
+                }
+                let lastDay = metadata.day;
+                if (lastDay < 29) {
+                    lastDay = 28;
+                }
+                queryParamDates = '&sd='+metadata.year+'-'+month+'-01&ed='+metadata.year+'-'+month+'-'+lastDay;
+            }
+            $("#mapTabMessage").html(TimelineTemplates.MapLinks({metadata:metadata, placeNameDisplayName:placeNameDisplayName, queryParamDates:queryParamDates}));
 
             if (shashin.map === null) {
                 const duration = 400;

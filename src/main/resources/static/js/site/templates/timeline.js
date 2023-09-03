@@ -27,8 +27,8 @@ class TimelineTemplates {
         ` : ''}
     `};
 
-    static MapLinks({metadata, placeNameDisplayName}) { return `
-        <a href="/map?lat=${metadata.lat}&lng=${metadata.lng}" target="_blank" style="text-decoration: none;"><span class="bi-geo-alt-fill" style="font-size:1.0rem;"></span>${placeNameDisplayName}</a>&nbsp;<a href="https://www.google.com/maps/search/?api=1&query=${metadata.lat}%2C${metadata.lng}" target="_blank" class="bi-google" style="text-decoration: none;"></a>
+    static MapLinks({metadata, placeNameDisplayName, queryParamDates}) { return `
+        <a href="/map?lat=${metadata.lat}&lng=${metadata.lng}${queryParamDates}" target="_blank" style="text-decoration: none;"><span class="bi-geo-alt-fill" style="font-size:1.0rem;"></span>${placeNameDisplayName}</a>&nbsp;<a href="https://www.google.com/maps/search/?api=1&query=${metadata.lat}%2C${metadata.lng}" target="_blank" class="bi-google" style="text-decoration: none;"></a>
     `};
 
     static HeaderThumbnail({metadata}) { return `
