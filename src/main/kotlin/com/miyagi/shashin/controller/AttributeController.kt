@@ -159,30 +159,32 @@ class AttributeController: ResponseEntityExceptionHandler() {
         val logger: Logger = Logger.getLogger(AttributeController::class.simpleName)
 
         val browserDetails = request.getHeader("User-Agent")
-        val user = browserDetails.lowercase(Locale.getDefault())
         var browser = ""
+        if (browserDetails != null) {
+            val user = browserDetails.lowercase(Locale.getDefault())
 
-        logger.log(Level.INFO,"User Agent: $browserDetails")
-        //===============Browser===========================
-        if (user.contains("msie")) {
-            browser = "IE"
-        } else if (user.contains("safari") && user.contains("version")) {
-            browser = "Safari"
-        } else if (user.contains("opr") || user.contains("opera")) {
-            browser = "Opera"
-        } else if (user.contains("chrome")) {
-            browser = "Chrome"
-        } else if (user.indexOf("mozilla/7.0") > -1 || user.indexOf("netscape6") != -1 || user.indexOf("mozilla/4.7") != -1 || user.indexOf(
-                "mozilla/4.78"
-            ) != -1 || user.indexOf("mozilla/4.08") != -1 || user.indexOf("mozilla/3") != -1
-        ) {
-            browser = "Netscape"
-        } else if (user.contains("firefox")) {
-            browser = "Firefox"
-        } else if (user.contains("rv")) {
-            browser = "IE"
-        } else {
-            browser = "Unknown browser: $browserDetails"
+            logger.log(Level.INFO, "User Agent: $browserDetails")
+            //===============Browser===========================
+            if (user.contains("msie")) {
+                browser = "IE"
+            } else if (user.contains("safari") && user.contains("version")) {
+                browser = "Safari"
+            } else if (user.contains("opr") || user.contains("opera")) {
+                browser = "Opera"
+            } else if (user.contains("chrome")) {
+                browser = "Chrome"
+            } else if (user.indexOf("mozilla/7.0") > -1 || user.indexOf("netscape6") != -1 || user.indexOf("mozilla/4.7") != -1 || user.indexOf(
+                    "mozilla/4.78"
+                ) != -1 || user.indexOf("mozilla/4.08") != -1 || user.indexOf("mozilla/3") != -1
+            ) {
+                browser = "Netscape"
+            } else if (user.contains("firefox")) {
+                browser = "Firefox"
+            } else if (user.contains("rv")) {
+                browser = "IE"
+            } else {
+                browser = "Unknown browser: $browserDetails"
+            }
         }
         logger.log(Level.INFO,"Browser Name: $browser")
         model["agentName"] = browser.lowercase()
