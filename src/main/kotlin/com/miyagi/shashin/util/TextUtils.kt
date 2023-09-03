@@ -1,6 +1,7 @@
 package com.miyagi.shashin.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.miyagi.shashin.repository.MetadataRepository
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 import java.io.BufferedReader
@@ -161,6 +162,47 @@ class TextUtils {
         fun getGeoData(geocodeUrl: String,lat: String, lng: String): String? {
             val geoLookupUrl: String = geocodeUrl+"reverse?format=json&lat="+lat+"&lon="+lng+"&extratags=1&namedetails=1"
             return readUrl(geoLookupUrl)
+        }
+
+        fun getPlaceNamesForDate(year: Int, month: Int, day: Int, metadataRepository:MetadataRepository): MutableList<String> {
+            val placeList = metadataRepository.findTimelinePlaceByDate(year, month, day)
+            var placeNameHeaders = mutableListOf<String>()
+            val processedPlaceNameArray = mutableListOf<String>()
+            if (placeList != null) {
+                for (placeDescription in placeList) {
+                    if (placeDescription != null) {
+                        val placeDescriptionArray = placeDescription.split(";")
+                        if (placeDescriptionArray.size > 1) {
+                            val placeName = placeDescriptionArray[0]
+                            val placeNameArray = placeName.split(",")
+                            if (placeNameArray.size > 2) {
+                                val processedPlaceName = placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                                processedPlaceNameArray.add(processedPlaceName)
+                            }
+                        } else {
+                            val placeNameArray = placeDescription.split(",")
+                            if (placeNameArray.size > 2) {
+                                val processedPlaceName =
+                                    placeNameArray[placeNameArray.size - 3].trim() + ", " + placeNameArray[placeNameArray.size - 2].trim() + ", " + placeNameArray[placeNameArray.size - 1].trim()
+                                processedPlaceNameArray.add(processedPlaceName)
+                            }
+                        }
+                    }
+                }
+            }
+            val sortedPlaces = processedPlaceNameArray
+                .groupingBy{ it }
+                .eachCount()
+                .toList()
+                .sortedByDescending{ it.second }.map{it.first}
+
+            if (sortedPlaces.isNotEmpty()) {
+                placeNameHeaders = sortedPlaces as MutableList<String>
+            } else {
+                placeNameHeaders.add("")
+            }
+
+            return placeNameHeaders
         }
 
         fun getPlaceNameFromJson(geoDataJsonString: String?): String {
