@@ -58,7 +58,7 @@ class Taken {
 
                     const dateHeadingCount = $(".dateSection").length;
                     const lastDateHeading = $(".dateSection").get(dateHeadingCount - 1).id;
-                    const currentDate = dateFormat((metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"]).replace(/-/g, "/"), "isoDate");
+                    const currentDate = metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"];
                     const displayCurrentDate = dateFormat((metadata["year"]+"-"+metadata["month"]+"-"+metadata["day"]).replace(/-/g, "/"), "ddd, mmm d, yyyy");
 
                     const placenameMap = data["placenameMap"];
