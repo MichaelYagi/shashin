@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Bug fixes for modal edits
+- Timeline view bug fixes
 
 ## [2.2.3] - 2023-04-26
 ### Added
