@@ -1718,13 +1718,16 @@ class SettingsController {
                                 val recognitionLabelPhotoLabels =
                                     recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
-                                val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
-                                    .optApplication(Application.CV.OBJECT_DETECTION)
-                                    .setTypes(Image::class.java, DetectedObjects::class.java)
-                                    .optEngine(Engine.getDefaultEngineName())
-                                    .optFilter("backbone", "resnet50")
-                                    .optProgress(ProgressBar())
-                                    .build()
+                                var criteria: Criteria<Image, DetectedObjects>? = null
+                                if (settings?.getObjectDetection() == true) {
+                                    criteria = Criteria.builder()
+                                        .optApplication(Application.CV.OBJECT_DETECTION)
+                                        .setTypes(Image::class.java, DetectedObjects::class.java)
+                                        .optEngine(Engine.getDefaultEngineName())
+                                        .optFilter("backbone", "resnet50")
+                                        .optProgress(ProgressBar())
+                                        .build()
+                                }
 
                                 for (mediaDir in mediaDirs) {
                                     if (mediaDir != null) {
@@ -1822,7 +1825,7 @@ class SettingsController {
         logger.log(Level.INFO, "shashinscan thread file deleted")
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>, webClient: WebClient?, recognitionLabelPhotoLabels:  MutableIterable<RecognitionLabelId>?) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>?, webClient: WebClient?, recognitionLabelPhotoLabels:  MutableIterable<RecognitionLabelId>?) {
         val f = File(dirPath)
         val files = f.listFiles()
 
@@ -2067,8 +2070,17 @@ class SettingsController {
                                                 }
                                             }
 
-                                            if (settings?.getObjectDetection() == true) {
-                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!, metadataObj, criteria, settings, threadFile, shouldStop.get())
+                                            if (settings?.getObjectDetection() == true && criteria != null) {
+                                                FileUtils.objectRecognizer(
+                                                    keywordRepository!!,
+                                                    keywordPhotoRepository!!,
+                                                    metadataRepository!!,
+                                                    metadataObj,
+                                                    criteria,
+                                                    settings,
+                                                    threadFile,
+                                                    shouldStop.get()
+                                                )
                                             }
 
                                             threadText = file.path + " indexed"
