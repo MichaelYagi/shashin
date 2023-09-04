@@ -906,7 +906,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
                                         logger.log(
                                             Level.INFO,
-                                            "Objects identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
+                                            "Objects not saved but identified for " + metadataObj.getThumbnailUrlSmall() + ": S-" + objSubject + " P-" + objProbability
                                         )
                                     }
                                 }
