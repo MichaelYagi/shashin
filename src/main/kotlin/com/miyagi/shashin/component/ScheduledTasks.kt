@@ -1,5 +1,11 @@
 package com.miyagi.shashin.component
 
+import ai.djl.Application
+import ai.djl.engine.Engine
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.controller.TimelineController
 import com.miyagi.shashin.repository.*
 import com.miyagi.shashin.util.FileUtils
@@ -130,6 +136,15 @@ class ScheduledTasks {
 
                     val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
                     if (withoutKeywords != null) {
+
+                        val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
+                            .optApplication(Application.CV.OBJECT_DETECTION)
+                            .setTypes(Image::class.java, DetectedObjects::class.java)
+                            .optEngine(Engine.getDefaultEngineName())
+                            .optFilter("backbone", "resnet50")
+                            .optProgress(ProgressBar())
+                            .build()
+
                         for (withoutKeyword in withoutKeywords) {
                             val metadataWithoutKeywordsObj = metadataRepository?.findById(withoutKeyword.getId())?.get()
 
@@ -138,6 +153,7 @@ class ScheduledTasks {
                                 keywordPhotoRepository!!,
                                 metadataRepository!!,
                                 metadataWithoutKeywordsObj!!,
+                                criteria,
                                 settings,
                                 null,
                                 null

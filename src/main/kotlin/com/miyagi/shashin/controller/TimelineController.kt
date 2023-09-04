@@ -1,5 +1,11 @@
 package com.miyagi.shashin.controller
 
+import ai.djl.Application
+import ai.djl.engine.Engine
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -920,6 +926,7 @@ class TimelineController: BaseController() {
             val metadataObj = metadataRepository.findById(metadataId)
 
             if (metadataObj.isPresent) {
+
                 val currentUserObj = model.getAttribute("currentUser") as User?
 
                 // Process albums
@@ -1106,11 +1113,18 @@ class TimelineController: BaseController() {
                     val keywordList = keywords.split(",").map { it.trim() }
                     processKeywords(keywordList, metadataId)
                 } else {
+                    val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
+                        .optApplication(Application.CV.OBJECT_DETECTION)
+                        .setTypes(Image::class.java, DetectedObjects::class.java)
+                        .optEngine(Engine.getDefaultEngineName())
+                        .optFilter("backbone", "resnet50")
+                        .optProgress(ProgressBar())
+                        .build()
                     val settings = model.getAttribute("settings") as Settings
                     val keywordCount = keywordPhotoRepository.countByMetadataId(metadataId)
 
                     if ((metadataMap["keywords"].toString().isBlank() || keywordCount == 0) && settings.getObjectDetection() == true) {
-                        val keywordArray = FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), settings, null, null)
+                        val keywordArray = FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), criteria, settings, null, null)
                         if (!keywordArray.isNullOrEmpty()) {
                             resp["keywordsIdentified"] = keywordArray.joinToString(",")
                         }
