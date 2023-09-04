@@ -98,22 +98,6 @@ class TimelineController: BaseController() {
         return buildTimelineModel(model,mediaType)
     }
 
-    private fun buildTimelineLocationDate(model: Model,mediaTypeFilter: String?) {
-        var mediaType = mediaTypeFilter
-
-        if (mediaTypeFilter.isNullOrEmpty()) {
-            mediaType = "all"
-        }
-
-        val initialMetadataObj = if (mediaType != "all") {
-            metadataRepository.findDistinctFirstByHiddenIsFalseByMediaTypeOrderByYearDescMonthDescDayDesc(mediaType!!)
-        } else {
-            metadataRepository.findDistinctFirstByHiddenIsFalseOrderByYearDescMonthDescDayDesc()
-        }
-
-
-    }
-
     private fun buildTimelineModel(model: Model,mediaTypeFilter: String?): String {
         val module = "timeline"
 
