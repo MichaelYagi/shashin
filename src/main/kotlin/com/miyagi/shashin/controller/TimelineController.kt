@@ -41,7 +41,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.isDirectory
 import kotlin.io.path.pathString
 
-
+@Suppress("UNCHECKED_CAST")
 @Controller
 @Secured("ROLE_ADMIN")
 class TimelineController: BaseController() {
