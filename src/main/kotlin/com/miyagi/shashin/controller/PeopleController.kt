@@ -1,11 +1,5 @@
 package com.miyagi.shashin.controller
 
-import ai.djl.Application
-import ai.djl.modality.Classifications
-import ai.djl.modality.cv.output.DetectedObjects
-import ai.djl.repository.zoo.Criteria
-import ai.djl.repository.zoo.ModelZoo
-import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -17,16 +11,12 @@ import com.miyagi.shashin.util.ApiResponse
 import com.miyagi.shashin.util.FileUtils
 import com.miyagi.shashin.util.TextUtils
 import com.miyagi.shashin.util.TextUtils.Companion.getCurrentTimestamp
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import org.apache.commons.text.StringEscapeUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.event.EventListener
-import org.springframework.core.io.FileSystemResource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.http.client.MultipartBodyBuilder
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.handler.annotation.SendTo
 import org.springframework.messaging.simp.annotation.SubscribeMapping
@@ -40,7 +30,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.socket.messaging.SessionConnectEvent
 import org.springframework.web.socket.messaging.SessionDisconnectEvent
 import org.springframework.web.socket.messaging.SessionSubscribeEvent
-import java.awt.image.BufferedImage
 import java.io.*
 import java.net.URL
 import java.net.URLConnection
@@ -48,7 +37,6 @@ import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.logging.Level
 import java.util.logging.Logger
-import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpSession
 

@@ -1,12 +1,13 @@
 package com.miyagi.shashin.controller
 
 import ai.djl.Application
-import ai.djl.inference.Predictor
+import ai.djl.engine.Engine
 import ai.djl.modality.Classifications
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.ImageFactory
 import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
 import ai.djl.repository.zoo.ModelZoo
-import ai.djl.repository.zoo.ZooModel
 import ai.djl.training.util.ProgressBar
 import com.miyagi.shashin.repository.MetadataRepository
 import com.miyagi.shashin.repository.PersistentLoginsRepository
@@ -22,11 +23,10 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.ResponseBody
 import java.awt.image.BufferedImage
 import java.io.File
-import java.net.URL
-import java.util.logging.Level
 import javax.imageio.ImageIO
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
+import kotlin.io.path.Path
 
 
 @Controller
@@ -47,21 +47,26 @@ class TestController {
         model["persistentLoginsDetails"] = persistentLoginsDetails as Any
 
         // http://127.0.0.1:6624/image/68bcd16b-b362-304c-b521-f21bb6ee23d3/viewer
-        val metadataId = "68bcd16b-b362-304c-b521-f21bb6ee23d3"
+        val metadataId = "42722f17-65de-3d6c-aa6f-dbe6dbb257f9"
         val metadataObj = metadataRepository.findById(metadataId).get()
 
-        val file = File(metadataObj.getPath()!!+"a")
+
+        val file = File(metadataObj.getPath()!!)
         println(file)
-        val img: BufferedImage = ImageIO.read(file)
+//        val img: BufferedImage = ImageIO.read(file)
+
+        val img = ImageFactory.getInstance().fromFile(Path(metadataObj.getPath()!!))
+
 
 //        val url = URL("http://michaelyagi.tplinkdns.com:66/api/v1/image/$metadataId.jpg")
 //
 //        val img = ImageIO.read(url)
         println(img)
 
-        val criteria: Criteria<BufferedImage, DetectedObjects> = Criteria.builder()
+        val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
             .optApplication(Application.CV.OBJECT_DETECTION)
-            .setTypes(BufferedImage::class.java, DetectedObjects::class.java)
+            .setTypes(Image::class.java, DetectedObjects::class.java)
+            .optEngine(Engine.getDefaultEngineName())
             .optFilter("backbone", "resnet50")
             .optProgress(ProgressBar())
             .build()
