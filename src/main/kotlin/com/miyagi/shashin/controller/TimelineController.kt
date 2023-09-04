@@ -1113,17 +1113,17 @@ class TimelineController: BaseController() {
                     val keywordList = keywords.split(",").map { it.trim() }
                     processKeywords(keywordList, metadataId)
                 } else {
-                    val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
-                        .optApplication(Application.CV.OBJECT_DETECTION)
-                        .setTypes(Image::class.java, DetectedObjects::class.java)
-                        .optEngine(Engine.getDefaultEngineName())
-                        .optFilter("backbone", "resnet50")
-                        .optProgress(ProgressBar())
-                        .build()
                     val settings = model.getAttribute("settings") as Settings
                     val keywordCount = keywordPhotoRepository.countByMetadataId(metadataId)
 
                     if ((metadataMap["keywords"].toString().isBlank() || keywordCount == 0) && settings.getObjectDetection() == true) {
+                        val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
+                            .optApplication(Application.CV.OBJECT_DETECTION)
+                            .setTypes(Image::class.java, DetectedObjects::class.java)
+                            .optEngine(Engine.getDefaultEngineName())
+                            .optFilter("backbone", "resnet50")
+                            .optProgress(ProgressBar())
+                            .build()
                         val keywordArray = FileUtils.objectRecognizer(keywordRepository, keywordPhotoRepository, metadataRepository, metadataObj.get(), criteria, settings, null, null)
                         if (!keywordArray.isNullOrEmpty()) {
                             resp["keywordsIdentified"] = keywordArray.joinToString(",")
