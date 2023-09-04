@@ -962,7 +962,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
             } catch (e: Exception) {
                 logger.log(
                     Level.INFO,
-                    "Could not open file for " + metadataObj.getPath()!!
+                    "Object recognition could not process file for " + metadataObj.getPath()!! + " error " + e.message
                 )
             }
 
