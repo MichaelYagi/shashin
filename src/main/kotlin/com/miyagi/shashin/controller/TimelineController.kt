@@ -1079,8 +1079,7 @@ class TimelineController: BaseController() {
                     metadataObj.get().setLens(null)
                 }
                 if (metadataObj.get().getType()?.contains("video")!! &&
-                    metadataMap["duration"].toString().trim() != "" && metadataMap["duration"].toString().trim() != "0:00" &&
-                    metadataObj.get().getDuration() != metadataMap["duration"].toString())
+                    metadataMap["duration"].toString().trim() != "" && metadataMap["duration"].toString().trim() != "0:00")
                 {
                     metadataObj.get().setDuration(metadataMap["duration"].toString().trim())
                 } else {
