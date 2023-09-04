@@ -874,6 +874,11 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                         threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()
                                     }
 
+                                    logger.log(
+                                        Level.INFO,
+                                        "Objects identifier threshold for: $threshold"
+                                    )
+
                                     // Give a little more leeway for object probability
                                     if (objSubject.trim() != "person" && objProbability >= threshold
                                     ) {
