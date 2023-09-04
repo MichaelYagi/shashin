@@ -850,14 +850,6 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 // Object recognition
                 val img = ImageFactory.getInstance().fromFile(file.toPath())
 
-//                val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
-//                    .optApplication(Application.CV.OBJECT_DETECTION)
-//                    .setTypes(Image::class.java, DetectedObjects::class.java)
-//                    .optEngine(Engine.getDefaultEngineName())
-//                    .optFilter("backbone", "resnet50")
-//                    .optProgress(ProgressBar())
-//                    .build()
-
                 ModelZoo.loadModel(criteria).use { objmodel ->
                     objmodel.newPredictor().use { predictor ->
                         try {
