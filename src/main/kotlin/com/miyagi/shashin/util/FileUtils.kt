@@ -1,7 +1,10 @@
 package com.miyagi.shashin.util
 
 import ai.djl.Application
+import ai.djl.engine.Engine
 import ai.djl.modality.Classifications
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.ImageFactory
 import ai.djl.modality.cv.output.DetectedObjects
 import ai.djl.repository.zoo.Criteria
 import ai.djl.repository.zoo.ModelZoo
@@ -36,6 +39,7 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import javax.imageio.ImageIO
 import javax.xml.bind.DatatypeConverter.parseBase64Binary
+import kotlin.io.path.Path
 
 @Suppress("UNCHECKED_CAST")
 @Component
@@ -837,10 +841,12 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                 }
 
                 // Object recognition
-                val img: BufferedImage = ImageIO.read(file)
-                val criteria: Criteria<BufferedImage, DetectedObjects> = Criteria.builder()
+                val img = ImageFactory.getInstance().fromFile(file.toPath())
+
+                val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
                     .optApplication(Application.CV.OBJECT_DETECTION)
-                    .setTypes(BufferedImage::class.java, DetectedObjects::class.java)
+                    .setTypes(Image::class.java, DetectedObjects::class.java)
+                    .optEngine(Engine.getDefaultEngineName())
                     .optFilter("backbone", "resnet50")
                     .optProgress(ProgressBar())
                     .build()
