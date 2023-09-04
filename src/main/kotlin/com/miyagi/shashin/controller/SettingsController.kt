@@ -1,5 +1,11 @@
 package com.miyagi.shashin.controller
 
+import ai.djl.Application
+import ai.djl.engine.Engine
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.JsonNode
@@ -1712,6 +1718,14 @@ class SettingsController {
                                 val recognitionLabelPhotoLabels =
                                     recognitionLabelPhotoRepository?.findGroupByRecognitionLabelId()
 
+                                val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
+                                    .optApplication(Application.CV.OBJECT_DETECTION)
+                                    .setTypes(Image::class.java, DetectedObjects::class.java)
+                                    .optEngine(Engine.getDefaultEngineName())
+                                    .optFilter("backbone", "resnet50")
+                                    .optProgress(ProgressBar())
+                                    .build()
+
                                 for (mediaDir in mediaDirs) {
                                     if (mediaDir != null) {
                                         getFile(
@@ -1721,6 +1735,7 @@ class SettingsController {
                                             mediaDir.getDirectory().toString(),
                                             mediaExcludeDirs,
                                             settings,
+                                            criteria,
                                             webClient,
                                             recognitionLabelPhotoLabels
                                         )
@@ -1807,7 +1822,7 @@ class SettingsController {
         logger.log(Level.INFO, "shashinscan thread file deleted")
     }
 
-    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, webClient: WebClient?, recognitionLabelPhotoLabels:  MutableIterable<RecognitionLabelId>?) {
+    private fun getFile(dirPath: String, threadFile: File, sidecarDir: String, rootDir: String, mediaExcludeDirs: MutableIterable<MediaDirectory?>?, settings: Settings?, criteria: Criteria<Image, DetectedObjects>, webClient: WebClient?, recognitionLabelPhotoLabels:  MutableIterable<RecognitionLabelId>?) {
         val f = File(dirPath)
         val files = f.listFiles()
 
@@ -1999,35 +2014,39 @@ class SettingsController {
                                                                                     subject
                                                                                 )
 
-                                                                            val recognitionLabelPhoto =
-                                                                                recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
-                                                                                    recognitionLabelObj!!.getId(),
-                                                                                    metadataObj.getId()
-                                                                                )
-
-                                                                            if (recognitionLabelObj != null && recognitionLabelPhoto == 0) {
-                                                                                val recognitionLabelPhotoObj =
-                                                                                    RecognitionLabelPhoto()
-                                                                                recognitionLabelPhotoObj.setMetadataId(
-                                                                                    metadataObj.getId()
-                                                                                )
-                                                                                recognitionLabelPhotoObj.setRecognitionLabelId(
-                                                                                    recognitionLabelObj.getId()
-                                                                                )
-                                                                                recognitionLabelPhotoObj.setConfidence(
-                                                                                    similarity.toString()
-                                                                                )
-                                                                                if (compreFaceImageId != null) {
-                                                                                    recognitionLabelPhotoObj.setCompreFaceImageId(
-                                                                                        compreFaceImageId
+                                                                            if (recognitionLabelObj != null) {
+                                                                                val recognitionLabelPhoto =
+                                                                                    recognitionLabelPhotoRepository?.countByRecognitionLabelIdAndMetadataId(
+                                                                                        recognitionLabelObj.getId(),
+                                                                                        metadataObj.getId()
                                                                                     )
-                                                                                }
-                                                                                recognitionLabelPhotoRepository?.save(
-                                                                                    recognitionLabelPhotoObj
-                                                                                )
 
-                                                                                metadataObj.setModifiedAt(getCurrentTimestamp())
-                                                                                metadataRepository?.save(metadataObj)
+                                                                                if (recognitionLabelPhoto == 0) {
+                                                                                    val recognitionLabelPhotoObj =
+                                                                                        RecognitionLabelPhoto()
+                                                                                    recognitionLabelPhotoObj.setMetadataId(
+                                                                                        metadataObj.getId()
+                                                                                    )
+                                                                                    recognitionLabelPhotoObj.setRecognitionLabelId(
+                                                                                        recognitionLabelObj.getId()
+                                                                                    )
+                                                                                    recognitionLabelPhotoObj.setConfidence(
+                                                                                        similarity.toString()
+                                                                                    )
+                                                                                    if (compreFaceImageId != null) {
+                                                                                        recognitionLabelPhotoObj.setCompreFaceImageId(
+                                                                                            compreFaceImageId
+                                                                                        )
+                                                                                    }
+                                                                                    recognitionLabelPhotoRepository?.save(
+                                                                                        recognitionLabelPhotoObj
+                                                                                    )
+
+                                                                                    metadataObj.setModifiedAt(
+                                                                                        getCurrentTimestamp()
+                                                                                    )
+                                                                                    metadataRepository?.save(metadataObj)
+                                                                                }
                                                                             }
                                                                         }
                                                                     }
@@ -2049,7 +2068,7 @@ class SettingsController {
                                             }
 
                                             if (settings?.getObjectDetection() == true) {
-                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!, metadataObj, settings, threadFile, shouldStop.get())
+                                                FileUtils.objectRecognizer(keywordRepository!!, keywordPhotoRepository!!, metadataRepository!!, metadataObj, criteria, settings, threadFile, shouldStop.get())
                                             }
 
                                             threadText = file.path + " indexed"
@@ -2086,7 +2105,7 @@ class SettingsController {
                 }
 
                 if (file.isDirectory) {
-                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, webClient, recognitionLabelPhotoLabels)
+                    getFile(file.absolutePath, threadFile, sidecarDir, rootDir, mediaExcludeDirs, settings, criteria, webClient, recognitionLabelPhotoLabels)
                 }
             }
         }

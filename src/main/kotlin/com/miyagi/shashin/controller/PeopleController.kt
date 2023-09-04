@@ -1,5 +1,11 @@
 package com.miyagi.shashin.controller
 
+import ai.djl.Application
+import ai.djl.engine.Engine
+import ai.djl.modality.cv.Image
+import ai.djl.modality.cv.output.DetectedObjects
+import ai.djl.repository.zoo.Criteria
+import ai.djl.training.util.ProgressBar
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -172,6 +178,15 @@ class PeopleController {
                     if (settings.getObjectDetection() == true) {
                         val withoutKeywords = metadataRepository?.findWithoutKeywords(settings.getMatchScanLimit()!!)
                         if (withoutKeywords != null) {
+
+                            val criteria: Criteria<Image, DetectedObjects> = Criteria.builder()
+                                .optApplication(Application.CV.OBJECT_DETECTION)
+                                .setTypes(Image::class.java, DetectedObjects::class.java)
+                                .optEngine(Engine.getDefaultEngineName())
+                                .optFilter("backbone", "resnet50")
+                                .optProgress(ProgressBar())
+                                .build()
+
                             for (withoutKeyword in withoutKeywords) {
                                 if (shouldStop.get()) {
                                     break
@@ -185,6 +200,7 @@ class PeopleController {
                                     keywordPhotoRepository!!,
                                     metadataRepository!!,
                                     metadataWithoutKeywordsObj!!,
+                                    criteria,
                                     settings,
                                     threadFile,
                                     shouldStop.get()
