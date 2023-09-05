@@ -655,7 +655,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
                         logger.log(
                             Level.INFO,
-                            "Recognizing face for " + metadataObj.getPath() + ": " + response
+                            "Recognizing face for " + metadataObj.getId() + " - " + metadataObj.getPath() + ": " + response
                         )
                     } catch (e: Exception) {
                         val recognitionLabelRecord =
@@ -678,7 +678,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
                         logger.log(
                             Level.WARNING,
-                            "Error recognizing face for " + metadataObj.getPath() + ": " + e.localizedMessage
+                            "Error recognizing face for " + metadataObj.getId() + " - " + metadataObj.getPath() + ": " + e.localizedMessage
                         )
                     }
 
@@ -750,7 +750,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                             } catch (e: Exception) {
                                                 logger.log(
                                                     Level.WARNING,
-                                                    "Error uploading face for " + subject + " for image " + metadataObj.getPath() + ": " + e.localizedMessage
+                                                    "Error uploading face for " + subject + " for " + metadataObj.getId() + " - " +" image " + metadataObj.getPath() + ": " + e.localizedMessage
                                                 )
                                             }
 
@@ -769,7 +769,7 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
 
                                             logger.log(
                                                 Level.INFO,
-                                                "Uploaded subject for " + metadataObj.getPath() + " for subject " + subject + ": " + response
+                                                "Uploaded subject for " + metadataObj.getId() + " - " + metadataObj.getPath() + " for subject " + subject + ": " + response
                                             )
 
                                             val recognitionLabelObj =
@@ -818,13 +818,13 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                             } else {
                                                 logger.log(
                                                     Level.INFO,
-                                                    "Did not process subject " + subject + " for " + metadataObj.getPath() + " with similarity " + similarity.toString()
+                                                    "Did not process subject " + subject + " for " + metadataObj.getId() + " - " + metadataObj.getPath() + " with similarity " + similarity.toString()
                                                 )
                                             }
                                         } else {
                                             logger.log(
                                                 Level.INFO,
-                                                "Did not upload subject " + subject + " for " + metadataObj.getPath() + " with similarity " + similarity.toString()
+                                                "Did not upload subject " + subject + " for " + metadataObj.getId() + " - " + metadataObj.getPath() + " with similarity " + similarity.toString()
                                             )
                                         }
                                     }
