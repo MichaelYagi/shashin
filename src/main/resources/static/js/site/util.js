@@ -670,6 +670,7 @@ class Util {
         $(".coordinatesLabel").hide();
         $(".locationLabel").hide();
         $(".locationTypeLabel").hide();
+        $(".metadataIdLabel").hide();
 
         $(".linkCopyStatus").css("visibility","hidden");
 
@@ -818,6 +819,33 @@ class Util {
         if (metadata.timeZone != null) {
             $(".timeZoneLabel").show();
             $(".timeZoneDetails").text(metadata.timeZone);
+        }
+        if (metadata.id != null) {
+            $(".metadataIdLabel").show();
+            $(".metadataIdDetails").html(metadata.id + "&nbsp;<a href='#' class='copyLink bi-clipboard-plus sharecopy' data-clipboard-text='" + metadata.id + "' title='Copy metadata ID' style='font-size: 1rem;' id='copyMetadataId'></a>");
+            const metadataClipboard = new ClipboardJS("#copyMetadataId",{container: document.getElementById(containerModalId)});
+            $("#copyMetadataId").on("click", function () {
+                metadataClipboard.on('success', function (e) {
+                    $("#copyMetadataId").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-x").addClass("bi-clipboard-check");
+                    $('#copyMetadataId').fadeOut(5000, function () {
+                        $(this).removeClass("bi-clipboard-check").removeClass("bi-clipboard-x").addClass("bi-clipboard-plus");
+                    }).fadeIn(400)
+                    shashin.showToastMessage("Link copied", "Metadata ID copied to clipboard!", {
+                        icon: "bi-info-circle",
+                        iconColor: "#777777",
+                        target: "liveToast1"
+                    });
+                });
+
+                metadataClipboard.on('error', function (e) {
+                    $("#copyMetadataId").removeClass("bi-clipboard-plus").removeClass("bi-clipboard-check").addClass("bi-clipboard-x");
+                    shashin.showToastMessage("Could not copy metadata ID", "Could not copy metadata ID. " + e, {
+                        icon: "bi-exclamation-triangle",
+                        iconColor: "#FF0000",
+                        target: "liveToast1"
+                    });
+                });
+            });
         }
         if (metadata.thumbnailUrlOriginal != null || metadata.videoUrl != null) {
             let relativeShareLink = metadata.thumbnailUrlOriginal;
