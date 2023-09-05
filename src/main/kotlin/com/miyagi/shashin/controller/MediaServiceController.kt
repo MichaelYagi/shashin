@@ -42,6 +42,8 @@ class MediaServiceController {
 
     private var logger: Logger = Logger.getLogger(MediaServiceController::class.simpleName)
 
+    private var validFileNameRegex = "[^a-zA-Z0-9.-]".toRegex()
+
     @RequestMapping(value = ["/api/v1/video/{metadataId}"], method = [RequestMethod.GET], produces = ["video/mp4","video/3gpp","video/mpeg","video/ogg","video/quicktime","video/webm"])
     @ResponseBody
     @Throws(java.io.IOException::class)
@@ -154,8 +156,7 @@ class MediaServiceController {
             }
 
             if (attachFile) {
-                val regex = "[^a-zA-Z0-9.-]".toRegex()
-                val filename = resource.filename.replace(regex, "_")
+                val filename = resource.filename.replace(validFileNameRegex, "_")
                 response?.setHeader("Content-Disposition", "attachment; filename=$filename")
             }
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
@@ -177,8 +178,7 @@ class MediaServiceController {
             }
             if (attachFile) {
                 // Sanitize filename
-                val regex = "[^a-zA-Z0-9.-]".toRegex()
-                val filename = resource.filename.replace(regex, "_")
+                val filename = resource.filename.replace(validFileNameRegex, "_")
                 response?.setHeader("Content-Disposition", "attachment; filename=$filename")
             }
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
@@ -238,8 +238,7 @@ class MediaServiceController {
                 }
                 if (attachFile) {
                     // Sanitize filename
-                    val regex = "[^a-zA-Z0-9.-]".toRegex()
-                    val filename = resource.filename.replace(regex, "_")
+                    val filename = resource.filename.replace(validFileNameRegex, "_")
                     response?.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
@@ -260,8 +259,7 @@ class MediaServiceController {
                     }
                 }
                 if (attachFile) {
-                    val regex = "[^a-zA-Z0-9.-]".toRegex()
-                    val filename = resource.filename.replace(regex, "_")
+                    val filename = resource.filename.replace(validFileNameRegex, "_")
                     response?.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
