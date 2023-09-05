@@ -154,7 +154,9 @@ class MediaServiceController {
             }
 
             if (attachFile) {
-                response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+                val regex = "[^a-zA-Z0-9.-]".toRegex()
+                val filename = resource.filename.replace(regex, "_")
+                response?.setHeader("Content-Disposition", "attachment; filename=$filename")
             }
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
@@ -174,7 +176,10 @@ class MediaServiceController {
                 }
             }
             if (attachFile) {
-                response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+                // Sanitize filename
+                val regex = "[^a-zA-Z0-9.-]".toRegex()
+                val filename = resource.filename.replace(regex, "_")
+                response?.setHeader("Content-Disposition", "attachment; filename=$filename")
             }
             headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
             return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
@@ -255,7 +260,9 @@ class MediaServiceController {
                     }
                 }
                 if (attachFile) {
-                    response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+                    val regex = "[^a-zA-Z0-9.-]".toRegex()
+                    val filename = resource.filename.replace(regex, "_")
+                    response?.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
                 return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
