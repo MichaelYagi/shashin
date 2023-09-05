@@ -219,7 +219,7 @@ class MediaServiceController {
     private fun getImageFactory(response: HttpServletResponse?, metadataId: String, attachFile: Boolean = false): ResponseEntity<FileSystemResource> {
         val metadataObj = metadataRepository.findById(metadataId)
 
-        return if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
+        if (metadataObj.isPresent && !metadataObj.get().getType().isNullOrBlank() && metadataObj.get().getType()?.contains("image")!!) {
             val path = metadataObj.get().getPath()!!
             var resource = FileSystemResource(path)
             val headers = HttpHeaders()
@@ -232,10 +232,13 @@ class MediaServiceController {
                     }
                 }
                 if (attachFile) {
-                    response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
+                    // Sanitize filename
+                    val regex = "[^a-zA-Z0-9.-]".toRegex()
+                    val filename = resource.filename.replace(regex, "_")
+                    response?.setHeader("Content-Disposition", "attachment; filename=$filename")
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-                ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
             } catch (e: Exception) {
                 logger.log(
                     Level.SEVERE,
@@ -255,7 +258,7 @@ class MediaServiceController {
                     response?.setHeader("Content-Disposition", "attachment; filename=" + resource.filename)
                 }
                 headers.setCacheControl(CacheControl.maxAge(24, TimeUnit.HOURS))
-                ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
+                return ResponseEntity<FileSystemResource>(resource, headers, HttpStatus.OK)
             }
         } else {
             return ResponseEntity<FileSystemResource>(null, null, HttpStatus.NOT_FOUND)
