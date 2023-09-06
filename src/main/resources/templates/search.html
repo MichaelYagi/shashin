@@ -19,7 +19,7 @@
 
             <div id="scroll-gallery">
                 <th:block th:if="${term != '' and not #lists.isEmpty(metadataSearchList)}">
-                    <h1 th:text="'Results for \''+${term}+'\''"></h1>
+<!--                    <h1 th:text="'Results for \''+${term}+'\''"></h1>-->
                     <div class="row image-group-padding">
                         <th:block th:each="metadata, iterStat: ${metadataSearchList}">
 
