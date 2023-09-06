@@ -93,6 +93,13 @@
                 <input type="submit" style="position: absolute; left: -9999px"/>
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                     $(document).ready(async function () {
+                        $("#appSearch").on("submit", function (e) {
+                            const searchTerm = $("#appSearchInput").val();
+                            if (searchTerm === "") {
+                                e.preventDefault();
+                            }
+                        })
+
                         const http = new Http("search history");
                         const data = await http.ajax("get", "/search/history");
 

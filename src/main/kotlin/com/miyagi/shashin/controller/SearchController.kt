@@ -173,10 +173,10 @@ class SearchController {
                             searchHistoryRepository?.deleteById(searchHistory.last().getId())
                         }
                     }
+
+                    redirectAttributes.addAttribute("term", term)
                 }
             }
-
-            redirectAttributes.addAttribute("term", term)
         }
 
         val module = "search"
