@@ -1231,7 +1231,7 @@
             rotate: true,
             rotateLeft: true,
             rotateRight: true,
-            flipHorizontal: false,
+            flipHorizontal: true,
             flipVertical: false,
             licenseKey: Util.lgApiKey()
         }
