@@ -94,7 +94,7 @@
                 <script th:inline="javascript" type="text/javascript" th:nonce="${cspNonce}">
                     $(document).ready(async function () {
                         $("#appSearch").on("submit", function (e) {
-                            const searchTerm = $("#appSearchInput").val();
+                            const searchTerm = $("#appSearchInput").val().trim();
                             if (searchTerm === "") {
                                 e.preventDefault();
                             }
