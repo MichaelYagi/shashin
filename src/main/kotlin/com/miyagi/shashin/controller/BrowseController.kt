@@ -813,7 +813,7 @@ class BrowseController: BaseController() {
     }
 
     @RequestMapping(value = ["/folder/{folder}"], method = [RequestMethod.GET])
-    fun getRecentlyAdded(model: Model, @PathVariable folder: String): String {
+    fun getFolder(model: Model, @PathVariable folder: String): String {
         val module = "folder"
         val page = 0
         val decodedValue = URLDecoder.decode(folder, StandardCharsets.UTF_8.toString())
@@ -827,7 +827,7 @@ class BrowseController: BaseController() {
 
         model["activePage"] = module
         model["activeSidebar"] = module
-        model["titleDescriptor"] = TextUtils.capitalized(module) + " - " +  decodedValue
+        model["titleDescriptor"] = decodedValue
 
         return module
     }

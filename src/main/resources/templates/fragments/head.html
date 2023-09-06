@@ -3,7 +3,7 @@
 <head th:fragment="head(activePage,titleDescriptor)">
     <th:block th:with="activePageLower = ${#strings.toLowerCase(activePage)}">
         <meta charset="UTF-8">
-        <title th:text="${@environment.getProperty('app.build.properties.name')} + (${#strings.isEmpty(titleDescriptor)} ? '' : ': ' + ${titleDescriptor})"></title>
+        <title th:text="${(#strings.isEmpty(titleDescriptor) ? '' : titleDescriptor+' - ') + @environment.getProperty('app.build.properties.name')}"></title>
         <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
         <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
