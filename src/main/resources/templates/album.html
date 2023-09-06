@@ -29,6 +29,7 @@
                         <th:block th:if="${albumUser.profile != null}">
                         <img th:src="${albumUser.profile}" th:title="${albumUser.username}" th:id="${'albumuser'+albumUser.id}" class="me-1" style="display:inline-block;width:30px;height:30px;">
                         </th:block>
+
                         <th:block th:if="${albumUser.profile == null}">
                         <span class="bi-person-circle me-1 align-middle" style="font-size:1.8rem;" th:title="${albumUser.username}" th:id="${'albumuser'+albumUser.id}"></span>
                         </th:block>
