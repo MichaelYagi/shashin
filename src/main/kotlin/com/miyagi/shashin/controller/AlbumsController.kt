@@ -1117,6 +1117,8 @@ class AlbumsController: BaseController() {
 
         getAllAttributeData(model)
 
+        model["sharedAlbumUsers"] = userRepository.findAllUserBySharedAlbum(albumId)
+
         return model.getAttribute("activePage").toString()
     }
 
