@@ -866,19 +866,9 @@ class FileUtils(private val metadataRepository: MetadataRepository) {
                                     val objSubject =
                                         detection.item<Classifications.Classification?>(i).className
 
-                                    // Adjust threshold for object recognition
-                                    var threshold =
-                                        settings.getRecognitionConfidenceThreshold().toString().toDouble() - 0.45
-                                    if (threshold <= 0.0) {
-                                        threshold = settings.getRecognitionConfidenceThreshold().toString().toDouble()
-                                    }
+                                    val threshold =
+                                        settings.getObjectRecognitionConfidenceThreshold().toString().toDouble()
 
-                                    logger.log(
-                                        Level.INFO,
-                                        "Objects identifier threshold for: $threshold"
-                                    )
-
-                                    // Give a little more leeway for object probability
                                     if (objSubject.trim() != "person" && objProbability >= threshold
                                     ) {
                                         saveObject(objSubject, metadataObj, keywordRepository, keywordPhotoRepository, metadataRepository)

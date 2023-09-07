@@ -34,6 +34,9 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
     @Value("\${app.config.default.recognitionConfidenceThreshold}")
     private lateinit var recognitionConfidenceThresholdProperty: String
 
+    @Value("\${app.config.default.objectRecognitionConfidenceThreshold}")
+    private lateinit var objectRecognitionConfidenceThresholdProperty: String
+
     @Value("\${server.port}")
     private lateinit var portProperty: String
 
@@ -57,6 +60,7 @@ class DataLoader @Autowired constructor(private val settingsRepository: Settings
             settingsObj.setScheduledMatching(false)
             settingsObj.setScheduledTime(scheduledTime)
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
+            settingsObj.setObjectRecognitionConfidenceThreshold(objectRecognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(TextUtils.getCurrentTimestamp())
             settingsObj.setModifiedAt(TextUtils.getCurrentTimestamp())
             settingsRepository.save(settingsObj)

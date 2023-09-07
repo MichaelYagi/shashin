@@ -102,6 +102,9 @@ class AttributeController: ResponseEntityExceptionHandler() {
     @Value("\${app.config.default.recognitionConfidenceThreshold}")
     private lateinit var recognitionConfidenceThresholdProperty: String
 
+    @Value("\${app.config.default.objectRecognitionConfidenceThreshold}")
+    private lateinit var objectRecognitionConfidenceThresholdProperty: String
+
     @Value("\${server.port}")
     private lateinit var portProperty: String
 
@@ -235,6 +238,7 @@ class AttributeController: ResponseEntityExceptionHandler() {
             settingsObj.setScheduledTime(scheduledTime)
             model["objectRecogEnabled"] = false
             settingsObj.setRecognitionConfidenceThreshold(recognitionConfidenceThresholdProperty)
+            settingsObj.setObjectRecognitionConfidenceThreshold(objectRecognitionConfidenceThresholdProperty)
             settingsObj.setCreatedAt(getCurrentTimestamp())
             settingsObj.setModifiedAt(getCurrentTimestamp())
             model["settings"] = settingsObj

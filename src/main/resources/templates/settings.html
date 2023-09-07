@@ -60,15 +60,19 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-4">
-                                <label for="recognitionConfidenceThreshold" class="form-label"><strong>Recognition Confidence Threshold</strong> (Default 0.9)</label>
+                            <div class="col-3">
+                                <label for="recognitionConfidenceThreshold" class="form-label"><strong>Facial Recognition Confidence Threshold</strong> (Default 0.9)</label>
                                 <input class="form-control" id="recognitionConfidenceThreshold" name="recognitionConfidenceThreshold" th:value="${settings.recognitionConfidenceThreshold}">
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
+                                <label for="objectRecognitionConfidenceThreshold" class="form-label"><strong>Object Recognition Confidence Threshold</strong> (Default 0.45)</label>
+                                <input class="form-control" id="objectRecognitionConfidenceThreshold" name="objectRecognitionConfidenceThreshold" th:value="${settings.objectRecognitionConfidenceThreshold}">
+                            </div>
+                            <div class="col-3">
                                 <label for="queryLimit" class="form-label"><strong>Paging Results Query Limit</strong> (Default 20)</label>
                                 <input class="form-control" id="queryLimit" name="queryLimit" th:value="${settings.queryLimit}">
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
                                 <label for="notificationLimit" class="form-label"><strong>Notification Limit</strong> (Default 20)</label>
                                 <input class="form-control" id="notificationLimit" name="notificationLimit" th:value="${settings.notificationLimit}">
                             </div>

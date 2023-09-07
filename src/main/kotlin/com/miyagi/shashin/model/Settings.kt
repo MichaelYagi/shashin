@@ -14,6 +14,8 @@ class Settings {
     @NotBlank
     private var recognitionConfidenceThreshold: String? = null
     @NotBlank
+    private var objectRecognitionConfidenceThreshold: String? = null
+    @NotBlank
     private var compreFaceServer: String? = null
     @NotBlank
     private var compreFaceKey: String? = null
@@ -60,6 +62,14 @@ class Settings {
 
     fun setRecognitionConfidenceThreshold(recognitionConfidenceThreshold: String?) {
         this.recognitionConfidenceThreshold = recognitionConfidenceThreshold
+    }
+
+    fun getObjectRecognitionConfidenceThreshold(): String? {
+        return this.objectRecognitionConfidenceThreshold
+    }
+
+    fun setObjectRecognitionConfidenceThreshold(objectRecognitionConfidenceThreshold: String?) {
+        this.objectRecognitionConfidenceThreshold = objectRecognitionConfidenceThreshold
     }
 
     fun getCompreFaceKey(): String? {
@@ -170,6 +180,7 @@ class Settings {
         val map = mutableMapOf<String, Any?>()
         map["id"] = this.id
         map["recognitionConfidenceThreshold"] = this.recognitionConfidenceThreshold
+        map["objectRecognitionConfidenceThreshold"] = this.objectRecognitionConfidenceThreshold
         map["queryLimit"] = this.queryLimit
         map["matchScanLimit"] = this.matchScanLimit
         map["trainingDataLimit"] = this.trainingDataLimit
