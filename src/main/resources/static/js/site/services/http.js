@@ -58,7 +58,7 @@ class Http {
             if (isJSON(data) && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
                 return data;
             } else if (isJSON(data) === false) {
-                if (data.indexOf("Shashin: Login") >= 0) {
+                if (data.indexOf("Login - Shashin") >= 0) {
                     $(location).prop('href', '/users/login');
                 }
             } else {

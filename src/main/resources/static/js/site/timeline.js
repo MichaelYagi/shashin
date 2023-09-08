@@ -250,9 +250,11 @@
             const http = new Http("attaching associated metadata in viewport");
             const version = Util.getMetadataLocalStorage();
             http.ajax("get", "/metadata/" + metadataId + (version === "" ? "" : "?v=" + version)).then(function (data) {
-                const metadata = data["metadata"];
-                const favoritesMap = data["favorites"];
-                timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                if (data !== undefined && data !== null && data.hasOwnProperty("status") && data.hasOwnProperty("msg")) {
+                    const metadata = data["metadata"];
+                    const favoritesMap = data["favorites"];
+                    timelineSettings.renderThumbnailPreviews(metadata, favoritesMap);
+                }
             });
         }
     }
