@@ -232,10 +232,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
 
                 if (request.session.getAttribute("ComprefaceConnection") == null) {
                     logger.log(Level.INFO, "AttributeController - CompreFaceConnection network check")
-                    model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
+                    val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
                         settings.getCompreFaceServer(),
                         settings.getCompreFaceKey()
                     )
+                    model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+                    request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
                 } else {
                     logger.log(Level.INFO, "AttributeController - CompreFaceConnection attribute check")
                     model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean
@@ -266,10 +268,12 @@ class AttributeController: ResponseEntityExceptionHandler() {
             if (request.session.getAttribute("ComprefaceConnection") == null) {
                 logger.log(Level.INFO, "AttributeController - Setting initialized and CompreFaceConnection network check")
 
-                model["faceRecogServicesAvailable"] = FileUtils.checkCompreFaceConnection(
+                val faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
                     settingsObj.getCompreFaceServer(),
                     settingsObj.getCompreFaceKey()
                 )
+                model["faceRecogServicesAvailable"] = faceRecogServicesAvailable
+                request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
             } else {
                 logger.log(Level.INFO, "AttributeController - Setting initialized and CompreFaceConnection attribute check")
                 model["faceRecogServicesAvailable"] = request.session.getAttribute("ComprefaceConnection") as Boolean

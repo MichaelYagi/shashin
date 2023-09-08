@@ -160,13 +160,16 @@ class PeopleController {
 
                 // Object and person recognition
                 if (threadFile != null) {
-                    val faceRecogServicesAvailable = if (request.session.getAttribute("ComprefaceConnection") == null) {
-                        FileUtils.checkCompreFaceConnection(
+
+                    val faceRecogServicesAvailable: Boolean
+                    if (request.session.getAttribute("ComprefaceConnection") == null) {
+                        faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
                             settings.getCompreFaceServer(),
                             settings.getCompreFaceKey()
                         )
+                        request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
                     } else {
-                        request.session.getAttribute("ComprefaceConnection") as Boolean
+                        faceRecogServicesAvailable = request.session.getAttribute("ComprefaceConnection") as Boolean
                     }
 
                     if (faceRecogServicesAvailable) {
@@ -551,13 +554,15 @@ class PeopleController {
         var subjectCompreFaceJsonStr: String? = null
         val settings = model.getAttribute("settings") as Settings
 
-        val faceRecogServicesAvailable = if (request.session.getAttribute("ComprefaceConnection") == null) {
-            FileUtils.checkCompreFaceConnection(
+        val faceRecogServicesAvailable: Boolean
+        if (request.session.getAttribute("ComprefaceConnection") == null) {
+            faceRecogServicesAvailable = FileUtils.checkCompreFaceConnection(
                 settings.getCompreFaceServer(),
                 settings.getCompreFaceKey()
             )
+            request.session.setAttribute("ComprefaceConnection", faceRecogServicesAvailable)
         } else {
-            request.session.getAttribute("ComprefaceConnection") as Boolean
+            faceRecogServicesAvailable = request.session.getAttribute("ComprefaceConnection") as Boolean
         }
 
         if (faceRecogServicesAvailable) {
