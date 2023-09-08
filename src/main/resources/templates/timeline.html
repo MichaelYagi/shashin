@@ -99,7 +99,7 @@
                             <th:block th:with="sdf = ${new java.text.SimpleDateFormat('yyyy-M-d')}">
                                 <div class="mb-3"><strong class="dateHeading p-1" th:text="${#strings.replace(#dates.format(sdf.parse(metadataList[0].year+'-'+metadataList[0].month+'-'+metadataList[0].day), 'EEE, MMM d, yyyy'),'.','')}"></strong>
                                     <th:block th:if="${#lists.size(placeNameHeaders)==1 and placeNameHeaders[0]!=''}"><span class="text-muted" th:utext="${'&lt;a class=&quot;link-unstyled&quot; href=&quot;/search?term='+placeNameHeaders[0]+'&quot; target=&quot;_blank&quot;&gt'+placeNameHeaders[0]+'&lt;/a&gt;'}"></span></th:block>
-                                    <th:block th:unless="${#lists.size(placeNameHeaders)==1}">
+                                    <th:block th:if="${#lists.size(placeNameHeaders)>1}">
                                         <span class="text-muted">
                                             <div class="dropdown" style="display: inline-block;"><a class="dropdown-toggle link-unstyled" data-bs-toggle="dropdown" href="#" th:text="${placeNameHeaders[0]}"></a>
                                                 <ul class="dropdown-menu">
