@@ -334,9 +334,13 @@ class AttributeController: ResponseEntityExceptionHandler() {
             }
 
             if (request.session.getAttribute("CurrentUser") == null) {
+                logger.log(Level.INFO, "AttributeController - CurrentUser db check")
+
                 currentUser = userRepository.findByUsername(authentication.name)
                 request.session.setAttribute("CurrentUser",currentUser)
             } else {
+                logger.log(Level.INFO, "AttributeController - CurrentUser attribute check")
+
                 currentUser = request.session.getAttribute("CurrentUser") as User
             }
 
