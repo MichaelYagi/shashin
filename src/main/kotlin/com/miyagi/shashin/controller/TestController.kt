@@ -51,9 +51,7 @@ class TestController {
         val metadataObj = metadataRepository.findById(metadataId).get()
 
 
-        val file = File(metadataObj.getPath()!!)
-println(file)
-println(metadataObj.getThumbnailUrlOriginal())
+//        val file = File(metadataObj.getPath()!!)
 
         val img = ImageFactory.getInstance().fromFile(Path(metadataObj.getPath()!!))
 
@@ -94,7 +92,7 @@ println(metadataObj.getThumbnailUrlOriginal())
             }
         }
 
-
+        println(request.session.getAttribute("ComprefaceConnection"))
 
 
         return "test"
