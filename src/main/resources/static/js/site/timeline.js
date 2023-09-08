@@ -870,16 +870,17 @@
                                 await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
                                 timelineSettings.distanceToFooter = calculateDistanceToFooter();
                             }
-                        } else {
-                            // 1 sec delay for smoother scrolling
-                            setTimeout(async () => {
-                                // Stage 3 - network call to embed the image URL and complete the process
-                                if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
-                                    await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
-                                    timelineSettings.distanceToFooter = calculateDistanceToFooter();
-                                }
-                            }, 1000);
                         }
+                        // else {
+                        //     // 1 sec delay for smoother scrolling
+                        //     setTimeout(async () => {
+                        //         // Stage 3 - network call to embed the image URL and complete the process
+                        //         if (msg === timelineSettings.success && $("#" + currentDate).length === 1) {
+                        //             await timelineSettings.attachAssociatedMetadata(currentDate, mediaTypeFilter);
+                        //             timelineSettings.distanceToFooter = calculateDistanceToFooter();
+                        //         }
+                        //     }, 1000);
+                        // }
 
                         timelineSettings.distanceToFooter = calculateDistanceToFooter();
 
